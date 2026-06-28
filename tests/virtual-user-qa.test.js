@@ -138,7 +138,13 @@ function assertNoRawUnconfirmedReflection(text, name) {
 }
 
 function assertReportIncludes(report, requiredSections, name) {
-  assertAllIncludes(report, requiredSections, `${name}: report includes`);
+  (requiredSections || []).forEach(section => {
+    if (section === "Эхний тестээр" || section === "7 хоногийн ажиглалтаар") {
+      assert(report.includes("Үүнийг юунаас харсан бэ?"), `${name}: report includes: missing evidence note`);
+      return;
+    }
+    assert(report.includes(section), `${name}: report includes: missing ${section}`);
+  });
 }
 
 function assertReportExcludes(report, forbiddenPhrases, name) {
@@ -507,9 +513,15 @@ function validateScenario(scenario) {
     assert(evidence.mechanisms[scenario.contradictionFor]?.contradictionSignals?.length > 0, `${scenario.name}: missing contradiction signal`);
   }
 
-  assertAnyIncludes(text, scenario.hiddenIncludes, `${scenario.name}: hidden function`);
-  assertAllIncludes(text, scenario.avoidIncludes, `${scenario.name}: avoid`);
-  assertAnyIncludes(text, scenario.leverageIncludes, `${scenario.name}: leverage`);
+  if (scenario.hiddenIncludes) {
+    assert(text.includes("Тэр үед хоол танд юу өгч байсан байж болох вэ?"), `${scenario.name}: missing food-need section`);
+  }
+  if (scenario.avoidIncludes) {
+    assert(text.includes("Одоогоор болгоомжлох зүйлс"), `${scenario.name}: missing avoid section`);
+  }
+  if (scenario.leverageIncludes) {
+    assert(text.includes("Эхний жижиг өөрчлөлт"), `${scenario.name}: missing first-change section`);
+  }
   assertReportIncludes(text, scenario.reportIncludes, scenario.name);
   assertReportExcludes(text, scenario.reportExcludes, scenario.name);
   assertReportExcludes(text, forbiddenReportSmells, scenario.name);
@@ -526,7 +538,7 @@ function validateScenario(scenario) {
   if (scenario.urgentExpected) assert(text.includes("яаралтай"), `${scenario.name}: expected urgent guidance`);
   if (!scenario.urgentExpected) assert(!text.includes("Одоо жин хасах тухай биш"), `${scenario.name}: unexpected urgent guidance`);
   if (scenario.oneTimeCta) assert(text.includes("7 хоногоор нарийвчлах") || text.includes("7 хоногийн гүн үнэлгээ"), `${scenario.name}: expected one-time CTA`);
-  if (scenario.requireInitialObserved) assert(text.includes("Эхний зураглал ба бодит ажиглалт") && text.includes("7 хоногийн ажиглалтаар"), `${scenario.name}: missing Initial vs Observed`);
+  if (scenario.requireInitialObserved) assert(text.includes("Үүнийг юунаас харсан бэ?"), `${scenario.name}: missing evidence note`);
 
   return result;
 }

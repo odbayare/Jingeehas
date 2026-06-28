@@ -106,9 +106,10 @@ function run() {
 
   setBase({ oneTimePaid: true });
   const oneTimeFullReport = normalize(_internal.renderReport());
-  ["орой тэнхээ багасах үед сонголт амархан өөрчлөгддөг давтамжтай нийцэж байна", "олон шийдвэрийн дараах ядаргаа", "эхэлж өөрчлөх хамгийн амар цэг", "тэмдэглэл"].forEach(phrase => {
+  ["Өдөр дуусах үед хоолны асуудал", "Дахин шийдвэр гаргах ачааллаас түр чөлөөлөх", "Эхний жижиг өөрчлөлт", "тэмдэглэл"].forEach(phrase => {
     assert(oneTimeFullReport.includes(phrase), `one-time report should include Mongolian replacement: ${phrase}`);
   });
+  assert(!oneTimeFullReport.includes("давтамжтай нийцэж байна"));
   assertAbsent(oneTimeFullReport, ["Executive Load Failure", "low-friction default", "Decision fatigue", "leverage point", "diary"], "one-time full report");
 
   setBase();

@@ -149,8 +149,8 @@ function run() {
     diaryEntries: Array.from({ length: 5 }, (_, i) => diaryEntry(i + 1))
   });
   const report = _internal.renderReport();
-  assert(report.includes("Дараа өлсөхөөс хамгаалах давтамж") || report.includes("Өлсөлтөөс хамгаалах"));
-  assert(report.includes("Эхэлж өөрчлөх хамгийн амар цэг"));
+  assert(report.includes("Дараа хэзээ идэх нь тодорхойгүй") || report.includes("Дараа өлсөхөөс хамгаалах"));
+  assert(report.includes("Эхний жижиг өөрчлөлт"));
   assert(!/confidence|итгэлцэл|82%/.test(report));
 }
 

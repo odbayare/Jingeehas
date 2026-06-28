@@ -103,14 +103,14 @@ function run() {
   assert(unpaidOneTime.includes("Таны эхний зураглал бэлэн боллоо"));
   assert(unpaidOneTime.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"));
   assert(unpaidOneTime.includes("Хамгийн түрүүнд харагдаж буй зүйл"));
-  assert(!unpaidOneTime.includes("Энэ зан үйл ямар үүрэгтэй байж болох вэ?"));
+  assert(!unpaidOneTime.includes("Тэр үед хоол танд юу өгч байсан байж болох вэ?"));
   assert(!unpaidOneTime.includes("<h3>14 хоногийн эхний туршилт</h3>"));
   assertNoCommercialSmell(unpaidOneTime, "one-time unpaid");
 
   _internal.demoCompletePayment("one-time");
   const paidOneTime = normalize(_internal.renderReport());
-  assert(paidOneTime.includes("Энэ зан үйл ямар үүрэгтэй байж болох вэ?"));
-  assert(paidOneTime.includes("14 хоногийн эхний туршилт"));
+  assert(paidOneTime.includes("Тэр үед хоол танд юу өгч байсан байж болох вэ?"));
+  assert(paidOneTime.includes("14 хоногийн туршилт"));
   assert(paidOneTime.includes("Нарийвчлах үнэ"));
   assert(paidOneTime.includes("19,900₮ төлөөд 7 хоногоор нарийвчлах"));
   assert(paidOneTime.includes("Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой"));

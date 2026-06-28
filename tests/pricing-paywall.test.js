@@ -106,14 +106,14 @@ function run() {
   assert(!unpaidOneTime.includes("Та авах сонирхолтой эсэхээ л үлдээж байна"));
   assert(!unpaidOneTime.includes("Demo unlock хийх"));
   assert(!unpaidOneTime.includes("6,900₮"));
-  assert(!unpaidOneTime.includes("Энэ зан үйл ямар үүрэгтэй байж болох вэ?"));
+  assert(!unpaidOneTime.includes("Тэр үед хоол танд юу өгч байсан байж болох вэ?"));
   assert(!unpaidOneTime.includes("14 хоногийн эхний туршилт Өдөр бүр хийх"));
   assertNoPressureCopy(unpaidOneTime);
 
   _internal.demoCompletePayment("one-time");
   const paidOneTime = normalize(_internal.renderReport());
-  assert(paidOneTime.includes("Энэ зан үйл ямар үүрэгтэй байж болох вэ?"));
-  assert(paidOneTime.includes("14 хоногийн эхний туршилт"));
+  assert(paidOneTime.includes("Тэр үед хоол танд юу өгч байсан байж болох вэ?"));
+  assert(paidOneTime.includes("14 хоногийн туршилт"));
   assert(paidOneTime.includes("Нарийвчлах үнэ"));
   assert(paidOneTime.includes("19,900₮ төлөөд 7 хоногоор нарийвчлах"));
   assert(!paidOneTime.includes("12,900₮"));

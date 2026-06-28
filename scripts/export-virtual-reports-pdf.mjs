@@ -115,6 +115,25 @@ function flattenAnswer(value) {
   return String(value ?? "");
 }
 
+function translateExportText(value) {
+  return String(value ?? "")
+    .replace(/\bTwo-child working parent\b/g, "Хоёр хүүхэдтэй, ажилтай эцэг/эх")
+    .replace(/\bOffice worker carrying deadlines\b/g, "Ажлын хугацаа, гэрийн хүлээлт давхцсан оффисын ажилтан")
+    .replace(/\bStarts strict plans after every weekend\b/g, "Амралтын өдрийн дараа хатуу төлөвлөгөө эхлүүлдэг")
+    .replace(/\bDelivery\b/g, "Хоол захиалга")
+    .replace(/\bdelivery\b/g, "хоол захиалга")
+    .replace(/\bSnack\b/g, "Зууш")
+    .replace(/\bsnack\b/g, "зууш")
+    .replace(/\bflat feeling\b/g, "хоосон мэт мэдрэмж")
+    .replace(/\bchallenge\b/g, "сорил")
+    .replace(/\bWeight and eating distress is severe and current safety text appears\./g, "Жин, идэлттэй холбоотой тавгүй мэдрэмж хүчтэй бөгөөд аюулгүй байдлын зөвлөмж гарч байгаа")
+    .replace(/\bDistress around eating and body image has escalated\./g, "Идэлт, биеийн дүр төрхтэй холбоотой тавгүй мэдрэмж нэмэгдсэн")
+    .replace(/\bNot audited as ordinary eating pattern because safety comes first\./g, "Аюулгүй байдал түрүүнд тул ердийн идэлтийн давтамжаар дүгнээгүй")
+    .replace(/\bCurrent self-harm thought\./g, "Өөртөө хор хүргэх тухай одоогийн бодол илэрсэн")
+    .replace(/\bPoor\./g, "Муу")
+    .replace(/\bUrgent self-harm signal\./g, "Яаралтай аюулгүй байдлын дохио");
+}
+
 function friendlyMechanismFromKey(key) {
   return FRIENDLY_MECHANISMS[key] || key || "Тодорхойгүй";
 }
@@ -192,7 +211,7 @@ function selectedAnswersSummary(result) {
   const entries = Object.entries(result.selectedAnswers || {});
   return entries
     .filter(([, value]) => value !== undefined && value !== null && flattenAnswer(value).trim())
-    .map(([key, value]) => ({ key, value: flattenAnswer(value) }));
+    .map(([key, value]) => ({ key, value: translateExportText(flattenAnswer(value)) }));
 }
 
 function assertCleanReports(results) {
@@ -243,7 +262,7 @@ function makeMarkdown(model) {
 
   model.results.forEach((result, index) => {
     const label = USER_LABELS[result.id] || result.label;
-    const profile = result.personaProfile || {};
+    const profile = result.profile || result.personaProfile || {};
     const primary = friendlyMechanismFromName(result.primaryMechanism, result.rankedPatterns);
     const secondary = (result.secondaryMechanisms || [])
       .map((name) => friendlyMechanismFromName(name, result.rankedPatterns))
@@ -429,7 +448,7 @@ def footer(canvas, doc):
     canvas.saveState()
     canvas.setFont(font_name, 7)
     canvas.setFillColor(colors.HexColor("#66737a"))
-    canvas.drawString(doc.leftMargin, 11 * mm, "Weight Test virtual report audit - internal")
+    canvas.drawString(doc.leftMargin, 11 * mm, "Жин хасалтын гүн зураглал — дотоод тайлангийн шалгалт")
     canvas.drawRightString(A4[0] - doc.rightMargin, 11 * mm, f"Page {doc.page}")
     canvas.restoreState()
 
@@ -581,7 +600,10 @@ function buildModel(results, commitHash) {
     sourceScript: SOURCE_SCRIPT,
     exportScript: EXPORT_SCRIPT,
     results: results.map((result) => {
-      const profile = result.personaProfile || {};
+      const rawProfile = result.personaProfile || {};
+      const profile = Object.fromEntries(
+        Object.entries(rawProfile).map(([key, value]) => [key, translateExportText(value)])
+      );
       const displayLabel = USER_LABELS[result.id] || result.label;
       const primaryFriendly = friendlyMechanismFromName(result.primaryMechanism, result.rankedPatterns);
       const secondaryFriendly = (result.secondaryMechanisms || [])

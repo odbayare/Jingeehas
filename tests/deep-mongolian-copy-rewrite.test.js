@@ -95,11 +95,12 @@ function run() {
     diaryEntries: []
   });
   const report = normalize(_internal.renderReport());
-  const livedIndex = report.indexOf("Та юу хийхээ мэдэхгүйдээ биш");
-  const patternIndex = report.indexOf("орой тэнхээ багасах үед сонголт амархан өөрчлөгддөг давтамжтай нийцэж байна");
+  const livedIndex = report.indexOf("Тэр үед та юу хийхээ мэдэхгүйдээ биш");
+  const structureIndex = report.indexOf("Давтагддаг тойрог");
   assert(livedIndex >= 0, "report should include lived explanation");
-  assert(patternIndex >= 0, "report should include public Mongolian pattern label");
-  assert(livedIndex < patternIndex, "report should explain the lived moment before naming the pattern");
+  assert(structureIndex >= 0, "report should include human-readable cycle section");
+  assert(livedIndex < structureIndex, "report should explain the lived moment before the cycle");
+  assert(!report.includes("давтамжтай нийцэж байна"), "report should not use old engine fit phrase");
 
   mockBackend.resetMockBackend();
   _internal.startLeadCapture("one-time");

@@ -78,30 +78,27 @@ function run() {
   setSevenDay();
   const full = _internal.renderReport();
   [
-    "Хариултын хүрэлцээ",
-    "Эхний зураглал ба бодит ажиглалт",
-    "Гол давтагдаж буй нөхцөл",
-    "Давхар нөлөөлж буй давтамжууд",
-    "Илэрч буй зан үйлүүд",
-    "Энэ зан үйл ямар үүрэгтэй байж болох вэ?",
+    "Таны гүн зураглал бэлэн боллоо",
+    "Гол зураг",
+    "Тэр үед хоол танд юу өгч байсан байж болох вэ?",
     "Давтагддаг тойрог",
-    "Идэх хүсэл эхэлдэг нөхцөл",
-    "Идэхийн өмнөх 30 минут",
-    "Идсэний дараах 30 минут",
+    "Үүнийг юунаас харсан бэ?",
     "Асуудал яг юу биш вэ?",
-    "Өмнөх аргууд яагаад удаан ажиллаагүй байж болох вэ?",
-    "Одоогоор зайлсхийх зүйлс",
-    "Эхэлж өөрчлөх хамгийн амар цэг",
+    "Одоогоор болгоомжлох зүйлс",
+    "Эхний жижиг өөрчлөлт",
     "14 хоногийн туршилт"
   ].forEach(section => assert(full.includes(section), `missing ${section}`));
 
-  assert(full.includes("<table"));
-  assert(full.includes("5/5"));
-  assert(full.includes("Дараа өлсөхөөс хамгаалах") || full.includes("Тэнхээ нөхөх") || full.includes("Таатай мэдрэмж авах"));
-  assert(full.includes("Өдөр хоолны хэмнэл алдагдана") || full.includes("Өдөр олон шийдвэрийн ачаалал өндөр байна"));
+  assert(!full.includes("давтамжтай нийцэж байна"));
+  assert(!full.includes("Таны идэлт дараах үүргүүдийг гүйцэтгэж байна"));
+  assert(full.includes("Эхний 3 өдөр"));
+  assert(full.includes("4–10 дахь өдөр"));
+  assert(full.includes("11–14 дахь өдөр"));
+  assert(full.includes("Хэрвээ нэг өдөр алгасвал"));
+  assert(full.includes("Өдөр хоол холдоно") || full.includes("Өдөр олон зүйл шийдэж өнгөрнө"));
   assert(full.includes("Асуудал"));
   assert(full.includes("Урт мацаг"));
-  assert(full.includes("тогтмол хоол") || full.includes("оройн хоолны бэлэн зам"));
+  assert(full.includes("тулгуур хоол") || full.includes("хоёр бэлэн зам"));
   assert(!full.includes("UNCONFIRMED RAW"));
   assert(!/confidence|итгэлцэл|82%/.test(full));
   assert(!full.includes("Trigger -> body"));
@@ -150,10 +147,10 @@ function run() {
     stageVoiceSummaries: {}
   });
   const oneTime = _internal.renderReport();
-  assert(oneTime.includes("Таны нэг удаагийн гүн анализ бэлэн боллоо"));
+  assert(oneTime.includes("Таны гүн зураглал бэлэн боллоо"));
   assert(oneTime.includes("7 хоногоор нарийвчлах"));
-  assert(oneTime.includes("Илүү нарийвчилж болох хэсгүүд"));
-  assert(oneTime.includes("Энэ хэсгийг 7 хоногоор илүү тодруулж болно"));
+  assert(oneTime.includes("Гол зураг"));
+  assert(oneTime.includes("Хэрвээ энэ зураглалыг илүү бодит өдөр тутмын түвшинд харахыг хүсвэл"));
   assert(!oneTime.includes("Миний pattern-ийг 7 хоногоор шалгах"));
 }
 

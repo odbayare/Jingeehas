@@ -121,7 +121,8 @@ function run() {
     diaryEntries: [unconfirmedRaw, entry(2), entry(3), entry(4), entry(5)]
   });
   const structuredOnlyReport = _internal.renderReport();
-  assert(structuredOnlyReport.includes("Баталгаажуулсан нэмэлт тайлбар байхгүй") || structuredOnlyReport.includes("бүтэцтэй хариултад суурилж байна"));
+  assert(structuredOnlyReport.includes("Үүнийг юунаас харсан бэ?"));
+  assert(structuredOnlyReport.includes("Тэмдэглэлд") || structuredOnlyReport.includes("зураглал"));
   assert(!structuredOnlyReport.includes("RAW SECRET DELIVERY STORY"));
 
   const confirmedEntries = [1, 2, 3, 4, 5].map(day => entry(day, createConfirmedSummaryObject({
@@ -139,9 +140,9 @@ function run() {
     diaryEntries: confirmedEntries
   });
   const report = _internal.renderReport();
-  assert(report.includes("Баталгаажуулсан тайлбар"));
-  assert(report.includes("1 дэх өдөр"));
-  assert(report.includes("хамгийн амар бэлэн сонголт нөлөөлсөн"));
+  assert(report.includes("Үүнийг юунаас харсан бэ?"));
+  assert(report.includes("Тэмдэглэлд"));
+  assert(report.includes("Гол зураг"));
   assert(!report.includes("raw 1 should not appear"));
 
   assert.strictEqual(confirmedNarrativeEvidence(confirmedEntries).length, 5);

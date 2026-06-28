@@ -1,7 +1,7 @@
 # PDF Export Notes
 
-Generated: 2026-06-28T08:52:48.739Z
-Commit: f6e1f545e5f4ff0ab3c5cbfb9d10d295bc7381c2
+Generated: 2026-06-28T09:29:23.999Z
+Commit: 594b9899a98b6974f8f9a94a3e6da7ed0289717c
 Source script: scripts/run-virtual-user-audit.mjs
 Export script: scripts/export-virtual-reports-pdf.mjs
 

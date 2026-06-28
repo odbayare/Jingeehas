@@ -116,7 +116,7 @@ function run() {
 
   setOneTimeReport();
   const oneTimeText = normalize(_internal.renderReport());
-  assert(oneTimeText.includes("Энэ хэсгийг 7 хоногоор илүү тодруулж болно"));
+  assert(oneTimeText.includes("Хэрвээ энэ зураглалыг илүү бодит өдөр тутмын түвшинд харахыг хүсвэл"));
   assert(oneTimeText.includes("7 хоногоор нарийвчлах"));
   assert(!oneTimeText.includes("Миний pattern-ийг 7 хоногоор шалгах"));
   assertNoPressureCopy(oneTimeText);
@@ -124,8 +124,8 @@ function run() {
   setMode2Report();
   const mode2Text = normalize(_internal.renderReport());
   assert(mode2Text.includes("онош гэсэн үг биш"));
-  assert(mode2Text.includes("Таны давтамж харагдаж байна"));
-  assert(mode2Text.includes("эхний туршилт илүү зөөлөн, аюулгүй байна"));
+  assert(mode2Text.includes("Нэмэлтээр нэг биеийн дохиог шалгуулахад илүүдэхгүй"));
+  assert(mode2Text.includes("огцом хязгаарлалтгүй зөөлөн эхлүүлнэ"));
 
   setMode3Report();
   const mode3Text = normalize(_internal.renderReport());

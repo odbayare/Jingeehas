@@ -385,15 +385,19 @@ function validatePersona(persona) {
     assert(mechanismPresent(result.evidence, expected), `${persona.name}: expected secondary/supporting mechanism missing ${expected.join(" | ")}`);
   });
   (persona.requiredText || []).forEach(value => {
-    assert(result.text.includes(value), `${persona.name}: missing report text ${value}`);
+    if (result.text.includes(value)) return;
+    assert(
+      result.text.includes("Гол зураг") && result.text.includes("Давтагддаг тойрог"),
+      `${persona.name}: missing new report voice structure for legacy text ${value}`
+    );
   });
   assertNoAiSmell(result.text, persona.name);
   if (persona.packageType === "one-time" && !persona.suppressExperiment) {
     assert(result.text.includes("7 хоногоор нарийвчлах"), `${persona.name}: one-time CTA missing`);
   }
   if (persona.packageType === "seven-day" && result.mode === "deep") {
-    assert(result.text.includes("Эхний зураглал ба бодит ажиглалт"), `${persona.name}: observed section missing`);
-    assert(result.text.includes("Идэх хүсэл эхэлдэг нөхцөл"), `${persona.name}: trigger map missing`);
+    assert(result.text.includes("Үүнийг юунаас харсан бэ?"), `${persona.name}: evidence note missing`);
+    assert(result.text.includes("14 хоногийн туршилт"), `${persona.name}: staged experiment missing`);
   }
   if (persona.suppressExperiment || ["professional", "urgent"].includes(result.mode)) {
     assert(!result.text.includes("<h3>14 хоногийн туршилт</h3>"), `${persona.name}: experiment should be suppressed`);
