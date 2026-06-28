@@ -97,7 +97,7 @@ function run() {
   assert(publicText.includes("тайлангийн жишээ"));
   assert(publicText.includes("Тэмдэглэлээ үргэлжлүүлэх"));
   assert(publicText.includes("Утас эсвэл имэйл"));
-  assert(publicText.includes("Нойр муу хоносны дараа амттай юм руу илүү амархан татагддаг уу?"));
+  assert(publicText.includes("Нойр муу хоносны маргааш амттай юм руу илүү амархан татагддаг уу?"));
   assert(publicText.includes("7 хоногийн гүн анализ руу шилжих боломж"));
 
   setBase({ oneTimePaid: false });

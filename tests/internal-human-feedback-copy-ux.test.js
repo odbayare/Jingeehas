@@ -41,10 +41,19 @@ function run() {
     "Богино reflection",
     "Reflection-д бүтэцтэй context хараахан бага байна",
     "тасарсан бэ",
+    "тасардаг",
+    "тасалдах",
     "Хоол удахад дараахаас гардаг уу"
   ], "question flow copy");
 
-  ["үргэлжлэхээ больсон", "Хоол холдоход дараахаас илэрдэг үү?", "Идсэнээ “нөхөх” гэж бөөлжүүлэх"].forEach(phrase => {
+  [
+    "үргэлжлүүлэхэд хэцүү болсон",
+    "Хоол холдоход дараах шинжээс илэрдэг үү?",
+    "Хоол идээд цадсан эсэхээ мэдрэхэд танд хэр амар байдаг вэ?",
+    "Төлөвлөгөө жаахан зөрөхөд таны толгойд ихэвчлэн юу орж ирдэг вэ?",
+    "Идсэний дараа хамгийн түрүүнд юу мэдрэгддэг вэ?",
+    "Идсэнээ “нөхөх” гэж бөөлжүүлэх"
+  ].forEach(phrase => {
     assert(questionFlowCopy.includes(phrase), `new question copy should appear: ${phrase}`);
   });
 
@@ -93,7 +102,7 @@ function run() {
   });
   const savedTextQuestion = normalize(_internal.renderStageOne());
   assert(savedTextQuestion.includes("Тайлбар хадгалагдлаа"));
-  assert(savedTextQuestion.includes("Бид энэ тайлбарыг дараагийн зураглалд нэмэлт мэдээлэл болгон ашиглана."));
+  assert(savedTextQuestion.includes("Таны бичсэн тайлбар хадгалагдлаа. Дараагийн асуултад үргэлжлүүлж болно."));
   assertAbsent(savedTextQuestion, blockedTerms, "saved free-text question");
 
   _internal.setTestState({
