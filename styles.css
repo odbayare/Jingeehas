@@ -567,6 +567,52 @@ h3 {
   font-size: 1.55rem;
 }
 
+.feedback-survey {
+  border-color: rgba(31, 99, 84, 0.28);
+  background: rgba(245, 251, 248, 0.86);
+}
+
+.feedback-question {
+  display: grid;
+  gap: 10px;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+}
+
+.feedback-question:first-of-type {
+  border-top: 0;
+}
+
+.feedback-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  color: var(--text);
+  font-size: 0.92rem;
+}
+
+.feedback-option input {
+  accent-color: var(--primary);
+}
+
+.feedback-export-json {
+  max-height: 62vh;
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #0e1714;
+  color: #edf7f2;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
 .danger-copy {
   color: var(--danger);
   font-weight: 700;

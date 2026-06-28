@@ -16,6 +16,26 @@ const WEIGHT_TEST_QPAY_ENDPOINTS = {
   check: "/.netlify/functions/qpay-check-payment"
 };
 
+const INTERNAL_FEEDBACK_DEFAULTS = {
+  discomfort: "Үгүй",
+  discomfortDetail: "",
+  questionClarity: "Ерөнхийдөө ойлгомжтой",
+  unclearQuestions: "",
+  fitRating: "8",
+  feltUnderstood: "Зарим хэсэг дээр",
+  feltUnderstoodReason: "",
+  newInsight: "Бага зэрэг",
+  newInsightDetail: "",
+  aiGenericFeeling: "Үгүй",
+  aiGenericDetail: "",
+  languageTone: "Байгалийн монгол хэлтэй",
+  languageToneSuggestion: "",
+  valueAt9900: "Магадгүй",
+  valueReason: "",
+  mostUsefulPart: "",
+  mostNeedsFix: ""
+};
+
 const VALIDATION_PRODUCTS = {
   "one-time": {
     productType: "one_time",
@@ -856,6 +876,9 @@ const initialState = {
     invoice: null
   },
   currentAssessmentId: null,
+  internalTest: false,
+  internalFeedbackForm: { ...INTERNAL_FEEDBACK_DEFAULTS },
+  lastFeedbackId: null,
   leadProductKey: null,
   leadSourceScreen: null,
   leadForm: {
@@ -874,7 +897,12 @@ let state = hasBrowserRuntime ? loadState() : { ...initialState };
 function loadState() {
   try {
     if (!hasBrowserRuntime) return { ...initialState };
-    return { ...initialState, ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") };
+    const params = new URLSearchParams(window.location.search || "");
+    return {
+      ...initialState,
+      ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"),
+      internalTest: params.get("internalTest") === "1" || JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}").internalTest === true
+    };
   } catch {
     return { ...initialState };
   }
@@ -886,7 +914,8 @@ function saveState() {
 }
 
 function resetState() {
-  state = { ...initialState };
+  const keepInternalTest = isInternalTestMode();
+  state = { ...initialState, internalTest: keepInternalTest };
   saveState();
   render();
 }
@@ -1111,12 +1140,12 @@ async function checkWeightQpayPayment() {
 
 function hasSevenDayAccess() {
   const access = mockBackend.getAccessState(state.currentAssessmentId || null);
-  return Boolean(state.sevenDayPaid || state.upgradePaid || access.hasSevenDayAccess);
+  return Boolean(isInternalTestMode() || state.sevenDayPaid || state.upgradePaid || access.hasSevenDayAccess);
 }
 
 function hasOneTimeReportAccess() {
   const access = mockBackend.getAccessState(state.currentAssessmentId || null);
-  return Boolean(state.oneTimePaid || state.qpayPayment?.status === "paid" || access.hasOneTimeReportAccess);
+  return Boolean(isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === "paid" || access.hasOneTimeReportAccess);
 }
 
 function hasUpgradeAccess() {
@@ -3142,7 +3171,125 @@ function renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanis
         </div>
         ${mode.mode === "check" ? professionalCheckHtml(tags, true) : ""}
         ${renderUpgradeOffer()}
+        ${renderInternalTesterFeedbackSurvey()}
         <div class="actions"><button class="button secondary" onclick="setView('choice')">Сонголт руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
+      </div>
+    </section>
+  `;
+}
+
+function feedbackChoiceField(name, label, options, followUpName = "", followUpLabel = "") {
+  const form = { ...INTERNAL_FEEDBACK_DEFAULTS, ...(state.internalFeedbackForm || {}) };
+  return `
+    <div class="feedback-question">
+      <p><strong>${escapeHtml(label)}</strong></p>
+      <div class="pill-row feedback-options">
+        ${options.map(option => `
+          <label class="feedback-option">
+            <input type="radio" name="${escapeAttr(name)}" value="${escapeAttr(option)}" ${form[name] === option ? "checked" : ""} onchange="updateInternalFeedbackField('${escapeAttr(name)}', this.value)">
+            <span>${escapeHtml(option)}</span>
+          </label>
+        `).join("")}
+      </div>
+      ${followUpName ? `<label class="field"><span class="muted">${escapeHtml(followUpLabel)}</span><textarea rows="2" oninput="updateInternalFeedbackField('${escapeAttr(followUpName)}', this.value)">${escapeHtml(form[followUpName] || "")}</textarea></label>` : ""}
+    </div>
+  `;
+}
+
+function renderInternalTesterFeedbackSurvey() {
+  if (!isInternalTestMode()) return "";
+  const mode = reportMode();
+  if (["urgent", "professional"].includes(mode.mode)) return "";
+  const form = { ...INTERNAL_FEEDBACK_DEFAULTS, ...(state.internalFeedbackForm || {}) };
+  return `
+    <div class="report-section feedback-survey" id="internal-feedback-survey">
+      <p class="choice-kicker">Дотоод туршилтын хувилбар — энэ шатанд бодит төлбөр авахгүй.</p>
+      <h3>Туршилтын санал асуулга</h3>
+      <p>Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.</p>
+      ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
+      ${feedbackChoiceField("questionClarity", "Асуултууд ойлгомжтой байсан уу?", ["Маш ойлгомжтой", "Ерөнхийдөө ойлгомжтой", "Зарим нь ойлгомжгүй", "Ихэнх нь ойлгомжгүй"], "unclearQuestions", "Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.")}
+      <div class="feedback-question">
+        <p><strong>Тайлан таны нөхцөлтэй хэр нийцсэн бэ?</strong></p>
+        <label class="field"><span class="muted">1 = огт нийцээгүй, 10 = маш сайн нийцсэн</span><input type="number" min="1" max="10" value="${escapeAttr(form.fitRating)}" oninput="updateInternalFeedbackField('fitRating', this.value)"></label>
+      </div>
+      ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
+      ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
+      ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
+      ${feedbackChoiceField("languageTone", "Тайлангийн хэл найруулга ямар санагдсан бэ?", ["Байгалийн монгол хэлтэй", "Зарим хэсэг хиймэл", "Хэт албархуу", "Хэт зөөлөн/бөөрөнхий"], "languageToneSuggestion", "Засах санал:")}
+      ${feedbackChoiceField("valueAt9900", "Энэ тайланг 9,900₮ төлж авахад үнэ цэнтэй санагдах уу?", ["Тийм", "Магадгүй", "Үгүй"], "valueReason", "Яагаад?")}
+      <label class="field"><span class="muted">Хамгийн хэрэгтэй санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostUsefulPart', this.value)">${escapeHtml(form.mostUsefulPart || "")}</textarea></label>
+      <label class="field"><span class="muted">Хамгийн засмаар санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostNeedsFix', this.value)">${escapeHtml(form.mostNeedsFix || "")}</textarea></label>
+      <div class="actions">
+        <button class="button" onclick="submitInternalFeedback()">Санал илгээх</button>
+        <button class="button ghost" onclick="setView('feedbackExport')">Feedback export</button>
+      </div>
+    </div>
+  `;
+}
+
+function updateInternalFeedbackField(field, value) {
+  state.internalFeedbackForm = {
+    ...INTERNAL_FEEDBACK_DEFAULTS,
+    ...(state.internalFeedbackForm || {}),
+    [field]: value
+  };
+  saveState();
+}
+
+function internalFeedbackMetadata() {
+  const mode = reportMode();
+  const evidence = calculateMechanismEvidence(state);
+  return {
+    reportMode: mode.mode,
+    primaryMechanism: evidence.primaryMechanism || null,
+    secondaryMechanisms: evidence.secondaryMechanisms || [],
+    safetyMode: mode.mode
+  };
+}
+
+function submitInternalFeedback() {
+  if (!isInternalTestMode()) return;
+  const metadata = internalFeedbackMetadata();
+  const feedback = {
+    ...INTERNAL_FEEDBACK_DEFAULTS,
+    ...(state.internalFeedbackForm || {})
+  };
+  const record = mockBackend.createTesterFeedback({
+    ...metadata,
+    feedback
+  });
+  state.lastFeedbackId = record.id;
+  state.internalFeedbackForm = { ...INTERNAL_FEEDBACK_DEFAULTS };
+  state.view = "feedbackThanks";
+  saveState();
+  render();
+}
+
+function renderFeedbackThanks() {
+  return `
+    ${topbar(100, "Санал асуулга")}
+    <section class="screen">
+      <div class="panel stack">
+        <h2>Санал өгсөнд баярлалаа</h2>
+        <p>Таны хариулт тестийн асуулт, тайлангийн найруулга, хэрэгтэй эсэхийг сайжруулахад шууд ашиглагдана.</p>
+        ${isInternalTestMode() ? `<div class="actions"><button class="button secondary" onclick="setView('feedbackExport')">Feedback export</button></div>` : ""}
+        <button class="button" onclick="resetState()">Дахин эхлэх</button>
+      </div>
+    </section>
+  `;
+}
+
+function renderFeedbackExport() {
+  if (!isInternalTestMode()) return renderLanding();
+  const records = mockBackend.getTesterFeedbackRecords();
+  return `
+    ${topbar(100, "Feedback export")}
+    <section class="screen">
+      <div class="panel stack">
+        <h2>Feedback export</h2>
+        <p class="muted">Дотоод туршилтын санал асуулгын JSON export.</p>
+        <pre class="feedback-export-json">${escapeHtml(JSON.stringify(records, null, 2))}</pre>
+        <div class="actions"><button class="button" onclick="setView('choice')">Тест рүү буцах</button><button class="button ghost" onclick="resetState()">Дахин эхлэх</button></div>
       </div>
     </section>
   `;
@@ -3338,6 +3485,7 @@ function renderReport() {
           ${isOneTime ? `<p class="muted">Энэ туршилтыг 7 хоногийн тэмдэглэл дээр илүү нарийвчилж, нөхцлийн зураглал, давтагддаг цикл, эхэлж өөрчлөх хамгийн амар цэгийг тодруулж болно.</p><div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>` : ""}
         </div>
         ${mode.mode === "check" ? professionalCheckHtml(tags, true) : ""}
+        ${renderInternalTesterFeedbackSurvey()}
         <div class="actions"><button class="button secondary" onclick="setView('${isOneTime ? "choice" : "diaryHome"}')">${isOneTime ? "Сонголт руу буцах" : "Тэмдэглэл рүү буцах"}</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
       </div>
     </section>
@@ -3394,6 +3542,13 @@ function isDemoMode() {
   return params.get("demo") === "1" || params.get("internal") === "1";
 }
 
+function isInternalTestMode() {
+  if (state.internalTest) return true;
+  if (!hasBrowserRuntime) return false;
+  const params = new URLSearchParams(window.location.search || "");
+  return params.get("internalTest") === "1";
+}
+
 function demoOnlyHtml(html) {
   return isDemoMode() ? html : "";
 }
@@ -3446,6 +3601,10 @@ function publicValidationProductLabel(productType) {
 
 function render() {
   if (!hasBrowserRuntime) return;
+  if (getInternalFeedbackRoute()) {
+    document.getElementById("app").innerHTML = renderFeedbackExport();
+    return;
+  }
   const routes = {
     landing: renderLanding,
     about: renderAbout,
@@ -3462,9 +3621,17 @@ function render() {
     diary: renderDiary,
     reportReady: renderReportReady,
     upgradePaywall: renderUpgradePaywall,
-    report: renderReport
+    report: renderReport,
+    feedbackThanks: renderFeedbackThanks,
+    feedbackExport: renderFeedbackExport
   };
   document.getElementById("app").innerHTML = (routes[state.view] || renderLanding)();
+}
+
+function getInternalFeedbackRoute() {
+  if (!hasBrowserRuntime) return false;
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  return path === "/feedback-export" && isInternalTestMode();
 }
 
 if (hasBrowserRuntime) {
@@ -3524,6 +3691,12 @@ if (typeof module !== "undefined") {
       startLeadCapture,
       updateLeadField,
       submitLeadCapture,
+      isInternalTestMode,
+      updateInternalFeedbackField,
+      submitInternalFeedback,
+      renderInternalTesterFeedbackSurvey,
+      renderFeedbackThanks,
+      renderFeedbackExport,
       renderLanding,
       renderAbout,
       renderChoice,

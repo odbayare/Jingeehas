@@ -16,13 +16,15 @@ const emptyState = () => ({
     payment: 0,
     entitlement: 0,
     lead: 0,
-    event: 0
+    event: 0,
+    feedback: 0
   },
   sessions: [],
   assessments: [],
   payments: [],
   entitlements: [],
   leadIntents: [],
+  feedbackRecords: [],
   events: []
 });
 
@@ -57,6 +59,7 @@ function normalizeState(input) {
   state.payments = Array.isArray(state.payments) ? state.payments : [];
   state.entitlements = Array.isArray(state.entitlements) ? state.entitlements : [];
   state.leadIntents = Array.isArray(state.leadIntents) ? state.leadIntents : [];
+  state.feedbackRecords = Array.isArray(state.feedbackRecords) ? state.feedbackRecords : [];
   state.events = Array.isArray(state.events) ? state.events : [];
   return state;
 }
@@ -364,6 +367,35 @@ function getLeadIntents() {
   return clone(readState().leadIntents);
 }
 
+function createTesterFeedback(attrs = {}) {
+  const state = readState();
+  const timestamp = nowIso();
+  const feedback = {
+    id: nextId(state, "feedback", "fb"),
+    createdAt: timestamp,
+    internalTest: true,
+    assessmentType: "weight-test",
+    reportMode: attrs.reportMode || "",
+    primaryMechanism: attrs.primaryMechanism || null,
+    secondaryMechanisms: Array.isArray(attrs.secondaryMechanisms) ? attrs.secondaryMechanisms : [],
+    safetyMode: attrs.safetyMode || attrs.reportMode || "",
+    feedback: { ...(attrs.feedback || {}) }
+  };
+  state.feedbackRecords.push(feedback);
+  writeState(state);
+  return clone(feedback);
+}
+
+function getTesterFeedbackRecords() {
+  return clone(readState().feedbackRecords);
+}
+
+function clearTesterFeedbackRecords() {
+  const state = readState();
+  state.feedbackRecords = [];
+  writeState(state);
+}
+
 function clearLeadIntents() {
   const state = readState();
   state.leadIntents = [];
@@ -431,6 +463,9 @@ const api = {
   trackEvent,
   createLeadIntent,
   getLeadIntents,
+  createTesterFeedback,
+  getTesterFeedbackRecords,
+  clearTesterFeedbackRecords,
   clearLeadIntents,
   summarizeLeadIntents,
   resetMockBackend,
