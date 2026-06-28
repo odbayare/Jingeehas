@@ -117,9 +117,70 @@ function flattenAnswer(value) {
 
 function translateExportText(value) {
   return String(value ?? "")
+    .replace(/\bknows nutrition basics but ends days depleted\b/g, "хооллолтын суурь мэдлэгтэй ч өдөр дуусахад тэнхээ нь багасдаг")
+    .replace(/\bSlow 8 kg gain over two years during workload and sleep pressure\./g, "Ажлын ачаалал, нойрны дарамттай давхцаж хоёр жилд аажмаар 8 кг нэмсэн.")
+    .replace(/\bDaytime discipline, skipped lunches, evening delivery and desk snacks\./g, "Өдөр өөрийгөө барьдаг, өдрийн хоол алгасдаг, орой хоол захиалга болон ширээний зууш нэмэгддэг.")
+    .replace(/\bFrustration and fatigue more than sadness; guilt the next morning\./g, "Гунигаас илүү бухимдал, ядаргаа давамгай; маргааш өглөө өөрийгөө буруутгах мэдрэмж төрдөг.")
+    .replace(/\b5-6 hours, low evening energy\./g, "5-6 цаг унтдаг, оройн тэнхээ бага.")
+    .replace(/\bNo severe safety signal\./g, "Хүнд аюулгүй байдлын дохио байхгүй.")
+    .replace(/\bordinary report\b/g, "ердийн тайлан")
+    .replace(/\bevening decision load \/ low-energy default\b/g, "оройн шийдвэрийн ачаалал / тэнхээ багасах үеийн хамгийн амар сонголт")
     .replace(/\bTwo-child working parent\b/g, "Хоёр хүүхэдтэй, ажилтай эцэг/эх")
     .replace(/\bOffice worker carrying deadlines\b/g, "Ажлын хугацаа, гэрийн хүлээлт давхцсан оффисын ажилтан")
+    .replace(/\bfamily expectations\b/g, "гэр бүлийн хүлээлт")
+    .replace(/\bRepeated calorie counting and fasting attempts\./g, "Калори тоолох, мацаг барих оролдлого давтагдсан.")
+    .replace(/\bEats after stressful calls and tense evenings\./g, "Стресстэй дуудлага, түгшүүртэй оройн дараа иддэг.")
+    .replace(/\bFood gives temporary calm, then guilt\./g, "Хоол түр тайвшруулдаг, дараа нь өөрийгөө буруутгах мэдрэмж төрдөг.")
+    .replace(/\bAverage sleep, stress spikes\./g, "Нойр дундаж, стресс үе үе огцом нэмэгддэг.")
+    .replace(/\bNo purging or self-harm\./g, "Бөөлжүүлэх, өөртөө хор хүргэх дохио байхгүй.")
+    .replace(/\bfood-as-regulation \/ shame-avoidance secondary\b/g, "сэтгэлээ хоолоор түр намдаах / ичих мэдрэмжээс зай авах хоёрдогч давтамж")
     .replace(/\bStarts strict plans after every weekend\b/g, "Амралтын өдрийн дараа хатуу төлөвлөгөө эхлүүлдэг")
+    .replace(/\bRepeated strict diets and Monday restarts\./g, "Хатуу хоолны дэглэм, даваа гарагийн дахин эхлэл давтагдсан.")
+    .replace(/\bOne slip turns into overeating because the day feels ruined\./g, "Нэг хазайлт өдөр бүхэлдээ өнгөрсөн мэт санагдаж хэтрүүлж идэхэд хүрдэг.")
+    .replace(/\bAll-or-nothing, guilt, restart pressure\./g, "Бүгд эсвэл юу ч биш бодол, өөрийгөө буруутгах мэдрэмж, дахин эхлэх дарамт.")
+    .replace(/\bVariable\./g, "Тогтворгүй.")
+    .replace(/\bNo urgent safety\./g, "Яаралтай аюулгүй байдлын дохио байхгүй.")
+    .replace(/\bcontrol-collapse \/ all-or-nothing\b/g, "хяналт алдагдах тойрог / бүгд эсвэл юу ч биш сэтгэлгээ")
+    .replace(/\bBusy field worker with unpredictable meal access\./g, "Хооллох боломж нь тогтворгүй, завгүй гадуур ажилтай хүн.")
+    .replace(/\bWeight fluctuates with job seasons\./g, "Ажлын улирлын ачааллаас хамаарч жин хэлбэлздэг.")
+    .replace(/\bLong meal gaps, eats in advance, leaves little uneaten\./g, "Хоол холдох нь олон, урьдчилж иддэг, хоол үлдээх нь бага.")
+    .replace(/\bFear of later hunger, urgency around available food\./g, "Дараа өлсөхөөс айх, олдсон хоолонд яарах мэдрэмж.")
+    .replace(/\bMostly normal\./g, "Ерөнхийдөө хэвийн.")
+    .replace(/\bNo severe symptoms\./g, "Хүнд шинж тэмдэг байхгүй.")
+    .replace(/\bhunger-safety \/ scarcity protection\b/g, "дараа өлсөхөөс хамгаалах / хоол хомсдохоос сэргийлэх давтамж")
+    .replace(/\bCaregiver who takes care of others first\./g, "Бусдыг түрүүнд тавьж асардаг хүн.")
+    .replace(/\bSlow gain after caregiving load increased\./g, "Асаргаа, халамжийн ачаалал нэмэгдсэний дараа аажмаар жин нэмсэн.")
+    .replace(/\bEvening sweets feel like the only personal reward\./g, "Оройн амттан өөртөө үлдэх цорын ганц таатай мөч мэт санагддаг.")
+    .replace(/\bSelf-neglect, emptiness, needing a small private pleasure\./g, "Өөрийгөө хойш тавих, хоосон мэт мэдрэмж, хувийн жижиг таатай зүйл хэрэгтэй болох.")
+    .replace(/\bTired most evenings\./g, "Ихэнх орой ядарсан.")
+    .replace(/\breward deficit \/ self-neglect secondary\b/g, "таатай зүйл дутсан үе / өөрийгөө хойш тавих хоёрдогч давтамж")
+    .replace(/\bRemote worker surrounded by snack cues and delivery apps\./g, "Зууш, хоол захиалгын аппын дохио ойр байдаг зайнаас ажиллагч.")
+    .replace(/\bWeight rose after working from home\./g, "Гэрээс ажиллах болсноос хойш жин нэмэгдсэн.")
+    .replace(/\bOften not hungry; eats when food is visible\./g, "Ихэвчлэн өлсөөгүй ч хоол харагдахад иддэг.")
+    .replace(/\bLow distress, mostly automatic environment response\./g, "Тавгүй мэдрэмж бага, ихэвчлэн орчны дохионд автоматаар хариулах хэлбэртэй.")
+    .replace(/\bNormal\./g, "Хэвийн.")
+    .replace(/\bNo strong emotional distress\./g, "Сэтгэлзүйн хүчтэй тавгүй байдал байхгүй.")
+    .replace(/\bcue-conditioned automatic eating \/ environment default\b/g, "орчны дохионоос эхэлдэг автомат идэлт / орчны хамгийн амар сонголт")
+    .replace(/\bLate-night worker with poor sleep and tired mornings\./g, "Орой ажилладаг, нойр муу, өглөө ядруу сэрдэг хүн.")
+    .replace(/\bWeight gain followed sleep disruption\./g, "Нойр алдагдсаны дараа жин нэмэгдсэн.")
+    .replace(/\bSweet\/fatty food pull after poor sleep\./g, "Нойр муу үед амттай, тослог хоол руу татагддаг.")
+    .replace(/\bNot highly distressed; mostly exhausted\./g, "Тавгүй мэдрэмж өндөр биш, гол нь их ядарсан.")
+    .replace(/\bBad sleep, possible snoring, wakes tired\./g, "Нойр муу, хурхирах магадлалтай, ядруу сэрдэг.")
+    .replace(/\bNo urgent safety; check note may be useful if symptoms strengthen\./g, "Яаралтай аюулгүй байдлын дохио байхгүй; шинж нэмэгдвэл шалгуулах сануулга хэрэгтэй байж магадгүй.")
+    .replace(/\bsleep\/energy mismatch\b/g, "нойр, тэнхээний зөрүү")
+    .replace(/\bHealth change and medication period, worried the issue is not just habits\./g, "Эрүүл мэндийн өөрчлөлт, эмийн хэрэглээтэй үе; асуудал зөвхөн дадал биш байж магадгүй гэж санаа зовсон.")
+    .replace(/\bWeight increased after medication and swelling\/fatigue appeared\./g, "Эм хэрэглэж эхэлсний дараа, хавагнах/ядрах шинжтэй давхцаж жин нэмсэн.")
+    .replace(/\bModerate eating; behavior-only explanation feels incomplete\./g, "Идэлт дунд зэрэг; зөвхөн зан үйлээр тайлбарлахад дутуу санагддаг.")
+    .replace(/\bConcern and confusion rather than loss of control\./g, "Хяналт алдсанаас илүү санаа зовнил, будилах мэдрэмж давамгай.")
+    .replace(/\bFatigue and low energy\./g, "Ядаргаа, тэнхээ багасах.")
+    .replace(/\bSwelling, fatigue, possible BP concern\./g, "Хавагнах, ядрах, даралттай холбоотой байж магадгүй санаа зовнил.")
+    .replace(/\bmedical \/ medication \/ physiological friction\b/g, "биеийн нөхцөл / эмийн хэрэглээ / физиологийн саад")
+    .replace(/\bLong meal gaps produce body symptoms and fear\./g, "Хоол холдох үед биеийн шинж болон айдас гардаг.")
+    .replace(/\bHas tried skipping meals but symptoms worsen\./g, "Хоол алгасаж үзсэн ч шинж тэмдэг нэмэгддэг.")
+    .replace(/\bTrembling, sweating, dizziness, heart pounding after long gaps\./g, "Хоол холдоход гар салгалах, хөлрөх, толгой эргэх, зүрх дэлсэх шинж гардаг.")
+    .replace(/\bAnxious about sugar\/BP readings\./g, "Сахар/даралтын хэмжилтэд санаа зовдог.")
+    .replace(/\bMeasured abnormal sugar\/BP before; may use related medication\./g, "Өмнө нь сахар/даралтын хэмжилт хэвийн бус гарч байсан; холбоотой эм хэрэглэдэг байж магадгүй.")
+    .replace(/\bglucose\/BP concern\b/g, "сахар/даралтын санаа зовнил")
     .replace(/\bDelivery\b/g, "Хоол захиалга")
     .replace(/\bdelivery\b/g, "хоол захиалга")
     .replace(/\bSnack\b/g, "Зууш")
@@ -274,7 +335,7 @@ function makeMarkdown(model) {
       `# ${result.id.replace("user-", "User ")} - ${label}`,
       "",
       `Дүрийн товч нэр: ${label}`,
-      `Нас/нөхцөл: ${profile.age || ""} - ${profile.context || ""}`,
+      `Нас/нөхцөл: ${profile.age || ""} - ${translateExportText(profile.context || "")}`,
       `Хүлээгдэж буй чиглэл: ${expectedRouteLabel(profile)}`,
       `Гарсан чиглэл: ${routeLabel(result.generatedMode)}`,
       `Гол давтамж: ${primary}`,
@@ -284,12 +345,12 @@ function makeMarkdown(model) {
       "",
       "## Дүрийн товч зураглал",
       "",
-      `- Амьдралын нөхцөл: ${profile.context || ""}`,
-      `- Жингийн түүх: ${profile.weightHistory || ""}`,
-      `- Идэлтийн давтамж: ${profile.eatingPattern || ""}`,
-      `- Сэтгэлзүйн давтамж: ${profile.emotionalPattern || ""}`,
-      `- Нойр/энерги: ${profile.sleepEnergy || ""}`,
-      `- Эрүүл мэнд/аюулгүй байдлын тэмдэглэл: ${profile.medicalSafety || ""}`,
+      `- Амьдралын нөхцөл: ${translateExportText(profile.context || "")}`,
+      `- Жингийн түүх: ${translateExportText(profile.weightHistory || "")}`,
+      `- Идэлтийн давтамж: ${translateExportText(profile.eatingPattern || "")}`,
+      `- Сэтгэлзүйн давтамж: ${translateExportText(profile.emotionalPattern || "")}`,
+      `- Нойр/энерги: ${translateExportText(profile.sleepEnergy || "")}`,
+      `- Эрүүл мэнд/аюулгүй байдлын тэмдэглэл: ${translateExportText(profile.medicalSafety || "")}`,
       "",
       "## Сонгосон хариултын товч",
       "",
