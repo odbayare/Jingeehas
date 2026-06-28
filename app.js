@@ -110,7 +110,7 @@ const mechanisms = {
   hungerSafety: {
     name: "Hunger-Safety / Scarcity Protection",
     short: "Hunger-Safety",
-    observation: "Хоол удах, дараа өлсөхөөс санаа зовох, оройн rebound давтагдаж байгаа эсэхийг ажиглана.",
+    observation: "Хоол холдох, дараа өлсөхөөс санаа зовох, оройн нөхөж идэх давтамж байгаа эсэхийг ажиглана.",
     hiddenFunction: "safety",
     avoid: "Мацаг, хоол алгасах, өдөр хэт бага идэх",
     lever: "anchor_meals",
@@ -119,7 +119,7 @@ const mechanisms = {
   glucose: {
     name: "Glucose-Safety / Hypoglycemia Risk Pattern",
     short: "Glucose-Safety",
-    observation: "Хоол удахад гардаг биеийн дохио болон хэмжсэн сахар/даралтын мэдээллийг тэмдэглэнэ.",
+    observation: "Хоол холдоход гардаг биеийн дохио болон хэмжсэн сахар/даралтын мэдээллийг тэмдэглэнэ.",
     hiddenFunction: "body safety",
     avoid: "Мацаг, хоол алгасах, хүчтэй restriction",
     lever: "professional_check_plus_regular_meals",
@@ -272,18 +272,18 @@ const mechanisms = {
 };
 
 const stageOneQuestions = [
-  { id: "S1-C00", module: "Warm start", type: "info", text: "Энэ тест таныг шүүх гэж биш. Ямар өдөр, ямар үед хоолны сонголт өөрчлөгддөгийг хамт харах гэж байгаа юм." },
-  { id: "S1-C01", module: "Basic context", type: "number", text: "Та хэдэн настай вэ?", safety: value => Number(value) < 18 ? ["professional"] : [] },
-  { id: "S1-C02", module: "Basic context", type: "single", text: "Таны хүйс?", options: ["Эмэгтэй", "Эрэгтэй", "Өөрөөр тодорхойлно", "Хариулахгүй"] },
-  { id: "S1-C03", module: "Basic context", type: "number", text: "Таны өндөр хэд вэ? /см/" },
+  { id: "S1-C00", module: "Warm start", type: "info", text: "Энэ тест таныг шүүх гэж биш. Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харах гэж байгаа юм." },
+  { id: "S1-C01", module: "Basic context", type: "number", text: "Таны нас хэд вэ?", safety: value => Number(value) < 18 ? ["professional"] : [] },
+  { id: "S1-C02", module: "Basic context", type: "single", text: "Та хүйсээ яаж тэмдэглэх вэ?", options: ["Эмэгтэй", "Эрэгтэй", "Өөрөөр тодорхойлно", "Хариулахгүй"] },
+  { id: "S1-C03", module: "Basic context", type: "number", text: "Таны өндөр ойролцоогоор хэд вэ? /см/" },
   { id: "S1-C04", module: "Basic context", type: "number", text: "Таны одоогийн жин ойролцоогоор хэд вэ? /кг/" },
-  { id: "S1-C05", module: "Basic context", type: "number", text: "Та одоо хэдэн кг болохыг хүсэж байна вэ? /кг/" },
-  { id: "S1-C06", module: "Basic context", type: "multi", text: "Жин бууруулах хүсэл тань өдөр тутмын юутай хамгийн их холбоотой вэ?", options: ["Эрүүл мэнддээ анхаарах", "Өдрийн тэнхээ нэмэх", "Хувцсандаа тухтай байх", "Өөртөө итгэлтэй болох", "Гадаад төрхөө өөрчлөх", "Даралт, сахар, шинжилгээнд санаа зовсон", "Хөдлөхөд амар болох", "Төрсний дараа биеэ сэргээх", "Өөр зүйл"] },
+  { id: "S1-C05", module: "Basic context", type: "number", text: "Та ойролцоогоор хэдэн кг болохыг хүсэж байна вэ? /кг/" },
+  { id: "S1-C06", module: "Basic context", type: "multi", text: "Жин бууруулах хүсэл тань өдөр тутмын амьдралын юутай хамгийн их холбоотой вэ?", options: ["Эрүүл мэнддээ анхаарах", "Өдрийн тэнхээ нэмэх", "Хувцсандаа тухтай байх", "Өөртөө итгэлтэй болох", "Гадаад төрхөө өөрчлөх", "Даралт, сахар, шинжилгээнд санаа зовсон", "Хөдлөхөд амар болох", "Төрсний дараа биеэ сэргээх", "Өөр зүйл"] },
   { id: "S1-W01", module: "Weight trajectory", type: "single", text: "Сүүлийн 12 сарын хугацаанд таны жин хэр өөрчлөгдсөн бэ?", options: ["Их өөрчлөгдөөгүй", "1-3 кг нэмсэн", "4-7 кг нэмсэн", "8+ кг нэмсэн", "Буурсан", "Мэдэхгүй"], scores: { "8+ кг нэмсэн": ["medical"], "4-7 кг нэмсэн": ["medical"] } },
   { id: "S1-W02", module: "Weight trajectory", type: "multi", text: "Жин өөрчлөгдөх үе ямар амьдралын өөрчлөлттэй давхацсан бэ?", options: ["Ажил ихсэж, стресс нэмэгдсэн", "Хөдөлгөөн багассан", "Нойр муудсан", "Эм хэрэглэж эхэлсэн", "Жирэмсэн эсвэл төрсний дараах үе", "Өвчин, мэс засалтай давхацсан", "Сэтгэл санааны хүнд үе байсан", "Тодорхой зүйл байхгүй", "Мэдэхгүй"], scores: { "Ажил ихсэж, стресс нэмэгдсэн": ["regulation", "executive"], "Ажил-стресс": ["regulation", "executive"], "Хөдөлгөөн багассан": ["executive"], "Нойр муудсан": ["circadian"], "Эм хэрэглэж эхэлсэн": ["medical"], "Эм": ["medical"], "Жирэмсэн эсвэл төрсний дараах үе": ["medical"], "Жирэмсэн-төрсний дараа": ["medical"], "Өвчин, мэс засалтай давхацсан": ["medical"], "Өвчин-мэс засал": ["medical"] } },
   { id: "S1-W03", module: "Past attempts", type: "single", text: "Та өмнө нь жингээ хасаж чадсан ч буцаад нэмсэн тохиолдол бий юу?", options: ["Үгүй", "Нэг удаа", "Хэд хэдэн удаа", "Бараг бүх оролдлогоос хойш", "Санахгүй"], scores: { "Хэд хэдэн удаа": ["collapse"], "Бараг бүх оролдлогоос хойш": ["collapse", "hungerSafety"] } },
   { id: "S1-W04", module: "Past attempts", type: "multi", text: "Өмнө нь турж үзсэн аргуудаас аль нь танд хамгийн танил вэ?", options: ["Мацаг", "Калори тоолох", "Нүүрс ус хасах", "Орой хоол идэхгүй", "Фитнесийн богино сорил", "Хор гадагшлуулах арга", "Хоол орлуулах бүтээгдэхүүн", "Эм, тариа, нэмэлт бүтээгдэхүүн", "Дасгалжуулагч эсвэл бүлгийн хөтөлбөр", "Ерөнхийдөө бага идэх", "Оролдож байгаагүй"], scores: { "Мацаг": ["hungerSafety", "glucose"], "Орой хоол идэхгүй": ["hungerSafety"], "Ерөнхийдөө бага идэх": ["hungerSafety"], "Фитнесийн богино сорил": ["collapse"], "Фитнес challenge": ["collapse"] } },
-  { id: "S1-W05", module: "Past attempts", type: "text", text: "Өмнө туршсан аргуудаас аль нь эхэндээ болж байгаад дараа нь тасарсан бэ? Тэр үед юу өөрчлөгдсөн гэж санагддаг вэ?", voice: true },
+  { id: "S1-W05", module: "Past attempts", type: "text", text: "Өмнө туршсан аргуудаас аль нь эхэндээ болж байгаад дараа нь үргэлжлэхээ больсон бэ? Тэр үед юу өөрчлөгдсөн гэж санагддаг вэ?", voice: true },
   { id: "S1-W06", module: "Past attempts", type: "single", text: "Төлөвлөгөө бага зэрэг алдагдсаны дараа танд ихэвчлэн юу бодогддог вэ?", options: ["Дараагийн хоолноос хэвийн үргэлжлүүлье", "Өнөөдөр өнгөрлөө, маргаашаас", "Маргааш илүү чанга барина", "Би угаасаа чаддаггүй юм байна", "Одоо бүх юм дууссан", "Тодорхой бодолгүй"], scores: { "Өнөөдөр өнгөрлөө, маргаашаас": ["collapse"], "Өнөөдөр алдсан, маргаашаас": ["collapse"], "Маргааш илүү чанга барина": ["collapse"], "Маргааш илүү чанга": ["collapse"], "Одоо бүх юм дууссан": ["collapse"], "Би угаасаа чаддаггүй юм байна": ["collapse"], "Би угаасаа чаддаггүй": ["collapse"] } },
   { id: "S1-M01", module: "Meal rhythm", type: "single", text: "Энгийн өдөр хоолны хэмнэл тань ихэвчлэн ямар байдаг вэ?", options: ["2-3 удаа тогтмол хооллодог", "Өглөөний хоол алгасдаг", "Өдрийн хоол алгасдаг", "Өдөр бага идээд орой нөхдөг", "Хоолны цаг өдөр бүр өөр", "Тодорхой хэмнэл байхгүй"], scores: { "Өглөөний хоол алгасдаг": ["hungerSafety", "circadian"], "Өглөө алгасах": ["hungerSafety", "circadian"], "Өдрийн хоол алгасдаг": ["hungerSafety", "executive"], "Өдрийн хоол алгасах": ["hungerSafety", "executive"], "Өдөр бага идээд орой нөхдөг": ["hungerSafety", "circadian"], "Өдөр бага идээд орой нөхөх": ["hungerSafety", "circadian"], "Хоолны цаг өдөр бүр өөр": ["executive"], "Хоолны цаг өөр": ["executive"] } },
   { id: "S1-M02", module: "Meal rhythm", type: "single", text: "Хоолны хооронд 5+ цагийн зай гарах нь хэр олон вэ?", options: ["Бараг үгүй", "7 хоногт 1-2", "3-4", "Бараг өдөр бүр", "Мэдэхгүй"], scores: { "3-4": ["hungerSafety"], "Бараг өдөр бүр": ["hungerSafety", "glucose"] } },
@@ -303,7 +303,7 @@ const stageOneQuestions = [
   { id: "S1-G01", module: "Hunger-safety", type: "single", text: "Дараа өлсөх вий гэж бодоод урьдчилж идсэн үе байдаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш хүчтэй"], scores: { "Заримдаа": ["hungerSafety"], "Ихэвчлэн": ["hungerSafety"], "Маш хүчтэй": ["hungerSafety"] } },
   { id: "S1-G02", module: "Hunger-safety", type: "single", text: "Дараагийн хоол тодорхойгүй үед та илүү идэх хандлагатай юу?", options: ["Үгүй", "Ховор", "Заримдаа", "Тийм", "Маш тод"], scores: { "Заримдаа": ["hungerSafety"], "Тийм": ["hungerSafety"], "Маш тод": ["hungerSafety"] } },
   { id: "S1-G03", module: "Hunger-safety", type: "single", text: "Хоол үлдээхэд танд хэр хэцүү байдаг вэ?", options: ["Хэцүү биш", "Заримдаа", "Нэлээд хэцүү", "Маш хэцүү", "Анзаарч байгаагүй"], scores: { "Нэлээд хэцүү": ["hungerSafety"], "Маш хэцүү": ["hungerSafety"] } },
-  { id: "S1-X01", module: "Restriction response", type: "single", text: "Хоол багасгах, хориглох үед танд хамгийн түрүүнд юу мэдрэгддэг вэ?", options: ["Тайван", "Өлсөхөөс санаа зовдог", "Уур/эсэргүүцэл", "Идэх юм бодогдоно", "Бие сулрах вий гэж айдаг", "Хэсэг сайн яваад дараа нь нурдаг"], scores: { "Өлсөхөөс санаа зовдог": ["hungerSafety"], "Уур/эсэргүүцэл": ["autonomy"], "Идэх юм бодогдоно": ["reward"], "Бие сулрах вий гэж айдаг": ["physiological"], "Хэсэг сайн яваад дараа нь нурдаг": ["collapse"] } },
+  { id: "S1-X01", module: "Restriction response", type: "single", text: "Хоол багасгах, хориглох үед танд хамгийн түрүүнд юу мэдрэгддэг вэ?", options: ["Тайван", "Өлсөхөөс санаа зовдог", "Уур/эсэргүүцэл", "Идэх юм бодогдоно", "Бие сулрах вий гэж айдаг", "Хэсэг сайн яваад дараа нь үргэлжлэхээ больдог"], scores: { "Өлсөхөөс санаа зовдог": ["hungerSafety"], "Уур/эсэргүүцэл": ["autonomy"], "Идэх юм бодогдоно": ["reward"], "Бие сулрах вий гэж айдаг": ["physiological"], "Хэсэг сайн яваад дараа нь үргэлжлэхээ больдог": ["collapse"], "Хэсэг сайн яваад дараа нь нурдаг": ["collapse"] } },
   { id: "S1-X02", module: "Restriction response", type: "single", text: "Хориглосон хоол улам их бодогдох үе байдаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Бараг үргэлж"], scores: { "Заримдаа": ["reward", "collapse"], "Ихэвчлэн": ["reward", "collapse"], "Бараг үргэлж": ["reward", "collapse"] } },
   { id: "S1-X03", module: "Restriction response", type: "single", text: "Нэг удаа хазайхаар ‘өнөөдөр өнгөрлөө’ гэж бодоод цааш нь тавьчихдаг уу?", options: ["Бараг үгүй", "Хааяа", "Нэлээд тэгдэг", "Ихэвчлэн тэгдэг", "Маш хүчтэй"], scores: { "Хааяа": ["collapse"], "Нэлээд тэгдэг": ["collapse"], "Заримдаа": ["collapse"], "Ихэвчлэн тэгдэг": ["collapse"], "Ихэвчлэн": ["collapse"], "Маш хүчтэй": ["collapse"] } },
   { id: "S1-V02", module: "Voice checkpoint", type: "text", text: "Хоол хасах, мацаг барих, эсвэл 'маргаашаас эхэлнэ' гэж бодох үед танд ямар бодол, мэдрэмж, биеийн хариу гардаг вэ?", voice: true },
@@ -315,16 +315,16 @@ const stageOneQuestions = [
   { id: "S1-N01", module: "Sleep / energy", type: "single", text: "Сүүлийн үед дундаж нойр тань ямар байна вэ?", options: ["4 цагаас бага", "4-6 цаг", "6-8 цаг", "8+ цаг", "Чанар муу", "Тогтворгүй"], scores: { "4 цагаас бага": ["circadian", "medical"], "4-6 цаг": ["circadian"], "Чанар муу": ["circadian"], "Тогтворгүй": ["circadian"] } },
   { id: "S1-N02", module: "Sleep / energy", type: "single", text: "Нойр муу хоносны дараа амттай юм руу илүү амархан татагддаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш тод"], scores: { "Заримдаа": ["circadian", "reward"], "Ихэвчлэн": ["circadian", "reward"], "Маш тод": ["circadian", "reward"] } },
   { id: "S1-N03", module: "Sleep / energy", type: "multi", text: "Хурхиралт, өдөр нойрмоглох, өглөө ядрах шинж байна уу?", options: ["Хурхирдаг", "Өдөр нойрмоглодог", "Өглөө ядруу сэрдэг", "Амьсгал тасалдах мэт хэлж байсан", "Аль нь ч үгүй", "Мэдэхгүй"], scores: { "Хурхирдаг": ["medical", "circadian"], "Өдөр нойрмоглодог": ["medical", "circadian"], "Амьсгал тасалдах мэт хэлж байсан": ["medical"] } },
-  { id: "S1-B01", module: "Body / medical", type: "multi", text: "Хоол удахад дараахаас гардаг уу?", options: ["Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Толгой өвдөх", "Сахар унасан мэт", "Будилах/ухаан балартах", "Аль нь ч үгүй"], scores: { "Гар салгалах": ["physiological"], "Зүрх дэлсэх": ["physiological"], "Хөлрөх": ["physiological"], "Толгой эргэх": ["physiological"], "Толгой өвдөх": ["physiological"], "Сахар унасан мэт": ["glucose", "physiological"], "Будилах/ухаан балартах": ["glucose", "medical"] }, safety: values => values.includes("Будилах/ухаан балартах") ? ["urgent"] : [] },
+  { id: "S1-B01", module: "Body / medical", type: "multi", text: "Хоол холдоход дараахаас илэрдэг үү?", options: ["Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Толгой өвдөх", "Сахар унасан мэт", "Будилах/ухаан балартах", "Аль нь ч үгүй"], scores: { "Гар салгалах": ["physiological"], "Зүрх дэлсэх": ["physiological"], "Хөлрөх": ["physiological"], "Толгой эргэх": ["physiological"], "Толгой өвдөх": ["physiological"], "Сахар унасан мэт": ["glucose", "physiological"], "Будилах/ухаан балартах": ["glucose", "medical"] }, safety: values => values.includes("Будилах/ухаан балартах") ? ["urgent"] : [] },
   { id: "S1-B02", module: "Body / medical", type: "single", text: "Та сахар эсвэл даралтаа хэмжиж үзсэн үү?", options: ["Үгүй", "Тийм, хэвийн", "Тийм, бага сахар гарч байсан", "Тийм, өндөр даралт гарч байсан", "Тийм, санаа зовоосон"], scores: { "Тийм, бага сахар гарч байсан": ["glucose", "medical"], "Тийм, өндөр даралт гарч байсан": ["medical"], "Тийм, санаа зовоосон": ["medical"] }, safety: value => ["Тийм, бага сахар гарч байсан", "Тийм, санаа зовоосон"].includes(value) ? ["professional"] : [] },
   { id: "S1-B03", module: "Body / medical", type: "single", text: "Инсулин эсвэл сахар бууруулах эм хэрэглэдэг үү?", options: ["Үгүй", "Тийм", "Мэдэхгүй"], scores: { "Тийм": ["glucose", "medical"] }, safety: value => value === "Тийм" ? ["professional"] : [] },
   { id: "S1-B04", module: "Body / medical", type: "multi", text: "Огцом жин нэмэх, хавагнах, амьсгаадах, маш их ядрах зэрэг шинж байна уу?", options: ["Огцом жин нэмсэн", "Хавагнадаг", "Амьсгааддаг", "Маш их ядардаг", "Аль нь ч үгүй"], scores: { "Огцом жин нэмсэн": ["medical"], "Хавагнадаг": ["medical"], "Амьсгааддаг": ["medical"], "Маш их ядардаг": ["medical"] }, safety: values => values.some(v => ["Огцом жин нэмсэн", "Хавагнадаг", "Амьсгааддаг"].includes(v)) ? ["professional"] : [] },
   { id: "S1-B05", module: "Body / medical", type: "single", text: "Та жирэмсэн, төрсний дараах үе, эсвэл хөхүүл үе дээр байна уу?", options: ["Үгүй", "Жирэмсэн", "Төрсний дараах 0-6 сар", "Төрсний дараах 6-24 сар", "Хөхүүл", "Хариулахгүй"], scores: { "Жирэмсэн": ["medical"], "Төрсний дараах 0-6 сар": ["medical"], "Төрсний дараах 6-24 сар": ["medical"], "Хөхүүл": ["medical"] }, safety: value => ["Жирэмсэн", "Төрсний дараах 0-6 сар", "Хөхүүл"].includes(value) ? ["professional"] : [] },
   { id: "S1-S01", module: "Safety", type: "single", text: "Идэх үедээ хяналтаа алдсан мэт мэдрэмж хүчтэй гардаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш хүчтэй"], scores: { "Ихэвчлэн": ["collapse"], "Маш хүчтэй": ["collapse"] }, safety: value => ["Ихэвчлэн", "Маш хүчтэй"].includes(value) ? ["professional"] : [] },
   { id: "S1-S02", module: "Safety", type: "single", text: "Идсэний дараа нуух, ичих, ганцаараа баймаар санагдах мэдрэмж хэр хүчтэй байдаг вэ?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш хүчтэй"], scores: { "Заримдаа": ["collapse"], "Ихэвчлэн": ["collapse"], "Маш хүчтэй": ["collapse"] }, safety: value => ["Ихэвчлэн", "Маш хүчтэй"].includes(value) ? ["professional"] : [] },
-  { id: "S1-S03", module: "Safety", type: "single", text: "Идсэнээ нөхөхийн тулд бөөлжүүлэх, туулгах, хэт дасгал хийх, олон цаг хоолгүй байх зэрэг үйлдэл гардаг уу?", options: ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], safety: value => ["Одоо хааяа", "Одоо давтагддаг"].includes(value) ? ["professional"] : [] },
+  { id: "S1-S03", module: "Safety", type: "single", text: "Идсэнээ “нөхөх” гэж бөөлжүүлэх, туулгах, хэт их дасгал хийх, эсвэл олон цаг хоолгүй байх тохиолдол гардаг уу?", options: ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], safety: value => ["Одоо хааяа", "Одоо давтагддаг"].includes(value) ? ["professional"] : [] },
   { id: "S1-S04", module: "Safety", type: "single", text: "Сүүлийн үед өөртөө хор хүргэх бодол төрсөн үү?", options: ["Үгүй", "Өнгөрсөнд байсан", "Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна", "Хариулахгүй"], safety: value => value === "Одоо идэвхтэй бодогдож байна" ? ["urgent"] : value === "Одоо хааяа бодогддог" ? ["professional"] : [] },
-  { id: "S1-V03", module: "Voice checkpoint", type: "text", text: "Өмнө хэрэглэсэн хамгийн их нурсан аргаа бодоорой. Тэр арга яагаад эхэндээ ажилласан, дараа нь яагаад үргэлжлээгүй гэж та боддог вэ?", voice: true },
+  { id: "S1-V03", module: "Voice checkpoint", type: "text", text: "Өмнө хэрэглэсэн ч хамгийн удаан үргэлжлээгүй аргаа бодоорой. Тэр арга яагаад эхэндээ ажилласан, дараа нь яагаад үргэлжлээгүй гэж та боддог вэ?", voice: true },
   { id: "S1-V04", module: "Voice checkpoint", type: "text", text: "'Би яг ___ байвал илүү тогтвортой явж чадна' гэж өгүүлбэрийг дуусгаад тайлбарлаарай.", voice: true }
 ];
 
@@ -339,11 +339,11 @@ const dailyCore = [
   { id: "D-C08", type: "scale", text: "Орой болоход тэнхээ хэр үлдсэн байсан бэ? 0 = огт үлдээгүй, 10 = хангалттай байсан", field: "energy_score" },
   { id: "D-C09", type: "multi", text: "Өчигдөр шөнө хэр унтсан бэ?", field: "sleep", options: ["4 цагаас бага", "4–6 цаг", "6–8 цаг", "8 цагаас дээш", "Олон сэрсэн, чанар муу", "Сайн амарсан"] },
   { id: "D-C10", type: "multi", text: "Өнөөдөр та юу юу уув?", field: "drinks", options: ["Хар кофе", "Сүүтэй кофе", "Сүүтэй цай", "Жүүс / хийжүүлсэн ундаа", "Сэргээх ундаа", "Алкоголь", "Ус голдуу", "Онцгой зүйл байгаагүй"] },
-  { id: "D-C11", type: "multi", text: "Хоол удах үед эсвэл орой биеэр ямар нэг шинж мэдрэгдсэн үү?", field: "body_signals", options: ["Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Толгой өвдөх", "Сахар унасан мэт санагдах", "Хавагнах", "Аль нь ч үгүй"] },
+  { id: "D-C11", type: "multi", text: "Хоол холдох үед эсвэл орой биеэр ямар нэг шинж мэдрэгдсэн үү?", field: "body_signals", options: ["Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Толгой өвдөх", "Сахар унасан мэт санагдах", "Хавагнах", "Аль нь ч үгүй"] },
   { id: "D-C12", type: "single", text: "Өнөөдрийн хөдөлгөөн хэр байсан бэ?", field: "movement", options: ["Маш бага", "Бага зэрэг алхсан", "20+ минут хөдөлсөн", "Дасгал хийсэн", "Өвдөлт/ядаргаанаас болоод бараг хөдөлсөнгүй"] },
   { id: "D-C13", type: "text", text: "Өнөөдөр төлөвлөөгүй идэлт гараагүй бол ямар нөхцөл тусалсан бэ?", field: "what_helped" },
   { id: "D-V01", type: "text", text: "Өнөөдрийн идэлтэд хамгийн их нөлөөлсөн нэг мөчийг богино тайлбарлаарай. Юуны дараа болсон бэ? Тэр үед өлсөж байсан уу? Ямар мэдрэмж давамгай байсан бэ? Идсэний дараа юу өөрчлөгдсөн бэ?", field: "raw_reflection" },
-  { id: "D-SUM01", type: "single", text: "Бид таны хариултыг ингэж ойлголоо. Зөв үү?", field: "summary_confirmation", options: ["Тийм, зөв", "Засах", "Нэмэх зүйл байна"] }
+  { id: "D-SUM01", type: "single", text: "Тайлбар хадгалагдлаа", field: "summary_confirmation", options: ["Үргэлжлүүлэх", "Засах", "Нэмэх зүйл байна"] }
 ];
 
 const probeBank = {
@@ -368,7 +368,7 @@ const probeBank = {
     { id: "D-P-CC02", type: "single", text: "Дараа нь ‘маргааш илүү чанга барина’ гэж бодогдсон уу?", field: "tighten_tomorrow", options: ["Үгүй", "Тийм"] }
   ],
   glucose: [
-    { id: "D-P-GP01", type: "multi", text: "Өнөөдөр хоол удахад биеийн хүчтэй шинж гарсан уу?", field: "glucose_signals", options: ["Үгүй", "Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Будилах / ухаан балартах"] },
+    { id: "D-P-GP01", type: "multi", text: "Өнөөдөр хоол холдоход биеийн хүчтэй шинж гарсан уу?", field: "glucose_signals", options: ["Үгүй", "Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Будилах / ухаан балартах"] },
     { id: "D-P-GP02", type: "single", text: "Өнөөдөр сахар эсвэл даралт хэмжсэн үү?", field: "measured_today", options: ["Үгүй", "Тийм, хэвийн", "Тийм, бага/өндөр гарсан", "Тийм, санаа зовоосон"] }
   ],
   circadian: [
@@ -1296,22 +1296,22 @@ function generateDailySummaryBullets(draft = {}) {
 
   if (draft.meal_rhythm?.includes("Нэг хоол алгассан")) bullets.push("Нэг хоол алгассан");
   if (draft.meal_rhythm?.includes("5+")) bullets.push("Хоолны хооронд 5+ цагийн зай гарсан");
-  if (draft.meal_rhythm?.includes("орой нөхсөн")) bullets.push("Өдөр бага идээд орой нөхсөн pattern тэмдэглэгдсэн");
+  if (draft.meal_rhythm?.includes("орой нөхсөн")) bullets.push("Өдөр бага идээд орой нөхөж идсэн давтамж тэмдэглэгдсэн");
   if (draft.main_moment_time === "Орой") bullets.push("Гол мөч орой гарсан");
   if (Number(draft.hunger_level) >= 7) bullets.push("Тэр үед өлсөлт өндөр байсан");
   if (Number(draft.hunger_level) <= 3 && draft.unplanned_eating_count && draft.unplanned_eating_count !== "Үгүй") bullets.push("Өлсөлт бага үед идэх хүсэл гарсан");
-  if (functions.includes("Амттай юм хүссэн") || functions.includes("Өөрийгөө шагнамаар байсан")) bullets.push("Reward хүсэл давхцсан");
+  if (functions.includes("Амттай юм хүссэн") || functions.includes("Өөрийгөө шагнамаар байсан")) bullets.push("Өөрийгөө баярлуулах эсвэл амттай юм идэх хүсэл давхцсан");
   if (functions.includes("Тайвширмаар байсан")) bullets.push("Хоол тайвшруулах үүрэгтэй байсан гэж тэмдэглэгдсэн");
-  if (functions.includes("Дараа өлсөхөөс санаа зовсон")) bullets.push("Дараа өлсөхөөс хамгаалах response ажиглагдсан");
-  if (functions.includes("Хамгийн амар сонголт байсан")) bullets.push("Ядарсан үед хамгийн амар default сонголт нөлөөлсөн");
-  if (functions.includes("Хоол харагдаад/үнэртээд идмээр болсон")) bullets.push("Орчны cue идэх хүслийг асаасан");
-  if (functions.includes("Хүмүүсийн дунд татгалзах эвгүй байсан")) bullets.push("Social pressure сонголтод нөлөөлсөн");
-  if (functions.includes("Бие муудах/сахар унах вий гэж санаа зовсон")) bullets.push("Биеийн safety concern тэмдэглэгдсэн");
-  if (["Стресс", "Уур", "Гуниг", "Санаа зовнил", "Ганцаардал"].includes(draft.emotion)) bullets.push(`${draft.emotion} emotion идэх хүсэлтэй давхцсан`);
+  if (functions.includes("Дараа өлсөхөөс санаа зовсон")) bullets.push("Дараа өлсөхөөс болгоомжилсон мэдрэмж ажиглагдсан");
+  if (functions.includes("Хамгийн амар сонголт байсан")) bullets.push("Ядарсан үед хамгийн амар сонголт нөлөөлсөн");
+  if (functions.includes("Хоол харагдаад/үнэртээд идмээр болсон")) bullets.push("Орчны дохио идэх хүслийг асаасан");
+  if (functions.includes("Хүмүүсийн дунд татгалзах эвгүй байсан")) bullets.push("Хүмүүсийн дунд татгалзах эвгүй мэдрэмж сонголтод нөлөөлсөн");
+  if (functions.includes("Бие муудах/сахар унах вий гэж санаа зовсон")) bullets.push("Биеийн дохионд санаа зовсон мэдрэмж тэмдэглэгдсэн");
+  if (["Стресс", "Уур", "Гуниг", "Санаа зовнил", "Ганцаардал"].includes(draft.emotion)) bullets.push(`${draft.emotion} мэдрэмж идэх хүсэлтэй давхцсан`);
   if (Number(draft.energy_score) <= 3) bullets.push("Оройн эрч хүч бага байсан");
   if ((draft.body_signals || []).some(item => item !== "Аль нь ч үгүй")) bullets.push("Биеийн дохио тэмдэглэгдсэн");
-  if (/delivery|захиал/i.test(reflection)) bullets.push("Delivery хамгийн амар сонголт болсон");
-  if (reflection && bullets.length < 3) bullets.push("Бичгээр reflection тайланд зөвхөн баталгаажсаны дараа орно");
+  if (/delivery|захиал/i.test(reflection)) bullets.push("Хоол захиалах нь хамгийн амар сонголт болсон");
+  if (reflection && bullets.length < 3) bullets.push("Таны бичсэн тайлбар нэмэлт мэдээлэл болж хадгалагдсан");
   if (!bullets.length) bullets.push("Өдрийн бүтэцтэй хариулт хадгалагдсан");
   return unique(bullets).slice(0, 6);
 }
@@ -1321,13 +1321,12 @@ function generateStageSummaryBullets(rawText = "", answers = {}) {
   const bullets = [];
   if (answers["S1-M01"]) bullets.push(`Хоолны хэмнэл: ${answers["S1-M01"]}`);
   if (answers["S1-F01"]) bullets.push(`Төлөвлөөгүй идэхийн өмнөх ойр дохио: ${[].concat(answers["S1-F01"]).join(", ")}`);
-  if (answers["S1-W06"]) bullets.push(`Төлөвлөгөө алдагдсаны дараах response: ${answers["S1-W06"]}`);
-  if (/delivery|захиал/i.test(text)) bullets.push("Default сонголт эсвэл delivery context дурдагдсан");
+  if (answers["S1-W06"]) bullets.push(`Төлөвлөгөө алдагдсаны дараах бодол: ${answers["S1-W06"]}`);
+  if (/delivery|захиал/i.test(text)) bullets.push("Хоол захиалах эсвэл хамгийн амар сонголт дурдагдсан");
   if (/стресс|stress|тайвш/i.test(text)) bullets.push("Стресс эсвэл тайвшрах хэрэгцээ дурдагдсан");
-  if (/өлс|хоол уда|5\+/.test(text)) bullets.push("Өлсөлт эсвэл хоолны зайтай холбоотой context дурдагдсан");
-  if (/гэмш|ич|нуух/.test(text)) bullets.push("Дараах нөлөө дээр guilt/shame дохио дурдагдсан");
-  if (text && bullets.length < 3) bullets.push("Бичгээр reflection-ийн context баталгаажуулах шаардлагатай");
-  if (!bullets.length) bullets.push("Reflection-д бүтэцтэй context хараахан бага байна");
+  if (/өлс|хоол холд|хоол уда|5\+/.test(text)) bullets.push("Өлсөлт эсвэл хоолны зайтай холбоотой зүйл дурдагдсан");
+  if (/гэмш|ич|нуух/.test(text)) bullets.push("Дараа нь гэмших, ичих, нуух мэдрэмж дурдагдсан");
+  if (text && bullets.length < 3) bullets.push("Таны бичсэн тайлбар нэмэлт мэдээлэл болж хадгалагдсан");
   return unique(bullets).slice(0, 6);
 }
 
@@ -1591,7 +1590,7 @@ function renderLanding() {
         <div class="hero-copy">
           <p class="eyebrow">Жин хасалтыг гацаадаг давтамжийг харах үнэлгээ</p>
           <h1>Яагаад хичээсэн ч жин буурахгүй байна вэ?</h1>
-          <p class="lead">Юу идсэнээс гадна, ямар өдөр ямар мэдрэмж, өлсөлт, ядаргаа, орчин давхцахад таны сонголт өөрчлөгддөгийг харна.</p>
+          <p class="lead">Энэ тест таныг шүүх гэж биш. Ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харах гэж байгаа юм.</p>
           <div class="hero-actions">
             <button class="button" onclick="setView('choice')">Миний зураглалыг эхлүүлэх</button>
             <button class="button secondary" onclick="setView('about')">Үнэлгээний ялгааг харах</button>
@@ -1603,6 +1602,7 @@ function renderLanding() {
       <div class="grid">
         <div class="panel stack">
           <h2>Ерөнхий зөвлөгөө биш, давтамжийн зураглал</h2>
+          <p class="muted">Зөв, буруу хариулт байхгүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.</p>
           <ul>
             <li>“Та юу иддэг вэ?” биш — “яагаад тэр сонголт руу дахин дахин ордог вэ?” гэдгийг харна.</li>
             <li>Жин хасалтыг гацааж буй 2-3 давтагддаг хэв маягийг гаргана.</li>
@@ -1764,7 +1764,12 @@ function renderOneTimeStart() {
     <section class="screen">
       <div class="panel stack">
         <h2>Энэ тест таныг шүүхгүй</h2>
-        <p>Бид таны идэлт, өлсөлт, стресс, таатай мэдрэмж авах хэрэгцээ, нойр, орчин хоорондоо яаж холбогдож байгааг зураглана.</p>
+        <p>Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.</p>
+        <div class="card stack">
+          <p>Зөв, буруу хариулт байхгүй.</p>
+          <p class="muted">Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.</p>
+          <p class="muted">Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.</p>
+        </div>
         <div class="pill-row">
           <span class="pill">10-15 минут</span>
           <span class="pill">Бичгээр богино тайлбар оруулж болно</span>
@@ -1934,13 +1939,19 @@ function renderSevenDayStart() {
 
 function renderInput(question, value, setterName) {
   if (question.type === "info") {
-    return `<p class="muted">45-60 асуулт таны хариултаас хамаарч салаална. Нэмэлт тайлбар бичгээр орно.</p>`;
+    return `
+      <div class="card stack">
+        <p>Зөв, буруу хариулт байхгүй.</p>
+        <p class="muted">Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.</p>
+        <p class="muted">Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.</p>
+      </div>
+    `;
   }
   if (question.type === "number") {
     return `<label class="field"><span class="muted">Тоогоор оруулна уу</span><input id="input-${question.id}" type="number" value="${escapeAttr(value)}" oninput="setAnswerDraft('${question.id}', this.value)" /></label>`;
   }
   if (question.type === "text") {
-    return `<label class="field"><span class="muted">${question.voice ? "Богино reflection" : "Хариулт"}</span><textarea id="input-${question.id}" oninput="setAnswerDraft('${question.id}', this.value)">${escapeHtml(value)}</textarea></label>${question.voice ? renderStageVoiceConfirmation(question, value) : ""}`;
+    return `<label class="field"><span class="muted">${question.voice ? "Богино тайлбар" : "Хариулт"}</span><textarea id="input-${question.id}" oninput="setAnswerDraft('${question.id}', this.value)">${escapeHtml(value)}</textarea></label><p class="muted">Хэрвээ санахгүй эсвэл бичмээргүй байвал хоосон орхиод үргэлжлүүлж болно.</p>${question.voice ? renderStageVoiceConfirmation(question, value) : ""}`;
   }
   if (question.type === "scale") {
     return `<div class="scale">${Array.from({ length: 11 }, (_, i) => `<button class="option ${String(value) === String(i) ? "selected" : ""}" onclick="${setterName}('${question.id}', '${i}')">${i}</button>`).join("")}</div>`;
@@ -1971,15 +1982,28 @@ function updateQuestionValue(id, value) {
 function renderStageVoiceConfirmation(question, rawText) {
   const existing = state.stageVoiceSummaries[question.id];
   const ui = state.stageSummaryUi[question.id] || {};
+  const text = String(rawText || "").trim();
+  if (!existing && text.length < 12) {
+    return "";
+  }
   const bullets = existing?.aiSummaryBullets || generateStageSummaryBullets(rawText, state.stageAnswers);
+  if (!existing && !bullets.length) {
+    return `
+      <div class="card stack">
+        <h3>Тайлбар хадгалагдлаа</h3>
+        <p class="muted">Таны бичсэн тайлбар хадгалагдлаа. Дараагийн асуултад үргэлжлүүлж болно.</p>
+      </div>
+    `;
+  }
   return `
     <div class="card stack">
-      <h3>Бид таны хариултыг ингэж ойлголоо:</h3>
-      <ul>${bullets.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>
-      ${existing?.userConfirmed ? `<p class="pill">Баталгаажсан</p>` : `<p class="muted">Зөв үү?</p>`}
+      <h3>Тайлбар хадгалагдлаа</h3>
+      <p class="muted">Бид энэ тайлбарыг дараагийн зураглалд нэмэлт мэдээлэл болгон ашиглана.</p>
+      ${bullets.length ? `<ul>${bullets.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>` : ""}
+      ${existing?.userConfirmed ? `<p class="pill">Баталгаажсан</p>` : ""}
       ${ui.mode === "edit" || ui.mode === "add" ? `<label class="field"><span class="muted">${ui.mode === "edit" ? "Зассан ойлголтоо мөр мөрөөр бичнэ үү" : "Нэмэх нэг зүйлээ бичнэ үү"}</span><textarea id="input-${question.id}-${ui.mode}" oninput="setStageSummaryText('${question.id}', this.value)">${escapeHtml(ui.text || "")}</textarea></label>` : ""}
       <div class="actions">
-        <button class="button secondary" onclick="confirmStageVoiceSummary('${question.id}', 'confirm')">Тийм, зөв</button>
+        <button class="button secondary" onclick="confirmStageVoiceSummary('${question.id}', 'confirm')">Үргэлжлүүлэх</button>
         <button class="button ghost" onclick="setStageSummaryMode('${question.id}', 'edit')">Засах</button>
         <button class="button ghost" onclick="setStageSummaryMode('${question.id}', 'add')">Нэмэх зүйл байна</button>
         ${ui.mode === "edit" || ui.mode === "add" ? `<button class="button" onclick="confirmStageVoiceSummary('${question.id}', '${ui.mode}')">Баталгаажуулах</button>` : ""}
@@ -2040,6 +2064,9 @@ function renderStageOne() {
   const questions = stageQuestions();
   const progress = Math.round((state.stageIndex / Math.max(1, questions.length - 1)) * 100);
   const patterns = rankedPatterns(false).slice(0, 3);
+  const backButton = state.stageIndex > 0
+    ? `<button class="button secondary" onclick="previousStageQuestion()">Буцах</button>`
+    : "";
   return `
     ${topbar(progress, `Үе 1 · ${displayModuleName(question.module)}`)}
     <section class="screen">
@@ -2049,8 +2076,8 @@ function renderStageOne() {
           <h2 class="question-text">${question.text}</h2>
           ${renderInput(question, getValue(question), "updateQuestionValue")}
           <div class="actions">
-            <button class="button secondary" onclick="previousStageQuestion()" ${state.stageIndex === 0 ? "disabled" : ""}>Буцах</button>
-            <button class="button" onclick="nextStageQuestion()">${state.stageIndex === questions.length - 1 ? (state.packageType === "one-time" ? "Тайлан харах" : "Diary focus харах") : "Үргэлжлүүлэх"}</button>
+            ${backButton}
+            <button class="button" onclick="nextStageQuestion()">${state.stageIndex === questions.length - 1 ? (state.packageType === "one-time" ? "Тайлан харах" : "Тэмдэглэлийн чиглэл харах") : "Үргэлжлүүлэх"}</button>
           </div>
         </div>
         <aside class="aside">
@@ -2307,10 +2334,10 @@ function renderReportReady() {
     <section class="screen">
       <div class="panel stack">
         <h2>Таны 7 хоногийн зураглал бэлэн боллоо</h2>
-        <p>Бид эхний setup-ийн pattern-уудыг 7 хоногийн diary-тэй харьцуулж, аль нь бодит амьдрал дээр давтагдсан, аль нь сул байсан, аль нь таны cycle-г үргэлжлүүлж байгааг нэгтгэлээ.</p>
+        <p>Бид эхний асуултаар гарсан давтамжуудыг 7 хоногийн тэмдэглэлтэй харьцуулж, аль нь бодит амьдрал дээр давтагдсан, аль нь сул байсан, аль нь таны тойргийг үргэлжлүүлж байгааг нэгтгэлээ.</p>
         <div class="actions">
           <button class="button" onclick="setView('report')">Миний бүрэн тайланг харах</button>
-          <button class="button ghost" onclick="setView('diaryHome')">Diary явц руу буцах</button>
+          <button class="button ghost" onclick="setView('diaryHome')">Тэмдэглэлийн явц руу буцах</button>
         </div>
       </div>
     </section>
@@ -2321,6 +2348,9 @@ function renderDiary() {
   const questions = getDiaryQuestions();
   const question = questions[state.diaryQuestionIndex];
   const progress = Math.round(((state.diaryEntries.length + state.diaryQuestionIndex / questions.length) / 7) * 100);
+  const backButton = state.diaryQuestionIndex > 0
+    ? `<button class="button secondary" onclick="previousDiaryQuestion()">Буцах</button>`
+    : "";
   return `
     ${topbar(progress, `Тэмдэглэлийн ${state.diaryDay} дэх өдөр`)}
     <section class="screen">
@@ -2330,7 +2360,7 @@ function renderDiary() {
           <h2 class="question-text">${question.text}</h2>
           ${renderDiaryInput(question)}
           <div class="actions">
-            <button class="button secondary" onclick="previousDiaryQuestion()" ${state.diaryQuestionIndex === 0 ? "disabled" : ""}>Буцах</button>
+            ${backButton}
             <button class="button" onclick="nextDiaryQuestion()">${state.diaryQuestionIndex === questions.length - 1 ? "Өдрийг хадгалах" : "Үргэлжлүүлэх"}</button>
           </div>
         </div>
@@ -2352,7 +2382,7 @@ function renderDiaryInput(question) {
     return renderDailySummaryConfirmation(question);
   }
   if (question.type === "text") {
-    return `<label class="field"><span class="muted">1-2 өгүүлбэр хангалттай</span><textarea id="input-${question.id}" oninput="setDiaryDraftValue('${question.id}', this.value)">${escapeHtml(value)}</textarea></label>`;
+    return `<label class="field"><span class="muted">1-2 өгүүлбэр хангалттай</span><textarea id="input-${question.id}" oninput="setDiaryDraftValue('${question.id}', this.value)">${escapeHtml(value)}</textarea></label><p class="muted">Хэрвээ санахгүй эсвэл бичмээргүй байвал хоосон орхиод үргэлжлүүлж болно.</p>`;
   }
   if (question.type === "scale") {
     return `<div class="scale">${Array.from({ length: 11 }, (_, i) => `<button class="option ${String(value) === String(i) ? "selected" : ""}" onclick="setDiaryValue('${question.id}', '${i}')">${i}</button>`).join("")}</div>`;
@@ -2378,16 +2408,31 @@ function renderDiaryInput(question) {
 function renderDailySummaryConfirmation(question) {
   const existing = state.diaryDraft.confirmedSummaryObject;
   const ui = state.diarySummaryUi || {};
+  const reflection = String(state.diaryDraft.raw_reflection || "").trim();
+  if (!existing && reflection.length < 12) {
+    return `
+      <div class="card stack">
+        <h3>Тайлбар хадгалагдлаа</h3>
+        <p class="muted">Өнөөдрийн сонгосон хариултууд хадгалагдсан. Бичмээр зүйл байхгүй бол үргэлжлүүлж болно.</p>
+        <div class="actions">
+          <button class="button secondary" onclick="confirmDailySummary('confirm')">Үргэлжлүүлэх</button>
+          <button class="button ghost" onclick="previousDiaryQuestion()">Буцах</button>
+        </div>
+      </div>
+    `;
+  }
   const bullets = existing?.aiSummaryBullets || generateDailySummaryBullets(state.diaryDraft);
   return `
     <div class="card stack">
-      <h3>Бид таны хариултыг ингэж ойлголоо:</h3>
-      <ul>${bullets.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>
-      ${existing?.userConfirmed ? `<p class="pill">Баталгаажсан</p>` : `<p class="muted">Зөв үү?</p>`}
+      <h3>Тайлбар хадгалагдлаа</h3>
+      <p class="muted">Бид энэ тайлбарыг дараагийн зураглалд нэмэлт мэдээлэл болгон ашиглана.</p>
+      ${bullets.length ? `<ul>${bullets.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>` : ""}
+      ${existing?.userConfirmed ? `<p class="pill">Баталгаажсан</p>` : ""}
       ${ui.mode === "edit" || ui.mode === "add" ? `<label class="field"><span class="muted">${ui.mode === "edit" ? "Зассан ойлголтоо мөр мөрөөр бичнэ үү" : "Нэмэх нэг зүйлээ бичнэ үү"}</span><textarea id="input-D-SUM01-${ui.mode}" oninput="setDailySummaryText(this.value)">${escapeHtml(ui.text || "")}</textarea></label>` : ""}
       <div class="actions">
-        <button class="button secondary" onclick="confirmDailySummary('confirm')">Тийм, зөв</button>
+        <button class="button secondary" onclick="confirmDailySummary('confirm')">Үргэлжлүүлэх</button>
         <button class="button ghost" onclick="setDailySummaryMode('edit')">Засах</button>
+        <button class="button ghost" onclick="previousDiaryQuestion()">Буцах</button>
         <button class="button ghost" onclick="setDailySummaryMode('add')">Нэмэх зүйл байна</button>
         ${ui.mode === "edit" || ui.mode === "add" ? `<button class="button" onclick="confirmDailySummary('${ui.mode}')">Баталгаажуулах</button>` : ""}
       </div>
@@ -2672,7 +2717,7 @@ function cycleMapSteps(primaryKey, tags = allReportTags()) {
       "Өлсөлтөөс гадна “нэг гоё юм” хүсэл нэмэгдэнэ",
       "Орчны дохио эсвэл амар сонголт хүсэлтэй давхцана",
       "Амттай зүйл түр таатай мэдрэмж өгнө",
-      "Хэрвээ guilt нэмэгдвэл маргааш хатуу барих бодол гарна",
+      "Хэрвээ өөрийгөө буруутгах мэдрэмж нэмэгдвэл маргааш хатуу барих бодол гарна",
       "Таатай мэдрэмж авах хэрэгцээг төлөвлөөгүй үед цикл дахин амархан асна"
     ];
   }
@@ -2680,18 +2725,18 @@ function cycleMapSteps(primaryKey, tags = allReportTags()) {
     return [
       "Стресс эсвэл мэдрэмжийн даац багасна",
       "Тайвшрах хамгийн хурдан арга хоол болж харагдана",
-      "Идэх сонголт түр relief өгнө",
+      "Идэх сонголт түр амсхийх мэдрэмж өгнө",
       "Дараа нь гэмших эсвэл санаа зовнил нэмэгдэж болно",
-      "Стресс хэвээр үлдвэл дараагийн өдөр ижил regulation хэрэгцээ дахин гарна"
+      "Стресс хэвээр үлдвэл дараагийн өдөр ижил тайвшрах хэрэгцээ дахин гарна"
     ];
   }
   if (primaryKey === "glucose" || tags.includes("glucose_like_signal")) {
     return [
-      "Хоол удах эсвэл эрч хүчний нөөц багасна",
+      "Хоол холдох эсвэл эрч хүчний нөөц багасна",
       "Биеийн дохио хүчтэй мэдрэгдэнэ",
       "Бие муудахаас хамгаалах идэх хүсэл гарна",
-      "Хоол түр relief өгч болно",
-      "Шинж давтагдвал мацаг/хоол алгасах нь буруу leverage болж магадгүй",
+      "Хоол түр амсхийх мэдрэмж өгч болно",
+      "Шинж давтагдвал мацаг/хоол алгасах нь буруу эхлэх цэг болж магадгүй",
       "Мэргэжлийн хүнтэй ярилцах болон тогтвортой хоолны хэмнэл эхний дараалал болно"
     ];
   }
@@ -2850,7 +2895,7 @@ function experimentFor(primaryKey, tags = allReportTags()) {
     return { goal: "Таатай мэдрэмж авах хэрэгцээг санамсаргүй зууш биш төлөвлөсөн хэлбэрт оруулах", actions: ["Орой өөрийгөө баярлуулах жижиг сонголтоо урьдчилж сонгох", "Өөрийгөө баярлуулах хэрэгцээг өлсөлтөөс тусад нь нэрлэх", "Хоол захиалга эсвэл орчны дохионоос өмнө 3 минут завсарлах"], track: ["Өөрийгөө баярлуулах хүсэл", "Өлсөлт", "Орчны дохио"], success: "“Нэг гоё юм” хүсэл сохроор ажилладаг бэлэн сонголт биш болно.", recovery: "Хэтрүүлсэн өдөр маргааш бүрэн хорихгүй, таатай мэдрэмж авах сонголтоо дахин төлөвлөнө." };
   }
   if (leverage.label === "professional_check_first") {
-    return { goal: "Биеийн дохиог аюулгүйгээр тодруулах", actions: ["Хоол удахад гарсан шинжийг тэмдэглэх", "Хэмжсэн сахар/даралтын утгаа хадгалах", "Мэргэжлийн хүнтэй ярилцах товч нэгтгэл бэлдэх"], track: ["Биеийн дохио", "Хоолны зай", "Хэмжсэн сахар/даралт"], success: "Мацаг/хязгаарлалт эхлэхээс өмнө аюулгүй байдлын зураглал тодорно.", recovery: "Шинж хүчтэй бол жин хасалтын туршилтыг түр зогсоож, мэргэжлийн хүнтэй ярилцахыг түрүүнд тавина." };
+    return { goal: "Биеийн дохиог аюулгүйгээр тодруулах", actions: ["Хоол холдоход гарсан шинжийг тэмдэглэх", "Хэмжсэн сахар/даралтын утгаа хадгалах", "Мэргэжлийн хүнтэй ярилцах товч нэгтгэл бэлдэх"], track: ["Биеийн дохио", "Хоолны зай", "Хэмжсэн сахар/даралт"], success: "Мацаг/хязгаарлалт эхлэхээс өмнө аюулгүй байдлын зураглал тодорно.", recovery: "Шинж хүчтэй бол жин хасалтын туршилтыг түр зогсоож, мэргэжлийн хүнтэй ярилцахыг түрүүнд тавина." };
   }
   return { goal: "Давтамжийг ичгүүр биш мэдээлэл болгож ажиглах", actions: ["Өдөр бүр 3 минут тайван шалгалт хийх", "Идэх хүсэл эхэлдэг нэг нөхцөлийг нэрлэх", "Дараагийн хоолыг хэвийн үргэлжлэл гэж харах"], track: ["Эхэлдэг нөхцөл", "Дараах нөлөө", "Хэвийн үргэлжлүүлэх дүрэм"], success: "Нэг алдаа бүхэл өдөр болох нь багасна.", recovery: "Алгассан өдөр бүтэлгүйтэл биш, дараагийн тэмдэглэлээс үргэлжлүүлнэ." };
 }
@@ -2863,7 +2908,7 @@ function professionalCheckHtml(tags = allReportTags(), force = false) {
       <p>Зарим хариултад эхлээд шалгуулахад илүүдэхгүй дохио гарч болно. Энэ нь онош гэсэн үг биш. Харин fasting, хоол алгасах, огцом restriction зэрэг буруу дарааллаар эхлэхээс хамгаалах зорилготой.</p>
       <p><strong>Шалгуулахад илүүдэхгүй дохио:</strong> биеийн дохио, сахар унах мэт санаа зовнил, даралт/хавангийн дохио тэмдэглэгдсэн байна.</p>
       <p><strong>Авч очих мэдээлэл:</strong></p>
-      <ul><li>Хоол удахад гарсан шинж</li><li>Хэмжсэн сахар/даралт байсан эсэх</li><li>Шинж гарсан өдөр, хоолны зай, эрч хүчний түвшин</li></ul>
+      <ul><li>Хоол холдоход гарсан шинж</li><li>Хэмжсэн сахар/даралт байсан эсэх</li><li>Шинж гарсан өдөр, хоолны зай, эрч хүчний түвшин</li></ul>
       <p><strong>Одоогоор зайлсхийх арга:</strong> мацаг, хоол алгасах, хэт бага калорийн арга.</p>
     </div>
   `;
@@ -2911,7 +2956,7 @@ function selectedHiddenFunctions(primaryKey, secondaryKeys = [], tags = allRepor
     { keys: ["bodySafety", "shameAvoidance"], tag: "body_safety", name: "Бусдын хараанаас аюулгүй зай авах", evidence: "Өөрийгөө харах, бусдад харагдах, ичгүүр хоол/жинтэй холбогдож байна." },
     { keys: ["circadian"], tag: "circadian_crash", name: "Нойр/эрч хүчний хэмнэл нөхөх", evidence: "Нойр, кофеин, өглөөний хоолгүй хэмнэл, оройн тэнхээний уналт идэх хүсэл болон бэлэн сонголттой давхцаж байна." },
     { keys: ["circadian"], tag: "executive_load", name: "Тэнхээ нөхөх", evidence: "Тэнхээний уналт оройн идэх хүсэл болон бэлэн сонголттой давхцаж байна." },
-    { keys: ["glucose", "physiological"], tag: "physiological_reactivity", name: "Биеийн таагүй мэдрэмжийг намдаах", evidence: "Хоол удах үед body signal анзаарагдсан байна." }
+    { keys: ["glucose", "physiological"], tag: "physiological_reactivity", name: "Биеийн таагүй мэдрэмжийг намдаах", evidence: "Хоол холдох үед биеийн дохио анзаарагдсан байна." }
   ];
   return candidates
     .filter(item => item.keys.some(key => selected.has(key)) || tags.includes(item.tag))
@@ -3075,7 +3120,7 @@ function livedExplanationFor(primaryKey) {
     cue: "Хоол харагдах, үнэртэх, захиалгын апп нээгдэх зэрэг жижиг дохио идэх хүслийг эхлүүлж байна.",
     social: "Хүмүүстэй байх үед татгалзах эвгүй, хамт идэх нь амар санагдах мөч идэх сонголтод нөлөөлж байна.",
     bodySafety: "Биеэ жинлэх, зураг авахуулах, бусдад харагдах тухай бодол таагүй болоход хоол, жинтэй холбоотой дарамт нэмэгдэж байна.",
-    glucose: "Хоол удах үед гар салгалах, толгой эргэх, сахар унасан мэт мэдрэмж зэрэг биеийн дохио таны сонголтод нөлөөлж байна."
+    glucose: "Хоол холдох үед гар салгалах, толгой эргэх, сахар унасан мэт мэдрэмж зэрэг биеийн дохио таны сонголтод нөлөөлж байна."
   }[primaryKey] || "Таны хариултаас нэг давтагддаг нөхцөл тод харагдаж байна. Энэ нь сул тал гэхээсээ илүү таны өдөр тутмын ачаалал, мэдрэмж, орчны сонголт хоорондоо хэрхэн давхцаж байгааг харуулж байна.";
 }
 
@@ -3090,7 +3135,7 @@ function ordinaryReportOpeningTitle(primaryKey, tags = []) {
     return "Хэт чанга эхлээд, бага зэрэг хазайхад нурсан мэт мэдрэгдэх тойрог харагдаж байна";
   }
   if (primaryKey === "hungerSafety" || tags.includes("hunger_safety")) {
-    return "Хоол удах, дараа өлсөхөөс санаа зовох давтамж тодорч байна";
+    return "Хоол холдох, дараа өлсөхөөс санаа зовох давтамж тодорч байна";
   }
   if (primaryKey === "reward" || primaryKey === "rewardDeficit" || tags.includes("reward_pull")) {
     return "Өдөржин өөртөө амрах, баярлах зай бага үлдэх үе тод харагдаж байна";
@@ -3221,7 +3266,7 @@ function renderInternalTesterFeedbackSurvey() {
       <label class="field"><span class="muted">Хамгийн засмаар санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostNeedsFix', this.value)">${escapeHtml(form.mostNeedsFix || "")}</textarea></label>
       <div class="actions">
         <button class="button" onclick="submitInternalFeedback()">Санал илгээх</button>
-        <button class="button ghost" onclick="setView('feedbackExport')">Feedback export</button>
+        <button class="button ghost" onclick="setView('feedbackExport')">Саналын экспорт</button>
       </div>
     </div>
   `;
@@ -3272,7 +3317,7 @@ function renderFeedbackThanks() {
       <div class="panel stack">
         <h2>Санал өгсөнд баярлалаа</h2>
         <p>Таны хариулт тестийн асуулт, тайлангийн найруулга, хэрэгтэй эсэхийг сайжруулахад шууд ашиглагдана.</p>
-        ${isInternalTestMode() ? `<div class="actions"><button class="button secondary" onclick="setView('feedbackExport')">Feedback export</button></div>` : ""}
+        ${isInternalTestMode() ? `<div class="actions"><button class="button secondary" onclick="setView('feedbackExport')">Саналын экспорт</button></div>` : ""}
         <button class="button" onclick="resetState()">Дахин эхлэх</button>
       </div>
     </section>
@@ -3283,11 +3328,11 @@ function renderFeedbackExport() {
   if (!isInternalTestMode()) return renderLanding();
   const records = mockBackend.getTesterFeedbackRecords();
   return `
-    ${topbar(100, "Feedback export")}
+    ${topbar(100, "Саналын экспорт")}
     <section class="screen">
       <div class="panel stack">
-        <h2>Feedback export</h2>
-        <p class="muted">Дотоод туршилтын санал асуулгын JSON export.</p>
+        <h2>Саналын экспорт</h2>
+        <p class="muted">Дотоод туршилтын санал асуулгын JSON таталт.</p>
         <pre class="feedback-export-json">${escapeHtml(JSON.stringify(records, null, 2))}</pre>
         <div class="actions"><button class="button" onclick="setView('choice')">Тест рүү буцах</button><button class="button ghost" onclick="resetState()">Дахин эхлэх</button></div>
       </div>
@@ -3345,7 +3390,7 @@ function renderReport() {
             <h3>Ярилцах товч нэгтгэл</h3>
             <ul>
               <li>Хоол, жин, биеийн дохио, мэдрэмж, эмийн хэрэглээ эсвэл төрсний дараах нөхцөлтэй холбоотой хариултуудаа нэгтгэж авч очих.</li>
-              <li>Хоол удах үед гардаг шинж, хэмжсэн сахар/даралт, ухаан балартах эсвэл будилах үе байсан эсэхийг тодорхой тэмдэглэх.</li>
+              <li>Хоол холдох үед гардаг шинж, хэмжсэн сахар/даралт, ухаан балартах эсвэл будилах үе байсан эсэхийг тодорхой тэмдэглэх.</li>
               <li>Хяналт алдагдах, нуух, ичих мэдрэмж давтагддаг бол эхлээд мэргэжлийн хүнтэй ярилцах дараалал барих.</li>
             </ul>
           </div>
@@ -3687,6 +3732,13 @@ if (typeof module !== "undefined") {
       getTestState() {
         return state;
       },
+      nextStageQuestion,
+      previousStageQuestion,
+      updateQuestionValue,
+      nextDiaryQuestion,
+      previousDiaryQuestion,
+      setDiaryValue,
+      setDiaryDraftValue,
       demoCompletePayment,
       startLeadCapture,
       updateLeadField,
@@ -3701,11 +3753,13 @@ if (typeof module !== "undefined") {
       renderAbout,
       renderChoice,
       renderOneTimeStart,
+      renderStageOne,
       renderLeadCapture,
       renderLeadThankYou,
       renderValidationSummary,
       renderSevenDayStart,
       renderSevenDayPaywall,
+      renderDiary,
       hasOneTimeReportAccess,
       hasSevenDayAccess,
       hasUpgradeAccess,

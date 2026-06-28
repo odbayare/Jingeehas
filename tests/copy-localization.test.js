@@ -163,7 +163,8 @@ function run() {
   ].forEach(value => assert(text.includes(value), `localized heading missing: ${value}`));
 
   const source = require("fs").readFileSync(require("path").join(__dirname, "..", "app.js"), "utf8");
-  assert(source.includes("Бид таны хариултыг ингэж ойлголоо:"));
+  assert(source.includes("Тайлбар хадгалагдлаа"));
+  assert(!source.includes("Reflection-д бүтэцтэй context хараахан бага байна"));
 }
 
 run();

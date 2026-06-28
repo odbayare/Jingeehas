@@ -43,7 +43,7 @@ function run() {
   const bullets = generateDailySummaryBullets(dailyDraft);
   assert(bullets.length >= 3);
   assert(bullets.some(bullet => bullet.includes("өлсөлт өндөр")));
-  assert(bullets.some(bullet => bullet.includes("Delivery") || bullet.includes("default")));
+  assert(bullets.some(bullet => bullet.includes("Хоол захиалах") || bullet.includes("хамгийн амар сонголт")));
 
   const confirmed = createConfirmedSummaryObject({
     kind: "diary",

@@ -21,6 +21,7 @@ const commands = [
   ["node", ["tests/mock-backend-entitlements.test.js"]],
   ["node", ["tests/fake-payment-lead-capture.test.js"]],
   ["node", ["tests/internal-tester-feedback.test.js"]],
+  ["node", ["tests/internal-human-feedback-copy-ux.test.js"]],
   ["node", ["tests/deep-mongolian-copy-rewrite.test.js"]],
   ["node", ["tests/public-language-purge.test.js"]],
   ["node", ["tests/virtual-audit-public-copy.test.js"]]

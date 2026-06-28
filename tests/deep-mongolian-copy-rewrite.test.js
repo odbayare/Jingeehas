@@ -63,7 +63,7 @@ function run() {
   assert(questionCopy.includes("ингэе гэж бодоогүй байсан ч"), "daily diary should ask about lived unplanned moments");
   assert(/хамгийн амар сонголт/i.test(questionCopy), "daily/probe copy should include natural default-choice phrasing");
   assert(questionCopy.includes("сэтгэл түр намдах"), "probe copy should include natural regulation phrasing");
-  assert(questionCopy.includes("Бид таны хариултыг ингэж ойлголоо"), "summary confirmation should use natural confirmation copy");
+  assert(questionCopy.includes("Тайлбар хадгалагдлаа"), "summary confirmation should use natural saved-note copy");
 
   _internal.setTestState({
     packageType: "one-time",

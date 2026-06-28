@@ -88,11 +88,11 @@ function run() {
   assert(thanks.includes("Дахин эхлэх"));
 
   const exportText = normalize(_internal.renderFeedbackExport());
-  assert(exportText.includes("Feedback export"));
+  assert(exportText.includes("Саналын экспорт"));
   assert(exportText.includes("Давтагддаг тойрог"));
 
   baseAssessmentState({ internalTest: false });
-  assert(!normalize(_internal.renderFeedbackExport()).includes("Feedback export"), "feedback export should be internal-only");
+  assert(!normalize(_internal.renderFeedbackExport()).includes("Саналын экспорт"), "feedback export should be internal-only");
 
   _internal.setTestState({
     packageType: "seven-day",
