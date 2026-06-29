@@ -169,6 +169,17 @@ h3 {
   background: var(--danger);
 }
 
+.button.compact {
+  min-height: 40px;
+  padding: 0 14px;
+}
+
+.question-top-actions {
+  display: flex;
+  justify-content: flex-start;
+  margin: 0 0 18px;
+}
+
 .topbar {
   position: sticky;
   top: 0;
@@ -692,6 +703,11 @@ h3 {
     width: 100%;
     min-height: 50px;
     padding: 0 14px;
+  }
+
+  .question-top-actions .button {
+    width: auto;
+    min-height: 44px;
   }
 
   .option {

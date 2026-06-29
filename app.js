@@ -913,24 +913,34 @@ function saveState() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
+function scrollToTopAfterRender() {
+  if (!hasBrowserRuntime || typeof window.scrollTo !== "function") return;
+  const runScroll = () => window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  if (typeof window.requestAnimationFrame === "function") {
+    window.requestAnimationFrame(runScroll);
+    return;
+  }
+  runScroll();
+}
+
 function resetState() {
   const keepInternalTest = isInternalTestMode();
   state = { ...initialState, internalTest: keepInternalTest };
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function setView(view) {
   state.view = view;
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function choosePackage(packageType) {
   state.packageType = packageType;
   state.view = packageType === "one-time" ? "oneTimeStart" : "sevenDayStart";
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function ensurePaymentSessionId() {
@@ -951,7 +961,7 @@ function beginAssessment(packageType = state.packageType || "one-time") {
   state.preliminary = [];
   state.view = "stage1";
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function demoCompletePayment(kind) {
@@ -978,7 +988,7 @@ function demoCompletePayment(kind) {
     state.view = "unlock";
   }
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function startLeadCapture(kind) {
@@ -1005,7 +1015,7 @@ function startLeadCapture(kind) {
     assessmentId: state.currentAssessmentId || null
   });
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function updateLeadField(field, value) {
@@ -1041,7 +1051,7 @@ function submitLeadCapture() {
   state.leadError = "";
   state.view = "leadThankYou";
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function qpayStatusMessage(status) {
@@ -1552,7 +1562,7 @@ function completeStageOne() {
   state.preliminary = rankedPatterns(false).slice(0, 4);
   state.view = state.packageType === "one-time" ? "report" : "preliminary";
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function nextStageQuestion() {
@@ -1563,13 +1573,13 @@ function nextStageQuestion() {
   }
   state.stageIndex += 1;
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function previousStageQuestion() {
   state.stageIndex = Math.max(0, state.stageIndex - 1);
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function topbar(progress, label = "Жин хасалтын гүн зураглал") {
@@ -2039,7 +2049,7 @@ function confirmStageVoiceSummary(id, mode) {
   });
   state.safetyFlags = calculateSafetyFlags();
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function toggleMulti(id, option, max) {
@@ -2065,18 +2075,18 @@ function renderStageOne() {
   const progress = Math.round((state.stageIndex / Math.max(1, questions.length - 1)) * 100);
   const patterns = rankedPatterns(false).slice(0, 3);
   const backButton = state.stageIndex > 0
-    ? `<button class="button secondary" onclick="previousStageQuestion()">Буцах</button>`
+    ? `<div class="question-top-actions"><button class="button secondary compact" onclick="previousStageQuestion()">Буцах</button></div>`
     : "";
   return `
     ${topbar(progress, `Үе 1 · ${displayModuleName(question.module)}`)}
     <section class="screen">
       <div class="grid">
         <div class="panel">
+          ${backButton}
           <p class="muted">Асуулт ${state.stageIndex + 1}/${questions.length}</p>
           <h2 class="question-text">${question.text}</h2>
           ${renderInput(question, getValue(question), "updateQuestionValue")}
           <div class="actions">
-            ${backButton}
             <button class="button" onclick="nextStageQuestion()">${state.stageIndex === questions.length - 1 ? (state.packageType === "one-time" ? "Тайлан харах" : "Тэмдэглэлийн чиглэл харах") : "Үргэлжлүүлэх"}</button>
           </div>
         </div>
@@ -2163,7 +2173,7 @@ function startDiary() {
   state.diaryQuestionIndex = 0;
   state.diaryDraft = {};
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function getDiaryQuestions() {
@@ -2205,13 +2215,13 @@ function nextDiaryQuestion() {
   }
   state.diaryQuestionIndex += 1;
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function previousDiaryQuestion() {
   state.diaryQuestionIndex = Math.max(0, state.diaryQuestionIndex - 1);
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function saveDiaryEntry() {
@@ -2236,7 +2246,7 @@ function saveDiaryEntry() {
   state.diaryDay = Math.min(7, state.diaryEntries.length + 1);
   state.view = state.diaryEntries.length >= 5 ? "reportReady" : "diaryHome";
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function reportReadiness(entries = state.diaryEntries) {
@@ -2349,18 +2359,18 @@ function renderDiary() {
   const question = questions[state.diaryQuestionIndex];
   const progress = Math.round(((state.diaryEntries.length + state.diaryQuestionIndex / questions.length) / 7) * 100);
   const backButton = state.diaryQuestionIndex > 0
-    ? `<button class="button secondary" onclick="previousDiaryQuestion()">Буцах</button>`
+    ? `<div class="question-top-actions"><button class="button secondary compact" onclick="previousDiaryQuestion()">Буцах</button></div>`
     : "";
   return `
     ${topbar(progress, `Тэмдэглэлийн ${state.diaryDay} дэх өдөр`)}
     <section class="screen">
       <div class="grid">
         <div class="panel">
+          ${backButton}
           <p class="muted">Асуулт ${state.diaryQuestionIndex + 1}/${questions.length}</p>
           <h2 class="question-text">${question.text}</h2>
           ${renderDiaryInput(question)}
           <div class="actions">
-            ${backButton}
             <button class="button" onclick="nextDiaryQuestion()">${state.diaryQuestionIndex === questions.length - 1 ? "Өдрийг хадгалах" : "Үргэлжлүүлэх"}</button>
           </div>
         </div>
@@ -2468,7 +2478,7 @@ function confirmDailySummary(mode) {
   state.diaryDraft.summary_confirmation = mode === "edit" ? "Засах" : mode === "add" ? "Нэмэх зүйл байна" : "Тийм, зөв";
   state.diarySummaryUi = {};
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function dataQuality() {
@@ -3602,7 +3612,7 @@ function submitInternalFeedback() {
   state.internalFeedbackForm = { ...INTERNAL_FEEDBACK_DEFAULTS };
   state.view = "feedbackThanks";
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function renderFeedbackThanks() {
@@ -3845,7 +3855,7 @@ function startSevenDayRefinement() {
   if (!state.preliminary.length) state.preliminary = rankedPatterns(false).slice(0, 4);
   state.view = hasSevenDayAccess() ? "unlock" : "upgradePaywall";
   saveState();
-  render();
+  render({ scrollToTop: true });
 }
 
 function escapeHtml(value) {
@@ -3947,10 +3957,11 @@ function publicValidationProductLabel(productType) {
   }[productType] || productType;
 }
 
-function render() {
+function render(options = {}) {
   if (!hasBrowserRuntime) return;
   if (getInternalFeedbackRoute()) {
     document.getElementById("app").innerHTML = renderFeedbackExport();
+    if (options.scrollToTop) scrollToTopAfterRender();
     return;
   }
   const routes = {
@@ -3974,6 +3985,7 @@ function render() {
     feedbackExport: renderFeedbackExport
   };
   document.getElementById("app").innerHTML = (routes[state.view] || renderLanding)();
+  if (options.scrollToTop) scrollToTopAfterRender();
 }
 
 function getInternalFeedbackRoute() {
@@ -4038,6 +4050,8 @@ if (typeof module !== "undefined") {
       nextStageQuestion,
       previousStageQuestion,
       updateQuestionValue,
+      setAnswerDraft,
+      toggleMulti,
       nextDiaryQuestion,
       previousDiaryQuestion,
       setDiaryValue,
