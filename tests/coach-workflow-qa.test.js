@@ -70,7 +70,7 @@ function run() {
 
   const secondCoach = mockBackend.createCoachAccount({ email: "other-coach@example.com", displayName: "Other Coach" });
   const secondLogin = mockBackend.loginCoach("other-coach@example.com", secondCoach.temporaryPassword);
-  assert.strictEqual(mockBackend.listCoachClients(secondLogin.session.token).length, 0, "coach dashboard must be scoped to own clients");
+  assert.strictEqual(mockBackend.listCoachClients(secondLogin.session.token).length, 0, "coach menu must be scoped to own clients");
 
   const invite = mockBackend.resolveCoachInvitation({ inviteToken: client.inviteToken });
   assert.strictEqual(invite.matched, true);
@@ -87,9 +87,10 @@ function run() {
     diaryEntries: []
   });
   const inviteCopy = visibleText(_internal.renderOneTimeStart());
-  assert(inviteCopy.includes("Үндсэн үнэ 29,000₮"));
-  assert(inviteCopy.includes("Coach-ийн хөнгөлөлттэй үнэ 9,900₮"));
-  assert(inviteCopy.includes("тайланг QA Coach өөрийн dashboard-оос харах боломжтой"));
+  assert(inviteCopy.includes("Үндсэн үнэ: 29,000₮"));
+  assert(inviteCopy.includes("Coach-ийн хөнгөлөлттэй үнэ: 9,900₮"));
+  assert(inviteCopy.includes("дүгнэлтийг QA Coach харах боломжтой"));
+  assert(inviteCopy.includes("гарсан дүгнэлтээ QA Coach-д харагдахыг зөвшөөрч байна"));
   assert(inviteCopy.includes("зөвшөөрч байна"));
 
   const declined = mockBackend.acceptCoachInvitation({ coachClientId: client.client.id, consent: false });
@@ -170,7 +171,7 @@ function run() {
   });
   const mode4View = mockBackend.viewCoachReport(login.session.token, mode4.assessment.id);
   assert.strictEqual(mode4View.allowed, false);
-  assert(mode4View.reason.includes("дэлгэрэнгүй тайлан coach dashboard дээр харагдахгүй"));
+  assert(mode4View.reason.includes("дэлгэрэнгүй дүгнэлт coach цэсэнд харагдахгүй"));
   assert(!mode4View.reason.includes("private urgent details"));
 
   const dashboard = mockBackend.getCoachDashboard(login.session.token);
@@ -194,7 +195,8 @@ function run() {
   assert(redirects.includes("/admin/* /index.html 200"));
   assert(qaDoc.includes("PASS: 14"));
   assert(demoGuide.includes("QPay идэвхжээгүй"));
-  assert(demoGuide.includes("mock/internal prototype"));
+  assert(demoGuide.includes("Дотоод тэмдэглэл"));
+  assert(demoGuide.includes("production backend needed"));
 }
 
 run();

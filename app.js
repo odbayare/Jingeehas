@@ -2018,13 +2018,13 @@ function renderOneTimeStart() {
           <h3>${escapeHtml(coachName)} танд энэ үнэлгээг санал болгосон байна.</h3>
           <p>Та coach-ийн урилгаар хөнгөлөлттэй үнээр үнэлгээ хийлгэх боломжтой.</p>
           <div class="price-stack">
-            <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTime}</p>
-            <p class="price promo"><span>Coach-ийн хөнгөлөлттэй үнэ</span> ${PRICING.coachOneTime}</p>
+            <p class="price-line"><span>Үндсэн үнэ:</span> ${PRICING.oneTime}</p>
+            <p class="price promo"><span>Coach-ийн хөнгөлөлттэй үнэ:</span> ${PRICING.coachOneTime}</p>
           </div>
-          <p class="muted">Хэрэв та энэ хөнгөлөлтөөр үнэлгээ хийлгэвэл таны тайланг ${escapeHtml(coachName)} өөрийн dashboard-оос харах боломжтой.</p>
+          <p class="muted">Хэрэв та энэ хөнгөлөлтөөр үнэлгээ хийлгэвэл таны дүгнэлтийг ${escapeHtml(coachName)} харах боломжтой.</p>
           <label class="checkbox-row">
             <input type="checkbox" ${state.coachDiscountConsent ? "checked" : ""} onchange="${state.coachDiscountConsent ? "declineCoachDiscount()" : "acceptCoachDiscount()"}">
-            <span>Би хөнгөлөлттэй үнээр үнэлгээ хийлгэж, гарсан тайлангаа ${escapeHtml(coachName)}-д харагдахыг зөвшөөрч байна.</span>
+            <span>Би хөнгөлөлттэй үнээр үнэлгээ хийлгэж, гарсан дүгнэлтээ ${escapeHtml(coachName)}-д харагдахыг зөвшөөрч байна.</span>
           </label>
           <div class="actions">
             <button class="button" onclick="acceptCoachDiscount()">Хөнгөлөлттэй үнээр үргэлжлүүлэх</button>
@@ -3962,7 +3962,7 @@ function renderCoachReportView() {
   return `
     <div class="card stack">
       <h3>Дүгнэлт</h3>
-      <p class="muted">${escapeHtml(view.client_email_normalized)} · ${escapeHtml(view.report_mode)} · ${escapeHtml(String(view.paid_amount_mnt))}₮ · commission ${escapeHtml(String(view.commission_mnt))}₮</p>
+      <p class="muted">${escapeHtml(view.client_email_normalized)} · ${escapeHtml(view.report_mode)} · ${escapeHtml(String(view.paid_amount_mnt))}₮ · coach-ийн авах дүн ${escapeHtml(String(view.commission_mnt))}₮</p>
       <pre class="feedback-export-json">${escapeHtml(view.report_text)}</pre>
     </div>
   `;
@@ -3979,28 +3979,30 @@ function renderCoachDashboard() {
   }
   const summary = dashboard.summary;
   return `
-    ${topbar(100, "Coach dashboard")}
+    ${topbar(100, "Coach цэс")}
     <section class="screen">
       <div class="panel stack">
-        <h2>${escapeHtml(dashboard.coach.display_name)}</h2>
+        <p class="choice-kicker">Нээлтээс өмнөх туршилтын хувилбар</p>
+        <h2>Coach цэс</h2>
+        <p class="muted">Энэ хувилбар дээр бодит төлбөр авахгүй. ${escapeHtml(dashboard.coach.display_name)} өөрийн нэмсэн үйлчлүүлэгчийн явцыг эндээс харна.</p>
         <div class="two-col">
-          <div class="mini-stat"><strong>${summary.addedClientsCount}</strong><span>Нэмсэн хэрэглэгч</span></div>
+          <div class="mini-stat"><strong>${summary.addedClientsCount}</strong><span>Нэмсэн үйлчлүүлэгч</span></div>
           <div class="mini-stat"><strong>${summary.paidClientsCount}</strong><span>Төлбөр төлсөн</span></div>
-          <div class="mini-stat"><strong>${summary.completedReportsCount}</strong><span>Тайлан гарсан</span></div>
+          <div class="mini-stat"><strong>${summary.completedReportsCount}</strong><span>Дүгнэлт гарсан</span></div>
           <div class="mini-stat"><strong>${summary.totalPaidAmountMnt}₮</strong><span>Нийт оруулсан орлого</span></div>
-          <div class="mini-stat"><strong>${summary.coachCommissionTotalMnt}₮</strong><span>Таны commission</span></div>
-          <div class="mini-stat"><strong>${summary.pendingPayoutMnt}₮</strong><span>Төлөгдөөгүй commission</span></div>
+          <div class="mini-stat"><strong>${summary.coachCommissionTotalMnt}₮</strong><span>Таны авах орлого</span></div>
+          <div class="mini-stat"><strong>${summary.pendingPayoutMnt}₮</strong><span>Хүлээгдэж буй төлбөр</span></div>
         </div>
         <div class="card stack">
-          <h3>Шинэ хэрэглэгч нэмэх</h3>
-          <label class="field"><span class="muted">Хэрэглэгчийн имэйл</span><input type="email" value="${escapeAttr(state.coachClientForm?.email || "")}" oninput="updateCoachClientField('email', this.value)"></label>
+          <h3>Үйлчлүүлэгч нэмэх</h3>
+          <label class="field"><span class="muted">Үйлчлүүлэгчийн имэйл</span><input type="email" value="${escapeAttr(state.coachClientForm?.email || "")}" oninput="updateCoachClientField('email', this.value)"></label>
           <label class="field"><span class="muted">Нэр / тэмдэглэл</span><input value="${escapeAttr(state.coachClientForm?.name || "")}" oninput="updateCoachClientField('name', this.value)"></label>
           <label class="field"><span class="muted">Нэмэлт тэмдэглэл</span><textarea rows="2" oninput="updateCoachClientField('note', this.value)">${escapeHtml(state.coachClientForm?.note || "")}</textarea></label>
           <button class="button" onclick="addCoachClientFromDashboard()">Нэмэх</button>
           ${state.coachDashboardMessage ? `<p class="muted">${escapeHtml(state.coachDashboardMessage)}</p>` : ""}
         </div>
         <div class="card stack">
-          <h3>Хэрэглэгчийн жагсаалт</h3>
+          <h3>Үйлчлүүлэгчийн жагсаалт</h3>
           <div class="table-like">
             ${dashboard.clients.map(client => `<div class="table-row">
               <span>${escapeHtml(client.client_email_normalized)}</span>
@@ -4008,7 +4010,7 @@ function renderCoachDashboard() {
               <span>${escapeHtml(client.status)}</span>
               <span>${client.commission_mnt}₮</span>
               <button class="button compact secondary" onclick="viewCoachAssessmentReport('${escapeAttr(dashboard.completedAssessments.find(assessment => assessment.coach_client_id === client.id)?.id || "")}')">Дүгнэлт</button>
-            </div>`).join("") || `<p class="muted">Одоогоор хэрэглэгч нэмэгдээгүй байна.</p>`}
+            </div>`).join("") || `<p class="muted">Одоогоор үйлчлүүлэгч нэмэгдээгүй байна.</p>`}
           </div>
         </div>
         ${renderCoachReportView()}
@@ -4048,12 +4050,12 @@ function renderAdminCoach() {
         <h2>Coach / Дэд админ</h2>
         <div class="card stack">
           <h3>Coach нэмэх</h3>
-          <label class="field"><span class="muted">Coach email</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
-          <label class="field"><span class="muted">Coach name</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
-          <label class="field"><span class="muted">Phone</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
-          <label class="field"><span class="muted">Commission amount</span><input type="number" value="${escapeAttr(state.adminCoachForm?.commissionMnt || String(COACH_COMMISSION_MNT))}" oninput="updateAdminCoachField('commissionMnt', this.value)"></label>
+          <label class="field"><span class="muted">Coach-ийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
+          <label class="field"><span class="muted">Coach-ийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
+          <label class="field"><span class="muted">Утас</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
+          <label class="field"><span class="muted">Coach-ийн авах дүн</span><input type="number" value="${escapeAttr(state.adminCoachForm?.commissionMnt || String(COACH_COMMISSION_MNT))}" oninput="updateAdminCoachField('commissionMnt', this.value)"></label>
           <button class="button" onclick="createCoachFromAdmin()">Coach нэмэх</button>
-          ${state.adminCoachResult?.temporaryPassword ? `<p class="danger-copy">Түр нууц үг: ${escapeHtml(state.adminCoachResult.temporaryPassword)}<br>Энэ нууц үгийг нэг удаа харуулна. Coach нэвтэрсний дараа солих шаардлагатай.</p>` : ""}
+          ${state.adminCoachResult?.temporaryPassword ? `<p class="danger-copy">Түр нууц үг: ${escapeHtml(state.adminCoachResult.temporaryPassword)}<br>Энэ нууц үгийг coach-д өгнө. Нэвтэрсний дараа солих боломжтой.</p>` : ""}
           ${state.adminCoachResult?.error ? `<p class="danger-copy">${escapeHtml(state.adminCoachResult.error)}</p>` : ""}
         </div>
         <div class="card stack">

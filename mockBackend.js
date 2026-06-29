@@ -708,13 +708,13 @@ function viewCoachReport(tokenOrCoachId, assessmentId) {
   if (!assessment || assessment.coach_id !== coach.id) {
     reason = "Энэ тайлан таны хэрэглэгчид хамаарахгүй байна.";
   } else if (!assessment.share_with_coach) {
-    reason = "Энэ хэрэглэгч тайлангаа coach-той хуваалцахыг зөвшөөрөөгүй байна.";
+    reason = "Энэ үйлчлүүлэгч дүгнэлтээ coach-той хуваалцахыг зөвшөөрөөгүй байна.";
   } else if (!payment) {
     reason = "Төлбөр баталгаажаагүй байна.";
   } else if (!assessment.completed_at && !assessment.report_text) {
     reason = "Тайлан хараахан гараагүй байна.";
   } else if (assessment.safety_mode === "mode4" || assessment.report_mode === "mode4") {
-    reason = "Энэ үнэлгээ ердийн жин хасалтын тайлан гаргаагүй. Аюулгүй байдлын чиглэл илэрсэн тул дэлгэрэнгүй тайлан coach dashboard дээр харагдахгүй.";
+    reason = "Энэ үнэлгээ ердийн жин хасалтын дүгнэлт гаргаагүй. Аюулгүй байдлын чиглэл илэрсэн тул дэлгэрэнгүй дүгнэлт coach цэсэнд харагдахгүй.";
   } else {
     accessResult = "allowed";
     reason = "";

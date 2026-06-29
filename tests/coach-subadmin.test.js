@@ -159,7 +159,7 @@ function run() {
   });
   const mode4View = mockBackend.viewCoachReport(relogin.session.token, mode4.assessment.id);
   assert.strictEqual(mode4View.allowed, false);
-  assert(mode4View.reason.includes("dashboard дээр харагдахгүй"));
+  assert(mode4View.reason.includes("coach цэсэнд харагдахгүй"));
   backendState = mockBackend.getMockBackendState();
   assert(backendState.coachReportAccessLogs.length >= 4, "report access should be logged");
   assert(backendState.auditLogs.some(row => row.action === "coach_report_view"), "report access should create audit log");
@@ -184,7 +184,7 @@ function run() {
   });
   let start = normalize(_internal.renderOneTimeStart());
   assert(start.includes("Coach-ийн урилга илэрлээ"));
-  assert(start.includes("Coach-ийн хөнгөлөлттэй үнэ 9,900₮"));
+  assert(start.includes("Coach-ийн хөнгөлөлттэй үнэ: 9,900₮"));
   assert(start.includes("зөвшөөрч байна"));
 
   _internal.acceptCoachDiscount();
@@ -215,7 +215,7 @@ function run() {
   assert(!normalize(_internal.renderAdminCoach()).includes("Coach / Дэд админ"), "admin coach panel should not be public by default");
 
   _internal.setTestState({ coachSessionToken: uiLogin.session.token, coachClientForm: { email: "", name: "", note: "" } });
-  assert(normalize(_internal.renderCoachDashboard()).includes("Шинэ хэрэглэгч нэмэх"));
+  assert(normalize(_internal.renderCoachDashboard()).includes("Үйлчлүүлэгч нэмэх"));
 }
 
 run();
