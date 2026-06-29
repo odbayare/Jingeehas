@@ -54,7 +54,7 @@ function run() {
   let capture = normalize(_internal.renderLeadCapture());
   assert(capture.includes("Нээлтийн туршилтын бүртгэл"));
   assert(capture.includes("Нэг удаагийн гүн анализ"));
-  assert(capture.includes("9,900₮"));
+  assert(capture.includes("29,000₮"));
 
   _internal.submitLeadCapture();
   capture = normalize(_internal.renderLeadCapture());
@@ -69,7 +69,7 @@ function run() {
   const leads = mockBackend.getLeadIntents();
   assert.strictEqual(leads.length, 1);
   assert.strictEqual(leads[0].productType, "one_time");
-  assert.strictEqual(leads[0].priceMnt, 9900);
+  assert.strictEqual(leads[0].priceMnt, 29000);
   assert.strictEqual(leads[0].contact, "tester@example.com");
   assert.strictEqual(leads[0].willingness, "Тийм, энэ үнээр авахад бэлэн");
   assert(normalize(_internal.renderLeadThankYou()).includes("Баярлалаа. Таны сонирхлыг бүртгэлээ"));

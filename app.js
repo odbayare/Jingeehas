@@ -3,12 +3,16 @@ const mockBackend = typeof require === "function"
   ? require("./mockBackend.js")
   : window.MockBackend;
 const PRICING = {
-  oneTime: "9,900₮",
+  oneTime: "29,000₮",
   oneTimeAnchor: "29,000₮",
+  coachOneTime: "9,900₮",
   sevenDay: "29,000₮",
   sevenDayAnchor: "69,000₮",
   upgrade: "19,900₮"
 };
+const STANDARD_WEIGHT_PRICE_MNT = 29000;
+const COACH_WEIGHT_PRICE_MNT = 9900;
+const COACH_COMMISSION_MNT = 4000;
 const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";
 const WEIGHT_TEST_AMOUNT_MNT = 9900;
 const WEIGHT_TEST_QPAY_ENDPOINTS = {
@@ -41,7 +45,7 @@ const VALIDATION_PRODUCTS = {
     productType: "one_time",
     label: "Нэг удаагийн гүн анализ",
     priceLabel: PRICING.oneTime,
-    priceMnt: 9900
+    priceMnt: STANDARD_WEIGHT_PRICE_MNT
   },
   "seven-day": {
     productType: "seven_day",
@@ -915,7 +919,18 @@ const initialState = {
     comment: ""
   },
   leadError: "",
-  lastLeadId: null
+  lastLeadId: null,
+  coachInviteToken: "",
+  coachInvite: null,
+  coachDiscountConsent: false,
+  coachLoginForm: { email: "", password: "" },
+  coachLoginError: "",
+  coachSessionToken: "",
+  coachDashboardMessage: "",
+  coachClientForm: { email: "", name: "", note: "" },
+  coachReportView: null,
+  adminCoachForm: { email: "", name: "", phone: "", commissionMnt: String(COACH_COMMISSION_MNT) },
+  adminCoachResult: null
 };
 
 const hasBrowserRuntime = typeof window !== "undefined" && typeof document !== "undefined";
@@ -925,14 +940,26 @@ function loadState() {
   try {
     if (!hasBrowserRuntime) return { ...initialState };
     const params = new URLSearchParams(window.location.search || "");
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    const pathView = initialViewFromPath(window.location.pathname || "");
     return {
       ...initialState,
-      ...JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"),
-      internalTest: params.get("internalTest") === "1" || JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}").internalTest === true
+      ...stored,
+      view: pathView || stored.view || initialState.view,
+      internalTest: params.get("internalTest") === "1" || stored.internalTest === true,
+      coachInviteToken: params.get("coachInvite") || stored.coachInviteToken || ""
     };
   } catch {
     return { ...initialState };
   }
+}
+
+function initialViewFromPath(pathname = "") {
+  const path = pathname.replace(/\/+$/, "") || "/";
+  if (path === "/coach/login") return "coachLogin";
+  if (path === "/coach/dashboard") return "coachDashboard";
+  if (path === "/admin/coach") return "adminCoach";
+  return "";
 }
 
 function saveState() {
@@ -966,6 +993,48 @@ function setView(view) {
 function choosePackage(packageType) {
   state.packageType = packageType;
   state.view = packageType === "one-time" ? "oneTimeStart" : "sevenDayStart";
+  if (packageType === "one-time") refreshCoachInvite();
+  saveState();
+  render({ scrollToTop: true });
+}
+
+function refreshCoachInvite(email = "") {
+  const invite = mockBackend.resolveCoachInvitation({
+    email,
+    inviteToken: state.coachInviteToken || ""
+  });
+  state.coachInvite = invite.matched ? invite : null;
+  return state.coachInvite;
+}
+
+function acceptCoachDiscount() {
+  const invite = refreshCoachInvite();
+  if (!invite?.client?.id) return;
+  const result = mockBackend.acceptCoachInvitation({
+    coachClientId: invite.client.id,
+    consent: true
+  });
+  state.coachInvite = {
+    ...invite,
+    client: result.client,
+    price_mnt: result.price_mnt
+  };
+  state.coachDiscountConsent = true;
+  saveState();
+  render({ scrollToTop: true });
+}
+
+function declineCoachDiscount() {
+  const invite = refreshCoachInvite();
+  if (invite?.client?.id) {
+    mockBackend.acceptCoachInvitation({
+      coachClientId: invite.client.id,
+      consent: false
+    });
+  }
+  state.coachDiscountConsent = false;
+  state.coachInvite = null;
+  state.coachInviteToken = "";
   saveState();
   render({ scrollToTop: true });
 }
@@ -979,7 +1048,20 @@ function ensurePaymentSessionId() {
 }
 
 function beginAssessment(packageType = state.packageType || "one-time") {
-  const assessment = mockBackend.createAssessment(packageType === "seven-day" ? "seven_day" : "one_time");
+  const coachInvite = packageType === "one-time" && state.coachDiscountConsent ? state.coachInvite : null;
+  const assessment = mockBackend.createAssessment(packageType === "seven-day" ? "seven_day" : "one_time", {
+    coachClientId: coachInvite?.client?.id || null,
+    coachId: coachInvite?.coach?.id || null,
+    userEmail: coachInvite?.client?.client_email_normalized || "",
+    shareWithCoach: Boolean(coachInvite?.client?.share_report_consent)
+  });
+  if (coachInvite?.client?.id) {
+    mockBackend.linkAssessmentToCoach(assessment.id, {
+      coachClientId: coachInvite.client.id,
+      userEmail: coachInvite.client.client_email_normalized,
+      shareWithCoach: true
+    });
+  }
   state.packageType = packageType;
   state.currentAssessmentId = assessment.id;
   state.stageIndex = 0;
@@ -998,7 +1080,11 @@ function demoCompletePayment(kind) {
     sourceScreen: state.view,
     assessmentId: state.currentAssessmentId || null
   });
-  const payment = mockBackend.createMockPayment(productType, state.currentAssessmentId || null);
+  const payment = mockBackend.createMockPayment(productType, state.currentAssessmentId || null, {
+    coachId: kind === "one-time" && state.coachDiscountConsent ? state.coachInvite?.coach?.id : null,
+    coachClientId: kind === "one-time" && state.coachDiscountConsent ? state.coachInvite?.client?.id : null,
+    userEmail: kind === "one-time" && state.coachDiscountConsent ? state.coachInvite?.client?.client_email_normalized : ""
+  });
   mockBackend.markMockPaymentPaid(payment.id);
   if (kind === "one-time") {
     state.oneTimePaid = true;
@@ -1107,7 +1193,10 @@ async function createWeightQpayInvoice() {
       body: JSON.stringify({
         productCode: WEIGHT_TEST_PRODUCT_CODE,
         sessionId: state.paymentSessionId,
-        userId: state.paymentSessionId
+        userId: state.paymentSessionId,
+        amountMnt: currentOneTimePriceMnt(),
+        coachId: state.coachDiscountConsent ? state.coachInvite?.coach?.id : null,
+        coachClientId: state.coachDiscountConsent ? state.coachInvite?.client?.id : null
       })
     });
     const payload = await response.json().catch(() => ({}));
@@ -1861,8 +1950,7 @@ function renderChoice() {
             <p class="choice-kicker">Хурдан эхлэх</p>
             <h3>Нэг удаагийн гүн анализ</h3>
             <div class="price-stack">
-              <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTimeAnchor}</p>
-              <p class="price promo"><span>Нээлтийн урамшуулалт үнэ</span> ${PRICING.oneTime}</p>
+              <p class="price promo"><span>Үндсэн үнэ</span> ${PRICING.oneTime}</p>
             </div>
             <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
             <div class="pill-row"><span class="pill">10–15 минут</span><span class="pill">Эхний хэсгийг үнэгүй харах</span><span class="pill">Бүрэн эхний тайлан</span></div>
@@ -1906,6 +1994,8 @@ function renderChoice() {
 }
 
 function renderOneTimeStart() {
+  const invite = state.coachInvite || refreshCoachInvite();
+  const coachName = invite?.coach?.display_name || "Coach";
   return `
     ${topbar(0, "Нэг удаагийн гүн зураглал")}
     <section class="screen">
@@ -1923,8 +2013,26 @@ function renderOneTimeStart() {
           <span class="pill">Зөв/буруу хариулт байхгүй</span>
           <span class="pill">Зарим асуултыг алгасаж болно</span>
         </div>
+        ${invite ? `<div class="card stack coach-discount-card">
+          <p class="choice-kicker">Coach-ийн урилга илэрлээ</p>
+          <h3>${escapeHtml(coachName)} танд энэ үнэлгээг санал болгосон байна.</h3>
+          <p>Та coach-ийн урилгаар хөнгөлөлттэй үнээр үнэлгээ хийлгэх боломжтой.</p>
+          <div class="price-stack">
+            <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTime}</p>
+            <p class="price promo"><span>Coach-ийн хөнгөлөлттэй үнэ</span> ${PRICING.coachOneTime}</p>
+          </div>
+          <p class="muted">Хэрэв та энэ хөнгөлөлтөөр үнэлгээ хийлгэвэл таны тайланг ${escapeHtml(coachName)} өөрийн dashboard-оос харах боломжтой.</p>
+          <label class="checkbox-row">
+            <input type="checkbox" ${state.coachDiscountConsent ? "checked" : ""} onchange="${state.coachDiscountConsent ? "declineCoachDiscount()" : "acceptCoachDiscount()"}">
+            <span>Би хөнгөлөлттэй үнээр үнэлгээ хийлгэж, гарсан тайлангаа ${escapeHtml(coachName)}-д харагдахыг зөвшөөрч байна.</span>
+          </label>
+          <div class="actions">
+            <button class="button" onclick="acceptCoachDiscount()">Хөнгөлөлттэй үнээр үргэлжлүүлэх</button>
+            <button class="button ghost" onclick="declineCoachDiscount()">Хөнгөлөлт ашиглахгүй, стандарт үнээр үргэлжлүүлэх</button>
+          </div>
+        </div>` : ""}
         <div class="actions">
-          <button class="button" onclick="beginAssessment('one-time')">Тест эхлүүлэх</button>
+          <button class="button" onclick="beginAssessment('one-time')">${state.coachDiscountConsent ? "Coach-ийн хөнгөлөлттэй үнээр тест эхлүүлэх" : "Тест эхлүүлэх"}</button>
           <button class="button ghost" onclick="setView('choice')">Буцах</button>
         </div>
       </div>
@@ -3225,6 +3333,7 @@ function renderWeightQpayPaymentBox() {
   const invoice = payment.invoice || null;
   const busy = payment.status === "creating" || payment.status === "checking";
   const qrImage = normalizeQpayQrImage(invoice?.qrImage);
+  const oneTimePrice = currentOneTimePriceLabel();
   return `
     <div class="stack">
       ${payment.message ? `<p class="${payment.status === "error" ? "danger-copy" : "muted"}">${escapeHtml(payment.message)}</p>` : ""}
@@ -3238,7 +3347,7 @@ function renderWeightQpayPaymentBox() {
       <div class="actions">
         ${invoice
           ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Шалгаж байна..." : "Дахин шалгах"}</button>`
-          : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR үүсгэж байна..." : `${PRICING.oneTime} төлөөд бүрэн тайлангаа нээх`}</button>`}
+          : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR үүсгэж байна..." : `${oneTimePrice} төлөөд бүрэн тайлангаа нээх`}</button>`}
         ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment('one-time')">Дотоод туршилтаар нээх</button>`)}
         <button class="button ghost" onclick="setView('choice')">Сонголт руу буцах</button>
       </div>
@@ -3246,9 +3355,19 @@ function renderWeightQpayPaymentBox() {
   `;
 }
 
+function currentOneTimePriceLabel() {
+  return state.coachDiscountConsent && state.coachInvite ? PRICING.coachOneTime : PRICING.oneTime;
+}
+
+function currentOneTimePriceMnt() {
+  return state.coachDiscountConsent && state.coachInvite ? COACH_WEIGHT_PRICE_MNT : STANDARD_WEIGHT_PRICE_MNT;
+}
+
 function renderOneTimePaywall({ mode, primary, primaryMechanism, tags }) {
   const previewName = primary ? publicMechanismName(primary.key) : "Хамгийн түрүүнд нэг давтамж харагдаж байна";
   const previewInsight = primary ? livedExplanationFor(primary.key) : "Таны хариултаас нэг давтагддаг нөхцөл харагдаж байна.";
+  const priceLabel = currentOneTimePriceLabel();
+  const priceCaption = state.coachDiscountConsent && state.coachInvite ? "Coach-ийн хөнгөлөлттэй үнэ" : "Төлөх үнэ";
   return `
     ${topbar(100, "Тайлангийн эхний хэсэг")}
     <section class="screen">
@@ -3280,7 +3399,7 @@ function renderOneTimePaywall({ mode, primary, primaryMechanism, tags }) {
           <h3>Нээх үнэ</h3>
           <div class="price-stack">
             <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTimeAnchor}</p>
-            <p class="price promo"><span>Нээлтийн урамшуулалт үнэ</span> ${PRICING.oneTime}</p>
+            <p class="price promo"><span>${priceCaption}</span> ${priceLabel}</p>
           </div>
           ${renderWeightQpayPaymentBox()}
         </div>
@@ -3767,6 +3886,185 @@ function feedbackChoiceField(name, label, options, followUpName = "", followUpLa
   `;
 }
 
+function updateCoachLoginField(field, value) {
+  state.coachLoginForm = { ...(state.coachLoginForm || {}), [field]: value };
+  saveState();
+}
+
+function submitCoachLogin() {
+  try {
+    const result = mockBackend.loginCoach(state.coachLoginForm.email, state.coachLoginForm.password);
+    state.coachSessionToken = result.session.token;
+    state.coachLoginError = "";
+    state.view = "coachDashboard";
+  } catch {
+    state.coachLoginError = "Имэйл эсвэл нууц үг буруу байна.";
+  }
+  saveState();
+  render({ scrollToTop: true });
+}
+
+function renderCoachLogin() {
+  return `
+    ${topbar(0, "Coach login")}
+    <section class="screen">
+      <div class="panel stack">
+        <h2>Coach нэвтрэх</h2>
+        <label class="field"><span class="muted">Имэйл</span><input type="email" value="${escapeAttr(state.coachLoginForm?.email || "")}" oninput="updateCoachLoginField('email', this.value)"></label>
+        <label class="field"><span class="muted">Нууц үг</span><input type="password" value="${escapeAttr(state.coachLoginForm?.password || "")}" oninput="updateCoachLoginField('password', this.value)"></label>
+        ${state.coachLoginError ? `<p class="danger-copy">${escapeHtml(state.coachLoginError)}</p>` : ""}
+        <div class="actions">
+          <button class="button" onclick="submitCoachLogin()">Нэвтрэх</button>
+          <button class="button ghost" onclick="setView('landing')">Нүүр рүү буцах</button>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function updateCoachClientField(field, value) {
+  state.coachClientForm = { ...(state.coachClientForm || {}), [field]: value };
+  saveState();
+}
+
+function addCoachClientFromDashboard() {
+  try {
+    const result = mockBackend.createCoachClient(state.coachSessionToken, {
+      clientEmail: state.coachClientForm.email,
+      clientName: state.coachClientForm.name,
+      note: state.coachClientForm.note
+    });
+    state.coachDashboardMessage = `Хэрэглэгч нэмэгдлээ. Урилгын линк: ${result.inviteLink}`;
+    state.coachClientForm = { email: "", name: "", note: "" };
+  } catch (error) {
+    state.coachDashboardMessage = error.message || "Хэрэглэгч нэмэхэд алдаа гарлаа.";
+  }
+  saveState();
+  render({ scrollToTop: true });
+}
+
+function viewCoachAssessmentReport(assessmentId) {
+  try {
+    state.coachReportView = mockBackend.viewCoachReport(state.coachSessionToken, assessmentId);
+  } catch {
+    state.coachReportView = { allowed: false, reason: "Тайлан харах эрх олдсонгүй." };
+  }
+  saveState();
+  render({ scrollToTop: true });
+}
+
+function renderCoachReportView() {
+  const view = state.coachReportView;
+  if (!view) return "";
+  if (!view.allowed) {
+    return `<div class="card stack"><h3>Дүгнэлт</h3><p class="danger-copy">${escapeHtml(view.reason)}</p></div>`;
+  }
+  return `
+    <div class="card stack">
+      <h3>Дүгнэлт</h3>
+      <p class="muted">${escapeHtml(view.client_email_normalized)} · ${escapeHtml(view.report_mode)} · ${escapeHtml(String(view.paid_amount_mnt))}₮ · commission ${escapeHtml(String(view.commission_mnt))}₮</p>
+      <pre class="feedback-export-json">${escapeHtml(view.report_text)}</pre>
+    </div>
+  `;
+}
+
+function renderCoachDashboard() {
+  if (!state.coachSessionToken) return renderCoachLogin();
+  let dashboard;
+  try {
+    dashboard = mockBackend.getCoachDashboard(state.coachSessionToken);
+  } catch {
+    state.coachSessionToken = "";
+    return renderCoachLogin();
+  }
+  const summary = dashboard.summary;
+  return `
+    ${topbar(100, "Coach dashboard")}
+    <section class="screen">
+      <div class="panel stack">
+        <h2>${escapeHtml(dashboard.coach.display_name)}</h2>
+        <div class="two-col">
+          <div class="mini-stat"><strong>${summary.addedClientsCount}</strong><span>Нэмсэн хэрэглэгч</span></div>
+          <div class="mini-stat"><strong>${summary.paidClientsCount}</strong><span>Төлбөр төлсөн</span></div>
+          <div class="mini-stat"><strong>${summary.completedReportsCount}</strong><span>Тайлан гарсан</span></div>
+          <div class="mini-stat"><strong>${summary.totalPaidAmountMnt}₮</strong><span>Нийт оруулсан орлого</span></div>
+          <div class="mini-stat"><strong>${summary.coachCommissionTotalMnt}₮</strong><span>Таны commission</span></div>
+          <div class="mini-stat"><strong>${summary.pendingPayoutMnt}₮</strong><span>Төлөгдөөгүй commission</span></div>
+        </div>
+        <div class="card stack">
+          <h3>Шинэ хэрэглэгч нэмэх</h3>
+          <label class="field"><span class="muted">Хэрэглэгчийн имэйл</span><input type="email" value="${escapeAttr(state.coachClientForm?.email || "")}" oninput="updateCoachClientField('email', this.value)"></label>
+          <label class="field"><span class="muted">Нэр / тэмдэглэл</span><input value="${escapeAttr(state.coachClientForm?.name || "")}" oninput="updateCoachClientField('name', this.value)"></label>
+          <label class="field"><span class="muted">Нэмэлт тэмдэглэл</span><textarea rows="2" oninput="updateCoachClientField('note', this.value)">${escapeHtml(state.coachClientForm?.note || "")}</textarea></label>
+          <button class="button" onclick="addCoachClientFromDashboard()">Нэмэх</button>
+          ${state.coachDashboardMessage ? `<p class="muted">${escapeHtml(state.coachDashboardMessage)}</p>` : ""}
+        </div>
+        <div class="card stack">
+          <h3>Хэрэглэгчийн жагсаалт</h3>
+          <div class="table-like">
+            ${dashboard.clients.map(client => `<div class="table-row">
+              <span>${escapeHtml(client.client_email_normalized)}</span>
+              <span>${escapeHtml(client.client_name || client.note || "-")}</span>
+              <span>${escapeHtml(client.status)}</span>
+              <span>${client.commission_mnt}₮</span>
+              <button class="button compact secondary" onclick="viewCoachAssessmentReport('${escapeAttr(dashboard.completedAssessments.find(assessment => assessment.coach_client_id === client.id)?.id || "")}')">Дүгнэлт</button>
+            </div>`).join("") || `<p class="muted">Одоогоор хэрэглэгч нэмэгдээгүй байна.</p>`}
+          </div>
+        </div>
+        ${renderCoachReportView()}
+      </div>
+    </section>
+  `;
+}
+
+function updateAdminCoachField(field, value) {
+  state.adminCoachForm = { ...(state.adminCoachForm || {}), [field]: value };
+  saveState();
+}
+
+function createCoachFromAdmin() {
+  try {
+    state.adminCoachResult = mockBackend.createCoachAccount({
+      email: state.adminCoachForm.email,
+      displayName: state.adminCoachForm.name,
+      phone: state.adminCoachForm.phone,
+      commissionMnt: Number(state.adminCoachForm.commissionMnt || COACH_COMMISSION_MNT)
+    });
+    state.adminCoachForm = { email: "", name: "", phone: "", commissionMnt: String(COACH_COMMISSION_MNT) };
+  } catch (error) {
+    state.adminCoachResult = { error: error.message || "Coach үүсгэхэд алдаа гарлаа." };
+  }
+  saveState();
+  render({ scrollToTop: true });
+}
+
+function renderAdminCoach() {
+  if (!isInternalTestMode()) return renderLanding();
+  const coaches = mockBackend.listCoachAccounts();
+  return `
+    ${topbar(100, "Coach / Дэд админ")}
+    <section class="screen">
+      <div class="panel stack">
+        <h2>Coach / Дэд админ</h2>
+        <div class="card stack">
+          <h3>Coach нэмэх</h3>
+          <label class="field"><span class="muted">Coach email</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
+          <label class="field"><span class="muted">Coach name</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
+          <label class="field"><span class="muted">Phone</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
+          <label class="field"><span class="muted">Commission amount</span><input type="number" value="${escapeAttr(state.adminCoachForm?.commissionMnt || String(COACH_COMMISSION_MNT))}" oninput="updateAdminCoachField('commissionMnt', this.value)"></label>
+          <button class="button" onclick="createCoachFromAdmin()">Coach нэмэх</button>
+          ${state.adminCoachResult?.temporaryPassword ? `<p class="danger-copy">Түр нууц үг: ${escapeHtml(state.adminCoachResult.temporaryPassword)}<br>Энэ нууц үгийг нэг удаа харуулна. Coach нэвтэрсний дараа солих шаардлагатай.</p>` : ""}
+          ${state.adminCoachResult?.error ? `<p class="danger-copy">${escapeHtml(state.adminCoachResult.error)}</p>` : ""}
+        </div>
+        <div class="card stack">
+          <h3>Coach list</h3>
+          ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Coach бүртгэл алга.</p>`}
+        </div>
+      </div>
+    </section>
+  `;
+}
+
 function renderInternalTesterFeedbackSurvey() {
   if (!isInternalTestMode()) return "";
   const mode = reportMode();
@@ -3787,7 +4085,7 @@ function renderInternalTesterFeedbackSurvey() {
       ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
       ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
       ${feedbackChoiceField("languageTone", "Тайлангийн хэл найруулга ямар санагдсан бэ?", ["Байгалийн монгол хэлтэй", "Зарим хэсэг хиймэл", "Хэт албархуу", "Хэт зөөлөн/бөөрөнхий"], "languageToneSuggestion", "Засах санал:")}
-      ${feedbackChoiceField("valueAt9900", "Энэ тайланг 9,900₮ төлж авахад үнэ цэнтэй санагдах уу?", ["Тийм", "Магадгүй", "Үгүй"], "valueReason", "Яагаад?")}
+      ${feedbackChoiceField("valueAt9900", "Энэ тайланг 29,000₮ төлж авахад үнэ цэнтэй санагдах уу?", ["Тийм", "Магадгүй", "Үгүй"], "valueReason", "Яагаад?")}
       <label class="field"><span class="muted">Хамгийн хэрэгтэй санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostUsefulPart', this.value)">${escapeHtml(form.mostUsefulPart || "")}</textarea></label>
       <label class="field"><span class="muted">Хамгийн засмаар санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostNeedsFix', this.value)">${escapeHtml(form.mostNeedsFix || "")}</textarea></label>
       <div class="actions">
@@ -4204,6 +4502,9 @@ function render(options = {}) {
     reportReady: renderReportReady,
     upgradePaywall: renderUpgradePaywall,
     report: renderReport,
+    coachLogin: renderCoachLogin,
+    coachDashboard: renderCoachDashboard,
+    adminCoach: renderAdminCoach,
     feedbackThanks: renderFeedbackThanks,
     feedbackExport: renderFeedbackExport
   };
@@ -4294,6 +4595,16 @@ if (typeof module !== "undefined") {
       isInternalTestMode,
       updateInternalFeedbackField,
       submitInternalFeedback,
+      refreshCoachInvite,
+      acceptCoachDiscount,
+      declineCoachDiscount,
+      submitCoachLogin,
+      updateCoachLoginField,
+      addCoachClientFromDashboard,
+      updateCoachClientField,
+      viewCoachAssessmentReport,
+      createCoachFromAdmin,
+      updateAdminCoachField,
       renderInternalTesterFeedbackSurvey,
       renderFeedbackThanks,
       renderFeedbackExport,
@@ -4313,7 +4624,10 @@ if (typeof module !== "undefined") {
       hasUpgradeAccess,
       renderUnlock,
       renderUpgradePaywall,
-      renderReport
+      renderReport,
+      renderCoachLogin,
+      renderCoachDashboard,
+      renderAdminCoach
     }
   };
 }

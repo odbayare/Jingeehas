@@ -624,6 +624,34 @@ h3 {
   white-space: pre-wrap;
 }
 
+.checkbox-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  line-height: 1.5;
+}
+
+.checkbox-row input {
+  margin-top: 5px;
+}
+
+.table-like {
+  display: grid;
+  gap: 8px;
+}
+
+.table-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.2fr) minmax(120px, 1fr) minmax(92px, 0.7fr) minmax(92px, 0.6fr) auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.72);
+}
+
 .danger-copy {
   color: var(--danger);
   font-weight: 700;
@@ -735,5 +763,9 @@ h3 {
   .report-table th,
   .report-table td {
     padding: 10px;
+  }
+
+  .table-row {
+    grid-template-columns: 1fr;
   }
 }

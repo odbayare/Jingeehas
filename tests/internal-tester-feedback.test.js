@@ -41,7 +41,7 @@ function run() {
 
   baseAssessmentState();
   const publicReport = normalize(_internal.renderReport());
-  assert(publicReport.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"), "public one-time report should still require payment");
+  assert(publicReport.includes("29,000₮ төлөөд бүрэн тайлангаа нээх"), "public one-time report should still require payment");
   assert(!publicReport.includes("Туршилтын санал асуулга"), "feedback survey should not appear before internal report access");
 
   baseAssessmentState({ internalTest: true });
@@ -62,7 +62,7 @@ function run() {
     "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?",
     "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?",
     "Тайлангийн хэл найруулга ямар санагдсан бэ?",
-    "Энэ тайланг 9,900₮ төлж авахад үнэ цэнтэй санагдах уу?",
+    "Энэ тайланг 29,000₮ төлж авахад үнэ цэнтэй санагдах уу?",
     "Хамгийн хэрэгтэй санагдсан хэсэг юу байсан бэ?",
     "Хамгийн засмаар санагдсан хэсэг юу байсан бэ?"
   ];

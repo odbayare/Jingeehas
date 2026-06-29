@@ -63,7 +63,7 @@ function run() {
   mockBackend.completeAssessment(assessment.id, { report_mode: "mode1", report_text: "preview" });
 
   const oneTimePayment = mockBackend.createMockPayment("one_time", assessment.id);
-  assert.strictEqual(oneTimePayment.amount_mnt, 9900);
+  assert.strictEqual(oneTimePayment.amount_mnt, 29000);
   assert.strictEqual(oneTimePayment.status, "pending");
   assert.strictEqual(oneTimePayment.provider, "mock");
 
