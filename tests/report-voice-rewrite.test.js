@@ -55,8 +55,8 @@ assert(!user05.includes("Өдөр олон зүйл шийдэж өнгөрнө"
 
 const user06 = report("user-06");
 assert(user06.includes("хоол харагдах") || user06.includes("Хоол нүдэнд өртөх"));
-assert(user06.includes("ойрын дохио") || user06.includes("нэг дохио"));
-assert(user06.includes("нэг дохиог"));
+assert(user06.includes("нүдэнд ойр") || user06.includes("гарын дор"));
+assert(user06.includes("нэг зүйлийг"));
 assert(!user06.includes("Өдөр олон шийдвэрийн ачаалал өндөр байна"));
 assert(!user06.includes("Өдөр олон зүйл шийдэж өнгөрнө"));
 

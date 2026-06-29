@@ -300,7 +300,7 @@ const personas = [
       food_function: ["Мэдэхгүй"],
       body_signals: ["Аль нь ч үгүй"],
       pattern_probes: { measured_today: "Тийм, санаа зовоосон" }
-    }, ["Эмийн хэрэглээ болон хэмжилтийн санаа зовнил байгаа", "мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"])),
+    }, ["Эмийн хэрэглээ болон хэмжилтийн санаа зовнил байгаа", "биеийн талаа шалгах нь зөв"])),
     expectedMode: "professional",
     expectedPrimary: [M.medical, M.glucose],
     expectedSecondary: [[M.medical, M.glucose]],

@@ -66,7 +66,7 @@ function run() {
   setSevenDayState({ diaryEntries: [entry({ pattern_probes: { measured_today: "Тийм, санаа зовоосон" } })] });
   assert.strictEqual(_internal.reportMode().mode, "professional");
   const professionalReport = _internal.renderReport();
-  assert(professionalReport.includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));
+  assert(professionalReport.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
   assert(!professionalReport.includes("14 хоногийн туршилт"));
   assert(!professionalReport.includes("14 хоногийн эхний туршилт"));
 

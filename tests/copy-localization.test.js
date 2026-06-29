@@ -145,7 +145,7 @@ function run() {
   ].forEach(value => assert(!text.includes(value), `mixed copy rendered: ${value}`));
 
   [
-    "Таны гүн зураглал бэлэн боллоо",
+    "Таны тайлан бэлэн боллоо",
     "Гол зураг",
     "Тэр үед хоол танд юу өгч байсан байж болох вэ?",
     "Давтагддаг тойрог",
@@ -154,7 +154,7 @@ function run() {
     "Одоогоор болгоомжлох зүйлс",
     "Эхний жижиг өөрчлөлт",
     "14 хоногийн туршилт",
-    "Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй дохио"
+    "Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"
   ].forEach(value => assert(text.includes(value), `localized heading missing: ${value}`));
 
   const source = require("fs").readFileSync(require("path").join(__dirname, "..", "app.js"), "utf8");

@@ -116,7 +116,7 @@ function run() {
     preliminary: []
   });
   const professional = normalize(_internal.renderReport());
-  assert(professional.includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));
+  assert(professional.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
   assert(!professional.includes("9,900₮"));
   assert(!professional.includes("төлөөд"));
 

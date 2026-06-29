@@ -32,7 +32,8 @@ const commands = [
   ["node", ["tests/deep-mongolian-copy-rewrite.test.js"]],
   ["node", ["tests/public-language-purge.test.js"]],
   ["node", ["tests/report-voice-rewrite.test.js"]],
-  ["node", ["tests/virtual-audit-public-copy.test.js"]]
+  ["node", ["tests/virtual-audit-public-copy.test.js"]],
+  ["node", ["tests/sprint32-export-separation.test.js"]]
 ];
 
 for (const [command, args] of commands) {

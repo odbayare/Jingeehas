@@ -78,7 +78,7 @@ function run() {
   setSevenDay();
   const full = _internal.renderReport();
   [
-    "Таны гүн зураглал бэлэн боллоо",
+    "Таны тайлан бэлэн боллоо",
     "Гол зураг",
     "Тэр үед хоол танд юу өгч байсан байж болох вэ?",
     "Давтагддаг тойрог",
@@ -92,8 +92,8 @@ function run() {
   assert(!full.includes("давтамжтай нийцэж байна"));
   assert(!full.includes("Таны идэлт дараах үүргүүдийг гүйцэтгэж байна"));
   assert(full.includes("Эхний 3 өдөр"));
-  assert(full.includes("4–10 дахь өдөр"));
-  assert(full.includes("11–14 дахь өдөр"));
+  assert(full.includes("4-10 дахь өдөр"));
+  assert(full.includes("11-14 дахь өдөр"));
   assert(full.includes("Хэрвээ нэг өдөр алгасвал"));
   assert(full.includes("Өдөр хоол холдоно") || full.includes("Өдөр олон зүйл шийдэж өнгөрнө"));
   assert(full.includes("Асуудал"));
@@ -115,7 +115,7 @@ function run() {
 
   setSevenDay({ stageAnswers: { "S1-S03": "Одоо давтагддаг" }, diaryEntries: entries(5) });
   const professional = _internal.renderReport();
-  assert(professional.includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));
+  assert(professional.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
   assert(!professional.includes("Энэ зан үйл ямар үүрэгтэй байж болох вэ?"));
   assert(!professional.includes("14 хоногийн туршилт"));
 
@@ -131,9 +131,9 @@ function run() {
     diaryEntries: entries(5, { meal_rhythm: "Тогтвортой, хоол алгасаагүй" })
   });
   const mode2 = _internal.renderReport();
-  assert(mode2.includes("Давтамж тодорхой"));
-  assert(mode2.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй дохио"));
-  assert(mode2.includes("Шалгуулахад илүүдэхгүй дохио"));
+  assert(mode2.includes("Нэг зүйл тодорлоо"));
+  assert(mode2.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));
+  assert(mode2.includes("Шалгуулахад илүүдэхгүй"));
   assert(mode2.includes("14 хоногийн туршилт"));
 
   _internal.setTestState({
@@ -147,10 +147,10 @@ function run() {
     stageVoiceSummaries: {}
   });
   const oneTime = _internal.renderReport();
-  assert(oneTime.includes("Таны гүн зураглал бэлэн боллоо"));
+  assert(oneTime.includes("Таны тайлан бэлэн боллоо"));
   assert(oneTime.includes("7 хоногоор нарийвчлах"));
   assert(oneTime.includes("Гол зураг"));
-  assert(oneTime.includes("Хэрвээ үүнийг илүү бодит өдөр тутмын түвшинд ялгахыг хүсвэл"));
+  assert(oneTime.includes("Үүнийг өдөр тутамд илүү сайн ялгахыг хүсвэл"));
   assert(!oneTime.includes("Миний pattern-ийг 7 хоногоор шалгах"));
 }
 

@@ -88,9 +88,9 @@ function run() {
     "S1-R02": ["Хоолны зураг эсвэл захиалгын апп харахад"]
   });
   assertSimpleStructure(cueReport);
-  assert(cueReport.includes("хоол нүдэнд өртөхөөр"));
+  assert(cueReport.includes("Зууш нүдэнд ойр"));
   assert(cueReport.includes("захиалгын апп"));
-  assert(cueReport.includes("нэг дохиог"));
+  assert(cueReport.includes("нэг зүйлийг"));
 
   const cycleReport = setOrdinaryReport({
     "MC-GATE": "Тийм, хамаарна",
@@ -123,7 +123,7 @@ function run() {
   assert(!feedback.includes("29,000₮-өөр"));
 
   const professionalReport = setOrdinaryReport({ "S1-S03": "Одоо давтагддаг" });
-  assert(professionalReport.includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));
+  assert(professionalReport.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
   assert(!professionalReport.includes("Товч хариу"));
   assert(!professionalReport.includes("Эхлээд хийх нэг жижиг зүйл"));
 

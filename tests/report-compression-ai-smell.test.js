@@ -118,18 +118,18 @@ function run() {
   assert(!/Reward-Seeking[^.]{0,80}шалгуулах дохио/.test(oneTime));
   assert(sectionText(oneTimeHtml, "Асуудал яг юу биш вэ?").length > 20);
   assert(!sectionText(oneTimeHtml, "Асуудал яг юу биш вэ?").includes("давтамжтай нийцэж байна"));
-  assert(!oneTime.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй дохио"));
+  assert(!oneTime.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"));
 
   setOneTimeMode2();
   const mode2 = normalize(_internal.renderReport());
-  assert(mode2.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй дохио"));
+  assert(mode2.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"));
   assert(mode2.includes("онош гэсэн үг биш"));
   assert(mode2.includes("энэ туршилтыг мацаг, хоол алгасах, огцом хязгаарлалтгүй зөөлөн эхлүүлнэ"));
   assert(!/Reward-Seeking[^.]{0,80}шалгуулах дохио/.test(mode2));
 
   setMode3();
   const mode3 = normalize(_internal.renderReport());
-  assert(mode3.includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));
+  assert(mode3.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
   assert(mode3.includes("Ярилцах товч нэгтгэл"));
   assert(!mode3.includes("14 хоногийн туршилт"));
   assert(!mode3.includes("Your primary pattern"));

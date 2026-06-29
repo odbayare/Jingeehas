@@ -12,6 +12,13 @@ const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, "audits", "sprint-30-virtual-human-retest");
 const RAW_DIR = path.join(OUT_DIR, "raw");
 const PDF_PATH = path.join(OUT_DIR, "WEIGHT_TEST_10_VIRTUAL_HUMAN_RETEST.pdf");
+const SPRINT32_DIR = path.join(ROOT, "audits", "sprint-32-copy-rewrite");
+const SPRINT32_USER_DIR = path.join(SPRINT32_DIR, "user-facing");
+const SPRINT32_INTERNAL_DIR = path.join(SPRINT32_DIR, "internal-audit");
+const SPRINT32_USER_MD = path.join(SPRINT32_USER_DIR, "WEIGHT_TEST_USER_FACING_10_REPORTS.md");
+const SPRINT32_USER_PDF = path.join(SPRINT32_USER_DIR, "WEIGHT_TEST_USER_FACING_10_REPORTS.pdf");
+const SPRINT32_INTERNAL_MD = path.join(SPRINT32_INTERNAL_DIR, "WEIGHT_TEST_INTERNAL_AUDIT_10_REPORTS.md");
+const SPRINT32_INTERNAL_PDF = path.join(SPRINT32_INTERNAL_DIR, "WEIGHT_TEST_INTERNAL_AUDIT_10_REPORTS.pdf");
 const TEMP_JSON = path.join("/private/tmp", "weight-test-sprint-30-retest.json");
 const TEMP_PY = path.join("/private/tmp", "weight-test-sprint-30-render.py");
 const PYTHON = "/Users/odbayare/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3";
@@ -54,7 +61,7 @@ const personas = [
     title: "Орой тэнхээ дуусдаг хэрэглэгч",
     expected: "Энгийн тайлан, оройн тэнхээ багасах / бэлэн сонголт",
     expectedMode: "deep",
-    expectedText: ["Орой болоход хоол бодох", "хамгийн амар сонголт"],
+    expectedText: ["Орой болоход “юу идэх вэ?”", "Бэлэн хоол түрүүлж"],
     persona: { age: 38, profile: "Ажилтай, гэр бүлтэй. Өдөр гайгүй барьдаг ч орой ядарч хоол захиалдаг. Хоолны цаг өдөр бүр өөр. Нойр 5-6 цаг." },
     selectedAnswers: {
       "S1-C01": "38",
@@ -75,7 +82,7 @@ const personas = [
     title: "Стрессээр иддэг хэрэглэгч",
     expected: "Энгийн тайлан, стрессийн үед хоол түр амсхийх арга",
     expectedMode: "deep",
-    expectedText: ["Стресс өндөр үед", "түр амсхийх"],
+    expectedText: ["Стресс ихтэй үед", "түр амрах газар"],
     persona: { age: 34, profile: "Оффисын ажил. Санаа зовнил, уур, ажлын дарамтын дараа идэх хүсэл нэмэгддэг. Идсэний дараа түр тайвширдаг, дараа нь гэмшдэг." },
     selectedAnswers: {
       "S1-E01": "Ихэвчлэн тэгдэг",
@@ -146,7 +153,7 @@ const personas = [
     title: "Орчны дохиогоор автоматаар иддэг хэрэглэгч",
     expected: "Энгийн тайлан, хоол харагдах / захиалгын апп / нэг дохио",
     expectedMode: "deep",
-    expectedText: ["Хоол харагдах", "захиалгын апп", "нэг дохиог"],
+    expectedText: ["Зууш нүдэнд ойр", "захиалгын апп", "нэг зүйлийг"],
     persona: { age: 27, profile: "Зууш ширээн дээр байвал иддэг. Захиалгын апп, хоолны зураг, үнэр нөлөөлдөг. Өлсөөгүй үед ч иддэг." },
     selectedAnswers: {
       "S1-H02": "Ихэвчлэн үгүй",
@@ -245,6 +252,8 @@ const personas = [
 
 function ensureDirs() {
   mkdirSync(RAW_DIR, { recursive: true });
+  mkdirSync(SPRINT32_USER_DIR, { recursive: true });
+  mkdirSync(SPRINT32_INTERNAL_DIR, { recursive: true });
 }
 
 function write(filePath, content) {
@@ -288,6 +297,15 @@ function cleanExtractedValue(value) {
   return String(value || "")
     .replace(/^#+\s*/, "")
     .replace(/\n#+\s*$/g, "")
+    .trim();
+}
+
+function removeReviewChrome(text) {
+  return String(text || "")
+    .replace(/Дотоод туршилтын хувилбар[\s\S]*$/g, "")
+    .replace(/Сонголт руу буцах\s*Шинээр эхлэх/g, "")
+    .replace(/Тэмдэглэл рүү буцах\s*Шинээр эхлэх/g, "")
+    .replace(/\n{3,}/g, "\n\n")
     .trim();
 }
 
@@ -422,6 +440,30 @@ function runPersona(persona) {
   };
 }
 
+function runPersonaUserFacing(persona) {
+  _internal.setTestState({
+    packageType: "one-time",
+    view: "report",
+    internalTest: false,
+    oneTimePaid: true,
+    sevenDayPaid: true,
+    upgradePaid: true,
+    stageAnswers: {
+      ...persona.selectedAnswers,
+      ...persona.freeTextAnswers
+    },
+    diaryEntries: [],
+    preliminary: []
+  });
+  const html = _internal.renderReport();
+  const text = removeReviewChrome(htmlToText(html));
+  return {
+    userId: persona.userId,
+    title: persona.title,
+    reportText: text
+  };
+}
+
 function mdList(items) {
   return items.map((item) => `- ${item}`).join("\n");
 }
@@ -437,6 +479,69 @@ function answersMd(results) {
 function reportsMd(results) {
   const suppressedCopy = "Энэ хэрэглэгчид энгийн жин хасалтын тайлан үзүүлэхгүй. Аюулгүй байдлын зөвлөмжийг түрүүнд харуулсан.";
   return `# 10 virtual human reports\n\n${results.map((r) => `## ${r.userId}\n\n### Товч хариу\n\n${r.simpleResult.stuckMoment ? `**Таны гол гацдаг мөч:** ${r.simpleResult.stuckMoment}\n\n**Энэ юу гэсэн үг вэ?**\n${mdList(r.simpleResult.meaningBullets)}\n\n**Эхлээд хийх нэг жижиг зүйл:** ${r.simpleResult.firstStep}\n\n**Одоогоор түр болгоомжлох зүйл:** ${r.simpleResult.avoidForNow}\n\n${r.simpleResult.menstrualCycleNoteIfAny ? `**Нэмэлтээр анхаарах зүйл:** ${r.simpleResult.menstrualCycleNoteIfAny}\n` : ""}` : suppressedCopy}\n\n### Дэлгэрэнгүй тайлан\n\n${r.detailedReportText}\n\n### Виртуал хүний санал\n\n- Товч хариу: ${r.feedbackSimulation.simpleResultClarity}\n- Нөхцөлтэй нийцсэн үнэлгээ: ${r.feedbackSimulation.reportFitRating}/10\n- Ойлгогдсон мэдрэмж: ${r.feedbackSimulation.feltUnderstood}\n- Хэт ерөнхий санагдсан эсэх: ${r.feedbackSimulation.aiGenericFeeling}\n- 9,900₮ үнэ цэнэ: ${r.feedbackSimulation.valueAt9900}\n`).join("\n---\n\n")}`;
+}
+
+function plainUserFacingMd(results) {
+  const userReports = results.map((result) => runPersonaUserFacing(personas.find((p) => p.userId === result.userId)));
+  return [
+    "Weight Test - хэрэглэгчид харагдах 10 тайлан",
+    "",
+    "Энэ файлд зөвхөн хэрэглэгчийн унших тайлангийн текст орсон.",
+    "",
+    ...userReports.flatMap((report, index) => [
+      `Тайлан ${index + 1}`,
+      "",
+      report.reportText,
+      "",
+      "-----",
+      ""
+    ])
+  ].join("\n").trimEnd();
+}
+
+function internalAuditMd(results, summary) {
+  return [
+    "# Sprint 32 internal audit export",
+    "",
+    "This file is internal only. It may include route, verdict, answer IDs, checklist, and simulated feedback.",
+    "",
+    `Summary: ${summary.pass} PASS / ${summary.partial} PARTIAL / ${summary.fail} FAIL`,
+    `Recommendation: ${summary.recommendation}`,
+    "",
+    ...results.flatMap((r) => {
+      const persona = personas.find((p) => p.userId === r.userId);
+      return [
+        `## ${r.userId} - ${persona.title}`,
+        "",
+        `Route: ${r.generatedMode}`,
+        `Verdict: ${r.audit.verdict}`,
+        `Primary: ${r.primaryMechanism || "safety-first"}`,
+        `Checklist: route=${r.audit.routeCorrect}, clear=${r.audit.simpleAnswerUnderstandable}, safe=${r.audit.safetyCorrect}, bannedClean=${r.audit.noBannedTerms}`,
+        "",
+        "### Persona",
+        "",
+        persona.persona.profile,
+        "",
+        "### Selected answer summary",
+        "",
+        ...Object.entries(r.selectedAnswers).map(([key, value]) => `- ${key}: ${Array.isArray(value) ? value.join(", ") : value}`),
+        "",
+        "### User-facing report text",
+        "",
+        r.fullReportText,
+        "",
+        "### Virtual human feedback",
+        "",
+        `- Simple result: ${r.feedbackSimulation.simpleResultClarity}`,
+        `- Fit: ${r.feedbackSimulation.reportFitRating}/10`,
+        `- Felt understood: ${r.feedbackSimulation.feltUnderstood}`,
+        `- AI/generic feeling: ${r.feedbackSimulation.aiGenericFeeling}`,
+        "",
+        "---",
+        ""
+      ];
+    })
+  ].join("\n").trimEnd();
 }
 
 function auditMd(results, summary) {
@@ -574,6 +679,54 @@ doc.build(story)
   if (result.status !== 0) throw new Error("PDF render failed");
 }
 
+function renderPlainPdf(inputPath, outputPath, title) {
+  writeFileSync(TEMP_JSON, JSON.stringify({ inputPath, outputPath, title }, null, 2));
+  writeFileSync(TEMP_PY, `
+import json
+from pathlib import Path
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.lib.enums import TA_LEFT
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+
+data = json.load(open("${TEMP_JSON}", "r", encoding="utf-8"))
+text = Path(data["inputPath"]).read_text(encoding="utf-8")
+pdf_path = data["outputPath"]
+font_path = "/System/Library/Fonts/Supplemental/Arial Unicode.ttf"
+try:
+    pdfmetrics.registerFont(TTFont("MongolianFont", font_path))
+    font_name = "MongolianFont"
+except Exception:
+    font_name = "Helvetica"
+
+styles = getSampleStyleSheet()
+base = ParagraphStyle("base", parent=styles["BodyText"], fontName=font_name, fontSize=9.5, leading=13, alignment=TA_LEFT, spaceAfter=5)
+h1 = ParagraphStyle("h1", parent=base, fontSize=17, leading=21, spaceAfter=12)
+h2 = ParagraphStyle("h2", parent=base, fontSize=13, leading=17, spaceBefore=8, spaceAfter=5)
+small = ParagraphStyle("small", parent=base, fontSize=8.5, leading=11)
+
+def esc(value):
+    return str(value or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+story = [Paragraph(esc(data["title"]), h1), Spacer(1, 8)]
+for block in text.split("\\n\\n"):
+    block = block.strip()
+    if not block:
+        continue
+    if block == "-----" or block == "---":
+        story.append(PageBreak())
+        continue
+    style = h2 if block.startswith("Тайлан ") or block.startswith("## ") or block.startswith("### ") else small if len(block) > 800 else base
+    story.append(Paragraph(esc(block).replace("\\n", "<br/>"), style))
+doc = SimpleDocTemplate(pdf_path, pagesize=A4, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
+doc.build(story)
+`);
+  const result = spawnSync(PYTHON, [TEMP_PY], { stdio: "inherit", encoding: "utf8" });
+  if (result.status !== 0) throw new Error(`PDF render failed for ${outputPath}`);
+}
+
 function main() {
   ensureDirs();
   const results = personas.map(runPersona);
@@ -588,9 +741,15 @@ function main() {
   write(path.join(OUT_DIR, "ISSUES_AND_FIXES.md"), issuesMd(results, summary));
   write(path.join(OUT_DIR, "SPRINT_30_SUMMARY.md"), sprintSummaryMd(summary));
   renderPdf(results, summary);
+  write(SPRINT32_USER_MD, plainUserFacingMd(results));
+  write(SPRINT32_INTERNAL_MD, internalAuditMd(results, summary));
+  renderPlainPdf(SPRINT32_USER_MD, SPRINT32_USER_PDF, "Weight Test - хэрэглэгчид харагдах 10 тайлан");
+  renderPlainPdf(SPRINT32_INTERNAL_MD, SPRINT32_INTERNAL_PDF, "Weight Test - Sprint 32 internal audit");
   console.log(JSON.stringify({
     outDir: path.relative(ROOT, OUT_DIR),
     pdf: path.relative(ROOT, PDF_PATH),
+    sprint32UserFacingPdf: path.relative(ROOT, SPRINT32_USER_PDF),
+    sprint32InternalAuditPdf: path.relative(ROOT, SPRINT32_INTERNAL_PDF),
     users: results.length,
     pass: summary.pass,
     partial: summary.partial,

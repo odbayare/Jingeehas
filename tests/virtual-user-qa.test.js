@@ -411,7 +411,7 @@ const scenarios = [
     expectedPrimary: [M.physiological, M.hungerSafety, M.glucose],
     expectedSecondary: [[M.physiological, M.hungerSafety]],
     avoidIncludes: ["Мацаг", "Хоол алгасах"],
-    reportIncludes: ["Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй дохио"],
+    reportIncludes: ["Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"],
     experimentAllowed: true,
     professionalExpected: true,
     requireNotPrimary: [M.glucose],
@@ -534,7 +534,7 @@ function validateScenario(scenario) {
     assert(!/14-Day|14-day personalized experiment|14 хоногийн (эхний )?туршилт/.test(text), `${scenario.name}: experiment should be suppressed`);
   }
   if (scenario.professionalExpected) assert(text.includes("Professional") || text.includes("professional") || text.includes("мэргэжлийн") || text.includes("шалгуулахад илүүдэхгүй"), `${scenario.name}: expected professional guidance`);
-  if (!scenario.professionalExpected && scenario.expectedMode === "deep") assert(!text.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй дохио"), `${scenario.name}: unexpected professional check`);
+  if (!scenario.professionalExpected && scenario.expectedMode === "deep") assert(!text.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"), `${scenario.name}: unexpected professional check`);
   if (scenario.urgentExpected) assert(text.includes("яаралтай"), `${scenario.name}: expected urgent guidance`);
   if (!scenario.urgentExpected) assert(!text.includes("Одоо жин хасах тухай биш"), `${scenario.name}: unexpected urgent guidance`);
   if (scenario.oneTimeCta) assert(text.includes("7 хоногоор нарийвчлах") || text.includes("7 хоногийн гүн үнэлгээ"), `${scenario.name}: expected one-time CTA`);

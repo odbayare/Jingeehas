@@ -115,7 +115,7 @@ function run() {
     stageAnswers: { "S1-B03": "Тийм" },
     diaryEntries: []
   });
-  assert(normalize(_internal.renderReport()).includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"), "Mode 3 renders professional-first without payment");
+  assert(normalize(_internal.renderReport()).includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"), "Mode 3 renders professional-first without payment");
 
   _internal.setTestState({
     packageType: "one-time",
