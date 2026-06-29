@@ -2,8 +2,8 @@
 
 ## 10 виртуал хэрэглэгчийн тайлангийн багц
 
-Generated: 2026-06-28T11:42:34.765Z
-Commit: 1fa80baa7e90e4f9c5632c2492a8a82fb0de4f14
+Generated: 2026-06-29T05:01:57.801Z
+Commit: c7b42ab3c04bdd9d7adc973d01380f1af188a21f
 Source script: scripts/run-virtual-user-audit.mjs
 Export script: scripts/export-virtual-reports-pdf.mjs
 QPay status: disabled

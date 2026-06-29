@@ -271,6 +271,9 @@ const mechanisms = {
   }
 };
 
+const MENSTRUAL_GATE_YES = "Тийм, хамаарна";
+const MENSTRUAL_CONTEXT_MODULE = "Menstrual cycle";
+
 const stageOneQuestions = [
   { id: "S1-C00", module: "Warm start", type: "info", text: "Энэ тест таныг шүүх гэж биш. Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харах гэж байгаа юм." },
   { id: "S1-C01", module: "Basic context", type: "number", text: "Таны нас хэд вэ?", safety: value => Number(value) < 18 ? ["professional"] : [] },
@@ -291,11 +294,11 @@ const stageOneQuestions = [
   { id: "S1-H01", module: "Hunger & satiety", type: "single", text: "Хоол идээд цадсан эсэхээ мэдрэхэд танд хэр амар байдаг вэ?", options: ["Амархан мэдэрдэг", "Заримдаа мэдэрдэг", "Сайн ялгадаггүй", "Цадсан ч үргэлжлүүлдэг", "Хэт өлстлөө хүлээгээд хэтрүүлдэг"], scores: { "Сайн ялгадаггүй": ["satiety"], "Сайн мэддэггүй": ["satiety"], "Цадсан ч үргэлжлүүлдэг": ["satiety", "reward"], "Хэт өлстлөө хүлээгээд хэтрүүлдэг": ["hungerSafety", "glucose"] } },
   { id: "S1-H02", module: "Hunger & satiety", type: "single", text: "Төлөвлөөгүй идэх үед та ихэвчлэн бодитоор өлссөн байдаг уу?", options: ["Ихэвчлэн тийм", "Заримдаа", "Ихэвчлэн үгүй", "Ялгаж мэддэггүй", "Нөхцлөөс шалтгаална"], scores: { "Ихэвчлэн тийм": ["hungerSafety"], "Ихэвчлэн үгүй": ["reward", "regulation", "cue"], "Ялгаж мэддэггүй": ["satiety"] } },
   { id: "S1-H03", module: "Hunger & satiety", type: "single", text: "Өлссөн үү, ядарсан уу, сэтгэл тавгүй байна уу гэдгээ ялгахад амар байдаг уу?", options: ["Тийм, ихэнхдээ ялгадаг", "Заримдаа ялгадаг", "Сайн ялгадаггүй", "Бүгд л 'юм идмээр' гэж мэдрэгддэг", "Анзаарч байгаагүй"], scores: { "Сайн ялгадаггүй": ["satiety", "regulation"], "Бүгд л 'юм идмээр' гэж мэдрэгддэг": ["satiety", "regulation"], "Бүгд 'юм идмээр' гэж мэдрэгддэг": ["satiety", "regulation"] } },
-  { id: "S1-F01", module: "Hidden function", type: "multi", text: "Төлөвлөөгүй идэхийн яг өмнө танд юу хамгийн ойр санагддаг вэ?", options: ["Өлссөндөө идсэн", "Амттай юм идмээр байсан", "Тайвширмаар байсан", "Өөрийгөө жаахан шагнамаар санагдсан", "Уйдсан", "Ядарсан", "Дараа өлсөхөөс санаа зовсон", "Харагдаад эсвэл үнэртээд идмээр болсон", "Татгалзах эвгүй байсан", "Хамгийн амар сонголт тэр байсан", "Бие эвгүйрхэх вий гэж санаа зовсон", "Мэдэхгүй"], max: 3, scores: { "Өлссөндөө идсэн": ["hungerSafety"], "Биеэрээ өлссөн": ["hungerSafety"], "Амттай юм идмээр байсан": ["reward"], "Амттай юм хүссэн": ["reward"], "Тайвширмаар байсан": ["regulation"], "Тайвширмаар": ["regulation"], "Өөрийгөө жаахан шагнамаар санагдсан": ["reward"], "Өөрийгөө шагнамаар": ["reward"], "Уйдсан": ["reward"], "Ядарсан": ["executive", "circadian"], "Дараа өлсөхөөс санаа зовсон": ["hungerSafety"], "Харагдаад эсвэл үнэртээд идмээр болсон": ["cue"], "Хоол хараад идмээр болсон": ["cue"], "Татгалзах эвгүй байсан": ["social"], "Хүмүүсийн дунд татгалзах эвгүй": ["social"], "Хамгийн амар сонголт тэр байсан": ["executive"], "Хамгийн амар сонголт хэрэгтэй": ["executive"], "Бие эвгүйрхэх вий гэж санаа зовсон": ["glucose"], "Бие муудах-сахар унах вий": ["glucose"] } },
+  { id: "S1-F01", module: "Hidden function", type: "multi", text: "Төлөвлөөгүй идэхийн яг өмнө танд юу хамгийн ойр санагддаг вэ?", options: ["Өлссөндөө идсэн", "Амттай юм идмээр байсан", "Тайвширмаар байсан", "Өөрийгөө жаахан шагнамаар санагдсан", "Уйдсан", "Ядарсан", "Дараа өлсөхөөс санаа зовсон", "Харагдаад эсвэл үнэртээд идмээр болсон", "Татгалзах эвгүй байсан", "Хамгийн амар сонголт тэр байсан", "Бие эвгүйрхэх вий гэж санаа зовсон", "Мөчлөгийн тодорхой өдрүүдэд илүү хүчтэй болдог", "Мэдэхгүй"], max: 3, scores: { "Өлссөндөө идсэн": ["hungerSafety"], "Биеэрээ өлссөн": ["hungerSafety"], "Амттай юм идмээр байсан": ["reward"], "Амттай юм хүссэн": ["reward"], "Тайвширмаар байсан": ["regulation"], "Тайвширмаар": ["regulation"], "Өөрийгөө жаахан шагнамаар санагдсан": ["reward"], "Өөрийгөө шагнамаар": ["reward"], "Уйдсан": ["reward"], "Ядарсан": ["executive", "circadian"], "Дараа өлсөхөөс санаа зовсон": ["hungerSafety"], "Харагдаад эсвэл үнэртээд идмээр болсон": ["cue"], "Хоол хараад идмээр болсон": ["cue"], "Татгалзах эвгүй байсан": ["social"], "Хүмүүсийн дунд татгалзах эвгүй": ["social"], "Хамгийн амар сонголт тэр байсан": ["executive"], "Хамгийн амар сонголт хэрэгтэй": ["executive"], "Бие эвгүйрхэх вий гэж санаа зовсон": ["glucose"], "Бие муудах-сахар унах вий": ["glucose"] } },
   { id: "S1-F02", module: "Hidden function", type: "single", text: "Идсэний дараа хамгийн түрүүнд юу мэдрэгддэг вэ?", options: ["Тайвширдаг", "Сэтгэл ханамж", "Түр гайгүй болоод гэмшдэг", "Шууд гэмшдэг", "Бие гайгүй", "Одоо бүх юм дууссан", "Маргааш чанга барина", "Өөрчлөлтгүй", "Мэдэхгүй"], scores: { "Тайвширдаг": ["regulation"], "Сэтгэл ханамж": ["reward"], "Түр гайгүй болоод гэмшдэг": ["regulation", "collapse"], "Шууд гэмшдэг": ["collapse"], "Одоо бүх юм дууссан": ["collapse"], "Маргааш чанга барина": ["collapse"], "Бие гайгүй": ["glucose"] } },
   { id: "S1-V01", module: "Voice checkpoint", type: "text", text: "Сүүлийн үед төлөвлөөгүй идсэн хамгийн тод нэг мөчөө богино тайлбарлаарай. Юуны дараа болсон бэ? Тэр үед өлсөж байсан уу? Ямар мэдрэмж давамгай байсан бэ? Идсэний дараа юу өөрчлөгдсөн бэ?", voice: true },
   { id: "S1-R01", module: "Reward / craving", type: "single", text: "Өлсөөгүй байсан ч ‘нэг гоё юм идмээр байна’ гэж санагддаг үе байдаг уу?", options: ["Үгүй", "Хааяа", "Нэлээд олон удаа", "Бараг өдөр бүр", "Өдөрт олон удаа"], scores: { "Нэлээд олон удаа": ["reward"], "7 хоногт хэд хэд": ["reward"], "Бараг өдөр бүр": ["reward"], "Өдөрт олон удаа": ["reward"] } },
-  { id: "S1-R02", module: "Reward / craving", type: "multi", text: "Энэ хүсэл ихэвчлэн ямар үед гардаг вэ?", options: ["Уйдсан үед", "Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед", "Ажлын дараа амармаар санагдах үед", "Амт, үнэр, мэдрэмж татах үед", "Хоолны зураг эсвэл захиалгын апп харахад", "Стресс ихтэй үед", "Ганцаардсан үед", "Мэдэхгүй"], scores: { "Уйдсан үед": ["reward"], "Уйдал": ["reward"], "Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед": ["reward"], "Өдрийн төгсгөлд өөрийгөө шагнах": ["reward"], "Өдрийн төгсгөлд шагнах": ["reward"], "Ажлын дараа амармаар санагдах үед": ["reward", "regulation"], "Ажлын дараах амралт": ["reward", "regulation"], "Амт, үнэр, мэдрэмж татах үед": ["reward"], "Амт, мэдрэмж": ["reward"], "Амт-мэдрэмж": ["reward"], "Хоолны зураг эсвэл захиалгын апп харахад": ["reward", "cue"], "Хоолны зураг эсвэл delivery": ["reward", "cue"], "Food зураг-delivery": ["reward", "cue"], "Стресс ихтэй үед": ["regulation"], "Стресс": ["regulation"], "Stress": ["regulation"], "Ганцаардсан үед": ["regulation", "social"], "Ганцаардал": ["regulation", "social"] } },
+  { id: "S1-R02", module: "Reward / craving", type: "multi", text: "Энэ хүсэл ихэвчлэн ямар үед гардаг вэ?", options: ["Уйдсан үед", "Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед", "Ажлын дараа амармаар санагдах үед", "Амт, үнэр, мэдрэмж татах үед", "Хоолны зураг эсвэл захиалгын апп харахад", "Стресс ихтэй үед", "Ганцаардсан үед", "Сарын тэмдэг ирэхийн өмнөх өдрүүдэд", "Мэдэхгүй"], scores: { "Уйдсан үед": ["reward"], "Уйдал": ["reward"], "Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед": ["reward"], "Өдрийн төгсгөлд өөрийгөө шагнах": ["reward"], "Өдрийн төгсгөлд шагнах": ["reward"], "Ажлын дараа амармаар санагдах үед": ["reward", "regulation"], "Ажлын дараах амралт": ["reward", "regulation"], "Амт, үнэр, мэдрэмж татах үед": ["reward"], "Амт, мэдрэмж": ["reward"], "Амт-мэдрэмж": ["reward"], "Хоолны зураг эсвэл захиалгын апп харахад": ["reward", "cue"], "Хоолны зураг эсвэл delivery": ["reward", "cue"], "Food зураг-delivery": ["reward", "cue"], "Стресс ихтэй үед": ["regulation"], "Стресс": ["regulation"], "Stress": ["regulation"], "Ганцаардсан үед": ["regulation", "social"], "Ганцаардал": ["regulation", "social"] } },
   { id: "S1-R03", module: "Reward / craving", type: "single", text: "Заримдаа идэхээс өмнөх хүсэл нь идэж байх үеийн сэтгэл ханамжаас илүү хүчтэй байдаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Бараг үргэлж"], scores: { "Заримдаа": ["reward"], "Ихэвчлэн": ["reward"], "Бараг үргэлж": ["reward"] } },
   { id: "S1-E01", module: "Emotion / regulation", type: "single", text: "Стресс ихтэй өдөр орой ‘ямар нэг юм идээд жаахан амсхийе’ гэж бодогдох үе байдаг уу?", options: ["Бараг үгүй", "Хааяа", "Нэлээд давтагддаг", "Ихэвчлэн тэгдэг", "Заримдаа идэж чаддаггүй"], scores: { "Хааяа": ["regulation"], "Нэлээд давтагддаг": ["regulation"], "Ихэвчлэн тэгдэг": ["regulation"], "Заримдаа нэмэгддэг": ["regulation"], "Ихэвчлэн нэмэгддэг": ["regulation"], "Маш их нэмэгддэг": ["regulation"] } },
   { id: "S1-E02", module: "Emotion / regulation", type: "multi", text: "Идэх хүсэлтэй хамгийн их холбогддог мэдрэмж аль нь вэ?", options: ["Стресс", "Уур", "Гуниг", "Ганцаардал", "Санаа зовнил", "Ядаргаа", "Хоосон мэт мэдрэмж", "Баяртай эсвэл өөрийгөө шагнамаар үе", "Мэдэхгүй"], scores: { "Стресс": ["regulation"], "Уур": ["regulation"], "Гуниг": ["regulation"], "Ганцаардал": ["regulation", "social"], "Санаа зовнил": ["regulation"], "Ядаргаа": ["executive", "circadian"], "Хоосон мэт мэдрэмж": ["reward"], "Хоосон/flat мэдрэмж": ["reward"], "Баяртай эсвэл өөрийгөө шагнамаар үе": ["reward"], "Баяртай/reward mode": ["reward"] } },
@@ -320,6 +323,15 @@ const stageOneQuestions = [
   { id: "S1-B03", module: "Body / medical", type: "single", text: "Инсулин эсвэл сахар бууруулах эм хэрэглэдэг үү?", options: ["Үгүй", "Тийм", "Мэдэхгүй"], scores: { "Тийм": ["glucose", "medical"] }, safety: value => value === "Тийм" ? ["professional"] : [] },
   { id: "S1-B04", module: "Body / medical", type: "multi", text: "Огцом жин нэмэх, хавагнах, амьсгаадах, маш их ядрах зэрэг шинж байна уу?", options: ["Огцом жин нэмсэн", "Хавагнадаг", "Амьсгааддаг", "Маш их ядардаг", "Аль нь ч үгүй"], scores: { "Огцом жин нэмсэн": ["medical"], "Хавагнадаг": ["medical"], "Амьсгааддаг": ["medical"], "Маш их ядардаг": ["medical"] }, safety: values => values.some(v => ["Огцом жин нэмсэн", "Хавагнадаг", "Амьсгааддаг"].includes(v)) ? ["professional"] : [] },
   { id: "S1-B05", module: "Body / medical", type: "single", text: "Та жирэмсэн, төрсний дараах үе, эсвэл хөхүүл үе дээр байна уу?", options: ["Үгүй", "Жирэмсэн", "Төрсний дараах 0-6 сар", "Төрсний дараах 6-24 сар", "Хөхүүл", "Хариулахгүй"], scores: { "Жирэмсэн": ["medical"], "Төрсний дараах 0-6 сар": ["medical"], "Төрсний дараах 6-24 сар": ["medical"], "Хөхүүл": ["medical"] }, safety: value => ["Жирэмсэн", "Төрсний дараах 0-6 сар", "Хөхүүл"].includes(value) ? ["professional"] : [] },
+  { id: "MC-GATE", module: MENSTRUAL_CONTEXT_MODULE, type: "single", text: "Сарын тэмдгийн мөчлөгтэй холбоотой асуулт танд хамаарах уу?", intro: "Зарим хүний өлсөх мэдрэмж, амттай зүйл хүсэх, ядаргаа, нойр, сэтгэл санаа сарын тэмдгийн мөчлөгийн тодорхой өдрүүдэд өөрчлөгддөг. Энэ нь оношлох гэсэн асуулт биш. Хэрвээ танд хамаарахгүй эсвэл хариулахыг хүсэхгүй бол алгасаж болно.", options: [MENSTRUAL_GATE_YES, "Үгүй, хамаарахгүй", "Хариулахгүй"] },
+  { id: "MC-INTRO", module: MENSTRUAL_CONTEXT_MODULE, type: "info", text: "Дараагийн хэдэн асуулт сарын тэмдгийн мөчлөгтэй холбоотой. Зарим хүний хоолны дуршил, амттай зүйл хүсэх, ядаргаа, нойр, сэтгэл санаа мөчлөгийн тодорхой өдрүүдэд өөрчлөгддөг. Хэрвээ танд хамаарахгүй эсвэл хариулахыг хүсэхгүй бол алгасаж болно." },
+  { id: "MC-01", module: MENSTRUAL_CONTEXT_MODULE, type: "single", text: "Таны сарын тэмдгийн мөчлөг ихэвчлэн ямар байдаг вэ?", options: ["Тогтмол, ойролцоогоор 21–35 хоног", "Заримдаа зөрдөг", "Ихэнхдээ тогтмол биш", "Сүүлийн 3 сард ирээгүй", "Мэдэхгүй", "Хариулахгүй"] },
+  { id: "MC-02", module: MENSTRUAL_CONTEXT_MODULE, type: "single", text: "Сүүлийн сарын тэмдгийн эхний өдөр ойролцоогоор хэдийд байсан бэ?", options: ["Өнөөдөр–5 хоногийн дотор", "6–13 хоногийн өмнө", "14–17 хоногийн өмнө", "18–28 хоногийн өмнө", "28 хоногоос дээш", "Сайн мэдэхгүй", "Хариулахгүй"] },
+  { id: "MC-03", module: MENSTRUAL_CONTEXT_MODULE, type: "single", text: "Мөчлөгийн аль үед таны идэх хүсэл хамгийн их өөрчлөгддөг вэ?", options: ["Мөчлөгтэй холбоо анзаардаггүй", "Сарын тэмдэг ирэхээс хэд хоногийн өмнө", "Сарын тэмдэг ирж байх үед", "Сарын тэмдэг дууссаны дараах өдрүүдэд", "Овуляцийн орчим гэж боддог", "Тодорхой биш", "Хариулахгүй"] },
+  { id: "MC-04", module: MENSTRUAL_CONTEXT_MODULE, type: "multi", text: "Сарын тэмдэг ирэхийн өмнөх өдрүүдэд танд аль нь илүү ойр байдаг вэ?", options: ["Илүү өлсдөг", "Амттай юм, гурилан зүйл илүү хүсдэг", "Давслаг, шарсан зүйл илүү хүсдэг", "Сэтгэл санаа савлах үед идэх хүсэл нэмэгддэг", "Ядаргаа, нойр муудахтай давхцдаг", "Хавагнах эсвэл бие хүнд оргих мэдрэмж нэмэгддэг", "Онц ялгаа анзаардаггүй", "Хариулахгүй"], max: 3 },
+  { id: "MC-05", module: MENSTRUAL_CONTEXT_MODULE, type: "single", text: "Тэр үед таны хоолны хэмжээ эсвэл хооллох давтамж яаж өөрчлөгддөг вэ?", options: ["Өөрчлөгддөггүй", "Жаахан нэмэгддэг", "Нэлээд нэмэгддэг", "Ойр ойрхон идмээр болдог", "Өвдөлт, дотор муухайралтаас болоод багасдаг", "Тодорхой хэлж мэдэхгүй", "Хариулахгүй"] },
+  { id: "MC-06", module: MENSTRUAL_CONTEXT_MODULE, type: "multi", text: "Та одоогоор дараахаас аль нэгэнд хамаарах уу?", options: ["Дааврын жирэмслэлтээс хамгаалах хэрэгсэл хэрэглэдэг", "PCOS оноштой эсвэл сэжигтэй", "Төрсний дараах эсвэл хөхүүл үе", "Перименопауз байж магадгүй", "Аль нь ч биш", "Хариулахгүй"], max: 2 },
+  { id: "MC-07", module: MENSTRUAL_CONTEXT_MODULE, type: "single", text: "Мөчлөг тогтмол бус болох, ирэхээ болих, эсвэл их өөрчлөгдөх нь хоол хасалт, жин огцом буурах, эсвэл хэт их дасгалтай давхцаж байсан уу?", options: ["Тийм", "Үгүй", "Сайн мэдэхгүй", "Хариулахгүй"] },
   { id: "S1-S01", module: "Safety", type: "single", text: "Идэх үедээ хяналтаа алдсан мэт мэдрэмж хүчтэй гардаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш хүчтэй"], scores: { "Ихэвчлэн": ["collapse"], "Маш хүчтэй": ["collapse"] }, safety: value => ["Ихэвчлэн", "Маш хүчтэй"].includes(value) ? ["professional"] : [] },
   { id: "S1-S02", module: "Safety", type: "single", text: "Идсэний дараа нуух, ичих, ганцаараа баймаар санагдах мэдрэмж хэр хүчтэй байдаг вэ?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш хүчтэй"], scores: { "Заримдаа": ["collapse"], "Ихэвчлэн": ["collapse"], "Маш хүчтэй": ["collapse"] }, safety: value => ["Ихэвчлэн", "Маш хүчтэй"].includes(value) ? ["professional"] : [] },
   { id: "S1-S03", module: "Safety", type: "single", text: "Идсэнээ “нөхөх” гэж бөөлжүүлэх, туулгах, хэт их дасгал хийх, эсвэл олон цаг хоолгүй байх тохиолдол гардаг уу?", options: ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], safety: value => ["Одоо хааяа", "Одоо давтагддаг"].includes(value) ? ["professional"] : [] },
@@ -333,7 +345,7 @@ const dailyCore = [
   { id: "D-C02", type: "single", text: "Өнөөдөр ‘ингэе гэж бодоогүй байсан ч’ идэж, уусан зүйл гарсан уу?", field: "unplanned_eating_count", options: ["Үгүй", "Тийм, нэг удаа", "Тийм, хоёр удаа", "Тийм, гурваас олон удаа"] },
   { id: "D-C03", type: "single", text: "Тэр үе ихэвчлэн хэзээ байсан бэ?", field: "main_moment_time", options: ["Өглөө", "Өдөр", "Орой", "Шөнө", "Хүмүүстэй хамт байх үед", "Өнөөдөр тийм зүйл гараагүй"] },
   { id: "D-C04", type: "scale", text: "Тэр үед та үнэхээр өлссөн байсан уу? 0 = огт өлсөөгүй, 10 = маш их өлссөн", field: "hunger_level" },
-  { id: "D-C05", type: "multi", text: "Тэр хүслийг юутай хамгийн ойр тайлбарлах вэ?", field: "food_function", options: ["Өлссөндөө", "Амттай юм идмээр байсан", "Тайвширмаар байсан", "Өөрийгөө жаахан шагнамаар байсан", "Уйдсан", "Ядарсан", "Дараа өлсөхөөс санаа зовсон", "Харагдаад эсвэл үнэртээд идмээр болсон", "Татгалзах эвгүй байсан", "Хамгийн амар нь тэр байсан", "Бие эвгүйрхэх вий гэж санаа зовсон"] },
+  { id: "D-C05", type: "multi", text: "Тэр хүслийг юутай хамгийн ойр тайлбарлах вэ?", field: "food_function", options: ["Өлссөндөө", "Амттай юм идмээр байсан", "Тайвширмаар байсан", "Өөрийгөө жаахан шагнамаар байсан", "Уйдсан", "Ядарсан", "Дараа өлсөхөөс санаа зовсон", "Харагдаад эсвэл үнэртээд идмээр болсон", "Татгалзах эвгүй байсан", "Хамгийн амар нь тэр байсан", "Бие эвгүйрхэх вий гэж санаа зовсон", "Сарын тэмдэгтэй холбоотой мэт санагдсан"] },
   { id: "D-C06", type: "single", text: "Өнөөдөр сэтгэлд хамгийн их үлдсэн мэдрэмж аль нь байсан бэ?", field: "emotion", options: ["Тайван", "Стресс", "Ууртай", "Гунигтай", "Ганцаардсан", "Санаа зовсон", "Ядарсан", "Хоосон юм шиг", "Өөрийгөө баярлуулмаар санагдсан", "Сайн ялгахгүй байна"] },
   { id: "D-C07", type: "scale", text: "Өнөөдрийн стрессийг 0–10 дээр тавивал хэд орчим байсан бэ?", field: "stress_score" },
   { id: "D-C08", type: "scale", text: "Орой болоход тэнхээ хэр үлдсэн байсан бэ? 0 = огт үлдээгүй, 10 = хангалттай байсан", field: "energy_score" },
@@ -344,6 +356,12 @@ const dailyCore = [
   { id: "D-C13", type: "text", text: "Өнөөдөр төлөвлөөгүй идэлт гараагүй бол ямар нөхцөл тусалсан бэ?", field: "what_helped" },
   { id: "D-V01", type: "text", text: "Өнөөдрийн идэлтэд хамгийн их нөлөөлсөн нэг мөчийг богино тайлбарлаарай. Юуны дараа болсон бэ? Тэр үед өлсөж байсан уу? Ямар мэдрэмж давамгай байсан бэ? Идсэний дараа юу өөрчлөгдсөн бэ?", field: "raw_reflection" },
   { id: "D-SUM01", type: "single", text: "Тайлбар хадгалагдлаа", field: "summary_confirmation", options: ["Үргэлжлүүлэх", "Засах", "Нэмэх зүйл байна"] }
+];
+
+const dailyMenstrual = [
+  { id: "D-MC-01", type: "single", text: "Өнөөдөр мөчлөгийнхөө аль үедээ байгаа гэж бодож байна?", field: "cycle_today_phase", options: ["Сарын тэмдэг ирж байна", "Дууссанаас хойш эхний өдрүүд", "Овуляцийн орчим гэж бодож байна", "Ирэхээс өмнөх өдрүүд", "Мэдэхгүй", "Хамаарахгүй"] },
+  { id: "D-MC-02", type: "single", text: "Өнөөдрийн идэх хүсэл мөчлөгтэй холбоотой юм шиг санагдсан уу?", field: "cycle_today_link", options: ["Үгүй", "Бага зэрэг", "Тийм, илүү өлссөн", "Тийм, амттай юм илүү хүссэн", "Тийм, сэтгэл санаатай хамт хүчтэй болсон", "Тийм, ядаргаа/нойртой давхцсан"] },
+  { id: "D-MC-03", type: "single", text: "Өнөөдөр өвдөлт, хавагналт, ядаргаа, нойр муудах зэрэг нь хоолны сонголтод нөлөөлсөн үү?", field: "cycle_body_effect", options: ["Үгүй", "Бага зэрэг", "Дунд зэрэг", "Их"] }
 ];
 
 const probeBank = {
@@ -396,6 +414,7 @@ const dimensionByModule = {
   "Environment": ["D14"],
   "Sleep / energy": ["D15"],
   "Body / medical": ["D08", "D09", "D22"],
+  "Menstrual cycle": ["D04", "D05", "D06", "D08", "D09", "D15", "D22"],
   "Safety": ["D09", "D12", "D16"],
   "daily_core": ["D03", "D04", "D05", "D06", "D08", "D09", "D13", "D15", "D16", "D21"],
   "daily_probe": ["D05", "D06", "D07", "D08", "D09", "D11", "D13", "D14", "D15", "D17"]
@@ -471,6 +490,12 @@ function optionSignals(label) {
     add(["medical_friction"], ["D22", "D09"], [mechanismNamesByKey.medical], ["professional_check"]);
     safetyTrigger = "professional";
   }
+  if (/сарын тэмдэг|мөчлөг|овуляц|pcos|перименопауз/.test(text)) {
+    add(["menstrual_cycle_context"], ["D04", "D05", "D06", "D08", "D15", "D22"], [], ["tone_modifier", "what_to_avoid", "first_leverage_point"]);
+  }
+  if (/ирээгүй|тогтмол бус|хоол хасалт|хэт их дасгал|жин огцом буурах/.test(text)) {
+    add(["cycle_professional_check"], ["D09", "D22"], [], ["professional_check", "what_to_avoid"]);
+  }
   if (/бага сахар|санаа зовоосон|insulin|sugar-lowering|давтамжтай|одоогийн|хөхүүл|жирэмсэн|төрсний дараах 0-6/.test(text)) safetyTrigger = safetyTrigger || "professional";
   if (/будилах|ухаан балар|өөртөө хор|идэвхтэй|таталт|seizure|faint|confusion/.test(text)) safetyTrigger = "urgent";
 
@@ -528,12 +553,14 @@ function allQuestionObjects() {
   return [
     ...stageOneQuestions,
     ...dailyCore,
+    ...dailyMenstrual,
     ...Object.values(probeBank).flat()
   ];
 }
 
 stageOneQuestions.forEach(question => enrichQuestion(question, "stage"));
 dailyCore.forEach(question => enrichQuestion(question, "daily"));
+dailyMenstrual.forEach(question => enrichQuestion(question, "daily"));
 Object.values(probeBank).flat().forEach(question => enrichQuestion(question, "daily"));
 
 function getQuestionMetadata(questionId) {
@@ -1163,8 +1190,23 @@ function hasUpgradeAccess() {
   return Boolean(state.upgradePaid || access.hasUpgradeAccess);
 }
 
+function hasMenstrualCycleContext(answers = state.stageAnswers) {
+  return answers["MC-GATE"] === MENSTRUAL_GATE_YES;
+}
+
+function isMenstrualStageQuestion(question) {
+  return question?.module === MENSTRUAL_CONTEXT_MODULE;
+}
+
+function shouldShowStageQuestion(question, answers = state.stageAnswers) {
+  if (!isMenstrualStageQuestion(question)) return true;
+  if (question.id === "MC-GATE") return true;
+  return hasMenstrualCycleContext(answers);
+}
+
 function stageQuestions() {
-  if (state.packageType !== "seven-day") return stageOneQuestions;
+  const visible = question => shouldShowStageQuestion(question);
+  if (state.packageType !== "seven-day") return stageOneQuestions.filter(visible);
   const setupModules = new Set([
     "Warm start",
     "Basic context",
@@ -1176,14 +1218,17 @@ function stageQuestions() {
     "Executive load",
     "Environment",
     "Body / medical",
+    MENSTRUAL_CONTEXT_MODULE,
     "Safety"
   ]);
   const setupIds = new Set(["S1-H02", "S1-H03", "S1-V01", "S1-V02"]);
-  return stageOneQuestions.filter(question => setupModules.has(question.module) || setupIds.has(question.id));
+  return stageOneQuestions.filter(question => (setupModules.has(question.module) || setupIds.has(question.id)) && visible(question));
 }
 
 function currentQuestion() {
-  return stageQuestions()[state.stageIndex];
+  const questions = stageQuestions();
+  if (state.stageIndex >= questions.length) state.stageIndex = Math.max(0, questions.length - 1);
+  return questions[state.stageIndex];
 }
 
 function getValue(question) {
@@ -1206,6 +1251,7 @@ function setAnswerDraft(id, value) {
 function calculateSafetyFlags() {
   return [
     ...calculateStageSafetyFlags(),
+    ...calculateMenstrualSafetyFlags(),
     ...Object.values(state.stageVoiceSummaries || {}).flatMap(summary => summary.safetyFlags || []),
     ...calculateDiarySafetyFlags(state.diaryEntries)
   ];
@@ -1452,6 +1498,96 @@ function diaryEntrySafetyFlags(entry) {
 
 function calculateDiarySafetyFlags(entries = []) {
   return entries.flatMap(diaryEntrySafetyFlags);
+}
+
+function asArray(value) {
+  if (Array.isArray(value)) return value;
+  return isEmptyAnswer(value) ? [] : [value];
+}
+
+function menstrualCycleEvidence(answers = state.stageAnswers, diaryEntries = state.diaryEntries, diaryDraft = state.diaryDraft) {
+  const gateActive = hasMenstrualCycleContext(answers);
+  const directCycleOptions = [
+    ...asArray(answers["S1-F01"]),
+    ...asArray(answers["S1-R02"]),
+    ...asArray(diaryDraft.food_function),
+    ...diaryEntries.flatMap(entry => asArray(entry.food_function))
+  ].some(value => containsAny(value, ["сарын тэмдэг", "мөчлөг"]));
+  if (!gateActive && !directCycleOptions) {
+    return {
+      active: false,
+      tags: [],
+      confidenceLow: false,
+      premenstrual: false,
+      professionalCheck: false,
+      professionalFirst: false
+    };
+  }
+
+  const tags = new Set(["menstrual_cycle_context"]);
+  const cyclePattern = answers["MC-01"] || "";
+  const cycleTiming = answers["MC-02"] || "";
+  const appetiteTiming = answers["MC-03"] || "";
+  const premenstrualChanges = asArray(answers["MC-04"]);
+  const intakeChange = answers["MC-05"] || "";
+  const modifiers = asArray(answers["MC-06"]);
+  const disruption = answers["MC-07"] || "";
+  const diaryCycleValues = diaryEntries.flatMap(entry => [
+    entry.cycle_today_phase,
+    entry.cycle_today_link,
+    entry.cycle_body_effect,
+    ...asArray(entry.food_function)
+  ].flat()).filter(Boolean);
+
+  if (containsAny(cyclePattern, ["зөрдөг", "тогтмол биш", "ирээгүй"])) tags.add("irregular_cycle_professional_check");
+  if (cyclePattern === "Сүүлийн 3 сард ирээгүй") tags.add("amenorrhea_3_months");
+  if (containsAny(cycleTiming, ["18–28", "28 хоногоос дээш"])) tags.add("cycle_phase_low_confidence");
+  if (containsAny(appetiteTiming, ["ирэхээс"]) || asArray(answers["S1-R02"]).includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд") || diaryCycleValues.some(value => containsAny(value, ["ирэхээс өмнөх", "амттай юм"]))) tags.add("premenstrual_appetite_shift");
+  if (premenstrualChanges.includes("Илүү өлсдөг")) tags.add("cycle_hunger_increase");
+  if (premenstrualChanges.includes("Амттай юм, гурилан зүйл илүү хүсдэг")) tags.add("cycle_sweet_craving");
+  if (premenstrualChanges.includes("Давслаг, шарсан зүйл илүү хүсдэг")) tags.add("cycle_salty_fat_craving");
+  if (premenstrualChanges.includes("Сэтгэл санаа савлах үед идэх хүсэл нэмэгддэг")) tags.add("cycle_mood_eating");
+  if (premenstrualChanges.includes("Ядаргаа, нойр муудахтай давхцдаг")) tags.add("cycle_sleep_fatigue");
+  if (premenstrualChanges.includes("Хавагнах эсвэл бие хүнд оргих мэдрэмж нэмэгддэг")) tags.add("cycle_bloating_body_signal");
+  if (containsAny(intakeChange, ["Нэлээд", "Ойр ойрхон"])) tags.add("cycle_intake_increase");
+  if (containsAny(intakeChange, ["өвдөлт", "дотор муухайралт"])) tags.add("cycle_pain_nausea_decrease");
+  if (modifiers.some(value => value !== "Аль нь ч биш" && value !== "Хариулахгүй")) tags.add("cycle_modifier_confidence_low");
+  if (modifiers.includes("PCOS оноштой эсвэл сэжигтэй")) tags.add("pcos_known_or_suspected");
+  if (modifiers.includes("Төрсний дараах эсвэл хөхүүл үе")) tags.add("postpartum_breastfeeding");
+  if (modifiers.includes("Перименопауз байж магадгүй")) tags.add("perimenopause");
+  if (modifiers.includes("Дааврын жирэмслэлтээс хамгаалах хэрэгсэл хэрэглэдэг")) tags.add("hormonal_contraception");
+  if (disruption === "Тийм") tags.add("restriction_exercise_cycle_disruption");
+  if (asArray(answers["S1-F01"]).includes("Мөчлөгийн тодорхой өдрүүдэд илүү хүчтэй болдог")) tags.add("cycle_linked_function");
+  if (diaryCycleValues.some(value => containsAny(value, ["бага зэрэг", "тийм", "дунд", "их", "мөчлөг"]))) tags.add("daily_cycle_context");
+
+  const restrictionSignals = [
+    ...asArray(answers["S1-W04"]),
+    answers["S1-S03"] || "",
+    answers["MC-07"] || ""
+  ].some(value => containsAny(value, ["мацаг", "орой хоол идэхгүй", "бага идэх", "хэт их дасгал", "нөхөх", "тийм"]));
+  const glucoseOrBpConcern = [answers["S1-B02"], answers["S1-B03"], ...asArray(answers["S1-B04"])]
+    .some(value => containsAny(value, ["санаа зовоосон", "бага сахар", "өндөр даралт", "тийм", "огцом", "хаваг", "маш их"]));
+  const professionalFirst = (
+    tags.has("restriction_exercise_cycle_disruption") && (tags.has("amenorrhea_3_months") || restrictionSignals)
+  ) || (
+    tags.has("pcos_known_or_suspected") && tags.has("irregular_cycle_professional_check") && glucoseOrBpConcern
+  ) || (
+    tags.has("postpartum_breastfeeding") && glucoseOrBpConcern
+  );
+
+  return {
+    active: true,
+    tags: Array.from(tags),
+    confidenceLow: tags.has("cycle_modifier_confidence_low") || tags.has("cycle_phase_low_confidence"),
+    premenstrual: tags.has("premenstrual_appetite_shift") || tags.has("cycle_sweet_craving") || tags.has("cycle_salty_fat_craving") || tags.has("cycle_hunger_increase"),
+    professionalCheck: tags.has("irregular_cycle_professional_check") || tags.has("cycle_pain_nausea_decrease") || professionalFirst,
+    professionalFirst
+  };
+}
+
+function calculateMenstrualSafetyFlags() {
+  const evidence = menstrualCycleEvidence();
+  return evidence.professionalFirst ? ["MC:professional"] : [];
 }
 
 function addScore(scores, key, amount = 1) {
@@ -1707,6 +1843,7 @@ function displayModuleName(moduleName) {
     Environment: "Орчин",
     "Sleep / energy": "Нойр ба эрч хүч",
     "Body / medical": "Биеийн дохио",
+    "Menstrual cycle": "Сарын тэмдгийн мөчлөг",
     Safety: "Аюулгүй байдал"
   };
   return names[moduleName] || moduleName;
@@ -2070,8 +2207,9 @@ function toggleMulti(id, option, max) {
 }
 
 function renderStageOne() {
-  const question = currentQuestion();
   const questions = stageQuestions();
+  if (state.stageIndex >= questions.length) state.stageIndex = Math.max(0, questions.length - 1);
+  const question = currentQuestion();
   const progress = Math.round((state.stageIndex / Math.max(1, questions.length - 1)) * 100);
   const patterns = rankedPatterns(false).slice(0, 3);
   const backButton = state.stageIndex > 0
@@ -2084,6 +2222,7 @@ function renderStageOne() {
         <div class="panel">
           ${backButton}
           <p class="muted">Асуулт ${state.stageIndex + 1}/${questions.length}</p>
+          ${question.intro ? `<p class="muted">${escapeHtml(question.intro)}</p>` : ""}
           <h2 class="question-text">${question.text}</h2>
           ${renderInput(question, getValue(question), "updateQuestionValue")}
           <div class="actions">
@@ -2177,6 +2316,7 @@ function startDiary() {
 }
 
 function getDiaryQuestions() {
+  const cycleQuestions = getDailyMenstrualQuestions();
   if (state.diaryDraft.unplanned_eating_count === "Үгүй") {
     return [
       dailyCore[0],
@@ -2186,12 +2326,22 @@ function getDiaryQuestions() {
       dailyCore[8],
       dailyCore[11],
       dailyCore[12],
+      ...cycleQuestions,
       dailyCore[14]
     ];
   }
   const topKeys = (state.preliminary.length ? state.preliminary : rankedPatterns(false)).slice(0, 3).map(item => item.key);
   const probes = topKeys.flatMap(key => probeBank[key] || []).slice(0, 4);
-  return [...dailyCore.slice(0, 12), ...probes, dailyCore[13], dailyCore[14]];
+  return [...dailyCore.slice(0, 12), ...cycleQuestions, ...probes, dailyCore[13], dailyCore[14]];
+}
+
+function getDailyMenstrualQuestions() {
+  if (!hasMenstrualCycleContext()) return [];
+  const questions = [dailyMenstrual[0], dailyMenstrual[1]];
+  if (state.diaryDraft.cycle_today_link && state.diaryDraft.cycle_today_link !== "Үгүй") {
+    questions.push(dailyMenstrual[2]);
+  }
+  return questions;
 }
 
 function setDiaryValue(id, value) {
@@ -2796,6 +2946,12 @@ function previousAttemptsCopy(primaryKey, tags = allReportTags()) {
 
 function avoidListFor(primaryKey, tags = allReportTags()) {
   const avoid = new Set();
+  const cycleEvidence = menstrualCycleEvidence();
+  const cycleAvoidItems = [
+    "Сарын тэмдэг ирэхийн өмнөх өдрүүдэд хэт хатуу хоолны дүрэм эхлүүлэх",
+    "Тэр өдрүүдийн өлсөлт, амттай зүйл хүсэх мэдрэмжийг зөвхөн сахилга бат гэж тайлбарлах",
+    "Хавагналт, жингийн түр өөрчлөлтийг өөх нэмэгдсэн гэж шууд дүгнэх"
+  ];
   if (primaryKey === "collapse" || tags.includes("control_collapse")) {
     ["Төгс төлөвлөгөө", "Нэг алдаа гарвал бүхнийг дахин эхлүүлэх сорил", "Ичгүүрээр шахдаг хяналт"].forEach(item => avoid.add(item));
   }
@@ -2823,7 +2979,16 @@ function avoidListFor(primaryKey, tags = allReportTags()) {
   if (primaryKey === "glucose" || primaryKey === "physiological" || tags.includes("glucose_like_signal") || tags.includes("physiological_reactivity") || tags.includes("bp_concern")) {
     ["Мацаг", "Хоол алгасах", "Хэт бага калорийн арга", "Кофе уугаад хоолгүй явах"].forEach(item => avoid.add(item));
   }
+  if (cycleEvidence.premenstrual) {
+    cycleAvoidItems.forEach(item => avoid.add(item));
+  }
   if (!avoid.size) avoid.add("Илүү хатуу хоолны дэглэмийг бэлэн шийдэл болгох");
+  if (cycleEvidence.premenstrual) {
+    return unique([
+      ...cycleAvoidItems,
+      ...Array.from(avoid)
+    ]).slice(0, 7);
+  }
   if (primaryKey === "roleOverload" || tags.includes("role_overload")) {
     return unique([
       "“Зүгээр өөртөө цаг гарга” гэсэн ерөнхий зөвлөгөө",
@@ -2908,6 +3073,56 @@ function experimentFor(primaryKey, tags = allReportTags()) {
     return { goal: "Биеийн дохиог аюулгүйгээр тодруулах", actions: ["Хоол холдоход гарсан шинжийг тэмдэглэх", "Хэмжсэн сахар/даралтын утгаа хадгалах", "Мэргэжлийн хүнтэй ярилцах товч нэгтгэл бэлдэх"], track: ["Биеийн дохио", "Хоолны зай", "Хэмжсэн сахар/даралт"], success: "Мацаг/хязгаарлалт эхлэхээс өмнө аюулгүй байдлын зураглал тодорно.", recovery: "Шинж хүчтэй бол жин хасалтын туршилтыг түр зогсоож, мэргэжлийн хүнтэй ярилцахыг түрүүнд тавина." };
   }
   return { goal: "Давтамжийг ичгүүр биш мэдээлэл болгож ажиглах", actions: ["Өдөр бүр 3 минут тайван шалгалт хийх", "Идэх хүсэл эхэлдэг нэг нөхцөлийг нэрлэх", "Дараагийн хоолыг хэвийн үргэлжлэл гэж харах"], track: ["Эхэлдэг нөхцөл", "Дараах нөлөө", "Хэвийн үргэлжлүүлэх дүрэм"], success: "Нэг алдаа бүхэл өдөр болох нь багасна.", recovery: "Алгассан өдөр бүтэлгүйтэл биш, дараагийн тэмдэглэлээс үргэлжлүүлнэ." };
+}
+
+function menstrualCycleContextHtml() {
+  const evidence = menstrualCycleEvidence();
+  if (!evidence.active) return "";
+  const confidenceCopy = evidence.confidenceLow
+    ? `<p>Мөчлөг тогтмол бус, дааврын жирэмслэлтээс хамгаалах хэрэгсэл, PCOS, төрсний дараах/хөхүүл үе, эсвэл перименопаузын нөхцөл байвал календарийн өдрөөр хатуу тайлбар хийхэд тохиромжгүй. Тиймээс энэ хэсгийг онош биш, зөвхөн ажиглах нэмэлт нөхцөл гэж үзээрэй.</p>`
+    : "";
+  const professionalCopy = evidence.tags.includes("amenorrhea_3_months") || evidence.tags.includes("restriction_exercise_cycle_disruption")
+    ? `<p>Сарын тэмдэг ирэхгүй удах, мөчлөг огцом алдагдах нь хоол хасалт, жин огцом буурах, хэт их дасгал, стресс эсвэл бусад биеийн хүчин зүйлтэй давхцаж байвал эхлээд мэргэжлийн хүнтэй ярилцах нь зөв. Энэ тохиолдолд мацаг, огцом хязгаарлалт, өндөр ачаалалтай сорил санал болгохгүй.</p>`
+    : "";
+  const appetiteCopy = evidence.premenstrual
+    ? `<p>Сарын тэмдэг ирэхийн өмнөх өдрүүдэд өлсөх мэдрэмж, амттай юм хүсэх, ядаргаа эсвэл сэтгэл санааны савлагаа нэмэгддэг гэж та тэмдэглэсэн байна. Энэ нь таны сул тал гэсэн үг биш. Зарим хүний идэх хүсэл мөчлөгийн тодорхой өдрүүдэд илүү хүчтэй болдог.</p><p>Тийм өдрүүдэд хэт хатуу хоолны дүрэм тавих нь “маргаашаас чанга барина” гэсэн тойргийг улам хүчтэй болгож магадгүй. Илүү зөв эхлэл нь урьдчилж бэлдсэн зөөлөн сонголт, тогтмол хоол, өөрийгөө буруутгахгүй тэмдэглэл байна.</p>`
+    : `<p>Энэ давтамж мөчлөгийн тодорхой өдрүүдэд хүчтэй болох магадлалтай гэж тэмдэглэгдсэн байна. Энэ нь онош биш, гол шалтгааныг солих тайлбар биш. Харин тухайн өдрүүдэд бие, сэтгэл, нойр, идэх хүсэл яаж өөрчлөгддөгийг зөөлөн ажиглах нэмэлт нөхцөл юм.</p>`;
+  return `
+    <div class="report-section menstrual-cycle-note">
+      <h3>Мөчлөгтэй холбоотой анхаарах зүйл</h3>
+      ${appetiteCopy}
+      ${confidenceCopy}
+      ${professionalCopy}
+    </div>
+  `;
+}
+
+function menstrualCycleExperimentModifierHtml() {
+  const evidence = menstrualCycleEvidence();
+  if (!evidence.active || evidence.professionalFirst) return "";
+  return `
+    <div class="report-section menstrual-cycle-experiment">
+      <h3>Мөчлөгтэй холбоотой өдрүүдэд</h3>
+      <ul>
+        <li>Хэт хатуу хязгаарлалт эхлүүлэхгүй.</li>
+        <li>Тогтмол хоолны тулгуураа хадгална.</li>
+        <li>Амттай зүйл хүсэхийг шууд хорихын оронд урьдчилсан жижиг сонголт бэлдэнэ.</li>
+        <li>“Би сул байна” гэж дүгнэхгүй, тухайн өдрийн бие/сэтгэлийн дохио гэж тэмдэглэнэ.</li>
+      </ul>
+    </div>
+  `;
+}
+
+function menstrualCycleProfessionalSummaryHtml() {
+  const evidence = menstrualCycleEvidence();
+  if (!evidence.professionalFirst) return "";
+  return `
+    <div class="report-section menstrual-cycle-note">
+      <h3>Мөчлөгтэй холбоотой аюулгүй дараалал</h3>
+      <p>Сарын тэмдэг ирэхгүй удах, мөчлөг огцом алдагдах, хоол хасалт, жин огцом буурах эсвэл хэт их дасгал давхцаж байгаа бол энэ хэсгийг ердийн жин хасалтын сорил гэж үзэхгүй. Эхлээд мэргэжлийн хүнтэй ярилцаж, хоол/дасгалын ачаалал биеийн дохиотой яаж холбоотой байж болохыг аюулгүйгээр тодруулах нь зөв.</p>
+      <p>Энэ нь онош биш. Харин мацаг, огцом хязгаарлалт, өндөр ачаалалтай сорилыг түр хойшлуулж, биеийн аюулгүй байдлыг түрүүнд тавих сануулга юм.</p>
+    </div>
+  `;
 }
 
 function professionalCheckHtml(tags = allReportTags(), force = false) {
@@ -3383,6 +3598,10 @@ function renderStagedExperiment(voice) {
 function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], isOneTime = false }) {
   const voice = reportVoiceFor(primary?.key, tags);
   const refinementItems = refinementBullets(primary, secondary).slice(0, 3);
+  const cycleEvidence = menstrualCycleEvidence();
+  const avoidItems = cycleEvidence.premenstrual
+    ? unique([...avoidListFor(primary?.key, tags), ...voice.avoid]).slice(0, 5)
+    : voice.avoid.slice(0, 5);
   const modeCheckNote = mode.mode === "check"
     ? `<p class="danger-copy">Нэмэлтээр нэг биеийн дохиог шалгуулахад илүүдэхгүй. Тиймээс энэ туршилтыг мацаг, хоол алгасах, огцом хязгаарлалтгүй зөөлөн эхлүүлнэ.</p>`
     : "";
@@ -3417,8 +3636,9 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
         </div>
         <div class="report-section">
           <h3>Одоогоор болгоомжлох зүйлс</h3>
-          <ul>${voice.avoid.slice(0, 5).map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
+          <ul>${avoidItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
         </div>
+        ${menstrualCycleContextHtml()}
         <div class="report-section">
           <h3>Эхний жижиг өөрчлөлт</h3>
           <p>${publicHtml(voice.firstStep)}</p>
@@ -3428,6 +3648,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
           <h3>14 хоногийн туршилт</h3>
           ${renderStagedExperiment(voice)}
         </div>
+        ${menstrualCycleExperimentModifierHtml()}
         ${isOneTime ? `<div class="report-section">
           <h3>7 хоногоор нарийвчлах</h3>
           <p>Хэрвээ энэ зураглалыг илүү бодит өдөр тутмын түвшинд харахыг хүсвэл 7 хоногийн богино тэмдэглэлээр дараах хэсгүүдийг тодруулж болно.</p>
@@ -3699,6 +3920,8 @@ function renderReport() {
               <li>Хяналт алдагдах, нуух, ичих мэдрэмж давтагддаг бол эхлээд мэргэжлийн хүнтэй ярилцах дараалал барих.</li>
             </ul>
           </div>
+          ${menstrualCycleContextHtml()}
+          ${menstrualCycleProfessionalSummaryHtml()}
           ${bodySafetyPauseHtml(tags)}
           <div class="actions"><button class="button secondary" onclick="setView('preliminary')">Эхний зураглал руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
         </div>
@@ -4004,6 +4227,7 @@ if (typeof module !== "undefined") {
     mechanisms,
     stageOneQuestions,
     dailyCore,
+    dailyMenstrual,
     probeBank,
     reportReadiness,
     diaryEntrySafetyFlags,
@@ -4033,8 +4257,15 @@ if (typeof module !== "undefined") {
     _internal: {
       reportMode,
       calculateSafetyFlags,
+      calculateMenstrualSafetyFlags,
       calculateScores,
       rankedPatterns,
+      stageQuestions,
+      getDiaryQuestions,
+      hasMenstrualCycleContext,
+      menstrualCycleEvidence,
+      menstrualCycleContextHtml,
+      menstrualCycleExperimentModifierHtml,
       setTestState(nextState) {
         state = {
           ...initialState,

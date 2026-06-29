@@ -24,6 +24,7 @@ const commands = [
   ["node", ["tests/internal-human-feedback-copy-ux.test.js"]],
   ["node", ["tests/question-copy-polish.test.js"]],
   ["node", ["tests/question-navigation.test.js"]],
+  ["node", ["tests/menstrual-cycle-context.test.js"]],
   ["node", ["tests/deep-mongolian-copy-rewrite.test.js"]],
   ["node", ["tests/public-language-purge.test.js"]],
   ["node", ["tests/report-voice-rewrite.test.js"]],
