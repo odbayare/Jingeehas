@@ -93,9 +93,9 @@ function run() {
   assert(!ranked.some(item => item.key === "menstrual_cycle_context"), "cycle context should not become a primary mechanism");
   let report = normalize(app._internal.renderReport());
   assert(report.includes("Мөчлөгтэй холбоотой анхаарах зүйл"), "ordinary report should include cycle context note");
-  assert(report.includes("Зарим хүний идэх хүсэл мөчлөгийн тодорхой өдрүүдэд илүү хүчтэй болдог"));
+  assert(report.includes("Зарим хүнд тэр өдрүүдэд идэх хүсэл илүү хүчтэй болдог"));
   assert(report.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд хэт хатуу хоолны дүрэм эхлүүлэх"), "avoid list should include cycle-aware restriction warning");
-  assert(report.includes("Мөчлөгтэй холбоотой өдрүүдэд"), "14-day experiment should include cycle-aware modifier");
+  assert(report.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"), "14-day experiment should include cycle-aware modifier");
 
   const deterministicBanned = [
     "даавраас болж байна",
@@ -131,7 +131,7 @@ function run() {
   });
   assert.strictEqual(app._internal.reportMode().mode, "professional", "irregular cycle plus PCOS/glucose concern should route professional-first");
   report = normalize(app._internal.renderReport());
-  assert(report.includes("календарийн өдрөөр хатуу тайлбар хийхэд тохиромжгүй"), "confidence-lowering conditions should appear as low-confidence copy");
+  assert(report.includes("өдрөөр нь хатуу тайлбарлах хэрэггүй"), "confidence-lowering conditions should appear as low-confidence copy");
 
   setState({
     stageAnswers: {
@@ -191,7 +191,7 @@ function run() {
         }
       },
       expectedMode: "professional",
-      expectedCopy: "хатуу тайлбар хийхэд тохиромжгүй"
+      expectedCopy: "өдрөөр нь хатуу тайлбарлах хэрэггүй"
     },
     {
       name: "Cycle User C",

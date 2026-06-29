@@ -106,7 +106,7 @@ function run() {
 
   setBase({ oneTimePaid: true });
   const oneTimeFullReport = normalize(_internal.renderReport());
-  ["Өдөр дуусах үед хоолны асуудал", "Дахин шийдвэр гаргах ачааллаас түр чөлөөлөх", "Эхний жижиг өөрчлөлт", "тэмдэглэл"].forEach(phrase => {
+  ["Орой болоход хоол бодох тэнхээ үлдэхгүй", "Дахин юм бодохгүй амрах", "Эхний жижиг өөрчлөлт", "тэмдэглэл"].forEach(phrase => {
     assert(oneTimeFullReport.includes(phrase), `one-time report should include Mongolian replacement: ${phrase}`);
   });
   assert(!oneTimeFullReport.includes("давтамжтай нийцэж байна"));

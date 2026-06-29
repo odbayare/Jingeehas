@@ -116,7 +116,7 @@ function run() {
 
   setOneTimeReport();
   const oneTimeText = normalize(_internal.renderReport());
-  assert(oneTimeText.includes("Хэрвээ энэ зураглалыг илүү бодит өдөр тутмын түвшинд харахыг хүсвэл"));
+  assert(oneTimeText.includes("Хэрвээ үүнийг илүү бодит өдөр тутмын түвшинд ялгахыг хүсвэл"));
   assert(oneTimeText.includes("7 хоногоор нарийвчлах"));
   assert(!oneTimeText.includes("Миний pattern-ийг 7 хоногоор шалгах"));
   assertNoPressureCopy(oneTimeText);

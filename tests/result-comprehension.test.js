@@ -49,7 +49,17 @@ function assertNoConfusingReportWords(report) {
     "хүчтэй нийцэж байна",
     "дунд зэрэг нийцэж байна",
     "механизм",
-    "Нурах давтамж"
+    "Нурах давтамж",
+    "шийдвэрийн ачаалал",
+    "тухайн мөчид хоол дараах хэрэгцээний нэгийг түр нөхөж байсан байж магадгүй",
+    "таны хариултаас",
+    "харагдаж байна",
+    "энэ эхний зураглал",
+    "давтагддагийг харна",
+    "давтагдаж байна",
+    "нөхцөлд давтагддаг",
+    "орчин өөрөө идэх шийдвэрийг",
+    "Дэлгэрэнгүй тайлан харах"
   ].forEach(phrase => assert(!report.includes(phrase), `public report should not contain confusing phrase: ${phrase}`));
 }
 
@@ -71,14 +81,14 @@ function run() {
   });
   assertSimpleStructure(rewardDeficitReport);
   assert(rewardDeficitReport.includes("өөрийгөө хойш тавьсны дараа"));
-  assert(rewardDeficitReport.includes("жижиг шагнал"));
+  assert(rewardDeficitReport.includes("өөртөө өгөх нэг жижиг зүйл"));
 
   const cueReport = setOrdinaryReport({
     "S1-F01": ["Харагдаад эсвэл үнэртээд идмээр болсон"],
     "S1-R02": ["Хоолны зураг эсвэл захиалгын апп харахад"]
   });
   assertSimpleStructure(cueReport);
-  assert(cueReport.includes("Хоол харагдах"));
+  assert(cueReport.includes("хоол нүдэнд өртөхөөр"));
   assert(cueReport.includes("захиалгын апп"));
   assert(cueReport.includes("нэг дохиог"));
 
@@ -88,10 +98,10 @@ function run() {
     "MC-04": ["Амттай юм, гурилан зүйл илүү хүсдэг", "Сэтгэл санаа савлах үед идэх хүсэл нэмэгддэг", "Ядаргаа, нойр муудахтай давхцдаг"],
     "S1-R02": ["Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"]
   });
-  assert(cycleReport.includes("Сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх"));
-  assert(cycleReport.includes("Зарим хүнд мөчлөгийн тодорхой өдрүүдэд"));
+  assert(cycleReport.includes("Сарын тэмдэг ирэхээс өмнөх хэдэн өдөрт амттай юм илүү хүчтэй татдаг байж магадгүй."));
+  assert(cycleReport.includes("Зарим хүнд тэр өдрүүдэд"));
   assert(cycleReport.includes("Тэр өдрүүдийн өлсөлт, амттай зүйл хүсэх мэдрэмжийг зөвхөн сахилга бат гэж тайлбарлахаас түр зайлсхий."));
-  assert(cycleReport.includes("Сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх, ядаргаа, нойр, сэтгэл санаа зэрэг хамт өөрчлөгдөж байгаа нь таны хариултаас харагдаж байна."));
+  assert(cycleReport.includes("Сарын тэмдэг ирэхээс өмнөх хэдэн өдөрт амттай зүйл хүсэх, ядрах, нойр муудах, сэтгэл савлах зэрэг хамт ирж байна."));
   assert(cycleReport.includes("зөөлөн төлөвлөгөө"));
   assert(!cycleReport.includes("Өдөржин өөрийн хэрэгцээ хамгийн сүүлд"));
   assert(!cycleReport.includes("надад ч гэсэн нэг юм хэрэгтэй"));

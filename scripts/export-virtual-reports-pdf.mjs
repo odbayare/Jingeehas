@@ -52,7 +52,7 @@ const USER_LABELS = {
 };
 
 const FRIENDLY_MECHANISMS = {
-  executive: "Оройн шийдвэрийн ачаалал",
+  executive: "Орой хоол бодох тэнхээ дуусах үе",
   decisionDefault: "Бэлэн сонголт хамгийн амар болох үе",
   hungerSafety: "Дараа өлсөхөөс хамгаалах давтамж",
   glucose: "Биеийн дохиог хамгаалах хэрэгцээ",
@@ -124,7 +124,7 @@ function translateExportText(value) {
     .replace(/\b5-6 hours, low evening energy\./g, "5-6 цаг унтдаг, оройн тэнхээ бага.")
     .replace(/\bNo severe safety signal\./g, "Хүнд аюулгүй байдлын дохио байхгүй.")
     .replace(/\bordinary report\b/g, "ердийн тайлан")
-    .replace(/\bevening decision load \/ low-energy default\b/g, "оройн шийдвэрийн ачаалал / тэнхээ багасах үеийн хамгийн амар сонголт")
+    .replace(/\bevening decision load \/ low-energy default\b/g, "орой хоол бодох тэнхээ дуусах үе / тэнхээ багасах үеийн хамгийн амар сонголт")
     .replace(/\bTwo-child working parent\b/g, "Хоёр хүүхэдтэй, ажилтай эцэг/эх")
     .replace(/\bOffice worker carrying deadlines\b/g, "Ажлын хугацаа, гэрийн хүлээлт давхцсан оффисын ажилтан")
     .replace(/\bfamily expectations\b/g, "гэр бүлийн хүлээлт")

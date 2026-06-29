@@ -150,7 +150,7 @@ function run() {
   assert(oneTime.includes("Таны гүн зураглал бэлэн боллоо"));
   assert(oneTime.includes("7 хоногоор нарийвчлах"));
   assert(oneTime.includes("Гол зураг"));
-  assert(oneTime.includes("Хэрвээ энэ зураглалыг илүү бодит өдөр тутмын түвшинд харахыг хүсвэл"));
+  assert(oneTime.includes("Хэрвээ үүнийг илүү бодит өдөр тутмын түвшинд ялгахыг хүсвэл"));
   assert(!oneTime.includes("Миний pattern-ийг 7 хоногоор шалгах"));
 }
 

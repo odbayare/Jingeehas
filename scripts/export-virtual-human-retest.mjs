@@ -54,7 +54,7 @@ const personas = [
     title: "Орой тэнхээ дуусдаг хэрэглэгч",
     expected: "Энгийн тайлан, оройн тэнхээ багасах / бэлэн сонголт",
     expectedMode: "deep",
-    expectedText: ["Орой тэнхээ багасах", "хамгийн амар сонголт"],
+    expectedText: ["Орой болоход хоол бодох", "хамгийн амар сонголт"],
     persona: { age: 38, profile: "Ажилтай, гэр бүлтэй. Өдөр гайгүй барьдаг ч орой ядарч хоол захиалдаг. Хоолны цаг өдөр бүр өөр. Нойр 5-6 цаг." },
     selectedAnswers: {
       "S1-C01": "38",
@@ -111,7 +111,7 @@ const personas = [
     title: "Хоол холдоход хэтрүүлдэг хэрэглэгч",
     expected: "Энгийн тайлан, дараа өлсөхөөс хамгаалах",
     expectedMode: "deep",
-    expectedText: ["Хоол холдоход", "дараа өлсөхөөс хамгаалах"],
+    expectedText: ["хоолны зай хэт уртсах", "Дараа дахиад өлсөх"],
     persona: { age: 42, profile: "Хоолны зай уртсахад орой хэт өлсдөг. Дараа өлсөхөөс хамгаалж илүү иддэг. Хүнд биеийн шинжгүй." },
     selectedAnswers: {
       "S1-M01": "Өдрийн хоол алгасдаг",
@@ -130,7 +130,7 @@ const personas = [
     title: "Өөрийгөө хойш тавьдаг хэрэглэгч",
     expected: "Энгийн тайлан, өөрийн хэрэгцээ хойшлогдох / жижиг шагнал",
     expectedMode: "deep",
-    expectedText: ["өөрийгөө хойш тавьсны дараа", "жижиг шагнал", "өөрийн хоол", "үлдэгдэл цагт найдахгүй"],
+    expectedText: ["өөрийгөө хойш тавьсны дараа", "өөртөө өгөх нэг жижиг", "өөрийн хоол", "үлдэгдэл цагт найдахгүй"],
     persona: { age: 31, profile: "Бусдын хэрэгцээ түрүүлдэг. Орой амттай зүйл өөртөө өгөх ганц жижиг шагнал мэт санагддаг." },
     selectedAnswers: {
       "S1-R02": ["Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед"],
@@ -257,7 +257,7 @@ function htmlToText(html) {
     .replace(/<style[\s\S]*?<\/style>/gi, " ")
     .replace(/<li>/gi, "\n- ")
     .replace(/<p[^>]*>/gi, "\n")
-    .replace(/<h[1-4][^>]*>/gi, "\n## ")
+    .replace(/<h[1-4][^>]*>/gi, "\n")
     .replace(/<[^>]+>/g, " ")
     .replace(/&quot;/g, "\"")
     .replace(/&amp;/g, "&")
@@ -435,7 +435,8 @@ function answersMd(results) {
 }
 
 function reportsMd(results) {
-  return `# 10 virtual human reports\n\n${results.map((r) => `## ${r.userId}\n\n### Товч хариу\n\n${r.simpleResult.stuckMoment ? `**Таны гол гацдаг мөч:** ${r.simpleResult.stuckMoment}\n\n**Энэ юу гэсэн үг вэ?**\n${mdList(r.simpleResult.meaningBullets)}\n\n**Эхлээд хийх нэг жижиг зүйл:** ${r.simpleResult.firstStep}\n\n**Одоогоор түр болгоомжлох зүйл:** ${r.simpleResult.avoidForNow}\n\n${r.simpleResult.menstrualCycleNoteIfAny ? `**Нэмэлтээр анхаарах зүйл:** ${r.simpleResult.menstrualCycleNoteIfAny}\n` : ""}` : "Энгийн тайлан дарагдсан тул Товч хариу карт харуулаагүй."}\n\n### Дэлгэрэнгүй тайлан\n\n${r.detailedReportText}\n\n### Виртуал хүний санал\n\n- Товч хариу: ${r.feedbackSimulation.simpleResultClarity}\n- Нөхцөлтэй нийцсэн үнэлгээ: ${r.feedbackSimulation.reportFitRating}/10\n- Ойлгогдсон мэдрэмж: ${r.feedbackSimulation.feltUnderstood}\n- Хэт ерөнхий санагдсан эсэх: ${r.feedbackSimulation.aiGenericFeeling}\n- 9,900₮ үнэ цэнэ: ${r.feedbackSimulation.valueAt9900}\n`).join("\n---\n\n")}`;
+  const suppressedCopy = "Энэ хэрэглэгчид энгийн жин хасалтын тайлан үзүүлэхгүй. Аюулгүй байдлын зөвлөмжийг түрүүнд харуулсан.";
+  return `# 10 virtual human reports\n\n${results.map((r) => `## ${r.userId}\n\n### Товч хариу\n\n${r.simpleResult.stuckMoment ? `**Таны гол гацдаг мөч:** ${r.simpleResult.stuckMoment}\n\n**Энэ юу гэсэн үг вэ?**\n${mdList(r.simpleResult.meaningBullets)}\n\n**Эхлээд хийх нэг жижиг зүйл:** ${r.simpleResult.firstStep}\n\n**Одоогоор түр болгоомжлох зүйл:** ${r.simpleResult.avoidForNow}\n\n${r.simpleResult.menstrualCycleNoteIfAny ? `**Нэмэлтээр анхаарах зүйл:** ${r.simpleResult.menstrualCycleNoteIfAny}\n` : ""}` : suppressedCopy}\n\n### Дэлгэрэнгүй тайлан\n\n${r.detailedReportText}\n\n### Виртуал хүний санал\n\n- Товч хариу: ${r.feedbackSimulation.simpleResultClarity}\n- Нөхцөлтэй нийцсэн үнэлгээ: ${r.feedbackSimulation.reportFitRating}/10\n- Ойлгогдсон мэдрэмж: ${r.feedbackSimulation.feltUnderstood}\n- Хэт ерөнхий санагдсан эсэх: ${r.feedbackSimulation.aiGenericFeeling}\n- 9,900₮ үнэ цэнэ: ${r.feedbackSimulation.valueAt9900}\n`).join("\n---\n\n")}`;
 }
 
 function auditMd(results, summary) {
@@ -557,7 +558,7 @@ for r in data["results"]:
         if sr.get("menstrualCycleNoteIfAny"):
             story.append(Paragraph(f"Нэмэлтээр анхаарах зүйл: {esc(sr.get('menstrualCycleNoteIfAny'))}", base))
     else:
-        story.append(Paragraph("Энгийн тайлан дарагдсан тул Товч хариу карт харуулаагүй.", base))
+        story.append(Paragraph("Энэ хэрэглэгчид энгийн жин хасалтын тайлан үзүүлэхгүй. Аюулгүй байдлын зөвлөмжийг түрүүнд харуулсан.", base))
     story.append(Paragraph("Дэлгэрэнгүй тайлан", h2))
     story.append(Paragraph(esc(r["detailedReportText"][:4500]), small))
     story.append(Paragraph("Виртуал хүний санал", h2))
