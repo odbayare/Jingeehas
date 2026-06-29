@@ -63,7 +63,7 @@ function run() {
     "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?",
     "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?",
     "Тайлангийн хэл найруулга ямар санагдсан бэ?",
-    "Энэ тайланг 29,000₮-өөр авахад үнэ цэнтэй санагдах уу?",
+    "Энэ тайланг 29,000 төгрөгөөр авахад үнэ цэнтэй санагдах уу?",
     "Хамгийн хэрэгтэй санагдсан хэсэг юу байсан бэ?",
     "Хамгийн засмаар санагдсан хэсэг юу байсан бэ?"
   ];
@@ -71,6 +71,7 @@ function run() {
   assert(!internalReport.includes("29,000 төлж"));
   assert(!internalReport.includes("29,000₮ төлж"));
   assert(!internalReport.includes("29,000-өөр"));
+  assert(!internalReport.includes("29,000₮-өөр"));
 
   _internal.updateInternalFeedbackField("fitRating", "9");
   _internal.updateInternalFeedbackField("simpleResultClarity", "Тийм, шууд ойлгосон");

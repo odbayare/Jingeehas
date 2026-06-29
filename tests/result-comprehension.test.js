@@ -106,10 +106,11 @@ function run() {
   const feedback = normalize(_internal.renderInternalTesterFeedbackSurvey());
   assert(feedback.includes("Тайлангийн эхний “Товч хариу” хэсэг ойлгомжтой байсан уу?"));
   assert(feedback.includes("Дахин уншиж байж ойлгосон"));
-  assert(feedback.includes("29,000₮-өөр"));
+  assert(feedback.includes("29,000 төгрөгөөр"));
   assert(!feedback.includes("29,000 төлж"));
   assert(!feedback.includes("29,000₮ төлж"));
   assert(!feedback.includes("29,000-өөр"));
+  assert(!feedback.includes("29,000₮-өөр"));
 
   const professionalReport = setOrdinaryReport({ "S1-S03": "Одоо давтагддаг" });
   assert(professionalReport.includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));
