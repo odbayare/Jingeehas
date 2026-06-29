@@ -3305,6 +3305,13 @@ function compressedSurfaceBehaviors(primaryKey, tags = allReportTags()) {
 }
 
 function refinementBullets(primary, secondary = []) {
+  if (selectReportVoiceKey(primary?.key, allReportTags()) === "menstrualCycleContext") {
+    return [
+      "Мөчлөгтэй холбоотой өдрүүдэд идэх хүсэл яг яаж өөрчлөгдөж байгааг харна.",
+      "Ядаргаа, нойр, сэтгэл санаа, амттай зүйл хүсэх мэдрэмж хэрхэн давхцаж байгааг тэмдэглэлээр тодруулна.",
+      "Өмнөх 30 минут, оройн тэнхээ, орчны дохио, бэлэн сонголтын нөхцөлийг тэмдэглэл дээр тодруулна."
+    ];
+  }
   const items = [primary, ...secondary].filter(Boolean).slice(0, 2).map(item => {
     const short = publicMechanismShort(item.key);
     return `${short} яг ямар өдөр, ямар нөхцөлд давтагддагийг харна.`;
@@ -3471,6 +3478,9 @@ function livedExplanationFor(primaryKey) {
 }
 
 function ordinaryReportOpeningTitle(primaryKey, tags = []) {
+  if (shouldUseMenstrualCycleContextVoice("rewardDeficit")) {
+    return "Сарын тэмдэг ирэхийн өмнөх өдрүүдтэй холбоотой идэх хүсэл тодорч байна";
+  }
   if (primaryKey === "executive" || primaryKey === "decisionDefault" || tags.includes("executive_load") || tags.includes("default_delivery")) {
     return "Таны хариултаас оройн тэнхээ багасах үе тод харагдаж байна";
   }
@@ -3629,6 +3639,39 @@ const REPORT_VOICE_LIBRARY = {
       ["Хэрвээ нэг өдөр алгасвал", "өөрийгөө буруутгахгүй. Дараагийн өдөр дахин 10 минутаас эхэл."]
     ]
   },
+  menstrualCycleContext: {
+    opening: [
+      "Сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх, ядаргаа, нойр, сэтгэл санаа зэрэг хамт өөрчлөгдөж байгаа нь таны хариултаас харагдаж байна.",
+      "Энэ нь “би сул байна” гэсэн дүгнэлт биш. Зарим хүнд мөчлөгийн тодорхой өдрүүдэд өлсөх мэдрэмж, амттай зүйл хүсэх, тэнхээ, сэтгэл санаа илүү хүчтэй мэдрэгдэж болно. Тийм өдрүүдэд хэт хатуу дүрэм тавих нь дараа нь илүү хэцүү болгож магадгүй."
+    ],
+    needs: [
+      "Амттай зүйлээр түр таатай мэдрэмж авах",
+      "Ядаргаа, сэтгэл савлах мэдрэмжийг зөөллөх",
+      "Тухайн өдрийн биеийн дохионд хурдан хариу өгөх"
+    ],
+    cycle: [
+      "Сарын тэмдэг ирэхээс өмнөх өдрүүд ойртно",
+      "Ядаргаа, сэтгэл савлах, амттай зүйл хүсэх мэдрэмж нэмэгдэнэ",
+      "Хэт хатуу барих гэж оролдвол хүсэл улам хүчтэй санагдана",
+      "Амттай зүйл түр таатай мэдрэмж өгнө",
+      "Дараа нь өөрийгөө буруутгах бодол орж ирж магадгүй",
+      "Дараагийн мөчлөгт урьдчилсан зөөлөн төлөвлөгөө байхгүй бол тойрог дахин давтагдана"
+    ],
+    notProblem: "Асуудал амттай юм хүссэндээ биш. Мөчлөгийн тодорхой өдрүүдэд бие, сэтгэл, тэнхээ, идэх хүсэл зэрэг хамт өөрчлөгдөж болох тул тэр өдрүүдийг жирийн өдрүүдтэй адил хатуу дүрмээр барих нь хүндрэл үүсгэж магадгүй.",
+    avoid: [
+      "Сарын тэмдэг ирэхийн өмнөх өдрүүдэд хэт хатуу хоолны дүрэм эхлүүлэх",
+      "Тэр өдрүүдийн өлсөлт, амттай зүйл хүсэх мэдрэмжийг зөвхөн сахилга бат гэж тайлбарлах",
+      "Хавагналт, жингийн түр өөрчлөлтийг өөх нэмэгдсэн гэж шууд дүгнэх",
+      "Амттай зүйл хүсэхийг бүрэн хорих"
+    ],
+    firstStep: "Эхний жижиг өөрчлөлт бол тэр өдрүүдэд өөрийгөө илүү чанга барих биш. Харин тогтмол хоол, урьдчилж сонгосон жижиг амттай сонголт, өөрийгөө буруутгахгүй тэмдэглэл бэлдэх.",
+    experiment: [
+      ["Эхний 3 өдөр", "мөчлөгтэй холбоотой байж болох өдрүүдэд өлсөлт, амттай зүйл хүсэх, ядаргаа, сэтгэл санаагаа л тэмдэглэ."],
+      ["4–10 дахь өдөр", "тэр өдрүүдэд хэт хатуу дүрэм эхлүүлэхгүй. Тогтмол хоол, нэг жижиг амттай сонголт, ус/цай/амрах 10 минутын зөөлөн төлөвлөгөө бэлд."],
+      ["11–14 дахь өдөр", "зөөлөн төлөвлөгөөтэй өдөр, огцом хориг тавьсан өдөр хоёрын ялгааг анзаар."],
+      ["Хэрвээ нэг өдөр алгасвал", "“би сул байна” гэж дүгнэхгүй. Дараагийн өдөр тогтмол хоол болон зөөлөн сонголт руугаа буц."]
+    ]
+  },
   cue: {
     opening: [
       "Таны хариултаас өлсөөгүй байсан ч хоол харагдах, үнэртэх, захиалгын апп нээгдэх, зууш гарын дор байх үед идэх бодол өөрөө орж ирдэг нь мэдрэгдэж байна.",
@@ -3678,15 +3721,43 @@ const REPORT_VOICE_LIBRARY = {
   }
 };
 
+function hasSelfNeglectEvidence(answers = state.stageAnswers) {
+  return [
+    ...asArray(answers["S1-F01"]),
+    ...asArray(answers["S1-R02"]),
+    answers["S1-V01"] || "",
+    answers["S1-V02"] || ""
+  ].some(value => containsAny(value, ["өөрийгөө жаахан шагна", "өөрийгөө хойш", "бусдын хэрэгцээ", "миний цаг", "өөрийн хэрэгцээ", "үлдэгдэл цаг", "надад ч гэсэн"]));
+}
+
+function hasStrongMenstrualCycleContextEvidence() {
+  const answers = state.stageAnswers || {};
+  const evidence = menstrualCycleEvidence();
+  return evidence.premenstrual && (
+    evidence.tags.includes("cycle_sweet_craving") ||
+    evidence.tags.includes("cycle_mood_eating") ||
+    evidence.tags.includes("cycle_sleep_fatigue") ||
+    evidence.tags.includes("cycle_linked_function") ||
+    asArray(answers["S1-R02"]).includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд")
+  );
+}
+
+function shouldUseMenstrualCycleContextVoice(baseVoiceKey) {
+  return hasStrongMenstrualCycleContextEvidence()
+    && !hasSelfNeglectEvidence()
+    && ["rewardDeficit", "circadian", "executive"].includes(baseVoiceKey);
+}
+
 function selectReportVoiceKey(primaryKey, tags = []) {
-  if (primaryKey === "roleOverload" || primaryKey === "rewardDeficit" || tags.includes("role_overload")) return "rewardDeficit";
-  if (primaryKey === "cue" || tags.includes("cue_trigger")) return "cue";
-  if (primaryKey === "collapse" || primaryKey === "perfectionism" || tags.includes("control_collapse")) return "collapse";
-  if (primaryKey === "regulation" || tags.includes("food_as_regulation")) return "regulation";
-  if (primaryKey === "hungerSafety" || tags.includes("hunger_safety") || tags.includes("meal_gap_5h_plus") || tags.includes("skipped_meal")) return "hungerSafety";
-  if (primaryKey === "circadian" || tags.includes("circadian_crash")) return "circadian";
-  if (primaryKey === "reward" || tags.includes("reward_pull")) return "rewardDeficit";
-  return "executive";
+  let voiceKey = "executive";
+  if (primaryKey === "roleOverload" || primaryKey === "rewardDeficit" || tags.includes("role_overload")) voiceKey = "rewardDeficit";
+  else if (primaryKey === "cue" || tags.includes("cue_trigger")) voiceKey = "cue";
+  else if (primaryKey === "collapse" || primaryKey === "perfectionism" || tags.includes("control_collapse")) voiceKey = "collapse";
+  else if (primaryKey === "regulation" || tags.includes("food_as_regulation")) voiceKey = "regulation";
+  else if (primaryKey === "hungerSafety" || tags.includes("hunger_safety") || tags.includes("meal_gap_5h_plus") || tags.includes("skipped_meal")) voiceKey = "hungerSafety";
+  else if (primaryKey === "circadian" || tags.includes("circadian_crash")) voiceKey = "circadian";
+  else if (primaryKey === "reward" || tags.includes("reward_pull")) voiceKey = "rewardDeficit";
+  return shouldUseMenstrualCycleContextVoice(voiceKey) ? "menstrualCycleContext" : voiceKey;
 }
 
 function reportVoiceFor(primaryKey, tags = []) {
@@ -3700,22 +3771,7 @@ function reportVoiceFor(primaryKey, tags = []) {
 function getSimpleResultSummary(primaryKey, context = {}) {
   const tags = context.tags || [];
   const voiceKey = selectReportVoiceKey(primaryKey, tags);
-  const cycleEvidence = menstrualCycleEvidence();
-  const answers = state.stageAnswers || {};
-  const selfNeglectSignals = [
-    ...asArray(answers["S1-F01"]),
-    ...asArray(answers["S1-R02"]),
-    answers["S1-V01"] || "",
-    answers["S1-V02"] || ""
-  ].some(value => containsAny(value, ["өөрийгөө жаахан шагна", "өөрийгөө хойш", "бусдын хэрэгцээ", "миний цаг", "өөрийн хэрэгцээ", "үлдэгдэл цаг"]));
-  const cycleSignals = cycleEvidence.premenstrual && (
-    cycleEvidence.tags.includes("cycle_sweet_craving") ||
-    cycleEvidence.tags.includes("cycle_mood_eating") ||
-    cycleEvidence.tags.includes("cycle_sleep_fatigue") ||
-    cycleEvidence.tags.includes("cycle_linked_function") ||
-    asArray(answers["S1-R02"]).includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд")
-  );
-  if (cycleSignals && !selfNeglectSignals && ["rewardDeficit", "circadian", "executive"].includes(voiceKey)) {
+  if (voiceKey === "menstrualCycleContext") {
     return {
       stuckMoment: "Сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх, ядаргаа, сэтгэл савлах нь идэх хүслийг хүчтэй болгож байна.",
       meaningBullets: [

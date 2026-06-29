@@ -91,8 +91,13 @@ function run() {
   assert(cycleReport.includes("Сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх"));
   assert(cycleReport.includes("Зарим хүнд мөчлөгийн тодорхой өдрүүдэд"));
   assert(cycleReport.includes("Тэр өдрүүдийн өлсөлт, амттай зүйл хүсэх мэдрэмжийг зөвхөн сахилга бат гэж тайлбарлахаас түр зайлсхий."));
+  assert(cycleReport.includes("Сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх, ядаргаа, нойр, сэтгэл санаа зэрэг хамт өөрчлөгдөж байгаа нь таны хариултаас харагдаж байна."));
+  assert(cycleReport.includes("зөөлөн төлөвлөгөө"));
+  assert(!cycleReport.includes("Өдөржин өөрийн хэрэгцээ хамгийн сүүлд"));
+  assert(!cycleReport.includes("надад ч гэсэн нэг юм хэрэгтэй"));
   assert(cycleReport.includes("Нэмэлтээр анхаарах зүйл"));
   assert(cycleReport.includes("Энэ нь онош биш"));
+  assert(!cycleReport.includes("Дэлгэрэнгүй тайлан харах"));
   assert(!cycleReport.includes("Нэмэлтээр анхаарах зүйл: Нэмэлтээр анхаарах зүйл"));
   ["даавраас болж байна", "энэ бол PMS", "эмэгтэй хүмүүс бүгд", "заавал"].forEach(phrase => {
     assert(!cycleReport.includes(phrase), `cycle simple result should not overstate: ${phrase}`);
@@ -104,6 +109,7 @@ function run() {
   assert(feedback.includes("29,000₮-өөр"));
   assert(!feedback.includes("29,000 төлж"));
   assert(!feedback.includes("29,000₮ төлж"));
+  assert(!feedback.includes("29,000-өөр"));
 
   const professionalReport = setOrdinaryReport({ "S1-S03": "Одоо давтагддаг" });
   assert(professionalReport.includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));

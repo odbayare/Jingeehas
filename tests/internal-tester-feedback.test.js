@@ -68,6 +68,9 @@ function run() {
     "Хамгийн засмаар санагдсан хэсэг юу байсан бэ?"
   ];
   questions.forEach(question => assert(internalReport.includes(question), `missing feedback question: ${question}`));
+  assert(!internalReport.includes("29,000 төлж"));
+  assert(!internalReport.includes("29,000₮ төлж"));
+  assert(!internalReport.includes("29,000-өөр"));
 
   _internal.updateInternalFeedbackField("fitRating", "9");
   _internal.updateInternalFeedbackField("simpleResultClarity", "Тийм, шууд ойлгосон");
