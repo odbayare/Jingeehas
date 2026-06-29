@@ -58,6 +58,7 @@ function run() {
     "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?",
     "Асуултууд ойлгомжтой байсан уу?",
     "Тайлан таны нөхцөлтэй хэр нийцсэн бэ?",
+    "Тайлангийн эхний “Товч хариу” хэсэг ойлгомжтой байсан уу?",
     "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?",
     "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?",
     "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?",
@@ -69,6 +70,8 @@ function run() {
   questions.forEach(question => assert(internalReport.includes(question), `missing feedback question: ${question}`));
 
   _internal.updateInternalFeedbackField("fitRating", "9");
+  _internal.updateInternalFeedbackField("simpleResultClarity", "Тийм, шууд ойлгосон");
+  _internal.updateInternalFeedbackField("simpleResultClarityDetail", "Эхний хэсэг ойлгомжтой");
   _internal.updateInternalFeedbackField("mostUsefulPart", "Давтагддаг тойрог");
   _internal.updateInternalFeedbackField("mostNeedsFix", "Зарим өгүүлбэр богино байвал сайн");
   _internal.submitInternalFeedback();
@@ -82,6 +85,7 @@ function run() {
   assert(Array.isArray(records[0].secondaryMechanisms), "feedback record should include secondary mechanisms");
   assert.strictEqual(records[0].safetyMode, "deep");
   assert.strictEqual(records[0].feedback.fitRating, "9");
+  assert.strictEqual(records[0].feedback.simpleResultClarity, "Тийм, шууд ойлгосон");
 
   const thanks = normalize(_internal.renderFeedbackThanks());
   assert(thanks.includes("Санал өгсөнд баярлалаа"));

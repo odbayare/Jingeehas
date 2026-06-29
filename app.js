@@ -26,6 +26,8 @@ const INTERNAL_FEEDBACK_DEFAULTS = {
   questionClarity: "Ерөнхийдөө ойлгомжтой",
   unclearQuestions: "",
   fitRating: "8",
+  simpleResultClarity: "Ерөнхийдөө ойлгосон",
+  simpleResultClarityDetail: "",
   feltUnderstood: "Зарим хэсэг дээр",
   feltUnderstoodReason: "",
   newInsight: "Бага зэрэг",
@@ -3695,6 +3697,120 @@ function reportVoiceFor(primaryKey, tags = []) {
   };
 }
 
+function getSimpleResultSummary(primaryKey, context = {}) {
+  const tags = context.tags || [];
+  const voiceKey = selectReportVoiceKey(primaryKey, tags);
+  const summaries = {
+    executive: {
+      stuckMoment: "Орой тэнхээ багасах үед хамгийн амар сонголт ялдаг.",
+      meaningBullets: [
+        "Та юу хийхээ мэдэхгүйдээ биш.",
+        "Орой дахин хоол бодож, сонгох тэнхээ үлдэхгүй байна.",
+        "Тэр үед бэлэн, амар сонголт түрүүлж байна."
+      ],
+      firstStep: "Орой дахин шийдэхгүй байхаар 2 бэлэн хоолны сонголт урьдчилж тогтоо.",
+      avoidForNow: "Ядарсан орой өөрөөсөө дахин олон шийдвэр шаардах төлөвлөгөөнөөс түр зайлсхий."
+    },
+    regulation: {
+      stuckMoment: "Стресс өндөр үед хоол түр амсхийх арга болж байна.",
+      meaningBullets: [
+        "Тухайн үед хоол зөвхөн өлсөлт дарах зүйл биш байна.",
+        "Дотор давчдах, санаа зовох үед хоол хэсэг тайвшруулах шиг болдог.",
+        "Дараа нь гэмших мэдрэмж нэмэгдвэл энэ тойрог улам хүндэрдэг."
+      ],
+      firstStep: "Идэхээс өмнө 60 секунд “би өлсөж байна уу, амсхийх газар хайж байна уу?” гэж ялга.",
+      avoidForNow: "Стресс ихтэй өдөр өөрийгөө зөвхөн тэвч гэж шахахаас түр зайлсхий."
+    },
+    collapse: {
+      stuckMoment: "Нэг удаа төлөвлөгөө зөрөхөд “өнөөдөр өнгөрлөө” гэж мэдрэгддэг.",
+      meaningBullets: [
+        "Асуудал ганц удаа хазайсандаа биш.",
+        "Тэр мөчөөс хойш дараагийн хоолноос хэвийн үргэлжлэх зам бүдгэрч байна.",
+        "Маргаашаас илүү чанга барина гэсэн бодол тойргийг дахин эхлүүлж магадгүй."
+      ],
+      firstStep: "Нэг хазайлтын дараа хэрэглэх “дараагийн хоолноос хэвийн үргэлжлүүлэх” дүрэмтэй бол.",
+      avoidForNow: "Нэг алдааны дараа бүхнийг дахин эхлүүлэх хатуу дэглэмээс түр зайлсхий."
+    },
+    hungerSafety: {
+      stuckMoment: "Хоол холдоход дараа өлсөхөөс хамгаалах гэж илүү идэх хандлага гардаг.",
+      meaningBullets: [
+        "Өдөр хоол холдох үед бие орой илүү яаралтай хариу өгч байна.",
+        "Дараа хэзээ идэх нь тодорхойгүй санагдах үед илүү идэх нь хамгаалах оролдлого байж болно.",
+        "Энэ нь сул тал биш, хэмнэл тогтворгүй байгаагийн дохио байж магадгүй."
+      ],
+      firstStep: "5 цагаас дээш зай гарахаас өмнө жижиг гүүр хоол эсвэл зууш төлөвлө.",
+      avoidForNow: "Өдөр хоол алгасаад орой өөрийгөө тэс гэж шахахаас түр зайлсхий."
+    },
+    rewardDeficit: {
+      stuckMoment: "Өдөржин өөрийгөө хойш тавьсны дараа орой амттай зүйл өөртөө өгөх жижиг шагнал болж байна.",
+      meaningBullets: [
+        "Энэ нь зүгээр амттан хүссэн асуудал биш.",
+        "Өөрийн хоол, амралт, таатай зүйл өдөржин хойшлогдож байна.",
+        "Орой хоол “надад ч гэсэн нэг юм хэрэгтэй” гэсэн мэдрэмжтэй холбогдож байна."
+      ],
+      firstStep: "Өдөр бүр өөрийн хоол эсвэл амралтын 10 минутыг үлдэгдэл цагт найдахгүй хамгаал.",
+      avoidForNow: "Оройн амттай зүйл хүсэхийг шууд бүрэн хорихоос түр зайлсхий."
+    },
+    cue: {
+      stuckMoment: "Хоол харагдах, үнэртэх, захиалгын апп нээгдэхэд өлсөөгүй байсан ч идэх бодол орж ирдэг.",
+      meaningBullets: [
+        "Энд гол нь хүсэл зориг сулдаа биш.",
+        "Орчин өөрөө идэх шийдвэрийг эхлүүлж байна.",
+        "Харагдах зүйл ойр байх тусам идэх бодол хурдан орж ирдэг."
+      ],
+      firstStep: "Хамгийн хүчтэй нөлөөлдөг нэг дохиог нэг алхам холдуул.",
+      avoidForNow: "Бүх хоолоо хорих гэж оролдохоос илүү орчны нэг дохиог өөрчил."
+    },
+    circadian: {
+      stuckMoment: "Нойр муу, оройн тэнхээ багасах үед амттай юм руу илүү амархан татагддаг.",
+      meaningBullets: [
+        "Энэ нь зөвхөн дуршил биш байж болно.",
+        "Бие тэнхээ нөхөх хурдан арга хайж байна.",
+        "Нойр, кофеин, өглөөний хоолгүй эхлэх зэрэг нь оройн хүсэлтэй холбогдож байна."
+      ],
+      firstStep: "Өдрийн эхний тогтмол хоол, кофеиний хил, орой унтраах 10 минутын зан үйл турш.",
+      avoidForNow: "Нойр муу өдөр хатуу хоолны дэглэм эхлүүлэхээс түр зайлсхий."
+    }
+  };
+  return summaries[voiceKey] || summaries.executive;
+}
+
+function renderSimpleResultSection(primaryKey, tags = []) {
+  const summary = getSimpleResultSummary(primaryKey, { tags });
+  const cycleEvidence = menstrualCycleEvidence();
+  return `
+    <div class="report-section simple-result">
+      <h2>Товч хариу</h2>
+      <div class="two-col">
+        <div class="card stack">
+          <p class="choice-kicker">1. Таны гол гацдаг мөч</p>
+          <p>${publicHtml(summary.stuckMoment)}</p>
+        </div>
+        <div class="card stack">
+          <p class="choice-kicker">2. Энэ юу гэсэн үг вэ?</p>
+          <ul>${summary.meaningBullets.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
+        </div>
+        <div class="card stack">
+          <p class="choice-kicker">3. Эхлээд хийх нэг жижиг зүйл</p>
+          <p>${publicHtml(summary.firstStep)}</p>
+        </div>
+        <div class="card stack">
+          <p class="choice-kicker">4. Одоогоор түр болгоомжлох зүйл</p>
+          <p>${publicHtml(summary.avoidForNow)}</p>
+        </div>
+      </div>
+      ${cycleEvidence.premenstrual ? `<div class="card stack">
+        <h3>Нэмэлтээр анхаарах зүйл</h3>
+        <p>Хэрвээ энэ үе сарын тэмдэг ирэхийн өмнөх өдрүүдтэй давхцдаг бол өлсөх мэдрэмж, амттай юм хүсэх, ядаргаа, сэтгэл санаа илүү хүчтэй мэдрэгдэж болно. Энэ нь онош биш. Зүгээр л тэр өдрүүдэд хэт хатуу дүрэм биш, арай зөөлөн бэлэн төлөвлөгөө хэрэгтэй байж магадгүй гэсэн дохио.</p>
+      </div>` : ""}
+    </div>
+    <div class="report-section">
+      <h3>Дэлгэрэнгүй тайлан харах</h3>
+      <p class="muted">Доорх нь дэлгэрэнгүй тайлбар. Эхний хэсгийг ойлгосон бол бүгдийг нь унших албагүй.</p>
+    </div>
+  `;
+}
+
 function reportEvidenceNote(voiceKey, isOneTime) {
   if (isOneTime) {
     return "Энэ эхний зураглал таны хариулт болон баталгаажуулсан тайлбар дээр суурилсан. 7 хоногийн тэмдэглэл хийвэл яг ямар өдөр, ямар нөхцөлд давтагдаж байгааг илүү тодруулна.";
@@ -3732,6 +3848,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
           <h2>Таны гүн зураглал бэлэн боллоо</h2>
           <p class="muted">Энэ бол таны хариулт, тэмдэглэл дээр суурилсан эхний зураглал. Өөрийгөө буруутгах гэж биш, давтагддаг мөчөө илүү тод харах гэж уншаарай.</p>
         </div>
+        ${renderSimpleResultSection(primary?.key, tags)}
         <div class="report-section">
           <h3>Гол зураг</h3>
           ${voice.opening.map(paragraph => `<p>${publicHtml(paragraph)}</p>`).join("")}
@@ -4083,6 +4200,7 @@ function renderInternalTesterFeedbackSurvey() {
         <p><strong>Тайлан таны нөхцөлтэй хэр нийцсэн бэ?</strong></p>
         <label class="field"><span class="muted">1 = огт нийцээгүй, 10 = маш сайн нийцсэн</span><input type="number" min="1" max="10" value="${escapeAttr(form.fitRating)}" oninput="updateInternalFeedbackField('fitRating', this.value)"></label>
       </div>
+      ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Товч хариу” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
       ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
       ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
       ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
