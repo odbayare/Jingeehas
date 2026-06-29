@@ -32,8 +32,8 @@ function assertSimpleStructure(report) {
     "Эхлээд хийх нэг жижиг зүйл",
     "Одоогоор түр болгоомжлох зүйл"
   ].forEach(phrase => assert(report.includes(phrase), `ordinary report should include ${phrase}`));
-  assert(report.indexOf("Товч хариу") < report.indexOf("Дэлгэрэнгүй тайлан харах"), "simple answer should appear before detailed report separator");
-  assert(report.indexOf("Дэлгэрэнгүй тайлан харах") < report.indexOf("Гол зураг"), "detailed report should be secondary");
+  assert(report.indexOf("Товч хариу") < report.indexOf("Дэлгэрэнгүй тайлан"), "simple answer should appear before detailed report separator");
+  assert(report.indexOf("Дэлгэрэнгүй тайлан") < report.indexOf("Гол зураг"), "detailed report should be secondary");
 }
 
 function assertNoConfusingReportWords(report) {
@@ -48,7 +48,8 @@ function assertNoConfusingReportWords(report) {
     "гэх давтамжтай нийцэж байна",
     "хүчтэй нийцэж байна",
     "дунд зэрэг нийцэж байна",
-    "механизм"
+    "механизм",
+    "Нурах давтамж"
   ].forEach(phrase => assert(!report.includes(phrase), `public report should not contain confusing phrase: ${phrase}`));
 }
 
@@ -84,15 +85,25 @@ function run() {
   const cycleReport = setOrdinaryReport({
     "MC-GATE": "Тийм, хамаарна",
     "MC-03": "Сарын тэмдэг ирэхээс хэд хоногийн өмнө",
-    "MC-04": ["Амттай юм, гурилан зүйл илүү хүсдэг"],
+    "MC-04": ["Амттай юм, гурилан зүйл илүү хүсдэг", "Сэтгэл санаа савлах үед идэх хүсэл нэмэгддэг", "Ядаргаа, нойр муудахтай давхцдаг"],
     "S1-R02": ["Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"]
   });
+  assert(cycleReport.includes("Сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх"));
+  assert(cycleReport.includes("Зарим хүнд мөчлөгийн тодорхой өдрүүдэд"));
+  assert(cycleReport.includes("Тэр өдрүүдийн өлсөлт, амттай зүйл хүсэх мэдрэмжийг зөвхөн сахилга бат гэж тайлбарлахаас түр зайлсхий."));
   assert(cycleReport.includes("Нэмэлтээр анхаарах зүйл"));
   assert(cycleReport.includes("Энэ нь онош биш"));
+  assert(!cycleReport.includes("Нэмэлтээр анхаарах зүйл: Нэмэлтээр анхаарах зүйл"));
+  ["даавраас болж байна", "энэ бол PMS", "эмэгтэй хүмүүс бүгд", "заавал"].forEach(phrase => {
+    assert(!cycleReport.includes(phrase), `cycle simple result should not overstate: ${phrase}`);
+  });
 
   const feedback = normalize(_internal.renderInternalTesterFeedbackSurvey());
   assert(feedback.includes("Тайлангийн эхний “Товч хариу” хэсэг ойлгомжтой байсан уу?"));
   assert(feedback.includes("Дахин уншиж байж ойлгосон"));
+  assert(feedback.includes("29,000₮-өөр"));
+  assert(!feedback.includes("29,000 төлж"));
+  assert(!feedback.includes("29,000₮ төлж"));
 
   const professionalReport = setOrdinaryReport({ "S1-S03": "Одоо давтагддаг" });
   assert(professionalReport.includes("мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));

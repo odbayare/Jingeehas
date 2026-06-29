@@ -77,7 +77,7 @@ const publicMechanismCopy = {
   glucose: { name: "Биеийн дохиог хамгаалах хэрэгцээ", short: "Биеийн дохио" },
   satiety: { name: "Цадах дохио бүдгэрэх үе", short: "Цадах дохио" },
   cue: { name: "Орчны дохионоос эхэлдэг идэх хүсэл", short: "Орчны дохио" },
-  collapse: { name: "Нэг алдаанаас бүхэл өдөр нурдаг давтамж", short: "Нурах давтамж" },
+  collapse: { name: "Нэг хазайлтын дараа хэвийн үргэлжлэхэд хэцүү болдог мөч", short: "Хэвийн үргэлжлүүлэхэд хэцүү мөч" },
   executive: { name: "Оройн шийдвэрийн ачаалал", short: "Шийдвэрийн ачаалал" },
   circadian: { name: "Нойр ба тэнхээний зөрүү", short: "Нойр/тэнхээ" },
   social: { name: "Хүмүүсийн дунд амар сонголт руу орох үе", short: "Хамт олны нөхцөл" },
@@ -3542,7 +3542,7 @@ const REPORT_VOICE_LIBRARY = {
     ],
     notProblem: "Асуудал хоолондоо биш байж магадгүй. Гол нь стресс эсвэл мэдрэмж өндөр үед хоол хамгийн хурдан амсхийх газар болж байна.",
     avoid: ["Илүү хатуу хоолны дэглэмийг бэлэн шийдэл болгох", "Стрессийн мөчид зөвхөн тэвчих гэж шахах", "Гэмшлээр өөрийгөө хөдөлгөх", "Мэдрэмжээ огт нэрлэхгүй орхих"],
-    firstStep: "Эхний жижиг өөрчлөлт бол хоолноос өмнө заавал тэсэх биш. Харин “би яг одоо өлсөж байна уу, эсвэл амсхийх газар хайж байна уу?” гэж 60 секунд ялгах.",
+    firstStep: "Эхний жижиг өөрчлөлт бол хоолноос өмнө тэсэх гэж өөрийгөө шахах биш. Харин “би яг одоо өлсөж байна уу, эсвэл амсхийх газар хайж байна уу?” гэж 60 секунд ялгах.",
     experiment: [
       ["Эхний 3 өдөр", "идэх хүсэл стрессийн дараа гарсан эсэхийг л тэмдэглэ. Засах гэж бүү оролд."],
       ["4–10 дахь өдөр", "хоолноос өмнө 60 секунд амьсгаа авах, ус уух, алхах, хүн рүү бичих зэрэг нэг богино амсхийх сонголт турш."],
@@ -3700,6 +3700,33 @@ function reportVoiceFor(primaryKey, tags = []) {
 function getSimpleResultSummary(primaryKey, context = {}) {
   const tags = context.tags || [];
   const voiceKey = selectReportVoiceKey(primaryKey, tags);
+  const cycleEvidence = menstrualCycleEvidence();
+  const answers = state.stageAnswers || {};
+  const selfNeglectSignals = [
+    ...asArray(answers["S1-F01"]),
+    ...asArray(answers["S1-R02"]),
+    answers["S1-V01"] || "",
+    answers["S1-V02"] || ""
+  ].some(value => containsAny(value, ["өөрийгөө жаахан шагна", "өөрийгөө хойш", "бусдын хэрэгцээ", "миний цаг", "өөрийн хэрэгцээ", "үлдэгдэл цаг"]));
+  const cycleSignals = cycleEvidence.premenstrual && (
+    cycleEvidence.tags.includes("cycle_sweet_craving") ||
+    cycleEvidence.tags.includes("cycle_mood_eating") ||
+    cycleEvidence.tags.includes("cycle_sleep_fatigue") ||
+    cycleEvidence.tags.includes("cycle_linked_function") ||
+    asArray(answers["S1-R02"]).includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд")
+  );
+  if (cycleSignals && !selfNeglectSignals && ["rewardDeficit", "circadian", "executive"].includes(voiceKey)) {
+    return {
+      stuckMoment: "Сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх, ядаргаа, сэтгэл савлах нь идэх хүслийг хүчтэй болгож байна.",
+      meaningBullets: [
+        "Энэ нь таны сул тал гэсэн үг биш.",
+        "Зарим хүнд мөчлөгийн тодорхой өдрүүдэд өлсөх мэдрэмж, амттай зүйл хүсэх, тэнхээ, сэтгэл санаа зэрэг өөрчлөгдөж болно.",
+        "Тийм өдрүүдэд хэт хатуу дүрэм тавих нь дараа нь илүү хэцүү болгож магадгүй."
+      ],
+      firstStep: "Сарын тэмдэг ирэхээс өмнөх өдрүүдэд хэт хатуу эхлэхийн оронд тогтмол хоол, урьдчилсан жижиг амттай сонголт, өөрийгөө буруутгахгүй тэмдэглэл бэлд.",
+      avoidForNow: "Тэр өдрүүдийн өлсөлт, амттай зүйл хүсэх мэдрэмжийг зөвхөн сахилга бат гэж тайлбарлахаас түр зайлсхий."
+    };
+  }
   const summaries = {
     executive: {
       stuckMoment: "Орой тэнхээ багасах үед хамгийн амар сонголт ялдаг.",
@@ -3805,7 +3832,7 @@ function renderSimpleResultSection(primaryKey, tags = []) {
       </div>` : ""}
     </div>
     <div class="report-section">
-      <h3>Дэлгэрэнгүй тайлан харах</h3>
+      <h3>Дэлгэрэнгүй тайлан</h3>
       <p class="muted">Доорх нь дэлгэрэнгүй тайлбар. Эхний хэсгийг ойлгосон бол бүгдийг нь унших албагүй.</p>
     </div>
   `;
@@ -4205,7 +4232,7 @@ function renderInternalTesterFeedbackSurvey() {
       ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
       ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
       ${feedbackChoiceField("languageTone", "Тайлангийн хэл найруулга ямар санагдсан бэ?", ["Байгалийн монгол хэлтэй", "Зарим хэсэг хиймэл", "Хэт албархуу", "Хэт зөөлөн/бөөрөнхий"], "languageToneSuggestion", "Засах санал:")}
-      ${feedbackChoiceField("valueAt9900", "Энэ тайланг 29,000₮ төлж авахад үнэ цэнтэй санагдах уу?", ["Тийм", "Магадгүй", "Үгүй"], "valueReason", "Яагаад?")}
+      ${feedbackChoiceField("valueAt9900", "Энэ тайланг 29,000₮-өөр авахад үнэ цэнтэй санагдах уу?", ["Тийм", "Магадгүй", "Үгүй"], "valueReason", "Яагаад?")}
       <label class="field"><span class="muted">Хамгийн хэрэгтэй санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostUsefulPart', this.value)">${escapeHtml(form.mostUsefulPart || "")}</textarea></label>
       <label class="field"><span class="muted">Хамгийн засмаар санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostNeedsFix', this.value)">${escapeHtml(form.mostNeedsFix || "")}</textarea></label>
       <div class="actions">

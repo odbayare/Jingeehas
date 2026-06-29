@@ -284,8 +284,15 @@ function valueAfter(text, label, endLabels = []) {
   return block.replace(label, "").trim();
 }
 
+function cleanExtractedValue(value) {
+  return String(value || "")
+    .replace(/^#+\s*/, "")
+    .replace(/\n#+\s*$/g, "")
+    .trim();
+}
+
 function simpleResultFromReport(text) {
-  const simple = section(text, "Товч хариу", ["Дэлгэрэнгүй тайлан харах"]);
+  const simple = section(text, "Товч хариу", ["Дэлгэрэнгүй тайлан"]);
   if (!simple) return {
     stuckMoment: "",
     meaningBullets: [],
@@ -295,11 +302,11 @@ function simpleResultFromReport(text) {
   };
   const meaning = valueAfter(simple, "2. Энэ юу гэсэн үг вэ?", ["3. Эхлээд хийх нэг жижиг зүйл"]);
   return {
-    stuckMoment: valueAfter(simple, "1. Таны гол гацдаг мөч", ["2. Энэ юу гэсэн үг вэ?"]),
+    stuckMoment: cleanExtractedValue(valueAfter(simple, "1. Таны гол гацдаг мөч", ["2. Энэ юу гэсэн үг вэ?"])),
     meaningBullets: meaning.split(/\n- |\n/).map((item) => item.replace(/^- /, "").trim()).filter(Boolean),
-    firstStep: valueAfter(simple, "3. Эхлээд хийх нэг жижиг зүйл", ["4. Одоогоор түр болгоомжлох зүйл"]),
-    avoidForNow: valueAfter(simple, "4. Одоогоор түр болгоомжлох зүйл", ["Нэмэлтээр анхаарах зүйл"]),
-    menstrualCycleNoteIfAny: simple.includes("Нэмэлтээр анхаарах зүйл") ? section(simple, "Нэмэлтээр анхаарах зүйл") : ""
+    firstStep: cleanExtractedValue(valueAfter(simple, "3. Эхлээд хийх нэг жижиг зүйл", ["4. Одоогоор түр болгоомжлох зүйл"])),
+    avoidForNow: cleanExtractedValue(valueAfter(simple, "4. Одоогоор түр болгоомжлох зүйл", ["Нэмэлтээр анхаарах зүйл"])),
+    menstrualCycleNoteIfAny: simple.includes("Нэмэлтээр анхаарах зүйл") ? cleanExtractedValue(valueAfter(simple, "Нэмэлтээр анхаарах зүйл")) : ""
   };
 }
 
@@ -397,7 +404,7 @@ function runPersona(persona) {
     primaryMechanism: evidence.primaryMechanism,
     secondaryMechanisms: evidence.secondaryMechanisms,
     simpleResult,
-    detailedReportText: section(text, "Дэлгэрэнгүй тайлан харах") || text,
+    detailedReportText: valueAfter(text, "Дэлгэрэнгүй тайлан") || text,
     fullReportText: text,
     feedbackSimulation,
     audit: evaluation.audit,
