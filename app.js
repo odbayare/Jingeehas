@@ -3196,7 +3196,7 @@ function menstrualCycleContextHtml() {
       <div class="report-section menstrual-cycle-note">
         <h3>Мөчлөг тогтмол бус үед</h3>
         <ul>
-          <li>өдрөөр нь хатуу тайлбарлахгүй.</li>
+          <li>Өдрөөр нь хатуу тайлбарлахгүй.</li>
           <li>Нойр, биеийн мэдрэмж, идэх хүсэл хамт өөрчлөгдөж байгаа эсэхийг ажиглана.</li>
           <li>Мацаг, огцом хязгаарлалт эхлүүлэхгүй.</li>
           <li>“Би сул байна” гэж дүгнэхгүй.</li>
@@ -3205,22 +3205,16 @@ function menstrualCycleContextHtml() {
       </div>
     `;
   }
-  const confidenceCopy = evidence.confidenceLow
-    ? `<p>Хэрвээ сарын тэмдэг тогтмол биш, дааврын хамгаалалт хэрэглэдэг, PCOS-той эсвэл сэжигтэй, төрсний дараах/хөхүүл үе, перименопаузын үе байвал өдрөөр нь хатуу тайлбарлах хэрэггүй. Энэ хэсгийг онош биш, зүгээр ажиглах нэмэлт мэдээлэл гэж уншаарай.</p>`
-    : "";
   const professionalCopy = evidence.tags.includes("amenorrhea_3_months") || evidence.tags.includes("restriction_exercise_cycle_disruption")
     ? `<p>Сарын тэмдэг ирэхгүй удах, гэнэт их өөрчлөгдөх нь хоол хасалт, жин огцом буурах, хэт их дасгал, стресс эсвэл биеийн бусад шалтгаантай давхцаж байвал эхлээд мэргэжлийн хүнтэй ярилцах нь зөв. Ийм үед мацаг, огцом хязгаарлалт, өндөр ачаалалтай сорил санал болгохгүй.</p>`
     : "";
-  const appetiteCopy = evidence.confidenceLow
-    ? `<p><strong>Мөчлөг тогтмол бус үед</strong> өдрөөр нь хатуу тайлбарлахгүй. Нойр, биеийн мэдрэмж, идэх хүсэл хамт өөрчлөгдөж байгаа эсэхийг л ажиглана.</p>`
-    : evidence.premenstrual
+  const appetiteCopy = evidence.premenstrual
     ? `<p>Сарын тэмдэг ирэхийн өмнөх хэдэн өдөрт өлсөх, амттай юм хүсэх, ядрах, сэтгэл савлах нь илүү мэдрэгддэг гэж тэмдэглэсэн байна. Энэ нь онош биш, сул тал гэсэн үг биш.</p><p>Ийм үед өөрийгөө илүү чанга барих гэж шахвал “маргаашаас чанга барина” гэсэн тойрог хүчтэй болж магадгүй. Илүү зөв эхлэл нь тогтмол хоол, урьдчилж бэлдсэн зөөлөн сонголт, өөрийгөө буруутгахгүй тэмдэглэл байна.</p>`
     : `<p>Идэх хүсэл зарим өдөр сарын тэмдгийн мөчлөгтэй хамт өөрчлөгдөж байж магадгүй. Энэ нь онош биш, гол шалтгааныг сольж байгаа тайлбар биш. Зүгээр л тэр өдрүүдэд бие, сэтгэл, нойр, идэх хүсэл яаж өөр болдгийг зөөлөн ажиглах нэмэлт мэдээлэл юм.</p>`;
   return `
     <div class="report-section menstrual-cycle-note">
       <h3>Мөчлөгтэй холбоотой анхаарах зүйл</h3>
       ${appetiteCopy}
-      ${confidenceCopy}
       ${professionalCopy}
     </div>
   `;
@@ -3957,7 +3951,7 @@ const REPORT_VOICE_LIBRARY = {
       "Өөрийгөө буруутгахгүйгээр шалгах"
     ],
     cycle: [
-      "Биеийн мэдрэмж, жин, даралт эсвэл мөчлөг өөрчлөгдөнө",
+      "Биеийн мэдрэмж, жин, даралт, хоолны дуршил өөрчлөгдөнө",
       "“Юу болоод байна?” гэсэн санаа зовнил нэмэгдэнэ",
       "Хяналтаа буцаах гэж хоол дээр хэт чанга баримаар болно",
       "Хатуу барих нь өлсөлт, ядралт эсвэл гэмшлийг нэмэгдүүлнэ",
@@ -4298,7 +4292,23 @@ function renderSimpleResultSection(primaryKey, tags = [], voiceKeyOverride = "")
   const cycleEvidence = menstrualCycleEvidence();
   const voiceKey = voiceKeyOverride || selectReportVoiceKey(primaryKey, tags);
   const summary = getSimpleResultSummary(primaryKey, { tags, voiceKey });
-  const showBriefCycleNote = cycleEvidence.premenstrual && !cycleEvidence.confidenceLow && voiceKey !== "menstrualCycleContext";
+  const lowConfidenceCycleTags = [
+    "irregular_cycle",
+    "cycle_unknown",
+    "amenorrhea_3_months",
+    "hormonal_contraception",
+    "pcos_known_or_suspected",
+    "postpartum_breastfeeding",
+    "perimenopause",
+    "cycle_modifier_confidence_low",
+    "restriction_exercise_cycle_disruption"
+  ];
+  const cycleTags = cycleEvidence.tags || [];
+  const hasLowConfidenceCycleContext = cycleEvidence.confidenceLow
+    || lowConfidenceCycleTags.some(tag => cycleTags.includes(tag));
+  const showBriefCycleNote = cycleEvidence.premenstrual
+    && !hasLowConfidenceCycleContext
+    && voiceKey !== "menstrualCycleContext";
   return `
     <div class="report-section simple-result">
       <h2>Товч хариу</h2>
@@ -4472,7 +4482,7 @@ function surfaceContextInsight(voiceKey, answers = state.stageAnswers || {}) {
   if (voiceKey === "circadian") {
     return {
       surface: "нойр муу, өдрийн тэнхээ багасах",
-      hidden: "Гэхдээ гол нь нойр өөрөө биш. Ядарсан үед хоол амрах, тэнхээ авах хамгийн ойрын арга болж байна."
+      hidden: "Гол нь зөвхөн нойр муудсандаа биш. Ээлжийн дараах ядаргаа дээр бэлэн хоол хамгийн амар зам болж байна."
     };
   }
   if (voiceKey === "menstrualCycleContext") {

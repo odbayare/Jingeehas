@@ -2,67 +2,55 @@
 
 Date: 2026-06-30
 
-## Owner findings
+## Scope
 
-Sprint 34B-ийн report context precision сайжирсан боловч owner review дараах P1 үлдэгдлийг тэмдэглэсэн:
+Targeted user-facing copy cleanup after the second virtual cohort. This patch did not change scoring, mechanism detection, safety thresholds, payment, QPay, coach workflow, or deployment state.
 
-- user-facing report-д `belonging` үлдсэн
-- gym/restriction report-д `rebound` үлдсэн
-- PCOS/irregular-cycle report-д premenstrual-specific note үлдсэн
-- medication/BP report-д cycle evidence байхгүй үед `мөчлөг` орж байсан
-- perimenopause report-д cycle confidence note давхардаж байсан
-- shift report-д `хоол амрах, тэнхээ авах хамгийн ойрын арга` олон давтагдсан
+## Owner Findings
 
-## Fixes applied
+- User-facing report copy must not leak English mechanism terms such as `belonging` or `rebound`.
+- PCOS, irregular cycle, perimenopause, postpartum/breastfeeding, and hormonal contraception contexts must not receive a confident premenstrual interpretation.
+- Medication/BP reports must not mention menstrual cycle unless the user provided cycle evidence.
+- Perimenopause reports should show one low-confidence cycle section, not duplicate cycle notes.
+- Shift-work reports should not repeat the exact phrase `хоол амрах, тэнхээ авах хамгийн ойрын арга`.
 
-- Replaced `belonging` with `хамт байгаа мэдрэмжээ алдахгүй байх хэрэгцээ`.
-- Replaced user-facing `rebound` with `буцаад хүчтэй идэх тойрог` / `орой илүү хүчтэй өлсөж, дараа нь их идэх тойрог`.
-- Suppressed brief premenstrual note when cycle confidence is low.
-- Changed low-confidence cycle rendering to a single `Мөчлөг тогтмол бус үед` section.
-- Removed duplicate `Мөчлөгтэй холбоотой анхаарах зүйл` section from low-confidence reports.
-- Made medication/BP body-trust cycle step say `Эмийн хэрэглээ, даралт, хоолны дуршлын өөрчлөлт санаа зовнил нэмэгдүүлнэ`.
-- Reduced shift exact phrase repetition so `хоол амрах, тэнхээ авах хамгийн ойрын арга` appears only once.
+## Fixes Applied
 
-## Tests
+- Removed the stale generic low-confidence cycle paragraph from the regular cycle note path.
+- Added an explicit low-confidence cycle guard before showing the short premenstrual note in the simple-result section.
+- Updated the medication/BP report cycle line from `Биеийн мэдрэмж, жин, даралт эсвэл мөчлөг өөрчлөгдөнө` to `Биеийн мэдрэмж, жин, даралт, хоолны дуршил өөрчлөгдөнө`.
+- Updated the circadian/shift hidden-function sentence to avoid repeating the same `хоол амрах, тэнхээ авах хамгийн ойрын арга` phrase.
+- Kept internal mechanism keys unchanged where they are not user-facing.
 
-Updated `tests/surface-hidden-function-reframe.test.js` to assert:
+## Tests And Regeneration
 
-- social/weekend report does not contain `belonging`
-- gym restriction report does not contain `rebound`
-- PCOS/irregular report does not contain `Хэрвээ энэ үе сарын тэмдэг ирэхийн өмнөх өдрүүдтэй давхцдаг бол`
-- PCOS/irregular report contains `Мөчлөг тогтмол бус үед`
-- medication/BP report does not contain `мөчлөг`
-- perimenopause report does not contain duplicated cycle note sections
-- shift report does not repeat `хоол амрах, тэнхээ авах хамгийн ойрын арга` more than once
+- `node --check app.js` passed.
+- `node --check scripts/run-virtual-user-audit.mjs` passed.
+- `node --check scripts/run-sprint-33-second-virtual-cohort.mjs` passed.
+- `node scripts/run-virtual-user-audit.mjs --assert-clean` passed: 10 PASS, 0 PARTIAL, 0 FAIL, P0/P1/P2 = 0, readiness 96.
+- `npm test` passed.
+- `node scripts/run-sprint-33-second-virtual-cohort.mjs` passed: 10 PASS, 0 PARTIAL, 0 FAIL, P0/P1/P2 = 0, recommendation `READY FOR OWNER REVIEW - HUMAN TESTING STILL HOLD`.
+- `git diff --check` passed.
 
-## Export checks
+## User-Facing Checks
 
-Checked regenerated `audits/sprint-33-second-virtual-cohort/USER_FACING_REPORTS.md`:
+- No `belonging` in regenerated Sprint 33 user-facing reports.
+- No `rebound` in regenerated Sprint 33 user-facing reports.
+- No old medication/BP cycle phrase in regenerated Sprint 33 user-facing reports.
+- No generic `Хэрвээ сарын тэмдэг тогтмол биш...` paragraph in regenerated Sprint 33 user-facing reports.
+- PCOS and perimenopause reports use `Мөчлөг тогтмол бус үед`.
+- Medication/BP report uses `Эмийн хэрэглээ, даралт, хоолны дуршлын өөрчлөлт`.
+- Shift-work report keeps the target phrase only once.
 
-- no `belonging`
-- no `rebound`
-- no `Хэрвээ энэ үе сарын тэмдэг ирэхийн өмнөх өдрүүдтэй давхцдаг бол`
-- no `Биеийн мэдрэмж, жин, даралт эсвэл мөчлөг`
-- no duplicate low-confidence cycle heading pattern
-- medication/BP report section does not mention `мөчлөг`
-- shift report exact phrase appears once
+## Severity
 
-## Sprint 33 regeneration
+- P0: 0
+- P1: 0
+- P2: 0
 
-- Output folder: `audits/sprint-33-second-virtual-cohort/`
-- PDF: `audits/sprint-33-second-virtual-cohort/WEIGHT_TEST_SECOND_10_USER_FACING_REPORTS.pdf`
-- Result: 10 PASS / 0 PARTIAL / 0 FAIL
-- P0/P1/P2: 0/0/0
+## Remaining Concerns
 
-## Validation
-
-- `node --check app.js` — passed
-- `node --check scripts/run-virtual-user-audit.mjs` — passed
-- `node --check scripts/run-sprint-33-second-virtual-cohort.mjs` — passed
-- `node scripts/run-virtual-user-audit.mjs --assert-clean` — passed, 10 PASS, readiness 96
-- `npm test` — passed
-- `node scripts/run-sprint-33-second-virtual-cohort.mjs` — passed, 10 PASS, P0/P1/P2 = 0/0/0
-- `git diff --check` — passed
+- Human testing remains on hold until owner review of the regenerated second-cohort package.
 
 ## Recommendation
 
