@@ -106,8 +106,9 @@ function run() {
   assert(!cycleReport.includes("Өдөржин өөрийн хэрэгцээ хамгийн сүүлд"));
   assert(!cycleReport.includes("надад ч гэсэн нэг юм хэрэгтэй"));
   assert(!cycleReport.includes("Нэмэлтээр анхаарах зүйл"));
-  assert(cycleReport.includes("Мөчлөгтэй холбоотой анхаарах зүйл"));
   assert(cycleReport.includes("Энэ нь онош биш"));
+  assert(cycleReport.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
+  assert(cycleReport.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд идэх хүсэл хэр өөр байна вэ?"));
   assert(!cycleReport.includes("Дэлгэрэнгүй тайлан харах"));
   assert(!cycleReport.includes("Нэмэлтээр анхаарах зүйл: Нэмэлтээр анхаарах зүйл"));
   ["даавраас болж байна", "энэ бол PMS", "эмэгтэй хүмүүс бүгд", "заавал"].forEach(phrase => {

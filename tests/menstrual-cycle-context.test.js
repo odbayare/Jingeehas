@@ -92,10 +92,10 @@ function run() {
   const ranked = app._internal.rankedPatterns(false);
   assert(!ranked.some(item => item.key === "menstrual_cycle_context"), "cycle context should not become a primary mechanism");
   let report = normalize(app._internal.renderReport());
-  assert(report.includes("Мөчлөгтэй холбоотой анхаарах зүйл"), "ordinary report should include cycle context note");
-  assert(report.includes("Сарын тэмдэг ирэхийн өмнөх хэдэн өдөрт өлсөх, амттай юм хүсэх, ядрах, сэтгэл савлах нь илүү мэдрэгддэг"));
+  assert(report.includes("Энэ нь онош биш, таны сул тал гэсэн үг биш"), "ordinary report should include cycle context as non-diagnostic");
+  assert(report.includes("Сарын тэмдэг ирэхээс өмнөх хэдэн өдөрт амттай зүйл хүсэх, ядрах, нойр муудах, сэтгэл савлах зэрэг хамт ирж байна"));
   assert(report.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд хэт хатуу хоолны дүрэм эхлүүлэх"), "avoid list should include cycle-aware restriction warning");
-  assert(report.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"), "14-day experiment should include cycle-aware modifier");
+  assert(report.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд идэх хүсэл хэр өөр байна вэ?"), "7-day refinement should include cycle-aware question");
 
   const deterministicBanned = [
     "даавраас болж байна",
@@ -176,7 +176,7 @@ function run() {
         }
       },
       expectedMode: "deep",
-      expectedCopy: "Мөчлөгтэй холбоотой анхаарах зүйл"
+      expectedCopy: "Энэ нь онош биш, таны сул тал гэсэн үг биш"
     },
     {
       name: "Cycle User B",

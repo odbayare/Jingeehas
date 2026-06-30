@@ -301,10 +301,24 @@ function cleanExtractedValue(value) {
 }
 
 function removeReviewChrome(text) {
+  const blockedStandaloneLines = new Set([
+    "7 хоногоор нарийвчлах",
+    "Эхний хариу руу буцах",
+    "Шинээр эхлэх",
+    "Сонголт руу буцах",
+    "Тэмдэглэл рүү буцах",
+    "Саналын экспорт",
+    "Санал илгээх",
+    "Дэлгэрэнгүй тайлан харах"
+  ]);
   return String(text || "")
     .replace(/Дотоод туршилтын хувилбар[\s\S]*$/g, "")
     .replace(/Сонголт руу буцах\s*Шинээр эхлэх/g, "")
     .replace(/Тэмдэглэл рүү буцах\s*Шинээр эхлэх/g, "")
+    .replace(/Эхний хариу руу буцах\s*Шинээр эхлэх/g, "")
+    .split("\n")
+    .filter((line) => !blockedStandaloneLines.has(line.trim()))
+    .join("\n")
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 }

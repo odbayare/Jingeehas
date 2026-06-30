@@ -3305,19 +3305,47 @@ function compressedSurfaceBehaviors(primaryKey, tags = allReportTags()) {
 }
 
 function refinementBullets(primary, secondary = []) {
-  if (selectReportVoiceKey(primary?.key, allReportTags()) === "menstrualCycleContext") {
-    return [
-      "Сарын тэмдэг ирэхийн өмнөх өдрүүдэд идэх хүсэл хэр өөр болдгийг тэмдэглэнэ.",
-      "Ядаргаа, нойр, сэтгэл санаа, амттай зүйл хүсэх мэдрэмж хамт ирж байгаа эсэхийг ялгана.",
-      "Идэх хүсэл гарахын өмнөх 30 минут, оройн тэнхээ, хоол харагдах зэрэг ойрын нөхцөлийг тэмдэглэнэ."
-    ];
-  }
+  const voiceKey = selectReportVoiceKey(primary?.key, allReportTags());
+  const copy = {
+    executive: [
+      "Орой хоол бодох хамгийн хүнд өдөр аль нь вэ?",
+      "Нойр, ажил, гэрийн ачаалалтай давхцах эсэхийг ялгана."
+    ],
+    regulation: [
+      "Стрессийн дараа идэх хүсэл хэдэн удаа гарч байна вэ?",
+      "Идсэний дараа үнэхээр тайвширч байна уу, эсвэл гэмшил нэмэгдэж байна уу?"
+    ],
+    collapse: [
+      "“Өнөөдөр өнгөрлөө” гэсэн бодол ямар үед гарч байна вэ?",
+      "Дараагийн хоолноос хэвийн үргэлжлэхэд юу саад болж байна вэ?"
+    ],
+    hungerSafety: [
+      "Хоолны зай хэдэн цаг болоход орой яаралтай өлсөж байна вэ?",
+      "Жижиг гүүр хоол хэрэглэсэн өдөр орой ямар өөр байна вэ?"
+    ],
+    rewardDeficit: [
+      "Өөрийн хоол, амралт хойшлогдсон өдөр оройн идэх хүсэл ямар байна вэ?",
+      "10 минут хамгаалсан өдөр өөр санагдаж байна уу?"
+    ],
+    cue: [
+      "Нүдэнд ойр байгаа нэг зүйл идэх хүслийг хэдэн удаа эхлүүлж байна вэ?",
+      "Тэр зүйлийг холдуулсан өдөр ялгаа гарч байна уу?"
+    ],
+    circadian: [
+      "Нойр муу өдөр амттай юм руу татах хүч ямар байна вэ?",
+      "Кофеины хил, оройн 10 минут тус болж байна уу?"
+    ],
+    menstrualCycleContext: [
+      "Сарын тэмдэг ирэхийн өмнөх өдрүүдэд идэх хүсэл хэр өөр байна вэ?",
+      "Ядаргаа, нойр, сэтгэл санаа хамт өөрчлөгдөж байна уу?"
+    ]
+  };
+  if (copy[voiceKey]) return copy[voiceKey];
   const items = [primary, ...secondary].filter(Boolean).slice(0, 2).map(item => {
     const short = publicMechanismShort(item.key);
     return `${short} ямар өдөр илүү хүчтэй болдгийг тэмдэглэлээр ялгана.`;
   });
-  items.push("Идэх хүсэл гарахын өмнөх 30 минут, оройн тэнхээ, хоол харагдах зэрэг ойрын нөхцөлийг тэмдэглэнэ.");
-  return items.slice(0, 3);
+  return items.length ? items : ["Ямар өдөр илүү хэцүү болдгийг тэмдэглэлээр ялгана."];
 }
 
 function renderQpayLinks(invoice = {}) {
@@ -3781,7 +3809,7 @@ function getSimpleResultSummary(primaryKey, context = {}) {
     return {
       stuckMoment: "Сарын тэмдэг ирэхээс өмнөх хэдэн өдөрт амттай юм илүү хүчтэй татдаг байж магадгүй.",
       meaningBullets: [
-        "Энэ нь таны сул тал гэсэн үг биш.",
+        "Энэ нь онош биш, таны сул тал гэсэн үг биш.",
         "Зарим хүнд тэр өдрүүдэд өлсөх, амттай юм хүсэх, тэнхээ унах, сэтгэл савлах нь илүү мэдрэгддэг.",
         "Ийм үед хэт хатуу дүрэм тавих нь дараа нь илүү хэцүү болгож магадгүй."
       ],
@@ -3936,6 +3964,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
   const voice = reportVoiceFor(primary?.key, tags);
   const refinementItems = refinementBullets(primary, secondary).slice(0, 3);
   const cycleEvidence = menstrualCycleEvidence();
+  const compressCycleReport = voice.key === "menstrualCycleContext";
   const avoidItems = cycleEvidence.premenstrual
     ? unique([...avoidListFor(primary?.key, tags), ...voice.avoid]).slice(0, 5)
     : voice.avoid.slice(0, 5);
@@ -3948,7 +3977,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
       <div class="panel">
         <div class="report-section">
           <h2>Таны тайлан бэлэн боллоо</h2>
-          <p class="muted">Доорх нь таны өгсөн мэдээллээс гарсан эхний тайлбар. Өөрийгөө буруутгах гэж биш, өдөрт хаана хэцүү болдгийг тайван харах гэж уншаарай.</p>
+          <p class="muted">Доорх тайлан таны хариултад тулгуурласан эхний тайлбар. Өөрийгөө буруутгах гэж биш, өдөрт яг аль мөч дээр гацдагаа харах гэж уншаарай.</p>
         </div>
         ${renderSimpleResultSection(primary?.key, tags)}
         <div class="report-section">
@@ -3956,7 +3985,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
           ${voice.opening.map(paragraph => `<p>${publicHtml(paragraph)}</p>`).join("")}
         </div>
         <div class="report-section">
-          <h3>Тэр үед хоол танд юу өгч байсан байж болох вэ?</h3>
+          <h3>Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?</h3>
           <p>${publicHtml(foodFunctionIntro(voice.key))}</p>
           <ul>${voice.needs.slice(0, 3).map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
         </div>
@@ -3976,7 +4005,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
           <h3>Одоохондоо хэт яарахгүй зүйлс</h3>
           <ul>${avoidItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
         </div>
-        ${menstrualCycleContextHtml()}
+        ${compressCycleReport ? "" : menstrualCycleContextHtml()}
         <div class="report-section">
           <h3>Эхний жижиг өөрчлөлт</h3>
           <p>${publicHtml(voice.firstStep)}</p>
@@ -3986,10 +4015,9 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
           <h3>14 хоногийн туршилт</h3>
           ${renderStagedExperiment(voice)}
         </div>
-        ${menstrualCycleExperimentModifierHtml()}
+        ${compressCycleReport ? "" : menstrualCycleExperimentModifierHtml()}
         ${isOneTime ? `<div class="report-section">
           <h3>7 хоногийн тэмдэглэл юуг тодруулах вэ?</h3>
-          <p>Үүнийг өдөр тутамд илүү сайн ялгахыг хүсвэл 7 хоногийн богино тэмдэглэл тусална.</p>
           <ul>${refinementItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
           <div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>
         </div>` : ""}

@@ -105,7 +105,7 @@ function run() {
   });
 
   assert(!oneTime.includes("давтамжтай нийцэж байна"));
-  assert(countListItemsInSection(oneTimeHtml, "Тэр үед хоол танд юу өгч байсан байж болох вэ?") <= 3);
+  assert(countListItemsInSection(oneTimeHtml, "Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?") <= 3);
   assert(countListItemsInSection(oneTimeHtml, "Одоохондоо хэт яарахгүй зүйлс") <= 5);
   assert(countListItemsInSection(oneTimeHtml, "7 хоногийн тэмдэглэл юуг тодруулах вэ?") <= 3);
   assert(!oneTime.includes("Trigger зураглал"));

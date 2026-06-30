@@ -125,7 +125,7 @@ function run() {
       confirmedSummaryObject: confirmed
     }))
   });
-  assert(_internal.renderReport().includes("Тэр үед хоол танд юу өгч байсан байж болох вэ?"));
+  assert(_internal.renderReport().includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"));
   assert(mechanismNamesByKey.decisionDefault === "Decision-Default Mismatch");
 }
 

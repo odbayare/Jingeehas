@@ -514,7 +514,7 @@ function validateScenario(scenario) {
   }
 
   if (scenario.hiddenIncludes) {
-    assert(text.includes("Тэр үед хоол танд юу өгч байсан байж болох вэ?"), `${scenario.name}: missing food-need section`);
+    assert(text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"), `${scenario.name}: missing food-need section`);
   }
   if (scenario.avoidIncludes) {
     assert(text.includes("Одоохондоо хэт яарахгүй зүйлс"), `${scenario.name}: missing avoid section`);

@@ -116,7 +116,8 @@ function run() {
 
   setOneTimeReport();
   const oneTimeText = normalize(_internal.renderReport());
-  assert(oneTimeText.includes("Үүнийг өдөр тутамд илүү сайн ялгахыг хүсвэл"));
+  assert(oneTimeText.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
+  assert(oneTimeText.includes("Орой хоол бодох хамгийн хүнд өдөр аль нь вэ?"));
   assert(oneTimeText.includes("7 хоногоор нарийвчлах"));
   assert(!oneTimeText.includes("Миний pattern-ийг 7 хоногоор шалгах"));
   assertNoPressureCopy(oneTimeText);
