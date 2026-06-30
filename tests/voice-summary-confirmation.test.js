@@ -122,7 +122,7 @@ function run() {
   });
   const structuredOnlyReport = _internal.renderReport();
   assert(structuredOnlyReport.includes("Яагаад ингэж хэлж байна вэ?"));
-  assert(structuredOnlyReport.includes("хоолны зай уртсах") || structuredOnlyReport.includes("хоол захиалах"));
+  assert(structuredOnlyReport.includes("Удаан юм идээгүй өдөр орой гэнэт өлсөж байгаагаа анзаардаг.") || structuredOnlyReport.includes("хоол захиалах"));
   assert(!structuredOnlyReport.includes("RAW SECRET DELIVERY STORY"));
 
   const confirmedEntries = [1, 2, 3, 4, 5].map(day => entry(day, createConfirmedSummaryObject({
@@ -141,7 +141,7 @@ function run() {
   });
   const report = _internal.renderReport();
   assert(report.includes("Яагаад ингэж хэлж байна вэ?"));
-  assert(report.includes("хоолны зай уртсах") || report.includes("хоол захиалах"));
+  assert(report.includes("Удаан юм идээгүй өдөр орой гэнэт өлсөж байгаагаа анзаардаг.") || report.includes("хоол захиалах"));
   assert(report.includes("Гол зураг"));
   assert(!report.includes("raw 1 should not appear"));
 
