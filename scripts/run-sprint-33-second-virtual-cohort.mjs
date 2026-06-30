@@ -470,20 +470,80 @@ function sprintSummaryMd(summary) {
   return `# Sprint 33 summary\n\n- Cohort: second virtual cohort, 10 new personas\n- PASS: ${summary.pass}\n- PARTIAL: ${summary.partial}\n- FAIL: ${summary.fail}\n- P0/P1/P2: ${summary.p0}/${summary.p1}/${summary.p2}\n- Average simple clarity: ${summary.simpleAverage}\n- Average paid value: ${summary.valueAverage}\n- Recommendation: ${summary.recommendation}\n\nHuman testing remains HOLD by owner decision.\nNo coach demo, public traffic, production deploy, or paid flow was run.\nQPay remains disabled. Scoring, mechanism detection, and safety routing were not changed.\n`;
 }
 
-function renderPdf(inputPath, outputPath, title) {
-  writeFileSync(TEMP_JSON, JSON.stringify({ inputPath, outputPath, title }, null, 2));
+function listItems(text) {
+  return String(text || "")
+    .split("\n")
+    .map((line) => line.replace(/^- /, "").trim())
+    .filter(Boolean);
+}
+
+function reportPdfModel(result, index) {
+  const full = result.userFacingReport;
+  const detailed = result.detailedReportText || full;
+  const simple = result.simpleResult || simpleResultFromReport(full);
+  const cycleNote = section(detailed, "Мөчлөг тогтмол бус үед", ["Эхний жижиг өөрчлөлт"])
+    || section(detailed, "Мөчлөгтэй холбоотой анхаарах зүйл", ["Эхний жижиг өөрчлөлт"])
+    || simple.menstrualCycleNoteIfAny
+    || "";
+  return {
+    index: index + 1,
+    title: result.title,
+    mode: result.generatedMode,
+    intro: "Доорх тайлан таны хариултад тулгуурласан эхний тайлбар. Өөрийгөө буруутгах гэж биш, өдөрт яг аль мөч дээр гацдагаа харах гэж уншаарай.",
+    fullText: full,
+    simple: {
+      stuckMoment: simple.stuckMoment || "",
+      meaningBullets: simple.meaningBullets || [],
+      firstStep: simple.firstStep || "",
+      avoidForNow: simple.avoidForNow || ""
+    },
+    surface: valueAfter(full, "Ил харагдаж байгаа зүйл", ["Цаана нь ажиллаж байгаа зүйл"]),
+    hidden: valueAfter(full, "Цаана нь ажиллаж байгаа зүйл", ["Дэлгэрэнгүй тайлан"]),
+    detailed: {
+      goalPicture: valueAfter(detailed, "Гол зураг", ["Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"]),
+      foodFeeling: valueAfter(detailed, "Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?", ["Давтагддаг тойрог"]),
+      cycle: valueAfter(detailed, "Давтагддаг тойрог", ["Яагаад ингэж хэлж байна вэ?"]),
+      why: valueAfter(detailed, "Яагаад ингэж хэлж байна вэ?", ["Гол буруу ойлголт"]),
+      misunderstanding: valueAfter(detailed, "Гол буруу ойлголт", ["Одоохондоо хэт яарахгүй зүйлс"]),
+      avoid: valueAfter(detailed, "Одоохондоо хэт яарахгүй зүйлс", ["Мөчлөг тогтмол бус үед", "Мөчлөгтэй холбоотой анхаарах зүйл", "Эхний жижиг өөрчлөлт"]),
+      cycleNote,
+      firstStep: valueAfter(detailed, "Эхний жижиг өөрчлөлт", ["14 хоногийн туршилт"]),
+      experiment: valueAfter(detailed, "14 хоногийн туршилт", ["7 хоногийн тэмдэглэл юуг тодруулах вэ?"]),
+      diary: valueAfter(detailed, "7 хоногийн тэмдэглэл юуг тодруулах вэ?")
+    },
+    professional: result.generatedMode !== "deep" ? {
+      title: firstLine(full),
+      summary: section(full, firstLine(full), ["Ярилцах товч нэгтгэл"]),
+      consult: valueAfter(full, "Ярилцах товч нэгтгэл", ["Яагаад ердийн жин хасалтын тайланг түр зогсоож байна вэ?"]),
+      whyStopped: valueAfter(full, "Яагаад ердийн жин хасалтын тайланг түр зогсоож байна вэ?", ["Одоогоор зайлсхийх зүйлс:"]),
+      avoid: valueAfter(full, "Одоогоор зайлсхийх зүйлс:", ["Эхэлж өөрчлөх хамгийн амар цэг:"]),
+      firstStep: valueAfter(full, "Эхэлж өөрчлөх хамгийн амар цэг:")
+    } : null
+  };
+}
+
+function firstLine(text) {
+  return String(text || "").split("\n").map((line) => line.trim()).find(Boolean) || "";
+}
+
+function renderPdf(results, outputPath, title) {
+  writeFileSync(TEMP_JSON, JSON.stringify({
+    outputPath,
+    title,
+    reports: results.map(reportPdfModel)
+  }, null, 2));
   writeFileSync(TEMP_PY, `
 import json
-from pathlib import Path
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.enums import TA_LEFT
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
+from reportlab.lib import colors
+from reportlab.lib.units import mm
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak, Table, TableStyle, KeepTogether
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 
 data = json.load(open("${TEMP_JSON}", "r", encoding="utf-8"))
-text = Path(data["inputPath"]).read_text(encoding="utf-8")
 font_path = "/System/Library/Fonts/Supplemental/Arial Unicode.ttf"
 try:
     pdfmetrics.registerFont(TTFont("MongolianFont", font_path))
@@ -492,27 +552,196 @@ except Exception:
     font_name = "Helvetica"
 
 styles = getSampleStyleSheet()
-base = ParagraphStyle("base", parent=styles["BodyText"], fontName=font_name, fontSize=9.5, leading=13, alignment=TA_LEFT, spaceAfter=5)
-h1 = ParagraphStyle("h1", parent=base, fontSize=17, leading=21, spaceAfter=12)
-h2 = ParagraphStyle("h2", parent=base, fontSize=13, leading=17, spaceBefore=8, spaceAfter=5)
-small = ParagraphStyle("small", parent=base, fontSize=8.5, leading=11)
+PAGE_W, PAGE_H = A4
+BG = colors.HexColor("#F7F3EA")
+INK = colors.HexColor("#26332D")
+MUTED = colors.HexColor("#5E6A60")
+GREEN = colors.HexColor("#23483A")
+GREEN_SOFT = colors.HexColor("#DDE8DF")
+BEIGE = colors.HexColor("#EADDC8")
+BEIGE_DARK = colors.HexColor("#B79C72")
+CARD = colors.HexColor("#FFFDF7")
+LINE = colors.HexColor("#D8CDB9")
+
+base = ParagraphStyle("base", parent=styles["BodyText"], fontName=font_name, fontSize=10.2, leading=14.5, textColor=INK, alignment=TA_LEFT, spaceAfter=6)
+small = ParagraphStyle("small", parent=base, fontSize=8.7, leading=12, textColor=MUTED, spaceAfter=4)
+kicker = ParagraphStyle("kicker", parent=base, fontSize=8, leading=10, textColor=BEIGE_DARK, spaceAfter=4)
+h1 = ParagraphStyle("h1", parent=base, fontSize=21, leading=25, textColor=GREEN, spaceAfter=10)
+h2 = ParagraphStyle("h2", parent=base, fontSize=15, leading=18, textColor=GREEN, spaceBefore=4, spaceAfter=7)
+h3 = ParagraphStyle("h3", parent=base, fontSize=12, leading=15, textColor=GREEN, spaceAfter=4)
+quote_style = ParagraphStyle("quote", parent=base, fontSize=11.5, leading=16, textColor=GREEN, leftIndent=2, rightIndent=2)
 
 def esc(value):
     return str(value or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
-story = [Paragraph(esc(data["title"]), h1), Spacer(1, 8)]
-for block in text.split("\\n\\n"):
-    block = block.strip()
-    if not block or block == data["title"]:
-        continue
-    if block == "-----" or block == "---":
-        story.append(PageBreak())
-        continue
-    style = h2 if block.startswith("Тайлан ") else small if len(block) > 800 else base
-    story.append(Paragraph(esc(block).replace("\\n", "<br/>"), style))
+def p(text, style=base):
+    return Paragraph(esc(text).replace("\\n", "<br/>"), style)
 
-doc = SimpleDocTemplate(data["outputPath"], pagesize=A4, rightMargin=36, leftMargin=36, topMargin=36, bottomMargin=36)
-doc.build(story)
+def lines(text):
+    return [line.strip().replace("- ", "", 1) for line in str(text or "").split("\\n") if line.strip()]
+
+def card(title, body="", accent=False, width=164):
+    content = []
+    if title:
+        content.append(p(title, kicker if accent else h3))
+    if isinstance(body, list):
+        for item in body:
+            content.append(p("• " + item, base))
+    elif body:
+        content.append(p(body, base))
+    table = Table([[content]], colWidths=[width * mm])
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), GREEN_SOFT if accent else CARD),
+        ("BOX", (0, 0), (-1, -1), 0.65, LINE),
+        ("LEFTPADDING", (0, 0), (-1, -1), 10),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+        ("TOPPADDING", (0, 0), (-1, -1), 9),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 9),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    return table
+
+def two_cards(left_title, left_body, right_title, right_body):
+    t = Table([[
+        card(left_title, left_body, False, 78),
+        card(right_title, right_body, True, 78)
+    ]], colWidths=[80 * mm, 80 * mm])
+    t.setStyle(TableStyle([
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    return t
+
+def page_header(story, report, label):
+    story.append(p("Жин хасалтын гүн зураглал", kicker))
+    story.append(p("Тайлан %s — %s" % (report["index"], report["title"]), h1))
+    story.append(p(label, small))
+    story.append(Spacer(1, 8))
+
+def page_break(story):
+    story.append(PageBreak())
+
+def flow_steps(text):
+    items = [item.strip() for item in str(text or "").replace("↓", "\\n").split("\\n") if item.strip()]
+    if not items:
+        return [card("Давтагддаг тойрог", "Энэ хэсэгт тойргийн алхмууд гарна.")]
+    flow = []
+    for index, item in enumerate(items, start=1):
+        row = Table([[p(str(index), h3), p(item, base)]], colWidths=[12 * mm, 144 * mm])
+        row.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (0, 0), GREEN),
+            ("TEXTCOLOR", (0, 0), (0, 0), colors.white),
+            ("BACKGROUND", (1, 0), (1, 0), CARD),
+            ("BOX", (0, 0), (-1, -1), 0.55, LINE),
+            ("LEFTPADDING", (0, 0), (-1, -1), 8),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+            ("TOPPADDING", (0, 0), (-1, -1), 7),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ]))
+        flow.append(row)
+        if index < len(items):
+            flow.append(Spacer(1, 3))
+    return flow
+
+def experiment_blocks(text):
+    items = lines(text)
+    return items or [str(text or "").strip()]
+
+def diary_prompts(text):
+    return lines(text)[:4] or [str(text or "").strip()]
+
+def on_page(canvas, doc):
+    canvas.saveState()
+    canvas.setFillColor(BG)
+    canvas.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
+    canvas.setStrokeColor(BEIGE_DARK)
+    canvas.setLineWidth(0.8)
+    canvas.line(22 * mm, 19 * mm, 188 * mm, 19 * mm)
+    canvas.setFillColor(MUTED)
+    canvas.setFont(font_name, 7.5)
+    canvas.drawString(22 * mm, 14 * mm, "Жин хасалтын гүн зураглал")
+    canvas.drawRightString(188 * mm, 14 * mm, "Хуудас %s" % doc.page)
+    canvas.restoreState()
+
+story = []
+for report in data["reports"]:
+    if report["mode"] != "deep":
+        page_header(story, report, "Мэргэжлийн хүнтэй эхэлж ярилцах тайлан")
+        story.append(card(report["professional"]["title"], report["professional"]["summary"], True))
+        page_break(story)
+        page_header(story, report, "Ярилцахад авч очих нэгтгэл")
+        story.append(card("Ярилцах товч нэгтгэл", lines(report["professional"]["consult"]), True))
+        story.append(Spacer(1, 8))
+        story.append(card("Яагаад ердийн жин хасалтын тайланг түр зогсоож байна вэ?", report["professional"]["whyStopped"]))
+        page_break(story)
+        page_header(story, report, "Аюулгүй эхлэх дараалал")
+        story.append(card("Одоогоор зайлсхийх зүйлс", lines(report["professional"]["avoid"])))
+        story.append(Spacer(1, 8))
+        story.append(card("Эхэлж өөрчлөх хамгийн амар цэг", report["professional"]["firstStep"], True))
+        if report != data["reports"][-1]:
+            page_break(story)
+        continue
+
+    page_header(story, report, "Гол зураглал")
+    story.append(p(report["intro"], small))
+    story.append(Spacer(1, 6))
+    story.append(card("Товч хариу", report["simple"]["stuckMoment"], True))
+    story.append(Spacer(1, 7))
+    story.append(two_cards("Ил харагдаж байгаа зүйл", report["surface"], "Цаана нь ажиллаж байгаа зүйл", report["hidden"]))
+    story.append(Spacer(1, 7))
+    story.append(card("Онцлох санаа", report["simple"]["meaningBullets"], False))
+    story.append(Spacer(1, 7))
+    story.append(card("Эхлээд хийх нэг жижиг зүйл", report["simple"]["firstStep"], True))
+    page_break(story)
+
+    page_header(story, report, "Далд сэтгэлзүйн механизм")
+    story.append(card("Гол зураг", report["detailed"]["goalPicture"], True))
+    story.append(Spacer(1, 8))
+    story.append(card("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?", report["detailed"]["foodFeeling"]))
+    story.append(Spacer(1, 8))
+    story.append(two_cards("Гол буруу ойлголт", report["detailed"]["misunderstanding"], "Яагаад ингэж хэлж байна вэ?", report["detailed"]["why"]))
+    page_break(story)
+
+    page_header(story, report, "Давтагддаг тойрог")
+    for item in flow_steps(report["detailed"]["cycle"]):
+        story.append(item)
+    page_break(story)
+
+    page_header(story, report, "Эхний 14 хоногийн туршилт")
+    story.append(card("Одоохондоо хэт яарахгүй зүйлс", lines(report["detailed"]["avoid"])))
+    story.append(Spacer(1, 8))
+    story.append(card("Эхний жижиг өөрчлөлт", report["detailed"]["firstStep"], True))
+    story.append(Spacer(1, 8))
+    story.append(card("14 хоногийн туршилт", experiment_blocks(report["detailed"]["experiment"])))
+    page_break(story)
+
+    page_header(story, report, "7 хоногийн тэмдэглэл")
+    story.append(p("Энэ тэмдэглэл нь гол тойрог яг ямар өдөр, ямар нөхцөлд хүчтэй болдгийг тодруулахад тусална.", small))
+    story.append(Spacer(1, 8))
+    for prompt in diary_prompts(report["detailed"]["diary"]):
+        story.append(card("Ажиглах асуулт", prompt))
+        story.append(Spacer(1, 6))
+
+    if report["detailed"]["cycleNote"]:
+        page_break(story)
+        page_header(story, report, "Нэмэлт нөхцөл")
+        story.append(card("Мөчлөгтэй холбоотой анхаарах зүйл", report["detailed"]["cycleNote"], True))
+    if report != data["reports"][-1]:
+        page_break(story)
+
+doc = SimpleDocTemplate(
+    data["outputPath"],
+    pagesize=A4,
+    rightMargin=22 * mm,
+    leftMargin=22 * mm,
+    topMargin=24 * mm,
+    bottomMargin=24 * mm
+)
+doc.build(story, onFirstPage=on_page, onLaterPages=on_page)
 `);
   const result = spawnSync(PYTHON, [TEMP_PY], { stdio: "inherit", encoding: "utf8" });
   if (result.status !== 0) throw new Error(`PDF render failed for ${outputPath}`);
@@ -529,7 +758,7 @@ function main() {
   write(path.join(OUT_DIR, "COMPREHENSION_AUDIT.md"), comprehensionAuditMd(results, summary));
   write(path.join(OUT_DIR, "ISSUES_AND_FIXES.md"), issuesMd(results, summary));
   write(path.join(OUT_DIR, "SPRINT_33_SUMMARY.md"), sprintSummaryMd(summary));
-  renderPdf(path.join(OUT_DIR, "USER_FACING_REPORTS.md"), PDF_PATH, TITLE);
+  renderPdf(results, PDF_PATH, TITLE);
   console.log(JSON.stringify({
     outDir: path.relative(ROOT, OUT_DIR),
     pdf: path.relative(ROOT, PDF_PATH),
