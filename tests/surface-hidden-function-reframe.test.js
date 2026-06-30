@@ -47,8 +47,12 @@ function run() {
     "S1-V01": "Эмийн хэрэглээ эхэлснээс хойш бие өөрчлөгдсөн мэт санагдаад хяналтаа алдсан юм шиг болж илүү чанга барих гэж оролддог."
   });
   assertSurfaceHidden(medication);
-  assert(/эмийн хэрэглээ|эм эсвэл жирэмслэлтээс хамгаалах бэлдмэл/.test(medication));
+  assert(/эмийн хэрэглээ|эм эсвэл жирэмслэлтээс хамгаалах бэлдмэл/i.test(medication));
+  assert(medication.includes("Эмийн хэрэглээ, даралт, хоолны дуршлын өөрчлөлт нь шалгаж үзэх зүйл байж болно."));
+  assert(!medication.includes("PCOS сэжиг"));
   assert(/хяналтаа алдаж байна|бие өөрчлөгдөх|өөрийгөө буруутгах|хэт чанга/.test(medication));
+  assert(!medication.includes("Та эмийн хэрэглээ нөлөөлж байгаа гэж анзаарсан байна. Энэ нь бодит нөлөө байж болно."));
+  assert(!medication.includes("Гэхдээ энэ тайлангийн гол нь зөвхөн эмийн хэрэглээ биш."));
   assertNoDeterministicMedicalCopy(medication);
 
   const menstrual = render({
@@ -83,8 +87,10 @@ function run() {
     "S1-V01": "Гэрээс ажиллахад гал тогоо ойр байдаг. Ширээн дээр зууш байвал өлсөөгүй ч аваад идчихдэг."
   });
   assertSurfaceHidden(remoteCue);
-  assert(remoteCue.includes("гэрээс ажиллах үед зууш, хоол, апп, зураг нүдэнд ойр байдаг"));
+  assert(remoteCue.includes("Гэрээс ажиллах үед зууш, апп, зураг нүдэнд ойр байна."));
+  assert(remoteCue.includes("Гарын дор байгаа зүйлд бараг бодолгүй хүрдэг үе хүчтэй байна."));
   assert(!remoteCue.includes("толь, зураг, бусдад харагдах орчин"));
+  assert(!remoteCue.includes("Та гэрээс ажиллах үед зууш, хоол, апп, зураг нүдэнд ойр байдаг нөлөөлж байгаа гэж анзаарсан байна."));
 
   const postpartum = render({
     "S1-R02": ["Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед"],
@@ -118,7 +124,28 @@ function run() {
   });
   assertSurfaceHidden(perimenopause);
   assert(/хяналтаа алдаж байна|бие өөрчлөгдөж/.test(perimenopause));
+  assert(perimenopause.includes("Мөчлөг, нойр, биеийн өөрчлөлт нь шалгаж үзэх зүйл байж болно."));
+  assert(perimenopause.includes("Мөчлөг тогтмол бус үед"));
+  assert(!perimenopause.includes("PCOS сэжиг"));
+  assert(!perimenopause.includes("Эмийн хэрэглээ, даралт"));
+  assert(!perimenopause.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд Хэт хатуу"));
   assert(!perimenopause.includes("Стресс ихтэй үед хоол түр амрах газар шиг санагдаж байна."));
+
+  const pcos = render({
+    "S1-C02": "Эмэгтэй",
+    "MC-GATE": "Тийм, хамаарна",
+    "MC-01": "Ихэнхдээ тогтмол биш",
+    "MC-06": "PCOS оноштой эсвэл сэжигтэй",
+    "S1-W06": "Маргааш илүү чанга барина",
+    "S1-F01": ["Амттай юм идмээр байсан", "Ядарсан"],
+    "S1-V01": "PCOS байж магадгүй гэж санаа зовдог. Мөчлөг тогтмол бус болохоор бие урьдчилж таахад хэцүү, хяналтаа буцааж авах гэж хэт чанга дэглэм эхлүүлдэг."
+  });
+  assertSurfaceHidden(pcos);
+  assert(pcos.includes("PCOS сэжиг, мөчлөг тогтмол бус байдал нь шалгаж үзэх зүйл байж болно."));
+  assert(pcos.includes("Мөчлөг тогтмол бус үед"));
+  assert(!pcos.includes("Эм, даралт"));
+  assert(!pcos.includes("Эмийн хэрэглээ, даралт"));
+  assert(!pcos.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"));
 
   const gym = render({
     "S1-W04": ["Мацаг", "Орой хоол идэхгүй"],
@@ -128,6 +155,16 @@ function run() {
   assertSurfaceHidden(gym);
   assert(/Өлсөх тусам зөв явж байна|сахилга бат/.test(gym));
   assert(/бие орой|оройн өлсөлт/.test(gym));
+
+  const collapseWithoutGym = render({
+    "S1-W03": "Бараг бүх оролдлогоос хойш",
+    "S1-W04": ["Калори тоолох", "Мацаг"],
+    "S1-W06": "Одоо бүх юм дууссан",
+    "S1-X01": "Хэсэг сайн яваад дараа нь үргэлжлүүлэхэд хэцүү болдог",
+    "S1-X03": "Маш хүчтэй",
+    "S1-F02": "Одоо бүх юм дууссан"
+  });
+  assert(!collapseWithoutGym.includes("хүчтэй дасгал"));
 
   const professional = render({ "S1-S03": "Одоо давтагддаг" });
   assert(professional.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));

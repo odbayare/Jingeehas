@@ -3194,7 +3194,9 @@ function menstrualCycleContextHtml() {
   const professionalCopy = evidence.tags.includes("amenorrhea_3_months") || evidence.tags.includes("restriction_exercise_cycle_disruption")
     ? `<p>Сарын тэмдэг ирэхгүй удах, гэнэт их өөрчлөгдөх нь хоол хасалт, жин огцом буурах, хэт их дасгал, стресс эсвэл биеийн бусад шалтгаантай давхцаж байвал эхлээд мэргэжлийн хүнтэй ярилцах нь зөв. Ийм үед мацаг, огцом хязгаарлалт, өндөр ачаалалтай сорил санал болгохгүй.</p>`
     : "";
-  const appetiteCopy = evidence.premenstrual
+  const appetiteCopy = evidence.confidenceLow
+    ? `<p><strong>Мөчлөг тогтмол бус үед</strong> өдрөөр нь хатуу тайлбарлахгүй. Нойр, биеийн мэдрэмж, идэх хүсэл хамт өөрчлөгдөж байгаа эсэхийг л ажиглана.</p>`
+    : evidence.premenstrual
     ? `<p>Сарын тэмдэг ирэхийн өмнөх хэдэн өдөрт өлсөх, амттай юм хүсэх, ядрах, сэтгэл савлах нь илүү мэдрэгддэг гэж тэмдэглэсэн байна. Энэ нь онош биш, сул тал гэсэн үг биш.</p><p>Ийм үед өөрийгөө илүү чанга барих гэж шахвал “маргаашаас чанга барина” гэсэн тойрог хүчтэй болж магадгүй. Илүү зөв эхлэл нь тогтмол хоол, урьдчилж бэлдсэн зөөлөн сонголт, өөрийгөө буруутгахгүй тэмдэглэл байна.</p>`
     : `<p>Идэх хүсэл зарим өдөр сарын тэмдгийн мөчлөгтэй хамт өөрчлөгдөж байж магадгүй. Энэ нь онош биш, гол шалтгааныг сольж байгаа тайлбар биш. Зүгээр л тэр өдрүүдэд бие, сэтгэл, нойр, идэх хүсэл яаж өөр болдгийг зөөлөн ажиглах нэмэлт мэдээлэл юм.</p>`;
   return `
@@ -3210,6 +3212,19 @@ function menstrualCycleContextHtml() {
 function menstrualCycleExperimentModifierHtml() {
   const evidence = menstrualCycleEvidence();
   if (!evidence.active || evidence.professionalFirst) return "";
+  if (evidence.confidenceLow) {
+    return `
+      <div class="report-section menstrual-cycle-experiment">
+        <h3>Мөчлөг тогтмол бус үед</h3>
+        <ul>
+          <li>Өдрөөр нь хатуу тайлбарлахгүй.</li>
+          <li>Нойр, биеийн мэдрэмж, идэх хүсэл хамт өөрчлөгдөж байгаа эсэхийг л ажиглана.</li>
+          <li>Мацаг, огцом хязгаарлалт эхлүүлэхгүй.</li>
+          <li>“Би сул байна” гэж дүгнэхгүй. Тухайн өдөр бие, сэтгэл яаж байсныг л тэмдэглэнэ.</li>
+        </ul>
+      </div>
+    `;
+  }
   return `
     <div class="report-section menstrual-cycle-experiment">
       <h3>Сарын тэмдэг ирэхийн өмнөх өдрүүдэд</h3>
@@ -3927,7 +3942,7 @@ const REPORT_VOICE_LIBRARY = {
   bodyTrustMedical: {
     opening: [
       "Бие өөрчлөгдөх үед “би хяналтаа алдаж байна” гэсэн мэдрэмж нэмэгдэж байна.",
-      "Эм, даралт, PCOS сэжиг, мөчлөг тогтмол бус байдал зэрэг нь бодит шалгах зүйл байж болно.",
+      "Биеийн өөрчлөлт, хоолны дуршил, хэмжилтийн санаа зовнил нь шалгаж үзэх зүйл байж болно.",
       "Гэхдээ тайлангийн гол нь онош тавих биш, бие урьдчилж таахад хэцүү санагдах үед хэт чанга барих тойргийг харах юм."
     ],
     needs: [
@@ -3943,12 +3958,12 @@ const REPORT_VOICE_LIBRARY = {
       "Дараа нь биеэ улам буруутгах бодол орж ирнэ",
       "Мэргэжлийн шалгалтгүйгээр зөвхөн дэглэмээр засах гэж оролдвол тойрог давтагдана"
     ],
-    notProblem: "Энэ нь онош биш. Эм, PCOS, даралт, мөчлөгийн асуудлыг ганцаараа тайлбарлахгүй. Гол нь бие урьдчилж таахад хэцүү санагдахад хяналт хайх, бухимдах, өөрийгөө буруутгах, хэт чанга барих хандлага нэмэгдэж байна.",
-    avoid: ["Эм эсвэл PCOS гэж өөрөө оношлоод орхих", "Биеийн санаа зовнилыг зөвхөн хоол хасалтаар засах", "Мэргэжлийн шалгалтыг хойш тавьж хатуу дэглэм эхлүүлэх", "Өөрийгөө буруутгах"],
+    notProblem: "Энэ нь онош биш. Биеийн өөрчлөлтийг ганцаараа тайлбарлахгүй. Гол нь бие урьдчилж таахад хэцүү санагдахад хяналт хайх, бухимдах, өөрийгөө буруутгах, хэт чанга барих хандлага нэмэгдэж байна.",
+    avoid: ["Биеийн өөрчлөлтийг өөрөө оношлоод орхих", "Биеийн санаа зовнилыг зөвхөн хоол хасалтаар засах", "Мэргэжлийн шалгалтыг хойш тавьж хатуу дэглэм эхлүүлэх", "Өөрийгөө буруутгах"],
     firstStep: "Эхний жижиг өөрчлөлт бол өөрийгөө чангаруулах биш. Биеийн өөрчлөлт, хоолны хариу, санаа зовнилоо тэмдэглээд хэрэгтэй бол мэргэжлийн хүнтэй шалгуулах асуултаа бэлд.",
     experiment: [
       ["Эхний 3 өдөр", "биеийн өөрчлөлт, санаа зовнил, хэт чанга барих бодол гарсан эсэхийг тэмдэглэ."],
-      ["4-10 дахь өдөр", "мацаг, огцом хязгаарлалт хийхгүй. Тогтмол хоолны тулгуур хадгалж, эм/даралт/мөчлөгтэй холбоотой асуултаа бич."],
+      ["4-10 дахь өдөр", "мацаг, огцом хязгаарлалт хийхгүй. Тогтмол хоолны тулгуур хадгалж, биеийн өөрчлөлттэй холбоотой асуултаа бич."],
       ["11-14 дахь өдөр", "биеийн санаа зовнил нэмэгдсэн өдөр хэт чанга барих бодол яаж өөрчлөгдсөнийг анзаар."],
       ["Хэрвээ нэг өдөр алгасвал", "өөрийгөө буруутгахгүй. Тэмдэглэл болон зөөлөн хоолны тулгуур руугаа буц."]
     ]
@@ -3974,6 +3989,74 @@ function hasStrongMenstrualCycleContextEvidence() {
     evidence.tags.includes("cycle_linked_function") ||
     asArray(answers["S1-R02"]).includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд")
   );
+}
+
+function normalizedAnswerValues(answers = state.stageAnswers || {}) {
+  return Object.values(answers)
+    .flatMap(value => Array.isArray(value) ? value : [value])
+    .map(value => String(value || "").trim().toLowerCase())
+    .filter(Boolean);
+}
+
+function allAnswerText(answers = state.stageAnswers || {}) {
+  return Object.values(answers)
+    .flatMap(value => Array.isArray(value) ? value : [value])
+    .filter(Boolean)
+    .join(" ");
+}
+
+function medicalContextKind(answers = state.stageAnswers || {}) {
+  const text = allAnswerText(answers).toLowerCase();
+  const values = normalizedAnswerValues(answers);
+  const hasText = (...terms) => terms.some(term => text.includes(term.toLowerCase()));
+  const hasAnswer = (...terms) => terms.some(term => values.includes(term.toLowerCase()));
+  if (hasText("төрсний дараах", "хөхүүл")) return "postpartum";
+  if (hasText("перименопауз")) return "perimenopause";
+  if (hasText("pcos", "тогтмол биш", "тогтмол бус")) return "pcos";
+  if (hasAnswer("эм") || hasText("эмийн", "эмчилгээ", "эм хэрэгл", "даралт", "жирэмслэлтээс хамгаалах", "дааврын")) return "medicationBp";
+  return "bodyChange";
+}
+
+function medicalContextCopy(answers = state.stageAnswers || {}) {
+  const kind = medicalContextKind(answers);
+  const copy = {
+    pcos: {
+      checkSentence: "PCOS сэжиг, мөчлөг тогтмол бус байдал нь шалгаж үзэх зүйл байж болно.",
+      surfaceSentence: "PCOS сэжиг, мөчлөг тогтмол бус байдал таны санааг зовоож байна.",
+      hiddenSentence: "Бие урьдчилж таахад хэцүү санагдах үед хяналтаа буцаах гэж хэт чанга барих хүсэл нэмэгдэж байна.",
+      avoidLabel: "PCOS эсвэл мөчлөг тогтмол бус гэж өөрөө оношлоод орхих",
+      questionLabel: "PCOS/мөчлөгтэй холбоотой асуултаа бич"
+    },
+    medicationBp: {
+      checkSentence: "Эмийн хэрэглээ, даралт, хоолны дуршлын өөрчлөлт нь шалгаж үзэх зүйл байж болно.",
+      surfaceSentence: "Эмийн хэрэглээ, даралт, хоолны дуршлын өөрчлөлт таны санааг зовоож байна.",
+      hiddenSentence: "Бие урьдчилж таахад хэцүү санагдах үед хяналтаа буцаах гэж хэт чанга барих хүсэл нэмэгдэж байна.",
+      avoidLabel: "Эмийн хэрэглээ эсвэл даралт гэж өөрөө тайлбарлаад орхих",
+      questionLabel: "эм/даралттай холбоотой асуултаа бич"
+    },
+    perimenopause: {
+      checkSentence: "Мөчлөг, нойр, биеийн өөрчлөлт нь шалгаж үзэх зүйл байж болно.",
+      surfaceSentence: "Мөчлөг, нойр, биеийн өөрчлөлт таны санааг зовоож байна.",
+      hiddenSentence: "Бие өөрчлөгдөж байгаа мэт санагдах үед хяналтаа буцаах, өөрийгөө буруутгах, орой тайвшрах зүйл хайх мэдрэмж нэмэгдэж байна.",
+      avoidLabel: "Перименопауз гэж өөрөө хатуу дүгнээд бүхнийг хоолоор засах гэж оролдох",
+      questionLabel: "мөчлөг/нойр/биеийн өөрчлөлттэй холбоотой асуултаа бич"
+    },
+    postpartum: {
+      checkSentence: "Төрсний дараах үе, тасалдсан нойр, хүүхэд асрах ачаалал нь бодитоор нөлөөлж болно.",
+      surfaceSentence: "Төрсний дараах үе, тасалдсан нойр, хүүхэд асрах ачаалал өдөрт бодитоор нөлөөлж байна.",
+      hiddenSentence: "Өөрийн хоол, амралт хамгийн сүүлд үлдэхэд орой хоол “би ч гэсэн анхаарал хэрэгтэй” гэсэн мэдрэмжтэй холбогдож байна.",
+      avoidLabel: "Төрсний дараах ачааллыг тооцохгүй хатуу дэглэм эхлүүлэх",
+      questionLabel: "төрсний дараах бие/нойр/хоолтой холбоотой асуултаа бич"
+    },
+    bodyChange: {
+      checkSentence: "Биеийн өөрчлөлт, хоолны дуршил, хэмжилтийн санаа зовнил нь шалгаж үзэх зүйл байж болно.",
+      surfaceSentence: "Биеийн өөрчлөлт, хоолны дуршлын өөрчлөлт таны санааг зовоож байна.",
+      hiddenSentence: "Бие урьдчилж таахад хэцүү санагдах үед хяналтаа буцаах гэж хэт чанга барих хүсэл нэмэгдэж байна.",
+      avoidLabel: "Биеийн санаа зовнилыг зөвхөн хоол хасалтаар засах",
+      questionLabel: "биеийн өөрчлөлттэй холбоотой асуултаа бич"
+    }
+  };
+  return { kind, ...copy[kind] };
 }
 
 function shouldUseMenstrualCycleContextVoice(baseVoiceKey) {
@@ -4014,9 +4097,35 @@ function selectReportVoiceKey(primaryKey, tags = []) {
 
 function reportVoiceFor(primaryKey, tags = []) {
   const voiceKey = selectReportVoiceKey(primaryKey, tags);
+  const baseVoice = REPORT_VOICE_LIBRARY[voiceKey];
+  if (voiceKey === "bodyTrustMedical") {
+    const medicalCopy = medicalContextCopy();
+    return {
+      key: voiceKey,
+      ...baseVoice,
+      opening: [
+        baseVoice.opening[0],
+        medicalCopy.checkSentence,
+        baseVoice.opening[2]
+      ],
+      notProblem: `Энэ нь онош биш. ${medicalCopy.checkSentence} Гол нь бие урьдчилж таахад хэцүү санагдахад хяналт хайх, бухимдах, өөрийгөө буруутгах, хэт чанга барих хандлага нэмэгдэж байна.`,
+      avoid: [
+        medicalCopy.avoidLabel,
+        "Биеийн санаа зовнилыг зөвхөн хоол хасалтаар засах",
+        "Мэргэжлийн шалгалтыг хойш тавьж хатуу дэглэм эхлүүлэх",
+        "Өөрийгөө буруутгах"
+      ],
+      experiment: [
+        baseVoice.experiment[0],
+        ["4-10 дахь өдөр", `мацаг, огцом хязгаарлалт хийхгүй. Тогтмол хоолны тулгуур хадгалж, ${medicalCopy.questionLabel}.`],
+        baseVoice.experiment[2],
+        baseVoice.experiment[3]
+      ]
+    };
+  }
   return {
     key: voiceKey,
-    ...REPORT_VOICE_LIBRARY[voiceKey]
+    ...baseVoice
   };
 }
 
@@ -4139,7 +4248,7 @@ function getSimpleResultSummary(primaryKey, context = {}) {
     perimenopauseContext: {
       stuckMoment: "Бие өөрчлөгдөж байгаа мэт санагдах үед “би хяналтаа алдаж байна” гэсэн мэдрэмж нэмэгддэг.",
       meaningBullets: [
-        "Энэ нь онош биш.",
+        "Мөчлөг, нойр, биеийн өөрчлөлт нь шалгаж үзэх зүйл байж болно.",
         "Мөчлөг тогтмол бус үед өдрөөр нь хатуу тайлбарлах хэрэггүй.",
         "Орой хоол түр тайвшрах эсвэл хяналт буцаах гэж оролдох арга болж байж магадгүй."
       ],
@@ -4159,12 +4268,12 @@ function getSimpleResultSummary(primaryKey, context = {}) {
     bodyTrustMedical: {
       stuckMoment: "Бие өөрчлөгдөх үед “би хяналтаа алдаж байна” гэсэн мэдрэмж нэмэгдэж байна.",
       meaningBullets: [
-        "Эм, даралт, PCOS сэжиг, мөчлөг тогтмол бус байдал зэрэг нь бодит шалгах зүйл байж болно.",
+        medicalContextCopy().checkSentence,
         "Гэхдээ энэ тайлан онош тавихгүй.",
         "Бие урьдчилж таахад хэцүү санагдах үед хэт чанга барих, өөрийгөө буруутгах тойрог эхэлж байна."
       ],
       firstStep: "Биеийн өөрчлөлт, хоолны хариу, санаа зовнилоо тэмдэглээд хэрэгтэй бол мэргэжлийн хүнтэй шалгуулах асуултаа бэлд.",
-      avoidForNow: "Эм эсвэл PCOS гэж өөрөө оношлоод, бүхнийг хатуу хоол хасалтаар засах гэж оролдохоос түр зайлсхий."
+      avoidForNow: `${medicalContextCopy().avoidLabel} болон бүхнийг хатуу хоол хасалтаар засах гэж оролдохоос түр зайлсхий.`
     }
   };
   return summaries[voiceKey] || summaries.executive;
@@ -4209,13 +4318,6 @@ function renderSimpleResultSection(primaryKey, tags = [], voiceKeyOverride = "")
   `;
 }
 
-function allAnswerText(answers = state.stageAnswers || {}) {
-  return Object.values(answers)
-    .flatMap(value => Array.isArray(value) ? value : [value])
-    .filter(Boolean)
-    .join(" ");
-}
-
 function surfaceContextInsight(voiceKey, answers = state.stageAnswers || {}) {
   const text = allAnswerText(answers).toLowerCase();
   const hasText = (...terms) => terms.some(term => text.includes(term.toLowerCase()));
@@ -4226,34 +4328,53 @@ function surfaceContextInsight(voiceKey, answers = state.stageAnswers || {}) {
   if (voiceKey === "shiftWork" || hasText("шөнийн ээлж", "ээлж")) {
     return {
       surface: "шөнийн ээлж, ээлжийн дараах ядаргаа, ойр дэлгүүр эсвэл бэлэн хоол",
-      hidden: "Ээлжийн дараа бие, толгой хоёр зэрэг суларсан үед хоол амрах, тэнхээ авах, өөрийгөө жаахан шагнах хамгийн ойрын арга болж байна."
+      hidden: "Ээлжийн дараа бие, толгой хоёр зэрэг суларсан үед хоол амрах, тэнхээ авах, өөрийгөө жаахан шагнах хамгийн ойрын арга болж байна.",
+      surfaceCopy: "Шөнийн ээлж таны хоол, нойрны цагийг бодитоор хөдөлгөж байна.",
+      hiddenCopy: "Ээлжийн дараа суларсан үед хоол амрах, тэнхээ авах хамгийн ойрын арга болж байна."
     };
   }
   if (voiceKey === "postpartumContext" || hasText("төрсний дараах", "хөхүүл") || (hasText("хүүхэд") && hasText("тасалдсан нойр", "өөрийн хоол"))) {
     return {
       surface: "хүүхэд асрах, тасалдсан нойр, төрсний дараах биеийн өөрчлөлт",
-      hidden: "Өөрийн хоол, амралт хамгийн сүүлд үлдэхэд орой амттай зүйл “би ч гэсэн анхаарал хэрэгтэй” гэсэн мэдрэмжтэй холбогдож байна."
+      hidden: "Өөрийн хоол, амралт хамгийн сүүлд үлдэхэд орой амттай зүйл “би ч гэсэн анхаарал хэрэгтэй” гэсэн мэдрэмжтэй холбогдож байна.",
+      surfaceCopy: "Хүүхэд, тасалдсан нойр, өөрийн хоол хойшлох нь өдөрт бодитоор нөлөөлж байна.",
+      hiddenCopy: "Өөрийн хоол, амралт хамгийн сүүлд үлдэхэд орой хоол “би ч гэсэн анхаарал хэрэгтэй” гэсэн мэдрэмжтэй холбогдож байна."
     };
   }
   if (voiceKey === "perimenopauseContext" || hasText("перименопауз")) {
     return {
       surface: "перименопауз байж болох үе, мөчлөг, нойрны өөрчлөлт",
-      hidden: "Бие өөрчлөгдөх нь тодорхой бус санагдах үед хяналтаа буцааж авах, өөрийгөө буруутгах, эсвэл орой тайвшрах зүйл хайх мэдрэмж нэмэгдэж байж магадгүй."
+      hidden: "Бие өөрчлөгдөх нь тодорхой бус санагдах үед хяналтаа буцааж авах, өөрийгөө буруутгах, эсвэл орой тайвшрах зүйл хайх мэдрэмж нэмэгдэж байж магадгүй.",
+      surfaceCopy: "Мөчлөг, нойр, биеийн өөрчлөлт таны өдөрт бодитоор нөлөөлж байна.",
+      hiddenCopy: "Бие өөрчлөгдөх нь тодорхой бус санагдах үед хяналтаа буцааж авах, өөрийгөө буруутгах, эсвэл орой тайвшрах зүйл хайх мэдрэмж нэмэгдэж байна."
     };
   }
   if (voiceKey === "socialWeekend" || hasText("архи", "найз", "найзууд", "хүмүүсийн дунд", "арга хэмжээ", "татгалзах")) {
     return {
       surface: "найз нөхөд, архи, амралтын өдрийн орчин",
-      hidden: "Хүмүүсийн дунд татгалзах эвгүй, “бүгд идэж байхад би яах вэ” гэсэн мэдрэмж идэх сонголтыг зөөлөн түлхэж байж магадгүй."
+      hidden: "Хүмүүсийн дунд татгалзах эвгүй, “бүгд идэж байхад би яах вэ” гэсэн мэдрэмж идэх сонголтыг зөөлөн түлхэж байж магадгүй.",
+      surfaceCopy: "Амралтын өдөр найз нөхөд, архи, оройн хоол хамт орж ирдэг.",
+      hiddenCopy: "Хүмүүсийн дунд татгалзах эвгүй мэдрэмж идэх сонголтыг зөөлөн түлхэж байна."
     };
   }
   if (voiceKey === "gymRestriction") {
     return {
       surface: "хүчтэй дасгал, хоол хасалт, нүүрс ус багасгах",
-      hidden: "“Өлсөх тусам зөв явж байна” гэж бодох үед бие орой хамгаалах гэж илүү хүчтэй хариу өгч, дараа нь буцаад хэтрүүлэх тойрог үүсэж байж магадгүй."
+      hidden: "“Өлсөх тусам зөв явж байна” гэж бодох үед бие орой хамгаалах гэж илүү хүчтэй хариу өгч, дараа нь буцаад хэтрүүлэх тойрог үүсэж байж магадгүй.",
+      surfaceCopy: "Хүчтэй дасгал, хоол хасалт, нүүрс ус багасгах нь оройн өлсөлтийг хурц болгож байна.",
+      hiddenCopy: "Өлсөхийг сахилга бат гэж ойлгох үед бие орой хамгаалах гэж илүү хүчтэй хариу өгч байна."
     };
   }
   if (voiceKey === "bodyTrustMedical" || hasAnswer("эм") || hasText("жирэмслэлтээс хамгаалах", "дааврын", "эмийн", "эмчилгээ", "эм хэрэгл", "pcos", "тогтмол биш", "тогтмол бус", "сахар", "даралт")) {
+    const medicalCopy = medicalContextCopy(answers);
+    return {
+      surface: medicalCopy.surfaceSentence.replace(" таны санааг зовоож байна.", ""),
+      hidden: medicalCopy.hiddenSentence,
+      surfaceCopy: medicalCopy.surfaceSentence,
+      hiddenCopy: medicalCopy.hiddenSentence
+    };
+  }
+  if (hasText("жирэмслэлтээс хамгаалах", "дааврын", "эмийн", "эмчилгээ", "эм хэрэгл")) {
     if (hasAnswer("эм") || hasText("жирэмслэлтээс хамгаалах", "дааврын", "эмийн", "эмчилгээ", "эм хэрэгл")) {
       const surface = hasText("жирэмслэлтээс хамгаалах", "дааврын")
         ? "эм эсвэл жирэмслэлтээс хамгаалах бэлдмэл"
@@ -4322,7 +4443,9 @@ function surfaceContextInsight(voiceKey, answers = state.stageAnswers || {}) {
   if (voiceKey === "cue" || hasText("захиалгын апп", "хоолны зураг", "зууш", "үнэр", "харагдаад", "ширээн дээр", "гал тогоо")) {
     return {
       surface: "гэрээс ажиллах үед зууш, хоол, апп, зураг нүдэнд ойр байдаг",
-      hidden: "Гол нь зөвхөн зууш ойр байгаадаа биш. Ажиллаж байхдаа гарын дор байгаа зүйлд бараг бодолгүй хүрэх хандлага хүчтэй байна."
+      hidden: "Гол нь зөвхөн зууш ойр байгаадаа биш. Ажиллаж байхдаа гарын дор байгаа зүйлд бараг бодолгүй хүрэх хандлага хүчтэй байна.",
+      surfaceCopy: "Гэрээс ажиллах үед зууш, апп, зураг нүдэнд ойр байна.",
+      hiddenCopy: "Гарын дор байгаа зүйлд бараг бодолгүй хүрдэг үе хүчтэй байна."
     };
   }
   if (hasText("зураг", "толь", "бусдад харагдах", "нуух", "ичих")) {
@@ -4354,11 +4477,11 @@ function renderSurfaceHiddenSection(voiceKey) {
       <div class="two-col">
         <div class="card stack">
           <h3>Ил харагдаж байгаа зүйл</h3>
-          <p>Та ${publicHtml(insight.surface)} нөлөөлж байгаа гэж анзаарсан байна. Энэ нь бодит нөлөө байж болно.</p>
+          <p>${publicHtml(insight.surfaceCopy || `Та ${insight.surface} нөлөөлж байгаа гэж анзаарсан байна. Энэ нь бодит нөлөө байж болно.`)}</p>
         </div>
         <div class="card stack">
           <h3>Цаана нь ажиллаж байгаа зүйл</h3>
-          <p>Гэхдээ энэ тайлангийн гол нь зөвхөн ${publicHtml(insight.surface)} биш. ${publicHtml(insight.hidden)}</p>
+          <p>${publicHtml(insight.hiddenCopy || `Гэхдээ энэ тайлангийн гол нь зөвхөн ${insight.surface} биш. ${insight.hidden}`)}</p>
         </div>
       </div>
     </div>
@@ -4385,6 +4508,9 @@ function foodFunctionIntro(voiceKey) {
 }
 
 function reportEvidenceNote(voiceKey) {
+  if (voiceKey === "bodyTrustMedical") {
+    return `Та ${medicalContextCopy().surfaceSentence.replace(" таны санааг зовоож байна.", "")} бие өөрчлөгдөх мэдрэмж, хяналтаа алдаж байгаа мэт бодолтой давхцдаг гэж тэмдэглэсэн.`;
+  }
   return {
     executive: "Та орой ядарсан үед хоол захиалах эсвэл гэрт байсан амар сонголт руу ордог гэж тэмдэглэсэн.",
     regulation: "Та стресс, санаа зовнил, уурын дараа идэх хүсэл нэмэгдэж, идсэний дараа хэсэг тайвширдаг гэж хариулсан.",
@@ -4398,8 +4524,7 @@ function reportEvidenceNote(voiceKey) {
     socialWeekend: "Та амралтын өдөр найз нөхөд, архи, оройн хоол, хүмүүсийн дунд татгалзах эвгүй мэдрэмж давхцдаг гэж тэмдэглэсэн.",
     postpartumContext: "Та хүүхэд асрах, тасалдсан нойр, өөрийн хоол хойшлох, орой анхаарал хэрэгтэй мэт мэдрэмж давхцдаг гэж тэмдэглэсэн.",
     perimenopauseContext: "Та перименопауз байж болох үе, мөчлөг зөрөх, нойр муудах, бие өөрчлөгдөх мэдрэмж давхцдаг гэж хариулсан.",
-    gymRestriction: "Та дасгалын сорил, нүүрс ус багасгах, хоол хасах, оройн өлсөлт хүчтэй болох нь давхцдаг гэж тэмдэглэсэн.",
-    bodyTrustMedical: "Та эм, даралт, PCOS эсвэл мөчлөгийн санаа зовнил бие өөрчлөгдөх мэдрэмж, хяналтаа алдаж байгаа мэт бодолтой давхцдаг гэж тэмдэглэсэн."
+    gymRestriction: "Та дасгалын сорил, нүүрс ус багасгах, хоол хасах, оройн өлсөлт хүчтэй болох нь давхцдаг гэж тэмдэглэсэн."
   }[voiceKey] || "Таны хариулт болон богино тайлбарт энэ хэсэг хэд хэдэн газарт ойртож харагдсан.";
 }
 
@@ -4412,7 +4537,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
   const refinementItems = refinementBullets(primary, secondary).slice(0, 3);
   const cycleEvidence = menstrualCycleEvidence();
   const compressCycleReport = voice.key === "menstrualCycleContext";
-  const avoidItems = cycleEvidence.premenstrual
+  const avoidItems = cycleEvidence.premenstrual && !cycleEvidence.confidenceLow
     ? unique([...avoidListFor(primary?.key, tags), ...voice.avoid]).slice(0, 5)
     : voice.avoid.slice(0, 5);
   const modeCheckNote = mode.mode === "check"

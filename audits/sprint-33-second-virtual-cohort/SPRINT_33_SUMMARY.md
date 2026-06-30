@@ -4,7 +4,7 @@
 - PASS: 10
 - PARTIAL: 0
 - FAIL: 0
-- P0/P1/P2: 0/0/1
+- P0/P1/P2: 0/0/0
 - Average simple clarity: 8.3
 - Average paid value: 7.0
 - Recommendation: READY FOR OWNER REVIEW - HUMAN TESTING STILL HOLD

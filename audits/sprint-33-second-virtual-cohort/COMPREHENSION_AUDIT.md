@@ -22,7 +22,7 @@ Main question: Does the current report copy hold up across a fresh, more varied 
 - FAIL: 0
 - P0: 0
 - P1: 0
-- P2: 1
+- P2: 0
 - Average simple clarity: 8.3
 - Average paid value: 7.0
 - Recommendation: READY FOR OWNER REVIEW - HUMAN TESTING STILL HOLD
