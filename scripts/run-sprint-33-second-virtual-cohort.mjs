@@ -575,6 +575,10 @@ h3 = ParagraphStyle("h3", parent=base, fontSize=12, leading=15, textColor=GREEN,
 quote_style = ParagraphStyle("quote", parent=base, fontSize=11.5, leading=16, textColor=GREEN, leftIndent=2, rightIndent=2)
 chip_style = ParagraphStyle("chip", parent=base, fontSize=7.8, leading=9.5, textColor=GREEN_DARK, spaceAfter=0)
 number_style = ParagraphStyle("number", parent=base, fontSize=16, leading=18, textColor=GREEN_DARK, alignment=1, spaceAfter=0)
+cover_label = ParagraphStyle("cover_label", parent=base, fontSize=8.5, leading=10, textColor=BEIGE, spaceAfter=10)
+cover_title = ParagraphStyle("cover_title", parent=base, fontSize=20, leading=24, textColor=colors.white, spaceAfter=8)
+cover_small = ParagraphStyle("cover_small", parent=base, fontSize=9, leading=12, textColor=GREEN_PALE, spaceAfter=0)
+cover_number = ParagraphStyle("cover_number", parent=base, fontSize=34, leading=38, textColor=GREEN_DARK, alignment=1, spaceAfter=0)
 
 def esc(value):
     return str(value or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -634,6 +638,31 @@ def chip_row(report):
     ]))
     return t
 
+def cover_opener(report):
+    left = [
+        p("Жин хасалтын гүн зураглал", cover_label),
+        p("Тайлан %s — %s" % (report["index"], report["title"]), cover_title),
+        p("Хувийн зан төлөвийн гүн тайлан", cover_small)
+    ]
+    right = [
+        p("Тайлан", kicker),
+        p(str(report["index"]), cover_number),
+        p("Гол зураглал", chip_style)
+    ]
+    t = Table([[left, right]], colWidths=[116 * mm, 48 * mm], rowHeights=[46 * mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, 0), GREEN_DARK),
+        ("BACKGROUND", (1, 0), (1, 0), BEIGE),
+        ("LINEAFTER", (0, 0), (0, 0), 4, BEIGE_DARK),
+        ("LEFTPADDING", (0, 0), (-1, -1), 14),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 14),
+        ("TOPPADDING", (0, 0), (-1, -1), 12),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 12),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("BOX", (0, 0), (-1, -1), 0.5, LINE),
+    ]))
+    return t
+
 def quote_card(text):
     body = [[p("Гол санаа", kicker)], [p("“" + str(text or "").strip() + "”", quote_style)]]
     t = Table(body, colWidths=[164 * mm])
@@ -652,6 +681,20 @@ def two_cards(left_title, left_body, right_title, right_body):
     t = Table([[
         card(left_title, left_body, False, 78),
         card(right_title, right_body, True, 78)
+    ]], colWidths=[80 * mm, 80 * mm])
+    t.setStyle(TableStyle([
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    return t
+
+def editorial_pair(left_title, left_body, right_title, right_body):
+    t = Table([[
+        card(left_title, left_body, True, 78),
+        card(right_title, right_body, False, 78)
     ]], colWidths=[80 * mm, 80 * mm])
     t.setStyle(TableStyle([
         ("LEFTPADDING", (0, 0), (-1, -1), 0),
@@ -743,6 +786,22 @@ def experiment_plan(text):
 def diary_prompts(text):
     return lines(text)[:4] or [str(text or "").strip()]
 
+def plan_step(index, title, body, accent=False):
+    marker = p(str(index), number_style)
+    content = [p(title, h3), p(body, base)]
+    t = Table([[marker, content]], colWidths=[16 * mm, 146 * mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, 0), BEIGE if accent else GREEN_SOFT),
+        ("BACKGROUND", (1, 0), (1, 0), GREEN_SOFT if accent else CARD),
+        ("BOX", (0, 0), (-1, -1), 0.65, LINE),
+        ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+        ("TOPPADDING", (0, 0), (-1, -1), 9),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 9),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    return t
+
 def prompt_card(index, text):
     t = Table([[p(str(index), number_style), p(text, base)]], colWidths=[14 * mm, 146 * mm])
     t.setStyle(TableStyle([
@@ -756,6 +815,51 @@ def prompt_card(index, text):
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
     ]))
     return t
+
+def prompt_panel(index, text, width=78, label="Ажиглах асуулт"):
+    body = [p(str(index), number_style), p(label, kicker), p(text, base)]
+    t = Table([[body]], colWidths=[width * mm], rowHeights=[34 * mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), CARD),
+        ("BOX", (0, 0), (-1, -1), 0.65, LINE),
+        ("LINEBEFORE", (0, 0), (-1, -1), 3, GREEN),
+        ("LEFTPADDING", (0, 0), (-1, -1), 10),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 8),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    return t
+
+def prompt_grid(prompts):
+    panels = [prompt_panel(i, prompt, 78) for i, prompt in enumerate(prompts, start=1)]
+    rows = []
+    for i in range(0, len(panels), 2):
+        row = panels[i:i+2]
+        if len(row) == 1:
+            row.append("")
+        rows.append(row)
+    t = Table(rows, colWidths=[80 * mm, 80 * mm])
+    t.setStyle(TableStyle([
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    return t
+
+def cycle_context_cards(text):
+    items = lines(text)
+    if items and items[0] == "Мөчлөг тогтмол бус үед":
+        items = items[1:]
+    if not items:
+        items = [str(text or "").strip()]
+    story_items = [card("Мөчлөг тогтмол бус үед", "Энэ хэсгийг онош биш, зөвхөн нэмэлт нөхцөл гэж уншаарай.", True)]
+    for index, item in enumerate(items[:4], start=1):
+        story_items.append(Spacer(1, 6))
+        story_items.append(prompt_panel(index, item, 164, "Анхаарах зүйл"))
+    return story_items
 
 def on_page(canvas, doc):
     canvas.saveState()
@@ -777,14 +881,18 @@ def on_page(canvas, doc):
 story = []
 for report in data["reports"]:
     if report["mode"] != "deep":
-        page_header(story, report, "Тайлан %s — %s" % (report["index"], report["title"]), "Мэргэжлийн хүнтэй эхэлж ярилцах тайлан")
+        story.append(cover_opener(report))
+        story.append(Spacer(1, 10))
+        story.append(p("Мэргэжлийн хүнтэй эхэлж ярилцах тайлан", h2))
         story.append(chip_row(report))
         story.append(Spacer(1, 10))
         story.append(card("Эхлээд мэргэжлийн хүнтэй ярилцах", report["professional"]["summary"], True))
         page_break(story)
         page_header(story, report, "Ярилцахад авч очих нэгтгэл")
-        story.append(card("Ярилцах товч нэгтгэл", lines(report["professional"]["consult"]), True))
-        story.append(Spacer(1, 8))
+        consult_items = lines(report["professional"]["consult"])
+        for index, item in enumerate(consult_items[:3], start=1):
+            story.append(prompt_panel(index, item, 164, "Ярилцах зүйл"))
+            story.append(Spacer(1, 6))
         story.append(card("Яагаад ердийн жин хасалтын тайланг түр зогсоож байна вэ?", report["professional"]["whyStopped"]))
         page_break(story)
         page_header(story, report, "Аюулгүй эхлэх дараалал")
@@ -795,7 +903,8 @@ for report in data["reports"]:
             page_break(story)
         continue
 
-    page_header(story, report, "Гол зураглал")
+    story.append(cover_opener(report))
+    story.append(Spacer(1, 10))
     story.append(chip_row(report))
     story.append(Spacer(1, 9))
     story.append(p(report["intro"], small))
@@ -816,9 +925,9 @@ for report in data["reports"]:
     page_header(story, report, "Далд сэтгэлзүйн механизм")
     story.append(card("Гол зураг", report["detailed"]["goalPicture"], True))
     story.append(Spacer(1, 8))
-    story.append(card("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?", report["detailed"]["foodFeeling"]))
+    story.append(editorial_pair("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?", report["detailed"]["foodFeeling"], "Яагаад ингэж хэлж байна вэ?", report["detailed"]["why"]))
     story.append(Spacer(1, 8))
-    story.append(two_cards("Гол буруу ойлголт", report["detailed"]["misunderstanding"], "Яагаад ингэж хэлж байна вэ?", report["detailed"]["why"]))
+    story.append(card("Гол буруу ойлголт", report["detailed"]["misunderstanding"], True))
     page_break(story)
 
     page_header(story, report, "Давтагддаг тойрог")
@@ -832,27 +941,25 @@ for report in data["reports"]:
     story.append(card("Эхний жижиг өөрчлөлт", report["detailed"]["firstStep"], True))
     story.append(Spacer(1, 8))
     plan_blocks, recovery_note = experiment_plan(report["detailed"]["experiment"])
-    for label, body in plan_blocks:
-        story.append(card(label, body))
+    for index, (label, body) in enumerate(plan_blocks, start=1):
+        story.append(plan_step(index, label, body))
         story.append(Spacer(1, 5))
     if recovery_note:
-        story.append(card("Хэрвээ нэг өдөр алгасвал", recovery_note.split(":", 1)[-1].strip(), True))
+        story.append(plan_step(4, "Хэрвээ нэг өдөр алгасвал", recovery_note.split(":", 1)[-1].strip(), True))
     page_break(story)
 
     page_header(story, report, "7 хоногийн тэмдэглэл")
     story.append(p("Энэ тэмдэглэл нь гол тойрог яг ямар өдөр, ямар нөхцөлд хүчтэй болдгийг тодруулахад тусална.", small))
     story.append(Spacer(1, 8))
-    for index, prompt in enumerate(diary_prompts(report["detailed"]["diary"]), start=1):
-        story.append(p("Ажиглах асуулт", kicker))
-        story.append(prompt_card(index, prompt))
-        story.append(Spacer(1, 6))
+    story.append(prompt_grid(diary_prompts(report["detailed"]["diary"])))
     story.append(Spacer(1, 6))
     story.append(card("Дараагийн алхам", "Энэ хэсэг нь дараагийн 7 хоногийн тэмдэглэлээр илүү тодорно.", True))
 
     if report["detailed"]["cycleNote"]:
         page_break(story)
         page_header(story, report, "Нэмэлт нөхцөл")
-        story.append(card("Мөчлөгтэй холбоотой анхаарах зүйл", report["detailed"]["cycleNote"], True))
+        for item in cycle_context_cards(report["detailed"]["cycleNote"]):
+            story.append(item)
     if report != data["reports"][-1]:
         page_break(story)
 
