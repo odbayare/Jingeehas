@@ -221,17 +221,17 @@ const personas = [
   },
   {
     userId: "user-10",
-    title: "Толь, зураг, social event дээр биеэ нуух хэрэглэгч",
+    title: "Толь, зураг, хүмүүсийн дунд биеэ нуух хэрэглэгч",
     expectedMode: "professional",
     expectedText: ["өөрийгөө харах", "бусдад харагдах", "ичгүүртэй"],
-    persona: { age: 31, profile: "Толь, зураг, social event дээр биеэ нуух хүсэл нэмэгддэг. Идсэний дараа ичих, нуух мэдрэмж хүчтэй тул энгийн тайлан дарагдана." },
+    persona: { age: 31, profile: "Толь, зураг, хүмүүсийн дунд биеэ нуух хүсэл нэмэгддэг. Идсэний дараа ичих, нуух мэдрэмж хүчтэй тул энгийн тайлан дарагдана." },
     selectedAnswers: {
       "S1-S01": "Заримдаа",
       "S1-S02": "Ихэвчлэн",
       "S1-F02": "Шууд гэмшдэг",
       "S1-S04": "Үгүй"
     },
-    freeTextAnswers: { "S1-V01": "Толь, зураг, бусдад харагдах social event дээр биеэ нуух хүсэл ихэсдэг. Идсэний дараа ичих, нуух мэдрэмж хүчтэй болдог." },
+    freeTextAnswers: { "S1-V01": "Толь, зураг, бусдад харагдах хүмүүсийн дунд биеэ нуух хүсэл ихэсдэг. Идсэний дараа ичих, нуух мэдрэмж хүчтэй болдог." },
     scores: { clarity: 8, fit: 8, mongolian: 8, ai: 8, safety: 10, action: 8, value: 5 }
   }
 ];
@@ -513,7 +513,7 @@ function reportPdfModel(result, index) {
     },
     professional: result.generatedMode !== "deep" ? {
       title: firstLine(full),
-      summary: section(full, firstLine(full), ["Ярилцах товч нэгтгэл"]),
+      summary: valueAfter(full, firstLine(full), ["Ярилцах товч нэгтгэл"]),
       consult: valueAfter(full, "Ярилцах товч нэгтгэл", ["Яагаад ердийн жин хасалтын тайланг түр зогсоож байна вэ?"]),
       whyStopped: valueAfter(full, "Яагаад ердийн жин хасалтын тайланг түр зогсоож байна вэ?", ["Одоогоор зайлсхийх зүйлс:"]),
       avoid: valueAfter(full, "Одоогоор зайлсхийх зүйлс:", ["Эхэлж өөрчлөх хамгийн амар цэг:"]),
@@ -557,19 +557,24 @@ BG = colors.HexColor("#F7F3EA")
 INK = colors.HexColor("#26332D")
 MUTED = colors.HexColor("#5E6A60")
 GREEN = colors.HexColor("#23483A")
+GREEN_DARK = colors.HexColor("#173328")
 GREEN_SOFT = colors.HexColor("#DDE8DF")
+GREEN_PALE = colors.HexColor("#EEF5ED")
 BEIGE = colors.HexColor("#EADDC8")
 BEIGE_DARK = colors.HexColor("#B79C72")
 CARD = colors.HexColor("#FFFDF7")
 LINE = colors.HexColor("#D8CDB9")
+WHITE = colors.HexColor("#FFFFFB")
 
 base = ParagraphStyle("base", parent=styles["BodyText"], fontName=font_name, fontSize=10.2, leading=14.5, textColor=INK, alignment=TA_LEFT, spaceAfter=6)
 small = ParagraphStyle("small", parent=base, fontSize=8.7, leading=12, textColor=MUTED, spaceAfter=4)
 kicker = ParagraphStyle("kicker", parent=base, fontSize=8, leading=10, textColor=BEIGE_DARK, spaceAfter=4)
-h1 = ParagraphStyle("h1", parent=base, fontSize=21, leading=25, textColor=GREEN, spaceAfter=10)
+h1 = ParagraphStyle("h1", parent=base, fontSize=22, leading=26, textColor=GREEN_DARK, spaceAfter=9)
 h2 = ParagraphStyle("h2", parent=base, fontSize=15, leading=18, textColor=GREEN, spaceBefore=4, spaceAfter=7)
 h3 = ParagraphStyle("h3", parent=base, fontSize=12, leading=15, textColor=GREEN, spaceAfter=4)
 quote_style = ParagraphStyle("quote", parent=base, fontSize=11.5, leading=16, textColor=GREEN, leftIndent=2, rightIndent=2)
+chip_style = ParagraphStyle("chip", parent=base, fontSize=7.8, leading=9.5, textColor=GREEN_DARK, spaceAfter=0)
+number_style = ParagraphStyle("number", parent=base, fontSize=16, leading=18, textColor=GREEN_DARK, alignment=1, spaceAfter=0)
 
 def esc(value):
     return str(value or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
@@ -601,6 +606,48 @@ def card(title, body="", accent=False, width=164):
     ]))
     return table
 
+def chip(label, value):
+    body = [p(label, kicker), p(value, chip_style)]
+    t = Table([[body]], colWidths=[50 * mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), GREEN_PALE),
+        ("BOX", (0, 0), (-1, -1), 0.55, LINE),
+        ("LEFTPADDING", (0, 0), (-1, -1), 7),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 7),
+        ("TOPPADDING", (0, 0), (-1, -1), 5),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 5),
+    ]))
+    return t
+
+def chip_row(report):
+    t = Table([[
+        chip("Тайлан", str(report["index"])),
+        chip("Профайл", report["title"]),
+        chip("Зорилго", "Гол тойргоо ойлгох")
+    ]], colWidths=[53 * mm, 53 * mm, 53 * mm])
+    t.setStyle(TableStyle([
+        ("LEFTPADDING", (0, 0), (-1, -1), 0),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+        ("TOPPADDING", (0, 0), (-1, -1), 0),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+        ("VALIGN", (0, 0), (-1, -1), "TOP"),
+    ]))
+    return t
+
+def quote_card(text):
+    body = [[p("Гол санаа", kicker)], [p("“" + str(text or "").strip() + "”", quote_style)]]
+    t = Table(body, colWidths=[164 * mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), WHITE),
+        ("BOX", (0, 0), (-1, -1), 0.8, BEIGE_DARK),
+        ("LINEBEFORE", (0, 0), (-1, -1), 4, GREEN),
+        ("LEFTPADDING", (0, 0), (-1, -1), 12),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 10),
+        ("TOPPADDING", (0, 0), (-1, -1), 8),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 9),
+    ]))
+    return t
+
 def two_cards(left_title, left_body, right_title, right_body):
     t = Table([[
         card(left_title, left_body, False, 78),
@@ -615,9 +662,20 @@ def two_cards(left_title, left_body, right_title, right_body):
     ]))
     return t
 
-def page_header(story, report, label):
+def optional_surface_hidden(report):
+    surface = str(report.get("surface") or "").strip()
+    hidden = str(report.get("hidden") or "").strip()
+    if surface and hidden:
+        return two_cards("Ил харагдаж байгаа зүйл", surface, "Цаана нь ажиллаж байгаа зүйл", hidden)
+    if surface:
+        return card("Ил харагдаж байгаа зүйл", surface)
+    if hidden:
+        return card("Цаана нь ажиллаж байгаа зүйл", hidden, True)
+    return None
+
+def page_header(story, report, label, title=None):
     story.append(p("Жин хасалтын гүн зураглал", kicker))
-    story.append(p("Тайлан %s — %s" % (report["index"], report["title"]), h1))
+    story.append(p(title or "Тайлан %s — %s" % (report["index"], report["title"]), h1))
     story.append(p(label, small))
     story.append(Spacer(1, 8))
 
@@ -629,49 +687,100 @@ def flow_steps(text):
     if not items:
         return [card("Давтагддаг тойрог", "Энэ хэсэгт тойргийн алхмууд гарна.")]
     flow = []
+    circled = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧", "⑨"]
     for index, item in enumerate(items, start=1):
-        row = Table([[p(str(index), h3), p(item, base)]], colWidths=[12 * mm, 144 * mm])
+        marker = p(circled[index - 1] if index <= len(circled) else str(index), number_style)
+        step_card = card("", item, False, 140)
+        row = Table([[marker, step_card]], colWidths=[18 * mm, 144 * mm])
         row.setStyle(TableStyle([
-            ("BACKGROUND", (0, 0), (0, 0), GREEN),
-            ("TEXTCOLOR", (0, 0), (0, 0), colors.white),
-            ("BACKGROUND", (1, 0), (1, 0), CARD),
-            ("BOX", (0, 0), (-1, -1), 0.55, LINE),
-            ("LEFTPADDING", (0, 0), (-1, -1), 8),
-            ("RIGHTPADDING", (0, 0), (-1, -1), 8),
-            ("TOPPADDING", (0, 0), (-1, -1), 7),
-            ("BOTTOMPADDING", (0, 0), (-1, -1), 7),
+            ("BACKGROUND", (0, 0), (0, 0), GREEN_SOFT),
+            ("BOX", (0, 0), (0, 0), 0.8, GREEN),
+            ("LEFTPADDING", (0, 0), (-1, -1), 0),
+            ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+            ("TOPPADDING", (0, 0), (-1, -1), 0),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
         ]))
         flow.append(row)
         if index < len(items):
-            flow.append(Spacer(1, 3))
+            connector = Table([["", ""]], colWidths=[18 * mm, 144 * mm], rowHeights=[5 * mm])
+            connector.setStyle(TableStyle([
+                ("LINEBEFORE", (0, 0), (0, 0), 1.2, BEIGE_DARK),
+                ("LEFTPADDING", (0, 0), (-1, -1), 9 * mm),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 0),
+                ("TOPPADDING", (0, 0), (-1, -1), 0),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 0),
+            ]))
+            flow.append(connector)
+    flow.append(Spacer(1, 4))
+    flow.append(card("Дахин эргэх цэг", "Хэрвээ бэлтгэсэн жижиг тулгуур байхгүй бол энэ тойрог дараагийн төстэй өдөр буцаж ирдэг.", True))
     return flow
 
 def experiment_blocks(text):
     items = lines(text)
     return items or [str(text or "").strip()]
 
+def experiment_plan(text):
+    items = experiment_blocks(text)
+    labels = ["Эхний 3 өдөр", "4-10 дахь өдөр", "11-14 дэх өдөр"]
+    blocks = []
+    recovery = ""
+    for item in items:
+        lower = item.lower()
+        if "хэрвээ" in lower or "алгас" in lower:
+            recovery = item
+        elif "эхний 3" in lower:
+            blocks.append(("Эхний 3 өдөр", item.split(":", 1)[-1].strip() or item))
+        elif "4-10" in lower or "4–10" in lower:
+            blocks.append(("4-10 дахь өдөр", item.split(":", 1)[-1].strip() or item))
+        elif "11-14" in lower or "11–14" in lower:
+            blocks.append(("11-14 дэх өдөр", item.split(":", 1)[-1].strip() or item))
+    while len(blocks) < 3 and len(blocks) < len(items):
+        idx = len(blocks)
+        blocks.append((labels[idx], items[idx]))
+    return blocks[:3], recovery
+
 def diary_prompts(text):
     return lines(text)[:4] or [str(text or "").strip()]
+
+def prompt_card(index, text):
+    t = Table([[p(str(index), number_style), p(text, base)]], colWidths=[14 * mm, 146 * mm])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (0, 0), GREEN_SOFT),
+        ("BACKGROUND", (1, 0), (1, 0), CARD),
+        ("BOX", (0, 0), (-1, -1), 0.65, LINE),
+        ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+        ("TOPPADDING", (0, 0), (-1, -1), 9),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 9),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+    ]))
+    return t
 
 def on_page(canvas, doc):
     canvas.saveState()
     canvas.setFillColor(BG)
     canvas.rect(0, 0, PAGE_W, PAGE_H, fill=1, stroke=0)
+    canvas.setFillColor(GREEN)
+    canvas.rect(0, 0, 8 * mm, PAGE_H, fill=1, stroke=0)
+    canvas.setFillColor(BEIGE)
+    canvas.rect(8 * mm, 0, 2 * mm, PAGE_H, fill=1, stroke=0)
     canvas.setStrokeColor(BEIGE_DARK)
-    canvas.setLineWidth(0.8)
-    canvas.line(22 * mm, 19 * mm, 188 * mm, 19 * mm)
+    canvas.setLineWidth(0.7)
+    canvas.line(22 * mm, 20 * mm, 188 * mm, 20 * mm)
     canvas.setFillColor(MUTED)
     canvas.setFont(font_name, 7.5)
-    canvas.drawString(22 * mm, 14 * mm, "Жин хасалтын гүн зураглал")
-    canvas.drawRightString(188 * mm, 14 * mm, "Хуудас %s" % doc.page)
+    canvas.drawString(22 * mm, 14.5 * mm, "Жин хасалтын гүн зураглал")
+    canvas.drawRightString(188 * mm, 14.5 * mm, "Хуудас %s" % doc.page)
     canvas.restoreState()
 
 story = []
 for report in data["reports"]:
     if report["mode"] != "deep":
-        page_header(story, report, "Мэргэжлийн хүнтэй эхэлж ярилцах тайлан")
-        story.append(card(report["professional"]["title"], report["professional"]["summary"], True))
+        page_header(story, report, "Тайлан %s — %s" % (report["index"], report["title"]), "Мэргэжлийн хүнтэй эхэлж ярилцах тайлан")
+        story.append(chip_row(report))
+        story.append(Spacer(1, 10))
+        story.append(card("Эхлээд мэргэжлийн хүнтэй ярилцах", report["professional"]["summary"], True))
         page_break(story)
         page_header(story, report, "Ярилцахад авч очих нэгтгэл")
         story.append(card("Ярилцах товч нэгтгэл", lines(report["professional"]["consult"]), True))
@@ -687,11 +796,17 @@ for report in data["reports"]:
         continue
 
     page_header(story, report, "Гол зураглал")
+    story.append(chip_row(report))
+    story.append(Spacer(1, 9))
     story.append(p(report["intro"], small))
     story.append(Spacer(1, 6))
     story.append(card("Товч хариу", report["simple"]["stuckMoment"], True))
     story.append(Spacer(1, 7))
-    story.append(two_cards("Ил харагдаж байгаа зүйл", report["surface"], "Цаана нь ажиллаж байгаа зүйл", report["hidden"]))
+    surface_hidden = optional_surface_hidden(report)
+    if surface_hidden:
+        story.append(surface_hidden)
+        story.append(Spacer(1, 7))
+    story.append(quote_card(report["hidden"] or (report["simple"]["meaningBullets"][0] if report["simple"]["meaningBullets"] else report["simple"]["stuckMoment"])))
     story.append(Spacer(1, 7))
     story.append(card("Онцлох санаа", report["simple"]["meaningBullets"], False))
     story.append(Spacer(1, 7))
@@ -716,15 +831,23 @@ for report in data["reports"]:
     story.append(Spacer(1, 8))
     story.append(card("Эхний жижиг өөрчлөлт", report["detailed"]["firstStep"], True))
     story.append(Spacer(1, 8))
-    story.append(card("14 хоногийн туршилт", experiment_blocks(report["detailed"]["experiment"])))
+    plan_blocks, recovery_note = experiment_plan(report["detailed"]["experiment"])
+    for label, body in plan_blocks:
+        story.append(card(label, body))
+        story.append(Spacer(1, 5))
+    if recovery_note:
+        story.append(card("Хэрвээ нэг өдөр алгасвал", recovery_note.split(":", 1)[-1].strip(), True))
     page_break(story)
 
     page_header(story, report, "7 хоногийн тэмдэглэл")
     story.append(p("Энэ тэмдэглэл нь гол тойрог яг ямар өдөр, ямар нөхцөлд хүчтэй болдгийг тодруулахад тусална.", small))
     story.append(Spacer(1, 8))
-    for prompt in diary_prompts(report["detailed"]["diary"]):
-        story.append(card("Ажиглах асуулт", prompt))
+    for index, prompt in enumerate(diary_prompts(report["detailed"]["diary"]), start=1):
+        story.append(p("Ажиглах асуулт", kicker))
+        story.append(prompt_card(index, prompt))
         story.append(Spacer(1, 6))
+    story.append(Spacer(1, 6))
+    story.append(card("Дараагийн алхам", "Энэ хэсэг нь дараагийн 7 хоногийн тэмдэглэлээр илүү тодорно.", True))
 
     if report["detailed"]["cycleNote"]:
         page_break(story)
