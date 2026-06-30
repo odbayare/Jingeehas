@@ -1,189 +1,146 @@
-# Mongolian Report Style Bible
+# Монгол тайлангийн найруулгын зарчим
 
-Source reference: `Оройгүй сүм - Л.Түдэв.pdf`
+Энэ баримт Weight Test-ийн тайланг монгол хүнд ойр, ойлгомжтой, дулаан хэлээр бичихэд хэрэглэнэ. `Оройгүй сүм - Л.Түдэв.pdf`-ийг зөвхөн өндөр түвшний монгол найруулгын ажиглалт болгон ашигласан. Өгүүлбэр, дүр, хэллэг хуулбарлахгүй. Энэ бүтээгдэхүүн роман биш. Гэхдээ орчуулга шиг сонсогдох ёсгүй.
 
-This guide uses the reference only to study high-level Mongolian prose habits. It does not imitate the novel, copy its sentences, or turn the Weight Test report into fiction. The product voice remains a clear health and behavior report.
+## 1. Эхлээд амьд мөч
 
-## 1. What Makes Prose Feel Mongolian
+Сайн монгол тайлан эхлээд хийсвэр дүгнэлтээс биш, амьд мөчөөс эхэлнэ.
 
-Strong Mongolian prose often starts from something concrete: a place, a body feeling, a time of day, a hand movement, a sound, a thing in front of the eyes. Meaning grows from the scene.
+- Орой гэртээ ирэх.
+- Утас нээх.
+- Хоол захиалах апп харагдах.
+- Ширээн дээр зууш ойр байх.
+- Өдөржин юм шийдээд тэнхээ дуусах.
+- Удаан хоолгүй явсны дараа бие яарах.
 
-For Weight Test, explain behavior through a lived moment first:
+Уншигч эхний өгүүлбэрээс өөрийн өдрөө таних ёстой. Дараа нь тайлбар орж болно.
 
-- evening, table, phone, delivery app, leftover food
-- body getting empty, head getting tired, hand reaching
-- a person coming home, sitting down, not wanting to think again
-- stress sitting in the chest, then food giving a short pause
+## 2. Үйл үг өгүүлбэрийг авч явна
 
-Verbs should carry the sentence. Use verbs like `хүрэх`, `татах`, `хүнд болох`, `сулрах`, `яарах`, `намдах`, `хойшлох`, `ойртох`, `холдуулах`, `буцах`.
+Монгол өгүүлбэрт үйл үг ачааг үүрнэ. Нэр үг олон давхарлавал тайлан хүндэрнэ.
 
-Short clauses feel more natural than stacked abstract nouns. One sentence should move one thought forward.
+Ийм үйл үг илүү амьд сонсогдоно:
 
-Time, body, and place words make explanation easier:
+- хүрэх
+- татах
+- хүнд болох
+- сулрах
+- яарах
+- намдах
+- холдох
+- ойртох
+- буцах
+- зөөлрөх
 
-- `орой болоход`
-- `удаан юм идээгүй үед`
-- `гарын дор байхаар`
-- `сэтгэл давчдахад`
-- `нүдэнд өртөхөөр`
-- `дараагийн хоолноос`
+`идэх шийдвэрийн хэв маяг` гэж бичихээс илүү `орой хоол сонгох хүнд болдог` гэж бичнэ.
 
-Cause and effect should be shown through a moment, not declared as a diagnosis. Instead of saying a system caused a behavior, show the moment where the behavior becomes likely.
+## 3. Хийсвэр нэр үг давхарлахгүй
 
-Spoken Mongolian softens heavy explanation. A report can be serious without sounding clinical.
+Тайлан дотор хийсвэр үг хэрэгтэй үе бий. Гэхдээ нэг өгүүлбэрт олон хийсвэр нэр үг шахахгүй.
 
-## 2. What To Avoid In Weight Test Reports
+Боломжтой бол:
 
-Avoid or strongly reduce these public report habits:
+- `орой`
+- `гарын дор`
+- `нүдэнд ойр`
+- `дараагийн хоол`
+- `удаан хоолгүй`
+- `сэтгэл давчдах`
+- `амархан сонголт`
 
-- starting paragraphs with `Таны...` again and again
-- abstract report-engine nouns
-- long noun chains
-- English labels or internal audit words
-- deterministic medical-sounding claims
-- repeated use of `давтамж`, `зураглал`, `дохио`
-- phrases that sound translated from product logic
-- markdown markers leaking into user-facing review files
-- internal export labels such as route, verdict, selected answers, checklist, S1/MC IDs, PASS/FAIL
+гэсэн үгээр эхэлнэ.
 
-Do not use public report language that says:
+`Давтамж`, `зураглал`, `дохио` зэрэг үгсийг user-facing тайланд аль болох цөөлнө. Хэрэглэвэл нэг удаа, тодорхой утгатай хэрэглэнэ.
 
-- the answer came from an engine
-- a mechanism was detected
-- ordinary report was suppressed
-- the user failed a checklist
-- the behavior is caused by one fixed reason
+## 4. Онош шиг биш, хүнтэй ярьж байгаа мэт
 
-## 3. Replacement Principles
+Тайлан хүнийг оношлохгүй. Хүнийг буруутгахгүй. Хэт итгэлтэй шалтгаан зарлахгүй.
 
-Put the lived moment before the explanation.
+Ингэж бичихгүй:
 
-Bad direction:
-`Орой дахин хоол бодож, сонгох тэнхээ үлдэхгүй байна.`
+- энэ бол даавраас болж байна
+- энэ бол сахилга батгүй байдал
+- таны механизм илэрлээ
+- ordinary report дарагдсан
+- checklist давсангүй
 
-Better direction:
-`Орой болоход "юу идэх вэ?" гэж бодох хүртэл хүнд болдог.`
+Ингэж бичнэ:
 
-Bad direction:
-`Орчин өөрөө идэх шийдвэрийг эхлүүлж байна.`
+- ийм өдөр илүү хэцүү болдог байж болно
+- энэ нь сул тал гэсэн үг биш
+- эхлээд нэг жижиг цэгээс харъя
+- тэр үед хоол өөр үүрэгтэй санагдсан байж болно
 
-Better direction:
-`Зууш нүдэнд ойр байхаар гар өөрөө хүрчихдэг үе байна.`
+## 5. Нэг өгүүлбэр нэг санаа
 
-Bad direction:
-`Хоол тодорхой хэрэгцээг түр нөхөж байсан байж магадгүй.`
+Нэг өгүүлбэр нэг санаа хэлнэ. Нэг догол мөр 2-3 богино өгүүлбэрээс хэтрэхгүй байвал уншихад амар.
 
-Better direction:
-`Тэр үед хоол зүгээр нэг хоол биш байсан байж болно. Түр амрах, тэнхээ орох, эсвэл өөртөө жаахан юм өгсөн мэдрэмж төрдөг.`
+Утаснаас уншиж байгаа хүн олон давхар тайлбар тэвчихгүй. Гол санаа эхэндээ харагдах ёстой.
 
-Bad direction:
-`Давтамж ямар нөхцөлд давтагддагийг харна.`
+## 6. Report роман болохгүй
 
-Better direction:
-`Ямар өдөр илүү хэцүү болдгийг тэмдэглэлээр ялгана.`
+Тайлан амьд хэлтэй байж болно. Гэхдээ хэт уран, хэт урт, дүрслэлээр дүүрэн байж болохгүй.
 
-## 4. Product-Specific Voice
+Зорилго нь:
 
-Weight Test should sound like a careful Mongolian coach:
+- хүн өөрийгөө ойлгох
+- ичих мэдрэмж багасах
+- эхний жижиг алхам тодрох
+- аюултай нөхцөлд зөв дараалал барих
 
-- warm
-- direct
-- grounded
-- non-shaming
-- easy to read on mobile
-- specific enough to feel personal
-- calm around safety
-- humble around body and cycle explanations
+Тайлангийн өгүүлбэр сайхан сонсогдохоос илүү хэрэгтэй байх ёстой.
 
-It should not sound:
+## 7. Archetype бүрийн өнгө
 
-- poetic for its own sake
-- like a novel
-- like a clinic form
-- like a motivational poster
-- like a translated dashboard
-- like an AI diagnosis
+### Оройн ядаргаа
 
-## 5. Sentence Rules
+Орой болоход `юу идэх вэ?` гэж бодох хүртэл хүнд болдог. Өдөржин ажил, гэр, хүмүүсийн хэрэгцээ өнгөрсний дараа бэлэн хоол түрүүлж харагдана.
 
-- Most sentences should stay under 18 words.
-- One paragraph should be no longer than 3 short sentences.
-- One sentence should carry one idea.
-- Use `байж магадгүй` sparingly.
-- Prefer ordinary verbs: `санагддаг`, `хүнд болдог`, `амархан болдог`, `татдаг`, `намддаг`, `сулрах`, `яарах`.
-- Use `та` only when needed. Do not start every paragraph with `Таны`.
-- Use concrete nouns before abstract nouns.
-- Prefer `юу идэх вэ?` over abstract decision language.
-- Prefer `гарын дор`, `нүдэнд ойр`, `орой`, `дараагийн хоол` over internal terms.
+### Стресс
 
-## 6. Archetype Voice Rules
+Стресс ихтэй үед хоол хэсэг амсхийх газар шиг санагдана. Дотор давчдах, санаа зовох, уур хүрэх үед түр намдах мэдрэмж гарч болно.
 
-### Evening Fatigue
+### Хэт чанга барих ба нурах
 
-Use:
-`Орой болоход "юу идэх вэ?" гэж бодох хүртэл хүнд болдог.`
+Нэг удаа хазайхаар бүх өдөр дуусчихсан юм шиг санагддаг. Гол нь алдаа биш. Буцаад дараагийн хоолноос хэвийн үргэлжлэх зам алга болдог.
 
-Write about work, home, people, and the last bit of energy leaving before food is chosen.
+### Өлсөлт ба аюулгүй мэдрэмж
 
-### Stress Eating
+Удаан юм идээгүй үед орой бие яардаг. Дараа дахиад өлсөх вий гэсэн айдас нэмэгдэж болно.
 
-Use:
-`Стресс ихтэй үед хоол түр амрах газар шиг санагдаж байна.`
+### Өөрийгөө хамгийн сүүлд тавих
 
-Write about tight chest, worry, anger, short relief, and later regret.
+Өдөржин өөрийн хоол, амралт хамгийн сүүлд үлдвэл орой амттай зүйл `миний юм` шиг санагдаж болно.
 
-### Restriction Collapse
+### Орчин ба харагдах зүйл
 
-Use:
-`Нэг удаа хазайхаар бүх өдөр дуусчихсан юм шиг санагддаг.`
+Зууш нүдэнд ойр байхаар гар амархан хүрдэг. Энэ нь хүсэл зориг сул гэсэн үг биш. Ойр, нээлттэй, харагдаж байгаа зүйл хүчтэй байдаг.
 
-Write about "өнөөдөр өнгөрлөө", returning at the next meal, and 70 percent being enough.
+### Нойр ба тэнхээ
 
-### Hunger Safety
+Нойр муу өдөр орой амттай юм илүү хүчтэй татдаг. Тийм үед эхний алхам нь зөвхөн хоол хорих биш. Нойр, кофеин, эхний хоолыг хамт харна.
 
-Use:
-`Удаан юм идээгүй байх үед орой бие яарч эхэлдэг.`
+### Сарын тэмдгийн мөчлөг
 
-Write about long gaps, urgent evening hunger, and one anchor meal plus one small bridge.
+Сарын тэмдэг ирэхийн өмнөх хэдэн өдөр амттай юм илүү хүчтэй татдаг байж болно. Үүнийг онош гэж бичихгүй. Зөвхөн тухайн өдрүүдэд зөөлөн төлөвлөх нэмэлт нөхцөл гэж бичнэ.
 
-### Self-Neglect
+### Мэргэжлийн хүн түрүүнд
 
-Use:
-`Өдөржин өөрийн хоол, амралт хамгийн сүүлд үлддэг бол орой амттай зүйл "миний юм" шиг санагдаж болно.`
+Зарим хариулт дээр эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв. Энэ хэсэг тодорхой, тайван, айлгахгүй байх ёстой.
 
-Write about protecting ten minutes before the day is gone.
+### Яаралтай аюулгүй байдал
 
-### Cue And Environment
+Ийм үед жин хасах тухай ярихгүй. Эхлээд хүний аюулгүй байдал. Төлбөр, туршилт, ordinary report, санал асуулга харагдахгүй.
 
-Use:
-`Зууш нүдэнд ойр байхаар гар өөрөө хүрчихдэг үе байна.`
+## 8. Сүүлийн шалгалт
 
-Write about what is visible, near, open, and easy to touch.
+User-facing тайланг гаргахын өмнө дараахыг шалгана.
 
-### Sleep And Energy
+- Дотоод route, verdict, checklist гарсан эсэх.
+- Англи label үлдсэн эсэх.
+- Нэг санаа олон удаа давтагдсан эсэх.
+- Хэт ерөнхий өгүүлбэр олон болсон эсэх.
+- Хүнийг буруутгаж байгаа мэт сонсогдож байгаа эсэх.
+- Мөчлөг, бие, сэтгэлзүйн хэсэг онош шиг сонсогдож байгаа эсэх.
 
-Use:
-`Нойр муу өдөр орой амттай юм илүү хүчтэй татдаг.`
-
-Write about low sleep, weak evenings, caffeine boundaries, and a ten-minute shutdown.
-
-### Menstrual Cycle
-
-Use:
-`Сарын тэмдэг ирэхийн өмнөх хэдэн өдөр амттай юм илүү хүчтэй татдаг байж магадгүй.`
-
-Write with caution. Do not diagnose. Do not over-explain. Mention softer planning and not treating swelling as fat gain.
-
-### Professional-First
-
-Use:
-`Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна.`
-
-Keep this clear and human. Do not show ordinary weight-loss plans.
-
-### Urgent Safety
-
-Use:
-`Одоо жин хасах тухай биш. Эхлээд таны аюулгүй байдал чухал.`
-
-Keep it direct. Do not show payment, feedback, ordinary report, or experiment text.
+Цэвэр тайлан бол хүнийг оношлохгүй. Харин тухайн өдөр хаана хэцүү болдгийг харахад тусална.

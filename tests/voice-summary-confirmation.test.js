@@ -121,8 +121,8 @@ function run() {
     diaryEntries: [unconfirmedRaw, entry(2), entry(3), entry(4), entry(5)]
   });
   const structuredOnlyReport = _internal.renderReport();
-  assert(structuredOnlyReport.includes("Үүнийг юунаас харсан бэ?"));
-  assert(structuredOnlyReport.includes("Тэмдэглэлд") || structuredOnlyReport.includes("зураглал"));
+  assert(structuredOnlyReport.includes("Яагаад ингэж хэлж байна вэ?"));
+  assert(structuredOnlyReport.includes("хоолны зай уртсах") || structuredOnlyReport.includes("хоол захиалах"));
   assert(!structuredOnlyReport.includes("RAW SECRET DELIVERY STORY"));
 
   const confirmedEntries = [1, 2, 3, 4, 5].map(day => entry(day, createConfirmedSummaryObject({
@@ -140,8 +140,8 @@ function run() {
     diaryEntries: confirmedEntries
   });
   const report = _internal.renderReport();
-  assert(report.includes("Үүнийг юунаас харсан бэ?"));
-  assert(report.includes("Тэмдэглэлд"));
+  assert(report.includes("Яагаад ингэж хэлж байна вэ?"));
+  assert(report.includes("хоолны зай уртсах") || report.includes("хоол захиалах"));
   assert(report.includes("Гол зураг"));
   assert(!report.includes("raw 1 should not appear"));
 

@@ -3195,7 +3195,7 @@ function menstrualCycleContextHtml() {
     ? `<p>Сарын тэмдэг ирэхгүй удах, гэнэт их өөрчлөгдөх нь хоол хасалт, жин огцом буурах, хэт их дасгал, стресс эсвэл биеийн бусад шалтгаантай давхцаж байвал эхлээд мэргэжлийн хүнтэй ярилцах нь зөв. Ийм үед мацаг, огцом хязгаарлалт, өндөр ачаалалтай сорил санал болгохгүй.</p>`
     : "";
   const appetiteCopy = evidence.premenstrual
-    ? `<p>Сарын тэмдэг ирэхийн өмнөх хэдэн өдөрт өлсөх, амттай юм хүсэх, ядрах, сэтгэл савлах нь илүү мэдрэгддэг гэж тэмдэглэсэн байна. Энэ нь сул тал гэсэн үг биш.</p><p>Ийм үед өөрийгөө илүү чанга барих гэж шахвал “маргаашаас чанга барина” гэсэн тойрог хүчтэй болж магадгүй. Илүү зөв эхлэл нь тогтмол хоол, урьдчилж бэлдсэн зөөлөн сонголт, өөрийгөө буруутгахгүй тэмдэглэл байна.</p>`
+    ? `<p>Сарын тэмдэг ирэхийн өмнөх хэдэн өдөрт өлсөх, амттай юм хүсэх, ядрах, сэтгэл савлах нь илүү мэдрэгддэг гэж тэмдэглэсэн байна. Энэ нь онош биш, сул тал гэсэн үг биш.</p><p>Ийм үед өөрийгөө илүү чанга барих гэж шахвал “маргаашаас чанга барина” гэсэн тойрог хүчтэй болж магадгүй. Илүү зөв эхлэл нь тогтмол хоол, урьдчилж бэлдсэн зөөлөн сонголт, өөрийгөө буруутгахгүй тэмдэглэл байна.</p>`
     : `<p>Идэх хүсэл зарим өдөр сарын тэмдгийн мөчлөгтэй хамт өөрчлөгдөж байж магадгүй. Энэ нь онош биш, гол шалтгааныг сольж байгаа тайлбар биш. Зүгээр л тэр өдрүүдэд бие, сэтгэл, нойр, идэх хүсэл яаж өөр болдгийг зөөлөн ажиглах нэмэлт мэдээлэл юм.</p>`;
   return `
     <div class="report-section menstrual-cycle-note">
@@ -3867,6 +3867,8 @@ function getSimpleResultSummary(primaryKey, context = {}) {
 function renderSimpleResultSection(primaryKey, tags = []) {
   const summary = getSimpleResultSummary(primaryKey, { tags });
   const cycleEvidence = menstrualCycleEvidence();
+  const voiceKey = selectReportVoiceKey(primaryKey, tags);
+  const showBriefCycleNote = cycleEvidence.premenstrual && voiceKey !== "menstrualCycleContext";
   return `
     <div class="report-section simple-result">
       <h2>Товч хариу</h2>
@@ -3888,7 +3890,7 @@ function renderSimpleResultSection(primaryKey, tags = []) {
           <p>${publicHtml(summary.avoidForNow)}</p>
         </div>
       </div>
-      ${cycleEvidence.premenstrual ? `<div class="card stack">
+      ${showBriefCycleNote ? `<div class="card stack">
         <h3>Нэмэлтээр анхаарах зүйл</h3>
         <p>Хэрвээ энэ үе сарын тэмдэг ирэхийн өмнөх өдрүүдтэй давхцдаг бол өлсөх, амттай юм хүсэх, ядрах, сэтгэл савлах нь илүү хүчтэй мэдрэгдэж болно. Энэ нь онош биш. Тэр өдрүүдэд хэт хатуу дүрэм биш, арай зөөлөн бэлэн төлөвлөгөө хэрэгтэй байж магадгүй.</p>
       </div>` : ""}
@@ -3900,19 +3902,30 @@ function renderSimpleResultSection(primaryKey, tags = []) {
   `;
 }
 
-function reportEvidenceNote(voiceKey, isOneTime) {
-  if (isOneTime) {
-    return "Энэ тайлбар таны өгсөн мэдээлэл, бичсэн богино тайлбар дээр тулгуурласан. 7 хоног тэмдэглэвэл аль өдөр, ямар үед илүү хэцүү болдгийг сайн ялгана.";
-  }
+function foodFunctionIntro(voiceKey) {
   return {
-    executive: "Тэмдэглэлд оройн тэнхээ багасах, хоолны зай холдох, бэлэн сонголт ойр байх үе хамт таарсан.",
-    regulation: "Тэмдэглэлд стресс, тавгүй мэдрэмж, идсэний дараа түр намдах мэдрэмж хэдэн өдөр давхцсан.",
-    collapse: "Хариултад хэт чанга эхлэх, бага зэрэг хазайхад “өнөөдөр өнгөрлөө” гэж мэдрэгдэх хэсэг тодорсон.",
-    hungerSafety: "Тэмдэглэлд хоолны зай холдох, оройн өлсөлт, яаралтай идмээр болох мэдрэмж хамт таарсан.",
-    rewardDeficit: "Хариултад өөрийн хоол, амралт, таатай мөч хойшлогдох үед оройн амттай зүйл илүү татдаг хэсэг тодорсон.",
-    cue: "Хариултад хоол харагдах, үнэртэх, захиалгын апп эсвэл зууш ойр байх үед идэх бодол амархан асдаг хэсэг тодорсон.",
-    circadian: "Тэмдэглэлд нойр, кофеин, оройн тэнхээ унах, амттай зүйл рүү татагдах мэдрэмж хамт таарсан."
-  }[voiceKey] || "Тэмдэглэлд энэ байдал хэд хэдэн өдөр ижил үед ойртсон.";
+    executive: "Тэр үед хоол сонгох биш, зүгээр амархан дуусгах зүйл хэрэгтэй болдог.",
+    regulation: "Тэр үед хоол хэсэг амсхийх газар болж байна.",
+    collapse: "Тэр үед хоол “нэгэнт алдсан” гэсэн дарамтаас түр холдуулах шиг болдог.",
+    hungerSafety: "Тэр үед хоол биеийг тайвшруулж, дараа дахиад өлсөх вий гэсэн айдсыг намдаадаг.",
+    rewardDeficit: "Тэр үед амттай зүйл “миний юм” гэсэн жижиг мэдрэмж өгч байж болно.",
+    cue: "Тэр үед өлссөндөө биш, нүдэнд өртсөн зүйлд гар амархан хүрч байна.",
+    circadian: "Тэр үед амттай зүйл ядарсан биед хурдан тэнхээ өгөх шиг санагдаж болно.",
+    menstrualCycleContext: "Тэр үед амттай зүйл ядаргаа, сэтгэл савлах мэдрэмжийг хэсэг зөөллөх шиг санагдаж болно."
+  }[voiceKey] || "Тэр үед хоол түр амсхийх эсвэл тэнхээ орох мэдрэмж өгсөн байж болно.";
+}
+
+function reportEvidenceNote(voiceKey) {
+  return {
+    executive: "Та орой ядарсан үед хоол захиалах эсвэл гэрт байсан амар сонголт руу ордог гэж тэмдэглэсэн.",
+    regulation: "Та стресс, санаа зовнил, уурын дараа идэх хүсэл нэмэгдэж, идсэний дараа хэсэг тайвширдаг гэж хариулсан.",
+    collapse: "Та нэг удаа төлөвлөгөө зөрөхөд “өнөөдөр өнгөрлөө” гэж бодогддог гэж хариулсан.",
+    hungerSafety: "Та хоолны зай уртсах үед орой өлсөлт яаралтай болж, дараа өлсөхөөс санаа зовдог гэж тэмдэглэсэн.",
+    rewardDeficit: "Та өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагддаг гэж хариулсан.",
+    cue: "Та хоол харагдах, үнэртэх, захиалгын апп харахад идэх хүсэл нэмэгддэг гэж тэмдэглэсэн.",
+    circadian: "Та нойр муу үед амттай зүйл илүү татдаг, орой тэнхээ багасдаг гэж хариулсан.",
+    menstrualCycleContext: "Та сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх, ядаргаа, сэтгэл савлах нэмэгддэг гэж тэмдэглэсэн."
+  }[voiceKey] || "Таны хариулт болон богино тайлбарт энэ хэсэг хэд хэдэн газарт ойртож харагдсан.";
 }
 
 function renderStagedExperiment(voice) {
@@ -3944,7 +3957,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
         </div>
         <div class="report-section">
           <h3>Тэр үед хоол танд юу өгч байсан байж болох вэ?</h3>
-          <p>Тэр үед хоол зүгээр нэг хоол биш байсан байж болно. Түр амрах, тэнхээ орох, эсвэл өөртөө жаахан юм өгсөн мэдрэмж төрдөг.</p>
+          <p>${publicHtml(foodFunctionIntro(voice.key))}</p>
           <ul>${voice.needs.slice(0, 3).map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
         </div>
         <div class="report-section">
@@ -3952,15 +3965,15 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
           <div class="cycle-map">${voice.cycle.slice(0, 7).map(step => `<p>${publicHtml(step)}</p>`).join("<span>↓</span>")}</div>
         </div>
         <div class="report-section">
-          <h3>Үүнийг юунаас харсан бэ?</h3>
-          <p>${publicHtml(reportEvidenceNote(voice.key, isOneTime))}</p>
+          <h3>Яагаад ингэж хэлж байна вэ?</h3>
+          <p>${publicHtml(reportEvidenceNote(voice.key))}</p>
         </div>
         <div class="report-section">
-          <h3>Асуудал яг юу биш вэ?</h3>
+          <h3>Гол буруу ойлголт</h3>
           <p>${publicHtml(voice.notProblem)}</p>
         </div>
         <div class="report-section">
-          <h3>Одоогоор болгоомжлох зүйлс</h3>
+          <h3>Одоохондоо хэт яарахгүй зүйлс</h3>
           <ul>${avoidItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
         </div>
         ${menstrualCycleContextHtml()}
@@ -3975,7 +3988,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
         </div>
         ${menstrualCycleExperimentModifierHtml()}
         ${isOneTime ? `<div class="report-section">
-          <h3>7 хоногоор нарийвчлах</h3>
+          <h3>7 хоногийн тэмдэглэл юуг тодруулах вэ?</h3>
           <p>Үүнийг өдөр тутамд илүү сайн ялгахыг хүсвэл 7 хоногийн богино тэмдэглэл тусална.</p>
           <ul>${refinementItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
           <div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>

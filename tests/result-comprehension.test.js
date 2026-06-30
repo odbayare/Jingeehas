@@ -105,7 +105,8 @@ function run() {
   assert(cycleReport.includes("зөөлөн төлөвлөгөө"));
   assert(!cycleReport.includes("Өдөржин өөрийн хэрэгцээ хамгийн сүүлд"));
   assert(!cycleReport.includes("надад ч гэсэн нэг юм хэрэгтэй"));
-  assert(cycleReport.includes("Нэмэлтээр анхаарах зүйл"));
+  assert(!cycleReport.includes("Нэмэлтээр анхаарах зүйл"));
+  assert(cycleReport.includes("Мөчлөгтэй холбоотой анхаарах зүйл"));
   assert(cycleReport.includes("Энэ нь онош биш"));
   assert(!cycleReport.includes("Дэлгэрэнгүй тайлан харах"));
   assert(!cycleReport.includes("Нэмэлтээр анхаарах зүйл: Нэмэлтээр анхаарах зүйл"));

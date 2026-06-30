@@ -140,7 +140,7 @@ function assertNoRawUnconfirmedReflection(text, name) {
 function assertReportIncludes(report, requiredSections, name) {
   (requiredSections || []).forEach(section => {
     if (section === "Эхний тестээр" || section === "7 хоногийн ажиглалтаар") {
-      assert(report.includes("Үүнийг юунаас харсан бэ?"), `${name}: report includes: missing evidence note`);
+      assert(report.includes("Яагаад ингэж хэлж байна вэ?"), `${name}: report includes: missing evidence note`);
       return;
     }
     assert(report.includes(section), `${name}: report includes: missing ${section}`);
@@ -517,7 +517,7 @@ function validateScenario(scenario) {
     assert(text.includes("Тэр үед хоол танд юу өгч байсан байж болох вэ?"), `${scenario.name}: missing food-need section`);
   }
   if (scenario.avoidIncludes) {
-    assert(text.includes("Одоогоор болгоомжлох зүйлс"), `${scenario.name}: missing avoid section`);
+    assert(text.includes("Одоохондоо хэт яарахгүй зүйлс"), `${scenario.name}: missing avoid section`);
   }
   if (scenario.leverageIncludes) {
     assert(text.includes("Эхний жижиг өөрчлөлт"), `${scenario.name}: missing first-change section`);
@@ -538,7 +538,7 @@ function validateScenario(scenario) {
   if (scenario.urgentExpected) assert(text.includes("яаралтай"), `${scenario.name}: expected urgent guidance`);
   if (!scenario.urgentExpected) assert(!text.includes("Одоо жин хасах тухай биш"), `${scenario.name}: unexpected urgent guidance`);
   if (scenario.oneTimeCta) assert(text.includes("7 хоногоор нарийвчлах") || text.includes("7 хоногийн гүн үнэлгээ"), `${scenario.name}: expected one-time CTA`);
-  if (scenario.requireInitialObserved) assert(text.includes("Үүнийг юунаас харсан бэ?"), `${scenario.name}: missing evidence note`);
+  if (scenario.requireInitialObserved) assert(text.includes("Яагаад ингэж хэлж байна вэ?"), `${scenario.name}: missing evidence note`);
 
   return result;
 }

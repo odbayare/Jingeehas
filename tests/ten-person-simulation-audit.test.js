@@ -396,7 +396,7 @@ function validatePersona(persona) {
     assert(result.text.includes("7 хоногоор нарийвчлах"), `${persona.name}: one-time CTA missing`);
   }
   if (persona.packageType === "seven-day" && result.mode === "deep") {
-    assert(result.text.includes("Үүнийг юунаас харсан бэ?"), `${persona.name}: evidence note missing`);
+    assert(result.text.includes("Яагаад ингэж хэлж байна вэ?"), `${persona.name}: evidence note missing`);
     assert(result.text.includes("14 хоногийн туршилт"), `${persona.name}: staged experiment missing`);
   }
   if (persona.suppressExperiment || ["professional", "urgent"].includes(result.mode)) {
