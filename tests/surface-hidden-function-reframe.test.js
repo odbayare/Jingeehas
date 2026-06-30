@@ -39,6 +39,10 @@ function assertNoDeterministicMedicalCopy(report) {
   ].forEach(phrase => assert(!report.includes(phrase), `report should not contain deterministic copy: ${phrase}`));
 }
 
+function countOccurrences(text, phrase) {
+  return String(text || "").split(phrase).length - 1;
+}
+
 function run() {
   const medication = render({
     "S1-W02": ["Эм"],
@@ -50,6 +54,7 @@ function run() {
   assert(/эмийн хэрэглээ|эм эсвэл жирэмслэлтээс хамгаалах бэлдмэл/i.test(medication));
   assert(medication.includes("Эмийн хэрэглээ, даралт, хоолны дуршлын өөрчлөлт нь шалгаж үзэх зүйл байж болно."));
   assert(!medication.includes("PCOS сэжиг"));
+  assert(!medication.includes("мөчлөг"), "medication/BP report should not mention cycle without cycle evidence");
   assert(/хяналтаа алдаж байна|бие өөрчлөгдөх|өөрийгөө буруутгах|хэт чанга/.test(medication));
   assert(!medication.includes("Та эмийн хэрэглээ нөлөөлж байгаа гэж анзаарсан байна. Энэ нь бодит нөлөө байж болно."));
   assert(!medication.includes("Гэхдээ энэ тайлангийн гол нь зөвхөн эмийн хэрэглээ биш."));
@@ -78,6 +83,7 @@ function run() {
   assert(/ойр дэлгүүр|цайны газар|бэлэн хоол/.test(shiftWork));
   assert(/амрах|шагнах|тэнхээ/.test(shiftWork));
   assert(!shiftWork.includes("Нойр муу өдөр орой амттай юм илүү хүчтэй татдаг."));
+  assert(countOccurrences(shiftWork, "хоол амрах, тэнхээ авах хамгийн ойрын арга") <= 1);
   assertNoDeterministicMedicalCopy(shiftWork);
 
   const remoteCue = render({
@@ -111,6 +117,8 @@ function run() {
   });
   assertSurfaceHidden(social);
   assert(/татгалзах эвгүй|хүмүүсийн дунд/.test(social));
+  assert(!social.includes("belonging"));
+  assert(social.includes("хамт байгаа мэдрэмжээ алдахгүй байх хэрэгцээ"));
   assert(!social.includes("Зууш нүдэнд ойр"));
   assert(social.includes("Гарахаасаа өмнө хэлэх нэг богино татгалзах өгүүлбэрээ бэлд"));
 
@@ -126,6 +134,9 @@ function run() {
   assert(/хяналтаа алдаж байна|бие өөрчлөгдөж/.test(perimenopause));
   assert(perimenopause.includes("Мөчлөг, нойр, биеийн өөрчлөлт нь шалгаж үзэх зүйл байж болно."));
   assert(perimenopause.includes("Мөчлөг тогтмол бус үед"));
+  assert(countOccurrences(perimenopause, "Мөчлөг тогтмол бус үед") === 1);
+  assert(!perimenopause.includes("Мөчлөгтэй холбоотой анхаарах зүйл"));
+  assert(!perimenopause.includes("Хэрвээ сарын тэмдэг тогтмол биш"));
   assert(!perimenopause.includes("PCOS сэжиг"));
   assert(!perimenopause.includes("Эмийн хэрэглээ, даралт"));
   assert(!perimenopause.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд Хэт хатуу"));
@@ -143,6 +154,8 @@ function run() {
   assertSurfaceHidden(pcos);
   assert(pcos.includes("PCOS сэжиг, мөчлөг тогтмол бус байдал нь шалгаж үзэх зүйл байж болно."));
   assert(pcos.includes("Мөчлөг тогтмол бус үед"));
+  assert(!pcos.includes("Хэрвээ энэ үе сарын тэмдэг ирэхийн өмнөх өдрүүдтэй давхцдаг бол"));
+  assert(!pcos.includes("Мөчлөгтэй холбоотой анхаарах зүйл"));
   assert(!pcos.includes("Эм, даралт"));
   assert(!pcos.includes("Эмийн хэрэглээ, даралт"));
   assert(!pcos.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"));
@@ -155,6 +168,8 @@ function run() {
   assertSurfaceHidden(gym);
   assert(/Өлсөх тусам зөв явж байна|сахилга бат/.test(gym));
   assert(/бие орой|оройн өлсөлт/.test(gym));
+  assert(!gym.includes("rebound"));
+  assert(gym.includes("буцаад хүчтэй идэх тойрог") || gym.includes("орой илүү хүчтэй өлсөж, дараа нь их идэх тойрог"));
 
   const collapseWithoutGym = render({
     "S1-W03": "Бараг бүх оролдлогоос хойш",
