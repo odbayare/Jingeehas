@@ -19,6 +19,7 @@ const SPRINT32_USER_MD = path.join(SPRINT32_USER_DIR, "WEIGHT_TEST_USER_FACING_1
 const SPRINT32_USER_PDF = path.join(SPRINT32_USER_DIR, "WEIGHT_TEST_USER_FACING_10_REPORTS.pdf");
 const SPRINT32_INTERNAL_MD = path.join(SPRINT32_INTERNAL_DIR, "WEIGHT_TEST_INTERNAL_AUDIT_10_REPORTS.md");
 const SPRINT32_INTERNAL_PDF = path.join(SPRINT32_INTERNAL_DIR, "WEIGHT_TEST_INTERNAL_AUDIT_10_REPORTS.pdf");
+const USER_FACING_TITLE = "Жин хасалтын гүн зураглал — хэрэглэгчийн унших 10 тайлан";
 const TEMP_JSON = path.join("/private/tmp", "weight-test-sprint-30-retest.json");
 const TEMP_PY = path.join("/private/tmp", "weight-test-sprint-30-render.py");
 const PYTHON = "/Users/odbayare/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3";
@@ -309,7 +310,8 @@ function removeReviewChrome(text) {
     "Тэмдэглэл рүү буцах",
     "Саналын экспорт",
     "Санал илгээх",
-    "Дэлгэрэнгүй тайлан харах"
+    "Дэлгэрэнгүй тайлан харах",
+    "Тайлан"
   ]);
   return String(text || "")
     .replace(/Дотоод туршилтын хувилбар[\s\S]*$/g, "")
@@ -498,7 +500,7 @@ function reportsMd(results) {
 function plainUserFacingMd(results) {
   const userReports = results.map((result) => runPersonaUserFacing(personas.find((p) => p.userId === result.userId)));
   return [
-    "Хэрэглэгчийн унших 10 тайлан",
+    USER_FACING_TITLE,
     "",
     "Энэ файлд зөвхөн хэрэглэгчийн унших тайлангийн текст орсон.",
     "",
@@ -729,6 +731,8 @@ for block in text.split("\\n\\n"):
     block = block.strip()
     if not block:
         continue
+    if block == data["title"]:
+        continue
     if block == "-----" or block == "---":
         story.append(PageBreak())
         continue
@@ -757,7 +761,7 @@ function main() {
   renderPdf(results, summary);
   write(SPRINT32_USER_MD, plainUserFacingMd(results));
   write(SPRINT32_INTERNAL_MD, internalAuditMd(results, summary));
-  renderPlainPdf(SPRINT32_USER_MD, SPRINT32_USER_PDF, "Хэрэглэгчийн унших 10 тайлан");
+  renderPlainPdf(SPRINT32_USER_MD, SPRINT32_USER_PDF, USER_FACING_TITLE);
   renderPlainPdf(SPRINT32_INTERNAL_MD, SPRINT32_INTERNAL_PDF, "Weight Test - Sprint 32 internal audit");
   console.log(JSON.stringify({
     outDir: path.relative(ROOT, OUT_DIR),

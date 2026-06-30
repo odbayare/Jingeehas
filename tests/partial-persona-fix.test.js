@@ -18,7 +18,7 @@ function run() {
     "mother persona should surface Role Overload or Reward Deficit strongly"
   );
   assert.notStrictEqual(mother.evidence.primaryMechanism, M.reward, "mother persona should not remain generic Reward-Seeking primary");
-  assert(/өөрийн хэрэгцээ хамгийн сүүлд|өөрийгөө хойш тавьсны дараа|өөрийн цаг/i.test(mother.text), "mother report copy should mention self-neglect or self-time compensation");
+  assert(/өөрийн хэрэгцээ хамгийн сүүлд|өөрийгөө хойш тавьсны дараа|өөрийгөө хойш тавьсан|өөрийн цаг|өөрийн хоол, амралт хамгийн сүүлд/i.test(mother.text), "mother report copy should mention self-neglect or self-time compensation");
   assert(/өөрийн хоол|амралтын 10 минут|үлдэгдэл цагт найдахгүй/i.test(mother.text), "mother leverage should include protected self-feeding or protected rest");
   assert(mother.text.includes("Оройн өөрийгөө баярлуулах хэрэгцээг шууд бүрэн хорих") || mother.text.includes("өөрийн хоолыг үлдэгдэл цагт найдах"), "mother avoid list should include self-neglect-specific avoid");
 

@@ -19,10 +19,25 @@ const userText = readFileSync(userMdPath, "utf8");
 const internalText = readFileSync(internalMdPath, "utf8");
 const styleBible = readFileSync(styleBiblePath, "utf8");
 
+function occurrences(text, phrase) {
+  return text.split(phrase).length - 1;
+}
+
+function reportSection(index) {
+  const start = `Тайлан ${index}`;
+  const end = `Тайлан ${index + 1}`;
+  const startIndex = userText.indexOf(start);
+  assert(startIndex >= 0, `user-facing export should include ${start}`);
+  const endIndex = userText.indexOf(end, startIndex + start.length);
+  return userText.slice(startIndex, endIndex >= 0 ? endIndex : userText.length);
+}
+
 [
   "Route:",
   "Verdict:",
   "Selected answer summary",
+  "Weight Test - хэрэглэгчид харагдах",
+  "Хэрэглэгчийн унших 10 тайлан",
   "Checklist:",
   "route=True",
   "Виртуал хүний санал",
@@ -47,7 +62,6 @@ const styleBible = readFileSync(styleBiblePath, "utf8");
   "verdict",
   "checklist",
   "selected answer",
-  "зураглал",
   "давтамж",
   "дохио",
   "Эхний хариу руу буцах",
@@ -74,6 +88,11 @@ const styleBible = readFileSync(styleBiblePath, "utf8");
 ].forEach((phrase) => {
   assert(!userText.includes(phrase), `user-facing export should not include: ${phrase}`);
 });
+
+const userFacingTitle = "Жин хасалтын гүн зураглал — хэрэглэгчийн унших 10 тайлан";
+assert(userText.includes(userFacingTitle), "user-facing export should use the final Sprint 32E title");
+assert.strictEqual(occurrences(userText, userFacingTitle), 1, "user-facing export title should appear once");
+assert(!userText.split(/\n/).some((line, index, lines) => line.trim() === "Тайлан" && /^Тайлан \d+$/.test((lines[index - 2] || "").trim())), "user-facing export should not keep redundant standalone report heading after numbered report heading");
 
 [
   "Source reference:",
@@ -104,6 +123,30 @@ assert(userText.includes("Доорх тайлан таны хариултад т
 assert(userText.includes("Өдөржин өөрийгөө хойш тавьсан өдөр орой амттай зүйл өөртөө өгч байгаа жижигхээн шагнал шиг л санагддаг."), "user-facing export should include owner-approved self-neglect wording");
 assert(userText.includes("Тухайн өдөр бие, сэтгэлээ анзаарах"), "user-facing export should include owner-approved menstrual wording");
 assert(userText.includes("Удаан юм идээгүй өдөр орой гэнэт өлсөж байгаагаа анзаардаг."), "user-facing export should include owner-approved hunger-safety wording");
+[
+  "Өдрийн хоолны зай уртсах тусам оройн өлсөлт илүү хүчтэй мэдрэгддэг.",
+  "Өдөр удаан хоосон явсны дараа оройн өлсөлт огцом нэмэгддэг.",
+  "Та хоолны зай уртсах үед орой хүчтэй өлсөж, дараа дахин өлсөхөөс санаа зовдог гэж тэмдэглэсэн."
+].forEach((phrase) => {
+  assert(userText.includes(phrase), `user-facing export should include Sprint 32E hunger support line: ${phrase}`);
+});
+[
+  "Өдөржин бусдын хэрэгцээ түрүүлсэн өдөр өөрийн хоол, амралт хамгийн сүүлд үлддэг.",
+  "Тэр үед амттай зүйл өөртөө жаахан анхаарсан мэт мэдрэмж өгч болно.",
+  "Амттай зүйл хэсэг таатай мэдрэмж өгнө"
+].forEach((phrase) => {
+  assert(userText.includes(phrase), `user-facing export should include Sprint 32E self-neglect support line: ${phrase}`);
+});
+assert.strictEqual(
+  occurrences(reportSection(4), "Удаан юм идээгүй өдөр орой гэнэт өлсөж байгаагаа анзаардаг."),
+  1,
+  "User 04 hunger-safety canonical sentence should appear once in that report"
+);
+assert.strictEqual(
+  occurrences(reportSection(5), "Өдөржин өөрийгөө хойш тавьсан өдөр орой амттай зүйл өөртөө өгч байгаа жижигхээн шагнал шиг л санагддаг."),
+  1,
+  "User 05 self-neglect canonical sentence should appear once in that report"
+);
 assert(
   userText.includes("Өдрийн эхний хоолоо тогтмол болго. Өдрийн сүүлийн кофегоо хэзээ уухаа тогтоо. Орой 10 минут тайвшрах хугацаа гарга."),
   "user-facing export should include owner-approved coffee/sleep wording"
