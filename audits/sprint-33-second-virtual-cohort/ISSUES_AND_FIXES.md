@@ -6,7 +6,7 @@
 
 ## P1 fixes before real humans
 
-- user-08: P1: дааврын хэрэгсэл/тогтмол бус мөчлөгийн confidence-low тайлбар дутуу
+- Байхгүй
 
 ## P2 polish
 
@@ -14,4 +14,4 @@
 
 ## Suggested fixes
 
-- user-08: P1: дааврын хэрэгсэл/тогтмол бус мөчлөгийн confidence-low тайлбар дутуу
+- Одоогоор copy patch шаардах blocker илрээгүй. Owner approval хүртэл human testing HOLD хэвээр.

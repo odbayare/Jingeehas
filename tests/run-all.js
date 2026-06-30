@@ -25,6 +25,7 @@ const commands = [
   ["node", ["tests/question-copy-polish.test.js"]],
   ["node", ["tests/question-navigation.test.js"]],
   ["node", ["tests/menstrual-cycle-context.test.js"]],
+  ["node", ["tests/surface-hidden-function-reframe.test.js"]],
   ["node", ["tests/coach-subadmin.test.js"]],
   ["node", ["tests/coach-workflow-qa.test.js"]],
   ["node", ["tests/coach-language-polish.test.js"]],

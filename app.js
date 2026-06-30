@@ -3891,10 +3891,10 @@ function getSimpleResultSummary(primaryKey, context = {}) {
   return summaries[voiceKey] || summaries.executive;
 }
 
-function renderSimpleResultSection(primaryKey, tags = []) {
+function renderSimpleResultSection(primaryKey, tags = [], voiceKeyOverride = "") {
   const summary = getSimpleResultSummary(primaryKey, { tags });
   const cycleEvidence = menstrualCycleEvidence();
-  const voiceKey = selectReportVoiceKey(primaryKey, tags);
+  const voiceKey = voiceKeyOverride || selectReportVoiceKey(primaryKey, tags);
   const showBriefCycleNote = cycleEvidence.premenstrual && voiceKey !== "menstrualCycleContext";
   return `
     <div class="report-section simple-result">
@@ -3922,9 +3922,126 @@ function renderSimpleResultSection(primaryKey, tags = []) {
         <p>Хэрвээ энэ үе сарын тэмдэг ирэхийн өмнөх өдрүүдтэй давхцдаг бол өлсөх, амттай юм хүсэх, ядрах, сэтгэл савлах нь илүү хүчтэй мэдрэгдэж болно. Энэ нь онош биш. Тэр өдрүүдэд хэт хатуу дүрэм биш, арай зөөлөн бэлэн төлөвлөгөө хэрэгтэй байж магадгүй.</p>
       </div>` : ""}
     </div>
+    ${renderSurfaceHiddenSection(voiceKey)}
     <div class="report-section">
       <h3>Дэлгэрэнгүй тайлан</h3>
       <p class="muted">Доорх хэсэг илүү дэлгэрэнгүй. Эхний хариу хангалттай санагдвал бүгдийг нь унших албагүй.</p>
+    </div>
+  `;
+}
+
+function allAnswerText(answers = state.stageAnswers || {}) {
+  return Object.values(answers)
+    .flatMap(value => Array.isArray(value) ? value : [value])
+    .filter(Boolean)
+    .join(" ");
+}
+
+function surfaceContextInsight(voiceKey, answers = state.stageAnswers || {}) {
+  const text = allAnswerText(answers).toLowerCase();
+  const hasText = (...terms) => terms.some(term => text.includes(term.toLowerCase()));
+  if (hasText("жирэмслэлтээс хамгаалах", "дааврын", "эмийн", "эмчилгээ", "эм хэрэгл")) {
+    const surface = hasText("жирэмслэлтээс хамгаалах", "дааврын")
+      ? "эм эсвэл жирэмслэлтээс хамгаалах бэлдмэл"
+      : "эмийн хэрэглээ";
+    return {
+      surface,
+      hidden: "Бие өөрчлөгдөх үед “би хяналтаа алдаж байна” гэсэн мэдрэмж нэмэгдэж, түүнийгээ засах гэж хэт чанга барих эсвэл өөрийгөө буруутгах тойрог эхэлж байж магадгүй."
+    };
+  }
+  if (hasText("pcos", "тогтмол биш", "тогтмол бус", "сахар", "даралт")) {
+    return {
+      surface: "мөчлөг тогтмол бус, PCOS эсвэл биеийн хэмжилтийн санаа зовнил",
+      hidden: "Бие урьдчилж таахад хэцүү санагдах үед хяналтаа буцааж авах гэсэн оролдлого, өөрийгөө буруутгах, хэт чанга барих хүсэл нэмэгдэж байж магадгүй."
+    };
+  }
+  if (hasText("төрсний дараах", "хүүхэд", "хөхүүл")) {
+    return {
+      surface: "хүүхэд асрах, тасалдсан нойр, төрсний дараах биеийн өөрчлөлт",
+      hidden: "Өөрийн хоол, амралт хамгийн сүүлд үлдэхэд орой хоол “би ч гэсэн анхаарал хэрэгтэй” гэсэн мэдрэмжтэй холбогдож байна."
+    };
+  }
+  if (hasText("перименопауз")) {
+    return {
+      surface: "перименопауз байж болох үе, мөчлөг болон нойрны өөрчлөлт",
+      hidden: "Бие өөрчлөгдөх нь тодорхой бус санагдах үед хяналтаа буцааж авах, өөрийгөө буруутгах, эсвэл орой тайвшрах зүйл хайх мэдрэмж нэмэгдэж байж магадгүй."
+    };
+  }
+  if (hasText("сарын тэмдэг", "мөчлөг", "перименопауз", "хавагнах")) {
+    return {
+      surface: "сарын тэмдэг ирэхийн өмнөх хэдэн өдөр",
+      hidden: "Тэр өдрүүдэд ядаргаа, бие хүнд оргих, сэтгэл савлах мэдрэмж нэмэгдэхэд хоол өөрийгөө зөөллөх нэг арга болж байж магадгүй."
+    };
+  }
+  if (hasText("шөнийн ээлж", "ээлж", "нойр", "кофе", "унтах")) {
+    const surface = hasText("шөнийн ээлж", "ээлж")
+      ? "шөнийн ээлж, нойр муу эсвэл солигддог ажлын цаг"
+      : "нойр муу эсвэл солигддог ажлын цаг";
+    return {
+      surface,
+      hidden: "Бие, толгой хоёр зэрэг суларсан үед хоол амрах, тэнхээ авах, өөрийгөө жаахан шагнах хамгийн ойрын арга болж байна."
+    };
+  }
+  if (hasText("стресс", "ажлын дарамт", "deadline", "дарга", "санаа зовнил", "уур")) {
+    return {
+      surface: "ажил, стресс, санаа зовнил",
+      hidden: "Дотор давчдах үед хоол асуудлыг шийдэхээс илүү түр амрах, өөрийгөө тайвшруулах ойрын арга болж байна."
+    };
+  }
+  if (hasText("архи", "найз", "найзууд", "хүмүүсийн дунд", "арга хэмжээ", "татгалзах")) {
+    return {
+      surface: "найз нөхөд, архи, амралтын өдрийн орчин",
+      hidden: "Хүмүүсийн дунд татгалзах эвгүй, “бүгд идэж байхад би яах вэ” гэсэн мэдрэмж идэх сонголтыг зөөлөн түлхэж байж магадгүй."
+    };
+  }
+  if (hasText("дасгал", "challenge", "нүүрс ус", "мацаг", "калори", "хоол хас", "хэт их дасгал")) {
+    return {
+      surface: "хүчтэй дасгал, хоол хасалт эсвэл хатуу сорил",
+      hidden: "“Өлсөх тусам зөв явж байна” гэж бодох үед бие орой хамгаалах гэж илүү хүчтэй хариу өгч, дараа нь буцаад хэтрүүлэх тойрог үүсэж байж магадгүй."
+    };
+  }
+  if (hasText("зураг", "толь", "бусдад харагдах", "нуух", "ичих", "харагдах")) {
+    return {
+      surface: "толь, зураг, бусдад харагдах орчин",
+      hidden: "Биеэ нуух, харагдахаас зугтах, өөрийгөө буруутгах мэдрэмж нэмэгдэхэд хоол тэр тавгүй мэдрэмжээс түр зай авах арга болж байж магадгүй."
+    };
+  }
+  if (hasText("захиалгын апп", "хоолны зураг", "зууш", "үнэр", "харагдаад")) {
+    return {
+      surface: "захиалгын апп, хоолны зураг, нүдэнд ойр байгаа зүйл",
+      hidden: "Гарын дор байгаа зүйл зөвхөн орчны асуудал биш. Ядарсан эсвэл бодолгүй хурдан амсхийх хэрэгтэй үед тэр сонголт хамгийн ойрын тайвшрал болж байна."
+    };
+  }
+  if (voiceKey === "circadian") {
+    return {
+      surface: "нойр муу, өдрийн тэнхээ багасах",
+      hidden: "Гэхдээ гол нь нойр өөрөө биш. Ядарсан үед хоол амрах, тэнхээ авах хамгийн ойрын арга болж байна."
+    };
+  }
+  if (voiceKey === "menstrualCycleContext") {
+    return {
+      surface: "сарын тэмдэг ирэхийн өмнөх хэдэн өдөр",
+      hidden: "Тэр үед хоол ядаргаа, сэтгэл савлах мэдрэмжийг зөөллөх арга болж байж магадгүй."
+    };
+  }
+  return null;
+}
+
+function renderSurfaceHiddenSection(voiceKey) {
+  const insight = surfaceContextInsight(voiceKey);
+  if (!insight) return "";
+  return `
+    <div class="report-section surface-hidden">
+      <div class="two-col">
+        <div class="card stack">
+          <h3>Ил харагдаж байгаа зүйл</h3>
+          <p>Та ${publicHtml(insight.surface)} нөлөөлж байгаа гэж анзаарсан байна. Энэ нь бодит нөлөө байж болно.</p>
+        </div>
+        <div class="card stack">
+          <h3>Цаана нь ажиллаж байгаа зүйл</h3>
+          <p>Гэхдээ энэ тайлангийн гол нь зөвхөн ${publicHtml(insight.surface)} биш. ${publicHtml(insight.hidden)}</p>
+        </div>
+      </div>
     </div>
   `;
 }
@@ -3978,7 +4095,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
           <h2>Таны тайлан бэлэн боллоо</h2>
           <p class="muted">Доорх тайлан таны хариултад тулгуурласан эхний тайлбар. Өөрийгөө буруутгах гэж биш, өдөрт яг аль мөч дээр гацдагаа харах гэж уншаарай.</p>
         </div>
-        ${renderSimpleResultSection(primary?.key, tags)}
+        ${renderSimpleResultSection(primary?.key, tags, voice.key)}
         <div class="report-section">
           <h3>Гол зураг</h3>
           ${voice.opening.map(paragraph => `<p>${publicHtml(paragraph)}</p>`).join("")}

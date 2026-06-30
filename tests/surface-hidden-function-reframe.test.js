@@ -1,0 +1,112 @@
+const assert = require("assert");
+const app = require("../app.js");
+
+const { _internal } = app;
+
+function normalize(html) {
+  return String(html || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function render(stageAnswers = {}) {
+  _internal.setTestState({
+    packageType: "one-time",
+    internalTest: true,
+    oneTimePaid: true,
+    sevenDayPaid: true,
+    upgradePaid: true,
+    stageAnswers: {
+      "S1-S04": "Үгүй",
+      ...stageAnswers
+    },
+    diaryEntries: [],
+    preliminary: []
+  });
+  return normalize(_internal.renderReport());
+}
+
+function assertSurfaceHidden(report) {
+  assert(report.includes("Ил харагдаж байгаа зүйл"), "ordinary report should name visible context");
+  assert(report.includes("Цаана нь ажиллаж байгаа зүйл"), "ordinary report should name hidden function");
+}
+
+function assertNoDeterministicMedicalCopy(report) {
+  [
+    "энэ бол PCOS",
+    "даавраас болж байна",
+    "эмээс болсон",
+    "зөвхөн нойрноос",
+    "зөвхөн мөчлөгөөс"
+  ].forEach(phrase => assert(!report.includes(phrase), `report should not contain deterministic copy: ${phrase}`));
+}
+
+function run() {
+  const medication = render({
+    "S1-W02": ["Эм"],
+    "S1-W04": ["Калори тоолох"],
+    "S1-W06": "Маргааш илүү чанга барина",
+    "S1-V01": "Эмийн хэрэглээ эхэлснээс хойш бие өөрчлөгдсөн мэт санагдаад хяналтаа алдсан юм шиг болж илүү чанга барих гэж оролддог."
+  });
+  assertSurfaceHidden(medication);
+  assert(/эмийн хэрэглээ|эм эсвэл жирэмслэлтээс хамгаалах бэлдмэл/.test(medication));
+  assert(/хяналтаа алдаж байна|бие өөрчлөгдөх|өөрийгөө буруутгах|хэт чанга/.test(medication));
+  assertNoDeterministicMedicalCopy(medication);
+
+  const menstrual = render({
+    "MC-GATE": "Тийм, хамаарна",
+    "MC-03": "Сарын тэмдэг ирэхээс хэд хоногийн өмнө",
+    "MC-04": ["Амттай юм, гурилан зүйл илүү хүсдэг", "Сэтгэл санаа савлах үед идэх хүсэл нэмэгддэг"],
+    "S1-R02": ["Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"]
+  });
+  assertSurfaceHidden(menstrual);
+  assert(menstrual.includes("сарын тэмдэг ирэхийн өмнөх хэдэн өдөр"));
+  assert(/зөөллөх|өөрийгөө буруутгахгүй|амрах/.test(menstrual));
+  assertNoDeterministicMedicalCopy(menstrual);
+
+  const shiftWork = render({
+    "S1-W02": ["Нойр муудсан", "Ажлын цаг өөрчлөгдсөн"],
+    "S1-N01": "4-6 цаг",
+    "S1-F01": ["Ядарсан", "Амттай юм идмээр байсан"],
+    "S1-V01": "Шөнийн ээлжийн дараа нойр тасалдаад орой хоол амрах, өөрийгөө жаахан шагнах хамгийн ойрын арга болдог."
+  });
+  assertSurfaceHidden(shiftWork);
+  assert(shiftWork.includes("шөнийн ээлж"));
+  assert(/амрах|шагнах|тэнхээ/.test(shiftWork));
+  assertNoDeterministicMedicalCopy(shiftWork);
+
+  const postpartum = render({
+    "S1-R02": ["Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед"],
+    "S1-F01": ["Өөрийгөө жаахан шагнамаар санагдсан", "Ядарсан"],
+    "S1-V01": "Төрсний дараах үе, хүүхэд асрах, тасалдсан нойр давхцаад өөрийн хоол хамгийн сүүлд үлддэг. Орой надад ч гэсэн анхаарал хэрэгтэй гэж мэдрэгддэг."
+  });
+  assertSurfaceHidden(postpartum);
+  assert(postpartum.includes("хүүхэд"));
+  assert(postpartum.includes("өөрийн хоол"));
+  assert(postpartum.includes("анхаарал хэрэгтэй"));
+
+  const social = render({
+    "S1-V01": "Амралтын өдөр найзуудтай уулзахад архи, оройн хоол хамт орж ирдэг. Хүмүүсийн дунд татгалзах эвгүй санагддаг.",
+    "S1-F01": ["Бусадтай хамт байсан"],
+    "S1-R02": ["Ажлын дараах амралт"]
+  });
+  assertSurfaceHidden(social);
+  assert(/татгалзах эвгүй|хүмүүсийн дунд/.test(social));
+
+  const gym = render({
+    "S1-W04": ["Мацаг", "Орой хоол идэхгүй"],
+    "S1-F01": ["Өлссөндөө идсэн", "Дараа өлсөхөөс санаа зовсон"],
+    "S1-V01": "Дасгал challenge эхлээд нүүрс ус хассан. Өлсөх тусам зөв явж байна гэж бодоод орой бие хамгаалах шиг хэт өлсдөг."
+  });
+  assertSurfaceHidden(gym);
+  assert(/Өлсөх тусам зөв явж байна|бие орой хамгаалах/.test(gym));
+
+  const professional = render({ "S1-S03": "Одоо давтагддаг" });
+  assert(professional.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
+  assert(!professional.includes("Ил харагдаж байгаа зүйл"));
+
+  const urgent = render({ "S1-S04": "Одоо идэвхтэй бодогдож байна" });
+  assert(urgent.includes("Яаралтай аюулгүй байдлын зөвлөмж"));
+  assert(!urgent.includes("Ил харагдаж байгаа зүйл"));
+}
+
+run();
+console.log("surface-hidden-function-reframe tests passed");
