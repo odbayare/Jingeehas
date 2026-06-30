@@ -137,7 +137,7 @@ const personas = [
     title: "Өөрийгөө хойш тавьдаг хэрэглэгч",
     expected: "Энгийн тайлан, өөрийн хэрэгцээ хойшлогдох / жижиг шагнал",
     expectedMode: "deep",
-    expectedText: ["өөрийгөө хойш тавьсны дараа", "өөртөө өгөх нэг жижиг", "өөрийн хоол", "үлдэгдэл цагт найдахгүй"],
+    expectedText: ["Өдөржин өөрийгөө хойш тавьсан өдөр орой амттай зүйл өөртөө өгч байгаа жижигхээн шагнал шиг л санагддаг.", "өөрийн хоол", "үлдэгдэл цагт найдахгүй"],
     persona: { age: 31, profile: "Бусдын хэрэгцээ түрүүлдэг. Орой амттай зүйл өөртөө өгөх ганц жижиг шагнал мэт санагддаг." },
     selectedAnswers: {
       "S1-R02": ["Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед"],
@@ -498,7 +498,7 @@ function reportsMd(results) {
 function plainUserFacingMd(results) {
   const userReports = results.map((result) => runPersonaUserFacing(personas.find((p) => p.userId === result.userId)));
   return [
-    "Weight Test - хэрэглэгчид харагдах 10 тайлан",
+    "Хэрэглэгчийн унших 10 тайлан",
     "",
     "Энэ файлд зөвхөн хэрэглэгчийн унших тайлангийн текст орсон.",
     "",
@@ -757,7 +757,7 @@ function main() {
   renderPdf(results, summary);
   write(SPRINT32_USER_MD, plainUserFacingMd(results));
   write(SPRINT32_INTERNAL_MD, internalAuditMd(results, summary));
-  renderPlainPdf(SPRINT32_USER_MD, SPRINT32_USER_PDF, "Weight Test - хэрэглэгчид харагдах 10 тайлан");
+  renderPlainPdf(SPRINT32_USER_MD, SPRINT32_USER_PDF, "Хэрэглэгчийн унших 10 тайлан");
   renderPlainPdf(SPRINT32_INTERNAL_MD, SPRINT32_INTERNAL_PDF, "Weight Test - Sprint 32 internal audit");
   console.log(JSON.stringify({
     outDir: path.relative(ROOT, OUT_DIR),

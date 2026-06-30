@@ -80,8 +80,10 @@ function run() {
     "S1-R02": ["Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед"]
   });
   assertSimpleStructure(rewardDeficitReport);
-  assert(rewardDeficitReport.includes("өөрийгөө хойш тавьсны дараа"));
-  assert(rewardDeficitReport.includes("өөртөө өгөх нэг жижиг зүйл"));
+  assert(rewardDeficitReport.includes("Өдөржин өөрийгөө хойш тавьсан өдөр орой амттай зүйл өөртөө өгч байгаа жижигхээн шагнал шиг л санагддаг."));
+  assert(!rewardDeficitReport.includes("миний юм"));
+  assert(!rewardDeficitReport.includes("ганц жижиг баяр"));
+  assert(!rewardDeficitReport.includes("өөртөө өгөх нэг жижиг зүйл болдог"));
 
   const cueReport = setOrdinaryReport({
     "S1-F01": ["Харагдаад эсвэл үнэртээд идмээр болсон"],

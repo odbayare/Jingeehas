@@ -56,7 +56,15 @@ const styleBible = readFileSync(styleBiblePath, "utf8");
   "Саналын экспорт",
   "Санал илгээх",
   "Дэлгэрэнгүй тайлан харах",
-  "Доорх нь таны өгсөн мэдээллээс гарсан эхний тайлбар"
+  "Доорх нь таны өгсөн мэдээллээс гарсан эхний тайлбар",
+  "миний юм",
+  "ганц жижиг баяр",
+  "өөртөө өгөх нэг жижиг зүйл болдог",
+  "биеэ зөөлөн сонсох",
+  "бие, сэтгэлээ зөөлөн анзаарах",
+  "кофеины хил",
+  "кофеин уух цагийн хязгаар",
+  "орой унтраах"
 ].forEach((phrase) => {
   assert(!userText.includes(phrase), `user-facing export should not include: ${phrase}`);
 });
@@ -87,6 +95,12 @@ assert(cyrillicChars > asciiLetters * 8, "style bible should be overwhelmingly M
 assert(!userText.includes("Тэр үед хоол зүгээр нэг хоол биш байсан байж болно"), "user-facing export should not repeat generic food-function intro");
 assert(userText.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"), "user-facing export should include the polished food-function heading");
 assert(userText.includes("Доорх тайлан таны хариултад тулгуурласан эхний тайлбар"), "user-facing export should include the polished intro sentence");
+assert(userText.includes("Өдөржин өөрийгөө хойш тавьсан өдөр орой амттай зүйл өөртөө өгч байгаа жижигхээн шагнал шиг л санагддаг."), "user-facing export should include owner-approved self-neglect wording");
+assert(userText.includes("Тухайн өдөр бие, сэтгэлээ анзаарах"), "user-facing export should include owner-approved menstrual wording");
+assert(
+  userText.includes("Өдрийн эхний хоолоо тогтмол болго. Өдрийн сүүлийн кофегоо хэзээ уухаа тогтоо. Орой 10 минут тайвшрах хугацаа гарга."),
+  "user-facing export should include owner-approved coffee/sleep wording"
+);
 
 [
   "Тэр үед хоол сонгох биш, зүгээр амархан дуусгах зүйл хэрэгтэй болдог.",
