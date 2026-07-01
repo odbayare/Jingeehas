@@ -1,0 +1,170 @@
+{
+  "version": "driver-stack-report-object-v0-test-only",
+  "generatedBy": "tests/driver-stack/exportDriverStackReportObjects.mjs",
+  "recommendation": "READY FOR OWNER REVIEW OF TEST-ONLY REPORT OBJECT",
+  "fixtureCount": 10,
+  "results": [
+    {
+      "name": "shift_work_recovery_only",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "shift_work",
+      "secondaryDriverKeys": [
+        "quick_recovery"
+      ],
+      "interactionId": "shift_work_recovery_only",
+      "vulnerableMomentId": "shift_work_recovery_only",
+      "hiddenFoodFunctionKey": "quick_recovery",
+      "firstGentleChangeId": "shift_recovery_anchor",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "shift_work_loneliness_combo",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "shift_work",
+      "secondaryDriverKeys": [
+        "decompression",
+        "loneliness",
+        "comfort"
+      ],
+      "interactionId": "shift_work_loneliness_combo",
+      "vulnerableMomentId": "shift_work_loneliness_combo",
+      "hiddenFoodFunctionKey": "loneliness_soothing",
+      "firstGentleChangeId": "shift_recovery_connection_slot",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "remote_work_visible_snacks",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "visible_snacks",
+      "secondaryDriverKeys": [
+        "self_reward",
+        "food_photo_cue",
+        "low_friction_default"
+      ],
+      "interactionId": "cue_reward_low_friction_default",
+      "vulnerableMomentId": "cue_reward_low_friction_default",
+      "hiddenFoodFunctionKey": "self_reward",
+      "firstGentleChangeId": "move_one_cue",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "stress_delivery_app_comfort",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "stress",
+      "secondaryDriverKeys": [
+        "low_friction_default",
+        "delivery_app",
+        "decompression"
+      ],
+      "interactionId": "stress_delivery_app_comfort",
+      "vulnerableMomentId": "stress_delivery_app_comfort",
+      "hiddenFoodFunctionKey": "decompression",
+      "firstGentleChangeId": "pre_delivery_decompression_pause",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "meal_gap_evening_hunger",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "meal_gap",
+      "secondaryDriverKeys": [
+        "low_friction_default",
+        "quick_recovery",
+        "hunger_safety"
+      ],
+      "interactionId": "meal_gap_evening_hunger",
+      "vulnerableMomentId": "meal_gap_evening_hunger",
+      "hiddenFoodFunctionKey": "hunger_safety",
+      "firstGentleChangeId": "bridge_meal_before_evening",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "all_or_nothing_restriction_rebound",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "all_or_nothing",
+      "secondaryDriverKeys": [
+        "meal_gap",
+        "evening_hunger",
+        "strict_diet"
+      ],
+      "interactionId": "all_or_nothing_punishment_restriction",
+      "vulnerableMomentId": "all_or_nothing_punishment_restriction",
+      "hiddenFoodFunctionKey": "hunger_safety",
+      "firstGentleChangeId": "next_meal_reset_rule",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "social_weekend_alcohol_monday_restart",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "social_table",
+      "secondaryDriverKeys": [
+        "all_or_nothing",
+        "monday_restart",
+        "belonging"
+      ],
+      "interactionId": "social_belonging_alcohol",
+      "vulnerableMomentId": "social_belonging_alcohol",
+      "hiddenFoodFunctionKey": "belonging",
+      "firstGentleChangeId": "social_choice_script",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "body_shame_restriction",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "body_change_uncertainty",
+      "secondaryDriverKeys": [
+        "shame",
+        "escape_from_shame",
+        "strict_diet"
+      ],
+      "interactionId": "body_shame_restriction",
+      "vulnerableMomentId": "body_shame_restriction",
+      "hiddenFoodFunctionKey": "escape_from_shame",
+      "firstGentleChangeId": "body_neutral_private_tracking",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "pcos_body_uncertainty_control",
+      "safetyMode": "mode1",
+      "primaryDriverKey": "body_change_uncertainty",
+      "secondaryDriverKeys": [
+        "control_regain"
+      ],
+      "interactionId": "pcos_body_uncertainty_control",
+      "vulnerableMomentId": "pcos_body_uncertainty_control",
+      "hiddenFoodFunctionKey": "control_regain",
+      "firstGentleChangeId": "body_neutral_private_tracking",
+      "experimentDurationDays": 14,
+      "professionalFirst": false,
+      "pass": true
+    },
+    {
+      "name": "medication_body_concern_professional_check",
+      "safetyMode": "mode3",
+      "primaryDriverKey": null,
+      "secondaryDriverKeys": [],
+      "interactionId": "medical_first_body_signal",
+      "vulnerableMomentId": "medical_first_body_signal",
+      "hiddenFoodFunctionKey": "quick_recovery",
+      "firstGentleChangeId": "professional_discussion_summary",
+      "experimentDurationDays": 0,
+      "professionalFirst": true,
+      "pass": true
+    }
+  ]
+}
