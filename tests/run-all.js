@@ -13,6 +13,7 @@ const commands = [
   ["node", ["tests/driver-stack/driverStackReportObject.test.js"]],
   ["node", ["tests/driver-stack/copyDecisionMetadata.test.js"]],
   ["node", ["tests/driver-stack/copyDecisionRenderer.test.js"]],
+  ["node", ["tests/driver-stack/runtimeAdapterPrototype.test.js"]],
   ["node", ["tests/virtual-user-qa.test.js"]],
   ["node", ["tests/ten-person-simulation-audit.test.js"]],
   ["node", ["tests/partial-persona-fix.test.js"]],
