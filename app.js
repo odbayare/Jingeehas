@@ -1,4 +1,5 @@
 const STORAGE_KEY = "weightLossDeepPatternMvp";
+const ENABLE_RUNTIME_ADAPTER_SHADOW = false;
 const mockBackend = typeof require === "function"
   ? require("./mockBackend.js")
   : window.MockBackend;
@@ -5011,6 +5012,74 @@ function renderFeedbackExport() {
   `;
 }
 
+function prepareRuntimeAdapterShadowSignal(reportContext = {}, adapterPayload = null, options = {}) {
+  const shadowEnabled = options.enabled === true;
+  if (!shadowEnabled) {
+    return {
+      shadowAttempted: false,
+      shadowEnabled: false,
+      adapterMode: null,
+      reportSurface: null,
+      runtimeCanRender: false,
+      safetyGuidanceRequiresPayment: false,
+      pass: true,
+      errors: []
+    };
+  }
+
+  const errors = [];
+  const allowedContextKeys = [
+    "mode",
+    "ranked",
+    "primary",
+    "secondary",
+    "packageType",
+    "readiness",
+    "stageEvidence",
+    "narrativeEvidence",
+    "tags"
+  ];
+
+  Object.keys(reportContext || {}).forEach(key => {
+    if (!allowedContextKeys.includes(key)) {
+      errors.push(`Shadow report context contains forbidden field: ${key}`);
+    }
+  });
+
+  if (!adapterPayload) {
+    errors.push("Shadow adapter payload is required when shadow mode is enabled.");
+  }
+  if (adapterPayload?.adapterMode !== "test_only") {
+    errors.push("Shadow adapter mode must remain test_only.");
+  }
+  if (adapterPayload?.reportSurface !== "prototype_only") {
+    errors.push("Shadow report surface must remain prototype_only.");
+  }
+  if (adapterPayload?.runtimeSafetyGate?.canRenderInRuntime !== false) {
+    errors.push("Shadow runtime gate must remain false.");
+  }
+  if (adapterPayload?.runtimeSafetyGate?.status !== "HOLD") {
+    errors.push("Shadow runtime gate status must remain HOLD.");
+  }
+  if (adapterPayload?.paymentGate?.safetyGuidanceRequiresPayment !== false) {
+    errors.push("Shadow safety guidance must not require payment.");
+  }
+  if (adapterPayload?.pass !== true) {
+    errors.push("Shadow adapter payload must pass its own WP14 validation.");
+  }
+
+  return {
+    shadowAttempted: true,
+    shadowEnabled: true,
+    adapterMode: adapterPayload?.adapterMode || null,
+    reportSurface: adapterPayload?.reportSurface || null,
+    runtimeCanRender: adapterPayload?.runtimeSafetyGate?.canRenderInRuntime === true,
+    safetyGuidanceRequiresPayment: adapterPayload?.paymentGate?.safetyGuidanceRequiresPayment === true,
+    pass: errors.length === 0,
+    errors
+  };
+}
+
 function renderReport() {
   const quality = dataQuality();
   const mode = reportMode();
@@ -5033,6 +5102,17 @@ function renderReport() {
   const avoidItems = avoidListFor(primary?.key, tags).slice(0, 6);
   const leverage = leveragePoint(primary?.key, tags);
   const experiment = experimentFor(primary?.key, tags);
+  prepareRuntimeAdapterShadowSignal({
+    mode,
+    ranked,
+    primary,
+    secondary,
+    packageType: state.packageType,
+    readiness,
+    stageEvidence,
+    narrativeEvidence,
+    tags
+  });
 
   if (mode.mode === "urgent") {
     return `
@@ -5415,6 +5495,8 @@ if (typeof module !== "undefined") {
       menstrualCycleEvidence,
       menstrualCycleContextHtml,
       menstrualCycleExperimentModifierHtml,
+      ENABLE_RUNTIME_ADAPTER_SHADOW,
+      prepareRuntimeAdapterShadowSignal,
       setTestState(nextState) {
         state = {
           ...initialState,
