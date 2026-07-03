@@ -5128,6 +5128,70 @@ function visibleSurfacePrototypeHtml(section) {
   `;
 }
 
+function buildRuntimeVisibleSurfacePayload(reportContext = {}) {
+  const mode = reportContext?.mode?.mode || reportContext?.mode || "ordinary";
+  const primary = reportContext?.primary || null;
+  const secondary = Array.isArray(reportContext?.secondary) ? reportContext.secondary : [];
+  const readiness = reportContext?.readiness || null;
+  const packageType = reportContext?.packageType || state.packageType || "one-time";
+  const primaryLabel = primary?.key ? publicMechanismShort(primary.key) : "давтамж";
+  const secondaryLabels = secondary
+    .map(item => item?.key ? publicMechanismShort(item.key) : "")
+    .filter(Boolean)
+    .slice(0, 2);
+  const readinessCopy = readiness?.count
+    ? `${readiness.count}/7 өдрийн ажиглалттай байна.`
+    : "Одоогийн хариултад суурилсан эхний зураглал байна.";
+  const packageCopy = packageType === "one-time"
+    ? "Энэ хэсэг нэг удаагийн хариултад тулгуурлана."
+    : "Энэ хэсэг 7 хоногийн тэмдэглэлд тулгуурлана.";
+
+  return {
+    version: "runtime-visible-surface-payload-v0",
+    adapterMode: "runtime_visible_surface_v0",
+    source: "runtime_report_context",
+    generatedFrom: "app.renderReport",
+    reportSurface: "runtime_visible_surface",
+    previewSections: [
+      {
+        title: "Таны эхний ажиглалт",
+        body: `${primaryLabel} хамгийн тод давтагдаж байна. ${secondaryLabels.length ? `Давхар ажиглагдсан дохио: ${secondaryLabels.join(", ")}.` : "Давхар дохио тодроход нэмэлт ажиглалт хэрэгтэй."}`
+      },
+      {
+        title: "Хариултын хүрэлцээ",
+        body: `${packageCopy} ${readinessCopy}`
+      }
+    ],
+    paidSections: [
+      {
+        title: "Гүн зураглалд харах хэсэг",
+        body: "Төлбөртэй тайланд идэхийн өмнөх нөхцөл, давтагддаг цаг, дараах мэдрэмжийн холбоосыг илүү нарийвчилж харуулна."
+      },
+      {
+        title: "Дараагийн жижиг алхам",
+        body: "Хэт чангалсан дүрэм нэмэхээс илүү нэг давтамжийг бодит өдөр тутамд ажиглах жижиг туршилт сонгоно."
+      }
+    ],
+    safetyGuidanceSections: [
+      {
+        title: "Аюулгүй ашиглах сануулга",
+        body: mode === "urgent"
+          ? "Энэ үед жин хасах туршилт хийхээс өмнө ганцаараа үлдэхгүй, ойрын итгэдэг хүнтэйгээ холбогдох нь чухал."
+          : "Хоолоо хүчээр хасах, удаан өлсөх, өөрийгөө буруутгах хэлбэрээр энэ тайланг ашиглахгүй. Бие тавгүйрхвэл туршилтаа зогсоож тусламж авна."
+      }
+    ],
+    runtimeSafetyGate: {
+      canRenderInRuntime: false,
+      status: "HOLD"
+    },
+    paymentGate: {
+      safetyGuidanceRequiresPayment: false,
+      paidSectionsRequirePaidAccess: true
+    },
+    pass: true
+  };
+}
+
 function renderVisibleSurfacePrototype(adapterPayload = null, options = {}) {
   const visiblePrototypeEnabled = options.enabled === true;
   if (!visiblePrototypeEnabled) {
@@ -5153,11 +5217,15 @@ function renderVisibleSurfacePrototype(adapterPayload = null, options = {}) {
   if (!adapterPayload) {
     errors.push("Visible surface prototype requires an adapter payload when enabled.");
   }
-  if (adapterPayload?.adapterMode !== "test_only") {
-    errors.push("Visible surface prototype only accepts test_only adapter payloads.");
-  }
-  if (adapterPayload?.reportSurface !== "prototype_only") {
-    errors.push("Visible surface prototype only accepts prototype_only report surfaces.");
+  const isPrototypePayload =
+    adapterPayload?.adapterMode === "test_only" &&
+    adapterPayload?.reportSurface === "prototype_only";
+  const isRuntimePayload =
+    adapterPayload?.adapterMode === "runtime_visible_surface_v0" &&
+    adapterPayload?.reportSurface === "runtime_visible_surface" &&
+    adapterPayload?.source === "runtime_report_context";
+  if (adapterPayload && !isPrototypePayload && !isRuntimePayload) {
+    errors.push("Visible surface prototype only accepts approved visible surface payloads.");
   }
   if (adapterPayload?.runtimeSafetyGate?.canRenderInRuntime !== false) {
     errors.push("Visible surface prototype must preserve runtimeSafetyGate.canRenderInRuntime === false.");
@@ -5376,10 +5444,11 @@ function renderReport() {
   }
 
   if (isOneTime) {
+    const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
     return renderReportWithRuntimeVisibleSurface(
       renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }),
-      { mode, ranked, primary, secondary, packageType: state.packageType, tags },
-      null,
+      reportContext,
+      buildRuntimeVisibleSurfacePayload(reportContext),
       {
         enabled: ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
         hasPaidAccess: hasOneTimeReportAccess(),
@@ -5388,6 +5457,7 @@ function renderReport() {
     ).html;
   }
 
+  const reportContext = { mode, primary, secondary, packageType: state.packageType, readiness, quality, tags };
   return renderReportWithRuntimeVisibleSurface(
     renderHumanReadableReport({
       mode,
@@ -5396,8 +5466,8 @@ function renderReport() {
       tags,
       isOneTime: false
     }),
-    { mode, primary, secondary, packageType: state.packageType, tags },
-    null,
+    reportContext,
+    buildRuntimeVisibleSurfacePayload(reportContext),
     {
       enabled: ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
       hasPaidAccess: hasSevenDayAccess(),
@@ -5707,6 +5777,7 @@ if (typeof module !== "undefined") {
       ENABLE_VISIBLE_SURFACE_PROTOTYPE,
       ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
       prepareRuntimeAdapterShadowSignal,
+      buildRuntimeVisibleSurfacePayload,
       renderVisibleSurfacePrototype,
       renderReportWithRuntimeVisibleSurface,
       sanitizeVisibleSurfacePrototypeText,
