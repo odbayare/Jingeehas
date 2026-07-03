@@ -503,14 +503,21 @@ h3 {
 }
 
 .runtime-visible-surface-integration {
+  max-width: 100%;
   margin-top: clamp(18px, 4vw, 28px);
   padding-top: clamp(16px, 3vw, 24px);
   border-top: 1px solid var(--line-strong);
+  overflow-wrap: anywhere;
+}
+
+.visible-surface-prototype.runtime-visible-surface-integration {
+  width: 100%;
 }
 
 .runtime-visible-surface-integration h2 {
   margin-bottom: 12px;
   font-size: clamp(1.35rem, 2.5vw, 2rem);
+  line-height: 1.2;
 }
 
 .runtime-visible-surface-integration + .runtime-visible-surface-integration {
@@ -518,6 +525,8 @@ h3 {
 }
 
 .visible-surface-card {
+  max-width: 100%;
+  box-sizing: border-box;
   margin-top: 10px;
   padding: clamp(15px, 2.5vw, 20px);
   border-color: var(--line);
@@ -538,6 +547,7 @@ h3 {
 .visible-surface-card p {
   color: #374151;
   line-height: 1.62;
+  overflow-wrap: anywhere;
 }
 
 .runtime-visible-surface-integration[data-surface="safety"] .visible-surface-card {
@@ -765,6 +775,7 @@ h3 {
   .runtime-visible-surface-integration {
     margin-top: 16px;
     padding-top: 16px;
+    overflow-x: hidden;
   }
 
   .runtime-visible-surface-integration h2 {
@@ -779,6 +790,7 @@ h3 {
 
   .visible-surface-card h3 {
     font-size: 1rem;
+    line-height: 1.28;
   }
 
   .actions,
