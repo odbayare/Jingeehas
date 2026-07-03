@@ -19,6 +19,7 @@ const commands = [
   ["node", ["tests/visible-surface-owner-qa.test.js"]],
   ["node", ["tests/runtime-visible-surface-integration.test.js"]],
   ["node", ["tests/public-visible-surface-readiness.test.js"]],
+  ["node", ["tests/public-visible-surface-enable.test.js"]],
   ["node", ["tests/virtual-user-qa.test.js"]],
   ["node", ["tests/ten-person-simulation-audit.test.js"]],
   ["node", ["tests/partial-persona-fix.test.js"]],
