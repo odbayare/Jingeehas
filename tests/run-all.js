@@ -29,6 +29,7 @@ const commands = [
   ["node", ["tests/copy-localization.test.js"]],
   ["node", ["tests/public-copy-trust-qa.test.js"]],
   ["node", ["tests/final-public-launch-smoke.test.js"]],
+  ["node", ["tests/production-launch-monitoring.test.js"]],
   ["node", ["tests/ai-blind-demo-panel.test.js"]],
   ["node", ["tests/sample-preview-choice-clarity.test.js"]],
   ["node", ["tests/pricing-paywall.test.js"]],
