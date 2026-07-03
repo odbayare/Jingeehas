@@ -1,7 +1,7 @@
 const STORAGE_KEY = "weightLossDeepPatternMvp";
 const ENABLE_RUNTIME_ADAPTER_SHADOW = false;
 const ENABLE_VISIBLE_SURFACE_PROTOTYPE = false;
-const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = false;
+const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = true;
 const mockBackend = typeof require === "function"
   ? require("./mockBackend.js")
   : window.MockBackend;
@@ -5141,7 +5141,7 @@ function buildRuntimeVisibleSurfacePayload(reportContext = {}) {
     .slice(0, 2);
   const readinessCopy = readiness?.count
     ? `${readiness.count}/7 өдрийн ажиглалттай байна.`
-    : "Одоогийн хариултад суурилсан эхний зураглал байна.";
+    : "Эхний зураглалд одоогийн хариултыг ашиглав.";
   const packageCopy = packageType === "one-time"
     ? "Энэ хэсэг нэг удаагийн хариултад тулгуурлана."
     : "Энэ хэсэг 7 хоногийн тэмдэглэлд тулгуурлана.";
@@ -5155,7 +5155,7 @@ function buildRuntimeVisibleSurfacePayload(reportContext = {}) {
     previewSections: [
       {
         title: "Таны эхний ажиглалт",
-        body: `${primaryLabel} хамгийн тод давтагдаж байна. ${secondaryLabels.length ? `Давхар ажиглагдсан дохио: ${secondaryLabels.join(", ")}.` : "Давхар дохио тодроход нэмэлт ажиглалт хэрэгтэй."}`
+        body: `Гол дохио: ${primaryLabel}. ${secondaryLabels.length ? `Давхар дохио: ${secondaryLabels.join(", ")}.` : "Давхар дохиог тодруулахад нэмэлт ажиглалт хэрэгтэй."}`
       },
       {
         title: "Хариултын хүрэлцээ",
@@ -5165,7 +5165,7 @@ function buildRuntimeVisibleSurfacePayload(reportContext = {}) {
     paidSections: [
       {
         title: "Гүн зураглалд харах хэсэг",
-        body: "Төлбөртэй тайланд идэхийн өмнөх нөхцөл, давтагддаг цаг, дараах мэдрэмжийн холбоосыг илүү нарийвчилж харуулна."
+        body: "Төлбөртэй тайланд идэхийн өмнөх нөхцөл, цаг, дараах мэдрэмжийн холбоосыг илүү нарийвчилна."
       },
       {
         title: "Дараагийн жижиг алхам",
@@ -5338,6 +5338,19 @@ function renderReportWithRuntimeVisibleSurface(reportHtml, reportContext = {}, a
   };
 }
 
+function renderReportWithConnectedRuntimeVisibleSurface(reportHtml, reportContext = {}, options = {}) {
+  return renderReportWithRuntimeVisibleSurface(
+    reportHtml,
+    reportContext,
+    buildRuntimeVisibleSurfacePayload(reportContext),
+    {
+      enabled: ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
+      placement: "before-section-end",
+      ...options
+    }
+  );
+}
+
 function renderReport() {
   const quality = dataQuality();
   const mode = reportMode();
@@ -5373,7 +5386,8 @@ function renderReport() {
   });
 
   if (mode.mode === "urgent") {
-    return `
+    const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
+    return renderReportWithConnectedRuntimeVisibleSurface(`
       ${topbar(100, mode.title)}
       <section class="screen">
         <div class="panel stack">
@@ -5383,11 +5397,12 @@ function renderReport() {
           <button class="button secondary" onclick="resetState()">Шинээр эхлэх</button>
         </div>
       </section>
-    `;
+    `, reportContext, { hasPaidAccess: false }).html;
   }
 
   if (mode.mode === "professional") {
-    return `
+    const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
+    return renderReportWithConnectedRuntimeVisibleSurface(`
       ${topbar(100, mode.title)}
       <section class="screen">
         <div class="panel">
@@ -5410,15 +5425,25 @@ function renderReport() {
           <div class="actions"><button class="button secondary" onclick="setView('preliminary')">Эхний хариу руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
         </div>
       </section>
-    `;
+    `, reportContext, { hasPaidAccess: false }).html;
   }
 
   if (isOneTime && !hasOneTimeReportAccess()) {
-    return renderOneTimePaywall({ mode, primary, primaryMechanism, tags });
+    const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
+    return renderReportWithConnectedRuntimeVisibleSurface(
+      renderOneTimePaywall({ mode, primary, primaryMechanism, tags }),
+      reportContext,
+      { hasPaidAccess: false }
+    ).html;
   }
 
   if (!isOneTime && !hasSevenDayAccess()) {
-    return renderSevenDayPaywall();
+    const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
+    return renderReportWithConnectedRuntimeVisibleSurface(
+      renderSevenDayPaywall(),
+      reportContext,
+      { hasPaidAccess: false }
+    ).html;
   }
 
   if (!isOneTime && !readiness.canGenerateFullReport) {
@@ -5445,12 +5470,10 @@ function renderReport() {
 
   if (isOneTime) {
     const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
-    return renderReportWithRuntimeVisibleSurface(
+    return renderReportWithConnectedRuntimeVisibleSurface(
       renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }),
       reportContext,
-      buildRuntimeVisibleSurfacePayload(reportContext),
       {
-        enabled: ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
         hasPaidAccess: hasOneTimeReportAccess(),
         placement: "before-section-end"
       }
@@ -5458,7 +5481,7 @@ function renderReport() {
   }
 
   const reportContext = { mode, primary, secondary, packageType: state.packageType, readiness, quality, tags };
-  return renderReportWithRuntimeVisibleSurface(
+  return renderReportWithConnectedRuntimeVisibleSurface(
     renderHumanReadableReport({
       mode,
       primary,
@@ -5467,9 +5490,7 @@ function renderReport() {
       isOneTime: false
     }),
     reportContext,
-    buildRuntimeVisibleSurfacePayload(reportContext),
     {
-      enabled: ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
       hasPaidAccess: hasSevenDayAccess(),
       placement: "before-section-end"
     }
