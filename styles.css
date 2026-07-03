@@ -420,6 +420,23 @@ h3 {
   background: linear-gradient(180deg, #ffffff 0%, #f7fbf9 100%);
 }
 
+.paywall-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.paywall-detail-grid > div {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.paywall-detail-grid ul {
+  margin-bottom: 0;
+}
+
 .sample-preview {
   display: grid;
   gap: 16px;
@@ -714,6 +731,7 @@ h3 {
   .grid,
   .two-col,
   .choice-grid,
+  .paywall-detail-grid,
   .sample-grid {
     grid-template-columns: 1fr;
   }

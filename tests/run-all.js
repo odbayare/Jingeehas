@@ -30,6 +30,7 @@ const commands = [
   ["node", ["tests/ai-blind-demo-panel.test.js"]],
   ["node", ["tests/sample-preview-choice-clarity.test.js"]],
   ["node", ["tests/pricing-paywall.test.js"]],
+  ["node", ["tests/conversion-paywall-ux-polish.test.js"]],
   ["node", ["tests/commercial-flow-qa.test.js"]],
   ["node", ["tests/backend-qpay-plan.test.js"]],
   ["node", ["tests/mock-backend-entitlements.test.js"]],
