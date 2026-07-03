@@ -1,6 +1,7 @@
 const STORAGE_KEY = "weightLossDeepPatternMvp";
 const ENABLE_RUNTIME_ADAPTER_SHADOW = false;
 const ENABLE_VISIBLE_SURFACE_PROTOTYPE = false;
+const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = false;
 const mockBackend = typeof require === "function"
   ? require("./mockBackend.js")
   : window.MockBackend;
@@ -5220,6 +5221,55 @@ function renderVisibleSurfacePrototype(adapterPayload = null, options = {}) {
   };
 }
 
+function placeVisibleSurfaceHtml(reportHtml, surfaceHtml, placement = "append") {
+  if (!surfaceHtml) return reportHtml;
+  const marker = "</section>";
+  if (placement === "before-section-end" && String(reportHtml).includes(marker)) {
+    const index = String(reportHtml).lastIndexOf(marker);
+    return `${reportHtml.slice(0, index)}${surfaceHtml}\n${reportHtml.slice(index)}`;
+  }
+  return `${reportHtml}\n${surfaceHtml}`;
+}
+
+function renderReportWithRuntimeVisibleSurface(reportHtml, reportContext = {}, adapterPayload = null, options = {}) {
+  const integrationEnabled = options.enabled === true;
+  if (!integrationEnabled) {
+    return {
+      integrationAttempted: false,
+      integrationEnabled: false,
+      placement: null,
+      renderedSurfaces: [],
+      html: reportHtml,
+      pass: true,
+      errors: []
+    };
+  }
+
+  const visibleResult = renderVisibleSurfacePrototype(adapterPayload, {
+    enabled: true,
+    hasPaidAccess: options.hasPaidAccess === true,
+    mode: options.mode || reportContext?.mode?.mode || null,
+    routeMode: options.routeMode,
+    urgent: options.urgent === true,
+    professionalFirst: options.professionalFirst === true,
+    paymentState: options.paymentState,
+    reportLocked: options.reportLocked
+  });
+  const placement = options.placement || "before-section-end";
+
+  return {
+    integrationAttempted: true,
+    integrationEnabled: true,
+    placement,
+    renderedSurfaces: visibleResult.renderedSurfaces,
+    html: visibleResult.pass
+      ? placeVisibleSurfaceHtml(reportHtml, visibleResult.html, placement)
+      : reportHtml,
+    pass: visibleResult.pass,
+    errors: visibleResult.errors
+  };
+}
+
 function renderReport() {
   const quality = dataQuality();
   const mode = reportMode();
@@ -5326,16 +5376,34 @@ function renderReport() {
   }
 
   if (isOneTime) {
-    return renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags });
+    return renderReportWithRuntimeVisibleSurface(
+      renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }),
+      { mode, ranked, primary, secondary, packageType: state.packageType, tags },
+      null,
+      {
+        enabled: ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
+        hasPaidAccess: hasOneTimeReportAccess(),
+        placement: "before-section-end"
+      }
+    ).html;
   }
 
-  return renderHumanReadableReport({
-    mode,
-    primary,
-    secondary,
-    tags,
-    isOneTime: false
-  });
+  return renderReportWithRuntimeVisibleSurface(
+    renderHumanReadableReport({
+      mode,
+      primary,
+      secondary,
+      tags,
+      isOneTime: false
+    }),
+    { mode, primary, secondary, packageType: state.packageType, tags },
+    null,
+    {
+      enabled: ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
+      hasPaidAccess: hasSevenDayAccess(),
+      placement: "before-section-end"
+    }
+  ).html;
 
   return `
     ${topbar(100, mode.title)}
@@ -5637,8 +5705,10 @@ if (typeof module !== "undefined") {
       menstrualCycleExperimentModifierHtml,
       ENABLE_RUNTIME_ADAPTER_SHADOW,
       ENABLE_VISIBLE_SURFACE_PROTOTYPE,
+      ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION,
       prepareRuntimeAdapterShadowSignal,
       renderVisibleSurfacePrototype,
+      renderReportWithRuntimeVisibleSurface,
       sanitizeVisibleSurfacePrototypeText,
       setTestState(nextState) {
         state = {
