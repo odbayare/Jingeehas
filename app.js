@@ -5121,7 +5121,7 @@ function visibleSurfacePrototypeHtml(section) {
   const body = sanitizeVisibleSurfacePrototypeText(section?.body);
   if (!title && !body) return "";
   return `
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       ${title ? `<h3>${escapeHtml(title)}</h3>` : ""}
       ${body ? `<p>${escapeHtml(body)}</p>` : ""}
     </div>
@@ -5272,7 +5272,7 @@ function renderVisibleSurfacePrototype(adapterPayload = null, options = {}) {
   const html = errors.length
     ? ""
     : surfaceGroups.map(group => `
-      <section class="visible-surface-prototype" data-surface="${escapeAttr(group.id)}">
+      <section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="${escapeAttr(group.id)}">
         <h2>${escapeHtml(group.title)}</h2>
         ${group.sections.map(visibleSurfacePrototypeHtml).join("")}
       </section>

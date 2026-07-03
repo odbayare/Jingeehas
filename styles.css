@@ -502,6 +502,49 @@ h3 {
   margin-top: 6px;
 }
 
+.runtime-visible-surface-integration {
+  margin-top: clamp(18px, 4vw, 28px);
+  padding-top: clamp(16px, 3vw, 24px);
+  border-top: 1px solid var(--line-strong);
+}
+
+.runtime-visible-surface-integration h2 {
+  margin-bottom: 12px;
+  font-size: clamp(1.35rem, 2.5vw, 2rem);
+}
+
+.runtime-visible-surface-integration + .runtime-visible-surface-integration {
+  margin-top: 18px;
+}
+
+.visible-surface-card {
+  margin-top: 10px;
+  padding: clamp(15px, 2.5vw, 20px);
+  border-color: var(--line);
+  background: #fff;
+  box-shadow: none;
+}
+
+.visible-surface-card:first-child {
+  border-color: var(--line);
+  background: #fff;
+}
+
+.visible-surface-card h3 {
+  font-size: 1.02rem;
+  line-height: 1.25;
+}
+
+.visible-surface-card p {
+  color: #374151;
+  line-height: 1.62;
+}
+
+.runtime-visible-surface-integration[data-surface="safety"] .visible-surface-card {
+  border-color: #e7c8c8;
+  background: #fffafa;
+}
+
 .table-scroll {
   width: 100%;
   overflow-x: auto;
@@ -717,6 +760,25 @@ h3 {
   .card,
   .report-section {
     padding: 16px;
+  }
+
+  .runtime-visible-surface-integration {
+    margin-top: 16px;
+    padding-top: 16px;
+  }
+
+  .runtime-visible-surface-integration h2 {
+    font-size: 1.28rem;
+    line-height: 1.18;
+  }
+
+  .visible-surface-card {
+    margin-top: 8px;
+    padding: 14px;
+  }
+
+  .visible-surface-card h3 {
+    font-size: 1rem;
   }
 
   .actions,
