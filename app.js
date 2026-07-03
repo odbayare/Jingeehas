@@ -1,5 +1,6 @@
 const STORAGE_KEY = "weightLossDeepPatternMvp";
 const ENABLE_RUNTIME_ADAPTER_SHADOW = false;
+const ENABLE_VISIBLE_SURFACE_PROTOTYPE = false;
 const mockBackend = typeof require === "function"
   ? require("./mockBackend.js")
   : window.MockBackend;
@@ -5080,6 +5081,145 @@ function prepareRuntimeAdapterShadowSignal(reportContext = {}, adapterPayload = 
   };
 }
 
+const VISIBLE_SURFACE_PROTOTYPE_FORBIDDEN_TEXT = [
+  /\bpreviewSections\b/g,
+  /\bpaidSections\b/g,
+  /\bsafetyGuidanceSections\b/g,
+  /\binternalDiagnostics\b/g,
+  /\bownerDebug\b/g,
+  /\bruntimeGate\b/g,
+  /\bdecisionStatus\b/g,
+  /\brendererMode\b/g,
+  /\bfixtureName\b/g,
+  /\ball_or_nothing_restriction_rebound\b/g,
+  /\bpcos_body_uncertainty_control\b/g,
+  /\bowner_recommended\b/g,
+  /\btest_only\b/g,
+  /\bmode[0-9]\b/g,
+  /\bdiagnos(?:e|is|ed|ing)\b/gi,
+  /\btreat(?:ment|s|ed|ing)?\b/gi,
+  /\bprescrib(?:e|es|ed|ing)\b/gi,
+  /\bQPay\b/gi,
+  /\bcheckout\b/gi,
+  /\bunlock\b/gi,
+  /\bpayment\b/gi,
+  /₮/g
+];
+
+function sanitizeVisibleSurfacePrototypeText(value) {
+  let text = sanitizePublicReportText(value);
+  VISIBLE_SURFACE_PROTOTYPE_FORBIDDEN_TEXT.forEach(pattern => {
+    pattern.lastIndex = 0;
+    text = text.replace(pattern, "");
+  });
+  return text.replace(/\s{2,}/g, " ").trim();
+}
+
+function visibleSurfacePrototypeHtml(section) {
+  const title = sanitizeVisibleSurfacePrototypeText(section?.title);
+  const body = sanitizeVisibleSurfacePrototypeText(section?.body);
+  if (!title && !body) return "";
+  return `
+    <div class="report-section">
+      ${title ? `<h3>${escapeHtml(title)}</h3>` : ""}
+      ${body ? `<p>${escapeHtml(body)}</p>` : ""}
+    </div>
+  `;
+}
+
+function renderVisibleSurfacePrototype(adapterPayload = null, options = {}) {
+  const visiblePrototypeEnabled = options.enabled === true;
+  if (!visiblePrototypeEnabled) {
+    return {
+      prototypeAttempted: false,
+      visiblePrototypeEnabled: false,
+      suppressed: false,
+      renderedSurfaces: [],
+      html: "",
+      pass: true,
+      errors: []
+    };
+  }
+
+  const mode = options.mode || options.routeMode || null;
+  const suppressOrdinarySurfaces =
+    mode === "urgent" ||
+    mode === "professional" ||
+    options.urgent === true ||
+    options.professionalFirst === true;
+
+  const errors = [];
+  if (!adapterPayload) {
+    errors.push("Visible surface prototype requires an adapter payload when enabled.");
+  }
+  if (adapterPayload?.adapterMode !== "test_only") {
+    errors.push("Visible surface prototype only accepts test_only adapter payloads.");
+  }
+  if (adapterPayload?.reportSurface !== "prototype_only") {
+    errors.push("Visible surface prototype only accepts prototype_only report surfaces.");
+  }
+  if (adapterPayload?.runtimeSafetyGate?.canRenderInRuntime !== false) {
+    errors.push("Visible surface prototype must preserve runtimeSafetyGate.canRenderInRuntime === false.");
+  }
+  if (adapterPayload?.runtimeSafetyGate?.status !== "HOLD") {
+    errors.push("Visible surface prototype must preserve runtimeSafetyGate.status === HOLD.");
+  }
+  if (adapterPayload?.paymentGate?.safetyGuidanceRequiresPayment !== false) {
+    errors.push("Visible surface prototype must keep safety guidance outside payment.");
+  }
+  if (adapterPayload?.pass !== true) {
+    errors.push("Visible surface prototype requires a passing adapter payload.");
+  }
+
+  const surfaceGroups = [];
+  const previewSections = Array.isArray(adapterPayload?.previewSections) ? adapterPayload.previewSections : [];
+  const paidSections = Array.isArray(adapterPayload?.paidSections) ? adapterPayload.paidSections : [];
+  const safetyGuidanceSections = Array.isArray(adapterPayload?.safetyGuidanceSections)
+    ? adapterPayload.safetyGuidanceSections
+    : [];
+
+  if (!suppressOrdinarySurfaces && previewSections.length) {
+    surfaceGroups.push({
+      id: "preview",
+      title: "Эхний товч зураглал",
+      sections: previewSections
+    });
+  }
+  if (!suppressOrdinarySurfaces && options.hasPaidAccess === true && paidSections.length) {
+    surfaceGroups.push({
+      id: "paid",
+      title: "Гүн тайлангийн хэсэг",
+      sections: paidSections
+    });
+  }
+  if (safetyGuidanceSections.length) {
+    surfaceGroups.push({
+      id: "safety",
+      title: "Аюулгүй байдлын сануулга",
+      sections: safetyGuidanceSections
+    });
+  }
+
+  const html = errors.length
+    ? ""
+    : surfaceGroups.map(group => `
+      <section class="visible-surface-prototype" data-surface="${escapeAttr(group.id)}">
+        <h2>${escapeHtml(group.title)}</h2>
+        ${group.sections.map(visibleSurfacePrototypeHtml).join("")}
+      </section>
+    `).join("");
+
+  return {
+    prototypeAttempted: true,
+    visiblePrototypeEnabled: true,
+    suppressed: suppressOrdinarySurfaces,
+    renderedSurfaces: surfaceGroups.map(group => group.id),
+    html,
+    pass: errors.length === 0,
+    errors
+  };
+}
+
 function renderReport() {
   const quality = dataQuality();
   const mode = reportMode();
@@ -5496,7 +5636,10 @@ if (typeof module !== "undefined") {
       menstrualCycleContextHtml,
       menstrualCycleExperimentModifierHtml,
       ENABLE_RUNTIME_ADAPTER_SHADOW,
+      ENABLE_VISIBLE_SURFACE_PROTOTYPE,
       prepareRuntimeAdapterShadowSignal,
+      renderVisibleSurfacePrototype,
+      sanitizeVisibleSurfacePrototypeText,
       setTestState(nextState) {
         state = {
           ...initialState,
