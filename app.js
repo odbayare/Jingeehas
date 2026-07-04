@@ -22,6 +22,10 @@ const WEIGHT_TEST_QPAY_ENDPOINTS = {
   create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice",
   check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"
 };
+const WEIGHT_TEST_FUNNEL_ENDPOINT = "https://www.lifepattern.live/.netlify/functions/track-funnel-event";
+const WEIGHT_TEST_VISITOR_ID_STORAGE_KEY = "weight_test_visitor_id_v1";
+const WEIGHT_TEST_SESSION_ID_STORAGE_KEY = "weight_test_session_id_v1";
+const WEIGHT_TEST_EVENT_DEDUPE_STORAGE_KEY = "weight_test_funnel_events_v1";
 const PUBLIC_PRODUCT_NAME = "Илүүдэл жингээс салах тест үнэлгээ";
 const PUBLIC_PRODUCT_DESCRIPTION = [
   "Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаанаа илрүүл.",
@@ -963,7 +967,83 @@ const initialState = {
 };
 
 const hasBrowserRuntime = typeof window !== "undefined" && typeof document !== "undefined";
+
+function randomTrackingId(prefix) {
+  const random = Math.random().toString(36).slice(2, 10);
+  return `${prefix}_${Date.now().toString(36)}_${random}`;
+}
+
+function getOrCreateTrackingId(storage, key, prefix) {
+  if (!storage) return "";
+  try {
+    const existing = storage.getItem(key);
+    if (existing && /^[a-z0-9_-]{8,80}$/i.test(existing)) return existing;
+    const next = randomTrackingId(prefix);
+    storage.setItem(key, next);
+    return next;
+  } catch {
+    return "";
+  }
+}
+
+function safeWeightEventMetadata(metadata = {}) {
+  const output = {
+    product_code: WEIGHT_TEST_PRODUCT_CODE,
+    product_label: PUBLIC_PRODUCT_NAME,
+    amount_mnt: WEIGHT_TEST_AMOUNT_MNT
+  };
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return output;
+  for (const [key, raw] of Object.entries(metadata).slice(0, 16)) {
+    const safeKey = String(key || "").replace(/[^a-z0-9_:-]/gi, "").slice(0, 48);
+    if (!safeKey || /email|phone|name|contact|password|token|secret|answer|raw/i.test(safeKey)) continue;
+    if (typeof raw === "number" || typeof raw === "boolean") {
+      output[safeKey] = raw;
+    } else {
+      output[safeKey] = String(raw ?? "").slice(0, 120);
+    }
+  }
+  return output;
+}
+
+function trackWeightFunnelEvent(eventName, metadata = {}) {
+  if (!hasBrowserRuntime || !window.fetch || !window.localStorage || !window.sessionStorage) return false;
+  const visitorId = getOrCreateTrackingId(window.localStorage, WEIGHT_TEST_VISITOR_ID_STORAGE_KEY, "wtv");
+  const sessionId = getOrCreateTrackingId(window.sessionStorage, WEIGHT_TEST_SESSION_ID_STORAGE_KEY, "wts");
+  if (!visitorId || !sessionId) return false;
+  window.fetch(WEIGHT_TEST_FUNNEL_ENDPOINT, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      event_name: eventName,
+      visitor_id: visitorId,
+      session_id: sessionId,
+      path: window.location.pathname || "/",
+      referrer: document.referrer || "",
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+      screen: state.view || "unknown",
+      metadata: safeWeightEventMetadata(metadata)
+    }),
+    keepalive: true
+  }).catch(() => {});
+  return true;
+}
+
+function trackWeightFunnelOnce(eventName, metadata = {}, dedupeKey = "") {
+  if (!hasBrowserRuntime || !window.sessionStorage) return false;
+  const key = dedupeKey ? `${eventName}:${dedupeKey}` : eventName;
+  try {
+    const raw = window.sessionStorage.getItem(WEIGHT_TEST_EVENT_DEDUPE_STORAGE_KEY);
+    const tracked = raw ? JSON.parse(raw) : {};
+    if (tracked[key]) return false;
+    tracked[key] = new Date().toISOString();
+    window.sessionStorage.setItem(WEIGHT_TEST_EVENT_DEDUPE_STORAGE_KEY, JSON.stringify(tracked));
+  } catch {
+    // Tracking should never block the paid-first assessment flow.
+  }
+  return trackWeightFunnelEvent(eventName, metadata);
+}
 let state = hasBrowserRuntime ? loadState() : { ...initialState };
+trackWeightFunnelOnce("landing_viewed", { source: "app_boot" }, "landing");
 
 function loadState() {
   try {
@@ -1125,6 +1205,11 @@ function saveContactCapture() {
     copyStatus: ""
   };
   saveState();
+  trackWeightFunnelOnce("contact_submitted", {
+    has_phone: Boolean(phone),
+    has_email: Boolean(email),
+    has_name: Boolean(String(contact.name || "").trim())
+  }, "contact");
   render({ scrollToTop: true });
   return true;
 }
@@ -1169,6 +1254,10 @@ function beginAssessment(packageType = state.packageType || "one-time") {
   state.preliminary = [];
   state.view = "stage1";
   saveState();
+  trackWeightFunnelOnce("test_started", {
+    package_type: packageType,
+    assessment_id: assessment.id
+  }, assessment.id);
   render({ scrollToTop: true });
   return true;
 }
@@ -1296,6 +1385,10 @@ async function createWeightQpayInvoice() {
     invoice: null
   };
   saveState();
+  trackWeightFunnelEvent("qpay_invoice_requested", {
+    payment_session_id: state.paymentSessionId,
+    amount_mnt: currentOneTimePriceMnt()
+  });
   render();
   try {
     const response = await fetch(WEIGHT_TEST_QPAY_ENDPOINTS.create, {
@@ -1317,6 +1410,12 @@ async function createWeightQpayInvoice() {
       message: qpayStatusMessage("pending"),
       invoice: payload.invoice
     };
+    trackWeightFunnelEvent("qpay_invoice_created", {
+      payment_session_id: state.paymentSessionId,
+      amount_mnt: payload.invoice.amount || currentOneTimePriceMnt(),
+      invoice_id_present: Boolean(payload.invoice.invoiceId),
+      sender_invoice_present: Boolean(payload.invoice.senderInvoiceNo)
+    });
   } catch {
     state.qpayPayment = {
       status: "error",
@@ -1331,6 +1430,11 @@ async function createWeightQpayInvoice() {
 async function checkWeightQpayPayment() {
   const invoice = state.qpayPayment?.invoice;
   if (!invoice) return;
+  trackWeightFunnelEvent("payment_check_started", {
+    payment_session_id: state.paymentSessionId,
+    invoice_id_present: Boolean(invoice.invoiceId),
+    sender_invoice_present: Boolean(invoice.senderInvoiceNo)
+  });
   state.qpayPayment = {
     ...state.qpayPayment,
     status: "checking",
@@ -1357,6 +1461,11 @@ async function checkWeightQpayPayment() {
         status: "paid",
         message: qpayStatusMessage("paid")
       };
+      trackWeightFunnelOnce("payment_confirmed", {
+        payment_session_id: state.paymentSessionId,
+        amount_mnt: payload.payment.amount || currentOneTimePriceMnt(),
+        credit_granted: Boolean(payload.payment.creditGranted)
+      }, invoice.senderInvoiceNo || invoice.invoiceId || state.paymentSessionId);
     } else {
       state.qpayPayment = {
         ...state.qpayPayment,
@@ -1932,6 +2041,11 @@ function completeStageOne() {
   state.preliminary = rankedPatterns(false).slice(0, 4);
   state.view = state.packageType === "one-time" ? "report" : "preliminary";
   saveState();
+  trackWeightFunnelOnce("test_completed", {
+    package_type: state.packageType || "one-time",
+    assessment_id: state.currentAssessmentId || "",
+    question_count: stageQuestions().length
+  }, state.currentAssessmentId || state.paymentSessionId || "assessment");
   render({ scrollToTop: true });
 }
 
@@ -3885,6 +3999,10 @@ async function copyCurrentReport() {
       copyStatus: "Тайлан clipboard-д хуулагдлаа."
     };
     saveState();
+    trackWeightFunnelEvent("report_copy_clicked", {
+      assessment_id: state.currentAssessmentId || "",
+      package_type: state.packageType || "one-time"
+    });
     render();
     return true;
   } catch {
@@ -3900,6 +4018,10 @@ async function copyCurrentReport() {
 
 function printCurrentReport() {
   if (!hasBrowserRuntime || typeof window.print !== "function") return false;
+  trackWeightFunnelEvent("report_print_clicked", {
+    assessment_id: state.currentAssessmentId || "",
+    package_type: state.packageType || "one-time"
+  });
   window.print();
   return true;
 }
@@ -5888,6 +6010,11 @@ function renderReport() {
 
   if (isOneTime) {
     const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
+    trackWeightFunnelOnce("report_generated", {
+      assessment_id: state.currentAssessmentId || "",
+      package_type: state.packageType || "one-time",
+      readiness: readiness.key || ""
+    }, state.currentAssessmentId || state.paymentSessionId || "one-time-report");
     return renderReportWithConnectedRuntimeVisibleSurface(
       renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }),
       reportContext,
@@ -5899,6 +6026,11 @@ function renderReport() {
   }
 
   const reportContext = { mode, primary, secondary, packageType: state.packageType, readiness, quality, tags };
+  trackWeightFunnelOnce("report_generated", {
+    assessment_id: state.currentAssessmentId || "",
+    package_type: state.packageType || "seven-day",
+    readiness: readiness.key || ""
+  }, state.currentAssessmentId || state.paymentSessionId || "seven-day-report");
   return renderReportWithConnectedRuntimeVisibleSurface(
     renderHumanReadableReport({
       mode,
@@ -6256,6 +6388,9 @@ if (typeof module !== "undefined") {
       renderReportDeliveryActions,
       copyCurrentReport,
       printCurrentReport,
+      safeWeightEventMetadata,
+      trackWeightFunnelEvent,
+      trackWeightFunnelOnce,
       isInternalTestMode,
       updateInternalFeedbackField,
       submitInternalFeedback,

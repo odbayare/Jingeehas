@@ -43,6 +43,7 @@ const commands = [
   ["node", ["tests/paid-first-gate-emergency.test.js"]],
   ["node", ["tests/qpay-device-payment-ux.test.js"]],
   ["node", ["tests/no-account-contact-delivery.test.js"]],
+  ["node", ["tests/weight-funnel-event-tracking.test.js"]],
   ["node", ["tests/commercial-flow-qa.test.js"]],
   ["node", ["tests/backend-qpay-plan.test.js"]],
   ["node", ["tests/mock-backend-entitlements.test.js"]],
