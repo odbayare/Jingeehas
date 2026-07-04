@@ -63,8 +63,10 @@ const twitterCard = metaContent(indexHtml, "twitter:card");
 const twitterTitle = metaContent(indexHtml, "twitter:title");
 const twitterDescription = metaContent(indexHtml, "twitter:description");
 const themeColor = metaContent(indexHtml, "theme-color");
+const officialProductName = "Илүүдэл жингээс салах тест үнэлгээ";
+const officialDescription = "Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаан, далд зуршил, жин хасахад тохирох хэв маяг болон дасгал сургуулилтын чиглэлээ ойлгоход туслах тест үнэлгээ.";
 
-assert.strictEqual(title, "Жин хасалтын гүн зураглал", "public title must remain present");
+assert.strictEqual(title, officialProductName, "public title must use official product name");
 assert(description, "meta description must exist");
 assert(ogTitle, "Open Graph title must exist");
 assert(ogDescription, "Open Graph description must exist");
@@ -78,6 +80,7 @@ assert.strictEqual(ogTitle, title, "Open Graph title must match public title");
 assert.strictEqual(twitterTitle, title, "Twitter title must match public title");
 assert.strictEqual(ogDescription, description, "Open Graph description must match meta description");
 assert.strictEqual(twitterDescription, description, "Twitter description must match meta description");
+assert.strictEqual(description, officialDescription, "meta description must use approved public copy");
 
 [
   ["title", title],

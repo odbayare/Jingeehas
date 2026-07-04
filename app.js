@@ -22,6 +22,12 @@ const WEIGHT_TEST_QPAY_ENDPOINTS = {
   create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice",
   check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"
 };
+const PUBLIC_PRODUCT_NAME = "Илүүдэл жингээс салах тест үнэлгээ";
+const PUBLIC_PRODUCT_DESCRIPTION = [
+  "Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаанаа илрүүл.",
+  "Ямар далд зуршлууд илүүдэл жин үүсэхэд нөлөөлж буйг тайлж мэд.",
+  "Жин хасахад тань тохирох дөт хэв маяг, дасгал сургуулилтын чиглэлээ мэдэж ав."
+];
 
 const INTERNAL_FEEDBACK_DEFAULTS = {
   discomfort: "Үгүй",
@@ -1855,7 +1861,7 @@ function previousStageQuestion() {
   render({ scrollToTop: true });
 }
 
-function topbar(progress, label = "Жин хасалтын гүн зураглал") {
+function topbar(progress, label = PUBLIC_PRODUCT_NAME) {
   return `
     <div class="topbar">
       <div class="topbar-inner">
@@ -1871,11 +1877,13 @@ function renderLanding() {
     <section class="hero">
       <div class="hero-inner">
         <div class="hero-copy">
-          <p class="eyebrow">Жин хасалтыг гацаадаг давтамжийг харах үнэлгээ</p>
-          <h1>Яагаад хичээсэн ч жин буурахгүй байна вэ?</h1>
-          <p class="lead">Энэ тест таныг шүүх гэж биш. Ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харах гэж байгаа юм.</p>
+          <p class="eyebrow">Сэтгэлзүйн хэв маяг, далд зуршлын үнэлгээ</p>
+          <h1>${PUBLIC_PRODUCT_NAME}</h1>
+          <div class="lead public-description">
+            ${PUBLIC_PRODUCT_DESCRIPTION.map(line => `<p>${line}</p>`).join("")}
+          </div>
           <div class="hero-actions">
-            <button class="button" onclick="setView('choice')">Миний зураглалыг эхлүүлэх</button>
+            <button class="button" onclick="setView('choice')">Тест үнэлгээг эхлүүлэх</button>
             <button class="button secondary" onclick="setView('about')">Үнэлгээний ялгааг харах</button>
           </div>
         </div>

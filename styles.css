@@ -120,6 +120,15 @@ h3 {
   font-size: clamp(1.05rem, 2vw, 1.3rem);
 }
 
+.public-description {
+  display: grid;
+  gap: 6px;
+}
+
+.public-description p {
+  margin: 0;
+}
+
 .hero-actions,
 .actions {
   display: flex;

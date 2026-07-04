@@ -119,6 +119,7 @@ const ogTitle = metaContent(indexHtml, "og:title");
 const ogDescription = metaContent(indexHtml, "og:description");
 const ogUrl = metaContent(indexHtml, "og:url");
 const iconRefs = linkRefs(indexHtml, "icon");
+const officialProductName = "Илүүдэл жингээс салах тест үнэлгээ";
 const missingBrandingMetadata = [
   !metaDescription && "meta description",
   !ogTitle && "Open Graph title",
@@ -132,10 +133,10 @@ assert.strictEqual(_internal.ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION, true, "
 assert(appSource.includes("const ENABLE_VISIBLE_SURFACE_PROTOTYPE = false;"), "source prototype guard must remain false");
 assert(appSource.includes("const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = true;"), "source runtime visible integration guard must remain true");
 
-assert.strictEqual(title, "Жин хасалтын гүн зураглал", "current public title must be present and recorded");
-assert(missingBrandingMetadata.includes("meta description"), "missing meta description must be explicitly recorded");
-assert(missingBrandingMetadata.includes("Open Graph title"), "missing Open Graph title must be explicitly recorded");
-assert(missingBrandingMetadata.includes("Open Graph description"), "missing Open Graph description must be explicitly recorded");
+assert.strictEqual(title, officialProductName, "current public title must use official product name");
+assert.strictEqual(ogTitle, officialProductName, "Open Graph title must use official product name");
+assert(metaDescription, "meta description must be present");
+assert(ogDescription, "Open Graph description must be present");
 assert(missingBrandingMetadata.includes("Open Graph URL"), "missing Open Graph URL must be explicitly recorded");
 assert(missingBrandingMetadata.includes("favicon/icon reference"), "missing favicon/icon reference must be explicitly recorded");
 
