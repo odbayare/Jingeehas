@@ -232,12 +232,12 @@ function setOneTime(overrides = {}) {
 
   [
     "const STORAGE_KEY = \"weightLossDeepPatternMvp\";",
-    "oneTime: \"29,000₮\"",
+    "oneTime: \"9,900₮\"",
     "sevenDayAnchor: \"69,000₮\"",
     "const WEIGHT_TEST_PRODUCT_CODE = \"WEIGHT_TEST_ONE_TIME\";",
     "const WEIGHT_TEST_AMOUNT_MNT = 9900;",
-    "create: \"/.netlify/functions/qpay-create-invoice\"",
-    "check: \"/.netlify/functions/qpay-check-payment\""
+    "create: \"https://www.lifepattern.live/.netlify/functions/qpay-create-invoice\"",
+    "check: \"https://www.lifepattern.live/.netlify/functions/qpay-check-payment\""
   ].forEach(expected => assert(source.includes(expected), `missing unchanged contract: ${expected}`));
 
   console.log("visible-surface-prototype tests passed");

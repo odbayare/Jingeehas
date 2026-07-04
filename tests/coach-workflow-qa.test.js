@@ -75,7 +75,7 @@ function run() {
   const invite = mockBackend.resolveCoachInvitation({ inviteToken: client.inviteToken });
   assert.strictEqual(invite.matched, true);
   assert.strictEqual(invite.price_mnt, 9900);
-  assert.strictEqual(mockBackend.resolveCoachInvitation({ email: "standard@example.com" }).price_mnt, 29000);
+  assert.strictEqual(mockBackend.resolveCoachInvitation({ email: "standard@example.com" }).price_mnt, 9900);
 
   _internal.setTestState({
     packageType: "one-time",
@@ -87,14 +87,14 @@ function run() {
     diaryEntries: []
   });
   const inviteCopy = visibleText(_internal.renderOneTimeStart());
-  assert(inviteCopy.includes("Үндсэн үнэ: 29,000₮"));
+  assert(inviteCopy.includes("Үндсэн үнэ: 9,900₮"));
   assert(inviteCopy.includes("Coach-ийн хөнгөлөлттэй үнэ: 9,900₮"));
   assert(inviteCopy.includes("дүгнэлтийг QA Coach харах боломжтой"));
   assert(inviteCopy.includes("гарсан дүгнэлтээ QA Coach-д харагдахыг зөвшөөрч байна"));
   assert(inviteCopy.includes("зөвшөөрч байна"));
 
   const declined = mockBackend.acceptCoachInvitation({ coachClientId: client.client.id, consent: false });
-  assert.strictEqual(declined.price_mnt, 29000);
+  assert.strictEqual(declined.price_mnt, 9900);
   const declinedPaid = paidAssessment({
     coachId: created.coach.id,
     coachClientId: client.client.id,

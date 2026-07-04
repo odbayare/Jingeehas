@@ -77,7 +77,7 @@ function run() {
 
   const noInvite = mockBackend.resolveCoachInvitation({ email: "other@example.com" });
   assert.strictEqual(noInvite.matched, false);
-  assert.strictEqual(noInvite.price_mnt, 29000);
+  assert.strictEqual(noInvite.price_mnt, 9900);
 
   const invite = mockBackend.resolveCoachInvitation({ inviteToken: clientResult.inviteToken });
   assert.strictEqual(invite.matched, true);
@@ -85,7 +85,7 @@ function run() {
   assert.strictEqual(invite.coach.display_name, "Coach A");
 
   const declined = mockBackend.acceptCoachInvitation({ coachClientId: clientResult.client.id, consent: false });
-  assert.strictEqual(declined.price_mnt, 29000);
+  assert.strictEqual(declined.price_mnt, 9900);
   assert.strictEqual(declined.share_with_coach, false);
   let deniedSetup = paidCoachAssessment({
     coachId: created.coach.id,
@@ -110,8 +110,8 @@ function run() {
   });
   const paidStatus = mockBackend.getPaymentStatus(paid.payment.id);
   assert.strictEqual(paidStatus.payment.amount_mnt, 9900);
-  assert.strictEqual(paidStatus.payment.base_price_mnt, 29000);
-  assert.strictEqual(paidStatus.payment.discount_amount_mnt, 19100);
+  assert.strictEqual(paidStatus.payment.base_price_mnt, 9900);
+  assert.strictEqual(paidStatus.payment.discount_amount_mnt, 0);
   assert.strictEqual(paidStatus.payment.commission_mnt, 4000);
 
   mockBackend.markMockPaymentPaid(paid.payment.id);
@@ -205,8 +205,8 @@ function run() {
     diaryEntries: []
   });
   paywall = normalize(_internal.renderReport());
-  assert(paywall.includes("Төлөх үнэ 29,000₮"));
-  assert(paywall.includes("29,000₮ төлөөд бүрэн тайлангаа нээх"));
+  assert(paywall.includes("Төлөх үнэ 9,900₮"));
+  assert(paywall.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"));
   assert(!paywall.includes("Coach-ийн хөнгөлөлттэй үнэ 9,900₮"));
 
   _internal.setTestState({ internalTest: true, adminCoachForm: { email: "", name: "", phone: "", commissionMnt: "4000" } });

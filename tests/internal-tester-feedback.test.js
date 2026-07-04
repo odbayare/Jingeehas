@@ -41,7 +41,7 @@ function run() {
 
   baseAssessmentState();
   const publicReport = normalize(_internal.renderReport());
-  assert(publicReport.includes("29,000₮ төлөөд бүрэн тайлангаа нээх"), "public one-time report should still require payment");
+  assert(publicReport.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"), "public one-time report should still require payment");
   assert(!publicReport.includes("Туршилтын санал асуулга"), "feedback survey should not appear before internal report access");
 
   baseAssessmentState({ internalTest: true });
@@ -63,15 +63,15 @@ function run() {
     "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?",
     "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?",
     "Тайлангийн хэл найруулга ямар санагдсан бэ?",
-    "Энэ тайланг 29,000 төгрөгөөр авахад үнэ цэнтэй санагдах уу?",
+    "Энэ тайланг 9,900 төгрөгөөр авахад үнэ цэнтэй санагдах уу?",
     "Хамгийн хэрэгтэй санагдсан хэсэг юу байсан бэ?",
     "Хамгийн засмаар санагдсан хэсэг юу байсан бэ?"
   ];
   questions.forEach(question => assert(internalReport.includes(question), `missing feedback question: ${question}`));
-  assert(!internalReport.includes("29,000 төлж"));
-  assert(!internalReport.includes("29,000₮ төлж"));
-  assert(!internalReport.includes("29,000-өөр"));
-  assert(!internalReport.includes("29,000₮-өөр"));
+  assert(!internalReport.includes("9,900 төлж"));
+  assert(!internalReport.includes("9,900₮ төлж"));
+  assert(!internalReport.includes("9,900-өөр"));
+  assert(!internalReport.includes("9,900₮-өөр"));
 
   _internal.updateInternalFeedbackField("fitRating", "9");
   _internal.updateInternalFeedbackField("simpleResultClarity", "Тийм, шууд ойлгосон");

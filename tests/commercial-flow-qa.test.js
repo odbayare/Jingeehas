@@ -90,9 +90,9 @@ function assertNoCommercialSmell(text, label) {
 
 function run() {
   const choice = normalize(_internal.renderChoice());
-  assert(choice.includes("Үндсэн үнэ 29,000₮"));
+  assert(choice.includes("Үндсэн үнэ 9,900₮"));
   assert(!choice.includes("Нээлтийн урамшуулалт үнэ 9,900₮"));
-  assert(choice.includes("29,000₮ төлөөд тайлангаа нээх"));
+  assert(choice.includes("9,900₮ төлөөд тайлангаа нээх"));
   assert(choice.includes("Үндсэн үнэ 69,000₮"));
   assert(choice.includes("Нээлтийн урамшуулалт үнэ 29,000₮"));
   assert(!choice.includes("6,900₮"));
@@ -102,7 +102,7 @@ function run() {
   setOneTime();
   const unpaidOneTime = normalize(_internal.renderReport());
   assert(unpaidOneTime.includes("Таны эхний зураглал бэлэн боллоо"));
-  assert(unpaidOneTime.includes("29,000₮ төлөөд бүрэн тайлангаа нээх"));
+  assert(unpaidOneTime.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"));
   assert(unpaidOneTime.includes("Хамгийн түрүүнд харагдаж буй зүйл"));
   assert(!unpaidOneTime.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"));
   assert(!unpaidOneTime.includes("<h3>14 хоногийн эхний туршилт</h3>"));

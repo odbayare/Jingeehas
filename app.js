@@ -6,21 +6,21 @@ const mockBackend = typeof require === "function"
   ? require("./mockBackend.js")
   : window.MockBackend;
 const PRICING = {
-  oneTime: "29,000₮",
-  oneTimeAnchor: "29,000₮",
+  oneTime: "9,900₮",
+  oneTimeAnchor: "9,900₮",
   coachOneTime: "9,900₮",
   sevenDay: "29,000₮",
   sevenDayAnchor: "69,000₮",
   upgrade: "19,900₮"
 };
-const STANDARD_WEIGHT_PRICE_MNT = 29000;
+const STANDARD_WEIGHT_PRICE_MNT = 9900;
 const COACH_WEIGHT_PRICE_MNT = 9900;
 const COACH_COMMISSION_MNT = 4000;
 const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";
 const WEIGHT_TEST_AMOUNT_MNT = 9900;
 const WEIGHT_TEST_QPAY_ENDPOINTS = {
-  create: "/.netlify/functions/qpay-create-invoice",
-  check: "/.netlify/functions/qpay-check-payment"
+  create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice",
+  check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"
 };
 
 const INTERNAL_FEEDBACK_DEFAULTS = {
@@ -4949,7 +4949,7 @@ function renderInternalTesterFeedbackSurvey() {
       ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
       ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
       ${feedbackChoiceField("languageTone", "Тайлангийн хэл найруулга ямар санагдсан бэ?", ["Байгалийн монгол хэлтэй", "Зарим хэсэг хиймэл", "Хэт албархуу", "Хэт зөөлөн/бөөрөнхий"], "languageToneSuggestion", "Засах санал:")}
-      ${feedbackChoiceField("valueAt9900", "Энэ тайланг 29,000 төгрөгөөр авахад үнэ цэнтэй санагдах уу?", ["Тийм", "Магадгүй", "Үгүй"], "valueReason", "Яагаад?")}
+      ${feedbackChoiceField("valueAt9900", "Энэ тайланг 9,900 төгрөгөөр авахад үнэ цэнтэй санагдах уу?", ["Тийм", "Магадгүй", "Үгүй"], "valueReason", "Яагаад?")}
       <label class="field"><span class="muted">Хамгийн хэрэгтэй санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostUsefulPart', this.value)">${escapeHtml(form.mostUsefulPart || "")}</textarea></label>
       <label class="field"><span class="muted">Хамгийн засмаар санагдсан хэсэг юу байсан бэ?</span><textarea rows="3" oninput="updateInternalFeedbackField('mostNeedsFix', this.value)">${escapeHtml(form.mostNeedsFix || "")}</textarea></label>
       <div class="actions">

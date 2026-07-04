@@ -123,20 +123,20 @@ assert.strictEqual(_internal.ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION, true, "
 assert(appSource.includes("const ENABLE_VISIBLE_SURFACE_PROTOTYPE = false;"), "source prototype guard must remain false");
 assert(appSource.includes("const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = true;"), "source runtime visible integration guard must remain true");
 
-assert(appSource.includes('oneTime: "29,000₮"'), "one-time price label must remain unchanged");
-assert(appSource.includes('oneTimeAnchor: "29,000₮"'), "one-time anchor price label must remain unchanged");
+assert(appSource.includes('oneTime: "9,900₮"'), "one-time price label must remain unchanged");
+assert(appSource.includes('oneTimeAnchor: "9,900₮"'), "one-time anchor price label must remain unchanged");
 assert(appSource.includes('coachOneTime: "9,900₮"'), "coach price label must remain unchanged");
 assert(appSource.includes('sevenDay: "29,000₮"'), "seven-day price label must remain unchanged");
 assert(appSource.includes('sevenDayAnchor: "69,000₮"'), "seven-day anchor price label must remain unchanged");
 assert(appSource.includes('upgrade: "19,900₮"'), "upgrade price label must remain unchanged");
-assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 29000;"), "standard price constant must remain unchanged");
+assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price constant must remain unchanged");
 assert(appSource.includes("const COACH_WEIGHT_PRICE_MNT = 9900;"), "coach price constant must remain unchanged");
 assert(appSource.includes("const COACH_COMMISSION_MNT = 4000;"), "coach commission constant must remain unchanged");
 assert(appSource.includes("const WEIGHT_TEST_AMOUNT_MNT = 9900;"), "QPay amount constant must remain unchanged");
 
 assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";'), "QPay product code must remain unchanged");
-assert(appSource.includes('create: "/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
-assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
+assert(appSource.includes('create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
+assert(appSource.includes('check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
 assert(appSource.includes("productCode: WEIGHT_TEST_PRODUCT_CODE"), "QPay create payload must keep product code");
 assert(appSource.includes("amountMnt: currentOneTimePriceMnt()"), "QPay create payload must keep current one-time amount helper");
 assert(appSource.includes("return state.coachDiscountConsent && state.coachInvite ? COACH_WEIGHT_PRICE_MNT : STANDARD_WEIGHT_PRICE_MNT;"), "current one-time amount helper must remain unchanged");
@@ -199,7 +199,7 @@ withLocalStorageMutationSpy(() => {
   assertSafePaymentOutput(paidHtml, "paid output");
   assert(paid.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "paid output must show paid depth");
   assert(paid.includes("14 хоногийн туршилт"), "paid output must show paid experiment");
-  assert(!paid.includes("Бүрэн тайлан нээх 29,000₮"), "paid output must not show locked paywall state");
+  assert(!paid.includes("Бүрэн тайлан нээх 9,900₮"), "paid output must not show locked paywall state");
   assert(!paid.includes("Төлбөр төлсний дараа"), "paid output must not show locked payment explanation");
 
   setOneTime({

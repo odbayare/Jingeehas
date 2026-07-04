@@ -1,13 +1,13 @@
 const MOCK_BACKEND_STORAGE_KEY = "weightLossMockBackendState";
 
 const PRODUCT_AMOUNTS = {
-  one_time: 29000,
+  one_time: 9900,
   seven_day: 29000,
   upgrade: 19900
 };
 
 const COACH_PARTNER = {
-  standardPriceMnt: 29000,
+  standardPriceMnt: 9900,
   coachPriceMnt: 9900,
   defaultCommissionMnt: 4000
 };

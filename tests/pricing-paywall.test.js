@@ -84,9 +84,9 @@ function assertNoPressureCopy(text) {
 function run() {
   const choice = normalize(_internal.renderChoice());
   assert(choice.includes("Нэг удаагийн гүн анализ"), "One-Time commercial title should use analysis wording");
-  assert(choice.includes("Үндсэн үнэ 29,000₮"), "One-Time anchor price should be visible");
+  assert(choice.includes("Үндсэн үнэ 9,900₮"), "One-Time anchor price should be visible");
   assert(!choice.includes("Нээлтийн урамшуулалт үнэ 9,900₮"), "Coach discount should not appear as public promo price");
-  assert(choice.includes("29,000₮ төлөөд тайлангаа нээх"), "One-Time card should use standard paid report CTA");
+  assert(choice.includes("9,900₮ төлөөд тайлангаа нээх"), "One-Time card should use standard paid report CTA");
   assert(choice.includes("7 хоногийн гүн анализ"), "7-Day commercial title should use analysis wording");
   assert(choice.includes("Үндсэн үнэ 69,000₮"), "7-Day anchor price should be visible");
   assert(choice.includes("Нээлтийн урамшуулалт үнэ 29,000₮"), "7-Day promo price should be visible");
@@ -99,9 +99,9 @@ function run() {
   const unpaidOneTime = normalize(_internal.renderReport());
   assert(unpaidOneTime.includes("Таны эхний зураглал бэлэн боллоо"));
   assert(unpaidOneTime.includes("Хамгийн түрүүнд харагдаж буй зүйл"));
-  assert(unpaidOneTime.includes("Үндсэн үнэ 29,000₮"));
-  assert(unpaidOneTime.includes("Төлөх үнэ 29,000₮"));
-  assert(unpaidOneTime.includes("29,000₮ төлөөд бүрэн тайлангаа нээх"));
+  assert(unpaidOneTime.includes("Үндсэн үнэ 9,900₮"));
+  assert(unpaidOneTime.includes("Төлөх үнэ 9,900₮"));
+  assert(unpaidOneTime.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"));
   assert(!unpaidOneTime.includes("Энэ бүртгэл бодит төлбөр авахгүй"));
   assert(!unpaidOneTime.includes("Та авах сонирхолтой эсэхээ л үлдээж байна"));
   assert(!unpaidOneTime.includes("Demo unlock хийх"));
