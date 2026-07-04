@@ -38,6 +38,7 @@ const commands = [
   ["node", ["tests/payment-qpay-production-hardening-audit.test.js"]],
   ["node", ["tests/live-payment-qpay-flow-qa.test.js"]],
   ["node", ["tests/paid-first-gate-emergency.test.js"]],
+  ["node", ["tests/qpay-device-payment-ux.test.js"]],
   ["node", ["tests/commercial-flow-qa.test.js"]],
   ["node", ["tests/backend-qpay-plan.test.js"]],
   ["node", ["tests/mock-backend-entitlements.test.js"]],

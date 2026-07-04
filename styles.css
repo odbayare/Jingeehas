@@ -336,6 +336,111 @@ h3 {
   background: #fff;
 }
 
+.qpay-payment-surfaces {
+  display: grid;
+  gap: 12px;
+}
+
+.qpay-surface {
+  box-shadow: none;
+}
+
+.qpay-desktop-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.95fr) minmax(220px, 1fr);
+  align-items: center;
+  gap: 18px;
+}
+
+.qpay-qr-wrap {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.qpay-qr-large {
+  width: min(320px, 100%);
+}
+
+.qpay-secondary-apps {
+  display: grid;
+  gap: 12px;
+}
+
+.qpay-app-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 10px;
+}
+
+.qpay-app-card {
+  display: grid;
+  justify-items: center;
+  align-content: center;
+  min-height: 104px;
+  padding: 14px 10px;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--text);
+  text-align: center;
+  font-size: 0.86rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: border-color 0.16s ease, transform 0.16s ease, box-shadow 0.16s ease;
+}
+
+.qpay-app-card:hover,
+.qpay-app-card:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 10px 24px rgba(39, 132, 111, 0.12);
+  transform: translateY(-1px);
+}
+
+.qpay-app-logo {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #f6faf8;
+  border: 1px solid var(--line);
+}
+
+.qpay-app-logo-fallback {
+  display: grid;
+  place-items: center;
+  color: var(--accent-strong);
+  font-weight: 900;
+}
+
+.qpay-mobile-primary {
+  display: none;
+}
+
+.qpay-mobile-qr-toggle {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px;
+  background: #fff;
+}
+
+.qpay-mobile-qr-toggle summary {
+  cursor: pointer;
+  color: var(--accent-strong);
+  font-weight: 850;
+}
+
+.qpay-mobile-qr-toggle .qpay-qr {
+  display: block;
+  margin: 12px auto 0;
+}
+
+.qpay-reference {
+  margin: 0;
+}
+
 .choice-panel {
   overflow: hidden;
 }
@@ -752,6 +857,25 @@ h3 {
 
   .aside {
     order: 2;
+  }
+}
+
+@media (max-width: 640px), (hover: none) and (pointer: coarse) {
+  .qpay-desktop-primary {
+    display: none;
+  }
+
+  .qpay-mobile-primary {
+    display: block;
+  }
+
+  .qpay-app-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .qpay-app-card {
+    min-height: 108px;
+    padding: 14px 8px;
   }
 }
 

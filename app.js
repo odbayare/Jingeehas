@@ -3457,10 +3457,60 @@ function renderQpayLinks(invoice = {}) {
   const urls = Array.isArray(invoice.urls) ? invoice.urls : [];
   if (!urls.length) return "";
   return `<div class="pill-row">${urls.map((item, index) => {
-    const label = escapeHtml(item.name || item.description || `Банк ${index + 1}`);
-    const link = escapeAttr(item.link || item.url || item.deeplink || "#");
+    const label = escapeHtml(qpayLinkLabel(item, index));
+    const link = escapeAttr(qpayLinkHref(item) || "#");
     return `<a class="pill" href="${link}" target="_blank" rel="noopener">${label}</a>`;
   }).join("")}</div>`;
+}
+
+function qpayLinkHref(item = {}) {
+  return item.link || item.url || item.deeplink || item.deepLink || item.webUrl || item.web_url || "";
+}
+
+function qpayLinkLabel(item = {}, index = 0) {
+  return item.name || item.description || item.bankName || item.appName || `Банк ${index + 1}`;
+}
+
+function qpayLogoUrl(item = {}) {
+  return item.logo || item.logoUrl || item.logo_url || item.icon || item.iconUrl || item.icon_url || item.image || item.imageUrl || "";
+}
+
+function normalizeQpayAppLinks(invoice = {}) {
+  const urls = Array.isArray(invoice.urls) ? invoice.urls : [];
+  return urls.map((item, index) => ({
+    label: qpayLinkLabel(item, index),
+    href: qpayLinkHref(item),
+    logo: qpayLogoUrl(item)
+  })).filter(item => item.href);
+}
+
+function qpayAppInitial(label = "") {
+  const text = String(label || "").trim();
+  return escapeHtml(text ? text[0].toUpperCase() : "Q");
+}
+
+function renderQpayAppLogo(item) {
+  if (item.logo) {
+    return `<img class="qpay-app-logo" src="${escapeAttr(item.logo)}" alt="" loading="lazy">`;
+  }
+  return `<span class="qpay-app-logo qpay-app-logo-fallback" aria-hidden="true">${qpayAppInitial(item.label)}</span>`;
+}
+
+function renderQpayAppGrid(invoice = {}, options = {}) {
+  const links = normalizeQpayAppLinks(invoice);
+  if (!links.length) {
+    return `<p class="muted qpay-app-empty">${escapeHtml(options.emptyText || "Банкны аппын холбоос ирээгүй байна. QR кодоор үргэлжлүүлнэ үү.")}</p>`;
+  }
+  return `
+    <div class="qpay-app-grid" data-qpay-app-grid>
+      ${links.map(item => `
+        <a class="qpay-app-card" data-qpay-app-link href="${escapeAttr(item.href)}" target="_blank" rel="noopener">
+          ${renderQpayAppLogo(item)}
+          <span>${escapeHtml(item.label)}</span>
+        </a>
+      `).join("")}
+    </div>
+  `;
 }
 
 function normalizeQpayQrImage(value) {
@@ -3468,6 +3518,39 @@ function normalizeQpayQrImage(value) {
   if (!text) return "";
   if (text.startsWith("data:") || text.startsWith("http://") || text.startsWith("https://")) return text;
   return `data:image/png;base64,${text}`;
+}
+
+function renderQpayDesktopPaymentSurface(invoice, qrImage) {
+  return `
+    <div class="card qpay-surface qpay-desktop-primary" data-qpay-device-mode="desktop-qr-first">
+      <div class="qpay-desktop-layout">
+        <div class="qpay-qr-wrap">
+          ${qrImage ? `<img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr qpay-qr-large">` : `<p class="muted">QR үүслээ. Банкны апп-аар төлбөрөө үргэлжлүүлнэ үү.</p>`}
+        </div>
+        <div class="qpay-secondary-apps">
+          <p class="muted">Утаснаас төлөх бол банкны апп сонгож болно.</p>
+          ${renderQpayAppGrid(invoice, { emptyText: "Банкны аппын холбоос ирээгүй байна." })}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderQpayMobilePaymentSurface(invoice, qrImage) {
+  return `
+    <div class="card qpay-surface qpay-mobile-primary" data-qpay-device-mode="mobile-app-grid-first">
+      <div class="stack">
+        <p class="muted">Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.</p>
+        ${renderQpayAppGrid(invoice)}
+        ${qrImage ? `
+          <details class="qpay-mobile-qr-toggle">
+            <summary>QR кодоор төлөх</summary>
+            <img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr">
+          </details>
+        ` : ""}
+      </div>
+    </div>
+  `;
 }
 
 function renderWeightQpayPaymentBox(options = {}) {
@@ -3481,10 +3564,10 @@ function renderWeightQpayPaymentBox(options = {}) {
     <div class="stack">
       ${payment.message ? `<p class="${payment.status === "error" ? "danger-copy" : "muted"}">${escapeHtml(payment.message)}</p>` : ""}
       ${invoice ? `
-        <div class="card stack">
-          ${qrImage ? `<img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr">` : `<p class="muted">QR үүслээ. Банкны апп-аар төлбөрөө үргэлжлүүлнэ үү.</p>`}
-          ${renderQpayLinks(invoice)}
-          <p class="muted">Лавлах дугаар: ${escapeHtml(invoice.senderInvoiceNo || invoice.invoiceId || "")}</p>
+        <div class="qpay-payment-surfaces" data-qpay-payment-surfaces>
+          ${renderQpayDesktopPaymentSurface(invoice, qrImage)}
+          ${renderQpayMobilePaymentSurface(invoice, qrImage)}
+          <p class="muted qpay-reference">Лавлах дугаар: ${escapeHtml(invoice.senderInvoiceNo || invoice.invoiceId || "")}</p>
         </div>
       ` : ""}
       <div class="actions">
