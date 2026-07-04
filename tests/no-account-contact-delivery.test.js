@@ -99,7 +99,7 @@ assert(reportHtml.includes("data-report-output"), "paid report should expose a c
 assert(reportHtml.includes("data-report-delivery"), "paid report should include report delivery actions");
 assert(reportText.includes("Таны тайлан энэ дэлгэц дээр гарлаа"), "report delivery should say the report is on screen");
 assert(reportText.includes("Тайлан хуулж авах"), "copy report button must render");
-assert(reportText.includes("Хэвлэх / PDF хадгалах"), "print/save as PDF button must render");
+assert(reportText.includes("Хэвлэх / PDF хадгалах"), "print/save button must render");
 assert(reportText.includes("Дэмжлэг авахад хадгалсан мэдээлэл"), "saved contact should appear in report delivery UI");
 assert(reportText.includes("test@example.com"), "saved email should appear for recovery/support");
 

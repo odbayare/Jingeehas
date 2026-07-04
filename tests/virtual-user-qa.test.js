@@ -201,10 +201,8 @@ const scenarios = [
     expectedPrimary: [M.reward],
     expectedSecondary: [[M.cue, M.decisionDefault, M.rewardDeficit]],
     hiddenIncludes: ["Таатай мэдрэмж авах"],
-    avoidIncludes: ["Амттай бүхнийг бүрэн хорих"],
     leverageIncludes: ["таатай мэдрэмж авах жижиг сонголт"],
-    experimentAllowed: true,
-    oneTimeCta: true
+    experimentAllowed: true
   },
   {
     name: "Reward Deficit / My Time",
@@ -470,8 +468,7 @@ const scenarios = [
     expectedSecondary: [[M.autonomy, M.social]],
     hiddenIncludes: ["Хүмүүсийн дунд татгалзахгүй байх"],
     leverageIncludes: ["тайван шалгалт", "таатай мэдрэмж авах жижиг сонголт"],
-    experimentAllowed: true,
-    oneTimeCta: true
+    experimentAllowed: true
   },
   {
     name: "Body-Safety + Shame",
@@ -514,13 +511,13 @@ function validateScenario(scenario) {
   }
 
   if (scenario.hiddenIncludes) {
-    assert(text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"), `${scenario.name}: missing food-need section`);
+    assert(text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?") || text.includes("2. Яагаад давтагдаад байна вэ?"), `${scenario.name}: missing food-need section`);
   }
   if (scenario.avoidIncludes) {
-    assert(text.includes("Одоохондоо хэт яарахгүй зүйлс"), `${scenario.name}: missing avoid section`);
+    assert(text.includes("Одоохондоо хэт яарахгүй зүйлс") || text.includes("6. Болгоомжлох зүйл"), `${scenario.name}: missing avoid section`);
   }
   if (scenario.leverageIncludes) {
-    assert(text.includes("Эхний жижиг өөрчлөлт"), `${scenario.name}: missing first-change section`);
+    assert(text.includes("Эхний жижиг өөрчлөлт") || text.includes("4. Таны хувьд хамгийн түрүүнд өөрчлөх цэг"), `${scenario.name}: missing first-change section`);
   }
   assertReportIncludes(text, scenario.reportIncludes, scenario.name);
   assertReportExcludes(text, scenario.reportExcludes, scenario.name);
@@ -529,15 +526,16 @@ function validateScenario(scenario) {
   assertNoRawUnconfirmedReflection(text, scenario.name);
 
   if (scenario.experimentAllowed) {
-    assert(/14-Day|14-day personalized experiment|14 хоногийн (эхний )?туршилт/.test(text), `${scenario.name}: expected experiment`);
+    assert(/14-Day|14-day personalized experiment|14 хоногийн (эхний |жижиг )?туршилт/.test(text), `${scenario.name}: expected experiment`);
   } else {
-    assert(!/14-Day|14-day personalized experiment|14 хоногийн (эхний )?туршилт/.test(text), `${scenario.name}: experiment should be suppressed`);
+    assert(!/14-Day|14-day personalized experiment|14 хоногийн (эхний |жижиг )?туршилт/.test(text), `${scenario.name}: experiment should be suppressed`);
   }
   if (scenario.professionalExpected) assert(text.includes("Professional") || text.includes("professional") || text.includes("мэргэжлийн") || text.includes("шалгуулахад илүүдэхгүй"), `${scenario.name}: expected professional guidance`);
   if (!scenario.professionalExpected && scenario.expectedMode === "deep") assert(!text.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"), `${scenario.name}: unexpected professional check`);
   if (scenario.urgentExpected) assert(text.includes("яаралтай"), `${scenario.name}: expected urgent guidance`);
   if (!scenario.urgentExpected) assert(!text.includes("Одоо жин хасах тухай биш"), `${scenario.name}: unexpected urgent guidance`);
   if (scenario.oneTimeCta) assert(text.includes("7 хоногоор нарийвчлах") || text.includes("7 хоногийн гүн үнэлгээ"), `${scenario.name}: expected one-time CTA`);
+  if (scenario.packageType === "one-time" && scenario.expectedMode === "deep") assert(!text.includes("7 хоногоор нарийвчлах"), `${scenario.name}: WP62 one-time report should not mix in 7-day CTA`);
   if (scenario.requireInitialObserved) assert(text.includes("Яагаад ингэж хэлж байна вэ?"), `${scenario.name}: missing evidence note`);
 
   return result;

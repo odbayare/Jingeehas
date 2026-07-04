@@ -118,12 +118,19 @@ function assertSurfaces(html, expected, label) {
     `${label}: preview heading mismatch`
   );
   assert.strictEqual(
-    html.includes("Гүн тайлангийн хэсэг"),
+    html.includes("Дэлгэрэнгүй тайлангийн хэсэг"),
     expected.includes("paid"),
     `${label}: paid heading mismatch`
   );
   assert(html.includes("Аюулгүй байдлын сануулга"), `${label}: safety heading must be visible`);
   assertNoForbiddenVisibleText(html, label);
+}
+
+function assertNoSurfaces(html, label) {
+  assert(!html.includes("visible-surface-prototype"), `${label}: WP62 paid report must not inject runtime visible surfaces`);
+  assert(!html.includes('data-surface="preview"'), `${label}: preview surface must not render`);
+  assert(!html.includes('data-surface="paid"'), `${label}: paid surface must not render`);
+  assert(!html.includes('data-surface="safety"'), `${label}: safety surface must not render as a separate wrapper`);
 }
 
 function assertNoPaymentMutation(before, label) {
@@ -146,7 +153,8 @@ assertNoPaymentMutation(unpaidBackendBefore, "ordinary unpaid report");
 setOneTime({ oneTimePaid: true });
 const paidBackendBefore = mockBackend.getMockBackendState();
 const paid = _internal.renderReport();
-assertSurfaces(paid, ["preview", "paid", "safety"], "ordinary paid report");
+assertNoSurfaces(paid, "ordinary paid report");
+assert(paid.includes("Таны тайлан бэлэн боллоо"), "ordinary paid report should render the WP62 report directly");
 assertNoPaymentMutation(paidBackendBefore, "ordinary paid report");
 
 setSevenDay({

@@ -315,7 +315,7 @@ const stageOneQuestions = [
   { id: "S1-W02", module: "Weight trajectory", type: "multi", text: "Жин нэмэгдэх эсвэл буурах үе тань амьдралын ямар өөрчлөлттэй давхацсан бэ?", options: ["Ажил ихсэж, стресс нэмэгдсэн", "Хөдөлгөөн багассан", "Нойр муудсан", "Эм хэрэглэж эхэлсэн", "Жирэмсэн эсвэл төрсний дараах үе", "Өвчин, мэс засалтай давхацсан", "Сэтгэл санааны хүнд үе байсан", "Тодорхой зүйл байхгүй", "Мэдэхгүй"], scores: { "Ажил ихсэж, стресс нэмэгдсэн": ["regulation", "executive"], "Ажил-стресс": ["regulation", "executive"], "Хөдөлгөөн багассан": ["executive"], "Нойр муудсан": ["circadian"], "Эм хэрэглэж эхэлсэн": ["medical"], "Эм": ["medical"], "Жирэмсэн эсвэл төрсний дараах үе": ["medical"], "Жирэмсэн-төрсний дараа": ["medical"], "Өвчин, мэс засалтай давхацсан": ["medical"], "Өвчин-мэс засал": ["medical"] } },
   { id: "S1-W03", module: "Past attempts", type: "single", text: "Та өмнө нь жингээ хасаж чадсан ч буцаад нэмсэн тохиолдол бий юу?", options: ["Үгүй", "Нэг удаа", "Хэд хэдэн удаа", "Бараг бүх оролдлогоос хойш", "Санахгүй"], scores: { "Хэд хэдэн удаа": ["collapse"], "Бараг бүх оролдлогоос хойш": ["collapse", "hungerSafety"] } },
   { id: "S1-W04", module: "Past attempts", type: "multi", text: "Өмнө нь турж үзсэн аргуудаас аль нь танд хамгийн танил вэ?", options: ["Мацаг", "Калори тоолох", "Нүүрс ус хасах", "Орой хоол идэхгүй", "Фитнесийн богино сорил", "Хор гадагшлуулах арга", "Хоол орлуулах бүтээгдэхүүн", "Эм, тариа, нэмэлт бүтээгдэхүүн", "Дасгалжуулагч эсвэл бүлгийн хөтөлбөр", "Ерөнхийдөө бага идэх", "Оролдож байгаагүй"], scores: { "Мацаг": ["hungerSafety", "glucose"], "Орой хоол идэхгүй": ["hungerSafety"], "Ерөнхийдөө бага идэх": ["hungerSafety"], "Фитнесийн богино сорил": ["collapse"], "Фитнес challenge": ["collapse"] } },
-  { id: "S1-W05", module: "Past attempts", type: "text", text: "Өмнө туршсан аргуудаас аль нь эхэндээ болж байгаад дараа нь үргэлжлүүлэхэд хэцүү болсон бэ? Тэр үед юу өөрчлөгдсөн гэж санагддаг вэ?", voice: true },
+  { id: "S1-W05", module: "Past attempts", type: "text", text: "Өмнө туршсан аргуудаас аль нь 2 долоо хоногоос дээш үргэлжлэхэд хамгийн хэцүү байсан бэ? Яагаад?", voice: true },
   { id: "S1-W06", module: "Past attempts", type: "single", text: "Төлөвлөгөө жаахан зөрөхөд таны толгойд ихэвчлэн юу орж ирдэг вэ?", options: ["Дараагийн хоолноос хэвийн үргэлжлүүлье", "Өнөөдөр өнгөрлөө, маргаашаас", "Маргааш илүү чанга барина", "Би угаасаа чаддаггүй юм байна", "Одоо бүх юм дууссан", "Тодорхой бодолгүй"], scores: { "Өнөөдөр өнгөрлөө, маргаашаас": ["collapse"], "Өнөөдөр алдсан, маргаашаас": ["collapse"], "Маргааш илүү чанга барина": ["collapse"], "Маргааш илүү чанга": ["collapse"], "Одоо бүх юм дууссан": ["collapse"], "Би угаасаа чаддаггүй юм байна": ["collapse"], "Би угаасаа чаддаггүй": ["collapse"] } },
   { id: "S1-M01", module: "Meal rhythm", type: "single", text: "Энгийн өдөр хоолны хэмнэл тань ихэвчлэн ямар байдаг вэ?", options: ["2-3 удаа тогтмол хооллодог", "Өглөөний хоол алгасдаг", "Өдрийн хоол алгасдаг", "Өдөр бага идээд орой нөхдөг", "Хоолны цаг өдөр бүр өөр", "Тодорхой хэмнэл байхгүй"], scores: { "Өглөөний хоол алгасдаг": ["hungerSafety", "circadian"], "Өглөө алгасах": ["hungerSafety", "circadian"], "Өдрийн хоол алгасдаг": ["hungerSafety", "executive"], "Өдрийн хоол алгасах": ["hungerSafety", "executive"], "Өдөр бага идээд орой нөхдөг": ["hungerSafety", "circadian"], "Өдөр бага идээд орой нөхөх": ["hungerSafety", "circadian"], "Хоолны цаг өдөр бүр өөр": ["executive"], "Хоолны цаг өөр": ["executive"] } },
   { id: "S1-M02", module: "Meal rhythm", type: "single", text: "Хоолны хооронд 5+ цагийн зай гарах нь хэр олон вэ?", options: ["Бараг үгүй", "7 хоногт 1-2", "3-4", "Бараг өдөр бүр", "Мэдэхгүй"], scores: { "3-4": ["hungerSafety"], "Бараг өдөр бүр": ["hungerSafety", "glucose"] } },
@@ -328,17 +328,17 @@ const stageOneQuestions = [
   { id: "S1-V01", module: "Voice checkpoint", type: "text", text: "Сүүлийн үед төлөвлөөгүй идсэн хамгийн тод нэг мөчөө богино тайлбарлаарай. Юуны дараа болсон бэ? Тэр үед өлсөж байсан уу? Ямар мэдрэмж давамгай байсан бэ? Идсэний дараа юу өөрчлөгдсөн бэ?", voice: true },
   { id: "S1-R01", module: "Reward / craving", type: "single", text: "Өлсөөгүй байсан ч ‘нэг гоё юм идмээр байна’ гэж санагддаг үе байдаг уу?", options: ["Үгүй", "Хааяа", "Нэлээд олон удаа", "Бараг өдөр бүр", "Өдөрт олон удаа"], scores: { "Нэлээд олон удаа": ["reward"], "7 хоногт хэд хэд": ["reward"], "Бараг өдөр бүр": ["reward"], "Өдөрт олон удаа": ["reward"] } },
   { id: "S1-R02", module: "Reward / craving", type: "multi", text: "Энэ хүсэл ихэвчлэн ямар үед гардаг вэ?", options: ["Уйдсан үед", "Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед", "Ажлын дараа амармаар санагдах үед", "Амт, үнэр, мэдрэмж татах үед", "Хоолны зураг эсвэл захиалгын апп харахад", "Стресс ихтэй үед", "Ганцаардсан үед", "Сарын тэмдэг ирэхийн өмнөх өдрүүдэд", "Мэдэхгүй"], scores: { "Уйдсан үед": ["reward"], "Уйдал": ["reward"], "Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед": ["reward"], "Өдрийн төгсгөлд өөрийгөө шагнах": ["reward"], "Өдрийн төгсгөлд шагнах": ["reward"], "Ажлын дараа амармаар санагдах үед": ["reward", "regulation"], "Ажлын дараах амралт": ["reward", "regulation"], "Амт, үнэр, мэдрэмж татах үед": ["reward"], "Амт, мэдрэмж": ["reward"], "Амт-мэдрэмж": ["reward"], "Хоолны зураг эсвэл захиалгын апп харахад": ["reward", "cue"], "Хоолны зураг эсвэл delivery": ["reward", "cue"], "Food зураг-delivery": ["reward", "cue"], "Стресс ихтэй үед": ["regulation"], "Стресс": ["regulation"], "Stress": ["regulation"], "Ганцаардсан үед": ["regulation", "social"], "Ганцаардал": ["regulation", "social"] } },
-  { id: "S1-R03", module: "Reward / craving", type: "single", text: "Заримдаа идэхээс өмнөх хүсэл нь идэж байх үеийн сэтгэл ханамжаас илүү хүчтэй байдаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Бараг үргэлж"], scores: { "Заримдаа": ["reward"], "Ихэвчлэн": ["reward"], "Бараг үргэлж": ["reward"] } },
+  { id: "S1-R03", module: "Reward / craving", type: "single", text: "Идэхээс өмнө бодогдох амттай зүйл идсэний дараа санаснаас бага таашаал өгдөг үү?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Бараг үргэлж"], scores: { "Заримдаа": ["reward"], "Ихэвчлэн": ["reward"], "Бараг үргэлж": ["reward"] } },
   { id: "S1-E01", module: "Emotion / regulation", type: "single", text: "Стресс ихтэй өдөр орой ‘ямар нэг юм идээд жаахан амсхийе’ гэж бодогдох үе байдаг уу?", options: ["Бараг үгүй", "Хааяа", "Нэлээд давтагддаг", "Ихэвчлэн тэгдэг", "Заримдаа идэж чаддаггүй"], scores: { "Хааяа": ["regulation"], "Нэлээд давтагддаг": ["regulation"], "Ихэвчлэн тэгдэг": ["regulation"], "Заримдаа нэмэгддэг": ["regulation"], "Ихэвчлэн нэмэгддэг": ["regulation"], "Маш их нэмэгддэг": ["regulation"] } },
   { id: "S1-E02", module: "Emotion / regulation", type: "multi", text: "Идэх хүсэлтэй хамгийн их холбогддог мэдрэмж аль нь вэ?", options: ["Стресс", "Уур", "Гуниг", "Ганцаардал", "Санаа зовнил", "Ядаргаа", "Хоосон мэт мэдрэмж", "Баяртай эсвэл өөрийгөө шагнамаар үе", "Мэдэхгүй"], scores: { "Стресс": ["regulation"], "Уур": ["regulation"], "Гуниг": ["regulation"], "Ганцаардал": ["regulation", "social"], "Санаа зовнил": ["regulation"], "Ядаргаа": ["executive", "circadian"], "Хоосон мэт мэдрэмж": ["reward"], "Хоосон/flat мэдрэмж": ["reward"], "Баяртай эсвэл өөрийгөө шагнамаар үе": ["reward"], "Баяртай/reward mode": ["reward"] } },
   { id: "S1-E03", module: "Emotion / regulation", type: "single", text: "Идсэний дараа таны мэдрэмж ихэвчлэн яаж өөрчлөгддөг вэ?", options: ["Тайвширдаг", "Түр тайвширдаг", "Өөрчлөгдөхгүй", "Гэмшдэг", "Илүү их санаа зовдог"], scores: { "Тайвширдаг": ["regulation"], "Түр тайвширдаг": ["regulation"], "Гэмшдэг": ["collapse"], "Илүү их санаа зовдог": ["collapse"] } },
   { id: "S1-G01", module: "Hunger-safety", type: "single", text: "Дараа өлсөх вий гэж бодоод урьдчилж идсэн үе байдаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш хүчтэй"], scores: { "Заримдаа": ["hungerSafety"], "Ихэвчлэн": ["hungerSafety"], "Маш хүчтэй": ["hungerSafety"] } },
   { id: "S1-G02", module: "Hunger-safety", type: "single", text: "Дараагийн хоол тодорхойгүй үед та илүү идэх хандлагатай юу?", options: ["Үгүй", "Ховор", "Заримдаа", "Тийм", "Маш тод"], scores: { "Заримдаа": ["hungerSafety"], "Тийм": ["hungerSafety"], "Маш тод": ["hungerSafety"] } },
   { id: "S1-G03", module: "Hunger-safety", type: "single", text: "Хоол үлдээхэд танд хэр хэцүү байдаг вэ?", options: ["Хэцүү биш", "Заримдаа", "Нэлээд хэцүү", "Маш хэцүү", "Анзаарч байгаагүй"], scores: { "Нэлээд хэцүү": ["hungerSafety"], "Маш хэцүү": ["hungerSafety"] } },
-  { id: "S1-X01", module: "Restriction response", type: "single", text: "Хоол багасгах, хориглох үед танд хамгийн түрүүнд юу мэдрэгддэг вэ?", options: ["Тайван", "Өлсөхөөс санаа зовдог", "Уур/эсэргүүцэл", "Идэх юм бодогдоно", "Бие сулрах вий гэж айдаг", "Хэсэг сайн яваад дараа нь үргэлжлүүлэхэд хэцүү болдог"], scores: { "Өлсөхөөс санаа зовдог": ["hungerSafety"], "Уур/эсэргүүцэл": ["autonomy"], "Идэх юм бодогдоно": ["reward"], "Бие сулрах вий гэж айдаг": ["physiological"], "Хэсэг сайн яваад дараа нь үргэлжлүүлэхэд хэцүү болдог": ["collapse"], "Хэсэг сайн яваад дараа нь үргэлжлэхээ больдог": ["collapse"], "Хэсэг сайн яваад дараа нь нурдаг": ["collapse"] } },
+  { id: "S1-X01", module: "Restriction response", type: "single", text: "Хоолоо огцом багасгах үед танд хамгийн түрүүнд юу мэдрэгддэг вэ?", options: ["Тайван", "Өлсөхөөс санаа зовдог", "Уур хүрдэг", "Идэх юм их бодогддог", "Бие сулрах вий гэж айдаг", "Хэсэг сайн яваад дараа нь үргэлжлүүлэхэд хэцүү болдог"], scores: { "Өлсөхөөс санаа зовдог": ["hungerSafety"], "Уур хүрдэг": ["autonomy"], "Уур/эсэргүүцэл": ["autonomy"], "Идэх юм их бодогддог": ["reward"], "Идэх юм бодогдоно": ["reward"], "Бие сулрах вий гэж айдаг": ["physiological"], "Хэсэг сайн яваад дараа нь үргэлжлүүлэхэд хэцүү болдог": ["collapse"], "Хэсэг сайн яваад дараа нь үргэлжлэхээ больдог": ["collapse"], "Хэсэг сайн яваад дараа нь нурдаг": ["collapse"] } },
   { id: "S1-X02", module: "Restriction response", type: "single", text: "Хориглосон хоол улам их бодогдох үе байдаг уу?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Бараг үргэлж"], scores: { "Заримдаа": ["reward", "collapse"], "Ихэвчлэн": ["reward", "collapse"], "Бараг үргэлж": ["reward", "collapse"] } },
   { id: "S1-X03", module: "Restriction response", type: "single", text: "Нэг удаа хазайхаар ‘өнөөдөр өнгөрлөө’ гэж бодоод цааш нь тавьчихдаг уу?", options: ["Бараг үгүй", "Хааяа", "Нэлээд тэгдэг", "Ихэвчлэн тэгдэг", "Маш хүчтэй"], scores: { "Хааяа": ["collapse"], "Нэлээд тэгдэг": ["collapse"], "Заримдаа": ["collapse"], "Ихэвчлэн тэгдэг": ["collapse"], "Ихэвчлэн": ["collapse"], "Маш хүчтэй": ["collapse"] } },
-  { id: "S1-V02", module: "Voice checkpoint", type: "text", text: "Хоол хасах, мацаг барих, эсвэл “маргаашаас эхэлнэ” гэж бодох үед таны биед, сэтгэлд юу хамгийн түрүүнд мэдрэгддэг вэ?", voice: true },
+  { id: "S1-V02", module: "Voice checkpoint", type: "text", text: "Хоолоо хасаж эхлэх үед таны биед хамгийн түрүүнд юу мэдрэгддэг вэ?", voice: true },
   { id: "S1-L01", module: "Executive load", type: "single", text: "Юу хийхээ мэдэж байсан ч хийх тэнхээ үлдээгүй үе хэр олон байдаг вэ?", options: ["Бараг үгүй", "Заримдаа", "7 хоногт хэд хэд", "Бараг өдөр бүр", "Маш их"], scores: { "7 хоногт хэд хэд": ["executive"], "Бараг өдөр бүр": ["executive"], "Маш их": ["executive"] } },
   { id: "S1-L02", module: "Executive load", type: "multi", text: "Ядарсан үед хамгийн амархан олдох сонголт юу болдог вэ?", options: ["Урьдчилж бэлдсэн хоол", "Хоол захиалах", "Ойр байсан зууш", "Хоол алгасах", "Гэрт байсан амар сонголт", "Чихэртэй ундаа/кофе", "Мэдэхгүй"], scores: { "Хоол захиалах": ["executive", "cue"], "Delivery": ["executive", "cue"], "Ойр байсан зууш": ["executive", "cue"], "Ойр байсан snack": ["executive", "cue"], "Snack": ["executive", "cue"], "Хоол алгасах": ["executive", "hungerSafety"], "Гэрт байсан амар сонголт": ["executive"], "Чихэртэй ундаа/кофе": ["reward", "circadian"] } },
   { id: "S1-L03", module: "Executive load", type: "multi", text: "Хоол бэлдэхэд хамгийн их саад болдог зүйл юу вэ?", options: ["Цаг", "Ядаргаа", "Юу хийхээ шийдэх", "Дэлгүүр/материал", "Бусдын хэрэгцээ", "Орчин", "Мэдэхгүй"], scores: { "Цаг": ["executive"], "Ядаргаа": ["executive"], "Юу хийхээ шийдэх": ["executive"], "Бусдын хэрэгцээ": ["executive", "social"] } },
@@ -365,8 +365,8 @@ const stageOneQuestions = [
   { id: "S1-S02", module: "Safety", type: "single", text: "Идсэний дараа нуух, ичих, ганцаараа баймаар санагдах мэдрэмж хэр хүчтэй байдаг вэ?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш хүчтэй"], scores: { "Заримдаа": ["collapse"], "Ихэвчлэн": ["collapse"], "Маш хүчтэй": ["collapse"] }, safety: value => ["Ихэвчлэн", "Маш хүчтэй"].includes(value) ? ["professional"] : [] },
   { id: "S1-S03", module: "Safety", type: "single", text: "Идсэнээ “нөхөх” гэж бөөлжүүлэх, туулгах, хэт их дасгал хийх, эсвэл олон цаг хоолгүй байх тохиолдол гардаг уу?", options: ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], safety: value => ["Одоо хааяа", "Одоо давтагддаг"].includes(value) ? ["professional"] : [] },
   { id: "S1-S04", module: "Safety", type: "single", text: "Сүүлийн үед өөртөө хор хүргэх бодол төрсөн үү?", options: ["Үгүй", "Өнгөрсөнд байсан", "Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна", "Хариулахгүй"], safety: value => value === "Одоо идэвхтэй бодогдож байна" ? ["urgent"] : value === "Одоо хааяа бодогддог" ? ["professional"] : [] },
-  { id: "S1-V03", module: "Voice checkpoint", type: "text", text: "Өмнө хэрэглэсэн ч хамгийн удаан үргэлжлээгүй аргаа бодоорой. Тэр арга яагаад эхэндээ ажилласан, дараа нь яагаад үргэлжлээгүй гэж та боддог вэ?", voice: true },
-  { id: "S1-V04", module: "Voice checkpoint", type: "text", text: "'Би яг ___ байвал илүү тогтвортой явж чадна' гэж өгүүлбэрийг дуусгаад тайлбарлаарай.", voice: true }
+  { id: "S1-V03", module: "Voice checkpoint", type: "text", text: "Өмнө хэрэглэсэн нэг арга яагаад удаан үргэлжлээгүй вэ?", voice: true },
+  { id: "S1-V04", module: "Voice checkpoint", type: "text", text: "Танд тогтвортой үргэлжлэхэд хамгийн их туслах нэг нөхцөл юу вэ?", voice: true }
 ];
 
 const dailyCore = [
@@ -383,7 +383,7 @@ const dailyCore = [
   { id: "D-C11", type: "multi", text: "Хоол холдох үед эсвэл орой биеэр ямар нэг шинж мэдрэгдсэн үү?", field: "body_signals", options: ["Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Толгой өвдөх", "Сахар унасан мэт санагдах", "Хавагнах", "Аль нь ч үгүй"] },
   { id: "D-C12", type: "single", text: "Өнөөдрийн хөдөлгөөн хэр байсан бэ?", field: "movement", options: ["Маш бага", "Бага зэрэг алхсан", "20+ минут хөдөлсөн", "Дасгал хийсэн", "Өвдөлт/ядаргаанаас болоод бараг хөдөлсөнгүй"] },
   { id: "D-C13", type: "text", text: "Өнөөдөр төлөвлөөгүй идэлт гараагүй бол ямар нөхцөл тусалсан бэ?", field: "what_helped" },
-  { id: "D-V01", type: "text", text: "Өнөөдрийн идэлтэд хамгийн их нөлөөлсөн нэг мөчийг богино тайлбарлаарай. Юуны дараа болсон бэ? Тэр үед өлсөж байсан уу? Ямар мэдрэмж давамгай байсан бэ? Идсэний дараа юу өөрчлөгдсөн бэ?", field: "raw_reflection" },
+  { id: "D-V01", type: "text", text: "Өнөөдрийн идэлтэд хамгийн их нөлөөлсөн нэг мөчийг богино бичнэ үү. Юуны дараа болсон бэ?", field: "raw_reflection" },
   { id: "D-SUM01", type: "single", text: "Тайлбар хадгалагдлаа", field: "summary_confirmation", options: ["Үргэлжлүүлэх", "Засах", "Нэмэх зүйл байна"] }
 ];
 
@@ -515,7 +515,7 @@ function optionSignals(label) {
   if (/угаасаа чаддаггүй|төсөөлдөггүй|public|before\/after|зайлсхий|анзаарах|visibility/.test(text)) add(["identity_conflict", "body_safety"], ["D19", "D20", "D12"], [mechanismNamesByKey.identity, mechanismNamesByKey.bodySafety], ["tone_modifier", "what_to_avoid"]);
   if (/гар салгалах|зүрх дэлсэх|хөлрөх|толгой эргэх|толгой өвдөх/.test(text)) add(["physiological_reactivity"], ["D09", "D22"], [mechanismNamesByKey.physiological], ["professional_check", "what_to_avoid"]);
   if (/сахар|measured|insulin|sugar-lowering|бага\/өндөр|даралт|bp/.test(text)) add(["glucose_like_signal", "physiological_reactivity"], ["D08", "D09", "D22"], [mechanismNamesByKey.glucose, mechanismNamesByKey.physiological], ["professional_check", "what_to_avoid"]);
-  if (/хаваг|амьсгаад|огцом жин|жирэмсэн|төрсний|хөхүүл|эм/.test(text)) {
+  if (/хаваг|амьсгаад|огцом жин|жирэмсэн|төрсний|хөхүүл|эм хэрэгл|эмийн|эм, тариа|эм тариа|medication/.test(text)) {
     add(["medical_friction"], ["D22", "D09"], [mechanismNamesByKey.medical], ["professional_check"]);
     safetyTrigger = "professional";
   }
@@ -1531,19 +1531,66 @@ function hasMenstrualCycleContext(answers = state.stageAnswers) {
   return answers["MC-GATE"] === MENSTRUAL_GATE_YES;
 }
 
+function selectedGender(answers = state.stageAnswers) {
+  return answers["S1-C02"] || "";
+}
+
+function isFemaleUser(answers = state.stageAnswers) {
+  return selectedGender(answers) === "Эмэгтэй";
+}
+
+function isMaleUser(answers = state.stageAnswers) {
+  return selectedGender(answers) === "Эрэгтэй";
+}
+
 function isMenstrualStageQuestion(question) {
   return question?.module === MENSTRUAL_CONTEXT_MODULE;
 }
 
+function isFemaleSpecificStageQuestion(question) {
+  return isMenstrualStageQuestion(question) || question?.id === "S1-B05";
+}
+
+function isFemaleSpecificOption(option) {
+  return containsAny(option, [
+    "сарын тэмдэг",
+    "мөчлөг",
+    "жирэмсэн",
+    "жирэмслэлт",
+    "төрсний дараа",
+    "төрсний дараах",
+    "хөхүүл",
+    "дааврын жирэмслэлтээс хамгаалах",
+    "перименопауз",
+    "цэвэршилт",
+    "PMS"
+  ]);
+}
+
+function genderSafeQuestion(question, answers = state.stageAnswers) {
+  if (!question?.options || isFemaleUser(answers)) return question;
+  const filteredOptions = question.options.filter(option => !isFemaleSpecificOption(option));
+  if (filteredOptions.length === question.options.length) return question;
+  return {
+    ...question,
+    options: filteredOptions,
+    scores: Object.fromEntries(
+      Object.entries(question.scores || {}).filter(([option]) => filteredOptions.includes(option))
+    )
+  };
+}
+
 function shouldShowStageQuestion(question, answers = state.stageAnswers) {
+  if (isFemaleSpecificStageQuestion(question) && !isFemaleUser(answers)) return false;
   if (!isMenstrualStageQuestion(question)) return true;
-  if (question.id === "MC-GATE") return true;
+  if (question.id === "MC-GATE") return isFemaleUser(answers);
   return hasMenstrualCycleContext(answers);
 }
 
 function stageQuestions() {
   const visible = question => shouldShowStageQuestion(question);
-  if (state.packageType !== "seven-day") return stageOneQuestions.filter(visible);
+  const prepare = question => genderSafeQuestion(question);
+  if (state.packageType !== "seven-day") return stageOneQuestions.filter(visible).map(prepare);
   const setupModules = new Set([
     "Warm start",
     "Basic context",
@@ -1559,7 +1606,7 @@ function stageQuestions() {
     "Safety"
   ]);
   const setupIds = new Set(["S1-H02", "S1-H03", "S1-V01", "S1-V02"]);
-  return stageOneQuestions.filter(question => (setupModules.has(question.module) || setupIds.has(question.id)) && visible(question));
+  return stageOneQuestions.filter(question => (setupModules.has(question.module) || setupIds.has(question.id)) && visible(question)).map(prepare);
 }
 
 function currentQuestion() {
@@ -2652,7 +2699,7 @@ function confirmStageVoiceSummary(id, mode) {
 
 function toggleMulti(id, option, max) {
   const question = stageOneQuestions.find(item => item.id === id) || getDiaryQuestions().find(item => item.id === id);
-  if (stageOneQuestions.includes(question)) {
+  if (stageOneQuestions.some(item => item.id === id)) {
     const current = getValue(question);
     let next = current.includes(option) ? current.filter(item => item !== option) : [...current, option];
     if (next.length > max) next = next.slice(1);
@@ -2785,6 +2832,7 @@ function startDiary() {
 
 function getDiaryQuestions() {
   const cycleQuestions = getDailyMenstrualQuestions();
+  const prepare = question => genderSafeQuestion(question);
   if (state.diaryDraft.unplanned_eating_count === "Үгүй") {
     return [
       dailyCore[0],
@@ -2796,15 +2844,15 @@ function getDiaryQuestions() {
       dailyCore[12],
       ...cycleQuestions,
       dailyCore[14]
-    ];
+    ].map(prepare);
   }
   const topKeys = (state.preliminary.length ? state.preliminary : rankedPatterns(false)).slice(0, 3).map(item => item.key);
   const probes = topKeys.flatMap(key => probeBank[key] || []).slice(0, 4);
-  return [...dailyCore.slice(0, 12), ...cycleQuestions, ...probes, dailyCore[13], dailyCore[14]];
+  return [...dailyCore.slice(0, 12), ...cycleQuestions, ...probes, dailyCore[13], dailyCore[14]].map(prepare);
 }
 
 function getDailyMenstrualQuestions() {
-  if (!hasMenstrualCycleContext()) return [];
+  if (!isFemaleUser() || !hasMenstrualCycleContext()) return [];
   const questions = [dailyMenstrual[0], dailyMenstrual[1]];
   if (state.diaryDraft.cycle_today_link && state.diaryDraft.cycle_today_link !== "Үгүй") {
     questions.push(dailyMenstrual[2]);
@@ -3112,7 +3160,7 @@ function reportMode() {
   if (flags.includes("urgent")) return { mode: "urgent", title: "Яаралтай аюулгүй байдлын зөвлөмж" };
   if (flags.includes("professional")) return { mode: "professional", title: "Эхлээд мэргэжлийн хүнтэй ярилцах" };
   const scores = calculateScores(true);
-  if ((scores.medical || 0) >= 2 || (scores.glucose || 0) >= 4 || (scores.physiological || 0) >= 4) return { mode: "check", title: "Нэг зүйл тодорлоо — биеийн талаа шалгахад илүүдэхгүй" };
+  if ((scores.medical || 0) >= 2 || (scores.glucose || 0) >= 4 || (scores.physiological || 0) >= 4) return { mode: "check", title: "Биеийн талаа давхар шалгах дохио байна" };
   return { mode: "deep", title: "Тайлан" };
 }
 
@@ -3956,9 +4004,8 @@ function renderReportDeliveryActions() {
     : [];
   return `
     <div class="report-section report-delivery-card" data-report-delivery>
-      <p class="choice-kicker">Тайлан хүргэлт</p>
-      <h3>Таны тайлан энэ дэлгэц дээр гарлаа</h3>
-      <p class="muted">Бүртгэл үүсгээгүй тул одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй. Тайлангаа одоо хуулах, хэвлэх эсвэл browser-ийн print цонхоор PDF болгон хадгалж болно.</p>
+      <h3>7. Тайлангаа хадгалах</h3>
+      <p class="muted">Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.</p>
       ${savedContact ? `
         <div class="contact-summary inline-summary">
           <div>
@@ -5099,7 +5146,81 @@ function renderStagedExperiment(voice) {
   return voice.experiment.map(([label, copy]) => `<p><strong>${publicHtml(label)}:</strong> ${publicHtml(copy)}</p>`).join("");
 }
 
+function clearPaidReportSafetyHtml(mode, tags = []) {
+  const hasBodyCheck = tags.some(tag => [
+    "glucose_like_signal",
+    "bp_concern",
+    "swelling_signal",
+    "physiological_reactivity",
+    "cycle_professional_check",
+    "irregular_cycle_professional_check",
+    "postpartum_breastfeeding",
+    "medical_friction"
+  ].includes(tag));
+  if (!hasBodyCheck) return "";
+  return `
+    <div class="report-section">
+      <h3>6. Болгоомжлох зүйл</h3>
+      <p>Хэрвээ бие эвгүйрхэх, сахар/даралт санаа зовоох, огцом хавагнах, эсвэл жирэмсэн/төрсний дараах/хөхүүл үеийн асуудал байгаа бол хоолоо огцом хасахгүй. Энэ тайланг онош гэж биш, мэргэжлийн хүнтэй ярилцахад авч очих богино тэмдэглэл гэж ашиглаарай.</p>
+    </div>
+  `;
+}
+
+function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = [] }) {
+  const voice = reportVoiceFor(primary?.key, tags);
+  const summary = getSimpleResultSummary(primary?.key, { tags, voiceKey: voice.key });
+  const cycleSteps = voice.cycle.slice(0, 5);
+  const experimentRows = [
+    ["Day 1–3", voice.experiment[0]?.[1] || voice.firstStep],
+    ["Day 4–10", voice.experiment[1]?.[1] || "Нэг жижиг өөрчлөлтөө өдөр бүр давтаж, ямар цагт амар/хэцүү байгааг тэмдэглэ."],
+    ["Day 11–14", voice.experiment[2]?.[1] || "Аль өдөр илүү тогтвортой байсныг харж, дараагийн долоо хоногт үлдээх нэг алхмаа сонго."]
+  ];
+  const why = [
+    reportEvidenceNote(voice.key),
+    secondary.length ? `Давхар нөлөөлж байгаа зүйл: ${secondary.map(item => publicMechanismShort(item.key)).join(", ")}.` : "",
+    voice.notProblem
+  ].filter(Boolean).join(" ");
+  return `
+    ${topbar(100, "Тайлан")}
+    <section class="screen">
+      <div class="panel" data-report-output>
+        <div class="report-section">
+          <h2>Таны тайлан бэлэн боллоо</h2>
+          <p class="muted">Энэ бол таны төлбөртэй нэг удаагийн тайлан. Доорх хэсэг таны бөглөсөн хариултаас хамгийн хэрэгтэй нэг чиглэлийг ялгаж өгнө.</p>
+        </div>
+        <div class="report-section">
+          <h3>1. Гол гацалт</h3>
+          <p>${publicHtml(summary.stuckMoment)}</p>
+        </div>
+        <div class="report-section">
+          <h3>2. Яагаад давтагдаад байна вэ?</h3>
+          <p>${publicHtml(why)}</p>
+        </div>
+        <div class="report-section">
+          <h3>3. Таны өдөр тутмын тойрог</h3>
+          <div class="cycle-map">${cycleSteps.map(step => `<p>${publicHtml(step)}</p>`).join("<span>→</span>")}</div>
+        </div>
+        <div class="report-section">
+          <h3>4. Таны хувьд хамгийн түрүүнд өөрчлөх цэг</h3>
+          <p>${publicHtml(summary.firstStep || voice.firstStep)}</p>
+        </div>
+        <div class="report-section">
+          <h3>5. 14 хоногийн жижиг туршилт</h3>
+          ${experimentRows.map(([label, copy]) => `<p><strong>${label}</strong><br>${publicHtml(copy)}</p>`).join("")}
+        </div>
+        ${clearPaidReportSafetyHtml(mode, tags)}
+        ${renderReportDeliveryActions()}
+        ${renderInternalTesterFeedbackSurvey()}
+        <div class="actions"><button class="button secondary" onclick="setView('choice')">Сонголт руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
+      </div>
+    </section>
+  `;
+}
+
 function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], isOneTime = false }) {
+  if (isOneTime) {
+    return renderClearOneTimePaidReport({ mode, primary, secondary, tags });
+  }
   const voice = reportVoiceFor(primary?.key, tags);
   const refinementItems = refinementBullets(primary, secondary).slice(0, 3);
   const cycleEvidence = menstrualCycleEvidence();
@@ -5470,7 +5591,7 @@ function renderInternalTesterFeedbackSurvey() {
         <p><strong>Тайлан таны нөхцөлтэй хэр нийцсэн бэ?</strong></p>
         <label class="field"><span class="muted">1 = огт нийцээгүй, 10 = маш сайн нийцсэн</span><input type="number" min="1" max="10" value="${escapeAttr(form.fitRating)}" oninput="updateInternalFeedbackField('fitRating', this.value)"></label>
       </div>
-      ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Товч хариу” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
+      ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
       ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
       ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
       ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
@@ -5694,7 +5815,7 @@ function buildRuntimeVisibleSurfacePayload(reportContext = {}) {
     reportSurface: "runtime_visible_surface",
     previewSections: [
       {
-        title: "Таны эхний ажиглалт",
+        title: "Эхний мэдээлэл",
         body: `Гол дохио: ${primaryLabel}. ${secondaryLabels.length ? `Давхар дохио: ${secondaryLabels.join(", ")}.` : "Давхар дохиог тодруулахад нэмэлт ажиглалт хэрэгтэй."}`
       },
       {
@@ -5705,7 +5826,7 @@ function buildRuntimeVisibleSurfacePayload(reportContext = {}) {
     paidSections: [
       {
         title: "Гүн зураглалд харах хэсэг",
-        body: "Төлбөртэй тайланд идэхийн өмнөх нөхцөл, цаг, дараах мэдрэмжийн холбоосыг илүү нарийвчилна."
+        body: "Дэлгэрэнгүй хэсэгт идэхийн өмнөх нөхцөл, цаг, дараах мэдрэмжийн холбоосыг илүү нарийвчилна."
       },
       {
         title: "Дараагийн жижиг алхам",
@@ -5797,7 +5918,7 @@ function renderVisibleSurfacePrototype(adapterPayload = null, options = {}) {
   if (!suppressOrdinarySurfaces && options.hasPaidAccess === true && paidSections.length) {
     surfaceGroups.push({
       id: "paid",
-      title: "Гүн тайлангийн хэсэг",
+      title: "Дэлгэрэнгүй тайлангийн хэсэг",
       sections: paidSections
     });
   }
@@ -6009,20 +6130,12 @@ function renderReport() {
   }
 
   if (isOneTime) {
-    const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
     trackWeightFunnelOnce("report_generated", {
       assessment_id: state.currentAssessmentId || "",
       package_type: state.packageType || "one-time",
       readiness: readiness.key || ""
     }, state.currentAssessmentId || state.paymentSessionId || "one-time-report");
-    return renderReportWithConnectedRuntimeVisibleSurface(
-      renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }),
-      reportContext,
-      {
-        hasPaidAccess: hasOneTimeReportAccess(),
-        placement: "before-section-end"
-      }
-    ).html;
+    return renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags });
   }
 
   const reportContext = { mode, primary, secondary, packageType: state.packageType, readiness, quality, tags };

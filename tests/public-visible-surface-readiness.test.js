@@ -70,7 +70,7 @@ function assertIntegratedSurfaces(result, expectedSurfaces, label) {
     `${label}: preview visibility mismatch`
   );
   assert.strictEqual(
-    result.html.includes("Гүн тайлангийн хэсэг"),
+    result.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"),
     expectedSurfaces.includes("paid"),
     `${label}: paid visibility mismatch`
   );
@@ -112,7 +112,7 @@ function assertNoPaymentMutation(beforeState, beforeAccess, label) {
   assert.strictEqual(defaultAfter, defaultBefore, "default production renderReport output must remain unchanged");
   assert(!defaultAfter.includes("visible-surface-prototype"), "default production output must not include visible surfaces");
   assert(!defaultAfter.includes("Эхний товч зураглал"), "default production output must not include preview surface");
-  assert(!defaultAfter.includes("Гүн тайлангийн хэсэг"), "default production output must not include paid surface");
+  assert(!defaultAfter.includes("Дэлгэрэнгүй тайлангийн хэсэг"), "default production output must not include paid surface");
   assert(!defaultAfter.includes("Аюулгүй байдлын сануулга"), "default production output must not include runtime visible safety surface");
 
   mockBackend.resetMockBackend();
@@ -185,11 +185,11 @@ function assertNoPaymentMutation(beforeState, beforeAccess, label) {
       assertIntegratedSurfaces(result, testCase.expectedSurfaces, testCase.label);
 
       if (!testCase.expectedSurfaces.includes("paid")) {
-        assert(!result.html.includes("Гүн тайлангийн хэсэг"), `${testCase.label}: paid surface must not render`);
+        assert(!result.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), `${testCase.label}: paid surface must not render`);
       }
       if (testCase.context.mode.mode === "professional" || testCase.context.mode.mode === "urgent") {
         assert(!result.html.includes("Эхний товч зураглал"), `${testCase.label}: preview must be suppressed`);
-        assert(!result.html.includes("Гүн тайлангийн хэсэг"), `${testCase.label}: paid must be suppressed`);
+        assert(!result.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), `${testCase.label}: paid must be suppressed`);
       }
       assertNoPaymentMutation(backendBefore, accessBefore, testCase.label);
     });

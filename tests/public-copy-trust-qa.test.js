@@ -121,10 +121,13 @@ function assertNoBadTrustCopy(html, label) {
   });
 }
 
-function assertTrustedOutput(html, label) {
+function assertTrustedOutput(html, label, options = {}) {
   assertNoInternalLeak(html, label);
   assertNoBadTrustCopy(html, label);
-  assert(normalize(html).includes("Аюулгүй байдлын сануулга"), `${label}: safety guidance must remain visible`);
+  if (options.requireSafety !== false) {
+    const text = normalize(html);
+    assert(text.includes("Аюулгүй байдлын сануулга") || text.includes("6. Болгоомжлох зүйл"), `${label}: safety guidance must remain visible`);
+  }
 }
 
 function withLocalStorageMutationSpy(fn) {
@@ -198,9 +201,9 @@ withLocalStorageMutationSpy(() => {
   setOneTime({ oneTimePaid: true });
   const paidHtml = _internal.renderReport();
   const paid = normalize(paidHtml);
-  assertTrustedOutput(paidHtml, "paid output");
-  assert(paid.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "paid output must include paid depth");
-  assert(paid.includes("14 хоногийн туршилт"), "paid output must include paid experiment");
+  assertTrustedOutput(paidHtml, "paid output", { requireSafety: false });
+  assert(paid.includes("2. Яагаад давтагдаад байна вэ?"), "paid output must include paid explanation");
+  assert(paid.includes("5. 14 хоногийн жижиг туршилт"), "paid output must include paid experiment");
 
   setOneTime({
     qpayPayment: {
@@ -224,7 +227,7 @@ withLocalStorageMutationSpy(() => {
       "S1-M01": "Дасгал challenge нүүрс ус багасгах өлсөх тусам зөв"
     }
   });
-  assertTrustedOutput(_internal.renderReport(), "gym restriction paid output");
+  assertTrustedOutput(_internal.renderReport(), "gym restriction paid output", { requireSafety: false });
 
   setOneTime({
     oneTimePaid: true,

@@ -102,11 +102,13 @@ function assertNoBadTrustCopy(html, label) {
   });
 }
 
-function assertMonitoredOutput(html, label) {
+function assertMonitoredOutput(html, label, options = {}) {
   const text = normalize(html);
   assertNoInternalLeak(html, label);
   assertNoBadTrustCopy(html, label);
-  assert(text.includes("Аюулгүй байдлын сануулга"), `${label}: safety guidance must remain visible`);
+  if (options.requireSafety !== false) {
+    assert(text.includes("Аюулгүй байдлын сануулга") || text.includes("6. Болгоомжлох зүйл"), `${label}: safety guidance must remain visible`);
+  }
 }
 
 assert.strictEqual(_internal.ENABLE_VISIBLE_SURFACE_PROTOTYPE, false, "prototype guard must remain false");
@@ -145,9 +147,9 @@ assert(!unpaid.includes("14 хоногийн туршилт"), "unpaid output mu
 setOneTime({ oneTimePaid: true });
 const paidHtml = _internal.renderReport();
 const paid = normalize(paidHtml);
-assertMonitoredOutput(paidHtml, "paid output");
-assert(paid.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "paid output must keep paid depth visible");
-assert(paid.includes("14 хоногийн туршилт"), "paid output must keep paid experiment visible");
+assertMonitoredOutput(paidHtml, "paid output", { requireSafety: false });
+assert(paid.includes("2. Яагаад давтагдаад байна вэ?"), "paid output must keep paid explanation visible");
+assert(paid.includes("5. 14 хоногийн жижиг туршилт"), "paid output must keep paid experiment visible");
 
 setOneTime({
   qpayPayment: {

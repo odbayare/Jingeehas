@@ -209,7 +209,7 @@ const personas = [
     expectedMode: "deep",
     expectedPrimary: [M.collapse, M.identity],
     expectedSecondary: [[M.shameAvoidance, M.reward, M.hungerSafety]],
-    requiredText: ["7 хоногоор нарийвчлах", "14 хоногийн эхний туршилт"]
+    requiredText: ["1. Гол гацалт", "5. 14 хоногийн жижиг туршилт", "7. Тайлангаа хадгалах"]
   },
   {
     id: "40m-fasting-rebound",
@@ -279,7 +279,7 @@ const personas = [
     expectedMode: "deep",
     expectedPrimary: [M.cue, M.decisionDefault, M.executive, M.reward],
     expectedSecondary: [[M.decisionDefault, M.executive], [M.reward]],
-    requiredText: ["7 хоногоор нарийвчлах", "14 хоногийн эхний туршилт"]
+    requiredText: ["1. Гол гацалт", "5. 14 хоногийн жижиг туршилт", "7. Тайлангаа хадгалах"]
   },
   {
     id: "50f-medication-friction",
@@ -393,7 +393,7 @@ function validatePersona(persona) {
   });
   assertNoAiSmell(result.text, persona.name);
   if (persona.packageType === "one-time" && !persona.suppressExperiment) {
-    assert(result.text.includes("7 хоногоор нарийвчлах"), `${persona.name}: one-time CTA missing`);
+    assert(!result.text.includes("7 хоногоор нарийвчлах"), `${persona.name}: WP62 one-time report should not mix in 7-day CTA`);
   }
   if (persona.packageType === "seven-day" && result.mode === "deep") {
     assert(result.text.includes("Яагаад ингэж хэлж байна вэ?"), `${persona.name}: evidence note missing`);

@@ -95,12 +95,19 @@ function setSevenDay(overrides = {}) {
 }
 
 function assertSurfaces(html, expected, label) {
+  if (!expected.length) {
+    assert(!html.includes("visible-surface-prototype runtime-visible-surface-integration"), `${label}: WP62 paid report must not inject production visible surface wrapper`);
+    assert(!html.includes('data-surface="preview"'), `${label}: preview surface must not render`);
+    assert(!html.includes('data-surface="paid"'), `${label}: paid surface must not render`);
+    assert(!html.includes('data-surface="safety"'), `${label}: safety surface must not render as a separate wrapper`);
+    return;
+  }
   assert(html.includes("visible-surface-prototype runtime-visible-surface-integration"), `${label}: production visible surface wrapper class missing`);
   assert.strictEqual(html.includes('data-surface="preview"'), expected.includes("preview"), `${label}: preview surface mismatch`);
   assert.strictEqual(html.includes('data-surface="paid"'), expected.includes("paid"), `${label}: paid surface mismatch`);
   assert.strictEqual(html.includes('data-surface="safety"'), expected.includes("safety"), `${label}: safety surface mismatch`);
   assert.strictEqual(html.includes("Эхний товч зураглал"), expected.includes("preview"), `${label}: preview heading mismatch`);
-  assert.strictEqual(html.includes("Гүн тайлангийн хэсэг"), expected.includes("paid"), `${label}: paid heading mismatch`);
+  assert.strictEqual(html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), expected.includes("paid"), `${label}: paid heading mismatch`);
   assert(html.includes("Аюулгүй байдлын сануулга"), `${label}: safety guidance must remain visible`);
 }
 
@@ -188,7 +195,7 @@ withLocalStorageMutationSpy(() => {
   renderCase(
     "ordinary paid report",
     () => setOneTime({ oneTimePaid: true, sevenDayPaid: false, upgradePaid: false }),
-    ["preview", "paid", "safety"]
+    []
   );
 
   renderCase(

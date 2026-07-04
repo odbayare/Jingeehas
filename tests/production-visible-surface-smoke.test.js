@@ -111,12 +111,19 @@ function visibleSurfaceHtml(html) {
 }
 
 function assertSurfaceState(html, expected, label) {
+  if (!expected.length) {
+    assert(!html.includes("visible-surface-prototype"), `${label}: WP62 paid report must not inject live visible surface HTML`);
+    assert(!html.includes('data-surface="preview"'), `${label}: preview surface must not render`);
+    assert(!html.includes('data-surface="paid"'), `${label}: paid surface must not render`);
+    assert(!html.includes('data-surface="safety"'), `${label}: safety surface must not render as a separate wrapper`);
+    return;
+  }
   assert(html.includes("visible-surface-prototype"), `${label}: report output must include live visible surface HTML`);
   assert.strictEqual(html.includes('data-surface="preview"'), expected.includes("preview"), `${label}: preview surface mismatch`);
   assert.strictEqual(html.includes('data-surface="paid"'), expected.includes("paid"), `${label}: paid surface mismatch`);
   assert.strictEqual(html.includes('data-surface="safety"'), expected.includes("safety"), `${label}: safety surface mismatch`);
   assert.strictEqual(html.includes("Эхний товч зураглал"), expected.includes("preview"), `${label}: preview heading mismatch`);
-  assert.strictEqual(html.includes("Гүн тайлангийн хэсэг"), expected.includes("paid"), `${label}: paid heading mismatch`);
+  assert.strictEqual(html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), expected.includes("paid"), `${label}: paid heading mismatch`);
   assert(html.includes("Аюулгүй байдлын сануулга"), `${label}: safety heading must remain visible`);
 }
 
@@ -128,6 +135,7 @@ function assertNoInternalLeaks(html, label) {
 
 function assertNoVisibleSurfaceLeaks(html, label) {
   const visibleHtml = visibleSurfaceHtml(html);
+  if (!visibleHtml) return;
   [...ADAPTER_FIELD_NAMES, ...INTERNAL_LEAKS, ...RAW_FIXTURE_NAMES, ...PAYMENT_COPY_LEAKS].forEach(text => {
     assert(!visibleHtml.includes(text), `${label}: visible surface HTML leaked ${text}`);
   });
@@ -233,7 +241,7 @@ withLocalStorageMutationSpy(() => {
   assertReportCase(
     "ordinary paid report",
     () => setOneTime({ oneTimePaid: true, sevenDayPaid: false, upgradePaid: false }),
-    ["preview", "paid", "safety"],
+    [],
     { oneTime: true, sevenDay: false, upgrade: false }
   );
 

@@ -70,7 +70,7 @@ function assertIntegratedSurfaces(result, expectedSurfaces, label) {
     `${label}: preview visibility mismatch`
   );
   assert.strictEqual(
-    result.html.includes("Гүн тайлангийн хэсэг"),
+    result.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"),
     expectedSurfaces.includes("paid"),
     `${label}: paid visibility mismatch`
   );
@@ -99,7 +99,7 @@ function assertIntegratedSurfaces(result, expectedSurfaces, label) {
   assert.strictEqual(reportAfter, reportBefore, "default renderReport output must remain unchanged");
   assert(!reportAfter.includes("visible-surface-prototype"), "default renderReport must not include visible prototype surfaces");
   assert(!reportAfter.includes("Эхний товч зураглал"), "default renderReport must not include preview surface label");
-  assert(!reportAfter.includes("Гүн тайлангийн хэсэг"), "default renderReport must not include paid surface label");
+  assert(!reportAfter.includes("Дэлгэрэнгүй тайлангийн хэсэг"), "default renderReport must not include paid surface label");
   assert(!reportAfter.includes("Аюулгүй байдлын сануулга"), "default renderReport must not include runtime visible safety label");
 
   const disabled = _internal.renderReportWithRuntimeVisibleSurface(
@@ -144,7 +144,7 @@ function assertIntegratedSurfaces(result, expectedSurfaces, label) {
     const result = _internal.renderReportWithRuntimeVisibleSurface(baseHtml, context, payload, options);
     assertIntegratedSurfaces(result, ["safety"], label);
     assert.strictEqual(result.html.includes("Эхний товч зураглал"), false, `${label}: preview must be suppressed`);
-    assert.strictEqual(result.html.includes("Гүн тайлангийн хэсэг"), false, `${label}: paid must be suppressed`);
+    assert.strictEqual(result.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), false, `${label}: paid must be suppressed`);
   });
 
   console.log("runtime-visible-surface-integration tests passed");

@@ -105,9 +105,10 @@ function run() {
   });
 
   assert(!oneTime.includes("давтамжтай нийцэж байна"));
-  assert(countListItemsInSection(oneTimeHtml, "Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?") <= 3);
-  assert(countListItemsInSection(oneTimeHtml, "Одоохондоо хэт яарахгүй зүйлс") <= 5);
-  assert(countListItemsInSection(oneTimeHtml, "7 хоногийн тэмдэглэл юуг тодруулах вэ?") <= 3);
+  assert(oneTime.includes("1. Гол гацалт"));
+  assert(oneTime.includes("2. Яагаад давтагдаад байна вэ?"));
+  assert(oneTime.includes("5. 14 хоногийн жижиг туршилт"));
+  assert(!oneTime.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
   assert(!oneTime.includes("Trigger зураглал"));
   assert(!oneTime.includes("Before-Eating 30 Minutes"));
   assert(!oneTime.includes("After-Eating 30 Minutes"));
@@ -116,15 +117,15 @@ function run() {
   assert(!oneTime.includes("trigger timing"));
   assert(!oneTime.includes("before/after eating pattern"));
   assert(!/Reward-Seeking[^.]{0,80}шалгуулах дохио/.test(oneTime));
-  assert(sectionText(oneTimeHtml, "Гол буруу ойлголт").length > 20);
-  assert(!sectionText(oneTimeHtml, "Гол буруу ойлголт").includes("давтамжтай нийцэж байна"));
+  assert(sectionText(oneTimeHtml, "2. Яагаад давтагдаад байна вэ?").length > 20);
+  assert(!sectionText(oneTimeHtml, "2. Яагаад давтагдаад байна вэ?").includes("давтамжтай нийцэж байна"));
   assert(!oneTime.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"));
 
   setOneTimeMode2();
   const mode2 = normalize(_internal.renderReport());
-  assert(mode2.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"));
-  assert(mode2.includes("онош гэсэн үг биш"));
-  assert(mode2.includes("энэ туршилтыг мацаг, хоол алгасах, огцом хязгаарлалтгүй зөөлөн эхлүүлнэ"));
+  assert(mode2.includes("6. Болгоомжлох зүйл"));
+  assert(mode2.includes("онош гэж биш"));
+  assert(mode2.includes("хоолоо огцом хасахгүй"));
   assert(!/Reward-Seeking[^.]{0,80}шалгуулах дохио/.test(mode2));
 
   setMode3();

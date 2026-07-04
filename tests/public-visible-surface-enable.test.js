@@ -53,7 +53,7 @@ function setOneTime(overrides = {}) {
   const reportHtml = _internal.renderReport();
   assert(!reportHtml.includes("visible-surface-prototype"), "real renderReport output must not claim visible surfaces when guard remains false");
   assert(!reportHtml.includes("Эхний товч зураглал"), "real renderReport output must not show preview surface while blocked");
-  assert(!reportHtml.includes("Гүн тайлангийн хэсэг"), "real renderReport output must not show paid surface while blocked");
+  assert(!reportHtml.includes("Дэлгэрэнгүй тайлангийн хэсэг"), "real renderReport output must not show paid surface while blocked");
   assert(!reportHtml.includes("Аюулгүй байдлын сануулга"), "real renderReport output must not show runtime visible safety surface while blocked");
 
   console.log("public-visible-surface-enable hold tests passed");

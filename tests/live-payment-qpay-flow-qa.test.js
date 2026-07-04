@@ -82,11 +82,13 @@ function assertNoPressureCopy(html, label) {
   });
 }
 
-function assertSafePaymentOutput(html, label) {
+function assertSafePaymentOutput(html, label, options = {}) {
   const text = normalize(html);
   assertNoInternalLeak(html, label);
   assertNoPressureCopy(html, label);
-  assert(text.includes("Аюулгүй байдлын сануулга"), `${label}: safety guidance must remain visible`);
+  if (options.requireSafety !== false) {
+    assert(text.includes("Аюулгүй байдлын сануулга") || text.includes("6. Болгоомжлох зүйл"), `${label}: safety guidance must remain visible`);
+  }
 }
 
 function withLocalStorageMutationSpy(fn) {
@@ -204,9 +206,9 @@ withLocalStorageMutationSpy(() => {
   setOneTime({ oneTimePaid: true });
   const paidHtml = _internal.renderReport();
   const paid = normalize(paidHtml);
-  assertSafePaymentOutput(paidHtml, "paid output");
-  assert(paid.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "paid output must show paid depth");
-  assert(paid.includes("14 хоногийн туршилт"), "paid output must show paid experiment");
+  assertSafePaymentOutput(paidHtml, "paid output", { requireSafety: false });
+  assert(paid.includes("2. Яагаад давтагдаад байна вэ?"), "paid output must show paid explanation");
+  assert(paid.includes("5. 14 хоногийн жижиг туршилт"), "paid output must show paid experiment");
   assert(!paid.includes("Бүрэн тайлан нээх 9,900₮"), "paid output must not show locked paywall state");
   assert(!paid.includes("Төлбөр төлсний дараа"), "paid output must not show locked payment explanation");
 

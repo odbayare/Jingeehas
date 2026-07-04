@@ -96,7 +96,7 @@ function run() {
   });
   const report = normalize(_internal.renderReport());
   const livedIndex = report.indexOf("Орой болоход “юу идэх вэ?” гэж бодох хүртэл хүнд болдог");
-  const structureIndex = report.indexOf("Давтагддаг тойрог");
+  const structureIndex = report.indexOf("3. Таны өдөр тутмын тойрог");
   assert(livedIndex >= 0, "report should include lived explanation");
   assert(structureIndex >= 0, "report should include human-readable cycle section");
   assert(livedIndex < structureIndex, "report should explain the lived moment before the cycle");

@@ -78,7 +78,7 @@ function assertSurfaceResult(result, expectedSurfaces, label) {
     `${label}: preview visibility mismatch`
   );
   assert.strictEqual(
-    result.html.includes("Гүн тайлангийн хэсэг"),
+    result.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"),
     expectedSurfaces.includes("paid"),
     `${label}: paid visibility mismatch`
   );

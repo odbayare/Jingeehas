@@ -116,17 +116,19 @@ function run() {
 
   setOneTimeReport();
   const oneTimeText = normalize(_internal.renderReport());
-  assert(oneTimeText.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
-  assert(oneTimeText.includes("Орой хоол бодох хамгийн хүнд өдөр аль нь вэ?"));
-  assert(oneTimeText.includes("7 хоногоор нарийвчлах"));
+  assert(oneTimeText.includes("1. Гол гацалт"));
+  assert(oneTimeText.includes("2. Яагаад давтагдаад байна вэ?"));
+  assert(oneTimeText.includes("5. 14 хоногийн жижиг туршилт"));
+  assert(!oneTimeText.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
+  assert(!oneTimeText.includes("7 хоногоор нарийвчлах"));
   assert(!oneTimeText.includes("Миний pattern-ийг 7 хоногоор шалгах"));
   assertNoPressureCopy(oneTimeText);
 
   setMode2Report();
   const mode2Text = normalize(_internal.renderReport());
-  assert(mode2Text.includes("онош гэсэн үг биш"));
-  assert(mode2Text.includes("Биеийн талаа нэмэлтээр шалгуулахад илүүдэхгүй"));
-  assert(mode2Text.includes("огцом хязгаарлалтгүй зөөлөн эхлүүлнэ"));
+  assert(mode2Text.includes("онош гэж биш"));
+  assert(mode2Text.includes("6. Болгоомжлох зүйл"));
+  assert(mode2Text.includes("хоолоо огцом хасахгүй"));
 
   setMode3Report();
   const mode3Text = normalize(_internal.renderReport());

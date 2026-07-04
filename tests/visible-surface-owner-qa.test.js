@@ -83,7 +83,7 @@ function assertSurfaceResult(result, expectedSurfaces, label) {
     `${label}: preview surface visibility mismatch`
   );
   assert.strictEqual(
-    result.html.includes("Гүн тайлангийн хэсэг"),
+    result.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"),
     shouldShowPaid,
     `${label}: paid surface visibility mismatch`
   );
@@ -166,7 +166,7 @@ function snapshotBlock(testCase, result) {
     if (testCase.expectedSurfaces.includes("paid")) {
       assert.strictEqual(testCase.options.hasPaidAccess, true, `${testCase.name}: paid sections require paid access`);
     } else {
-      assert(!result.html.includes("Гүн тайлангийн хэсэг"), `${testCase.name}: paid surface must stay hidden`);
+      assert(!result.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), `${testCase.name}: paid surface must stay hidden`);
     }
 
     if (testCase.options.mode === "professional" || testCase.options.mode === "urgent" || testCase.options.professionalFirst === true || testCase.options.urgent === true) {

@@ -28,12 +28,13 @@ function run() {
   assert(gate.options.includes("Тийм, хамаарна"));
   assert(gate.options.includes("Үгүй, хамаарахгүй"));
 
-  setState({ stageAnswers: { "MC-GATE": "Үгүй, хамаарахгүй" } });
+  setState({ stageAnswers: { "S1-C02": "Эмэгтэй", "MC-GATE": "Үгүй, хамаарахгүй" } });
   let visibleIds = app._internal.stageQuestions().map(question => question.id);
   assert(visibleIds.includes("MC-GATE"), "gate should remain visible");
   assert(!visibleIds.includes("MC-01"), "menstrual module should be skipped when gate is no");
 
-  setState({ stageAnswers: { "MC-GATE": "Тийм, хамаарна" } });
+  setState({ stageAnswers: { "S1-C02": "Эмэгтэй",
+      "MC-GATE": "Тийм, хамаарна" } });
   visibleIds = app._internal.stageQuestions().map(question => question.id);
   assert(visibleIds.includes("MC-01"), "menstrual module should render when gate is yes");
   assert(visibleIds.includes("MC-07"), "cycle disruption safety question should render when active");
@@ -47,7 +48,7 @@ function run() {
 
   setState({
     packageType: "seven-day",
-    stageAnswers: { "MC-GATE": "Үгүй, хамаарахгүй" },
+    stageAnswers: { "S1-C02": "Эмэгтэй", "MC-GATE": "Үгүй, хамаарахгүй" },
     diaryDraft: { unplanned_eating_count: "Тийм, нэг удаа" },
     preliminary: [{ key: "reward" }]
   });
@@ -56,7 +57,8 @@ function run() {
 
   setState({
     packageType: "seven-day",
-    stageAnswers: { "MC-GATE": "Тийм, хамаарна" },
+    stageAnswers: { "S1-C02": "Эмэгтэй",
+      "MC-GATE": "Тийм, хамаарна" },
     diaryDraft: { unplanned_eating_count: "Тийм, нэг удаа" },
     preliminary: [{ key: "reward" }]
   });
@@ -67,7 +69,8 @@ function run() {
 
   setState({
     packageType: "seven-day",
-    stageAnswers: { "MC-GATE": "Тийм, хамаарна" },
+    stageAnswers: { "S1-C02": "Эмэгтэй",
+      "MC-GATE": "Тийм, хамаарна" },
     diaryDraft: { unplanned_eating_count: "Тийм, нэг удаа", cycle_today_link: "Тийм, амттай юм илүү хүссэн" },
     preliminary: [{ key: "reward" }]
   });
@@ -79,6 +82,7 @@ function run() {
       "S1-C01": "33",
       "S1-R01": "Нэлээд олон удаа",
       "S1-R02": ["Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"],
+      "S1-C02": "Эмэгтэй",
       "MC-GATE": "Тийм, хамаарна",
       "MC-01": "Тогтмол, ойролцоогоор 21–35 хоног",
       "MC-03": "Сарын тэмдэг ирэхээс хэд хоногийн өмнө",
@@ -92,10 +96,10 @@ function run() {
   const ranked = app._internal.rankedPatterns(false);
   assert(!ranked.some(item => item.key === "menstrual_cycle_context"), "cycle context should not become a primary mechanism");
   let report = normalize(app._internal.renderReport());
-  assert(report.includes("Энэ нь онош биш, таны сул тал гэсэн үг биш"), "ordinary report should include cycle context as non-diagnostic");
-  assert(report.includes("Сарын тэмдэг ирэхээс өмнөх хэдэн өдөрт амттай зүйл хүсэх, ядрах, нойр муудах, сэтгэл савлах зэрэг хамт ирж байна"));
-  assert(report.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд хэт хатуу хоолны дүрэм эхлүүлэх"), "avoid list should include cycle-aware restriction warning");
-  assert(report.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд идэх хүсэл хэр өөр байна вэ?"), "7-day refinement should include cycle-aware question");
+  assert(report.includes("Таны тайлан бэлэн боллоо"), "ordinary paid report should use the clear WP62 report opening");
+  assert(report.includes("1. Гол гацалт"), "ordinary paid report should include the clear main-blockage section");
+  assert(report.includes("2. Яагаад давтагдаад байна вэ?"), "ordinary paid report should explain why it repeats");
+  assert(report.includes("5. 14 хоногийн жижиг туршилт"), "ordinary paid report should include one 14-day experiment");
 
   const deterministicBanned = [
     "даавраас болж байна",
@@ -110,6 +114,7 @@ function run() {
 
   setState({
     stageAnswers: {
+      "S1-C02": "Эмэгтэй",
       "MC-GATE": "Тийм, хамаарна",
       "MC-01": "Сүүлийн 3 сард ирээгүй",
       "S1-S04": "Үгүй"
@@ -122,6 +127,7 @@ function run() {
 
   setState({
     stageAnswers: {
+      "S1-C02": "Эмэгтэй",
       "MC-GATE": "Тийм, хамаарна",
       "MC-01": "Ихэнхдээ тогтмол биш",
       "MC-06": ["PCOS оноштой эсвэл сэжигтэй"],
@@ -135,6 +141,7 @@ function run() {
 
   setState({
     stageAnswers: {
+      "S1-C02": "Эмэгтэй",
       "MC-GATE": "Тийм, хамаарна",
       "MC-01": "Сүүлийн 3 сард ирээгүй",
       "MC-07": "Тийм",
@@ -151,6 +158,7 @@ function run() {
     stageAnswers: {
       "S1-C01": "33",
       "S1-S04": "Одоо идэвхтэй бодогдож байна",
+      "S1-C02": "Эмэгтэй",
       "MC-GATE": "Тийм, хамаарна",
       "MC-04": ["Илүү өлсдөг"]
     },
@@ -168,7 +176,8 @@ function run() {
           "S1-C01": "31",
           "S1-R01": "Нэлээд олон удаа",
           "S1-R02": ["Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"],
-          "MC-GATE": "Тийм, хамаарна",
+          "S1-C02": "Эмэгтэй",
+      "MC-GATE": "Тийм, хамаарна",
           "MC-01": "Тогтмол, ойролцоогоор 21–35 хоног",
           "MC-03": "Сарын тэмдэг ирэхээс хэд хоногийн өмнө",
           "MC-04": ["Амттай юм, гурилан зүйл илүү хүсдэг"],
@@ -176,14 +185,15 @@ function run() {
         }
       },
       expectedMode: "deep",
-      expectedCopy: "Энэ нь онош биш, таны сул тал гэсэн үг биш"
+      expectedCopy: "Таны тайлан бэлэн боллоо"
     },
     {
       name: "Cycle User B",
       state: {
         stageAnswers: {
           "S1-C01": "36",
-          "MC-GATE": "Тийм, хамаарна",
+          "S1-C02": "Эмэгтэй",
+      "MC-GATE": "Тийм, хамаарна",
           "MC-01": "Ихэнхдээ тогтмол биш",
           "MC-06": ["PCOS оноштой эсвэл сэжигтэй"],
           "S1-B02": "Тийм, санаа зовоосон",
@@ -199,7 +209,8 @@ function run() {
         stageAnswers: {
           "S1-C01": "27",
           "S1-W04": ["Мацаг"],
-          "MC-GATE": "Тийм, хамаарна",
+          "S1-C02": "Эмэгтэй",
+      "MC-GATE": "Тийм, хамаарна",
           "MC-01": "Сүүлийн 3 сард ирээгүй",
           "MC-07": "Тийм",
           "S1-S04": "Үгүй"

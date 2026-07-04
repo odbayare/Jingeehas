@@ -56,7 +56,7 @@ function run() {
   assert.strictEqual(_internal.isInternalTestMode(), true);
   const internalReportHtml = _internal.renderReport();
   const internalReport = normalize(internalReportHtml);
-  assert(internalReport.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"), "internal mode should show full report without QPay");
+  assert(internalReport.includes("2. Яагаад давтагдаад байна вэ?"), "internal mode should show full report without QPay");
   assert(internalReport.includes("Дотоод туршилтын хувилбар — энэ шатанд бодит төлбөр авахгүй."));
   assert(internalReport.includes("Туршилтын санал асуулга"));
   assert(!internalReport.includes("QPay QR"));
@@ -66,7 +66,7 @@ function run() {
     "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?",
     "Асуултууд ойлгомжтой байсан уу?",
     "Тайлан таны нөхцөлтэй хэр нийцсэн бэ?",
-    "Тайлангийн эхний “Товч хариу” хэсэг ойлгомжтой байсан уу?",
+    "Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?",
     "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?",
     "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?",
     "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?",

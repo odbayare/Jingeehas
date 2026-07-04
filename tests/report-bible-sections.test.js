@@ -131,7 +131,7 @@ function run() {
     diaryEntries: entries(5, { meal_rhythm: "Тогтвортой, хоол алгасаагүй" })
   });
   const mode2 = _internal.renderReport();
-  assert(mode2.includes("Нэг зүйл тодорлоо"));
+  assert(mode2.includes("Биеийн талаа давхар шалгах дохио байна"));
   assert(mode2.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй"));
   assert(mode2.includes("Шалгуулахад илүүдэхгүй"));
   assert(mode2.includes("14 хоногийн туршилт"));
@@ -148,10 +148,13 @@ function run() {
   });
   const oneTime = _internal.renderReport();
   assert(oneTime.includes("Таны тайлан бэлэн боллоо"));
-  assert(oneTime.includes("7 хоногоор нарийвчлах"));
-  assert(oneTime.includes("Гол зураг"));
-  assert(oneTime.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
-  assert(oneTime.includes("Хоолны зай хэдэн цаг болоход орой яаралтай өлсөж байна вэ?"));
+  assert(oneTime.includes("1. Гол гацалт"));
+  assert(oneTime.includes("2. Яагаад давтагдаад байна вэ?"));
+  assert(oneTime.includes("5. 14 хоногийн жижиг туршилт"));
+  assert(oneTime.includes("7. Тайлангаа хадгалах"));
+  assert(!oneTime.includes("7 хоногоор нарийвчлах"));
+  assert(!oneTime.includes("Гол зураг"));
+  assert(!oneTime.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
   assert(!oneTime.includes("Миний pattern-ийг 7 хоногоор шалгах"));
 }
 

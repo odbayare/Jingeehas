@@ -118,11 +118,11 @@ function run() {
 
   _internal.demoCompletePayment("one-time");
   const paidOneTime = normalize(_internal.renderReport());
-  assert(paidOneTime.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"));
-  assert(paidOneTime.includes("14 хоногийн туршилт"));
-  assert(paidOneTime.includes("Нарийвчлах үнэ"));
-  assert(paidOneTime.includes("19,900₮ төлөөд 7 хоногоор нарийвчлах"));
-  assert(paidOneTime.includes("Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой"));
+  assert(paidOneTime.includes("2. Яагаад давтагдаад байна вэ?"));
+  assert(paidOneTime.includes("5. 14 хоногийн жижиг туршилт"));
+  assert(!paidOneTime.includes("Нарийвчлах үнэ"));
+  assert(!paidOneTime.includes("19,900₮ төлөөд 7 хоногоор нарийвчлах"));
+  assert(!paidOneTime.includes("Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой"));
 
   setSevenDay();
   const unpaidSevenDay = normalize(_internal.renderSevenDayStart());

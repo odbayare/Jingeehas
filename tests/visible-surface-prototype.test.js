@@ -108,7 +108,7 @@ function setOneTime(overrides = {}) {
   assert.deepStrictEqual(unpaid.renderedSurfaces, ["preview", "safety"]);
   assert(unpaid.html.includes("Эхний товч зураглал"), "preview surface should render behind explicit test guard");
   assert(unpaid.html.includes("Аюулгүй байдлын сануулга"), "safety surface should render without payment");
-  assert(!unpaid.html.includes("Гүн тайлангийн хэсэг"), "paid surface must not render without paid access");
+  assert(!unpaid.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), "paid surface must not render without paid access");
   assertNoForbiddenText(unpaid.html, "unpaid/payment-failed prototype");
 
   const paid = _internal.renderVisibleSurfacePrototype(payload, {
@@ -118,7 +118,7 @@ function setOneTime(overrides = {}) {
   });
   assert.strictEqual(paid.pass, true, "paid prototype should pass");
   assert.deepStrictEqual(paid.renderedSurfaces, ["preview", "paid", "safety"]);
-  assert(paid.html.includes("Гүн тайлангийн хэсэг"), "paid surface should render with paid access");
+  assert(paid.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), "paid surface should render with paid access");
   assertNoForbiddenText(paid.html, "paid prototype");
 
   ["professional", "urgent"].forEach(mode => {
@@ -132,7 +132,7 @@ function setOneTime(overrides = {}) {
     assert.deepStrictEqual(suppressed.renderedSurfaces, ["safety"], `${mode}: safety guidance must remain renderable`);
     assert(suppressed.html.includes("Аюулгүй байдлын сануулга"), `${mode}: safety guidance should render`);
     assert(!suppressed.html.includes("Эхний товч зураглал"), `${mode}: preview surface must be suppressed`);
-    assert(!suppressed.html.includes("Гүн тайлангийн хэсэг"), `${mode}: paid surface must be suppressed`);
+    assert(!suppressed.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), `${mode}: paid surface must be suppressed`);
     assertNoForbiddenText(suppressed.html, `${mode} safety-only prototype`);
   });
 
@@ -150,7 +150,7 @@ function setOneTime(overrides = {}) {
     assert.deepStrictEqual(suppressed.renderedSurfaces, ["safety"], `${label}: safety guidance must remain renderable`);
     assert(suppressed.html.includes("Аюулгүй байдлын сануулга"), `${label}: safety guidance should render`);
     assert(!suppressed.html.includes("Эхний товч зураглал"), `${label}: preview surface must be suppressed`);
-    assert(!suppressed.html.includes("Гүн тайлангийн хэсэг"), `${label}: paid surface must be suppressed`);
+    assert(!suppressed.html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), `${label}: paid surface must be suppressed`);
     assertNoForbiddenText(suppressed.html, `${label} safety-only prototype`);
   });
 

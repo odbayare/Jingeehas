@@ -95,6 +95,15 @@ function assertNoForbiddenOutputText(html, label) {
 }
 
 function assertSurfaceState(html, expectedSurfaces, label) {
+  if (!expectedSurfaces.length) {
+    assert(!html.includes("visible-surface-prototype runtime-visible-surface-integration"), `${label}: WP62 paid report must not inject visible surface wrapper`);
+    assert(!html.includes("visible-surface-card"), `${label}: visible surface card must not render`);
+    assert(!html.includes('data-surface="preview"'), `${label}: preview surface must not render`);
+    assert(!html.includes('data-surface="paid"'), `${label}: paid surface must not render`);
+    assert(!html.includes('data-surface="safety"'), `${label}: safety surface must not render as a separate wrapper`);
+    assertNoForbiddenOutputText(html, label);
+    return;
+  }
   assert(html.includes("visible-surface-prototype runtime-visible-surface-integration"), `${label}: visible surface wrapper classes missing`);
   assert(html.includes("visible-surface-card"), `${label}: visible surface card class missing`);
 
@@ -103,7 +112,7 @@ function assertSurfaceState(html, expectedSurfaces, label) {
   assert.strictEqual(html.includes('data-surface="safety"'), expectedSurfaces.includes("safety"), `${label}: safety surface mismatch`);
 
   assert.strictEqual(html.includes("Эхний товч зураглал"), expectedSurfaces.includes("preview"), `${label}: preview heading mismatch`);
-  assert.strictEqual(html.includes("Гүн тайлангийн хэсэг"), expectedSurfaces.includes("paid"), `${label}: paid heading mismatch`);
+  assert.strictEqual(html.includes("Дэлгэрэнгүй тайлангийн хэсэг"), expectedSurfaces.includes("paid"), `${label}: paid heading mismatch`);
   assert.strictEqual(html.includes("Аюулгүй байдлын сануулга"), expectedSurfaces.includes("safety"), `${label}: safety heading mismatch`);
   assertNoForbiddenOutputText(html, label);
 }
@@ -209,7 +218,7 @@ withLocalStorageMutationSpy(() => {
   renderCase(
     "paid report",
     () => setOneTime({ oneTimePaid: true, sevenDayPaid: false, upgradePaid: false }),
-    ["preview", "paid", "safety"]
+    []
   );
 
   renderCase(
