@@ -927,6 +927,14 @@ const initialState = {
     message: "",
     invoice: null
   },
+  contactCapture: {
+    name: "",
+    phone: "",
+    email: "",
+    saved: false,
+    message: "",
+    copyStatus: ""
+  },
   currentAssessmentId: null,
   internalTest: false,
   internalFeedbackForm: { ...INTERNAL_FEEDBACK_DEFAULTS },
@@ -1069,6 +1077,68 @@ function ensurePaymentSessionId() {
   return state.paymentSessionId;
 }
 
+function contactCaptureState() {
+  return {
+    ...initialState.contactCapture,
+    ...(state.contactCapture || {})
+  };
+}
+
+function hasSavedContactInfo() {
+  const contact = contactCaptureState();
+  return Boolean(contact.saved && (String(contact.phone || "").trim() || String(contact.email || "").trim()));
+}
+
+function updateContactCaptureField(field, value) {
+  if (!["name", "phone", "email"].includes(field)) return;
+  state.contactCapture = {
+    ...contactCaptureState(),
+    [field]: String(value || "").slice(0, 120),
+    saved: false,
+    message: "",
+    copyStatus: ""
+  };
+  saveState();
+}
+
+function saveContactCapture() {
+  const contact = contactCaptureState();
+  const phone = String(contact.phone || "").trim();
+  const email = String(contact.email || "").trim();
+  if (!phone && !email) {
+    state.contactCapture = {
+      ...contact,
+      saved: false,
+      message: "Тайлангаа сэргээх, дэмжлэг авахад ашиглах утас эсвэл имэйл үлдээнэ үү."
+    };
+    saveState();
+    render();
+    return false;
+  }
+  state.contactCapture = {
+    ...contact,
+    name: String(contact.name || "").trim(),
+    phone,
+    email,
+    saved: true,
+    message: "Мэдээлэл хадгалагдлаа. Одоо QPay төлбөрөө үргэлжлүүлж болно.",
+    copyStatus: ""
+  };
+  saveState();
+  render({ scrollToTop: true });
+  return true;
+}
+
+function editContactCapture() {
+  state.contactCapture = {
+    ...contactCaptureState(),
+    saved: false,
+    message: ""
+  };
+  saveState();
+  render({ scrollToTop: true });
+}
+
 function beginAssessment(packageType = state.packageType || "one-time") {
   if (!canStartPaidAssessment(packageType)) {
     state.packageType = packageType;
@@ -1208,6 +1278,17 @@ function qpayStatusMessage(status) {
 }
 
 async function createWeightQpayInvoice() {
+  if (!hasSavedContactInfo()) {
+    state.contactCapture = {
+      ...contactCaptureState(),
+      saved: false,
+      message: "Төлбөрөөс өмнө тайлан сэргээх холбоо барих мэдээллээ хадгална уу."
+    };
+    state.view = "oneTimeStart";
+    saveState();
+    render({ scrollToTop: true });
+    return;
+  }
   ensurePaymentSessionId();
   state.qpayPayment = {
     status: "creating",
@@ -2128,11 +2209,73 @@ function renderOneTimeStart() {
               <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTimeAnchor}</p>
               <p class="price promo"><span>Төлөх үнэ</span> ${currentOneTimePriceLabel()}</p>
             </div>
-            ${renderWeightQpayPaymentBox({ returnLabel: "Буцах" })}
+            ${renderNoAccountPaymentIntro()}
+            ${hasSavedContactInfo() ? `
+              ${renderSavedContactSummary()}
+              ${renderWeightQpayPaymentBox({ returnLabel: "Буцах" })}
+            ` : renderContactCaptureForm()}
           </div>
         `}
       </div>
     </section>
+  `;
+}
+
+function renderNoAccountPaymentIntro() {
+  return `
+    <div class="no-account-note">
+      <p><strong>Бүртгэл шаардлагагүй.</strong></p>
+      <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
+    </div>
+  `;
+}
+
+function renderContactCaptureForm() {
+  const contact = contactCaptureState();
+  return `
+    <div class="contact-capture-card stack" data-contact-capture>
+      <div>
+        <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
+        <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
+        <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
+      </div>
+      <label class="field">
+        <span>Нэр (сонголтоор)</span>
+        <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
+      </label>
+      <label class="field">
+        <span>Утас</span>
+        <input type="tel" value="${escapeAttr(contact.phone)}" oninput="updateContactCaptureField('phone', this.value)" autocomplete="tel">
+      </label>
+      <label class="field">
+        <span>Имэйл</span>
+        <input type="email" value="${escapeAttr(contact.email)}" oninput="updateContactCaptureField('email', this.value)" autocomplete="email">
+      </label>
+      <p class="muted">Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.</p>
+      ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
+      <div class="actions">
+        <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх</button>
+        <button class="button ghost" onclick="setView('choice')">Буцах</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderSavedContactSummary() {
+  const contact = contactCaptureState();
+  const rows = [
+    contact.name ? ["Нэр", contact.name] : null,
+    contact.phone ? ["Утас", contact.phone] : null,
+    contact.email ? ["Имэйл", contact.email] : null
+  ].filter(Boolean);
+  return `
+    <div class="contact-summary" data-contact-summary>
+      <div>
+        <p class="choice-kicker">Холбоо барих мэдээлэл хадгалагдсан</p>
+        <dl>${rows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl>
+      </div>
+      <button class="button ghost compact-button" onclick="editContactCapture()">Засах</button>
+    </div>
   `;
 }
 
@@ -3676,11 +3819,89 @@ function renderOneTimePaywall({ mode, primary, primaryMechanism, tags }) {
             <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTimeAnchor}</p>
             <p class="price promo"><span>${priceCaption}</span> ${priceLabel}</p>
           </div>
-          ${renderWeightQpayPaymentBox()}
+          ${renderNoAccountPaymentIntro()}
+          ${hasSavedContactInfo() ? `
+            ${renderSavedContactSummary()}
+            ${renderWeightQpayPaymentBox()}
+          ` : renderContactCaptureForm()}
         </div>
       </div>
     </section>
   `;
+}
+
+function renderReportDeliveryActions() {
+  const contact = contactCaptureState();
+  const savedContact = hasSavedContactInfo();
+  const contactRows = savedContact
+    ? [
+        contact.name ? ["Нэр", contact.name] : null,
+        contact.phone ? ["Утас", contact.phone] : null,
+        contact.email ? ["Имэйл", contact.email] : null
+      ].filter(Boolean)
+    : [];
+  return `
+    <div class="report-section report-delivery-card" data-report-delivery>
+      <p class="choice-kicker">Тайлан хүргэлт</p>
+      <h3>Таны тайлан энэ дэлгэц дээр гарлаа</h3>
+      <p class="muted">Бүртгэл үүсгээгүй тул одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй. Тайлангаа одоо хуулах, хэвлэх эсвэл browser-ийн print цонхоор PDF болгон хадгалж болно.</p>
+      ${savedContact ? `
+        <div class="contact-summary inline-summary">
+          <div>
+            <p class="choice-kicker">Дэмжлэг авахад хадгалсан мэдээлэл</p>
+            <dl>${contactRows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl>
+          </div>
+        </div>
+      ` : `<p class="muted">Холбоо барих мэдээлэл хадгалагдаагүй байна.</p>`}
+      ${contact.copyStatus ? `<p class="muted">${escapeHtml(contact.copyStatus)}</p>` : ""}
+      <div class="actions">
+        <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
+        <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
+      </div>
+    </div>
+  `;
+}
+
+async function copyCurrentReport() {
+  if (!hasBrowserRuntime) return false;
+  const source = document.querySelector("[data-report-output]") || document.querySelector(".panel");
+  const text = source?.innerText || "";
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement("textarea");
+      textarea.value = text;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "fixed";
+      textarea.style.left = "-9999px";
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textarea);
+    }
+    state.contactCapture = {
+      ...contactCaptureState(),
+      copyStatus: "Тайлан clipboard-д хуулагдлаа."
+    };
+    saveState();
+    render();
+    return true;
+  } catch {
+    state.contactCapture = {
+      ...contactCaptureState(),
+      copyStatus: "Хуулах боломжгүй байна. Browser-ийн print эсвэл гараар copy ашиглаж болно."
+    };
+    saveState();
+    render();
+    return false;
+  }
+}
+
+function printCurrentReport() {
+  if (!hasBrowserRuntime || typeof window.print !== "function") return false;
+  window.print();
+  return true;
 }
 
 function renderUpgradeOffer() {
@@ -4770,7 +4991,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
   return `
     ${topbar(100, mode.title)}
     <section class="screen">
-      <div class="panel">
+      <div class="panel" data-report-output>
         <div class="report-section">
           <h2>Таны тайлан бэлэн боллоо</h2>
           <p class="muted">Доорх тайлан таны хариултад тулгуурласан эхний тайлбар. Өөрийгөө буруутгах гэж биш, өдөрт яг аль мөч дээр гацдагаа харах гэж уншаарай.</p>
@@ -4819,6 +5040,7 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
         </div>` : ""}
         ${mode.mode === "check" ? professionalCheckHtml(tags, true) : ""}
         ${isOneTime ? renderUpgradeOffer() : ""}
+        ${renderReportDeliveryActions()}
         ${renderInternalTesterFeedbackSurvey()}
         <div class="actions"><button class="button secondary" onclick="setView('${isOneTime ? "choice" : "diaryHome"}')">${isOneTime ? "Сонголт руу буцах" : "Тэмдэглэл рүү буцах"}</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
       </div>
@@ -6024,6 +6246,16 @@ if (typeof module !== "undefined") {
       startLeadCapture,
       updateLeadField,
       submitLeadCapture,
+      hasSavedContactInfo,
+      updateContactCaptureField,
+      saveContactCapture,
+      editContactCapture,
+      renderNoAccountPaymentIntro,
+      renderContactCaptureForm,
+      renderSavedContactSummary,
+      renderReportDeliveryActions,
+      copyCurrentReport,
+      printCurrentReport,
       isInternalTestMode,
       updateInternalFeedbackField,
       submitInternalFeedback,

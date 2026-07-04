@@ -18,6 +18,14 @@ function baseAssessmentState(overrides = {}) {
     sevenDayPaid: false,
     upgradePaid: false,
     qpayPayment: { status: "idle", message: "", invoice: null },
+    contactCapture: {
+      name: "Internal QA",
+      phone: "99119911",
+      email: "",
+      saved: true,
+      message: "",
+      copyStatus: ""
+    },
     internalTest: false,
     preliminary: [{ key: "collapse", score: 5, label: "хүчтэй нийцэж байна" }],
     stageAnswers: {

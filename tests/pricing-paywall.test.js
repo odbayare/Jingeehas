@@ -23,6 +23,14 @@ function setOneTime(overrides = {}) {
       { key: "executive", score: 5, label: "хүчтэй нийцэж байна" },
       { key: "decisionDefault", score: 4, label: "дунд зэрэг нийцэж байна" }
     ],
+    contactCapture: {
+      name: "Pricing QA",
+      phone: "99119911",
+      email: "",
+      saved: true,
+      message: "",
+      copyStatus: ""
+    },
     stageVoiceSummaries: {},
     diaryEntries: [],
     ...overrides

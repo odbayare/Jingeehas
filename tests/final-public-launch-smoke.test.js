@@ -22,6 +22,14 @@ function setOneTime(overrides = {}) {
       invoice: null
     },
     currentAssessmentId: null,
+    contactCapture: {
+      name: "Launch Smoke",
+      phone: "99119911",
+      email: "",
+      saved: true,
+      message: "",
+      copyStatus: ""
+    },
     stageAnswers: {
       "S1-L01": "Бараг өдөр бүр",
       "S1-L02": ["Delivery", "Snack"],

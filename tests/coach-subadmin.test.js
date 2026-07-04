@@ -179,6 +179,14 @@ function run() {
     oneTimePaid: false,
     coachInviteToken: uiClient.inviteToken,
     coachDiscountConsent: false,
+    contactCapture: {
+      name: "Coach QA",
+      phone: "99119911",
+      email: "",
+      saved: true,
+      message: "",
+      copyStatus: ""
+    },
     stageAnswers: {},
     diaryEntries: []
   });
@@ -201,6 +209,14 @@ function run() {
     upgradePaid: false,
     coachInvite: null,
     coachDiscountConsent: false,
+    contactCapture: {
+      name: "Coach QA",
+      phone: "99119911",
+      email: "",
+      saved: true,
+      message: "",
+      copyStatus: ""
+    },
     stageAnswers: { "S1-C01": "33", "S1-S04": "Үгүй" },
     diaryEntries: []
   });
