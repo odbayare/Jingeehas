@@ -991,6 +991,7 @@ function resetState() {
 
 function setView(view) {
   state.view = view;
+  enforcePaidFirstGate();
   saveState();
   render({ scrollToTop: true });
 }
@@ -1053,6 +1054,13 @@ function ensurePaymentSessionId() {
 }
 
 function beginAssessment(packageType = state.packageType || "one-time") {
+  if (!canStartPaidAssessment(packageType)) {
+    state.packageType = packageType;
+    state.view = packageType === "seven-day" ? "sevenDayStart" : "oneTimeStart";
+    saveState();
+    render({ scrollToTop: true });
+    return false;
+  }
   const coachInvite = packageType === "one-time" && state.coachDiscountConsent ? state.coachInvite : null;
   const assessment = mockBackend.createAssessment(packageType === "seven-day" ? "seven_day" : "one_time", {
     coachClientId: coachInvite?.client?.id || null,
@@ -1076,6 +1084,7 @@ function beginAssessment(packageType = state.packageType || "one-time") {
   state.view = "stage1";
   saveState();
   render({ scrollToTop: true });
+  return true;
 }
 
 function demoCompletePayment(kind) {
@@ -1282,6 +1291,34 @@ function hasOneTimeReportAccess() {
 function hasUpgradeAccess() {
   const access = mockBackend.getAccessState(state.currentAssessmentId || null);
   return Boolean(state.upgradePaid || access.hasUpgradeAccess);
+}
+
+function canStartPaidAssessment(packageType = state.packageType || "one-time") {
+  if (packageType === "seven-day") return hasSevenDayAccess();
+  return hasOneTimeReportAccess() || hasSevenDayAccess() || hasUpgradeAccess();
+}
+
+function paidGateFallbackView(packageType = state.packageType || "one-time") {
+  return packageType === "seven-day" ? "sevenDayStart" : "oneTimeStart";
+}
+
+function isPaidGatedView(view = state.view) {
+  return [
+    "stage1",
+    "preliminary",
+    "unlock",
+    "diaryHome",
+    "diary",
+    "reportReady",
+    "report"
+  ].includes(view);
+}
+
+function enforcePaidFirstGate() {
+  if (!isPaidGatedView()) return false;
+  if (canStartPaidAssessment()) return false;
+  state.view = paidGateFallbackView();
+  return true;
 }
 
 function hasMenstrualCycleContext(answers = state.stageAnswers) {
@@ -1789,6 +1826,12 @@ function rankedPatterns(includeDiary = true) {
 }
 
 function completeStageOne() {
+  if (!canStartPaidAssessment()) {
+    state.view = paidGateFallbackView();
+    saveState();
+    render({ scrollToTop: true });
+    return;
+  }
   state.preliminary = rankedPatterns(false).slice(0, 4);
   state.view = state.packageType === "one-time" ? "report" : "preliminary";
   saveState();
@@ -2001,6 +2044,7 @@ function renderChoice() {
 function renderOneTimeStart() {
   const invite = state.coachInvite || refreshCoachInvite();
   const coachName = invite?.coach?.display_name || "Coach";
+  const hasPaidAccess = canStartPaidAssessment("one-time");
   return `
     ${topbar(0, "Нэг удаагийн гүн зураглал")}
     <section class="screen">
@@ -2036,10 +2080,22 @@ function renderOneTimeStart() {
             <button class="button ghost" onclick="declineCoachDiscount()">Хөнгөлөлт ашиглахгүй, стандарт үнээр үргэлжлүүлэх</button>
           </div>
         </div>` : ""}
-        <div class="actions">
-          <button class="button" onclick="beginAssessment('one-time')">${state.coachDiscountConsent ? "Coach-ийн хөнгөлөлттэй үнээр тест эхлүүлэх" : "Тест эхлүүлэх"}</button>
-          <button class="button ghost" onclick="setView('choice')">Буцах</button>
-        </div>
+        ${hasPaidAccess ? `
+          <div class="actions">
+            <button class="button" onclick="beginAssessment('one-time')">${state.coachDiscountConsent ? "Coach-ийн хөнгөлөлттэй үнээр тест эхлүүлэх" : "Тест эхлүүлэх"}</button>
+            <button class="button ghost" onclick="setView('choice')">Буцах</button>
+          </div>
+        ` : `
+          <div class="card stack paywall-panel">
+            <h3>Төлбөр баталгаажсаны дараа тест эхэлнэ</h3>
+            <p class="muted">QPay нэхэмжлэл үүсэх нь төлбөр биш. Зөвхөн төлбөр баталгаажсаны дараа асуултууд нээгдэнэ.</p>
+            <div class="price-stack">
+              <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTimeAnchor}</p>
+              <p class="price promo"><span>Төлөх үнэ</span> ${currentOneTimePriceLabel()}</p>
+            </div>
+            ${renderWeightQpayPaymentBox({ returnLabel: "Буцах" })}
+          </div>
+        `}
       </div>
     </section>
   `;
@@ -2420,12 +2476,19 @@ function renderUnlock() {
 }
 
 function startDiary() {
+  if (!hasSevenDayAccess()) {
+    state.view = "sevenDayStart";
+    saveState();
+    render({ scrollToTop: true });
+    return false;
+  }
   state.view = "diary";
   state.diaryDay = Math.min(7, Math.max(1, state.diaryEntries.length + 1));
   state.diaryQuestionIndex = 0;
   state.diaryDraft = {};
   saveState();
   render({ scrollToTop: true });
+  return true;
 }
 
 function getDiaryQuestions() {
@@ -3407,12 +3470,13 @@ function normalizeQpayQrImage(value) {
   return `data:image/png;base64,${text}`;
 }
 
-function renderWeightQpayPaymentBox() {
+function renderWeightQpayPaymentBox(options = {}) {
   const payment = state.qpayPayment || initialState.qpayPayment;
   const invoice = payment.invoice || null;
   const busy = payment.status === "creating" || payment.status === "checking";
   const qrImage = normalizeQpayQrImage(invoice?.qrImage);
   const oneTimePrice = currentOneTimePriceLabel();
+  const returnLabel = options.returnLabel || "Сонголт руу буцах";
   return `
     <div class="stack">
       ${payment.message ? `<p class="${payment.status === "error" ? "danger-copy" : "muted"}">${escapeHtml(payment.message)}</p>` : ""}
@@ -3428,7 +3492,7 @@ function renderWeightQpayPaymentBox() {
           ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Шалгаж байна..." : "Дахин шалгах"}</button>`
           : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR үүсгэж байна..." : `${oneTimePrice} төлөөд бүрэн тайлангаа нээх`}</button>`}
         ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment('one-time')">Дотоод туршилтаар нээх</button>`)}
-        <button class="button ghost" onclick="setView('choice')">Сонголт руу буцах</button>
+        <button class="button ghost" onclick="setView('choice')">${escapeHtml(returnLabel)}</button>
       </div>
     </div>
   `;
@@ -5721,6 +5785,7 @@ function publicValidationProductLabel(productType) {
 
 function render(options = {}) {
   if (!hasBrowserRuntime) return;
+  enforcePaidFirstGate();
   if (getInternalFeedbackRoute()) {
     document.getElementById("app").innerHTML = renderFeedbackExport();
     if (options.scrollToTop) scrollToTopAfterRender();
@@ -5871,6 +5936,11 @@ if (typeof module !== "undefined") {
       hasOneTimeReportAccess,
       hasSevenDayAccess,
       hasUpgradeAccess,
+      canStartPaidAssessment,
+      enforcePaidFirstGate,
+      beginAssessment,
+      completeStageOne,
+      startDiary,
       renderUnlock,
       renderUpgradePaywall,
       renderReport,
