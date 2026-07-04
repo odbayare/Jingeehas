@@ -247,6 +247,50 @@ h3 {
   padding: clamp(20px, 4vw, 34px);
 }
 
+.research-method-section {
+  display: grid;
+  gap: 18px;
+  margin-top: 24px;
+  padding: clamp(18px, 3vw, 28px);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow-soft);
+}
+
+.research-method-section .eyebrow {
+  color: var(--accent-strong);
+}
+
+.research-method-copy {
+  display: grid;
+  gap: 12px;
+}
+
+.research-method-copy p {
+  margin: 0;
+  max-width: 900px;
+}
+
+.research-method-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.research-method-list li {
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+  color: var(--ink);
+  font-size: 0.95rem;
+  line-height: 1.38;
+}
+
 .stack {
   display: grid;
   gap: 16px;
@@ -866,6 +910,10 @@ h3 {
 
   .aside {
     order: 2;
+  }
+
+  .research-method-list {
+    grid-template-columns: 1fr;
   }
 }
 

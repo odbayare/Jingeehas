@@ -28,6 +28,16 @@ const PUBLIC_PRODUCT_DESCRIPTION = [
   "Ямар далд зуршлууд илүүдэл жин үүсэхэд нөлөөлж буйг тайлж мэд.",
   "Жин хасахад тань тохирох дөт хэв маяг, дасгал сургуулилтын чиглэлээ мэдэж ав."
 ];
+const RESEARCH_METHOD_BASIS = [
+  "BCT — зан үйлийн өөрчлөлтийн аргачлал",
+  "CBT — танин мэдэхүй-зан үйлийн хандлага",
+  "Emotional Eating — стресс ба сэтгэл хөдлөлийн идэлт",
+  "Habit Loop — дадал, өдөөгч, хариу үйлдлийн давталт",
+  "Environmental Cue Analysis — орчны өдөөгч хүчин зүйлс",
+  "Self-Monitoring — өөрийгөө ажиглах, хэв маягаа тэмдэглэх арга",
+  "Sleep / Rhythm / Recovery — унтах хэмнэл, энерги, сэргэлтийн ажиглалт",
+  "Safety-First Screening — мэргэжлийн зөвлөгөө шаардлагатай байж болох дохиог ялгах шалгуур"
+];
 
 const INTERNAL_FEEDBACK_DEFAULTS = {
   discomfort: "Үгүй",
@@ -1907,7 +1917,24 @@ function renderLanding() {
           <div class="mini-stat"><strong>Орой бүр 3–5 минут</strong><span class="muted">7 хоногийн богино тэмдэглэл</span></div>
         </div>
       </div>
+      ${renderResearchMethodBasisSection()}
       ${renderSampleResultPreview()}
+    </section>
+  `;
+}
+
+function renderResearchMethodBasisSection() {
+  return `
+    <section class="research-method-section" aria-labelledby="research-method-title">
+      <div class="research-method-copy">
+        <p class="eyebrow">Аргачлал</p>
+        <h2 id="research-method-title">Судалгаа, аргачлалын үндэс</h2>
+        <p>Энэ тест нь илүүдэл жинг зөвхөн “сахилга бат”-тай холбож тайлбарлахгүй. Харин стресс, сэтгэл хөдлөлийн идэлт, дадал, орчин, унтах хэмнэл, хоолны далд үүрэг, биеийн дохио зэрэг олон хүчин зүйлийн давхцлыг хамтад нь хардаг.</p>
+        <p class="muted">Тестийн бүтэц дараах аргачлалын чиглэлүүдэд тулгуурласан.</p>
+      </div>
+      <ul class="research-method-list">
+        ${RESEARCH_METHOD_BASIS.map(item => `<li>${item}</li>`).join("")}
+      </ul>
     </section>
   `;
 }
