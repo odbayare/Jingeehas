@@ -7,6 +7,7 @@ const indexHtml = fs.readFileSync("index.html", "utf8");
 const appSource = fs.readFileSync("app.js", "utf8");
 
 const PRODUCT_NAME = "Илүүдэл жингээс салах тест үнэлгээ";
+const OLD_PRIMARY_CTA = ["Тест", "үнэлгээг", "эхлүүлэх"].join(" ");
 const PUBLIC_COPY = [
   "Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаанаа илрүүл.",
   "Ямар далд зуршлууд илүүдэл жин үүсэхэд нөлөөлж буйг тайлж мэд.",
@@ -73,7 +74,8 @@ assert(appSource.includes(`const PUBLIC_PRODUCT_NAME = "${PRODUCT_NAME}";`), "ap
 PUBLIC_COPY.forEach(line => {
   assert(appSource.includes(line), `app source must include approved public copy: ${line}`);
 });
-assert(appSource.includes("Тест үнэлгээг эхлүүлэх"), "landing CTA must use test assessment wording");
+assert(appSource.includes("Тест эхлэх"), "landing CTA must use short test start wording");
+assert(!appSource.includes(OLD_PRIMARY_CTA), "old landing CTA wording must be absent");
 assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price must remain unchanged");
 assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";'), "product code must remain unchanged");
 assert(appSource.includes('create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
@@ -85,7 +87,8 @@ assert(landing.includes(PRODUCT_NAME), "landing must render official product nam
 PUBLIC_COPY.forEach(line => {
   assert(landing.includes(line), `landing must render approved public copy: ${line}`);
 });
-assert(landing.includes("Тест үнэлгээг эхлүүлэх"), "landing must render updated CTA");
+assert(landing.includes("Тест эхлэх"), "landing must render updated CTA");
+assert(!landing.includes(OLD_PRIMARY_CTA), "landing must not render old CTA");
 assert(!landing.includes("Яагаад хичээсэн ч жин буурахгүй байна вэ?"), "old hero headline must be removed");
 assert(!landing.includes("Миний зураглалыг эхлүүлэх"), "old hero CTA must be removed");
 assertCopySafe(landingHtml, "landing");

@@ -1893,7 +1893,7 @@ function renderLanding() {
             ${PUBLIC_PRODUCT_DESCRIPTION.map(line => `<p>${line}</p>`).join("")}
           </div>
           <div class="hero-actions">
-            <button class="button" onclick="setView('choice')">Тест үнэлгээг эхлүүлэх</button>
+            <button class="button" onclick="setView('choice')">Тест эхлэх</button>
             <button class="button secondary" onclick="setView('about')">Үнэлгээний ялгааг харах</button>
           </div>
         </div>

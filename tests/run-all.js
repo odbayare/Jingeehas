@@ -30,6 +30,7 @@ const commands = [
   ["node", ["tests/public-copy-trust-qa.test.js"]],
   ["node", ["tests/domain-metadata-implementation.test.js"]],
   ["node", ["tests/product-name-public-copy.test.js"]],
+  ["node", ["tests/primary-cta-text.test.js"]],
   ["node", ["tests/research-method-basis-section.test.js"]],
   ["node", ["tests/final-public-launch-smoke.test.js"]],
   ["node", ["tests/production-launch-monitoring.test.js"]],
