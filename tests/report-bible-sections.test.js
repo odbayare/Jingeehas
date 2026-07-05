@@ -151,7 +151,7 @@ function run() {
   assert(oneTime.includes("1. Гол гацалт"));
   assert(oneTime.includes("2. Яагаад давтагдаад байна вэ?"));
   assert(oneTime.includes("5. 14 хоногийн жижиг туршилт"));
-  assert(oneTime.includes("7. Тайлангаа хадгалах"));
+  assert(oneTime.includes("Тайлангаа хадгалах"));
   assert(!oneTime.includes("7 хоногоор нарийвчлах"));
   assert(!oneTime.includes("Гол зураг"));
   assert(!oneTime.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));

@@ -54,7 +54,7 @@ const forbiddenBodyHeadline = ["Нэг зүйл тодорлоо", "биеийн
   "3. Таны өдөр тутмын тойрог",
   "4. Таны хувьд хамгийн түрүүнд өөрчлөх цэг",
   "5. 14 хоногийн жижиг туршилт",
-  "7. Тайлангаа хадгалах"
+  "Тайлангаа хадгалах"
 ].forEach(section => {
   assert(reportText.includes(section), `owner report must read as one coherent paid report with section: ${section}`);
 });

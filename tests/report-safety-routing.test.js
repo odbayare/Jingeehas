@@ -55,4 +55,31 @@ assert(
 );
 assert(!/мацаг барь|удаан өлс|огцом хязгаарлалт хий|огцом хас гэж/i.test(bodyRisk), "body-risk report must not recommend fasting or extreme restriction");
 
+const professionalSafety = paidReport({
+  "S1-C02": "Эмэгтэй",
+  "S1-B05": "Хөхүүл",
+  "S1-B02": "Тийм, санаа зовоосон",
+  "MC-GATE": "Тийм, хамаарна",
+  "MC-06": ["Төрсний дараах эсвэл хөхүүл үе"],
+  "S1-S04": "Үгүй"
+});
+
+[
+  "Эхлээд мэргэжлийн хүнтэй ярилцах нь зөв байна",
+  "1. Яагаад ердийн жин хасалтын туршилт өгөхгүй байна вэ?",
+  "2. Ямар мэдээлэл авч очих вэ?",
+  "3. Ойрын 7 хоногт юуг ажиглах вэ?",
+  "4. Одоогоор юунаас зайлсхийх вэ?",
+  "Тайлангаа хадгалах",
+  "Тайлан хуулж авах",
+  "Хэвлэх / PDF хадгалах"
+].forEach(section => {
+  assert(professionalSafety.includes(section), `professional safety route must include ${section}`);
+});
+assert(!professionalSafety.includes("5. 14 хоногийн жижиг туршилт"), "professional route must not produce ordinary 14-day experiment");
+assert(!/онош тав|эмчилгээ|өвчтэй|сахилга батгүй|мацаг барь|огцом хас гэж/i.test(professionalSafety), "professional safety route must avoid diagnosis/treatment/shame/extreme diet claims");
+assert(!professionalSafety.includes("qpay-create-invoice"), "professional route must not expose QPay create endpoint");
+assert(!professionalSafety.includes("qpay-check-payment"), "professional route must not expose QPay check endpoint");
+assert(professionalSafety.length > 900, "professional route must provide paid report value, not a dead-end sentence");
+
 console.log("report-safety-routing tests passed");

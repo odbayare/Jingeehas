@@ -647,6 +647,23 @@ function extractMechanismsFromAnswer(questionOrId, answer) {
   ]);
 }
 
+function selectedAnswerBelongsToQuestion(questionOrId, answer) {
+  const question = typeof questionOrId === "string" ? getQuestionObject(questionOrId) : questionOrId;
+  if (!question || answer == null || answer === "" || !question.options) return true;
+  const values = Array.isArray(answer) ? answer : [answer];
+  return values.every(value => question.options.includes(value));
+}
+
+function questionMappingIssues(answers = state.stageAnswers || {}) {
+  return Object.entries(answers)
+    .filter(([questionId, answer]) => !selectedAnswerBelongsToQuestion(questionId, answer))
+    .map(([questionId, answer]) => ({
+      questionId,
+      answer,
+      allowedOptions: getQuestionObject(questionId)?.options || []
+    }));
+}
+
 function extractReportUseFromAnswer(questionOrId, answer) {
   const question = typeof questionOrId === "string" ? getQuestionObject(questionOrId) : questionOrId;
   if (!question || answer == null || answer === "") return [];
@@ -776,6 +793,85 @@ function applyContradictionRules(evidence) {
   }
 }
 
+function boostScenarioEvidence(evidence, mechanismName, amount, detail) {
+  addMechanismEvidence(evidence, mechanismName, amount, "stage1", {
+    tags: detail.tags || [],
+    dimensions: detail.dimensions || [],
+    reportUse: ["scenario_focus", "first_leverage_point", "cycle_map"],
+    direct: true,
+    questionId: detail.questionId || "WP66-SCENARIO"
+  });
+}
+
+function applyScenarioPriorityRules(evidence, currentState = state) {
+  const answers = currentState.stageAnswers || {};
+  const text = allAnswerText(answers).toLowerCase();
+  const hasText = (...terms) => terms.some(term => text.includes(term.toLowerCase()));
+  const values = normalizedAnswerValues(answers);
+  const hasAnswer = (...terms) => terms.some(term => values.includes(term.toLowerCase()));
+
+  if (hasText("шөнийн ээлж", "ээлж", "late work", "night shift", "шөнө ажил", "after-shift")) {
+    boostScenarioEvidence(evidence, mechanismNamesByKey.circadian, 5, {
+      tags: ["circadian_crash", "shift_work"],
+      dimensions: ["D15"],
+      questionId: "WP66-SHIFT"
+    });
+  } else if (
+    hasText("нойр муу", "өглөө яд", "өдөр нойрмог", "унтах", "тогтворгүй", "4-6 цаг", "4 цагаас бага") ||
+    hasAnswer("нойр муудсан", "4-6 цаг", "4 цагаас бага", "чанар муу", "тогтворгүй", "өдөр нойрмоглодог", "өглөө ядруу сэрдэг")
+  ) {
+    boostScenarioEvidence(evidence, mechanismNamesByKey.circadian, 4, {
+      tags: ["circadian_crash"],
+      dimensions: ["D15"],
+      questionId: "WP66-SLEEP"
+    });
+  }
+
+  if (
+    hasText("зууш", "snack", "харагда", "үнэр", "хоолны зураг", "захиалгын апп", "гарын дор", "ширээн дээр", "гал тогоо") ||
+    hasAnswer("ойр байсан зууш", "харагдвал бараг автоматаар иддэг", "ихэвчлэн иддэг", "хоолны зураг эсвэл захиалгын апп харахад")
+  ) {
+    boostScenarioEvidence(evidence, mechanismNamesByKey.cue, 5, {
+      tags: ["cue_trigger"],
+      dimensions: ["D14"],
+      questionId: "WP66-CUE"
+    });
+  }
+
+  if (
+    hasText("бусдын хэрэгцээ", "үлдэгдэл", "leftover", "хүүхэд", "хоол хойш", "өөрийн хоол", "өөрийн амралт", "caregiving", "family") ||
+    hasAnswer("бусдын хэрэгцээ", "гэр бүл")
+  ) {
+    boostScenarioEvidence(evidence, mechanismNamesByKey.roleOverload, 5, {
+      tags: ["role_overload"],
+      dimensions: ["D18", "D13"],
+      questionId: "WP66-ROLE"
+    });
+  }
+
+  if (
+    hasText("мацаг", "орой хоол идэхгүй", "маргааш илүү чанга", "өнөөдөр өнгөрлөө", "одоо бүх юм дууссан", "strict reset", "tomorrow stricter") ||
+    hasAnswer("мацаг", "орой хоол идэхгүй", "маргааш илүү чанга барина", "өнөөдөр өнгөрлөө, маргаашаас", "одоо бүх юм дууссан")
+  ) {
+    boostScenarioEvidence(evidence, mechanismNamesByKey.collapse, 4, {
+      tags: ["control_collapse"],
+      dimensions: ["D11", "D02"],
+      questionId: "WP66-STRICT"
+    });
+  }
+
+  if (
+    hasText("найз", "найзууд", "архи", "хүмүүсийн дунд", "татгалзах", "social", "амралтын өдөр") ||
+    hasAnswer("татгалзах эвгүй байсан")
+  ) {
+    boostScenarioEvidence(evidence, mechanismNamesByKey.social, 5, {
+      tags: ["social_pressure"],
+      dimensions: ["D17"],
+      questionId: "WP66-SOCIAL"
+    });
+  }
+}
+
 function evidenceLabelFor(item, context) {
   if (!item || item.score <= 0) return "insufficient";
   if (context.evidenceQuality === "one_time") {
@@ -859,6 +955,7 @@ function calculateMechanismEvidence(currentState = state) {
 
   scoreRepeatedDays(evidence);
   applyContradictionRules(evidence);
+  applyScenarioPriorityRules(evidence, currentState);
 
   const context = { evidenceQuality };
   Object.values(evidence).forEach(item => {
@@ -4070,9 +4167,10 @@ function renderOneTimePaywall({ mode, primary, primaryMechanism, tags }) {
   `;
 }
 
-function renderReportDeliveryActions() {
+function renderReportDeliveryActions(options = {}) {
   const contact = contactCaptureState();
   const savedContact = hasSavedContactInfo();
+  const heading = options.heading || "Тайлангаа хадгалах";
   const contactRows = savedContact
     ? [
         contact.name ? ["Нэр", contact.name] : null,
@@ -4082,7 +4180,7 @@ function renderReportDeliveryActions() {
     : [];
   return `
     <div class="report-section report-delivery-card" data-report-delivery>
-      <h3>7. Тайлангаа хадгалах</h3>
+      <h3>${escapeHtml(heading)}</h3>
       <p class="muted">Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.</p>
       ${savedContact ? `
         <div class="contact-summary inline-summary">
@@ -4763,7 +4861,7 @@ function selectReportVoiceKey(primaryKey, tags = []) {
   else if (primaryKey === "circadian" || tags.includes("circadian_crash")) voiceKey = "circadian";
   else if (primaryKey === "reward" || tags.includes("reward_pull")) voiceKey = "rewardDeficit";
   const surfaceVoiceKey = surfaceContextVoiceKey();
-  if (surfaceVoiceKey && !(voiceKey === "collapse" && surfaceVoiceKey === "gymRestriction")) return surfaceVoiceKey;
+  if (surfaceVoiceKey) return surfaceVoiceKey;
   return shouldUseMenstrualCycleContextVoice(voiceKey) ? "menstrualCycleContext" : voiceKey;
 }
 
@@ -5264,7 +5362,7 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
       <div class="panel" data-report-output>
         <div class="report-section">
           <h2>Таны тайлан бэлэн боллоо</h2>
-          <p class="muted">Энэ бол таны төлбөртэй нэг удаагийн тайлан. Доорх хэсэг таны бөглөсөн хариултаас хамгийн хэрэгтэй нэг чиглэлийг ялгаж өгнө.</p>
+          <p class="muted">Доорх тайлан таны хариултаас хамгийн хүчтэй давтагдаж буй нэг хэв маягийг тайван харуулах зорилготой.</p>
         </div>
         <div class="report-section">
           <h3>1. Гол гацалт</h3>
@@ -5287,7 +5385,7 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
           ${experimentRows.map(([label, copy]) => `<p><strong>${label}</strong><br>${publicHtml(copy)}</p>`).join("")}
         </div>
         ${clearPaidReportSafetyHtml(mode, tags)}
-        ${renderReportDeliveryActions()}
+        ${renderReportDeliveryActions({ heading: "Тайлангаа хадгалах" })}
         ${renderInternalTesterFeedbackSurvey()}
         <div class="actions"><button class="button secondary" onclick="setView('choice')">Сонголт руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
       </div>
@@ -6144,23 +6242,40 @@ function renderReport() {
     return renderReportWithConnectedRuntimeVisibleSurface(`
       ${topbar(100, mode.title)}
       <section class="screen">
-        <div class="panel">
+        <div class="panel" data-report-output>
           <div class="report-section">
-            <h2>Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна</h2>
-            <p>Энэ нь онош гэсэн үг биш. Харин хэт барих, хоол алгасах, огцом дэглэм эхлүүлэхээс өмнө эмч, сэтгэлзүйч, эсвэл хоол зүйн мэргэжилтэнтэй ярилцахад хэрэгтэй сануулга юм.</p>
-            <p>Тиймээс энд ердийн жин хасалтын туршилт өгөхгүй. Харин ярилцахад авч очих богино нэгтгэл гаргана.</p>
+            <h2>Эхлээд мэргэжлийн хүнтэй ярилцах нь зөв байна</h2>
+            <p>Энэ нь онош гэсэн үг биш. Харин хоолоо огцом хасах, мацаг барих, эсвэл өөрт тохирохгүй арга эхлүүлэхээс өмнө биеийн нөхцөлөө аюулгүй шалгах сануулга юм.</p>
+            <p class="muted">Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна. Ярилцах товч нэгтгэл доор байна. ярилцахад авч очих богино нэгтгэл гаргана.</p>
           </div>
           <div class="report-section">
-            <h3>Ярилцах товч нэгтгэл</h3>
+            <h3>1. Яагаад ердийн жин хасалтын туршилт өгөхгүй байна вэ?</h3>
+            <p>Таны зарим хариулт хоолны дүрэм эхлэхээс өмнө бие, нойр, төрсний дараах/хөхүүл үе, сахар/даралт, эсвэл хоолтой холбоотой аюулгүй байдлыг тайван шалгах хэрэгтэйг зааж байна.</p>
+          </div>
+          <div class="report-section">
+            <h3>2. Ямар мэдээлэл авч очих вэ?</h3>
             <ul>
               <li>Хоол, жин, биеийн мэдрэмж, эмийн хэрэглээ эсвэл төрсний дараах нөхцөлтэй холбоотой хариултуудаа нэгтгэж авч очих.</li>
               <li>Хоол холдох үед гардаг шинж, хэмжсэн сахар/даралт, ухаан балартах эсвэл будилах үе байсан эсэхийг тодорхой тэмдэглэх.</li>
               <li>Хяналт алдагдах, нуух, ичих мэдрэмж давтагддаг бол эхлээд мэргэжлийн хүнтэй ярилцах дараалал барих.</li>
             </ul>
           </div>
+          <div class="report-section">
+            <h3>3. Ойрын 7 хоногт юуг ажиглах вэ?</h3>
+            <ul>
+              <li>Хоолны зай уртсахад ямар биеийн дохио гарч байна.</li>
+              <li>Нойр, ядралт, стресс, төрсний дараах ачаалал хоолны сонголттой яаж давхцаж байна.</li>
+              <li>Огцом хасах бодол төрөх үед бие болон сэтгэл ямар болж байна.</li>
+            </ul>
+          </div>
+          <div class="report-section">
+            <h3>4. Одоогоор юунаас зайлсхийх вэ?</h3>
+            <p>Мацаг, хоол алгасах, огцом хязгаарлалт, өөрийгөө шийтгэх дасгал, эсвэл “буцаад эхнээс нь чанга барина” гэсэн ганцхан шийдлээс түр зайлсхий.</p>
+          </div>
           ${menstrualCycleContextHtml()}
           ${menstrualCycleProfessionalSummaryHtml()}
           ${bodySafetyPauseHtml(tags)}
+          ${renderReportDeliveryActions({ heading: "Тайлангаа хадгалах" })}
           <div class="actions"><button class="button secondary" onclick="setView('preliminary')">Эхний хариу руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
         </div>
       </section>
@@ -6519,6 +6634,8 @@ if (typeof module !== "undefined") {
     allQuestionObjects,
     getQuestionMetadata,
     getOptionMetadata,
+    selectedAnswerBelongsToQuestion,
+    questionMappingIssues,
     extractTagsFromAnswer,
     extractDimensionsFromAnswer,
     extractMechanismsFromAnswer,
@@ -6583,6 +6700,8 @@ if (typeof module !== "undefined") {
       renderContactCaptureForm,
       renderSavedContactSummary,
       renderReportDeliveryActions,
+      questionMappingIssues,
+      selectedAnswerBelongsToQuestion,
       copyCurrentReport,
       printCurrentReport,
       safeWeightEventMetadata,

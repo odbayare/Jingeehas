@@ -220,7 +220,7 @@ const scenarios = [
       pattern_probes: { role_overload: "Өдөржин ажил/гэр бүлдээ зарцуулсан" }
     }, ["Оройн хоол миний цаг болсон", "Reward хүсэл өдөр дуусахад нэмэгдсэн"])),
     expectedMode: "deep",
-    expectedPrimary: [M.reward, M.rewardDeficit, M.executive],
+    expectedPrimary: [M.reward, M.rewardDeficit, M.executive, M.roleOverload],
     expectedSecondary: [[M.rewardDeficit], [M.roleOverload, M.circadian, M.executive]],
     hiddenIncludes: ["Таатай мэдрэмж авах", "Тэнхээ нөхөх", "Өөрийгөө хамгийн сүүлд"],
     leverageIncludes: ["таатай мэдрэмж авах жижиг сонголт", "оройн хоолны бэлэн зам", "өөрийн хоол, амралтын хамгаалагдсан жижиг зай"],

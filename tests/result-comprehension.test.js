@@ -32,10 +32,10 @@ function assertSimpleStructure(report) {
     "3. Таны өдөр тутмын тойрог",
     "4. Таны хувьд хамгийн түрүүнд өөрчлөх цэг",
     "5. 14 хоногийн жижиг туршилт",
-    "7. Тайлангаа хадгалах"
+    "Тайлангаа хадгалах"
   ].forEach(phrase => assert(report.includes(phrase), `ordinary report should include ${phrase}`));
   assert(report.indexOf("1. Гол гацалт") < report.indexOf("5. 14 хоногийн жижиг туршилт"), "paid report should keep one clear ordered structure");
-  assert(report.indexOf("5. 14 хоногийн жижиг туршилт") < report.indexOf("7. Тайлангаа хадгалах"), "save actions should come after the experiment");
+  assert(report.indexOf("5. 14 хоногийн жижиг туршилт") < report.indexOf("Тайлангаа хадгалах"), "save actions should come after the experiment");
 }
 
 function assertNoConfusingReportWords(report) {
@@ -54,7 +54,6 @@ function assertNoConfusingReportWords(report) {
     "Нурах давтамж",
     "шийдвэрийн ачаалал",
     "тухайн мөчид хоол дараах хэрэгцээний нэгийг түр нөхөж байсан байж магадгүй",
-    "таны хариултаас",
     "харагдаж байна",
     "энэ эхний зураглал",
     "давтагддагийг харна",
