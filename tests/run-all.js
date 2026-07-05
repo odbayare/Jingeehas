@@ -59,6 +59,7 @@ const commands = [
   ["node", ["tests/paid-report-quality.test.js"]],
   ["node", ["tests/owner-weekend-social-scenario.test.js"]],
   ["node", ["tests/scenario-focus-matching.test.js"]],
+  ["node", ["tests/sleep-rhythm-scenario-focus.test.js"]],
   ["node", ["tests/virtual-qa-verdict-strictness.test.js"]],
   ["node", ["tests/menstrual-cycle-context.test.js"]],
   ["node", ["tests/surface-hidden-function-reframe.test.js"]],

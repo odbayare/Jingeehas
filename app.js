@@ -504,6 +504,7 @@ function optionSignals(label) {
   };
 
   if (/алгас|5\+|орой нөх|хоолны хооронд/.test(text)) add(["skipped_meal", "meal_gap_5h_plus"], ["D03", "D15"], [mechanismNamesByKey.hungerSafety, mechanismNamesByKey.circadian], ["trigger_map", "before_30", "cycle_map"]);
+  if (/нойр|чанар муу|4-6 цаг|4 цагаас бага|өдөр нойрмог|өглөө яд|шөнийн ээлж|кофе|орой нөх/.test(text)) add(["circadian_crash"], ["D15"], [mechanismNamesByKey.circadian], ["scenario_focus", "cycle_map", "first_leverage_point"]);
   if (/амттай|шагна|нэг гоё|reward|уйд/.test(text)) add(["reward_pull"], ["D05"], [mechanismNamesByKey.reward, mechanismNamesByKey.rewardDeficit], ["hidden_function", "not_the_real_problem", "first_leverage_point"]);
   if (/тайвш|стресс|stress|санаа зовнил|гуниг|уур|ганцаард/.test(text)) add(["food_as_regulation"], ["D06", "D16"], [mechanismNamesByKey.regulation], ["hidden_function", "cycle_map"]);
   if (/дараа өлс|өлсөхөөс|санаа зовсон/.test(text)) add(["hunger_safety"], ["D07"], [mechanismNamesByKey.hungerSafety], ["hidden_function", "what_to_avoid", "first_leverage_point"]);
@@ -4835,6 +4836,37 @@ function shouldUseMenstrualCycleContextVoice(baseVoiceKey) {
     && ["rewardDeficit", "circadian", "executive"].includes(baseVoiceKey);
 }
 
+function hasStrongSleepRhythmEvidence(answers = state.stageAnswers || {}) {
+  const text = allAnswerText(answers).toLowerCase();
+  const answerValues = Object.values(answers)
+    .flatMap(value => Array.isArray(value) ? value : [value])
+    .map(value => String(value || "").trim().toLowerCase());
+  const hasText = (...terms) => terms.some(term => text.includes(term.toLowerCase()));
+  const hasAnswer = (...terms) => terms.some(term => answerValues.includes(term.toLowerCase()));
+  return hasText(
+    "чанар муу",
+    "4-6 цаг",
+    "4 цагаас бага",
+    "өглөө ядруу сэрдэг",
+    "өдөр нойрмоглодог",
+    "шөнийн ээлж",
+    "өдөр бага идээд орой нөхдөг",
+    "орой нөх",
+    "оройн тэнхээ",
+    "нойр муу",
+    "кофе"
+  ) || hasAnswer(
+    "чанар муу",
+    "4-6 цаг",
+    "4 цагаас бага",
+    "өглөө ядруу сэрдэг",
+    "өдөр нойрмоглодог",
+    "шөнийн ээлжтэй",
+    "өдөр бага идээд орой нөхдөг",
+    "өдөр бага идээд орой нөхөх"
+  );
+}
+
 function surfaceContextVoiceKey(answers = state.stageAnswers || {}) {
   const text = allAnswerText(answers).toLowerCase();
   const hasText = (...terms) => terms.some(term => text.includes(term.toLowerCase()));
@@ -4856,9 +4888,10 @@ function selectReportVoiceKey(primaryKey, tags = []) {
   if (primaryKey === "roleOverload" || primaryKey === "rewardDeficit" || tags.includes("role_overload")) voiceKey = "rewardDeficit";
   else if (primaryKey === "cue" || tags.includes("cue_trigger")) voiceKey = "cue";
   else if (primaryKey === "collapse" || primaryKey === "perfectionism" || tags.includes("control_collapse")) voiceKey = "collapse";
+  else if (primaryKey === "circadian" && hasStrongSleepRhythmEvidence()) voiceKey = "circadian";
   else if (primaryKey === "regulation" || tags.includes("food_as_regulation")) voiceKey = "regulation";
   else if (primaryKey === "hungerSafety" || tags.includes("hunger_safety") || tags.includes("meal_gap_5h_plus") || tags.includes("skipped_meal")) voiceKey = "hungerSafety";
-  else if (primaryKey === "circadian" || tags.includes("circadian_crash")) voiceKey = "circadian";
+  else if (primaryKey === "circadian" || (tags.includes("circadian_crash") && hasStrongSleepRhythmEvidence())) voiceKey = "circadian";
   else if (primaryKey === "reward" || tags.includes("reward_pull")) voiceKey = "rewardDeficit";
   const surfaceVoiceKey = surfaceContextVoiceKey();
   if (surfaceVoiceKey) return surfaceVoiceKey;
@@ -4980,7 +5013,7 @@ function getSimpleResultSummary(primaryKey, context = {}) {
       avoidForNow: "Бүх хоолоо хорих гэж оролдохоос илүү нүдэнд ойр байгаа нэг зүйлээ өөрчил."
     },
     circadian: {
-      stuckMoment: "Нойр муу өдөр орой амттай юм илүү хүчтэй татдаг.",
+      stuckMoment: "Гол гацалт нь нойр, тэнхээ, хоолны хэмнэлийн зөрүү дээр төвлөрч байна.",
       meaningBullets: [
         "Энэ нь зөвхөн дуршил биш байж болно.",
         "Өдөржин бие сул явахад хурдан, амттай зүйл илүү ойр санагддаг.",
@@ -5308,7 +5341,7 @@ function reportEvidenceNote(voiceKey) {
     hungerSafety: "Та хоолны зай уртсах үед орой хүчтэй өлсөж, дараа дахин өлсөхөөс санаа зовдог гэж тэмдэглэсэн.",
     rewardDeficit: "Та өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагддаг гэж хариулсан.",
     cue: "Та хоол харагдах, үнэртэх, захиалгын апп харахад идэх хүсэл нэмэгддэг гэж тэмдэглэсэн.",
-    circadian: "Та нойр муу үед амттай зүйл илүү татдаг, орой тэнхээ багасдаг гэж хариулсан.",
+    circadian: "Та нойр муу үед амттай зүйл илүү татдаг, орой тэнхээ багасдаг, хоолны хэмнэл орой нөхөх тал руу хэлбийдэг гэж хариулсан.",
     menstrualCycleContext: "Та сарын тэмдэг ирэхээс өмнөх өдрүүдэд амттай зүйл хүсэх, ядаргаа, сэтгэл савлах нэмэгддэг гэж тэмдэглэсэн.",
     shiftWork: "Та шөнийн ээлж, унтах цаг солигдох, ээлжийн дараах ядаргаа, хурдан тэнхээ өгөх мэт санагдах амттай зүйл давхцдаг гэж тэмдэглэсэн.",
     socialWeekend: "Та амралтын өдөр найз нөхөд, архи, оройн хоол, хүмүүсийн дунд татгалзах эвгүй мэдрэмж давхцдаг гэж тэмдэглэсэн.",
