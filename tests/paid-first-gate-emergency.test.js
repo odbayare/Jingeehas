@@ -7,6 +7,8 @@ const appSource = readFileSync("app.js", "utf8");
 const runAllSource = readFileSync("tests/run-all.js", "utf8");
 const { _internal } = app;
 
+_internal.setComingSoonModeForTest(false);
+
 function resetUnpaid(overrides = {}) {
   mockBackend.resetMockBackend();
   _internal.setTestState({

@@ -40,6 +40,7 @@ const commands = [
   ["node", ["tests/conversion-paywall-ux-polish.test.js"]],
   ["node", ["tests/payment-qpay-production-hardening-audit.test.js"]],
   ["node", ["tests/live-payment-qpay-flow-qa.test.js"]],
+  ["node", ["tests/coming-soon-mode.test.js"]],
   ["node", ["tests/paid-first-gate-emergency.test.js"]],
   ["node", ["tests/qpay-device-payment-ux.test.js"]],
   ["node", ["tests/no-account-contact-delivery.test.js"]],

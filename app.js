@@ -1,4 +1,6 @@
 const STORAGE_KEY = "weightLossDeepPatternMvp";
+const WEIGHT_TEST_COMING_SOON_MODE = true;
+let comingSoonModeTestOverride = null;
 const ENABLE_RUNTIME_ADAPTER_SHADOW = false;
 const ENABLE_VISIBLE_SURFACE_PROTOTYPE = false;
 const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = true;
@@ -1093,7 +1095,22 @@ function resetState() {
   render({ scrollToTop: true });
 }
 
+function isComingSoonModeActive() {
+  const enabled = comingSoonModeTestOverride === null ? WEIGHT_TEST_COMING_SOON_MODE : comingSoonModeTestOverride;
+  return enabled && !isInternalTestMode();
+}
+
+function setComingSoonModeForTest(value) {
+  comingSoonModeTestOverride = value === null ? null : Boolean(value);
+}
+
 function setView(view) {
+  if (isComingSoonModeActive()) {
+    state.view = "landing";
+    saveState();
+    render({ scrollToTop: true });
+    return;
+  }
   state.view = view;
   enforcePaidFirstGate();
   saveState();
@@ -1101,6 +1118,12 @@ function setView(view) {
 }
 
 function choosePackage(packageType) {
+  if (isComingSoonModeActive()) {
+    state.view = "landing";
+    saveState();
+    render({ scrollToTop: true });
+    return;
+  }
   state.packageType = packageType;
   state.view = packageType === "one-time" ? "oneTimeStart" : "sevenDayStart";
   if (packageType === "one-time") refreshCoachInvite();
@@ -1225,6 +1248,13 @@ function editContactCapture() {
 }
 
 function beginAssessment(packageType = state.packageType || "one-time") {
+  if (isComingSoonModeActive()) {
+    state.packageType = packageType;
+    state.view = "landing";
+    saveState();
+    render({ scrollToTop: true });
+    return false;
+  }
   if (!canStartPaidAssessment(packageType)) {
     state.packageType = packageType;
     state.view = packageType === "seven-day" ? "sevenDayStart" : "oneTimeStart";
@@ -1367,6 +1397,17 @@ function qpayStatusMessage(status) {
 }
 
 async function createWeightQpayInvoice() {
+  if (isComingSoonModeActive()) {
+    state.qpayPayment = {
+      status: "idle",
+      message: "Жин хасалтын тест одоогоор шинэчлэгдэж байна. Төлбөрийн QR үүсгэх боломж түр хаалттай.",
+      invoice: null
+    };
+    state.view = "landing";
+    saveState();
+    render({ scrollToTop: true });
+    return false;
+  }
   if (!hasSavedContactInfo()) {
     state.contactCapture = {
       ...contactCaptureState(),
@@ -2121,6 +2162,43 @@ function topbar(progress, label = PUBLIC_PRODUCT_NAME) {
         <div class="progress" aria-label="progress"><div class="progress-bar" style="--progress:${progress}"></div></div>
       </div>
     </div>
+  `;
+}
+
+function renderComingSoon() {
+  return `
+    <section class="hero coming-soon-hero">
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="eyebrow">Жин хасалтын тест шинэчлэгдэж байна</p>
+          <h1>Тун удахгүй</h1>
+          <div class="lead public-description">
+            <p>Бид энэ тестийн асуулт, тайлангийн чанар, аюулгүй байдлын чиглүүлгийг сайжруулж байна.</p>
+            <p>Шинэчилсэн хувилбар бэлэн болтол төлбөр авахгүй, тест эхлүүлэхгүй.</p>
+          </div>
+          <div class="hero-actions">
+            <a class="button secondary" href="https://www.lifepattern.live">LifePattern нүүр хуудас руу буцах</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="screen">
+      <div class="grid">
+        <div class="panel stack">
+          <h2>Түр хаасан төлөв</h2>
+          <p class="muted">WP64 дотоод шалгалтаар тайлангийн чанар, асуултын ойлгомж, зарим нөхцөлд таарах байдал дээр засах зүйлс илэрсэн тул олон нийтэд төлбөртэй хувилбарыг түр хаалаа.</p>
+          <ul>
+            <li>QPay төлбөрийн QR энэ хуудсаас үүсэхгүй.</li>
+            <li>Тестийн асуултууд олон нийтэд нээгдэхгүй.</li>
+            <li>Одоо байгаа логик хадгалагдсан, чанарын засвар дууссаны дараа дахин нээнэ.</li>
+          </ul>
+        </div>
+        <div class="aside">
+          <div class="mini-stat"><strong>Төлөв</strong><span class="muted">Чанарын засвар хийгдэж байна</span></div>
+          <div class="mini-stat"><strong>Төлбөр</strong><span class="muted">Түр хаалттай</span></div>
+        </div>
+      </div>
+    </section>
   `;
 }
 
@@ -6370,6 +6448,12 @@ function publicValidationProductLabel(productType) {
 
 function render(options = {}) {
   if (!hasBrowserRuntime) return;
+  if (isComingSoonModeActive()) {
+    state.view = "landing";
+    document.getElementById("app").innerHTML = renderComingSoon();
+    if (options.scrollToTop) scrollToTopAfterRender();
+    return;
+  }
   enforcePaidFirstGate();
   if (getInternalFeedbackRoute()) {
     document.getElementById("app").innerHTML = renderFeedbackExport();
@@ -6520,6 +6604,10 @@ if (typeof module !== "undefined") {
       renderInternalTesterFeedbackSurvey,
       renderFeedbackThanks,
       renderFeedbackExport,
+      WEIGHT_TEST_COMING_SOON_MODE,
+      isComingSoonModeActive,
+      setComingSoonModeForTest,
+      renderComingSoon,
       renderLanding,
       renderAbout,
       renderChoice,
@@ -6537,6 +6625,7 @@ if (typeof module !== "undefined") {
       canStartPaidAssessment,
       enforcePaidFirstGate,
       beginAssessment,
+      createWeightQpayInvoice,
       completeStageOne,
       startDiary,
       renderUnlock,
