@@ -21,7 +21,7 @@ function strictQaVerdict({ expectedFocus, reportText, mcMappingIssues = [], prof
     issues.push("expected family/caregiving focus missing");
   }
   if (mcMappingIssues.length) issues.push("MC answer mapping issue");
-  if (/5\. 14 хоногийн жижиг туршилт[\s\S]*7\. Тайлангаа хадгалах/.test(reportText)) issues.push("report numbering jump");
+  if (/7\. 7–14 хоногийн туршилт[\s\S]*7\. Тайлангаа хадгалах/.test(reportText)) issues.push("report numbering jump");
   if (professionalRoute && (!reportText.includes("Тайлан хуулж авах") || !reportText.includes("Хэвлэх / PDF хадгалах"))) {
     issues.push("professional safety report missing copy/print");
   }
@@ -47,7 +47,7 @@ assert.notStrictEqual(
   "mismatched family/caregiving focus cannot receive PASS"
 );
 assert.notStrictEqual(
-  strictQaVerdict({ expectedFocus: "social", reportText: ["5. 14 хоногийн жижиг туршилт", ["7.", "Тайлангаа хадгалах"].join(" ")].join(" ... ") }),
+  strictQaVerdict({ expectedFocus: "social", reportText: ["7. 7–14 хоногийн туршилт", ["7.", "Тайлангаа хадгалах"].join(" ")].join(" ... ") }),
   "PASS",
   "numbering jump cannot receive PASS"
 );

@@ -25,7 +25,10 @@ function run(stageAnswers, stageSummaryText = "") {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    stageAnswers,
+    stageAnswers: {
+      ...stageAnswers,
+      ...(stageSummaryText ? { "S1-V01": stageSummaryText } : {})
+    },
     stageVoiceSummaries,
     preliminary: [],
     diaryEntries: []
@@ -40,8 +43,8 @@ function run(stageAnswers, stageSummaryText = "") {
 function assertFocus(label, result, expectedKey, requiredPhrases, forbiddenGenericStress = true) {
   assert.strictEqual(result.ranked[0]?.key, expectedKey, `${label}: primary focus`);
   const lowerText = result.text.toLowerCase();
-  const stuckStart = result.text.indexOf("1. Гол гацалт");
-  const stuckEnd = result.text.indexOf("2. Яагаад давтагдаад байна вэ?");
+  const stuckStart = result.text.indexOf("1. Энэ тайлан юунд тулгуурласан бэ?");
+  const stuckEnd = result.text.indexOf("2. Таны гол давтагдаж буй механизм");
   const stuck = result.text.slice(stuckStart, stuckEnd);
   requiredPhrases.forEach(phrase => {
     assert(lowerText.includes(phrase.toLowerCase()) || stuck.toLowerCase().includes(phrase.toLowerCase()), `${label}: missing scenario phrase ${phrase}`);
@@ -110,8 +113,8 @@ assertFocus(
   "strict diet rebound male",
   run({
     "S1-C02": "Эрэгтэй",
-    "S1-W04": ["Мацаг", "Орой хоол идэхгүй"],
-    "S1-W06": "Маргааш илүү чанга барина",
+    "S1-W04": ["Завсарлагатай мацаг / мацаг барих", "Орой хоол идэхгүй байх"],
+    "S1-W06": "Маргааш илүү чанга барина гэж боддог",
     "S1-X03": "Ихэвчлэн тэгдэг",
     "S1-F02": "Одоо бүх юм дууссан"
   }, "Өнөөдөр өнгөрлөө, маргааш илүү чанга барина гэж дахин эхэлдэг."),
@@ -124,7 +127,7 @@ assertFocus(
   run({
     "S1-C02": "Эрэгтэй",
     "S1-F01": ["Татгалзах эвгүй байсан"],
-    "S1-V01": "Амралтын өдөр найзууд, архи, хүмүүсийн дунд татгалзах эвгүй."
+    "S1-V01": "Амралтын өдөр найзууд, согтууруулах ундаа хэрэглэсэн орой, хүмүүсийн дунд татгалзах эвгүй."
   }, "Амралтын өдөр найз нөхөдтэй байхад татгалзах эвгүй."),
   "social",
   ["Амралтын өдөр", "татгалзах"]

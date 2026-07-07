@@ -232,7 +232,7 @@ export const driverStackFixtures = [
         hunger_level: "4",
         food_function: ["Татгалзах эвгүй байсан"],
         emotion: "Тайван",
-        drinks: ["Алкоголь"],
+        drinks: ["Согтууруулах ундаа"],
         pattern_probes: { monday_restart: "Даваа гарагт дахин эхэлнэ гэж бодсон" }
       }, ["Weekend social table дээр татгалзах эвгүй байсан", "Архи social context-той давхцсан", "Monday restart бодол гарсан"]))
     },

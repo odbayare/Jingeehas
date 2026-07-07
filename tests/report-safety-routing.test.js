@@ -23,7 +23,7 @@ function paidReport(stageAnswers) {
 }
 
 const forbiddenBodyHeadline = ["Нэг зүйл тодорлоо", "биеийн талаа шалгахад илүүдэхгүй"].join(" — ");
-const mildBodyCaution = "6. Болгоомжлох зүйл";
+const mildBodyCaution = "хоолоо огцом хасахгүй";
 
 const normalSocial = paidReport({
   "S1-C02": "Эрэгтэй",
@@ -50,7 +50,7 @@ assert(bodyRisk.replace(/^Тайлан\s+/, "").startsWith("Таны тайла�
 assert(!bodyRisk.includes(forbiddenBodyHeadline), "body-risk report must not use the old body-check top headline");
 assert(bodyRisk.includes(mildBodyCaution), "mild caution must appear when body-risk flags exist");
 assert(
-  bodyRisk.indexOf(mildBodyCaution) > bodyRisk.indexOf("5. 14 хоногийн жижиг туршилт"),
+  bodyRisk.indexOf(mildBodyCaution) > bodyRisk.indexOf("7. 7–14 хоногийн туршилт"),
   "mild caution must stay as a short separate section after the main report"
 );
 assert(!/мацаг барь|удаан өлс|огцом хязгаарлалт хий|огцом хас гэж/i.test(bodyRisk), "body-risk report must not recommend fasting or extreme restriction");
@@ -76,7 +76,7 @@ const professionalSafety = paidReport({
 ].forEach(section => {
   assert(professionalSafety.includes(section), `professional safety route must include ${section}`);
 });
-assert(!professionalSafety.includes("5. 14 хоногийн жижиг туршилт"), "professional route must not produce ordinary 14-day experiment");
+assert(!professionalSafety.includes("7. 7–14 хоногийн туршилт"), "professional route must not produce ordinary 14-day experiment");
 assert(!/онош тав|эмчилгээ|өвчтэй|сахилга батгүй|мацаг барь|огцом хас гэж/i.test(professionalSafety), "professional safety route must avoid diagnosis/treatment/shame/extreme diet claims");
 assert(!professionalSafety.includes("qpay-create-invoice"), "professional route must not expose QPay create endpoint");
 assert(!professionalSafety.includes("qpay-check-payment"), "professional route must not expose QPay check endpoint");

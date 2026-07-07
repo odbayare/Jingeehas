@@ -511,13 +511,13 @@ function validateScenario(scenario) {
   }
 
   if (scenario.hiddenIncludes) {
-    assert(text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?") || text.includes("2. Яагаад давтагдаад байна вэ?"), `${scenario.name}: missing food-need section`);
+    assert(text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?") || text.includes("2. Таны гол давтагдаж буй механизм"), `${scenario.name}: missing food-need section`);
   }
   if (scenario.avoidIncludes) {
     assert(text.includes("Одоохондоо хэт яарахгүй зүйлс") || text.includes("6. Болгоомжлох зүйл"), `${scenario.name}: missing avoid section`);
   }
   if (scenario.leverageIncludes) {
-    assert(text.includes("Хамгийн хялбар эхлэх цэг") || text.includes("4. Таны хувьд хамгийн түрүүнд өөрчлөх цэг"), `${scenario.name}: missing first-change section`);
+    assert(text.includes("Хамгийн хялбар эхлэх цэг") || text.includes("6. Авч хэрэгжүүлж болох эхний алхам"), `${scenario.name}: missing first-change section`);
   }
   assertReportIncludes(text, scenario.reportIncludes, scenario.name);
   assertReportExcludes(text, scenario.reportExcludes, scenario.name);

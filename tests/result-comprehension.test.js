@@ -27,15 +27,15 @@ function setOrdinaryReport(stageAnswers = {}, extras = {}) {
 function assertSimpleStructure(report) {
   [
     "Таны тайлан бэлэн боллоо",
-    "1. Гол гацалт",
-    "2. Яагаад давтагдаад байна вэ?",
-    "3. Таны өдөр тутмын тойрог",
-    "4. Таны хувьд хамгийн түрүүнд өөрчлөх цэг",
-    "5. 14 хоногийн жижиг туршилт",
+    "1. Энэ тайлан юунд тулгуурласан бэ?",
+    "2. Таны гол давтагдаж буй механизм",
+    "3. Давхар нөлөөлж байгаа хүчин зүйлс",
+    "6. Авч хэрэгжүүлж болох эхний алхам",
+    "7. 7–14 хоногийн туршилт",
     "Тайлангаа хадгалах"
   ].forEach(phrase => assert(report.includes(phrase), `ordinary report should include ${phrase}`));
-  assert(report.indexOf("1. Гол гацалт") < report.indexOf("5. 14 хоногийн жижиг туршилт"), "paid report should keep one clear ordered structure");
-  assert(report.indexOf("5. 14 хоногийн жижиг туршилт") < report.indexOf("Тайлангаа хадгалах"), "save actions should come after the experiment");
+  assert(report.indexOf("1. Энэ тайлан юунд тулгуурласан бэ?") < report.indexOf("7. 7–14 хоногийн туршилт"), "paid report should keep one clear ordered structure");
+  assert(report.indexOf("7. 7–14 хоногийн туршилт") < report.indexOf("Тайлангаа хадгалах"), "save actions should come after the experiment");
 }
 
 function assertNoConfusingReportWords(report) {
@@ -50,7 +50,6 @@ function assertNoConfusingReportWords(report) {
     "гэх давтамжтай нийцэж байна",
     "хүчтэй нийцэж байна",
     "дунд зэрэг нийцэж байна",
-    "механизм",
     "Нурах давтамж",
     "шийдвэрийн ачаалал",
     "тухайн мөчид хоол дараах хэрэгцээний нэгийг түр нөхөж байсан байж магадгүй",
@@ -80,14 +79,14 @@ function run() {
   assertSimpleStructure(collapseReport);
   assertNoConfusingReportWords(collapseReport);
   assert(collapseReport.includes("Өнөөдөр өнгөрлөө"));
-  assert(collapseReport.includes("дараагийн хоолноос хэвийн үргэлжлүүлэх"));
+  assert(collapseReport.includes("ердийн хэмжээтэй хэвийн хоол руу буцах"));
 
   const rewardDeficitReport = setOrdinaryReport({
     "S1-V01": "Өдөржин хүүхэд, бусдын хэрэгцээ гээд өөрийгөө хамгийн сүүлд тавьдаг. Орой миний цаг болж амттай юм идмээр санагддаг.",
     "S1-R02": ["Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед"]
   });
   assertSimpleStructure(rewardDeficitReport);
-  assert(rewardDeficitReport.includes("Өдөржин өөрийгөө хойш тавьсан өдөр"));
+  assert(rewardDeficitReport.includes("өөрийгөө хамгийн сүүлд"));
   assert(!rewardDeficitReport.includes("миний юм"));
   assert(!rewardDeficitReport.includes("ганц жижиг баяр"));
   assert(!rewardDeficitReport.includes("өөртөө өгөх нэг жижиг зүйл болдог"));
@@ -99,7 +98,7 @@ function run() {
   assertSimpleStructure(cueReport);
   assert(cueReport.includes("зууш") || cueReport.includes("Зууш"));
   assert(cueReport.includes("захиалгын апп"));
-  assert(cueReport.includes("нэг зүйлийг"));
+  assert(cueReport.includes("нэг зүйлийг нэг алхам холдуул"));
 
   const cycleReport = setOrdinaryReport({
     "S1-C02": "Эмэгтэй",
@@ -109,7 +108,7 @@ function run() {
     "S1-R02": ["Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"]
   });
   assertSimpleStructure(cycleReport);
-  assert(cycleReport.includes("Сарын тэмдэг ирэхээс өмнөх"));
+  assert(cycleReport.includes("Сарын тэмдэг ирэхээс хэд хоногийн өмнө"));
   assert(!cycleReport.includes("Өдөржин өөрийн хэрэгцээ хамгийн сүүлд"));
   assert(!cycleReport.includes("надад ч гэсэн нэг юм хэрэгтэй"));
   assert(!cycleReport.includes("Нэмэлтээр анхаарах зүйл"));
@@ -133,13 +132,13 @@ function run() {
 
   const professionalReport = setOrdinaryReport({ "S1-S03": "Одоо давтагддаг" });
   assert(professionalReport.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
-  assert(!professionalReport.includes("1. Гол гацалт"));
-  assert(!professionalReport.includes("5. 14 хоногийн жижиг туршилт"));
+  assert(!professionalReport.includes("1. Энэ тайлан юунд тулгуурласан бэ?"));
+  assert(!professionalReport.includes("7. 7–14 хоногийн туршилт"));
 
   const urgentReport = setOrdinaryReport({ "S1-S04": "Одоо идэвхтэй бодогдож байна" });
   assert(urgentReport.includes("Яаралтай аюулгүй байдлын зөвлөмж"));
-  assert(!urgentReport.includes("1. Гол гацалт"));
-  assert(!urgentReport.includes("5. 14 хоногийн жижиг туршилт"));
+  assert(!urgentReport.includes("1. Энэ тайлан юунд тулгуурласан бэ?"));
+  assert(!urgentReport.includes("7. 7–14 хоногийн туршилт"));
 }
 
 run();

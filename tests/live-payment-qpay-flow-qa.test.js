@@ -207,8 +207,8 @@ withLocalStorageMutationSpy(() => {
   const paidHtml = _internal.renderReport();
   const paid = normalize(paidHtml);
   assertSafePaymentOutput(paidHtml, "paid output", { requireSafety: false });
-  assert(paid.includes("2. Яагаад давтагдаад байна вэ?"), "paid output must show paid explanation");
-  assert(paid.includes("5. 14 хоногийн жижиг туршилт"), "paid output must show paid experiment");
+  assert(paid.includes("2. Таны гол давтагдаж буй механизм"), "paid output must show paid explanation");
+  assert(paid.includes("7. 7–14 хоногийн туршилт"), "paid output must show paid experiment");
   assert(!paid.includes("Бүрэн тайлан нээх 9,900₮"), "paid output must not show locked paywall state");
   assert(!paid.includes("Төлбөр төлсний дараа"), "paid output must not show locked payment explanation");
 

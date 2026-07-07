@@ -42,7 +42,7 @@ function run() {
   const functionQuestion = app.stageOneQuestions.find(question => question.id === "S1-F01");
   const cravingQuestion = app.stageOneQuestions.find(question => question.id === "S1-R02");
   const dailyFunctionQuestion = app.dailyCore.find(question => question.id === "D-C05");
-  assert(functionQuestion.options.includes("Мөчлөгийн тодорхой өдрүүдэд илүү хүчтэй болдог"));
+  assert(functionQuestion.options.includes("Сарын тэмдгийн мөчлөгтэй холбоотой мэт санагдсан"));
   assert(cravingQuestion.options.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"));
   assert(dailyFunctionQuestion.options.includes("Сарын тэмдэгтэй холбоотой мэт санагдсан"));
 
@@ -97,9 +97,9 @@ function run() {
   assert(!ranked.some(item => item.key === "menstrual_cycle_context"), "cycle context should not become a primary mechanism");
   let report = normalize(app._internal.renderReport());
   assert(report.includes("Таны тайлан бэлэн боллоо"), "ordinary paid report should use the clear WP62 report opening");
-  assert(report.includes("1. Гол гацалт"), "ordinary paid report should include the clear main-blockage section");
-  assert(report.includes("2. Яагаад давтагдаад байна вэ?"), "ordinary paid report should explain why it repeats");
-  assert(report.includes("5. 14 хоногийн жижиг туршилт"), "ordinary paid report should include one 14-day experiment");
+  assert(report.includes("1. Энэ тайлан юунд тулгуурласан бэ?"), "ordinary paid report should include the clear main-blockage section");
+  assert(report.includes("2. Таны гол давтагдаж буй механизм"), "ordinary paid report should explain why it repeats");
+  assert(report.includes("7. 7–14 хоногийн туршилт"), "ordinary paid report should include one 14-day experiment");
 
   const deterministicBanned = [
     "даавраас болж байна",

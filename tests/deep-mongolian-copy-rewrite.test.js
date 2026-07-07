@@ -99,7 +99,7 @@ function run() {
     report.indexOf("Орой болоход “юу идэх вэ?” гэж бодох хүртэл хүнд болдог"),
     report.indexOf("Зууш нүдэнд ойр байхаар гар өөрөө хүрчихдэг үе байна")
   );
-  const structureIndex = report.indexOf("3. Таны өдөр тутмын тойрог");
+  const structureIndex = report.indexOf("3. Давхар нөлөөлж байгаа хүчин зүйлс");
   assert(livedIndex >= 0, "report should include lived explanation");
   assert(structureIndex >= 0, "report should include human-readable cycle section");
   assert(livedIndex < structureIndex, "report should explain the lived moment before the cycle");

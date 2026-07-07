@@ -26,11 +26,11 @@ function render(stageAnswers = {}) {
 
 function assertSurfaceHidden(report) {
   assert(
-    report.includes("Ил харагдаж байгаа зүйл") || report.includes("1. Гол гацалт"),
+    report.includes("Ил харагдаж байгаа зүйл") || report.includes("1. Энэ тайлан юунд тулгуурласан бэ?"),
     "ordinary report should name visible context"
   );
   assert(
-    report.includes("Цаана нь ажиллаж байгаа зүйл") || report.includes("2. Яагаад давтагдаад байна вэ?"),
+    report.includes("Цаана нь ажиллаж байгаа зүйл") || report.includes("2. Таны гол давтагдаж буй механизм"),
     "ordinary report should name hidden function"
   );
 }
@@ -118,7 +118,7 @@ function run() {
   assert(!/мацаг|огцом хязгаарлалт эхлүүлэх/.test(postpartum), "postpartum report should not recommend aggressive restriction");
 
   const social = render({
-    "S1-V01": "Амралтын өдөр найзуудтай уулзахад архи, оройн хоол хамт орж ирдэг. Хүмүүсийн дунд татгалзах эвгүй санагддаг.",
+    "S1-V01": "Амралтын өдөр найзуудтай уулзахад согтууруулах ундаа, оройн хоол хамт орж ирдэг. Хүмүүсийн дунд татгалзах эвгүй санагддаг.",
     "S1-F01": ["Татгалзах эвгүй байсан"],
     "S1-R02": ["Ажлын дараах амралт"]
   });

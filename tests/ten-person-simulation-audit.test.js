@@ -156,7 +156,7 @@ const personas = [
       emotion: "Ядаргаа",
       energy_score: day === 2 ? "5" : "3",
       sleep: day === 4 ? ["Чанар муу"] : ["4-6 цаг"],
-      drinks: day === 4 ? ["Алкоголь"] : [],
+      drinks: day === 4 ? ["Согтууруулах ундаа"] : [],
       pattern_probes: { default_choice: day === 2 ? "Гэрт хоол байсан" : "Delivery" }
     }, ["Орой ядарсан үед delivery/default амар болсон", "Хоолны зай, оройн эрч хүч давхцсан"])),
     expectedMode: "deep",
@@ -209,7 +209,7 @@ const personas = [
     expectedMode: "deep",
     expectedPrimary: [M.collapse, M.identity],
     expectedSecondary: [[M.shameAvoidance, M.reward, M.hungerSafety]],
-    requiredText: ["1. Гол гацалт", "5. 14 хоногийн жижиг туршилт", "Тайлангаа хадгалах"]
+    requiredText: ["1. Энэ тайлан юунд тулгуурласан бэ?", "7. 7–14 хоногийн туршилт", "Тайлангаа хадгалах"]
   },
   {
     id: "40m-fasting-rebound",
@@ -279,7 +279,7 @@ const personas = [
     expectedMode: "deep",
     expectedPrimary: [M.cue, M.decisionDefault, M.executive, M.reward],
     expectedSecondary: [[M.decisionDefault, M.executive], [M.reward]],
-    requiredText: ["1. Гол гацалт", "5. 14 хоногийн жижиг туршилт", "Тайлангаа хадгалах"]
+    requiredText: ["1. Энэ тайлан юунд тулгуурласан бэ?", "7. 7–14 хоногийн туршилт", "Тайлангаа хадгалах"]
   },
   {
     id: "50f-medication-friction",
@@ -342,7 +342,7 @@ const personas = [
     diaryEntries: repeat(5, day => diary(day, {
       main_moment_time: day >= 4 ? "Хүмүүсийн дунд эсвэл арга хэмжээний үеэр" : "Орой",
       food_function: day >= 4 ? ["Хүмүүсийн дунд татгалзах эвгүй байсан", "Амттай юм хүссэн"] : ["Өөрийгөө шагнамаар байсан"],
-      drinks: day >= 4 ? ["Алкоголь"] : [],
+      drinks: day >= 4 ? ["Согтууруулах ундаа"] : [],
       pattern_probes: { social_setting: day >= 4 ? "Тийм" : "Үгүй" }
     }, ["Найзуудтай үед татгалзах эвгүй", "Alcohol/snack availability нэмэгдсэн"])),
     expectedMode: "deep",

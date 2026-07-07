@@ -88,7 +88,7 @@ function run() {
   const rewardOneTimeHtml = setOneTime({
     "S1-V01": "Өдөржин бусдын хэрэгцээ түрүүлээд өөрийн хоол, амралт хойшлогддог. Орой амттай юм идмээр санагддаг.",
     "S1-R02": ["Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед"],
-    "S1-F01": ["Өөрийгөө жаахан шагнамаар санагдсан"]
+    "S1-F01": ["Өөрийгөө урамшуулмаар санагдсан"]
   });
   const rewardOneTime = normalize(rewardOneTimeHtml);
   assert(rewardOneTime.includes("амттай зүйл"), "reward-deficit report should keep broad tasty-food wording");
@@ -98,7 +98,7 @@ function run() {
 
   const collapseOneTimeHtml = setOneTime({
     "S1-W03": "Бараг бүх оролдлогоос хойш",
-    "S1-W06": "Өнөөдөр өнгөрлөө, маргаашаас",
+    "S1-W06": "Өнөөдөр нэгэнт өнгөрлөө, маргаашаас эхэлье гэж боддог",
     "S1-F02": "Одоо бүх юм дууссан",
     "S1-X03": "Маш хүчтэй"
   });

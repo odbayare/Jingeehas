@@ -55,6 +55,8 @@ const commands = [
   ["node", ["tests/wp71-selected-copy-implementation.test.js"]],
   ["node", ["tests/wp73-report-voice-copy-cleanup.test.js"]],
   ["node", ["tests/wp75-safety-copy-polish.test.js"]],
+  ["node", ["tests/wp78-question-bank-coverage.test.js"]],
+  ["node", ["tests/wp78-report-inference-quality.test.js"]],
   ["node", ["tests/question-navigation.test.js"]],
   ["node", ["tests/gender-gating.test.js"]],
   ["node", ["tests/cycle-question-mapping.test.js"]],

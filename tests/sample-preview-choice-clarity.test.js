@@ -116,9 +116,9 @@ function run() {
 
   setOneTimeReport();
   const oneTimeText = normalize(_internal.renderReport());
-  assert(oneTimeText.includes("1. Гол гацалт"));
-  assert(oneTimeText.includes("2. Яагаад давтагдаад байна вэ?"));
-  assert(oneTimeText.includes("5. 14 хоногийн жижиг туршилт"));
+  assert(oneTimeText.includes("1. Энэ тайлан юунд тулгуурласан бэ?"));
+  assert(oneTimeText.includes("2. Таны гол давтагдаж буй механизм"));
+  assert(oneTimeText.includes("7. 7–14 хоногийн туршилт"));
   assert(!oneTimeText.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
   assert(!oneTimeText.includes("7 хоногоор нарийвчлах"));
   assert(!oneTimeText.includes("Миний pattern-ийг 7 хоногоор шалгах"));
@@ -126,8 +126,8 @@ function run() {
 
   setMode2Report();
   const mode2Text = normalize(_internal.renderReport());
-  assert(mode2Text.includes("онош гэж биш"));
-  assert(mode2Text.includes("6. Болгоомжлох зүйл"));
+  assert(mode2Text.includes("онош биш"));
+  assert(mode2Text.includes("8. Аюулгүй байдлын сануулга"));
   assert(mode2Text.includes("хоолоо огцом хасахгүй"));
 
   setMode3Report();

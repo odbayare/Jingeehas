@@ -46,7 +46,7 @@ function run() {
   assert(professionalSafety.includes("Эхлээд мэргэжлийн хүнтэй ярилцах нь зөв байна"), "professional safety route should keep the safety-first headline");
   assert(professionalSafety.includes("Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."), "professional safety route should use the polished short-summary sentence");
   assert(!professionalSafety.includes("Ярилцах товч нэгтгэл доор байна. ярилцахад авч очих богино нэгтгэл гаргана."), "professional safety route should not repeat the short-summary idea");
-  assert(!professionalSafety.includes("5. 14 хоногийн жижиг туршилт"), "professional safety route must not show an ordinary experiment");
+  assert(!professionalSafety.includes("7. 7–14 хоногийн туршилт"), "professional safety route must not show an ordinary experiment");
   assert(!/онош тав|эмчилгээ|өвчтэй|сахилга батгүй|мацаг барь|огцом хас гэж/i.test(professionalSafety), "professional safety route must avoid diagnosis, treatment, shame, and extreme-diet claims");
 
   const urgentSafety = normalize(renderPaidReport({
@@ -63,17 +63,17 @@ function run() {
   const bodySignal = normalize(renderPaidReport({
     "S1-C02": "Эрэгтэй",
     "S1-B01": ["Гар салгалах"],
-    "S1-F01": ["Тайвширмаар байсан"],
+    "S1-F01": ["Тайвширмаар санагдсан"],
     "S1-F02": "Тайвширдаг"
   }));
-  assert(bodySignal.includes("6. Болгоомжлох зүйл"), "body-signal route should keep the caution section");
+  assert(bodySignal.includes("8. Аюулгүй байдлын сануулга"), "body-signal route should keep the safety reminder section");
   assert(bodySignal.includes("мэргэжлийн хүнтэй ярилцах"), "body-signal route should keep professional safety guidance");
   assert(!/онош тав|эмчилгээ|өвчтэй|сахилга батгүй/i.test(bodySignal), "body-signal route must avoid diagnostic and shame wording");
 
   const rewardReportHtml = renderPaidReport({
     "S1-V01": "Өдөржин бусдын хэрэгцээ түрүүлээд өөрийн хоол, амралт хойшлогддог. Орой амттай юм идмээр санагддаг.",
     "S1-R02": ["Өдрийн төгсгөлд өөрийгөө жаахан баярлуулмаар санагдах үед"],
-    "S1-F01": ["Өөрийгөө жаахан шагнамаар санагдсан"]
+    "S1-F01": ["Өөрийгөө урамшуулмаар санагдсан"]
   });
   const rewardReport = normalize(rewardReportHtml);
   assert(rewardReport.includes("амттай зүйл"), "reward route should keep broad tasty-food wording");

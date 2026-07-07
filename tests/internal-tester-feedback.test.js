@@ -56,7 +56,7 @@ function run() {
   assert.strictEqual(_internal.isInternalTestMode(), true);
   const internalReportHtml = _internal.renderReport();
   const internalReport = normalize(internalReportHtml);
-  assert(internalReport.includes("2. Яагаад давтагдаад байна вэ?"), "internal mode should show full report without QPay");
+  assert(internalReport.includes("2. Таны гол давтагдаж буй механизм"), "internal mode should show full report without QPay");
   assert(internalReport.includes("Дотоод туршилтын хувилбар — энэ шатанд бодит төлбөр авахгүй."));
   assert(internalReport.includes("Туршилтын санал асуулга"));
   assert(!internalReport.includes("QPay QR"));
