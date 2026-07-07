@@ -29,7 +29,7 @@ const reportText = normalize(_internal.renderReport());
 const paidText = reportText.replace(/^Тайлан\s+/, "");
 
 assert(paidText.startsWith("Таны тайлан бэлэн боллоо"), "paid report must start with the WP62 paid report headline");
-assert(reportText.includes("Доорх тайлан таны хариултаас хамгийн хүчтэй давтагдаж буй нэг хэв маягийг тайван харуулах зорилготой."), "paid report must use the calmer WP66 intro");
+assert(reportText.includes("Доорх тайлан таны хариултаас хамгийн хүчтэй харагдаж буй нэг боломжит хэв маягийг тайван харуулах зорилготой."), "paid report must use the calmer WP73 intro");
 
 [
   "1. Гол гацалт",

@@ -150,7 +150,7 @@ function run() {
   });
   const report = _internal.renderReport();
   assert(report.includes("Дараа хэзээ идэх нь тодорхойгүй") || report.includes("Дараа өлсөхөөс хамгаалах"));
-  assert(report.includes("Эхний жижиг өөрчлөлт"));
+  assert(report.includes("Хамгийн хялбар эхлэх цэг"));
   assert(!/confidence|итгэлцэл|82%/.test(report));
 }
 

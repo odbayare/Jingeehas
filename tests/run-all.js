@@ -53,6 +53,7 @@ const commands = [
   ["node", ["tests/internal-human-feedback-copy-ux.test.js"]],
   ["node", ["tests/question-copy-polish.test.js"]],
   ["node", ["tests/wp71-selected-copy-implementation.test.js"]],
+  ["node", ["tests/wp73-report-voice-copy-cleanup.test.js"]],
   ["node", ["tests/question-navigation.test.js"]],
   ["node", ["tests/gender-gating.test.js"]],
   ["node", ["tests/cycle-question-mapping.test.js"]],
