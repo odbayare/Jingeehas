@@ -154,7 +154,7 @@ function run() {
   setMode3Unpaid();
   const professional = normalize(_internal.renderReport());
   assert(professional.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
-  assert(professional.includes("Ярилцах товч нэгтгэл"));
+  assert(professional.includes("Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."));
   assert(!professional.includes("29,000₮"));
   assert(!professional.includes("14 хоногийн туршилт"));
 }

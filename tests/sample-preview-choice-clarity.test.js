@@ -133,7 +133,7 @@ function run() {
   setMode3Report();
   const mode3Text = normalize(_internal.renderReport());
   assert(mode3Text.includes("ердийн жин хасалтын туршилт өгөхгүй"));
-  assert(mode3Text.includes("ярилцахад авч очих богино нэгтгэл гаргана"));
+  assert(mode3Text.includes("Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."));
   assert(mode3Text.includes("онош гэсэн үг биш"));
 }
 

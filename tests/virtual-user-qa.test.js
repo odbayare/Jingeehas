@@ -432,7 +432,7 @@ const scenarios = [
     }, ["Measured glucose санаа зовоосон", "Хоол удахад sugar-drop-like signal гарсан"])),
     expectedMode: "professional",
     expectedPrimary: [null],
-    reportIncludes: ["Ярилцах товч нэгтгэл"],
+    reportIncludes: ["Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."],
     reportExcludes: ["14-day personalized experiment", "14-Day Experiment", "14-Day Starter Experiment", "14 хоногийн туршилт"],
     experimentAllowed: false,
     professionalExpected: true

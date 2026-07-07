@@ -296,7 +296,7 @@ withLocalStorageMutationSpy(() => {
     const text = normalize(html);
     assert.strictEqual(_internal.reportMode().mode, "professional", "professional setup must route to professional mode");
     assertSafeRenderedOutput(html, "professional output");
-    assert(text.includes("Ярилцах товч нэгтгэл"), "professional output should keep professional safety summary visible");
+    assert(text.includes("Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."), "professional output should keep professional safety summary visible");
     assert(!text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "professional output must not show ordinary paid depth");
     assert(!text.includes("14 хоногийн туршилт"), "professional output must not show ordinary paid experiment");
     assert(!text.includes("төлөөд бүрэн тайлангаа нээх"), "professional output must not show paid CTA");

@@ -131,7 +131,7 @@ function run() {
   setMode3();
   const mode3 = normalize(_internal.renderReport());
   assert(mode3.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
-  assert(mode3.includes("Ярилцах товч нэгтгэл"));
+  assert(mode3.includes("Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."));
   assert(!mode3.includes("14 хоногийн туршилт"));
   assert(!mode3.includes("Your primary pattern"));
   assert(!mode3.includes("Trigger зураглал"));

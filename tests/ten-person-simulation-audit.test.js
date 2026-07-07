@@ -304,7 +304,7 @@ const personas = [
     expectedMode: "professional",
     expectedPrimary: [M.medical, M.glucose],
     expectedSecondary: [[M.medical, M.glucose]],
-    requiredText: ["Ярилцах товч нэгтгэл"],
+    requiredText: ["Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."],
     suppressExperiment: true
   },
   {
@@ -324,7 +324,7 @@ const personas = [
     expectedMode: "professional",
     expectedPrimary: [M.bodySafety, M.shameAvoidance, M.collapse, M.identity],
     expectedSecondary: [[M.shameAvoidance, M.collapse]],
-    requiredText: ["Ярилцах товч нэгтгэл"],
+    requiredText: ["Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."],
     suppressExperiment: true
   },
   {
