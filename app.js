@@ -913,13 +913,17 @@ function safetyRouteForMode(mode) {
 
 function calculateMechanismEvidence(currentState = state) {
   const evidence = {};
+  const scopedState = {
+    ...currentState,
+    stageAnswers: effectiveStageAnswers(currentState.stageAnswers || {})
+  };
   const previousState = state;
-  state = { ...initialState, ...currentState };
+  state = { ...initialState, ...scopedState };
   const mode = reportMode();
   state = previousState;
-  const evidenceQuality = evidenceQualityFor(currentState);
+  const evidenceQuality = evidenceQualityFor(scopedState);
 
-  Object.entries(currentState.stageAnswers || {}).forEach(([questionId, answer]) => {
+  Object.entries(scopedState.stageAnswers || {}).forEach(([questionId, answer]) => {
     const mechanismsForAnswer = extractMechanismsFromAnswer(questionId, answer);
     const tags = extractTagsFromAnswer(questionId, answer);
     const dimensions = extractDimensionsFromAnswer(questionId, answer);
@@ -934,7 +938,7 @@ function calculateMechanismEvidence(currentState = state) {
     }));
   });
 
-  Object.values(currentState.stageVoiceSummaries || {}).filter(summary => summary?.userConfirmed).forEach(summary => {
+  Object.values(scopedState.stageVoiceSummaries || {}).filter(summary => summary?.userConfirmed).forEach(summary => {
     (summary.mechanismSignals || []).forEach(mechanismName => addMechanismEvidence(evidence, mechanismName, 1.5, "confirmedSummaries", {
       checkpointId: summary.checkpointId,
       tags: summary.extractedTags || [],
@@ -944,7 +948,7 @@ function calculateMechanismEvidence(currentState = state) {
     }));
   });
 
-  (currentState.diaryEntries || []).forEach(entry => {
+  (scopedState.diaryEntries || []).forEach(entry => {
     const tags = entryEvidenceTags(entry);
     const mechanismSignals = mapTagsToMechanismSignals(tags);
     const dimensions = mapTagsToDimensions(tags);
@@ -968,7 +972,7 @@ function calculateMechanismEvidence(currentState = state) {
 
   scoreRepeatedDays(evidence);
   applyContradictionRules(evidence);
-  applyScenarioPriorityRules(evidence, currentState);
+  applyScenarioPriorityRules(evidence, scopedState);
 
   const context = { evidenceQuality };
   Object.values(evidence).forEach(item => {
@@ -1682,6 +1686,62 @@ function hasMenstrualCycleContext(answers = state.stageAnswers) {
   return answers["MC-GATE"] === MENSTRUAL_GATE_YES;
 }
 
+const ALCOHOL_USE_VALUES = [
+  "Ховор хэрэглэдэг",
+  "Сард хэд хэдэн удаа хэрэглэдэг",
+  "7 хоногт 1–2 удаа хэрэглэдэг",
+  "7 хоногт 3 ба түүнээс олон удаа хэрэглэдэг"
+];
+const TOBACCO_USE_VALUES = [
+  "Өмнө татдаг байсан, одоо больсон",
+  "Хааяа татдаг",
+  "Өдөр бүр татдаг"
+];
+const ALCOHOL_FOLLOW_UP_IDS = ["S1-A02", "S1-A03"];
+const TOBACCO_FOLLOW_UP_IDS = ["S1-T02"];
+
+function hasAlcoholUse(answers = state.stageAnswers) {
+  return ALCOHOL_USE_VALUES.includes(answers?.["S1-A01"]);
+}
+
+function hasTobaccoUse(answers = state.stageAnswers) {
+  return TOBACCO_USE_VALUES.includes(answers?.["S1-T01"]);
+}
+
+function shouldShowSubstanceFollowUp(question, answers = state.stageAnswers) {
+  if (ALCOHOL_FOLLOW_UP_IDS.includes(question?.id)) return hasAlcoholUse(answers);
+  if (TOBACCO_FOLLOW_UP_IDS.includes(question?.id)) return hasTobaccoUse(answers);
+  return true;
+}
+
+function effectiveStageAnswers(answers = state.stageAnswers) {
+  const next = { ...(answers || {}) };
+  if (!hasAlcoholUse(next)) {
+    ALCOHOL_FOLLOW_UP_IDS.forEach(id => delete next[id]);
+    if (Array.isArray(next["S1-F01"])) {
+      next["S1-F01"] = next["S1-F01"].filter(value => value !== "Согтууруулах ундаа хэрэглэсний дараа эсвэл маргааш нь идмээр болсон");
+      if (!next["S1-F01"].length) delete next["S1-F01"];
+    } else if (next["S1-F01"] === "Согтууруулах ундаа хэрэглэсний дараа эсвэл маргааш нь идмээр болсон") {
+      delete next["S1-F01"];
+    }
+  }
+  if (!hasTobaccoUse(next)) TOBACCO_FOLLOW_UP_IDS.forEach(id => delete next[id]);
+  return next;
+}
+
+function clearSkippedSubstanceAnswers(answers = state.stageAnswers) {
+  if (!hasAlcoholUse(answers)) {
+    ALCOHOL_FOLLOW_UP_IDS.forEach(id => delete answers[id]);
+    if (Array.isArray(answers["S1-F01"])) {
+      answers["S1-F01"] = answers["S1-F01"].filter(value => value !== "Согтууруулах ундаа хэрэглэсний дараа эсвэл маргааш нь идмээр болсон");
+      if (!answers["S1-F01"].length) delete answers["S1-F01"];
+    } else if (answers["S1-F01"] === "Согтууруулах ундаа хэрэглэсний дараа эсвэл маргааш нь идмээр болсон") {
+      delete answers["S1-F01"];
+    }
+  }
+  if (!hasTobaccoUse(answers)) TOBACCO_FOLLOW_UP_IDS.forEach(id => delete answers[id]);
+}
+
 function selectedGender(answers = state.stageAnswers) {
   return answers["S1-C02"] || "";
 }
@@ -1733,6 +1793,7 @@ function genderSafeQuestion(question, answers = state.stageAnswers) {
 
 function shouldShowStageQuestion(question, answers = state.stageAnswers) {
   if (isFemaleSpecificStageQuestion(question) && !isFemaleUser(answers)) return false;
+  if (!shouldShowSubstanceFollowUp(question, answers)) return false;
   if (!isMenstrualStageQuestion(question)) return true;
   if (question.id === "MC-GATE") return isFemaleUser(answers);
   return hasMenstrualCycleContext(answers);
@@ -1772,6 +1833,7 @@ function getValue(question) {
 
 function setAnswer(question, value) {
   state.stageAnswers[question.id] = value;
+  if (question.id === "S1-A01" || question.id === "S1-T01") clearSkippedSubstanceAnswers(state.stageAnswers);
   state.safetyFlags = calculateSafetyFlags();
   saveState();
   render();
@@ -2131,8 +2193,9 @@ function addScore(scores, key, amount = 1) {
 
 function calculateScores(includeDiary = true) {
   const scores = {};
+  const stageAnswers = effectiveStageAnswers(state.stageAnswers);
   stageOneQuestions.forEach(question => {
-    const value = state.stageAnswers[question.id];
+    const value = stageAnswers[question.id];
     if (!question.scores || value === undefined || value === "") return;
     const values = Array.isArray(value) ? value : [value];
     values.forEach(answer => {
@@ -3419,8 +3482,9 @@ function allReportTags(entries = state.diaryEntries) {
 }
 
 function allStageReportTags() {
+  const stageAnswers = effectiveStageAnswers(state.stageAnswers);
   return unique([
-    ...Object.entries(state.stageAnswers || {}).flatMap(([questionId, answer]) => {
+    ...Object.entries(stageAnswers || {}).flatMap(([questionId, answer]) => {
       const values = Array.isArray(answer) ? answer : [answer];
       return values.flatMap(value => getOptionMetadata(questionId, value)?.tags || []);
     }),
@@ -4772,14 +4836,14 @@ function hasStrongMenstrualCycleContextEvidence() {
 }
 
 function normalizedAnswerValues(answers = state.stageAnswers || {}) {
-  return Object.values(answers)
+  return Object.values(effectiveStageAnswers(answers))
     .flatMap(value => Array.isArray(value) ? value : [value])
     .map(value => String(value || "").trim().toLowerCase())
     .filter(Boolean);
 }
 
 function allAnswerText(answers = state.stageAnswers || {}) {
-  return Object.values(answers)
+  return Object.values(effectiveStageAnswers(answers))
     .flatMap(value => Array.isArray(value) ? value : [value])
     .filter(Boolean)
     .join(" ");
@@ -4852,7 +4916,7 @@ function shouldUseMenstrualCycleContextVoice(baseVoiceKey) {
 
 function hasStrongSleepRhythmEvidence(answers = state.stageAnswers || {}) {
   const text = allAnswerText(answers).toLowerCase();
-  const answerValues = Object.values(answers)
+  const answerValues = Object.values(effectiveStageAnswers(answers))
     .flatMap(value => Array.isArray(value) ? value : [value])
     .map(value => String(value || "").trim().toLowerCase());
   const hasText = (...terms) => terms.some(term => text.includes(term.toLowerCase()));
@@ -4884,14 +4948,14 @@ function hasStrongSleepRhythmEvidence(answers = state.stageAnswers || {}) {
 function surfaceContextVoiceKey(answers = state.stageAnswers || {}) {
   const text = allAnswerText(answers).toLowerCase();
   const hasText = (...terms) => terms.some(term => text.includes(term.toLowerCase()));
-  const answerValues = Object.values(answers)
+  const answerValues = Object.values(effectiveStageAnswers(answers))
     .flatMap(value => Array.isArray(value) ? value : [value])
     .map(value => String(value || "").trim().toLowerCase());
   const hasAnswer = (...terms) => terms.some(term => answerValues.includes(term.toLowerCase()));
   if (hasText("шөнийн ээлж", "ээлж")) return "shiftWork";
   if (hasText("төрсний дараах", "хөхүүл") || (hasText("хүүхэд") && hasText("тасалдсан нойр", "өөрийн хоол"))) return "postpartumContext";
   if (hasText("перименопауз")) return "perimenopauseContext";
-  if (hasText("согтууруулах ундаа", "найз", "найзууд", "хүмүүсийн дунд", "арга хэмжээ", "татгалзах")) return "socialWeekend";
+  if (hasAlcoholUse(answers) && hasText("согтууруулах ундаа", "найз", "найзууд", "хүмүүсийн дунд", "арга хэмжээ", "татгалзах")) return "socialWeekend";
   if (hasText("дасгал", "challenge", "фитнес", "нүүрс ус", "өлсөх тусам зөв", "хэт их дасгал")) return "gymRestriction";
   if (hasAnswer("эм") || hasText("жирэмслэлтээс хамгаалах", "дааврын", "эмийн", "эмчилгээ", "эм хэрэгл", "pcos", "тогтмол биш", "тогтмол бус", "сахар", "даралт")) return "bodyTrustMedical";
   return "";
@@ -5390,7 +5454,7 @@ function clearPaidReportSafetyHtml(mode, tags = []) {
 }
 
 function wp78AnswerValues(questionId, answers = state.stageAnswers) {
-  const value = answers?.[questionId];
+  const value = effectiveStageAnswers(answers)?.[questionId];
   if (Array.isArray(value)) return value.filter(Boolean);
   return value ? [value] : [];
 }
@@ -5405,7 +5469,7 @@ function wp78HasAny(questionId, expected = [], answers = state.stageAnswers) {
 }
 
 function wp78HasText(patterns = [], answers = state.stageAnswers) {
-  const joined = Object.values(answers || {}).flat().join(" ").toLowerCase();
+  const joined = Object.values(effectiveStageAnswers(answers) || {}).flat().join(" ").toLowerCase();
   return patterns.some(pattern => joined.includes(String(pattern).toLowerCase()));
 }
 
@@ -6855,6 +6919,10 @@ if (typeof module !== "undefined") {
       calculateScores,
       rankedPatterns,
       stageQuestions,
+      effectiveStageAnswers,
+      hasAlcoholUse,
+      hasTobaccoUse,
+      shouldShowStageQuestion,
       getDiaryQuestions,
       hasMenstrualCycleContext,
       menstrualCycleEvidence,
