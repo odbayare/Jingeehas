@@ -58,6 +58,7 @@ const commands = [
   ["node", ["tests/wp78-question-bank-coverage.test.js"]],
   ["node", ["tests/wp78-report-inference-quality.test.js"]],
   ["node", ["tests/wp79-conditional-branching.test.js"]],
+  ["node", ["tests/wp80-context-safe-open-text.test.js"]],
   ["node", ["tests/question-navigation.test.js"]],
   ["node", ["tests/gender-gating.test.js"]],
   ["node", ["tests/cycle-question-mapping.test.js"]],

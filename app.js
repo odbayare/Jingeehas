@@ -374,7 +374,16 @@ const stageOneQuestions = [
   { id: "S1-S02", module: "Safety", type: "single", text: "Идсэний дараа нуух, ичих, ганцаараа баймаар санагдах мэдрэмж хэр хүчтэй байдаг вэ?", options: ["Үгүй", "Ховор", "Заримдаа", "Ихэвчлэн", "Маш хүчтэй"], scores: { "Заримдаа": ["collapse"], "Ихэвчлэн": ["collapse"], "Маш хүчтэй": ["collapse"] }, safety: value => ["Ихэвчлэн", "Маш хүчтэй"].includes(value) ? ["professional"] : [] },
   { id: "S1-S03", module: "Safety", type: "single", text: "Идсэнээ “нөхөх” гэж бөөлжүүлэх, туулгах, хэт их дасгал хийх, эсвэл олон цаг хоолгүй байх тохиолдол гардаг уу?", options: ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], safety: value => ["Одоо хааяа", "Одоо давтагддаг"].includes(value) ? ["professional"] : [] },
   { id: "S1-S04", module: "Safety", type: "single", text: "Сүүлийн үед өөртөө хор хүргэх бодол төрсөн үү?", options: ["Үгүй", "Өнгөрсөнд байсан", "Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна", "Хариулахгүй"], safety: value => value === "Одоо идэвхтэй бодогдож байна" ? ["urgent"] : value === "Одоо хааяа бодогддог" ? ["professional"] : [] },
-  { id: "S1-V03", module: "Voice checkpoint", type: "text", text: "Өмнө хэрэглэсэн нэг арга яагаад удаан үргэлжлээгүй вэ?", voice: true },
+  {
+    id: "S1-V03",
+    module: "Voice checkpoint",
+    stageTitle: "Өмнөх оролдлогоо тодруулах",
+    type: "text",
+    text: "Жингээ бууруулах эсвэл жингээ барихын тулд өмнө туршсан нэг арга тань яагаад удаан үргэлжлээгүй вэ?",
+    helper: "Энэ асуулт нь зөвхөн жингээ бууруулах, жингээ барих зорилгоор туршиж байсан хоол, хөдөлгөөн, дасгал, хэвшлийн тухай юм. Санахгүй эсвэл бичмээргүй байвал хоосон орхиж болно.",
+    placeholder: "Жишээ: фитнес эхлүүлсэн ч цаг тохироогүй, мацаг барихад орой хэт өлсдөг болсон, алхалтаа тогтмол үргэлжлүүлж чадаагүй гэх мэт.",
+    voice: true
+  },
   { id: "S1-V04", module: "Voice checkpoint", type: "text", text: "Танд тогтвортой үргэлжлэхэд хамгийн их туслах нэг нөхцөл юу вэ?", voice: true }
 ];
 
@@ -1791,9 +1800,25 @@ function genderSafeQuestion(question, answers = state.stageAnswers) {
   };
 }
 
+function hasHighRiskSelfHarmAnswer(answers = state.stageAnswers) {
+  return ["Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна"].includes(answers?.["S1-S04"]);
+}
+
+function hasNoPriorWeightAttempt(answers = state.stageAnswers) {
+  return asArray(answers?.["S1-W04"]).includes("Оролдож байгаагүй");
+}
+
+function shouldShowContextSafeOpenText(question, answers = state.stageAnswers) {
+  if (question?.id !== "S1-V03") return true;
+  if (hasHighRiskSelfHarmAnswer(answers)) return false;
+  if (hasNoPriorWeightAttempt(answers)) return false;
+  return true;
+}
+
 function shouldShowStageQuestion(question, answers = state.stageAnswers) {
   if (isFemaleSpecificStageQuestion(question) && !isFemaleUser(answers)) return false;
   if (!shouldShowSubstanceFollowUp(question, answers)) return false;
+  if (!shouldShowContextSafeOpenText(question, answers)) return false;
   if (!isMenstrualStageQuestion(question)) return true;
   if (question.id === "MC-GATE") return isFemaleUser(answers);
   return hasMenstrualCycleContext(answers);
@@ -2311,6 +2336,11 @@ function completeStageOne() {
 }
 
 function nextStageQuestion() {
+  const question = currentQuestion();
+  if (question?.id === "S1-S04" && hasHighRiskSelfHarmAnswer()) {
+    completeStageOne();
+    return;
+  }
   const questions = stageQuestions();
   if (state.stageIndex >= questions.length - 1) {
     completeStageOne();
@@ -2490,7 +2520,8 @@ function renderAbout() {
   `;
 }
 
-function displayModuleName(moduleName) {
+function displayModuleName(moduleName, question = null) {
+  if (question?.stageTitle) return question.stageTitle;
   const names = {
     "Warm start": "Эхлэх хэсэг",
     "Basic context": "Ерөнхий мэдээлэл",
@@ -2857,7 +2888,9 @@ function renderInput(question, value, setterName) {
     return `<label class="field"><span class="muted">Тоогоор оруулна уу</span><input id="input-${question.id}" type="number" value="${escapeAttr(value)}" oninput="setAnswerDraft('${question.id}', this.value)" /></label>`;
   }
   if (question.type === "text") {
-    return `<label class="field"><span class="muted">${question.voice ? "Богино тайлбар" : "Хариулт"}</span><textarea id="input-${question.id}" oninput="setAnswerDraft('${question.id}', this.value)">${escapeHtml(value)}</textarea></label><p class="muted">Хэрвээ санахгүй эсвэл бичмээргүй байвал хоосон орхиод үргэлжлүүлж болно.</p>${question.voice ? renderStageVoiceConfirmation(question, value) : ""}`;
+    const helper = question.helper || "Хэрвээ санахгүй эсвэл бичмээргүй байвал хоосон орхиод үргэлжлүүлж болно.";
+    const placeholder = question.placeholder ? ` placeholder="${escapeAttr(question.placeholder)}"` : "";
+    return `<label class="field"><span class="muted">${question.voice ? "Богино тайлбар" : "Хариулт"}</span><textarea id="input-${question.id}" oninput="setAnswerDraft('${question.id}', this.value)"${placeholder}>${escapeHtml(value)}</textarea></label><p class="muted">${escapeHtml(helper)}</p>${question.voice ? renderStageVoiceConfirmation(question, value) : ""}`;
   }
   if (question.type === "scale") {
     return `<div class="scale">${Array.from({ length: 11 }, (_, i) => `<button class="option ${String(value) === String(i) ? "selected" : ""}" onclick="${setterName}('${question.id}', '${i}')">${i}</button>`).join("")}</div>`;
@@ -2975,7 +3008,7 @@ function renderStageOne() {
     ? `<div class="question-top-actions"><button class="button secondary compact" onclick="previousStageQuestion()">Буцах</button></div>`
     : "";
   return `
-    ${topbar(progress, `Үе 1 · ${displayModuleName(question.module)}`)}
+    ${topbar(progress, `Үе 1 · ${displayModuleName(question.module, question)}`)}
     <section class="screen">
       <div class="grid">
         <div class="panel">
