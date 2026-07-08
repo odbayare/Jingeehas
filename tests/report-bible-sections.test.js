@@ -150,7 +150,7 @@ function run() {
   assert(oneTime.includes("Таны тайлан бэлэн боллоо"));
   assert(oneTime.includes("1. Энэ тайлан юунд тулгуурласан бэ?"));
   assert(oneTime.includes("2. Таны гол давтагдаж буй механизм"));
-  assert(oneTime.includes("7. 7–14 хоногийн туршилт"));
+  assert(oneTime.includes("8. 7–14 хоногийн туршилт"));
   assert(oneTime.includes("Тайлангаа хадгалах"));
   assert(!oneTime.includes("7 хоногоор нарийвчлах"));
   assert(!oneTime.includes("Гол зураг"));

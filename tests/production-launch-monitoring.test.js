@@ -149,7 +149,7 @@ const paidHtml = _internal.renderReport();
 const paid = normalize(paidHtml);
 assertMonitoredOutput(paidHtml, "paid output", { requireSafety: false });
 assert(paid.includes("2. Таны гол давтагдаж буй механизм"), "paid output must keep paid explanation visible");
-assert(paid.includes("7. 7–14 хоногийн туршилт"), "paid output must keep paid experiment visible");
+assert(paid.includes("8. 7–14 хоногийн туршилт"), "paid output must keep paid experiment visible");
 
 setOneTime({
   qpayPayment: {

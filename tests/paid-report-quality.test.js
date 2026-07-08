@@ -29,16 +29,20 @@ const reportText = normalize(_internal.renderReport());
 const paidText = reportText.replace(/^Тайлан\s+/, "");
 
 assert(paidText.startsWith("Таны тайлан бэлэн боллоо"), "paid report must start with the WP62 paid report headline");
-assert(reportText.includes("Доорх тайлан таны хариултыг давтаж жагсаах биш, хариултууд хоорондоо яаж холбогдож байж болохыг тайван тайлбарлах зорилготой."), "paid report must use the calmer WP73 intro");
+assert(reportText.includes("Доорх тайлан таны хариултыг давтаж жагсаах биш, хооронд нь холбож унших зорилготой."), "paid report must use the expanded WP81 intro");
 
 [
   "1. Энэ тайлан юунд тулгуурласан бэ?",
   "2. Таны гол давтагдаж буй механизм",
-  "3. Давхар нөлөөлж байгаа хүчин зүйлс",
-  "5. Одоогоор юуг хийхгүй байх вэ?",
-  "6. Авч хэрэгжүүлж болох эхний алхам",
-  "7. 7–14 хоногийн туршилт",
-  "8. Аюулгүй байдлын сануулга",
+  "3. Энэ нь яагаад жин дээр нөлөөлж байж болох вэ?",
+  "4. Давхар нөлөөлж байгаа хүчин зүйлс",
+  "6. Одоогоор юуг хийхгүй байх вэ?",
+  "7. Эхний өөрчлөлт хаанаас эхлэх вэ?",
+  "8. 7–14 хоногийн туршилт",
+  "9. Хэрэв дахин хазайвал яах вэ?",
+  "10. Танд тохирох ажиглалтын 5 асуулт",
+  "11. Хэзээ мэргэжлийн хүнтэй ярилцах вэ?",
+  "12. Товч дүгнэлт",
   "Тайлангаа хадгалах"
 ].forEach(section => {
   assert(reportText.includes(section), `paid report must include section: ${section}`);
@@ -77,10 +81,10 @@ _internal.setTestState({
   stageVoiceSummaries: {}
 });
 const noCautionText = normalize(_internal.renderReport());
-assert(noCautionText.includes("8. Аюулгүй байдлын сануулга"), "report should keep the WP78 safety reminder");
+assert(noCautionText.includes("11. Хэзээ мэргэжлийн хүнтэй ярилцах вэ?"), "report should keep the WP81 safety/professional guidance");
 assert(noCautionText.includes("Тайлангаа хадгалах"), "no-caution report still has save section");
 assert(!/6\. Тайлангаа хадгалах|7\. Тайлангаа хадгалах/.test(noCautionText), "save section must be unnumbered when caution is absent");
 
-assert(reportText.indexOf("8. Аюулгүй байдлын сануулга") < reportText.indexOf("Тайлангаа хадгалах"), "safety reminder must appear before save section");
+assert(reportText.indexOf("11. Хэзээ мэргэжлийн хүнтэй ярилцах вэ?") < reportText.indexOf("Тайлангаа хадгалах"), "safety reminder must appear before save section");
 
 console.log("paid-report-quality tests passed");

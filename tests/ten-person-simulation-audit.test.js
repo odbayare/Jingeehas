@@ -209,7 +209,7 @@ const personas = [
     expectedMode: "deep",
     expectedPrimary: [M.collapse, M.identity],
     expectedSecondary: [[M.shameAvoidance, M.reward, M.hungerSafety]],
-    requiredText: ["1. Энэ тайлан юунд тулгуурласан бэ?", "7. 7–14 хоногийн туршилт", "Тайлангаа хадгалах"]
+    requiredText: ["1. Энэ тайлан юунд тулгуурласан бэ?", "8. 7–14 хоногийн туршилт", "Тайлангаа хадгалах"]
   },
   {
     id: "40m-fasting-rebound",
@@ -279,7 +279,7 @@ const personas = [
     expectedMode: "deep",
     expectedPrimary: [M.cue, M.decisionDefault, M.executive, M.reward],
     expectedSecondary: [[M.decisionDefault, M.executive], [M.reward]],
-    requiredText: ["1. Энэ тайлан юунд тулгуурласан бэ?", "7. 7–14 хоногийн туршилт", "Тайлангаа хадгалах"]
+    requiredText: ["1. Энэ тайлан юунд тулгуурласан бэ?", "8. 7–14 хоногийн туршилт", "Тайлангаа хадгалах"]
   },
   {
     id: "50f-medication-friction",

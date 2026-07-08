@@ -66,7 +66,7 @@ function run() {
     "S1-F01": ["Тайвширмаар санагдсан"],
     "S1-F02": "Тайвширдаг"
   }));
-  assert(bodySignal.includes("8. Аюулгүй байдлын сануулга"), "body-signal route should keep the safety reminder section");
+  assert(bodySignal.includes("11. Хэзээ мэргэжлийн хүнтэй ярилцах вэ?"), "body-signal route should keep the safety reminder section");
   assert(bodySignal.includes("мэргэжлийн хүнтэй ярилцах"), "body-signal route should keep professional safety guidance");
   assert(!/онош тав|эмчилгээ|өвчтэй|сахилга батгүй/i.test(bodySignal), "body-signal route must avoid diagnostic and shame wording");
 

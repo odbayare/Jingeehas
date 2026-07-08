@@ -517,7 +517,7 @@ function validateScenario(scenario) {
     assert(text.includes("Одоохондоо хэт яарахгүй зүйлс") || text.includes("6. Болгоомжлох зүйл"), `${scenario.name}: missing avoid section`);
   }
   if (scenario.leverageIncludes) {
-    assert(text.includes("Хамгийн хялбар эхлэх цэг") || text.includes("6. Авч хэрэгжүүлж болох эхний алхам"), `${scenario.name}: missing first-change section`);
+    assert(text.includes("Хамгийн хялбар эхлэх цэг") || text.includes("6. Авч хэрэгжүүлж болох эхний алхам") || text.includes("7. Эхний өөрчлөлт хаанаас эхлэх вэ?"), `${scenario.name}: missing first-change section`);
   }
   assertReportIncludes(text, scenario.reportIncludes, scenario.name);
   assertReportExcludes(text, scenario.reportExcludes, scenario.name);

@@ -5619,69 +5619,249 @@ function wp78ReportInsights(primaryKey, secondary = [], tags = [], answers = sta
   return { clusters, secondaryFactors: unique(secondaryFactors).slice(0, 10), receipts };
 }
 
+function wp81AnswerText(questionId, answers = state.stageAnswers || {}) {
+  const value = effectiveStageAnswers(answers)[questionId];
+  if (Array.isArray(value)) return value.filter(Boolean).join(", ");
+  return String(value || "").trim();
+}
+
+function wp81EvidencePoints(insights, voice, primaryKey, tags = [], answers = state.stageAnswers || {}) {
+  const points = [];
+  const add = (condition, text, why) => {
+    if (condition && !points.some(item => item.text === text)) points.push({ text, why });
+  };
+  const receipts = insights.receipts || [];
+  receipts.slice(0, 6).forEach(item => add(true, item, "Энэ хариулт ганцаараа шийдвэр биш ч бусад хариулттай нийлээд давтагдах нөхцөлийг тодруулж өгдөг."));
+  add(wp78AnswerText("S1-W06", answers), `Та “${wp81AnswerText("S1-W06", answers)}” гэж хариулсан.`, "Нэг удаагийн хазайлт дараагийн хоолноос хэвийн үргэлжлэх үү, эсвэл маргааш нь хэт засах оролдлого руу орох уу гэдгийг энэ хариулт харуулдаг.");
+  add(wp78AnswerText("S1-F01", answers), `Идэх хүсэл гарсан ойрын шалтгаанд “${wp81AnswerText("S1-F01", answers)}” гэж тэмдэглэсэн.`, "Идэх хүсэл зөвхөн өлсөлтөөс биш, стресс, ядаргаа, орчин, social нөхцөл, эсвэл биеийн мэдрэмжтэй хамт эхэлж байгааг ялгахад хэрэгтэй.");
+  add(wp78AnswerText("S1-A02", answers), `Согтууруулах ундаа хэрэглэсэн үед “${wp81AnswerText("S1-A02", answers)}” гэж сонгосон.`, "Энэ нь хэрэглэсэн оройн хоолны хэмжээ, давслаг/тослог зууш, нойр болон маргаашийн хэмнэл хамт хөдөлж байж болохыг харуулна.");
+  add(wp78AnswerText("S1-A03", answers), `Согтууруулах ундаа хэрэглэсний маргааш “${wp81AnswerText("S1-A03", answers)}” илүү ойр гэж тэмдэглэсэн.`, "Маргаашийн биеийн тавгүйрхэл, өлсөлт, давслаг/тослог зүйл хүсэх мэдрэмж дараагийн өдрийн хэт чангаруулах бодолтой нийлж болно.");
+  add(wp78AnswerText("S1-E01", answers) || wp78AnswerText("S1-E02", answers), `Стресс, сэтгэл хөдлөлийн хэсэгт “${[wp81AnswerText("S1-E01", answers), wp81AnswerText("S1-E02", answers)].filter(Boolean).join("; ")}” гэж тэмдэглэсэн.`, "Хоол тухайн мөчид тайвшрах, дотор давчдах мэдрэмжийг намдаах үүрэгтэй болж байгаа эсэхийг энэ хэсэг шалгадаг.");
+  add(wp78AnswerText("S1-N01", answers) || wp78AnswerText("S1-N02", answers), `Нойр/өдрийн эрч хүчний хэсэгт “${[wp81AnswerText("S1-N01", answers), wp81AnswerText("S1-N02", answers)].filter(Boolean).join("; ")}” гэж хариулсан.`, "Нойр, кофе, өдрийн тэнхээний уналт нь оройн хурдан сонголт, амттай зүйл татах мэдрэмжийг хүчтэй болгож болно.");
+  add(wp78AnswerText("S1-M02", answers), `Хоол хоорондын зайны хэсэгт “${wp81AnswerText("S1-M02", answers)}” гэж сонгосон.`, "Хоолны зай уртсах үед оройн өлсөлт яаралтай болж, төлөвлөснөөс өөрөөр идэх магадлал нэмэгддэг.");
+  add(wp78AnswerText("S1-MV01", answers), `Хөдөлгөөний бодит боломж: ${wp81AnswerText("S1-MV01", answers)}.`, "Энэ нь шийтгэх дасгал санал болгох гэсэн үг биш. Харин бодит амьдралд тогтмол давтагдах хамгийн жижиг хөдөлгөөний хэлбэрийг сонгоход хэрэгтэй.");
+  add(wp78AnswerText("S1-B01", answers) || wp78AnswerText("S1-B02", answers), `Биеийн дохионы хэсэгт “${[wp81AnswerText("S1-B01", answers), wp81AnswerText("S1-B02", answers)].filter(Boolean).join("; ")}” гэж тэмдэглэсэн.`, "Толгой эргэх, зүрх дэлсэх, сахар/даралтын санаа зовнил байгаа үед хоолны төлөвлөгөө биш, аюулгүй шалгалт түрүүлнэ.");
+  if (!points.length) {
+    add(true, reportEvidenceNote(voice.key), "Хариулт цөөн тул энэ тайланг магадлалтай эхний зураглал гэж унших нь зөв.");
+  }
+  return points.slice(0, 10);
+}
+
+function wp81HasAlcoholLoop(answers = state.stageAnswers || {}, clusters = []) {
+  return clusters.some(item => item.key === "alcohol")
+    || (wp78AnswerText("S1-A01", answers) && wp78AnswerText("S1-A01", answers) !== "Огт хэрэглэдэггүй" && wp78AnswerText("S1-A01", answers) !== "Хариулахгүй");
+}
+
+function wp81SecondaryFactors(insights, primaryKey, tags = [], answers = state.stageAnswers || {}) {
+  const factors = [];
+  const add = (condition, title, body) => {
+    if (condition && !factors.some(item => item.title === title)) factors.push({ title, body });
+  };
+  add(wp78AnswerText("S1-N01", answers) || wp78AnswerText("S1-N02", answers) || tags.includes("circadian_crash") || primaryKey === "circadian", "Нойр ба өдрийн эрч хүч", "Нойр муу, өдөр тэнхээ багатай, эсвэл кофе/оройн хэмнэл солигдсон үед хоол сонгох шийдвэр илүү хүнд болдог. Тийм өдөр “зөв хооллох” мэдлэг байгаад ч хэрэгжүүлэх эрч хүч үлдэхгүй байж болно.");
+  add(wp78AnswerText("S1-E01", answers) || wp78AnswerText("S1-E02", answers) || primaryKey === "regulation", "Стресс ба тайвшрах хэрэгцээ", "Стрессийн дараах идэлт нь өлсөлтөөс гадна дотор давчдах мэдрэмжийг намдаах оролдлого байж болно. Энэ үед шууд хорихоос илүү богино тайвшрах зай хэрэгтэй.");
+  add(wp78AnswerText("S1-M02", answers) || tags.includes("meal_gap_5h_plus") || tags.includes("skipped_meal"), "Хоол хоорондын зай", "Өдөр хоол холдох тусам оройн өлсөлт яаралтай санагдаж, бэлэн эсвэл их хэмжээтэй сонголт руу шилжих магадлал нэмэгддэг.");
+  add(wp81HasAlcoholLoop(answers, insights.clusters), "Согтууруулах ундаа хэрэглэсэн үеийн сонголт", "Согтууруулах ундаа хэрэглэсэн орой зууш, оройн хоол, давслаг/тослог сонголт нэмэгдэх боломжтой. Гол нь буруутгах биш, тэр орчны өмнөх хоол, ус, дараагийн өдрийн сэргэлтийг төлөвлөх юм.");
+  add(wp81HasAlcoholLoop(answers, insights.clusters), "Согтууруулах ундаа хэрэглэсний маргааш", "Согтууруулах ундаа хэрэглэсний маргааш бие тавгүйрхэх, нойр муудсан байх, давслаг/шөлтэй/тослог зүйл хүсэх, хөдөлгөөн багасах зэрэг нийлж болно. Дараа нь хэт чанга барих бодол орж ирвэл тойрог улам тогтдог.");
+  add(wp78AnswerText("S1-T01", answers) && wp78AnswerText("S1-T01", answers) !== "Үгүй" && wp78AnswerText("S1-T01", answers) !== "Хариулахгүй", "Тамхи, кофе, зуушны холбоо", "Тамхи, кофе, стресс, амны зуршил, зуушны хүсэл нэг хэмнэл дээр давхцаж байж магадгүй. Энэ нь тамхи татахыг зөвлөж байгаа хэрэг биш; харин тэр холбоог ялгаж харах шаардлагатай гэсэн үг.");
+  add(wp78AnswerText("S1-MV01", answers) || wp78AnswerText("S1-MV02", answers), "Хөдөлгөөний бодит боломж", `хөдөлгөөний бодит боломж: ${wp81AnswerText("S1-MV01", answers) || "бага хүчтэй эхлэх боломж"}. Саад нь ${wp81AnswerText("S1-MV02", answers) || "өдрийн ачаалал"} гэж харагдаж байна. Энд зорилго нь шийтгэх дасгал биш, давтагдаж болох хамгийн жижиг хөдөлгөөн юм.`);
+  add(wp78AnswerText("S1-F01", answers).includes("Харагдаад") || primaryKey === "cue", "Хоол харагдах, үнэртэхэд идэх хүсэл нэмэгдэх", "Хоол ойр, харагдах, үнэртэх, апп нээгдэх үед шийдвэр гарахаас өмнө орчин өөрөө эхний алхмыг хийдэг. Орчны нэг дохиог холдуулах нь зөвхөн тэвчээр шаардахаас илүү бодитой.");
+  add(wp78AnswerText("S1-B01", answers) || wp78AnswerText("S1-B02", answers), "Биеийн шинж тэмдэг", "Гар салгалах, толгой эргэх, зүрх дэлсэх, сахар/даралтын санаа зовнил зэрэг байвал энэ тайлан хоолны хатуу дүрэм өгөхгүй. Аюулгүй шалгалт, тогтмол хоол, огцом хасалтаас зайлсхийх нь түрүүлнэ.");
+  insights.secondaryFactors.forEach(item => add(!factors.some(factor => factor.title.includes(item)), item, "Энэ хүчин зүйл таны бусад хариулттай давхцаж байгаа тул үндсэн механизмын хажууд ажиглах хэрэгтэй."));
+  return factors.slice(0, 6);
+}
+
+function wp81WeightImpactParagraphs(insights, primaryKey, tags = [], answers = state.stageAnswers || {}) {
+  const paragraphs = [
+    "Энэ хэсэг шууд шалтгаан-үр дагавар гэж батлахгүй. Харин таны хариултаас харахад жинд нөлөөлж болох хэд хэдэн завсрын гүүр байна. Жин өөрчлөгдөхөд зөвхөн хүсэл зориг биш, хоолны цаг, орчны бэлэн сонголт, стресс тайлах хэрэгцээ, нойр, биеийн дохио, social нөхцөл зэрэг хамт хөдөлдөг.",
+  ];
+  if (wp78AnswerText("S1-M02", answers) || tags.includes("meal_gap_5h_plus")) paragraphs.push("Хоол холдох үед оройн өлсөлт хүчтэй болж, төлөвлөсөн хэмжээнээс илүү идэх эсвэл хурдан, илчлэг өндөр сонголт руу шилжих магадлал нэмэгддэг. Энэ нь нэг оройн асуудал биш; маргааш нь дахин хасах бодол орж ирвэл хоолны зай ахиад уртсах нөхцөл үүсдэг.");
+  if (insights.clusters.some(item => item.key === "restrict") || primaryKey === "collapse") paragraphs.push("Хэт чанга засах оролдлого нь эхний өдөр сайн мэт санагдаж болох ч дараагийн хазайлтыг илүү том болгож магадгүй. “Маргааш илүү чанга барина” гэдэг бодол хоол алгасах, өлсөлт нэмэгдэх, дахин хэтрүүлэх тойрог руу түлхэж болно.");
+  if (wp78HasText(["дасгал", "challenge", "нүүрс ус", "өлсөх тусам"], answers)) paragraphs.push("Дасгал, challenge, нүүрс ус багасгах, “өлсөх тусам зөв явж байна” гэсэн бодол давхцвал бие орой хамгаалах хариу шиг хүчтэй өлсөж болно. Ийм оройн өлсөлт нь тэвчээр дутсандаа биш, өдрийн турш хэт чанга барьсны дараах биеийн дохио байж магадгүй.");
+  if (insights.clusters.some(item => item.key === "stress") || primaryKey === "regulation") paragraphs.push("Стрессийн үед хоол түр тайвшруулах үүрэгтэй болдог бол зөвхөн калори тоолох зөвлөгөө хангалтгүй. Учир нь хоол тухайн мөчид бодит сэтгэлзүйн үүрэг гүйцэтгэж байгаа: дотор давчдах, ядрах, уурлах, санаа зовох мэдрэмжийг богино хугацаанд намдааж байна.");
+  if (wp78AnswerText("S1-F01", answers).includes("Ядарсан") || primaryKey === "executive" || primaryKey === "circadian") paragraphs.push("Ядаргаа нэмэгдэхэд хамгийн бага хүч шаардсан хоол ялдаг. Энэ нь бэлэн хоол, захиалга, амархан зууш, том порц руу шилжих байдлаар илэрч болно. Тиймээс эхний алхам нь төгс хоолны жагсаалт биш, ядарсан үед ажиллах бага хүчтэй бэлэн сонголт байх хэрэгтэй.");
+  if (wp81HasAlcoholLoop(answers, insights.clusters)) paragraphs.push("Согтууруулах ундаа өөрөө илчлэгтэй. Мөн хэрэглэсэн орой болон маргаашийн хоолны сонголт, нойр, биеийн тавгүйрхэл, давслаг/тослог зүйл хүсэх мэдрэмж хамт өөрчлөгдөж болно. Энэ нь шууд “ингээд жин нэмнэ” гэсэн энгийн тайлбар биш, харин хэд хэдэн жижиг нөлөө нэг дараалалд орж болзошгүй гэсэн болгоомжтой зураглал юм.");
+  if (wp78AnswerText("S1-T01", answers) && wp78AnswerText("S1-T01", answers) !== "Үгүй" && wp78AnswerText("S1-T01", answers) !== "Хариулахгүй") paragraphs.push("Тамхи, кофе, зууш, стрессийн хэмнэл давхцаж байвал хоолны дуршил дангаараа биш, өдөр тутмын зуршлын багц хэлбэрээр хөдөлж байж магадгүй. Энэ нь тамхийг жин барих арга болго гэсэн зөвлөгөө огт биш.");
+  if (wp78AnswerText("S1-MV01", answers) || wp78AnswerText("S1-MV02", answers)) paragraphs.push("Хөдөлгөөний боломж бага байвал энерги зарцуулалт төдийгүй өдөр тутмын хэмнэл, сэтгэл санааны тогтвортой байдал, унтах цаг зэрэгт давхар нөлөөлж болно. Гэхдээ энэ нь өөрийгөө шийтгэх дасгал хийх ёстой гэсэн үг биш; давтагдах хамгийн жижиг хөдөлгөөн илүү чухал.");
+  return paragraphs;
+}
+
+function wp81CycleSteps(insights, voice, primaryKey, tags = [], answers = state.stageAnswers || {}) {
+  if (wp81HasAlcoholLoop(answers, insights.clusters)) {
+    return [
+      "Гарахаасаа өмнө хоол тодорхой биш эсвэл өдөр ядарсан байна",
+      "Согтууруулах ундаа хэрэглэсэн орой зууш, давслаг/тослог зүйл, оройн хоолны хэмжээ нэмэгдэж магадгүй",
+      "Нойр муудах эсвэл шөнө орой идэх нөхцөл үүснэ",
+      "Маргааш бие тавгүй, давслаг/шөлтэй/тослог зүйл хүсэх мэдрэмж нэмэгдэнэ",
+      "“Өнөөдөр чанга барина” гэж бодоод хоолоо хэт хасна",
+      "Орой өлсөлт, ядаргаа дахин нэмэгдэж дараагийн хазайлтад бэлэн болно"
+    ];
+  }
+  if (insights.clusters.some(item => item.key === "restrict") || primaryKey === "collapse") {
+    return ["Хэт чанга төлөвлөгөө эхэлнэ", "Нэг удаа хазайх мөч гарна", "“Өнөөдөр өнгөрлөө” гэж бодогдоно", "Дараагийн хоолноос хэвийн үргэлжлэх зам бүдгэрнэ", "Илүү их идэх эсвэл бүр орхих хандлага гарна", "Маргааш илүү чанга барина гэж бодоод тойрог дахин эхэлнэ"];
+  }
+  if (insights.clusters.some(item => item.key === "stress") || primaryKey === "regulation") {
+    return ["Стресс эсвэл дотор давчдах мэдрэмж нэмэгдэнэ", "Түр амсхийх газар хэрэгтэй болно", "Хоол хамгийн ойрын тайвшруулах арга шиг санагдана", "Идсэний дараа хэсэг намдана", "Дараа нь өөртөө хатуу хандах бодол орж ирж магадгүй", "Стресс хэвээр байвал дараагийн удаа хоол дахин ойрхон санагдана"];
+  }
+  if (primaryKey === "cue" || insights.clusters.some(item => item.key === "cue")) {
+    return ["Зууш, үнэр, зураг эсвэл апп нүдэнд ойр байна", "Идэх бодол шийдвэрээс өмнө орж ирнэ", "Гарын дор байгаа сонголт хамгийн амар болно", "Идсэний дараа өөр зүйл хийхэд түр амар санагдана", "Орчин өөрчлөгдөөгүй бол дараагийн өдөр ижил дохио дахин ажиллана"];
+  }
+  return (voice.cycle || []).slice(0, 7);
+}
+
+function wp81AvoidItems(insights, voice, primaryKey, tags = [], answers = state.stageAnswers || {}) {
+  const isPostpartum = wp78HasText(["төрсний дараах", "хүүхэд", "хөхүүл"], answers);
+  return unique([
+    ...(insights.clusters[0]?.avoid || []),
+    ...insights.clusters.slice(1, 4).flatMap(item => item.avoid || []),
+    ...(voice.avoid || []),
+    wp81HasAlcoholLoop(answers, insights.clusters) ? "согтууруулах ундаа хэрэглэсний маргааш огцом хасалт хийх" : "",
+    wp81HasAlcoholLoop(answers, insights.clusters) ? "бие тавгүй өдөр хүнд дасгалаар өөрийгөө шийтгэх" : "",
+    primaryKey === "regulation" ? "стресс өндөр үед зөвхөн тэвчээрээр барих" : "",
+    primaryKey === "cue" ? "хоол харагдах орчинд зөвхөн хүсэл зоригоор барих" : "",
+    "нэг удаа хазайсныг бүтэн өдрийн бүтэлгүйтэл гэж үзэх",
+    "биеийн шинжтэй үед мэргэжлийн хүнтэй ярилцахгүйгээр хоол олон цаг алгасах, огцом дэглэм эхлүүлэх",
+    "тамхийг хоолны дуршил дарах арга гэж ашиглах"
+  ].filter(Boolean))
+    .filter(item => !isPostpartum || !/мацаг|огцом хязгаарлалт эхлүүлэх/i.test(item))
+    .slice(0, 8);
+}
+
+function wp81FirstStep(insights, voice, primaryKey, tags = [], answers = state.stageAnswers || {}) {
+  if (wp81HasAlcoholLoop(answers, insights.clusters)) return "Согтууруулах ундаа хэрэглэх магадлалтай өдрийн өмнө нэг хэвийн хоол, ус, маргаашийн эхний зөөлөн хоолоо урьдчилж товло. Зорилго нь маргааш өөрийгөө шийтгэхгүйгээр биеэ хэвийн хэмнэл рүү буцаах юм.";
+  if (insights.clusters.some(item => item.key === "restrict") || primaryKey === "collapse") return "Нэг удаа хазайсны дараа хэрэглэх “дараагийн хоол бол шийтгэл биш, хэвийн үргэлжлэх цэг” гэсэн буцах дүрмээ урьдчилж бич.";
+  if (insights.clusters.some(item => item.key === "stress") || primaryKey === "regulation") return "Идэхээс өмнө 10 минутын богино decompression хий: утсаа тавих, ус уух, 10 удаа удаан амьсгалах, эсвэл богино алхах. Дараа нь идэх эсэхээ шийд.";
+  if (primaryKey === "circadian") return "Өдрийн эхний хоолоо тогтмол болго. Өдрийн сүүлийн кофегоо хэзээ уухаа тогтоо. Орой ядарсан үед хэрэглэх бага хүчтэй бэлэн хоолны хоёр хувилбар сонго.";
+  if (primaryKey === "executive" || insights.clusters.some(item => item.key === "fatigue")) return "Ядарсан өдөр хэрэглэх бага хүчтэй бэлэн хоолны хоёр хувилбар сонго. Тэдгээр нь төгс байх шаардлагагүй, харин бодит өдөр ажиллах ёстой.";
+  if (primaryKey === "cue" || insights.clusters.some(item => item.key === "cue")) return "Хамгийн их татдаг нэг зүйлийг нэг алхам холдуулж, хүсэж буй сонголтоо илүү харагдах газар тавь.";
+  const movement = wp81AnswerText("S1-MV01", answers);
+  if (movement) return `${movement} хөдөлгөөнийг шийтгэл биш, хамгийн бага хувилбараар эхэл: 5–10 минут, тогтмол давтагдах цаг, дууссаны дараа өөрийгөө шалгах богино тэмдэглэл.`;
+  return insights.clusters[0]?.step || voice.firstStep || "Дараагийн 7 хоногт нэг л жижиг өөрчлөлт сонго. Олон дүрэм зэрэг эхлүүлэхгүй.";
+}
+
+function wp81ExperimentRows(firstStep, insights, answers = state.stageAnswers || {}) {
+  const alcohol = wp81HasAlcoholLoop(answers, insights.clusters);
+  return [
+    ["1–3 дахь өдөр", firstStep, alcohol ? "Согтууруулах ундаа хэрэглэсэн өдөр болон маргааш өлсөлт, нойр, биеийн тавгүйрхэл, давслаг/тослог зүйл хүсэх мэдрэмжээ тэмдэглэ." : "Энэ алхам бодит өдөрт хэрэгжихэд хэр хялбар байгааг л ажигла.", "Эхний гурван өдөр жин, төгс байдал, нэг удаагийн хазайлтад хэт хариу үйлдэл үзүүлэхгүй."],
+    ["4–10 дахь өдөр", alcohol ? "Гарах өдөр байвал өмнөх хоол, ус, маргаашийн эхний хоолоо урьдчилж товло. Гарах өдөр байхгүй бол өөрийн гол тойрог дээр ижил буцах дүрмээ турш." : "Сонгосон нэг алхмаа өдөр бүр давтаж, ямар цагт амар/хэцүү байгааг тэмдэглэ.", "Хамгийн их унадаг цаг, орчин, мэдрэмж ямар байгааг хар.", "Нэг өдөр алгассан бол бүх төлөвлөгөө нурсан гэж үзэхгүй; дараагийн хоолноос үргэлжлүүл."],
+    ["11–14 дахь өдөр", "Аль нөхцөлд алхам ажилласан, аль нөхцөлд ажиллаагүйг ялгаад дараагийн 14 хоногт үлдээх нэг жижиг тохируулга сонго.", "Өлсөлт, стресс, ядаргаа, хүмүүсийн дунд байх нөхцөл, орчны дохионы аль нь хамгийн хүчтэй хэвээр байгааг ажигла.", "Өөртөө оноо тавихгүй. Энэ бол дүгнэлт биш, дараагийн хувилбараа олох туршилт."]
+  ];
+}
+
+function wp81ObservationQuestions(insights, primaryKey, answers = state.stageAnswers || {}) {
+  const questions = [
+    primaryKey === "regulation" || insights.clusters.some(item => item.key === "stress") ? "Би үнэхээр өлссөн үү, эсвэл тайвшрах хэрэгтэй байна уу?" : "",
+    wp81HasAlcoholLoop(answers, insights.clusters) ? "Согтууруулах ундаа хэрэглэсний маргааш миний хамгийн түрүүнд хүсдэг хоол юу вэ?" : "",
+    insights.clusters.some(item => item.key === "restrict") || primaryKey === "collapse" ? "Би нэг удаа хазайсны дараа юу гэж боддог вэ?" : "",
+    primaryKey === "executive" || primaryKey === "circadian" ? "Өнөөдөр миний хамгийн бага хүчин чармайлттай зөв сонголт юу вэ?" : "",
+    primaryKey === "cue" || insights.clusters.some(item => item.key === "cue") ? "Ямар хоол харагдах, үнэртэх, апп нээгдэхэд миний гар хамгийн хурдан хүрч байна вэ?" : "",
+    wp78AnswerText("S1-M02", answers) ? "Хоол хоорондын зай хэдэн цаг болоход оройн өлсөлт яаралтай санагдаж эхэлдэг вэ?" : "",
+    "Би дараагийн хоолноос хэвийн үргэлжлүүлж чадах уу?",
+    "Энэ мөчид хоол миний ямар хэрэгцээг шийдэж байна вэ?",
+    "Би өнөөдөр өөрийгөө шийтгэхгүйгээр ямар нэг жижиг тохируулга хийж чадах уу?"
+  ].filter(Boolean);
+  return unique(questions).slice(0, 5);
+}
+
+function wp81ProfessionalGuidance(mode, tags = [], answers = state.stageAnswers || {}) {
+  const items = [
+    "Ухаан балартах, хүчтэй толгой эргэх, зүрх дэлсэх, сахар/даралтын санаа зовнил, инсулин эсвэл сахар бууруулах эмийн хэрэглээ байвал хоол хасах туршилтаас өмнө мэргэжлийн хүнтэй ярилц.",
+    "Өөртөө хор хүргэх бодол, идсэний дараа нөхөх зан үйл, бөөлжүүлэх/туулгах/хэт их дасгал хийх, олон цаг хоолгүй байх давтагдвал энэ тайлангийн энгийн туршилт биш, аюулгүй тусламж түрүүлнэ.",
+    "Жирэмсэн, төрсний дараах эхний сарууд, хөхүүл үе, эм/тарилга/нэмэлтийн санаа зовнил байгаа бол жин хасах зөвлөгөөг өөрөө огцом эхлүүлэхгүй.",
+    "Согтууруулах ундаа хэрэглээ давтамжтай, хяналтгүй, ажил/гэр бүл/нойрт саад болж байвал тусдаа дэмжлэг авах нь зөв.",
+    "Тамхинаас гарах, тамхи багасгах үед хоолны дуршил өөрчлөгдвөл тамхиар жин барих гэж оролдохгүй; cessation дэмжлэг, стрессийн өөр гарц, зуушны төлөвлөгөөтэй хамт хар."
+  ];
+  if (mode.mode === "check" || tags.includes("glucose_like_signal") || wp78AnswerText("S1-B01", answers) || wp78AnswerText("S1-B02", answers)) {
+    items.unshift("Энэ нь онош биш. Таны биеийн дохио жирийн идэх зуршлаас илүү түрүүлж шалгах зүйл байж магадгүй. Тиймээс энэ тайлан хоолоо огцом хасахгүй, хоол олон цаг алгасах, огцом хязгаарлах, шийтгэх дасгал санал болгохгүй.");
+  }
+  return unique(items).slice(0, 6);
+}
+
 function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = [] }) {
+  const answers = effectiveStageAnswers(state.stageAnswers || {});
   const voice = reportVoiceFor(primary?.key, tags);
   const insights = wp78ReportInsights(primary?.key, secondary, tags);
   const mainCluster = insights.clusters[0];
-  const supportingClusters = insights.clusters.slice(1, 4);
-  const safetyNote = mode.mode === "check"
-    ? "Энэ нь онош биш. Биеийн дохио давхар харагдаж байгаа тул хоолоо огцом хасахгүй, мацаг эсвэл шийтгэх дасгал биш, мэргэжлийн хүнтэй ярилцахад бэлдэх зөөлөн ажиглалтаар эхэлнэ."
-    : "Энэ тайлан онош биш. Хэрвээ ухаан балартах, өөртөө хор хүргэх бодол, хүчтэй биеийн шинж, нөхөх зан үйл, инсулин/сахарын санаа зовнил, жирэмсэн/төрсний дараах эрсдэл байвал мэргэжлийн хүнтэй ярилцахыг түрүүнд тавина.";
-  const avoidItems = unique([
-    ...(mainCluster?.avoid || []),
-    ...supportingClusters.flatMap(item => item.avoid || []),
-    ...voice.avoid,
-    "биеийн шинжтэй үед мэргэжлийн хүнтэй ярилцахгүйгээр хатуу өөрчлөлт эхлүүлэх"
-  ]).slice(0, 7);
-  const firstStep = mainCluster?.step || voice.firstStep;
-  const experimentRows = [
-    ["1–3 дахь өдөр", firstStep],
-    ["4–10 дахь өдөр", voice.experiment[1]?.[1] || "Нэг жижиг өөрчлөлтөө өдөр бүр давтаж, ямар цагт амар/хэцүү байгааг тэмдэглэ."],
-    ["11–14 дахь өдөр", voice.experiment[2]?.[1] || "Аль өдөр илүү тогтвортой байсныг харж, дараагийн долоо хоногт үлдээх нэг алхмаа сонго."]
-  ];
+  const supportingClusters = insights.clusters.slice(1, 5);
+  const evidencePoints = wp81EvidencePoints(insights, voice, primary?.key, tags, answers);
+  const secondaryFactors = wp81SecondaryFactors(insights, primary?.key, tags, answers);
+  const weightImpact = wp81WeightImpactParagraphs(insights, primary?.key, tags, answers);
+  const cycleSteps = wp81CycleSteps(insights, voice, primary?.key, tags, answers);
+  const avoidItems = wp81AvoidItems(insights, voice, primary?.key, tags, answers);
+  const firstStep = wp81FirstStep(insights, voice, primary?.key, tags, answers);
+  const experimentRows = wp81ExperimentRows(firstStep, insights, answers);
+  const observationQuestions = wp81ObservationQuestions(insights, primary?.key, answers);
+  const professionalItems = wp81ProfessionalGuidance(mode, tags, answers);
+  const confidenceCopy = evidencePoints.length >= 6
+    ? "Хариултын мэдээлэл хангалттай тул тайлан гол давталтыг илүү дэлгэрэнгүй холбож тайлбарлаж байна."
+    : "Хариулт харьцангуй цөөн тул энэ тайланг эхний зураглал гэж уншаарай. Илүү олон өдөр/нөхцөл тэмдэглэвэл дүгнэлт илүү нарийсна.";
   return `
     ${topbar(100, "Тайлан")}
     <section class="screen">
       <div class="panel" data-report-output>
         <div class="report-section">
           <h2>Таны тайлан бэлэн боллоо</h2>
-          <p class="muted">Доорх тайлан таны хариултыг давтаж жагсаах биш, хариултууд хоорондоо яаж холбогдож байж болохыг тайван тайлбарлах зорилготой. Энэ нь боломжит хэв маяг болохоос эцсийн дүгнэлт биш.</p>
+          <p class="muted">Доорх тайлан таны хариултыг давтаж жагсаах биш, хооронд нь холбож унших зорилготой. Энэ нь боломжит хэв маяг болохоос онош, баталгаа, эсвэл жин бууруулах амлалт биш. Харин аль мөч дээр таны өдөр хэцүү болж, хоол ямар үүрэгтэй орж ирж, эхний өөрчлөлт хаанаас эхлэхийг илүү тодорхой болгох эхний зураглал юм.</p>
+          <p class="muted">${publicHtml(confidenceCopy)}</p>
         </div>
         <div class="report-section">
           <h3>1. Энэ тайлан юунд тулгуурласан бэ?</h3>
-          <ul>${(insights.receipts.length ? insights.receipts : [reportEvidenceNote(voice.key)]).map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
+          <div class="stack">${evidencePoints.map(item => `<div class="card stack"><p>${publicHtml(item.text)}</p><p class="muted">${publicHtml(item.why)}</p></div>`).join("")}</div>
         </div>
         <div class="report-section">
           <h3>2. Таны гол давтагдаж буй механизм</h3>
           <p><strong>${publicHtml(mainCluster?.title || publicMechanismShort(primary?.key))}</strong></p>
           <p>${publicHtml(mainCluster?.evidence || reportEvidenceNote(voice.key))}</p>
           <p>${publicHtml(mainCluster?.meaning || voice.notProblem)}</p>
+          <p>${publicHtml(livedExplanationFor(primary?.key))}</p>
+          <p>${publicHtml("Энэ механизм давтагдахдаа “мэдэхгүйгээс” биш, тухайн мөчид хоол нэг бодит үүрэг гүйцэтгэж байгаагаас хүчтэй болдог. Зарим үед хоол тайвшруулах, тэнхээ нөхөх, хүмүүсийн дунд эвтэйхэн байх, дараа өлсөхөөс хамгаалах, эсвэл хэт чанга дүрмээс түр гарах үүрэгтэй болж байна. Ийм үед зөвхөн хүсэл зоригоо нэмэх зөвлөгөө хангалтгүй: тухайн үүргийг өөр, илүү зөөлөн аргаар шийдэх хэрэгтэй.")}</p>
+          <p>${publicHtml("Давталт үүсэх гол шалтгаан нь нэг мөчийн сонголт биш, тэр сонголтын өмнөх нөхцөл ба дараах хариу үйлдэл юм. Өмнө нь хоол холдсон, стресс хуримтлагдсан, нойр муудсан, орчин бэлэн сонголтоор дүүрсэн, эсвэл нэг удаа хазайсны дараа өөртөө хатуу хандсан бол дараагийн удаа ижил зам илүү хурдан ажилладаг.")}</p>
         </div>
         <div class="report-section">
-          <h3>3. Давхар нөлөөлж байгаа хүчин зүйлс</h3>
-          ${insights.secondaryFactors.length ? `<ul>${insights.secondaryFactors.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>` : `<p class="muted">Давхар хүчин зүйл тод харагдахад мэдээлэл одоогоор бага байна.</p>`}
+          <h3>3. Энэ нь яагаад жин дээр нөлөөлж байж болох вэ?</h3>
+          ${weightImpact.map(paragraph => `<p>${publicHtml(paragraph)}</p>`).join("")}
+        </div>
+        <div class="report-section">
+          <h3>4. Давхар нөлөөлж байгаа хүчин зүйлс</h3>
+          ${secondaryFactors.length ? `<div class="stack">${secondaryFactors.map(item => `<div class="card stack"><h3>${publicHtml(item.title)}</h3><p>${publicHtml(item.body)}</p></div>`).join("")}</div>` : `<p class="muted">Давхар хүчин зүйл тод харагдахад мэдээлэл одоогоор бага байна.</p>`}
           ${supportingClusters.length ? `<div class="stack">${supportingClusters.map(item => `<div class="card"><h3>${publicHtml(item.title)}</h3><p>${publicHtml(item.meaning)}</p></div>`).join("")}</div>` : ""}
         </div>
         <div class="report-section">
-          <h3>4. Яагаад энэ давтагдаж байж болох вэ?</h3>
-          <p>${publicHtml(livedExplanationFor(primary?.key))}</p>
-          <p>${publicHtml("Энэ нь таны буруу эсвэл зангийн сул тал гэсэн дүгнэлт биш. Хоол зарим үед тайвшрах, тэнхээ нөхөх, social нөхцөлд эвтэйхэн байх, эсвэл дараа өлсөхөөс хамгаалах үүрэгтэй болж байж болно.")}</p>
+          <h3>5. Таны тойрог хэрхэн ажиллаж байна вэ?</h3>
+          <div class="cycle-map">${cycleSteps.map(step => `<p>${publicHtml(step)}</p>`).join("<span>→</span>")}</div>
+          <p class="muted">Энэ тойрог бол буруутгах жагсаалт биш. Аль холбоос дээр хамгийн бага өөрчлөлт хийхэд дараагийн холбоос суларч болохыг харах зураглал юм.</p>
         </div>
         <div class="report-section">
-          <h3>5. Одоогоор юуг хийхгүй байх вэ?</h3>
+          <h3>6. Одоогоор юуг хийхгүй байх вэ?</h3>
+          <p class="muted">Юуг одоогоор хийхгүй байх вэ гэдэг нь төлөвлөгөөний тал нь юм. Доорх зүйлс таны хариултад тулгуурласан түр хийхгүй байх жагсаалт.</p>
           <ul>${avoidItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
         </div>
         <div class="report-section">
-          <h3>6. Авч хэрэгжүүлж болох эхний алхам</h3>
+          <h3>7. Эхний өөрчлөлт хаанаас эхлэх вэ?</h3>
           <p>${publicHtml(firstStep)}</p>
+          <p class="muted">Олон зөвлөгөө зэрэг эхлүүлэхгүй. Эхний алхам нэг л байх тусам бодит өдөрт шалгах боломжтой. Хэрвээ энэ алхам хэт том санагдвал хугацаа, хэмжээ, хүч шаардлагыг нь хоёр дахин багасга.</p>
         </div>
         <div class="report-section">
-          <h3>7. 7–14 хоногийн туршилт</h3>
-          ${experimentRows.map(([label, copy]) => `<p><strong>${label}</strong><br>${publicHtml(copy)}</p>`).join("")}
+          <h3>8. 7–14 хоногийн туршилт</h3>
+          ${experimentRows.map(([label, action, observe, noOverreact]) => `<div class="card stack"><h3>${label}</h3><p><strong>Юу хийх вэ:</strong> ${publicHtml(action)}</p><p><strong>Юуг ажиглах вэ:</strong> ${publicHtml(observe)}</p><p><strong>Юунд хэт хариулахгүй вэ:</strong> ${publicHtml(noOverreact)}</p></div>`).join("")}
         </div>
         <div class="report-section">
-          <h3>8. Аюулгүй байдлын сануулга</h3>
-          <p>${publicHtml(safetyNote)}</p>
+          <h3>9. Хэрэв дахин хазайвал яах вэ?</h3>
+          <p><strong>Шууд хэлэх өгүүлбэр:</strong> ${publicHtml("Дараагийн хоол бол шийтгэл биш, хэвийн үргэлжлэх цэг.")}</p>
+          <p>${publicHtml("Хэрвээ төлөвлөснөөс өөрөөр идсэн бол дараагийн хоолыг хоол олон цаг алгасах, нөхөх дасгал, эсвэл бүхэл өдрийн шийтгэл болгож болохгүй. Дараагийн хоолонд ердийн хэмжээтэй хэвийн хоол руу буцах, бие тайвшруулах, хэт өлсгөхгүй сонголт хийх нь гол. Тэмдэглэх зүйл нь “би муу байлаа” биш, харин өмнө нь юу болсон, тухайн мөчид хоол ямар үүрэгтэй байсан, дараа нь ямар бодол орж ирсэн гэдэг гурван мөр юм.")}</p>
+        </div>
+        <div class="report-section">
+          <h3>10. Танд тохирох ажиглалтын 5 асуулт</h3>
+          <ul>${observationQuestions.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
+        </div>
+        <div class="report-section">
+          <h3>11. Хэзээ мэргэжлийн хүнтэй ярилцах вэ? · Аюулгүй байдлын сануулга</h3>
+          <ul>${professionalItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
+        </div>
+        <div class="report-section">
+          <h3>12. Товч дүгнэлт</h3>
+          <p>${publicHtml(`Таны тайланд хамгийн хүчтэй харагдаж байгаа зүйл бол ${mainCluster?.title || publicMechanismShort(primary?.key)}. Энэ нь сул тал гэхээсээ илүү өдөр тутмын нөхцөл, биеийн дохио, стресс/ядаргаа, орчны бэлэн сонголт, дараах өөртөө хандах хандлага хоорондоо холбогдож байгааг харуулж байна.`)}</p>
+          <p>${publicHtml(`Одоо зорилго нь бүхнийг нэг өдөрт өөрчлөх биш. Эхний туршилт бол “${firstStep}” гэсэн нэг л алхмыг 7–14 хоног шалгах явдал.`)}</p>
+          <p>${publicHtml("Хэрвээ хазайлт гарвал түүнийг тайлангийн эсрэг нотолгоо гэж үзэхгүй. Харин яг аль холбоос дээр тойрог буцаж ажиллаж байгааг харуулах мэдээлэл гэж ашигла.")}</p>
         </div>
         ${renderReportDeliveryActions({ heading: "Тайлангаа хадгалах" })}
         ${renderInternalTesterFeedbackSurvey()}

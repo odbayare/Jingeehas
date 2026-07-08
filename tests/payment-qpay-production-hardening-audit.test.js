@@ -269,7 +269,7 @@ withLocalStorageMutationSpy(() => {
     const text = normalize(html);
     assertSafeRenderedOutput(html, "paid output", { requireSafety: false });
     assert(text.includes("2. Таны гол давтагдаж буй механизм"), "paid output should show paid report explanation");
-    assert(text.includes("7. 7–14 хоногийн туршилт"), "paid output should show paid experiment depth");
+    assert(text.includes("8. 7–14 хоногийн туршилт"), "paid output should show paid experiment depth");
     assert(!text.includes("Бүрэн тайлан нээх 9,900₮"), "paid output should not show locked payment state");
   }, "paid output");
 

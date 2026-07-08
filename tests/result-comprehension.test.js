@@ -29,13 +29,14 @@ function assertSimpleStructure(report) {
     "Таны тайлан бэлэн боллоо",
     "1. Энэ тайлан юунд тулгуурласан бэ?",
     "2. Таны гол давтагдаж буй механизм",
-    "3. Давхар нөлөөлж байгаа хүчин зүйлс",
-    "6. Авч хэрэгжүүлж болох эхний алхам",
-    "7. 7–14 хоногийн туршилт",
+    "3. Энэ нь яагаад жин дээр нөлөөлж байж болох вэ?",
+    "4. Давхар нөлөөлж байгаа хүчин зүйлс",
+    "7. Эхний өөрчлөлт хаанаас эхлэх вэ?",
+    "8. 7–14 хоногийн туршилт",
     "Тайлангаа хадгалах"
   ].forEach(phrase => assert(report.includes(phrase), `ordinary report should include ${phrase}`));
-  assert(report.indexOf("1. Энэ тайлан юунд тулгуурласан бэ?") < report.indexOf("7. 7–14 хоногийн туршилт"), "paid report should keep one clear ordered structure");
-  assert(report.indexOf("7. 7–14 хоногийн туршилт") < report.indexOf("Тайлангаа хадгалах"), "save actions should come after the experiment");
+  assert(report.indexOf("1. Энэ тайлан юунд тулгуурласан бэ?") < report.indexOf("8. 7–14 хоногийн туршилт"), "paid report should keep one clear ordered structure");
+  assert(report.indexOf("8. 7–14 хоногийн туршилт") < report.indexOf("Тайлангаа хадгалах"), "save actions should come after the experiment");
 }
 
 function assertNoConfusingReportWords(report) {

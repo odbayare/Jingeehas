@@ -50,7 +50,7 @@ assert(bodyRisk.replace(/^Тайлан\s+/, "").startsWith("Таны тайла�
 assert(!bodyRisk.includes(forbiddenBodyHeadline), "body-risk report must not use the old body-check top headline");
 assert(bodyRisk.includes(mildBodyCaution), "mild caution must appear when body-risk flags exist");
 assert(
-  bodyRisk.indexOf(mildBodyCaution) > bodyRisk.indexOf("7. 7–14 хоногийн туршилт"),
+    bodyRisk.indexOf(mildBodyCaution) > bodyRisk.indexOf("8. 7–14 хоногийн туршилт"),
   "mild caution must stay as a short separate section after the main report"
 );
 assert(!/мацаг барь|удаан өлс|огцом хязгаарлалт хий|огцом хас гэж/i.test(bodyRisk), "body-risk report must not recommend fasting or extreme restriction");
