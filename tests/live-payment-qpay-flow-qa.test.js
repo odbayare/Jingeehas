@@ -151,7 +151,7 @@ assert(appSource.includes("productCode: WEIGHT_TEST_PRODUCT_CODE"), "QPay create
 assert(appSource.includes("amountMnt: currentOneTimePriceMnt()"), "QPay create payload must keep current one-time amount helper");
 assert(appSource.includes("return state.coachDiscountConsent && state.coachInvite ? COACH_WEIGHT_PRICE_MNT : STANDARD_WEIGHT_PRICE_MNT;"), "current one-time amount helper must remain unchanged");
 assert(appSource.includes("return Boolean(isInternalTestMode() || state.sevenDayPaid || state.upgradePaid || access.hasSevenDayAccess);"), "seven-day access helper source must remain unchanged");
-assert(appSource.includes("return Boolean(isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === \"paid\" || access.hasOneTimeReportAccess);"), "one-time access helper source must remain unchanged");
+assert(appSource.includes("return Boolean(isQaPaymentBypassEnabled() || isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === \"paid\" || access.hasOneTimeReportAccess);"), "one-time access helper source must keep paid-state and entitlement guards");
 assert(appSource.includes("return Boolean(state.upgradePaid || access.hasUpgradeAccess);"), "upgrade access helper source must remain unchanged");
 
 mockBackend.resetMockBackend();

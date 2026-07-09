@@ -60,6 +60,7 @@ const commands = [
   ["node", ["tests/wp79-conditional-branching.test.js"]],
   ["node", ["tests/wp80-context-safe-open-text.test.js"]],
   ["node", ["tests/wp81-report-depth-expansion.test.js"]],
+  ["node", ["tests/wp82-qa-skip-paywall.test.js"]],
   ["node", ["tests/question-navigation.test.js"]],
   ["node", ["tests/gender-gating.test.js"]],
   ["node", ["tests/cycle-question-mapping.test.js"]],

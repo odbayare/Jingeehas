@@ -1,5 +1,7 @@
 const STORAGE_KEY = "weightLossDeepPatternMvp";
 const WEIGHT_TEST_COMING_SOON_MODE = true;
+const WEIGHT_TEST_QA_PAYMENT_BYPASS = false;
+const WEIGHT_TEST_QA_SKIP_PAYWALL = false;
 let comingSoonModeTestOverride = null;
 const ENABLE_RUNTIME_ADAPTER_SHADOW = false;
 const ENABLE_VISIBLE_SURFACE_PROTOTYPE = false;
@@ -1653,9 +1655,21 @@ function hasSevenDayAccess() {
   return Boolean(isInternalTestMode() || state.sevenDayPaid || state.upgradePaid || access.hasSevenDayAccess);
 }
 
+function isQaPaymentBypassEnabled() {
+  return Boolean(WEIGHT_TEST_QA_PAYMENT_BYPASS);
+}
+
+function isQaSkipPaywallEnabled() {
+  return Boolean(WEIGHT_TEST_QA_PAYMENT_BYPASS && WEIGHT_TEST_QA_SKIP_PAYWALL);
+}
+
+function shouldQaSkipOneTimePaywall(packageType = state.packageType || "one-time") {
+  return packageType === "one-time" && isQaSkipPaywallEnabled();
+}
+
 function hasOneTimeReportAccess() {
   const access = mockBackend.getAccessState(state.currentAssessmentId || null);
-  return Boolean(isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === "paid" || access.hasOneTimeReportAccess);
+  return Boolean(isQaPaymentBypassEnabled() || isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === "paid" || access.hasOneTimeReportAccess);
 }
 
 function hasUpgradeAccess() {
@@ -2318,7 +2332,7 @@ function rankedPatterns(includeDiary = true) {
 }
 
 function completeStageOne() {
-  if (!canStartPaidAssessment()) {
+  if (!canStartPaidAssessment() && !shouldQaSkipOneTimePaywall()) {
     state.view = paidGateFallbackView();
     saveState();
     render({ scrollToTop: true });
@@ -2546,6 +2560,9 @@ function displayModuleName(moduleName, question = null) {
 }
 
 function renderChoice() {
+  if (shouldQaSkipOneTimePaywall("one-time")) {
+    return renderOneTimeStart();
+  }
   return `
     ${topbar(0, "Үнэлгээний сонголт")}
     <section class="screen">
@@ -7206,6 +7223,11 @@ if (typeof module !== "undefined") {
       renderFeedbackThanks,
       renderFeedbackExport,
       WEIGHT_TEST_COMING_SOON_MODE,
+      WEIGHT_TEST_QA_PAYMENT_BYPASS,
+      WEIGHT_TEST_QA_SKIP_PAYWALL,
+      isQaPaymentBypassEnabled,
+      isQaSkipPaywallEnabled,
+      shouldQaSkipOneTimePaywall,
       isComingSoonModeActive,
       setComingSoonModeForTest,
       renderComingSoon,
