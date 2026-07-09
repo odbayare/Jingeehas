@@ -314,6 +314,13 @@ const stageOneQuestions = [
   { id: "S1-C03", module: "Basic context", type: "number", text: "Таны өндөр ойролцоогоор хэд вэ? /см/" },
   { id: "S1-C04", module: "Basic context", type: "number", text: "Таны одоогийн жин ойролцоогоор хэд вэ? /кг/" },
   { id: "S1-C05", module: "Basic context", type: "number", text: "Та ойролцоогоор хэдэн кг болохыг хүсэж байна вэ? /кг/" },
+  { id: "S1-WC01", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", stageTitle: "Үе 1 · Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "single", text: "Таны ажил өдөрт ихэвчлэн ямар хөдөлгөөн шаарддаг вэ?", options: ["Ихэнхдээ суугаа ажил", "Суугаа боловч өдөрт ойр ойрхон босож явдаг", "Ихэнхдээ зогсоо ажил", "Өдөржин алхаж, нааш цааш хөдөлдөг ажил", "Биеийн хүчний дунд зэргийн ажил", "Хүнд биеийн хүчний ажил", "Жолоо барьж удаан суудаг ажил", "Ажил тогтмол биш / өдөр бүр өөр", "Одоогоор ажил хийдэггүй", "Хариулахгүй"] },
+  { id: "S1-WC02", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "single", text: "Та ажил, сургууль, өдөр тутмын гол газраа ихэвчлэн яаж очдог вэ?", options: ["Алхаж очдог", "Дугуйгаар явдаг", "Нийтийн тээврээр явдаг, бага зэрэг алхдаг", "Машинаар явдаг, бараг алхдаггүй", "Машинаар явдаг ч өдөрт нэлээд алхдаг", "Гэрээсээ ажилладаг", "Тогтмол газар очдоггүй", "Хариулахгүй"] },
+  { id: "S1-WC03", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "single", text: "Дасгалаас гадна өдөр тутамдаа хэр их хөдөлгөөнтэй байдаг вэ?", options: ["Маш бага — ихэнхдээ суудаг", "Бага — гэр, ажил хооронд л хөдөлдөг", "Дунд зэрэг — өдөрт тодорхой хэмжээнд алхдаг", "Нэлээд хөдөлгөөнтэй — ажил, гэрийн ажил, алхалт ихтэй", "Маш хөдөлгөөнтэй — өдөржин хөдөлгөөнтэй байдаг", "Сайн мэдэхгүй"] },
+  { id: "S1-WC04", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "single", text: "Таны ажлын цагийн хэмнэл аль нь вэ?", options: ["Өдрийн тогтмол цагтай", "Ээлжийн ажилтай", "Шөнийн ээлжтэй", "Урт цагаар ажилладаг", "Тогтмол бус цагтай", "Гэрээсээ ажилладаг", "Ажил, амралтын өдөр ялгарахгүй шахам", "Одоогоор хамаарахгүй", "Хариулахгүй"] },
+  { id: "S1-WC05", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "multi", text: "Ажил дээрээ хооллох боломж тань ихэвчлэн ямар байдаг вэ?", options: ["Тогтмол цагтаа хооллох боломжтой", "Заримдаа хоол алгасдаг", "Ихэвчлэн яарч иддэг", "Гадуур хоол / хүргэлт их хэрэглэдэг", "Ажлын байранд зууш, амттан, ундаа ойр байдаг", "Хоол авч явах боломжтой", "Хоол идэх цаг, орчин тогтмол биш", "Хариулахгүй"], max: 3 },
+  { id: "S1-WC06", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "multi", text: "Ажлын дараа таны бие, сэтгэл ихэвчлэн ямар байдаг вэ?", options: ["Хэвийн, хөдөлгөөн хийх боломжтой", "Сэтгэлээр ядарсан байдаг", "Биеэр ядарсан байдаг", "Хоёулаа ядарсан байдаг", "Толгой өвдөх, бие чилэх, нуруу/үе мөч өвдөх үе байдаг", "Шууд амрах эсвэл унтмаар санагддаг", "Хоол захиалах, бэлэн юм идэх нь хамгийн амар санагддаг", "Сайн мэдэхгүй"], max: 3 },
+  { id: "S1-WC07", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "multi", text: "Таны ажил дараах нөхцөлүүдийн аль нэгтэй холбоотой юу?", options: ["Тоос, утаа, үнэр, химийн бодистой орчин", "Их халуун эсвэл их хүйтэн орчин", "Дуу чимээ ихтэй орчин", "Удаан зогсдог", "Удаан суудаг", "Хүнд зүйл өргөдөг", "Маш их анхаарал төвлөрөл шаарддаг", "Стресс өндөртэй", "Аюулгүй ажиллагаа их шаарддаг", "Эдгээрээс хамаарахгүй", "Хариулахгүй"], max: 4 },
   { id: "S1-C06", module: "Basic context", type: "multi", text: "Жин бууруулах хүсэл тань өдөр тутмын амьдралын юутай хамгийн их холбоотой вэ?", options: ["Эрүүл мэнддээ анхаарах", "Өдрийн тэнхээ нэмэх", "Хувцсандаа тухтай байх", "Өөртөө итгэлтэй болох", "Гадаад төрхөө өөрчлөх", "Даралт, сахар, шинжилгээнд санаа зовсон", "Хөдлөхөд амар болох", "Төрсний дараа биеэ сэргээх", "Өөр зүйл"] },
   { id: "S1-W01", module: "Weight trajectory", type: "single", text: "Сүүлийн 12 сарын хугацаанд таны жин хэр өөрчлөгдсөн бэ?", options: ["Их өөрчлөгдөөгүй", "1-3 кг нэмсэн", "4-7 кг нэмсэн", "8+ кг нэмсэн", "Буурсан", "Мэдэхгүй"], scores: { "8+ кг нэмсэн": ["medical"], "4-7 кг нэмсэн": ["medical"] } },
   { id: "S1-W02", module: "Weight trajectory", type: "multi", text: "Жин нэмэгдэх эсвэл буурах үе тань амьдралын ямар өөрчлөлттэй давхацсан бэ?", options: ["Ажил ихсэж, стресс нэмэгдсэн", "Хөдөлгөөн багассан", "Нойр муудсан", "Эм хэрэглэж эхэлсэн", "Жирэмсэн эсвэл төрсний дараах үе", "Өвчин, мэс засалтай давхацсан", "Сэтгэл санааны хүнд үе байсан", "Тодорхой зүйл байхгүй", "Мэдэхгүй"], scores: { "Ажил ихсэж, стресс нэмэгдсэн": ["regulation", "executive"], "Ажил-стресс": ["regulation", "executive"], "Хөдөлгөөн багассан": ["executive"], "Нойр муудсан": ["circadian"], "Эм хэрэглэж эхэлсэн": ["medical"], "Эм": ["medical"], "Жирэмсэн эсвэл төрсний дараах үе": ["medical"], "Жирэмсэн-төрсний дараа": ["medical"], "Өвчин, мэс засалтай давхацсан": ["medical"], "Өвчин-мэс засал": ["medical"] } },
@@ -449,6 +456,7 @@ const probeBank = {
 const dimensionByModule = {
   "Warm start": [],
   "Basic context": ["D01"],
+  "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл": ["D03", "D13", "D14", "D15", "D16", "D22"],
   "Weight trajectory": ["D01"],
   "Past attempts": ["D02", "D11"],
   "Meal rhythm": ["D03", "D15"],
@@ -530,6 +538,13 @@ function optionSignals(label) {
   if (/дараа өлс|өлсөхөөс|санаа зовсон/.test(text)) add(["hunger_safety"], ["D07"], [mechanismNamesByKey.hungerSafety], ["hidden_function", "what_to_avoid", "first_leverage_point"]);
   if (/хамгийн амар|delivery|захиал|default/.test(text)) add(["executive_load", "default_delivery"], ["D13", "D14"], [mechanismNamesByKey.executive, mechanismNamesByKey.decisionDefault], ["trigger_map", "cycle_map", "first_leverage_point"]);
   if (/харагд|үнэр|cue|food зураг|snack/.test(text)) add(["cue_trigger"], ["D14"], [mechanismNamesByKey.cue, mechanismNamesByKey.decisionDefault], ["trigger_map", "before_30"]);
+  if (/суугаа|удаан суу|жолоо барьж|машинаар явдаг, бараг|маш бага/.test(text)) add(["sedentary_low_neat", "low_daily_movement"], ["D13", "D14", "D22"], [mechanismNamesByKey.executive], ["scenario_focus", "first_leverage_point", "trigger_map"]);
+  if (/гэрээсээ ажилладаг|зууш, амттан, ундаа ойр|гэрт байсан амар|хоол ойр/.test(text)) add(["work_from_home_food_cue", "cue_trigger"], ["D13", "D14"], [mechanismNamesByKey.cue, mechanismNamesByKey.decisionDefault], ["scenario_focus", "first_leverage_point", "trigger_map"]);
+  if (/биеийн хүчний|хүнд зүйл өргө|удаан зогс|өдөржин алхаж|зогсоо ажил/.test(text)) add(["manual_work_recovery_need"], ["D13", "D15", "D22"], [mechanismNamesByKey.executive, mechanismNamesByKey.hungerSafety], ["scenario_focus", "first_leverage_point", "what_to_avoid"]);
+  if (/ээлжийн|шөнийн ээлж|тогтмол бус цаг|урт цагаар|ялгарахгүй/.test(text)) add(["shift_work_rhythm"], ["D15", "D13"], [mechanismNamesByKey.circadian, mechanismNamesByKey.executive], ["scenario_focus", "cycle_map", "first_leverage_point"]);
+  if (/хоол алгас|яарч ид|хүргэлт|хоол идэх цаг, орчин тогтмол биш/.test(text)) add(["eating_opportunity_instability", "skipped_meal"], ["D03", "D13", "D15"], [mechanismNamesByKey.hungerSafety, mechanismNamesByKey.executive], ["trigger_map", "cycle_map", "first_leverage_point"]);
+  if (/сэтгэлээр ядар|биеэр ядар|хоёулаа ядар|унтмаар|бие чилэх|нуруу|үе мөч/.test(text)) add(["after_work_fatigue"], ["D13", "D15", "D22"], [mechanismNamesByKey.executive, mechanismNamesByKey.circadian], ["scenario_focus", "what_to_avoid", "first_leverage_point"]);
+  if (/тоос|утаа|үнэр|химийн|их халуун|их хүйтэн|дуу чимээ|аюулгүй ажиллагаа|анхаарал төвлөрөл/.test(text)) add(["hazardous_work_caution", "work_recovery_caution"], ["D16", "D22"], [mechanismNamesByKey.executive, mechanismNamesByKey.medical], ["professional_check", "what_to_avoid"]);
   if (/хүмүүс|social|татгалзах эвгүй|гэр бүл|найз/.test(text)) add(["social_pressure"], ["D17"], [mechanismNamesByKey.social], ["hidden_function", "not_the_real_problem"]);
   if (/согтууруулах ундаа|давслаг|тослог|биеийн тавгүйрхэл|шөнө орой|маргааш.*чанга|нойр муудаж|кофе/.test(text)) add(["alcohol_after_effect_loop"], ["D15", "D17", "D11"], [mechanismNamesByKey.social, mechanismNamesByKey.circadian, mechanismNamesByKey.hungerSafety], ["cycle_map", "what_to_avoid", "first_leverage_point"]);
   if (/тамхи|тамхинаас|хоолны дуршил|зууш|кофе/.test(text)) add(["tobacco_appetite_context"], ["D06", "D13", "D15"], [mechanismNamesByKey.regulation, mechanismNamesByKey.reward], ["tone_modifier", "what_to_avoid"]);
@@ -5657,6 +5672,8 @@ function wp81EvidencePoints(insights, voice, primaryKey, tags = [], answers = st
   add(wp78AnswerText("S1-N01", answers) || wp78AnswerText("S1-N02", answers), `Нойр/өдрийн эрч хүчний хэсэгт “${[wp81AnswerText("S1-N01", answers), wp81AnswerText("S1-N02", answers)].filter(Boolean).join("; ")}” гэж хариулсан.`, "Нойр, кофе, өдрийн тэнхээний уналт нь оройн хурдан сонголт, амттай зүйл татах мэдрэмжийг хүчтэй болгож болно.");
   add(wp78AnswerText("S1-M02", answers), `Хоол хоорондын зайны хэсэгт “${wp81AnswerText("S1-M02", answers)}” гэж сонгосон.`, "Хоолны зай уртсах үед оройн өлсөлт яаралтай болж, төлөвлөснөөс өөрөөр идэх магадлал нэмэгддэг.");
   add(wp78AnswerText("S1-MV01", answers), `Хөдөлгөөний бодит боломж: ${wp81AnswerText("S1-MV01", answers)}.`, "Энэ нь шийтгэх дасгал санал болгох гэсэн үг биш. Харин бодит амьдралд тогтмол давтагдах хамгийн жижиг хөдөлгөөний хэлбэрийг сонгоход хэрэгтэй.");
+  add(wp81AnswerText("S1-WC01", answers) || wp81AnswerText("S1-WC03", answers), `Ажил/өдрийн хөдөлгөөний хэсэгт “${[wp81AnswerText("S1-WC01", answers), wp81AnswerText("S1-WC03", answers)].filter(Boolean).join("; ")}” гэж тэмдэглэсэн.`, "Энэ нь энерги зарцуулалт төдийгүй суух блок, хооллох цаг, ажлын дараах ядаргаатай хамт уншигдах context юм.");
+  add(wp81AnswerText("S1-WC04", answers) || wp81AnswerText("S1-WC05", answers) || wp81AnswerText("S1-WC06", answers), `Ажлын хэмнэл/хооллох боломж/ядаргаа: ${[wp81AnswerText("S1-WC04", answers), wp81AnswerText("S1-WC05", answers), wp81AnswerText("S1-WC06", answers)].filter(Boolean).join("; ")}.`, "Энэ нь хоолны дүрэм бодит өдөрт хэрэгжих эсэх, орой нөхөх идэлт үүсэх эсэх, эхний стратеги ямар жижиг байх ёстойг тодруулна.");
   add(wp78AnswerText("S1-B01", answers) || wp78AnswerText("S1-B02", answers), `Биеийн дохионы хэсэгт “${[wp81AnswerText("S1-B01", answers), wp81AnswerText("S1-B02", answers)].filter(Boolean).join("; ")}” гэж тэмдэглэсэн.`, "Толгой эргэх, зүрх дэлсэх, сахар/даралтын санаа зовнил байгаа үед хоолны төлөвлөгөө биш, аюулгүй шалгалт түрүүлнэ.");
   if (!points.length) {
     add(true, reportEvidenceNote(voice.key), "Хариулт цөөн тул энэ тайланг магадлалтай эхний зураглал гэж унших нь зөв.");
@@ -5681,6 +5698,12 @@ function wp81SecondaryFactors(insights, primaryKey, tags = [], answers = state.s
   add(wp81HasAlcoholLoop(answers, insights.clusters), "Согтууруулах ундаа хэрэглэсний маргааш", "Согтууруулах ундаа хэрэглэсний маргааш бие тавгүйрхэх, нойр муудсан байх, давслаг/шөлтэй/тослог зүйл хүсэх, хөдөлгөөн багасах зэрэг нийлж болно. Дараа нь хэт чанга барих бодол орж ирвэл тойрог улам тогтдог.");
   add(wp78AnswerText("S1-T01", answers) && wp78AnswerText("S1-T01", answers) !== "Үгүй" && wp78AnswerText("S1-T01", answers) !== "Хариулахгүй", "Тамхи, кофе, зуушны холбоо", "Тамхи, кофе, стресс, амны зуршил, зуушны хүсэл нэг хэмнэл дээр давхцаж байж магадгүй. Энэ нь тамхи татахыг зөвлөж байгаа хэрэг биш; харин тэр холбоог ялгаж харах шаардлагатай гэсэн үг.");
   add(wp78AnswerText("S1-MV01", answers) || wp78AnswerText("S1-MV02", answers), "Хөдөлгөөний бодит боломж", `хөдөлгөөний бодит боломж: ${wp81AnswerText("S1-MV01", answers) || "бага хүчтэй эхлэх боломж"}. Саад нь ${wp81AnswerText("S1-MV02", answers) || "өдрийн ачаалал"} гэж харагдаж байна. Энд зорилго нь шийтгэх дасгал биш, давтагдаж болох хамгийн жижиг хөдөлгөөн юм.`);
+  const workFlags = workContextFlags(answers);
+  add(workFlags.sedentary || workFlags.lowMovement || workFlags.carCommute, "Суугаа ажил ба бага NEAT хөдөлгөөн", "Өдрийн нийт жижиг хөдөлгөөн бага үед зөвхөн фитнесийн нэг том оролдлогоос илүү суух блок таслах, богино алхах, босож ажиллах жижиг anchor илүү бодитой эхлэл байж болно.");
+  add(workFlags.manualWork && (workFlags.eatingUnstable || workFlags.fatigue), "Биеийн хүчний ажил ба сэргэлт", "Ажил өөрөө ачаалалтай байхад асуудал заавал дасгал дутагдахдаа биш. Хоол алгасах, ядаргаа, ус дуталт, орой нөхөх идэлт давхцах эсэхийг эхэлж тогтворжуулах хэрэгтэй.");
+  add(workFlags.shiftWork, "Ээлжийн/шөнийн ажлын хэмнэл", "Ээлжийн цагтай үед хооллох цаг бодит сэрэх/унтах цагтайгаа таарах ёстой. Ерөнхий оройн хориг амьдралын хэмнэлтэй зөрвөл удаан ажиллахгүй.");
+  add(workFlags.workFromHome || workFlags.foodNearby, "Гэрээс ажиллах ба хоолны дохио", "Гэрээс ажиллах, хоол ойр харагдах үед шийдвэр гарахаас өмнө орчин идэх дохио өгдөг. Хоолны visibility boundary нь тэвчээрээс илүү бодитой.");
+  add(workFlags.hazardous, "Хүнд/эрсдэлтэй ажлын нөхцөл", "Аюулгүй ажиллагаа, халуун/хүйтэн, тоос/утаа/химийн орчин эсвэл хүнд өргөлттэй үед сэргэлт, ус, тогтмол хоол, биеийн дохиог илүү болгоомжтой тооцох хэрэгтэй.");
   add(wp78AnswerText("S1-F01", answers).includes("Харагдаад") || primaryKey === "cue", "Хоол харагдах, үнэртэхэд идэх хүсэл нэмэгдэх", "Хоол ойр, харагдах, үнэртэх, апп нээгдэх үед шийдвэр гарахаас өмнө орчин өөрөө эхний алхмыг хийдэг. Орчны нэг дохиог холдуулах нь зөвхөн тэвчээр шаардахаас илүү бодитой.");
   add(wp78AnswerText("S1-B01", answers) || wp78AnswerText("S1-B02", answers), "Биеийн шинж тэмдэг", "Гар салгалах, толгой эргэх, зүрх дэлсэх, сахар/даралтын санаа зовнил зэрэг байвал энэ тайлан хоолны хатуу дүрэм өгөхгүй. Аюулгүй шалгалт, тогтмол хоол, огцом хасалтаас зайлсхийх нь түрүүлнэ.");
   insights.secondaryFactors.forEach(item => add(!factors.some(factor => factor.title.includes(item)), item, "Энэ хүчин зүйл таны бусад хариулттай давхцаж байгаа тул үндсэн механизмын хажууд ажиглах хэрэгтэй."));
@@ -5699,6 +5722,8 @@ function wp81WeightImpactParagraphs(insights, primaryKey, tags = [], answers = s
   if (wp81HasAlcoholLoop(answers, insights.clusters)) paragraphs.push("Согтууруулах ундаа өөрөө илчлэгтэй. Мөн хэрэглэсэн орой болон маргаашийн хоолны сонголт, нойр, биеийн тавгүйрхэл, давслаг/тослог зүйл хүсэх мэдрэмж хамт өөрчлөгдөж болно. Энэ нь шууд “ингээд жин нэмнэ” гэсэн энгийн тайлбар биш, харин хэд хэдэн жижиг нөлөө нэг дараалалд орж болзошгүй гэсэн болгоомжтой зураглал юм.");
   if (wp78AnswerText("S1-T01", answers) && wp78AnswerText("S1-T01", answers) !== "Үгүй" && wp78AnswerText("S1-T01", answers) !== "Хариулахгүй") paragraphs.push("Тамхи, кофе, зууш, стрессийн хэмнэл давхцаж байвал хоолны дуршил дангаараа биш, өдөр тутмын зуршлын багц хэлбэрээр хөдөлж байж магадгүй. Энэ нь тамхийг жин барих арга болго гэсэн зөвлөгөө огт биш.");
   if (wp78AnswerText("S1-MV01", answers) || wp78AnswerText("S1-MV02", answers)) paragraphs.push("Хөдөлгөөний боломж бага байвал энерги зарцуулалт төдийгүй өдөр тутмын хэмнэл, сэтгэл санааны тогтвортой байдал, унтах цаг зэрэгт давхар нөлөөлж болно. Гэхдээ энэ нь өөрийгөө шийтгэх дасгал хийх ёстой гэсэн үг биш; давтагдах хамгийн жижиг хөдөлгөөн илүү чухал.");
+  const workContext = workContextNarrative(answers);
+  if (workContext.flags.hasAny) paragraphs.push(...workContext.paragraphs);
   return paragraphs;
 }
 
@@ -5735,6 +5760,9 @@ function wp81AvoidItems(insights, voice, primaryKey, tags = [], answers = state.
     wp81HasAlcoholLoop(answers, insights.clusters) ? "бие тавгүй өдөр хүнд дасгалаар өөрийгөө шийтгэх" : "",
     primaryKey === "regulation" ? "стресс өндөр үед зөвхөн тэвчээрээр барих" : "",
     primaryKey === "cue" ? "хоол харагдах орчинд зөвхөн хүсэл зоригоор барих" : "",
+    workContextFlags(answers).manualWork ? "биеийн хүчний ажилтай өдөр дээрээс нь шийтгэх хүнд дасгал нэмэх" : "",
+    workContextFlags(answers).hazardous ? "хүнд/эрсдэлтэй ажлын өдөр мацаг, усгүйдэх, огцом хязгаарлалт хийх" : "",
+    workContextFlags(answers).shiftWork ? "ээлжийн ажилтай байхад ерөнхий “орой хоол идэхгүй” дүрмийг хүчээр барих" : "",
     "нэг удаа хазайсныг бүтэн өдрийн бүтэлгүйтэл гэж үзэх",
     "биеийн шинжтэй үед мэргэжлийн хүнтэй ярилцахгүйгээр хоол олон цаг алгасах, огцом дэглэм эхлүүлэх",
     "тамхийг хоолны дуршил дарах арга гэж ашиглах"
@@ -5745,6 +5773,11 @@ function wp81AvoidItems(insights, voice, primaryKey, tags = [], answers = state.
 
 function wp81FirstStep(insights, voice, primaryKey, tags = [], answers = state.stageAnswers || {}) {
   if (wp81HasAlcoholLoop(answers, insights.clusters)) return "Согтууруулах ундаа хэрэглэх магадлалтай өдрийн өмнө нэг хэвийн хоол, ус, маргаашийн эхний зөөлөн хоолоо урьдчилж товло. Зорилго нь маргааш өөрийгөө шийтгэхгүйгээр биеэ хэвийн хэмнэл рүү буцаах юм.";
+  const workFlags = workContextFlags(answers);
+  if (workFlags.manualWork && (workFlags.eatingUnstable || workFlags.fatigue)) return personalizedWorkStrategy(workFlags, answers);
+  if (workFlags.shiftWork) return personalizedWorkStrategy(workFlags, answers);
+  if (workFlags.workFromHome || workFlags.foodNearby) return personalizedWorkStrategy(workFlags, answers);
+  if (workFlags.sedentary || workFlags.lowMovement || workFlags.carCommute) return personalizedWorkStrategy(workFlags, answers);
   if (insights.clusters.some(item => item.key === "restrict") || primaryKey === "collapse") return "Нэг удаа хазайсны дараа хэрэглэх “дараагийн хоол бол шийтгэл биш, хэвийн үргэлжлэх цэг” гэсэн буцах дүрмээ урьдчилж бич.";
   if (insights.clusters.some(item => item.key === "stress") || primaryKey === "regulation") return "Идэхээс өмнө 10 минутын богино decompression хий: утсаа тавих, ус уух, 10 удаа удаан амьсгалах, эсвэл богино алхах. Дараа нь идэх эсэхээ шийд.";
   if (primaryKey === "circadian") return "Өдрийн эхний хоолоо тогтмол болго. Өдрийн сүүлийн кофегоо хэзээ уухаа тогтоо. Орой ядарсан үед хэрэглэх бага хүчтэй бэлэн хоолны хоёр хувилбар сонго.";
@@ -5805,7 +5838,7 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
   const cycleSteps = wp81CycleSteps(insights, voice, primary?.key, tags, answers);
   const avoidItems = wp81AvoidItems(insights, voice, primary?.key, tags, answers);
   const firstStep = wp81FirstStep(insights, voice, primary?.key, tags, answers);
-  const experimentRows = wp81ExperimentRows(firstStep, insights, answers);
+  const experimentRows = workAdaptedExperimentRows(firstStep, insights, answers);
   const observationQuestions = wp81ObservationQuestions(insights, primary?.key, answers);
   const professionalItems = wp81ProfessionalGuidance(mode, tags, answers);
   const confidenceCopy = evidencePoints.length >= 6
@@ -5824,6 +5857,8 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
           <h3>1. Энэ тайлан юунд тулгуурласан бэ?</h3>
           <div class="stack">${evidencePoints.map(item => `<div class="card stack"><p>${publicHtml(item.text)}</p><p class="muted">${publicHtml(item.why)}</p></div>`).join("")}</div>
         </div>
+        ${anthropometricSummaryHtml(answers, { safetyFirst: mode.mode === "check" })}
+        ${workContextSummaryHtml(answers, { safetyFirst: mode.mode === "check" })}
         <div class="report-section">
           <h3>2. Таны гол давтагдаж буй механизм</h3>
           <p><strong>${publicHtml(mainCluster?.title || publicMechanismShort(primary?.key))}</strong></p>
@@ -5857,6 +5892,7 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
           <p>${publicHtml(firstStep)}</p>
           <p class="muted">Олон зөвлөгөө зэрэг эхлүүлэхгүй. Эхний алхам нэг л байх тусам бодит өдөрт шалгах боломжтой. Хэрвээ энэ алхам хэт том санагдвал хугацаа, хэмжээ, хүч шаардлагыг нь хоёр дахин багасга.</p>
         </div>
+        ${personalizedStrategyHtml(answers)}
         <div class="report-section">
           <h3>8. 7–14 хоногийн туршилт</h3>
           ${experimentRows.map(([label, action, observe, noOverreact]) => `<div class="card stack"><h3>${label}</h3><p><strong>Юу хийх вэ:</strong> ${publicHtml(action)}</p><p><strong>Юуг ажиглах вэ:</strong> ${publicHtml(observe)}</p><p><strong>Юунд хэт хариулахгүй вэ:</strong> ${publicHtml(noOverreact)}</p></div>`).join("")}
@@ -5960,6 +5996,189 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
       </div>
     </section>
   `;
+}
+
+function numericStageAnswer(questionId, answers = state.stageAnswers || {}) {
+  const value = Number.parseFloat(String(effectiveStageAnswers(answers)[questionId] || "").replace(",", "."));
+  return Number.isFinite(value) && value > 0 ? value : null;
+}
+
+function roundToOne(value) {
+  return Number.isFinite(value) ? Math.round(value * 10) / 10 : null;
+}
+
+function calculateBmi(weightKg, heightCm) {
+  if (!Number.isFinite(weightKg) || !Number.isFinite(heightCm) || weightKg <= 0 || heightCm <= 0) return null;
+  const heightMeters = heightCm / 100;
+  return roundToOne(weightKg / (heightMeters * heightMeters));
+}
+
+function calculateAnthropometricContext(answers = state.stageAnswers || {}) {
+  const age = numericStageAnswer("S1-C01", answers);
+  const heightCm = numericStageAnswer("S1-C03", answers);
+  const currentWeightKg = numericStageAnswer("S1-C04", answers);
+  const targetWeightKg = numericStageAnswer("S1-C05", answers);
+  const currentBmi = calculateBmi(currentWeightKg, heightCm);
+  const targetBmi = calculateBmi(targetWeightKg, heightCm);
+  const weightToLoseKg = Number.isFinite(currentWeightKg) && Number.isFinite(targetWeightKg)
+    ? roundToOne(currentWeightKg - targetWeightKg)
+    : null;
+  const percentOfCurrent = Number.isFinite(weightToLoseKg) && weightToLoseKg > 0 && Number.isFinite(currentWeightKg)
+    ? roundToOne((weightToLoseKg / currentWeightKg) * 100)
+    : null;
+  const targetTooLow = Number.isFinite(targetBmi) && targetBmi < 18.5;
+  const largeTarget = Number.isFinite(percentOfCurrent) && percentOfCurrent > 10;
+  const hasValidLoss = Number.isFinite(weightToLoseKg) && weightToLoseKg > 0 && !targetTooLow;
+  const fasterWeeks = hasValidLoss ? Math.max(1, Math.round(weightToLoseKg / 0.9)) : null;
+  const slowerWeeks = hasValidLoss ? Math.max(fasterWeeks || 1, Math.round(weightToLoseKg / 0.45)) : null;
+  return {
+    age,
+    heightCm,
+    currentWeightKg,
+    targetWeightKg,
+    currentBmi,
+    targetBmi,
+    weightToLoseKg,
+    percentOfCurrent,
+    targetTooLow,
+    largeTarget,
+    fasterWeeks,
+    slowerWeeks,
+    hasAny: [age, heightCm, currentWeightKg, targetWeightKg, currentBmi, targetBmi].some(Number.isFinite),
+    hasValidLoss,
+    invalidOrMissing: !Number.isFinite(currentBmi) || !Number.isFinite(targetBmi) || !Number.isFinite(weightToLoseKg)
+  };
+}
+
+function anthropometricSummaryHtml(answers = state.stageAnswers || {}, options = {}) {
+  const context = calculateAnthropometricContext(answers);
+  if (!context.hasAny) return "";
+  const rows = [
+    ["Нас", Number.isFinite(context.age) ? `${context.age} нас` : "Одоогоор бөглөөгүй"],
+    ["Өндөр", Number.isFinite(context.heightCm) ? `${context.heightCm} см` : "Одоогоор бөглөөгүй"],
+    ["Одоогийн жин", Number.isFinite(context.currentWeightKg) ? `${context.currentWeightKg} кг` : "Одоогоор бөглөөгүй"],
+    ["Хүрэхийг хүсэж буй жин", Number.isFinite(context.targetWeightKg) ? `${context.targetWeightKg} кг` : "Одоогоор бөглөөгүй"],
+    ["Одоогийн BMI", Number.isFinite(context.currentBmi) ? `${context.currentBmi}` : "Тооцоолоход мэдээлэл дутуу"],
+    ["Зорилтот BMI", Number.isFinite(context.targetBmi) ? `${context.targetBmi}` : "Тооцоолоход мэдээлэл дутуу"],
+    ["Хасах шаардлагатай жин", Number.isFinite(context.weightToLoseKg) && context.weightToLoseKg > 0 ? `${context.weightToLoseKg} кг` : "Зорилтот жин одоогийнхоос бага биш байна"],
+    ["Одоогийн жингийн хэдэн хувь", Number.isFinite(context.percentOfCurrent) ? `${context.percentOfCurrent} хувь` : "Тооцоолоход мэдээлэл дутуу"],
+    ["Бодит хугацааны баримжаа", context.hasValidLoss ? (context.weightToLoseKg < 2 ? "хэдэн долоо хоногийн дотор байж болно" : `ойролцоогоор ${context.fasterWeeks}–${context.slowerWeeks} долоо хоног`) : "түр хугацаа амлахгүй"]
+  ];
+  const timelineCopy = context.hasValidLoss
+    ? `7 хоногт ойролцоогоор 0.45–0.9 кг гэсэн тогтвортой хэмнэлээр тооцвол энэ зорилт ${context.weightToLoseKg < 2 ? "хэдэн долоо хоногийн дотор" : `ойролцоогоор ${context.fasterWeeks}–${context.slowerWeeks} долоо хоногийн хүрээтэй`} байж болно. Энэ нь баталгаатай амлалт биш; нойр, стресс, хоолны хэмнэл, хөдөлгөөн, ажил, эрүүл мэндийн хүчин зүйлээс шалтгаална.`
+    : "Зорилтот жин одоогийн жингээс бага биш, эсвэл мэдээлэл дутуу байгаа тул жин хасах хугацааг зохиож хэлэхгүй.";
+  return `
+    <div class="report-section">
+      <h3>Биеийн суурь зураглал</h3>
+      <p>BMI нь өндөр, жингийн харьцаанд тулгуурласан ерөнхий чиг баримжаа. Булчин, ясны бүтэц, өөхний тархалт, эрүүл мэндийн бүх нөхцөлийг дангаараа илэрхийлэхгүй.</p>
+      <table class="report-table"><tbody>${rows.map(([label, value]) => `<tr><td>${publicHtml(label)}</td><td>${publicHtml(value)}</td></tr>`).join("")}</tbody></table>
+      <p>${publicHtml(timelineCopy)}</p>
+      ${context.largeTarget ? `<p class="muted">Эхний үе шатанд нийт зорилгын 5–10 хувийг зорих нь илүү бодитой байж болно.</p>` : ""}
+      ${context.targetTooLow ? `<p class="danger-copy">BMI-ийн энгийн ангиллаар зорилтот BMI 18.5-аас доош байна. Энэ зорилт хэт бага байж болзошгүй тул түргэн хугацааны төлөвлөгөө гаргахын оронд мэргэжлийн хүнтэй зөвлөлдөх нь зөв.</p>` : ""}
+      ${options.safetyFirst ? `<p class="danger-copy">Биеийн дохио эсвэл аюулгүй байдлын хариулт идэвхтэй үед энэ зураглал зөвхөн context; хоол хасах, мацаг, хүнд дасгалын төлөвлөгөө биш.</p>` : ""}
+    </div>
+  `;
+}
+
+function workContextFlags(answers = state.stageAnswers || {}) {
+  const answerText = (...ids) => ids.map(id => wp81AnswerText(id, answers)).join(" ").toLowerCase();
+  const workOnlyText = answerText("S1-WC01", "S1-WC02", "S1-WC03", "S1-WC04", "S1-WC05", "S1-WC06", "S1-WC07");
+  const workText = [workOnlyText, answerText("S1-F01", "S1-E01", "S1-E02", "S1-R02", "S1-M01", "S1-M02")].join(" ");
+  return {
+    hasAny: Boolean(workOnlyText.trim()),
+    sedentary: /суугаа|удаан суу|жолоо барьж|машинаар явдаг, бараг|маш бага/.test(workOnlyText),
+    carCommute: /машинаар явдаг/.test(workOnlyText),
+    lowMovement: /маш бага|бага —|бараг алхдаггүй|суугаа/.test(workOnlyText),
+    workFromHome: /гэрээсээ ажилладаг/.test(workOnlyText),
+    foodNearby: /зууш, амттан, ундаа ойр|хоол ойр/.test(workOnlyText),
+    manualWork: /биеийн хүчний|хүнд зүйл өргө|удаан зогс|өдөржин алхаж|зогсоо ажил/.test(workOnlyText),
+    shiftWork: /ээлжийн|шөнийн ээлж|тогтмол бус цаг|урт цагаар|ялгарахгүй/.test(workOnlyText),
+    eatingUnstable: /хоол алгас|яарч ид|хүргэлт|хоол идэх цаг, орчин тогтмол биш|хоолны цаг өдөр бүр өөр|5\+/.test(workText),
+    fatigue: /ядар|унтмаар|бие чилэх|нуруу|үе мөч|толгой өвдөх/.test(workText),
+    highStress: /стресс|анхаарал төвлөрөл|аюулгүй ажиллагаа|санаа зовнил|тайвшир/.test(workText),
+    hazardous: /тоос|утаа|үнэр|химийн|их халуун|их хүйтэн|дуу чимээ|аюулгүй ажиллагаа|хүнд зүйл өргө/.test(workText),
+    deliveryDefault: /захиал|хүргэлт|бэлэн юм|хамгийн амар/.test(workText),
+    alcoholAfterEffect: wp81HasAlcoholLoop(answers, [])
+  };
+}
+
+function workContextNarrative(answers = state.stageAnswers || {}) {
+  const flags = workContextFlags(answers);
+  if (!flags.hasAny) return {
+    flags,
+    paragraphs: ["Ажил, зам, өдрийн хөдөлгөөн, хооллох боломжийн мэдээлэл одоогоор бага байна. Тиймээс энэ хэсэгт ерөнхий дүгнэлтээс илүү, дараагийн удаа ажиглах context үлдээж байна."],
+    strategy: "Өдрийн нэг бодит блок сонгоод суух, алхах, хооллох боломж, ядаргаагаа 7 хоног тэмдэглэ.",
+    experimentFocus: "өдрийн суух/алхах блок, хоолны зай, ядаргааны цаг"
+  };
+  const paragraphs = [];
+  if (flags.sedentary || flags.carCommute || flags.lowMovement) paragraphs.push("Өдөр тутмын хөдөлгөөн бага, ажилдаа машинаар явдаг эсвэл ихэнхдээ суугаа ажилтай бол жин хасахад зөвхөн дасгалын 30 минут биш, өдрийн турш тасарсан бага хөдөлгөөнүүд чухал болж байна.");
+  if (flags.manualWork && (flags.eatingUnstable || flags.fatigue)) paragraphs.push("Биеийн хүчний ажилтай мөртлөө хооллох цаг тогтмол биш, ажлын дараа ядаргаа өндөр байвал асуудал хөдөлгөөн дутагдахдаа биш, өдрийн турш энерги зарцуулчихаад орой нөхөх идэлт рүү орох эрсдэлд байна.");
+  if (flags.workFromHome || flags.foodNearby) paragraphs.push("Гэрээсээ ажиллах эсвэл зууш, амттан, ундаа ойр байх үед хоол ойр байх, ажлын ба амралтын хил бүдгэрэх, босож алхах давтамж багасах нь төлөвлөөгүй идэх өдөөлтийг нэмэгдүүлж болно.");
+  if (flags.shiftWork) paragraphs.push("Ээлжийн эсвэл шөнийн ажилтай үед “орой хоол идэхгүй” гэх ерөнхий дүрэм тохирохгүй байж магадгүй. Таны хооллох хэмнэл бодит ээлжийн цагтайгаа таарах хэрэгтэй.");
+  if (flags.highStress && flags.fatigue) paragraphs.push("Өндөр төвлөрөл, стресс, ажлын дараах бие/сэтгэлийн ядаргаа давхцвал хоол тайвшрах, decompression хийх хамгийн ойрын арга болж магадгүй.");
+  if (flags.eatingUnstable) paragraphs.push("Хооллох боломж тогтмол биш, хоол алгасах эсвэл яарч идэх нь орой хэт өлсөх, хүргэлт эсвэл бэлэн сонголт руу шилжих нөхцөлийг нэмэгдүүлнэ.");
+  if (flags.hazardous) paragraphs.push("Хүнд, халуун/хүйтэн, тоос/утаа/үнэр/химийн бодистой, дуу чимээтэй эсвэл аюулгүй ажиллагаа шаардсан ажилтай бол ядралт ба сэргэлтийн хэрэгцээ өндөр байж болно. Ийм үед усгүйдэх, мацаглах, өөрийгөө шийтгэх хүнд дасгал нэмэх нь тохирохгүй байж магадгүй.");
+  return {
+    flags,
+    paragraphs: paragraphs.length ? paragraphs : ["Ажлын нөхцөл жингийн зорилтод шууд буруутан биш. Харин хөдөлгөөн хийх боломж, хооллох цаг, ажлын дараах ядаргаа, стресс тайлах хэрэгцээг бодитоор тооцох ёстой context болж байна."],
+    strategy: personalizedWorkStrategy(flags, answers),
+    experimentFocus: experimentFocusForWork(flags)
+  };
+}
+
+function personalizedWorkStrategy(flags = workContextFlags(), answers = state.stageAnswers || {}) {
+  if (flags.manualWork && (flags.eatingUnstable || flags.fatigue)) return "Эхний стратеги бол илүү их дасгал биш. Ажил дээр хоол алгасахгүй байх жижиг backup хоол/зууш, ус, ажлын дараах сэргэлтийн энгийн хоол, унтахын өмнөх зөөлөн буух хэмнэлээ хамгаал.";
+  if (flags.shiftWork) return "Ээлжийн цагтаа таарсан хоолны anchor хий: сэрсний дараах эхний хоол, урт ээлжийн өмнөх эсвэл дундах тогтвортой хоол, унтахын өмнөх хэт хүнд биш сонголтыг төлөвлө. Ерөнхий “орой идэхгүй” дүрэм энд гол шийдэл биш.";
+  if (flags.workFromHome || flags.foodNearby) return "Ажиллах бүс ба хоолны бүсээ ялгаж, харагдах зуушны boundary тавь. Ажил эхлэх/дуусах богино ritual эсвэл 5–10 минутын transition walk төлөвлө.";
+  if (flags.sedentary || flags.lowMovement || flags.carCommute) return "Өдөрт 2–3 удаа 5–10 минутын алхах/зогсох завсарлага, боломжтой үед хоолны дараах 10 минутын алхалт, машин/ширээний суултыг таслах minimum viable movement-ээс эхэл.";
+  if (flags.highStress) return "Хоолноос өмнө decompression pause хий: 5–10 минут утасгүй суух, ус уух, богино алхах, дараа нь default dinner сонгох. Зорилго нь шийдвэрийн ачааллыг багасгах.";
+  if (flags.alcoholAfterEffect && flags.fatigue) return "Согтууруулах ундаа хэрэглэх магадлалтай өдөр өмнөх хоол, ус, маргаашийн сэргэлтийн хоолыг урьдчилж төлөвлө. Маргааш нь огцом хасах эсвэл хүнд дасгалаар нөхөхгүй.";
+  if (flags.deliveryDefault || wp81AnswerText("S1-F01", answers).includes("Хамгийн амар")) return "Ядарсан үед сонгох 2 бага хүчин чармайлттай default хоол урьдчилж сонго. Төгс байх албагүй, гол нь захиалга/зууш хамгийн ойрын сонголт болохоос өмнө бэлэн байх.";
+  return "Өдөрт хамгийн бага хүчээр давтагдах нэг хөдөлгөөн, нэг тогтвортой хооллох anchor сонго. Олон дүрэм зэрэг эхлүүлэхгүй.";
+}
+
+function experimentFocusForWork(flags = workContextFlags()) {
+  if (flags.manualWork) return "хоолны зай, ажлын дараах ядаргаа, сэргэлтийн хоол";
+  if (flags.shiftWork) return "унтах, ажиллах, хооллох цагийн зураглал";
+  if (flags.workFromHome || flags.foodNearby) return "харагдах хоолны boundary ба ажил дуусах transition break";
+  if (flags.highStress) return "ажлын дараах decompression pause";
+  if (flags.sedentary || flags.lowMovement || flags.carCommute) return "суух блок, 5–10 минутын алхах/зогсох завсарлага";
+  return "ажлын бодит хэмнэл, хоолны боломж, ядаргааны цаг";
+}
+
+function workContextSummaryHtml(answers = state.stageAnswers || {}, options = {}) {
+  const context = workContextNarrative(answers);
+  if (!context.flags.hasAny) return "";
+  return `
+    <div class="report-section">
+      <h3>Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл таны зорилтод яаж нөлөөлж байна вэ?</h3>
+      ${context.paragraphs.map(paragraph => `<p>${publicHtml(paragraph)}</p>`).join("")}
+      ${options.safetyFirst ? `<p class="danger-copy">Аюулгүй байдлын дохио байгаа үед энэ context нь хүнд дасгал, мацаг, усгүйдэх, эсвэл огцом хасалтыг зөвлөхгүй.</p>` : ""}
+    </div>
+  `;
+}
+
+function personalizedStrategyHtml(answers = state.stageAnswers || {}) {
+  const context = workContextNarrative(answers);
+  if (!context.flags.hasAny) return "";
+  return `
+    <div class="report-section">
+      <h3>Танд илүү тохирох эхний стратеги</h3>
+      <p>${publicHtml(context.strategy)}</p>
+      <p class="muted">Энэ нь “бага ид, их хөдөл” гэсэн ерөнхий зөвлөгөө биш. Таны ажлын хэмнэл, хооллох боломж, ядаргаа, хөдөлгөөний бодит зайтай таарах эхний туршилт юм.</p>
+    </div>
+  `;
+}
+
+function workAdaptedExperimentRows(firstStep, insights, answers = state.stageAnswers || {}) {
+  const rows = wp81ExperimentRows(firstStep, insights, answers);
+  const context = workContextNarrative(answers);
+  if (!context.flags.hasAny) return rows;
+  return rows.map(([label, action, observe, noOverreact], index) => {
+    if (index === 0) return [label, `${action} Мөн ${context.experimentFocus}-аа богино тэмдэглэ.`, observe, noOverreact];
+    if (index === 1) return [label, `${action} Ажлын бодит нөхцөл дээр нэг жижиг тохируулга нэм: ${context.strategy}`, observe, noOverreact];
+    return [label, action, `${observe} Ажил, хөдөлгөөн, хооллох боломжийн аль тохируулга хамгийн бага хүчээр давтагдсаныг ялга.`, noOverreact];
+  });
 }
 
 function renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }) {
@@ -7165,6 +7384,11 @@ if (typeof module !== "undefined") {
       buildRuntimeVisibleSurfacePayload,
       renderVisibleSurfacePrototype,
       renderReportWithRuntimeVisibleSurface,
+      calculateBmi,
+      calculateAnthropometricContext,
+      workContextFlags,
+      workContextNarrative,
+      personalizedWorkStrategy,
       sanitizeVisibleSurfacePrototypeText,
       setTestState(nextState) {
         state = {
