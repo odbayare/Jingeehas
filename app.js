@@ -321,6 +321,13 @@ const stageOneQuestions = [
   { id: "S1-WC05", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "multi", text: "Ажил дээрээ хооллох боломж тань ихэвчлэн ямар байдаг вэ?", options: ["Тогтмол цагтаа хооллох боломжтой", "Заримдаа хоол алгасдаг", "Ихэвчлэн яарч иддэг", "Гадуур хоол / хүргэлт их хэрэглэдэг", "Ажлын байранд зууш, амттан, ундаа ойр байдаг", "Хоол авч явах боломжтой", "Хоол идэх цаг, орчин тогтмол биш", "Хариулахгүй"], max: 3 },
   { id: "S1-WC06", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "multi", text: "Ажлын дараа таны бие, сэтгэл ихэвчлэн ямар байдаг вэ?", options: ["Хэвийн, хөдөлгөөн хийх боломжтой", "Сэтгэлээр ядарсан байдаг", "Биеэр ядарсан байдаг", "Хоёулаа ядарсан байдаг", "Толгой өвдөх, бие чилэх, нуруу/үе мөч өвдөх үе байдаг", "Шууд амрах эсвэл унтмаар санагддаг", "Хоол захиалах, бэлэн юм идэх нь хамгийн амар санагддаг", "Сайн мэдэхгүй"], max: 3 },
   { id: "S1-WC07", module: "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл", type: "multi", text: "Таны ажил дараах нөхцөлүүдийн аль нэгтэй холбоотой юу?", options: ["Тоос, утаа, үнэр, химийн бодистой орчин", "Их халуун эсвэл их хүйтэн орчин", "Дуу чимээ ихтэй орчин", "Удаан зогсдог", "Удаан суудаг", "Хүнд зүйл өргөдөг", "Маш их анхаарал төвлөрөл шаарддаг", "Стресс өндөртэй", "Аюулгүй ажиллагаа их шаарддаг", "Эдгээрээс хамаарахгүй", "Хариулахгүй"], max: 4 },
+  { id: "S1-FR01", module: "Хүнсний зохицол ба биед өгөх мэдрэмж", stageTitle: "Үе 1 · Хүнсний зохицол ба биед өгөх мэдрэмж", type: "multi", text: "Ямар хүнс идсэний дараа таны биед хүнд, тавгүй эсвэл шингэц муутай санагдах үе байдаг вэ?", options: ["Улаан мах", "Тослог / шарсан хоол", "Гурилан бүтээгдэхүүн", "Талх, нарийн боов", "Гоймон, банш, хуушуур зэрэг гурилан хоол", "Цагаан будаа ихтэй хоол", "Сүү, сүүн бүтээгдэхүүн", "Чихэрлэг зүйл", "Хийжүүлсэн эсвэл чихэрлэг ундаа", "Халуун ногоотой хоол", "Шош, вандуй, буурцаг", "Байцаа, брокколи зэрэг зарим ногоо", "Их хэмжээтэй оройн хоол", "Согтууруулах ундаа хэрэглэсэн үеийн хоол", "Тодорхой анзаарсан зүйл байхгүй", "Сайн мэдэхгүй", "Хариулахгүй"], max: 4 },
+  { id: "S1-FR02", module: "Хүнсний зохицол ба биед өгөх мэдрэмж", type: "multi", text: "Тэр хүнсийг идсэний дараа танд ихэвчлэн юу мэдрэгддэг вэ?", options: ["Гэдэс дүүрдэг", "Хий ихэсдэг", "Хүнд оргидог", "Цээж хорсдог", "Нойр хүрдэг", "Амархан дахин өлсдөг", "Илүү их идмээр болдог", "Маргааш нь бие хавагнасан мэт санагддаг", "Өтгөн хатах эсвэл суулгах үе байдаг", "Толгой өвдөх эсвэл бие сулрах үе байдаг", "Онц өөрчлөлтгүй", "Сайн мэдэхгүй", "Хариулахгүй"], max: 4 },
+  { id: "S1-FR03", module: "Хүнсний зохицол ба биед өгөх мэдрэмж", type: "multi", text: "Энэ мэдрэмж ихэвчлэн ямар үед илүү тод илэрдэг вэ?", options: ["Их хэмжээгээр идсэн үед", "Орой эсвэл унтахын өмнө идсэн үед", "Өдөр хоол алгасаад орой идсэн үед", "Яарч идсэн үед", "Стресстэй үед", "Ядарсан үед", "Согтууруулах ундаа хэрэглэсэн үед", "Хөдөлгөөн багатай өдөр", "Ажлын дараа", "Тодорхой нөхцөл анзаардаггүй", "Сайн мэдэхгүй", "Хариулахгүй"], max: 3 },
+  { id: "S1-FR04", module: "Хүнсний зохицол ба биед өгөх мэдрэмж", type: "multi", text: "Ямар төрлийн хоол идсэний дараа танд цатгалан, хөнгөн, тогтвортой санагддаг вэ?", options: ["Өндөг", "Тахиа, загас зэрэг хөнгөн уурагтай хоол", "Улаан мах бага хэмжээгээр", "Шөлтэй хоол", "Ногоо ихтэй хоол", "Будаа, ногоо, уураг хосолсон хоол", "Тараг, аарц, сүүн бүтээгдэхүүн", "Самар, үр зэрэг бага хэмжээний тослог хүнс", "Жимс", "Гэрийн энгийн хоол", "Одоогоор сайн анзаараагүй", "Сайн мэдэхгүй", "Хариулахгүй"], max: 4 },
+  { id: "S1-FR05", module: "Хүнсний зохицол ба биед өгөх мэдрэмж", type: "multi", text: "Аль төрлийн хүнсийг идэж эхлэхээр хэмжээг нь барихад хамгийн хэцүү байдаг вэ?", options: ["Чихэр, шоколад, амттан", "Талх, нарийн боов", "Гоймон, банш, хуушуур зэрэг гурилан хоол", "Чипс, давслаг зууш", "Шарсан / тослог хоол", "Түргэн хоол", "Хийжүүлсэн эсвэл чихэрлэг ундаа", "Согтууруулах ундаа хэрэглэсэн үеийн зууш", "Оройн их хоол", "Надад хэмжээг нь барихад онц хэцүү хүнс байдаггүй", "Сайн мэдэхгүй", "Хариулахгүй"], max: 4 },
+  { id: "S1-FR06", module: "Хүнсний зохицол ба биед өгөх мэдрэмж", type: "multi", text: "Та ямар нэг хүнсийг ‘надад зохихгүй’ гэж бодоод бүрэн хасаж үзсэн үү?", options: ["Үгүй", "Тийм, гурилан бүтээгдэхүүн", "Тийм, сүү, сүүн бүтээгдэхүүн", "Тийм, улаан мах", "Тийм, чихэрлэг зүйл", "Тийм, тослог / шарсан хоол", "Тийм, будаа эсвэл нүүрс ус", "Тийм, өөр хүнс", "Хасах гэж оролдсон ч удаан үргэлжлээгүй", "Сайн мэдэхгүй", "Хариулахгүй"], max: 3 },
+  { id: "S1-FR07", module: "Хүнсний зохицол ба биед өгөх мэдрэмж", type: "text", text: "Танд биед тань зохихгүй мэт санагддаг өөр хүнс, нөхцөл байвал бичиж болно.", helper: "Энэ нь цусны бүлгийн тухай биш. Зөвхөн тухайн хүнсийг идсэний дараах таны өөрийн анзаарсан мэдрэмж, шингэц, өлсөлт, цатгалан байдал, биеийн тавгүйрхлийн тухай юм." },
   { id: "S1-C06", module: "Basic context", type: "multi", text: "Жин бууруулах хүсэл тань өдөр тутмын амьдралын юутай хамгийн их холбоотой вэ?", options: ["Эрүүл мэнддээ анхаарах", "Өдрийн тэнхээ нэмэх", "Хувцсандаа тухтай байх", "Өөртөө итгэлтэй болох", "Гадаад төрхөө өөрчлөх", "Даралт, сахар, шинжилгээнд санаа зовсон", "Хөдлөхөд амар болох", "Төрсний дараа биеэ сэргээх", "Өөр зүйл"] },
   { id: "S1-W01", module: "Weight trajectory", type: "single", text: "Сүүлийн 12 сарын хугацаанд таны жин хэр өөрчлөгдсөн бэ?", options: ["Их өөрчлөгдөөгүй", "1-3 кг нэмсэн", "4-7 кг нэмсэн", "8+ кг нэмсэн", "Буурсан", "Мэдэхгүй"], scores: { "8+ кг нэмсэн": ["medical"], "4-7 кг нэмсэн": ["medical"] } },
   { id: "S1-W02", module: "Weight trajectory", type: "multi", text: "Жин нэмэгдэх эсвэл буурах үе тань амьдралын ямар өөрчлөлттэй давхацсан бэ?", options: ["Ажил ихсэж, стресс нэмэгдсэн", "Хөдөлгөөн багассан", "Нойр муудсан", "Эм хэрэглэж эхэлсэн", "Жирэмсэн эсвэл төрсний дараах үе", "Өвчин, мэс засалтай давхацсан", "Сэтгэл санааны хүнд үе байсан", "Тодорхой зүйл байхгүй", "Мэдэхгүй"], scores: { "Ажил ихсэж, стресс нэмэгдсэн": ["regulation", "executive"], "Ажил-стресс": ["regulation", "executive"], "Хөдөлгөөн багассан": ["executive"], "Нойр муудсан": ["circadian"], "Эм хэрэглэж эхэлсэн": ["medical"], "Эм": ["medical"], "Жирэмсэн эсвэл төрсний дараах үе": ["medical"], "Жирэмсэн-төрсний дараа": ["medical"], "Өвчин, мэс засалтай давхацсан": ["medical"], "Өвчин-мэс засал": ["medical"] } },
@@ -457,6 +464,7 @@ const dimensionByModule = {
   "Warm start": [],
   "Basic context": ["D01"],
   "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл": ["D03", "D13", "D14", "D15", "D16", "D22"],
+  "Хүнсний зохицол ба биед өгөх мэдрэмж": ["D03", "D04", "D05", "D07", "D09", "D13", "D14", "D15", "D22"],
   "Weight trajectory": ["D01"],
   "Past attempts": ["D02", "D11"],
   "Meal rhythm": ["D03", "D15"],
@@ -545,6 +553,14 @@ function optionSignals(label) {
   if (/хоол алгас|яарч ид|хүргэлт|хоол идэх цаг, орчин тогтмол биш/.test(text)) add(["eating_opportunity_instability", "skipped_meal"], ["D03", "D13", "D15"], [mechanismNamesByKey.hungerSafety, mechanismNamesByKey.executive], ["trigger_map", "cycle_map", "first_leverage_point"]);
   if (/сэтгэлээр ядар|биеэр ядар|хоёулаа ядар|унтмаар|бие чилэх|нуруу|үе мөч/.test(text)) add(["after_work_fatigue"], ["D13", "D15", "D22"], [mechanismNamesByKey.executive, mechanismNamesByKey.circadian], ["scenario_focus", "what_to_avoid", "first_leverage_point"]);
   if (/тоос|утаа|үнэр|химийн|их халуун|их хүйтэн|дуу чимээ|аюулгүй ажиллагаа|анхаарал төвлөрөл/.test(text)) add(["hazardous_work_caution", "work_recovery_caution"], ["D16", "D22"], [mechanismNamesByKey.executive, mechanismNamesByKey.medical], ["professional_check", "what_to_avoid"]);
+  if (/гэдэс дүүр|хий ихэс|хүнд орг|цээж хорс|өтгөн хат|суулгах|шингэц|хүнд, тавгүй|их хэмжээтэй оройн хоол|тослог|шарсан/.test(text)) add(["digestive_heaviness", "food_response_context"], ["D03", "D09", "D15", "D22"], [mechanismNamesByKey.physiological, mechanismNamesByKey.hungerSafety], ["scenario_focus", "first_leverage_point", "what_to_avoid"]);
+  if (/амархан дахин өлс|гурилан|талх|нарийн боов|гоймон|банш|хуушуур|чихэр|хийжүүлсэн|чихэрлэг ундаа/.test(text)) add(["fast_hunger_rebound", "satiety_instability"], ["D04", "D05", "D07", "D13"], [mechanismNamesByKey.hungerSafety, mechanismNamesByKey.reward, mechanismNamesByKey.cue], ["scenario_focus", "first_leverage_point"]);
+  if (/хэмжээг нь барихад|илүү их идмээр|чипс|давслаг зууш|түргэн хоол|оройн их хоол/.test(text)) add(["easy_overeat_trigger_food", "portion_context"], ["D05", "D13", "D14"], [mechanismNamesByKey.reward, mechanismNamesByKey.cue, mechanismNamesByKey.decisionDefault], ["trigger_map", "first_leverage_point"]);
+  if (/сүү|сүүн бүтээгдэхүүн|тараг|аарц/.test(text)) add(["dairy_response_context"], ["D03", "D09", "D22"], [mechanismNamesByKey.physiological], ["scenario_focus", "professional_check"]);
+  if (/улаан мах/.test(text)) add(["red_meat_heavy_context"], ["D03", "D15", "D22"], [mechanismNamesByKey.physiological, mechanismNamesByKey.hungerSafety], ["scenario_focus", "first_leverage_point"]);
+  if (/маргааш.*хавагна|хавагнасан|давслаг|хийжүүлсэн|чихэрлэг ундаа/.test(text)) add(["swelling_salt_sugar_context"], ["D09", "D15", "D22"], [mechanismNamesByKey.physiological, mechanismNamesByKey.circadian], ["what_to_avoid", "first_leverage_point"]);
+  if (/бүрэн хас|хасах гэж оролдсон|зохихгүй/.test(text)) add(["restrictive_elimination_risk"], ["D10", "D11", "D21"], [mechanismNamesByKey.collapse, mechanismNamesByKey.perfectionism], ["what_to_avoid", "first_leverage_point"]);
+  if (/өндөг|тахиа|загас|шөлтэй|ногоо ихтэй|уураг хосолсон|гэрийн энгийн хоол/.test(text)) add(["comfortable_sustaining_food"], ["D03", "D04", "D13"], [mechanismNamesByKey.hungerSafety, mechanismNamesByKey.executive], ["first_leverage_point"]);
   if (/хүмүүс|social|татгалзах эвгүй|гэр бүл|найз/.test(text)) add(["social_pressure"], ["D17"], [mechanismNamesByKey.social], ["hidden_function", "not_the_real_problem"]);
   if (/согтууруулах ундаа|давслаг|тослог|биеийн тавгүйрхэл|шөнө орой|маргааш.*чанга|нойр муудаж|кофе/.test(text)) add(["alcohol_after_effect_loop"], ["D15", "D17", "D11"], [mechanismNamesByKey.social, mechanismNamesByKey.circadian, mechanismNamesByKey.hungerSafety], ["cycle_map", "what_to_avoid", "first_leverage_point"]);
   if (/тамхи|тамхинаас|хоолны дуршил|зууш|кофе/.test(text)) add(["tobacco_appetite_context"], ["D06", "D13", "D15"], [mechanismNamesByKey.regulation, mechanismNamesByKey.reward], ["tone_modifier", "what_to_avoid"]);
@@ -5674,6 +5690,8 @@ function wp81EvidencePoints(insights, voice, primaryKey, tags = [], answers = st
   add(wp78AnswerText("S1-MV01", answers), `Хөдөлгөөний бодит боломж: ${wp81AnswerText("S1-MV01", answers)}.`, "Энэ нь шийтгэх дасгал санал болгох гэсэн үг биш. Харин бодит амьдралд тогтмол давтагдах хамгийн жижиг хөдөлгөөний хэлбэрийг сонгоход хэрэгтэй.");
   add(wp81AnswerText("S1-WC01", answers) || wp81AnswerText("S1-WC03", answers), `Ажил/өдрийн хөдөлгөөний хэсэгт “${[wp81AnswerText("S1-WC01", answers), wp81AnswerText("S1-WC03", answers)].filter(Boolean).join("; ")}” гэж тэмдэглэсэн.`, "Энэ нь энерги зарцуулалт төдийгүй суух блок, хооллох цаг, ажлын дараах ядаргаатай хамт уншигдах context юм.");
   add(wp81AnswerText("S1-WC04", answers) || wp81AnswerText("S1-WC05", answers) || wp81AnswerText("S1-WC06", answers), `Ажлын хэмнэл/хооллох боломж/ядаргаа: ${[wp81AnswerText("S1-WC04", answers), wp81AnswerText("S1-WC05", answers), wp81AnswerText("S1-WC06", answers)].filter(Boolean).join("; ")}.`, "Энэ нь хоолны дүрэм бодит өдөрт хэрэгжих эсэх, орой нөхөх идэлт үүсэх эсэх, эхний стратеги ямар жижиг байх ёстойг тодруулна.");
+  add(wp81AnswerText("S1-FR01", answers) || wp81AnswerText("S1-FR02", answers), `Хүнсний мэдрэмжийн хэсэгт “${[wp81AnswerText("S1-FR01", answers), wp81AnswerText("S1-FR02", answers)].filter(Boolean).join("; ")}” гэж тэмдэглэсэн.`, "Энэ нь хүнсийг сайн/муу гэж ангилах биш, хэмжээ, цаг, бэлтгэл, хоолны зай, биеийн мэдрэмжийн холбоог шалгах context юм.");
+  add(wp81AnswerText("S1-FR04", answers) || wp81AnswerText("S1-FR05", answers), `Цатгалан/хэмжээ барих хэсэгт “${[wp81AnswerText("S1-FR04", answers), wp81AnswerText("S1-FR05", answers)].filter(Boolean).join("; ")}” гэж хариулсан.`, "Тогтвортой цатгалан мэдрэмж өгдөг хоол болон хэмжээг нь барихад хэцүү хүнсийг хамт харах нь эхний default хоол, орчны boundary сонгоход хэрэгтэй.");
   add(wp78AnswerText("S1-B01", answers) || wp78AnswerText("S1-B02", answers), `Биеийн дохионы хэсэгт “${[wp81AnswerText("S1-B01", answers), wp81AnswerText("S1-B02", answers)].filter(Boolean).join("; ")}” гэж тэмдэглэсэн.`, "Толгой эргэх, зүрх дэлсэх, сахар/даралтын санаа зовнил байгаа үед хоолны төлөвлөгөө биш, аюулгүй шалгалт түрүүлнэ.");
   if (!points.length) {
     add(true, reportEvidenceNote(voice.key), "Хариулт цөөн тул энэ тайланг магадлалтай эхний зураглал гэж унших нь зөв.");
@@ -5704,6 +5722,10 @@ function wp81SecondaryFactors(insights, primaryKey, tags = [], answers = state.s
   add(workFlags.shiftWork, "Ээлжийн/шөнийн ажлын хэмнэл", "Ээлжийн цагтай үед хооллох цаг бодит сэрэх/унтах цагтайгаа таарах ёстой. Ерөнхий оройн хориг амьдралын хэмнэлтэй зөрвөл удаан ажиллахгүй.");
   add(workFlags.workFromHome || workFlags.foodNearby, "Гэрээс ажиллах ба хоолны дохио", "Гэрээс ажиллах, хоол ойр харагдах үед шийдвэр гарахаас өмнө орчин идэх дохио өгдөг. Хоолны visibility boundary нь тэвчээрээс илүү бодитой.");
   add(workFlags.hazardous, "Хүнд/эрсдэлтэй ажлын нөхцөл", "Аюулгүй ажиллагаа, халуун/хүйтэн, тоос/утаа/химийн орчин эсвэл хүнд өргөлттэй үед сэргэлт, ус, тогтмол хоол, биеийн дохиог илүү болгоомжтой тооцох хэрэгтэй.");
+  const foodFlags = foodResponseFlags(answers);
+  foodResponseInterpretations(foodFlags).slice(0, 3).forEach(item => {
+    add(foodFlags.hasAny, item.title, item.body);
+  });
   add(wp78AnswerText("S1-F01", answers).includes("Харагдаад") || primaryKey === "cue", "Хоол харагдах, үнэртэхэд идэх хүсэл нэмэгдэх", "Хоол ойр, харагдах, үнэртэх, апп нээгдэх үед шийдвэр гарахаас өмнө орчин өөрөө эхний алхмыг хийдэг. Орчны нэг дохиог холдуулах нь зөвхөн тэвчээр шаардахаас илүү бодитой.");
   add(wp78AnswerText("S1-B01", answers) || wp78AnswerText("S1-B02", answers), "Биеийн шинж тэмдэг", "Гар салгалах, толгой эргэх, зүрх дэлсэх, сахар/даралтын санаа зовнил зэрэг байвал энэ тайлан хоолны хатуу дүрэм өгөхгүй. Аюулгүй шалгалт, тогтмол хоол, огцом хасалтаас зайлсхийх нь түрүүлнэ.");
   insights.secondaryFactors.forEach(item => add(!factors.some(factor => factor.title.includes(item)), item, "Энэ хүчин зүйл таны бусад хариулттай давхцаж байгаа тул үндсэн механизмын хажууд ажиглах хэрэгтэй."));
@@ -5724,6 +5746,8 @@ function wp81WeightImpactParagraphs(insights, primaryKey, tags = [], answers = s
   if (wp78AnswerText("S1-MV01", answers) || wp78AnswerText("S1-MV02", answers)) paragraphs.push("Хөдөлгөөний боломж бага байвал энерги зарцуулалт төдийгүй өдөр тутмын хэмнэл, сэтгэл санааны тогтвортой байдал, унтах цаг зэрэгт давхар нөлөөлж болно. Гэхдээ энэ нь өөрийгөө шийтгэх дасгал хийх ёстой гэсэн үг биш; давтагдах хамгийн жижиг хөдөлгөөн илүү чухал.");
   const workContext = workContextNarrative(answers);
   if (workContext.flags.hasAny) paragraphs.push(...workContext.paragraphs);
+  const foodFlags = foodResponseFlags(answers);
+  if (foodFlags.hasAny) paragraphs.push("Хүнсний мэдрэмжийн хариулт жин дээр шууд шалтгаан гэж уншигдахгүй. Харин ямар хоолны дараа хүнд оргих, өлсөлт хурдан эргэх, хэмжээгээ барихад хэцүү болох, эсвэл маргаашийн биеийн мэдрэмж өөрчлөгдөх нь порц, цаг, бэлтгэл, хоолны зайтай нийлж өдөр тутмын сонголтыг өөрчилж байж болно.");
   return paragraphs;
 }
 
@@ -5763,6 +5787,10 @@ function wp81AvoidItems(insights, voice, primaryKey, tags = [], answers = state.
     workContextFlags(answers).manualWork ? "биеийн хүчний ажилтай өдөр дээрээс нь шийтгэх хүнд дасгал нэмэх" : "",
     workContextFlags(answers).hazardous ? "хүнд/эрсдэлтэй ажлын өдөр мацаг, усгүйдэх, огцом хязгаарлалт хийх" : "",
     workContextFlags(answers).shiftWork ? "ээлжийн ажилтай байхад ерөнхий “орой хоол идэхгүй” дүрмийг хүчээр барих" : "",
+    foodResponseFlags(answers).eliminationRisk ? "олон хүнсийг нэг дор бүрэн хасах" : "",
+    foodResponseFlags(answers).redMeat ? "улаан махыг нэг хариултаар бүр мөсөн хорих" : "",
+    foodResponseFlags(answers).flour ? "бүх гурилан хүнсийг шууд бүрэн хорих" : "",
+    foodResponseFlags(answers).swelling ? "маргаашийн хүнд мэдрэмжийг нэг шөнийн өөх нэмэлт гэж үзээд сандран огцом хасалт хийх" : "",
     "нэг удаа хазайсныг бүтэн өдрийн бүтэлгүйтэл гэж үзэх",
     "биеийн шинжтэй үед мэргэжлийн хүнтэй ярилцахгүйгээр хоол олон цаг алгасах, огцом дэглэм эхлүүлэх",
     "тамхийг хоолны дуршил дарах арга гэж ашиглах"
@@ -5773,6 +5801,8 @@ function wp81AvoidItems(insights, voice, primaryKey, tags = [], answers = state.
 
 function wp81FirstStep(insights, voice, primaryKey, tags = [], answers = state.stageAnswers || {}) {
   if (wp81HasAlcoholLoop(answers, insights.clusters)) return "Согтууруулах ундаа хэрэглэх магадлалтай өдрийн өмнө нэг хэвийн хоол, ус, маргаашийн эхний зөөлөн хоолоо урьдчилж товло. Зорилго нь маргааш өөрийгөө шийтгэхгүйгээр биеэ хэвийн хэмнэл рүү буцаах юм.";
+  const foodFlags = foodResponseFlags(answers);
+  if (foodFlags.hasAny && (foodFlags.redMeat || foodFlags.dairy || foodFlags.flour || foodFlags.hungerRebound || foodFlags.easyOvereat || foodFlags.eliminationRisk)) return foodResponseFirstExperiment(foodFlags, answers);
   const workFlags = workContextFlags(answers);
   if (workFlags.manualWork && (workFlags.eatingUnstable || workFlags.fatigue)) return personalizedWorkStrategy(workFlags, answers);
   if (workFlags.shiftWork) return personalizedWorkStrategy(workFlags, answers);
@@ -5823,7 +5853,8 @@ function wp81ProfessionalGuidance(mode, tags = [], answers = state.stageAnswers 
   if (mode.mode === "check" || tags.includes("glucose_like_signal") || wp78AnswerText("S1-B01", answers) || wp78AnswerText("S1-B02", answers)) {
     items.unshift("Энэ нь онош биш. Таны биеийн дохио жирийн идэх зуршлаас илүү түрүүлж шалгах зүйл байж магадгүй. Тиймээс энэ тайлан хоолоо огцом хасахгүй, хоол олон цаг алгасах, огцом хязгаарлах, шийтгэх дасгал санал болгохгүй.");
   }
-  return unique(items).slice(0, 6);
+  items.push(...foodResponseProfessionalItems(answers));
+  return unique(items).slice(0, 8);
 }
 
 function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = [] }) {
@@ -5838,7 +5869,7 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
   const cycleSteps = wp81CycleSteps(insights, voice, primary?.key, tags, answers);
   const avoidItems = wp81AvoidItems(insights, voice, primary?.key, tags, answers);
   const firstStep = wp81FirstStep(insights, voice, primary?.key, tags, answers);
-  const experimentRows = workAdaptedExperimentRows(firstStep, insights, answers);
+  const experimentRows = contextAdaptedExperimentRows(firstStep, insights, answers);
   const observationQuestions = wp81ObservationQuestions(insights, primary?.key, answers);
   const professionalItems = wp81ProfessionalGuidance(mode, tags, answers);
   const confidenceCopy = evidencePoints.length >= 6
@@ -5877,6 +5908,7 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
           ${secondaryFactors.length ? `<div class="stack">${secondaryFactors.map(item => `<div class="card stack"><h3>${publicHtml(item.title)}</h3><p>${publicHtml(item.body)}</p></div>`).join("")}</div>` : `<p class="muted">Давхар хүчин зүйл тод харагдахад мэдээлэл одоогоор бага байна.</p>`}
           ${supportingClusters.length ? `<div class="stack">${supportingClusters.map(item => `<div class="card"><h3>${publicHtml(item.title)}</h3><p>${publicHtml(item.meaning)}</p></div>`).join("")}</div>` : ""}
         </div>
+        ${foodResponseSummaryHtml(answers)}
         <div class="report-section">
           <h3>5. Таны тойрог хэрхэн ажиллаж байна вэ?</h3>
           <div class="cycle-map">${cycleSteps.map(step => `<p>${publicHtml(step)}</p>`).join("<span>→</span>")}</div>
@@ -6178,6 +6210,122 @@ function workAdaptedExperimentRows(firstStep, insights, answers = state.stageAns
     if (index === 0) return [label, `${action} Мөн ${context.experimentFocus}-аа богино тэмдэглэ.`, observe, noOverreact];
     if (index === 1) return [label, `${action} Ажлын бодит нөхцөл дээр нэг жижиг тохируулга нэм: ${context.strategy}`, observe, noOverreact];
     return [label, action, `${observe} Ажил, хөдөлгөөн, хооллох боломжийн аль тохируулга хамгийн бага хүчээр давтагдсаныг ялга.`, noOverreact];
+  });
+}
+
+function foodValues(questionId, answers = state.stageAnswers || {}) {
+  return asArray(effectiveStageAnswers(answers)[questionId]).filter(Boolean);
+}
+
+function foodResponseFlags(answers = state.stageAnswers || {}) {
+  const heavyFoods = foodValues("S1-FR01", answers);
+  const responses = foodValues("S1-FR02", answers);
+  const contexts = foodValues("S1-FR03", answers);
+  const sustainingFoods = foodValues("S1-FR04", answers);
+  const overeatFoods = foodValues("S1-FR05", answers);
+  const eliminatedFoods = foodValues("S1-FR06", answers);
+  const openText = wp81AnswerText("S1-FR07", answers);
+  const text = [heavyFoods, responses, contexts, sustainingFoods, overeatFoods, eliminatedFoods, openText].flat().join(" ").toLowerCase();
+  return {
+    hasAny: Boolean(text.trim()),
+    heavyFoods,
+    responses,
+    contexts,
+    sustainingFoods,
+    overeatFoods,
+    eliminatedFoods,
+    openText,
+    digestive: /гэдэс дүүр|хий ихэс|хүнд орг|цээж хорс|өтгөн хат|суулгах|шингэц|хүнд, тавгүй/.test(text),
+    hungerRebound: /амархан дахин өлс|гурилан|талх|нарийн боов|гоймон|банш|хуушуур|чихэр|хийжүүлсэн|чихэрлэг ундаа/.test(text),
+    easyOvereat: /хэмжээг нь барихад|илүү их идмээр|чипс|давслаг зууш|түргэн хоол|оройн их хоол|амттан/.test(text),
+    dairy: /сүү|сүүн бүтээгдэхүүн|тараг|аарц/.test(text),
+    flour: /гурилан|талх|нарийн боов|гоймон|банш|хуушуур|будаа эсвэл нүүрс ус/.test(text),
+    redMeat: /улаан мах/.test(text),
+    friedFatty: /тослог|шарсан|түргэн хоол/.test(text),
+    swelling: /хавагнасан|давслаг|чипс|хийжүүлсэн|чихэрлэг ундаа/.test(text),
+    alcoholFood: /согтууруулах ундаа/.test(text),
+    eliminationRisk: /тийм,|бүрэн хас|хасах гэж оролдсон|зохихгүй/.test(eliminatedFoods.join(" ").toLowerCase()) || (wp78AnswerText("S1-W06", answers).includes("Маргааш илүү чанга") || wp78AnswerText("S1-W06", answers).includes("бүх юм нур")),
+    persistentSymptomContext: /өтгөн хатах|суулгах|цээж хорсдог|толгой өвдөх|бие сулрах|гэдэс дүүрдэг|хий ихэсдэг/.test(responses.join(" ").toLowerCase())
+  };
+}
+
+function foodResponseInterpretations(flags = foodResponseFlags()) {
+  const items = [];
+  const add = (condition, title, body) => {
+    if (condition && !items.some(item => item.title === title)) items.push({ title, body });
+  };
+  add(flags.redMeat, "Улаан махны context", "Улаан мах хүнд санагдаж байгаа бол шууд бүр мөсөн хасах дүгнэлт хийхээс өмнө хэмжээ, оройн цаг, тослог хэсэг, шарсан бэлтгэл, хамт идсэн хоолыг салгаж ажиглах нь илүү бодитой.");
+  add(flags.flour && flags.hungerRebound, "Гурил/чихэрлэг зүйл ба өлсөлт хурдан эргэх", "Гурилан эсвэл чихэрлэг сонголтын дараа дахин өлсөх, илүү их идмээр болох мэдрэмж гарвал бүх гурил муу гэсэн үг биш. Харин порц, уураг/ногоотой хослуулах эсэх, хоол холдсоны дараа идсэн эсэх нь цатгаланд нөлөөлж байна.");
+  add(flags.dairy && flags.digestive, "Сүү, сүүн бүтээгдэхүүний биеийн мэдрэмж", "Сүү, сүүн бүтээгдэхүүнтэй үед гэдэс дүүрэх, хий, өтгөн өөрчлөгдөх зэрэг давтагдвал онош гэж үзэхгүй. Бага порц, тараг/аарц шиг исгэсэн хэлбэр, идэх цагийг ялгаж ажиглаад, давтамжтай хүчтэй байвал мэргэжлийн хүнтэй ярилцах нь зөв.");
+  add(flags.friedFatty || flags.digestive, "Тослог/шарсан хоол ба шингэц", "Тослог, шарсан эсвэл их хэмжээтэй оройн хоол хүнд оргих, нойр хүрэх, цээж хорсох мэдрэмжтэй давхцвал цаг, порц, бэлтгэх аргыг өөрчлөх нэг хувьсагчийн туршилт илүү зөөлөн эхлэл болно.");
+  add(flags.swelling, "Маргаашийн хавагнасан мэт мэдрэмж", "Давслаг зууш, чихэрлэг ундаа, их хэмжээтэй оройн хоолны дараах маргаашийн хүнд/хавагнасан мэдрэмж нь заавал нэг шөнийн өөх нэмэлт гэсэн үг биш. Хоолны хэмжээ, давс, шингэн, нойр хамт нөлөөлж болно.");
+  add(flags.easyOvereat, "Хэмжээ барихад хэцүү хүнс", "Хэмжээг нь барихад хэцүү хүнс бол зан чанарын сул тал биш. Амт, бүтэц, харагдах байдал, савлагаа, ядарсан үеийн шийдвэрийн ачаалал нийлээд порц автоматаар томрох нөхцөл үүсгэдэг.");
+  add(flags.alcoholFood, "Согтууруулах ундаа хэрэглэсэн үеийн хоол", "Согтууруулах ундаа хэрэглэсэн үеийн зууш, оройн хоол, маргаашийн өлсөлт нь өмнөх report-ийн after-effect loop-тэй нийлж болно. Энд гол нь буруутгах биш, өмнөх хоол, ус, маргаашийн сэргэлтийг төлөвлөх юм.");
+  add(flags.eliminationRisk, "Хэт олон хүнс бүрэн хасах эрсдэл", "Олон хүнсийг нэг дор бүрэн хасах нь эхэндээ хяналттай мэт боловч дараа нь өлсөлт, хориглосон хоол бодогдох, нэг удаа хазайхад бүх зүйл нурсан мэт санагдах эрсдэлийг нэмэгдүүлж болно.");
+  add(flags.sustainingFoods.length, "Тогтвортой санагддаг хоол", `Танд цатгалан, хөнгөн, тогтвортой санагддаг сонголтууд: ${flags.sustainingFoods.join(", ")}. Эдгээрийг давтагдах үндсэн хоол болгон ашиглах нь хоригийн жагсаалтаас илүү бодитой эхлэл байж болно.`);
+  return items;
+}
+
+function foodResponseFirstExperiment(flags = foodResponseFlags(), answers = state.stageAnswers || {}) {
+  if (!flags.hasAny) return "";
+  if (flags.eliminationRisk) return "Нэг хүнс эсвэл нэг нөхцөл сонгоод зөвхөн порц, цаг, хослол, бэлтгэл, эсвэл орчны бэлэн байдлын нэг хувьсагчийг 7–14 хоног ажигла. Олон хүнсийг зэрэг хорихгүй, нэг удаа хазайсан бол дараагийн хоолноос хэвийн үргэлжлүүл.";
+  if (flags.redMeat) return "Улаан махтай нэг хоол дээр зөвхөн нэг хувьсагч өөрчил: порцыг багасгах, эрт идэх, тос багатай/шарсан биш бэлтгэх, ногоо эсвэл шөлтэй хослуулах. Дараа нь хүнд оргих, цээж хорсох, нойр хүрэх мэдрэмж өөрчлөгдөж байгаа эсэхийг тэмдэглэ.";
+  if (flags.dairy && flags.digestive) return "Сүү, сүүн бүтээгдэхүүн дээр бага порц, исгэсэн хэлбэр, өөр цаг гэсэн нэг л ялгааг 7–14 хоног ажигла. Шинж хүчтэй эсвэл давтамжтай бол өөрөө оношлохгүй, мэргэжлийн хүнтэй ярилц.";
+  if (flags.flour || flags.hungerRebound) return "Гурилан/чихэрлэг сонголт дээр порц, уураг/ногоотой хослуулах, хоол холдсоны дараа идэхгүй байх гэсэн нэг хувьсагчийг сонго. Бүх гурилыг хорих биш, өлсөлт хэр хурдан эргэж ирж байгааг хар.";
+  if (flags.easyOvereat) return "Хэмжээ барихад хэцүү нэг хүнс сонгоод савлагаа/харагдах байдал/урьдчилсан порцын boundary тавь. Зорилго нь бүр мөсөн хорих биш, автоматаар томрох порцыг багасгах.";
+  if (flags.friedFatty || flags.digestive) return "Тослог/шарсан эсвэл оройн их хоол дээр цаг, порц, бэлтгэх арга гурвын зөвхөн нэгийг өөрчилж, маргаашийн биеийн мэдрэмжийг хар.";
+  if (flags.sustainingFoods.length) return `${flags.sustainingFoods[0]} төрлийн хоолыг нэг ажлын/гэрийн өдөр default meal болгож туршаад өлсөлт, ядаргаа, хэмжээгээ барихад хэр тусалж байгааг тэмдэглэ.`;
+  return "Нэг хүнс эсвэл нэг нөхцөл сонгоод зөвхөн порц, цаг, хослол, бэлтгэл, эсвэл орчны бэлэн байдлын нэгийг өөрчил.";
+}
+
+function foodResponseSummaryHtml(answers = state.stageAnswers || {}) {
+  const flags = foodResponseFlags(answers);
+  if (!flags.hasAny) return "";
+  const interpretations = foodResponseInterpretations(flags);
+  const experiment = foodResponseFirstExperiment(flags, answers);
+  const listText = values => values.length ? values.join(", ") : "Одоогоор тодорхой сонголт алга";
+  return `
+    <div class="report-section">
+      <h3>Хүнсний зохицол, шингэц ба цатгалан мэдрэмж</h3>
+      <p>Энэ хэсэг нь цусны бүлгийн тухай биш. Харин таны өөрийн хариултад тулгуурлан ямар хүнс, ямар хэмжээ, ямар цаг, ямар нөхцөлд биед хүнд санагдаж, өлсөлт хурдан эргэж ирж, эсвэл хэмжээг нь барихад хэцүү болж байгааг харуулж байна.</p>
+      <table class="report-table"><tbody>
+        <tr><td>Хүнд/шингэц муутай санагдсан хүнс</td><td>${publicHtml(listText(flags.heavyFoods))}</td></tr>
+        <tr><td>Биеийн мэдрэмж</td><td>${publicHtml(listText(flags.responses))}</td></tr>
+        <tr><td>Илүү тод илэрдэг нөхцөл</td><td>${publicHtml(listText(flags.contexts))}</td></tr>
+        <tr><td>Цатгалан, хөнгөн, тогтвортой санагддаг хоол</td><td>${publicHtml(listText(flags.sustainingFoods))}</td></tr>
+        <tr><td>Хэмжээг нь барихад хэцүү хүнс</td><td>${publicHtml(listText(flags.overeatFoods))}</td></tr>
+      </tbody></table>
+      ${interpretations.map(item => `<div class="card stack"><h3>${publicHtml(item.title)}</h3><p>${publicHtml(item.body)}</p></div>`).join("")}
+      <p><strong>Эхний 7–14 хоногийн туршилт:</strong> ${publicHtml(experiment)}</p>
+    </div>
+  `;
+}
+
+function foodResponseProfessionalItems(answers = state.stageAnswers || {}) {
+  const flags = foodResponseFlags(answers);
+  if (!flags.hasAny) return [];
+  const items = [];
+  if (flags.persistentSymptomContext) {
+    items.push("Гэдэс дүүрэх, суулгах/өтгөн хатах, цээж хорсох, хүчтэй өвдөлт, бөөлжих, цус гарах, тайлбаргүй жин буурах, ухаан балартах эсвэл хүчтэй толгой эргэх шинж давтамжтай/хүчтэй байвал энэ тайлангаар өөрөө оношлохгүй, мэргэжлийн хүнтэй ярилц.");
+  }
+  if (flags.flour && flags.digestive) {
+    items.push("Гурил/улаан буудайтай холбоотой шинж хүчтэй эсвэл удаан үргэлжилбэл удаан хугацааны хатуу хасалт эхлүүлэхээс өмнө мэргэжлийн үнэлгээ авах нь зөв.");
+  }
+  if (flags.dairy && flags.digestive) {
+    items.push("Сүү, сүүн бүтээгдэхүүнтэй холбоотой тавгүйрхэл давтамжтай бол жижиг ажиглалт хийж болох ч онош гэж үзэхгүй; хүчтэй бол мэргэжлийн хүнтэй зөвлөлд.");
+  }
+  return items;
+}
+
+function contextAdaptedExperimentRows(firstStep, insights, answers = state.stageAnswers || {}) {
+  const rows = workAdaptedExperimentRows(firstStep, insights, answers);
+  const flags = foodResponseFlags(answers);
+  if (!flags.hasAny) return rows;
+  const experiment = foodResponseFirstExperiment(flags, answers);
+  return rows.map(([label, action, observe, noOverreact], index) => {
+    if (index === 0) return [label, `${action} Нэг хүнс/нөхцөл сонгоод хүнд оргих, өлсөлт хурдан эргэх, идэх хүсэл, маргаашийн мэдрэмжээ тэмдэглэ.`, observe, noOverreact];
+    if (index === 1) return [label, `${action} Хүнсний туршилтад зөвхөн нэг хувьсагч өөрчил: ${experiment}`, "Хүнд оргих, гэдэс дүүрэх, дахин өлсөх, хэмжээгээ барих, маргаашийн биеийн мэдрэмж өөрчлөгдөж байна уу?", "Олон хүнсийг зэрэг хорихгүй. Нэг өдөр таараагүй бол дараагийн хоолноос хэвийн үргэлжлүүл."];
+    return [label, action, `${observe} Сонгосон нэг өөрчлөлт бодит амьдралд үргэлжлэх боломжтой эсэхийг, өлсөлт ба биеийн мэдрэмжтэй хамт хар.`, noOverreact];
   });
 }
 
@@ -7389,6 +7537,9 @@ if (typeof module !== "undefined") {
       workContextFlags,
       workContextNarrative,
       personalizedWorkStrategy,
+      foodResponseFlags,
+      foodResponseInterpretations,
+      foodResponseFirstExperiment,
       sanitizeVisibleSurfacePrototypeText,
       setTestState(nextState) {
         state = {
