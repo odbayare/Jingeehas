@@ -97,9 +97,10 @@ function run() {
   const report = normalize(_internal.renderReport());
   const livedIndex = Math.max(
     report.indexOf("Орой болоход “юу идэх вэ?” гэж бодох хүртэл хүнд болдог"),
-    report.indexOf("Зууш нүдэнд ойр байхаар гар өөрөө хүрчихдэг үе байна")
+    report.indexOf("Зууш нүдэнд ойр байхаар гар өөрөө хүрчихдэг үе байна"),
+    report.indexOf("гар амархан хүрдэг")
   );
-  const structureIndex = report.indexOf("4. Давхар нөлөөлж байгаа хүчин зүйлс");
+  const structureIndex = report.indexOf("4. Гол биш боловч ажиглах хэрэгтэй зүйл");
   assert(livedIndex >= 0, "report should include lived explanation");
   assert(structureIndex >= 0, "report should include human-readable cycle section");
   assert(livedIndex < structureIndex, "report should explain the lived moment before the cycle");

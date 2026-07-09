@@ -148,12 +148,12 @@ function run() {
   });
   const oneTime = _internal.renderReport();
   assert(oneTime.includes("Таны тайлан бэлэн боллоо"));
-  assert(oneTime.includes("1. Энэ тайлан юунд тулгуурласан бэ?"));
-  assert(oneTime.includes("2. Таны гол давтагдаж буй механизм"));
-  assert(oneTime.includes("8. 7–14 хоногийн туршилт"));
+  assert(oneTime.includes("1. Гол зураглал"));
+  assert(oneTime.includes("2. Энэ дүгнэлт юунд тулгуурласан бэ?"));
+  assert(oneTime.includes("3. Таны хамгийн магадлалтай 2–3 механизм"));
+  assert(oneTime.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"));
   assert(oneTime.includes("Тайлангаа хадгалах"));
   assert(!oneTime.includes("7 хоногоор нарийвчлах"));
-  assert(!oneTime.includes("Гол зураг"));
   assert(!oneTime.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
   assert(!oneTime.includes("Миний pattern-ийг 7 хоногоор шалгах"));
 }

@@ -97,9 +97,9 @@ function run() {
   assert(!ranked.some(item => item.key === "menstrual_cycle_context"), "cycle context should not become a primary mechanism");
   let report = normalize(app._internal.renderReport());
   assert(report.includes("Таны тайлан бэлэн боллоо"), "ordinary paid report should use the clear WP62 report opening");
-  assert(report.includes("1. Энэ тайлан юунд тулгуурласан бэ?"), "ordinary paid report should include the clear main-blockage section");
-  assert(report.includes("2. Таны гол давтагдаж буй механизм"), "ordinary paid report should explain why it repeats");
-  assert(report.includes("8. 7–14 хоногийн туршилт"), "ordinary paid report should include one 14-day experiment");
+  assert(report.includes("1. Гол зураглал"), "ordinary paid report should include the clear case overview section");
+  assert(report.includes("3. Таны хамгийн магадлалтай 2–3 механизм"), "ordinary paid report should explain likely mechanisms");
+  assert(report.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), "ordinary paid report should include one 14-day experiment");
 
   const deterministicBanned = [
     "даавраас болж байна",

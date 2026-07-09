@@ -202,8 +202,8 @@ withLocalStorageMutationSpy(() => {
   const paidHtml = _internal.renderReport();
   const paid = normalize(paidHtml);
   assertTrustedOutput(paidHtml, "paid output", { requireSafety: false });
-  assert(paid.includes("2. Таны гол давтагдаж буй механизм"), "paid output must include paid explanation");
-  assert(paid.includes("8. 7–14 хоногийн туршилт"), "paid output must include paid experiment");
+  assert(paid.includes("3. Таны хамгийн магадлалтай 2–3 механизм"), "paid output must include paid explanation");
+  assert(paid.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), "paid output must include paid experiment");
 
   setOneTime({
     qpayPayment: {

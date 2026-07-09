@@ -209,7 +209,7 @@ const personas = [
     expectedMode: "deep",
     expectedPrimary: [M.collapse, M.identity],
     expectedSecondary: [[M.shameAvoidance, M.reward, M.hungerSafety]],
-    requiredText: ["1. Энэ тайлан юунд тулгуурласан бэ?", "8. 7–14 хоногийн туршилт", "Тайлангаа хадгалах"]
+    requiredText: ["1. Гол зураглал", "7. 7–14 хоногийн нэг хувьсагчийн туршилт", "Тайлангаа хадгалах"]
   },
   {
     id: "40m-fasting-rebound",
@@ -279,7 +279,7 @@ const personas = [
     expectedMode: "deep",
     expectedPrimary: [M.cue, M.decisionDefault, M.executive, M.reward],
     expectedSecondary: [[M.decisionDefault, M.executive], [M.reward]],
-    requiredText: ["1. Энэ тайлан юунд тулгуурласан бэ?", "8. 7–14 хоногийн туршилт", "Тайлангаа хадгалах"]
+    requiredText: ["1. Гол зураглал", "7. 7–14 хоногийн нэг хувьсагчийн туршилт", "Тайлангаа хадгалах"]
   },
   {
     id: "50f-medication-friction",
@@ -387,7 +387,8 @@ function validatePersona(persona) {
   (persona.requiredText || []).forEach(value => {
     if (result.text.includes(value)) return;
     assert(
-      result.text.includes("Гол зураг") && result.text.includes("Давтагддаг тойрог"),
+      (result.text.includes("Гол зураг") && result.text.includes("Давтагддаг тойрог"))
+        || (result.text.includes("Гол зураглал") && result.text.includes("Таны хамгийн магадлалтай 2–3 механизм")),
       `${persona.name}: missing new report voice structure for legacy text ${value}`
     );
   });

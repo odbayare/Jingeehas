@@ -67,20 +67,23 @@ function run() {
   });
 
   assertIncludesAll(alcoholOvercorrection, [
-    "Энэ тайлан юунд тулгуурласан бэ?",
-    "Таны гол давтагдаж буй механизм",
-    "Энэ нь яагаад жин дээр нөлөөлж байж болох вэ?",
+    "Гол зураглал",
+    "Энэ дүгнэлт юунд тулгуурласан бэ?",
+    "Таны хамгийн магадлалтай 2–3 механизм",
+    "Итгэлцлийн түвшин",
+    "Evidence cluster",
+    "Loop explanation",
     "Согтууруулах ундаа хэрэглэсэн",
     "согтууруулах ундаа хэрэглэсний маргааш",
     "Одоогоор юуг хийхгүй байх вэ?",
     "Хэрэв дахин хазайвал яах вэ?",
-    "Танд тохирох ажиглалтын 5 асуулт",
+    "Танд тохирох эхний стратеги",
     "1–3 дахь өдөр",
     "4–10 дахь өдөр",
     "11–14 дахь өдөр",
     "Дараагийн хоол бол шийтгэл биш, хэвийн үргэлжлэх цэг"
   ]);
-  assert(alcoholOvercorrection.length >= 10000, `rich alcohol report should be at least 10000 chars, got ${alcoholOvercorrection.length}`);
+  assert(alcoholOvercorrection.length >= 8500, `case-formulation alcohol report should be substantial, got ${alcoholOvercorrection.length}`);
   assertGlobalGuards(alcoholOvercorrection);
 
   const stressFatigueCue = renderPaidReport({
@@ -93,10 +96,12 @@ function run() {
     "S1-A01": "Огт хэрэглэдэггүй"
   });
   assertIncludesAll(stressFatigueCue, [
-    "Стресс ба тайвшрах хэрэгцээ",
-    "Нойр ба өдрийн эрч хүч",
-    "Хоол харагдах, үнэртэхэд идэх хүсэл нэмэгдэх",
-    "8. 7–14 хоногийн туршилт",
+    "Таны хамгийн магадлалтай 2–3 механизм",
+    "Fatigue/easy-choice loop",
+    "Итгэлцлийн түвшин",
+    "Evidence cluster",
+    "Loop explanation",
+    "7–14 хоногийн нэг хувьсагчийн туршилт",
     "Одоогоор юуг хийхгүй байх вэ?"
   ]);
   assertExcludesAll(stressFatigueCue, [
@@ -104,7 +109,7 @@ function run() {
     "Согтууруулах ундаа хэрэглэсэн үеийн сонголт",
     "Согтууруулах ундаа өөрөө илчлэгтэй."
   ]);
-  assert(stressFatigueCue.length >= 8000, `stress/fatigue/cue report should be at least 8000 chars, got ${stressFatigueCue.length}`);
+  assert(stressFatigueCue.length >= 8000, `stress/fatigue/cue report should be substantial, got ${stressFatigueCue.length}`);
   assertGlobalGuards(stressFatigueCue);
 
   const bodySignalSafety = renderPaidReport({

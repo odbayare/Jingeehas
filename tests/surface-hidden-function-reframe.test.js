@@ -26,11 +26,11 @@ function render(stageAnswers = {}) {
 
 function assertSurfaceHidden(report) {
   assert(
-    report.includes("Ил харагдаж байгаа зүйл") || report.includes("1. Энэ тайлан юунд тулгуурласан бэ?"),
+    report.includes("Ил харагдаж байгаа зүйл") || report.includes("2. Энэ дүгнэлт юунд тулгуурласан бэ?"),
     "ordinary report should name visible context"
   );
   assert(
-    report.includes("Цаана нь ажиллаж байгаа зүйл") || report.includes("2. Таны гол давтагдаж буй механизм"),
+    report.includes("Цаана нь ажиллаж байгаа зүйл") || report.includes("3. Таны хамгийн магадлалтай 2–3 механизм"),
     "ordinary report should name hidden function"
   );
 }

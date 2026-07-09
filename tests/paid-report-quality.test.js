@@ -29,20 +29,20 @@ const reportText = normalize(_internal.renderReport());
 const paidText = reportText.replace(/^Тайлан\s+/, "");
 
 assert(paidText.startsWith("Таны тайлан бэлэн боллоо"), "paid report must start with the WP62 paid report headline");
-assert(reportText.includes("Доорх тайлан таны хариултыг давтаж жагсаах биш, хооронд нь холбож унших зорилготой."), "paid report must use the expanded WP81 intro");
+assert(reportText.includes("Доорх тайлан answer-by-answer тайлбар биш."), "paid report must use the WP85 case-formulation intro");
+assert(reportText.includes("Таны хариултуудыг evidence болгон ашиглаж"), "paid report must use answers as case evidence");
 
 [
-  "1. Энэ тайлан юунд тулгуурласан бэ?",
-  "2. Таны гол давтагдаж буй механизм",
-  "3. Энэ нь яагаад жин дээр нөлөөлж байж болох вэ?",
-  "4. Давхар нөлөөлж байгаа хүчин зүйлс",
+  "1. Гол зураглал",
+  "2. Энэ дүгнэлт юунд тулгуурласан бэ?",
+  "3. Таны хамгийн магадлалтай 2–3 механизм",
+  "4. Гол биш боловч ажиглах хэрэгтэй зүйл",
+  "5. Танд тохирох эхний стратеги",
   "6. Одоогоор юуг хийхгүй байх вэ?",
-  "7. Эхний өөрчлөлт хаанаас эхлэх вэ?",
-  "8. 7–14 хоногийн туршилт",
-  "9. Хэрэв дахин хазайвал яах вэ?",
-  "10. Танд тохирох ажиглалтын 5 асуулт",
-  "11. Хэзээ мэргэжлийн хүнтэй ярилцах вэ?",
-  "12. Товч дүгнэлт",
+  "7. 7–14 хоногийн нэг хувьсагчийн туршилт",
+  "8. Хэрэв дахин хазайвал яах вэ?",
+  "9. Хэзээ мэргэжлийн хүнтэй ярилцах вэ? · Аюулгүй байдлын сануулга",
+  "10. Товч дүгнэлт",
   "Тайлангаа хадгалах"
 ].forEach(section => {
   assert(reportText.includes(section), `paid report must include section: ${section}`);
@@ -65,7 +65,7 @@ assert.strictEqual((reportText.match(/Тайлангаа хадгалах/g) || 
   assert(!paidText.includes(forbidden), `paid report must not include teaser/upsell copy: ${forbidden}`);
 });
 
-assert(!/7\. 7–14 хоногийн туршилт[\s\S]*7\. Тайлангаа хадгалах/.test(reportText), "save section must not reuse section numbering");
+assert(!/7\. 7–14 хоногийн нэг хувьсагчийн туршилт[\s\S]*7\. Тайлангаа хадгалах/.test(reportText), "save section must not reuse section numbering");
 
 _internal.setTestState({
   packageType: "one-time",
@@ -81,10 +81,10 @@ _internal.setTestState({
   stageVoiceSummaries: {}
 });
 const noCautionText = normalize(_internal.renderReport());
-assert(noCautionText.includes("11. Хэзээ мэргэжлийн хүнтэй ярилцах вэ?"), "report should keep the WP81 safety/professional guidance");
+assert(noCautionText.includes("9. Хэзээ мэргэжлийн хүнтэй ярилцах вэ? · Аюулгүй байдлын сануулга"), "report should keep the WP85 safety/professional guidance");
 assert(noCautionText.includes("Тайлангаа хадгалах"), "no-caution report still has save section");
 assert(!/6\. Тайлангаа хадгалах|7\. Тайлангаа хадгалах/.test(noCautionText), "save section must be unnumbered when caution is absent");
 
-assert(reportText.indexOf("11. Хэзээ мэргэжлийн хүнтэй ярилцах вэ?") < reportText.indexOf("Тайлангаа хадгалах"), "safety reminder must appear before save section");
+assert(reportText.indexOf("9. Хэзээ мэргэжлийн хүнтэй ярилцах вэ? · Аюулгүй байдлын сануулга") < reportText.indexOf("Тайлангаа хадгалах"), "safety reminder must appear before save section");
 
 console.log("paid-report-quality tests passed");

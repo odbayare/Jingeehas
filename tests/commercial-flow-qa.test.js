@@ -118,8 +118,9 @@ function run() {
 
   _internal.demoCompletePayment("one-time");
   const paidOneTime = normalize(_internal.renderReport());
-  assert(paidOneTime.includes("2. Таны гол давтагдаж буй механизм"));
-  assert(paidOneTime.includes("8. 7–14 хоногийн туршилт"));
+  assert(paidOneTime.includes("1. Гол зураглал"));
+  assert(paidOneTime.includes("3. Таны хамгийн магадлалтай 2–3 механизм"));
+  assert(paidOneTime.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"));
   assert(!paidOneTime.includes("Нарийвчлах үнэ"));
   assert(!paidOneTime.includes("19,900₮ төлөөд 7 хоногоор нарийвчлах"));
   assert(!paidOneTime.includes("Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой"));
