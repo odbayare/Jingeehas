@@ -28,9 +28,12 @@ _internal.setTestState({
 const reportText = normalize(_internal.renderReport());
 const paidText = reportText.replace(/^Тайлан\s+/, "");
 
-assert(paidText.startsWith("Таны тайлан бэлэн боллоо"), "paid report must start with the WP62 paid report headline");
-assert(reportText.includes("Доорх тайлан хариулт бүрийг тусад нь тайлбарлахгүй."), "paid report must use the WP86 humanized formulation intro");
-assert(reportText.includes("хамгийн түрүүнд шалгах нэг гол хэв маяг"), "paid report must use answers as human-readable evidence");
+assert(paidText.startsWith("1. Гол зураглал"), "paid report must start with the main case formulation");
+assert(reportText.includes("Энэ тайлан онош, баталгаа, эсвэл жин бууруулах амлалт биш."), "paid report must keep one short disclaimer");
+assert(
+  reportText.includes("Оройн хоол ба биеийн мэдрэмж") || reportText.includes("Өдөр тутмын хөдөлгөөн ба ажлын хэмнэл") || reportText.includes("Зорилтот жингийн хүрээ") || reportText.includes("Хариултын гол холбоос"),
+  "paid report must use grouped human-readable evidence"
+);
 
 [
   "1. Гол зураглал",

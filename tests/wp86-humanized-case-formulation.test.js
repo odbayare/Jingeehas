@@ -74,11 +74,11 @@ function run() {
   ], "humanized report");
 
   assert(!heavyFoodSedentary.includes("механизмыг дэмжиж байгаа нэг дохио"), "evidence section must use natural explanation");
-  assert(heavyFoodSedentary.includes("Энэ нь оройн цаг, хоолны хэмжээ, тослог бэлтгэлтэй холбоотой тавгүй мэдрэмж давхцаж байгааг харуулж байна."));
+  assert(heavyFoodSedentary.includes("Оройн хоол ба биеийн мэдрэмж"));
 
-  assert(heavyFoodSedentary.includes("порц/цаг/бэлтгэлээс зөвхөн нэгийг өөрчил"), "strategy must include one food variable");
-  assert(heavyFoodSedentary.includes("өдөрт 2 удаа 5–10 минут суултаа тасалж алх"), "strategy must include two short movement breaks");
-  assert(heavyFoodSedentary.includes("Хүнд оргих, өлсөх, цээж хорсох, хавагнасан мэт мэдрэмж, маргааш нь хэт хасаж засах хүсэл"), "experiment must track specific body and restriction markers");
+  assert(heavyFoodSedentary.includes("Зөвхөн нэг хувьсагч өөрчил"), "strategy must include one food variable");
+  assert(heavyFoodSedentary.includes("Өдөржин суусан эсэхээ тэмдэглэж болно, гэхдээ хөдөлгөөнийг өөрчлөхгүй"), "sedentary background must be observed without adding a second intervention");
+  assert(heavyFoodSedentary.includes("Хүнд оргих, өлсөх, цээж хорсох, хавагнасан мэт мэдрэмж"), "experiment must track specific body markers");
 
   assertAbsent(heavyFoodSedentary, [
     "очсон хойноо шууд шийдэх гэж оролдох",

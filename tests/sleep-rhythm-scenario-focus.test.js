@@ -36,7 +36,7 @@ const user10 = runReport({
 });
 
 assert.strictEqual(user10.ranked[0]?.key, "circadian", "WP67 user 10 must keep circadian as primary mechanism");
-assert(user10.text.includes("Таны тайлан бэлэн боллоо"), "sleep report must remain the paid report");
+assert(user10.text.includes("1. Гол зураглал"), "sleep report must remain the paid report");
 assert(user10.text.includes("нойр, тэнхээ, хоолны хэмнэлийн зөрүү"), "sleep report must name the sleep/energy/meal-rhythm focus");
 assert(user10.text.includes("Нойр"), "sleep report must include sleep wording");
 assert(user10.text.includes("тэнхээ"), "sleep report must include energy wording");

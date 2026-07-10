@@ -96,7 +96,7 @@ function run() {
   const ranked = app._internal.rankedPatterns(false);
   assert(!ranked.some(item => item.key === "menstrual_cycle_context"), "cycle context should not become a primary mechanism");
   let report = normalize(app._internal.renderReport());
-  assert(report.includes("Таны тайлан бэлэн боллоо"), "ordinary paid report should use the clear WP62 report opening");
+  assert(report.replace(/^Тайлан\s+/, "").startsWith("1. Гол зураглал"), "ordinary paid report should start with the clear case overview section");
   assert(report.includes("1. Гол зураглал"), "ordinary paid report should include the clear case overview section");
   assert(report.includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "ordinary paid report should explain likely mechanisms");
   assert(report.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), "ordinary paid report should include one 14-day experiment");
@@ -185,7 +185,7 @@ function run() {
         }
       },
       expectedMode: "deep",
-      expectedCopy: "Таны тайлан бэлэн боллоо"
+      expectedCopy: "1. Гол зураглал"
     },
     {
       name: "Cycle User B",

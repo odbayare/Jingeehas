@@ -33,7 +33,7 @@ const normalSocial = paidReport({
   "S1-S04": "Үгүй"
 });
 
-assert(normalSocial.replace(/^Тайлан\s+/, "").startsWith("Таны тайлан бэлэн боллоо"), "normal paid report must start with the main paid headline");
+assert(normalSocial.replace(/^Тайлан\s+/, "").startsWith("1. Гол зураглал"), "normal paid report must start with the main case formulation");
 assert(!normalSocial.includes(forbiddenBodyHeadline), "normal report must not start with the old body-check headline");
 assert(!normalSocial.includes(mildBodyCaution), "body-check section must not appear without body-risk flags");
 assert(!/мацаг барь|удаан өлс|огцом хязгаарлалт хий|огцом хас гэж/i.test(normalSocial), "report must not recommend fasting or extreme restriction");
@@ -46,7 +46,7 @@ const bodyRisk = paidReport({
   "S1-S04": "Үгүй"
 });
 
-assert(bodyRisk.replace(/^Тайлан\s+/, "").startsWith("Таны тайлан бэлэн боллоо"), "safety copy must not replace the main paid headline");
+assert(bodyRisk.replace(/^Тайлан\s+/, "").startsWith("1. Гол зураглал"), "safety copy must not replace the main paid case formulation");
 assert(!bodyRisk.includes(forbiddenBodyHeadline), "body-risk report must not use the old body-check top headline");
 assert(bodyRisk.includes(mildBodyCaution), "mild caution must appear when body-risk flags exist");
 assert(

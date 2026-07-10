@@ -48,7 +48,6 @@ const reportText = normalize(_internal.renderReport());
 const forbiddenBodyHeadline = ["Нэг зүйл тодорлоо", "биеийн талаа шалгахад илүүдэхгүй"].join(" — ");
 
 [
-  "Таны тайлан бэлэн боллоо",
   "1. Гол зураглал",
   "2. Энэ дүгнэлт юунд тулгуурласан бэ?",
   "3. Таны хамгийн магадлалтай гол хэв маяг",
@@ -58,6 +57,7 @@ const forbiddenBodyHeadline = ["Нэг зүйл тодорлоо", "биеийн
 ].forEach(section => {
   assert(reportText.includes(section), `owner report must read as one coherent paid report with section: ${section}`);
 });
+assert(reportText.replace(/^Тайлан\s+/, "").startsWith("1. Гол зураглал"), "owner report must start with the case formulation");
 
 assert(/хүмүүсийн дунд|найз нөхөд|татгалзах эвгүй/.test(reportText), "owner report must focus on social pressure and refusal difficulty");
 assert(reportText.includes("Гарахаасаа өмнө хэлэх нэг богино татгалзах өгүүлбэрээ бэлд"), "leverage point must be a pre-decided refusal phrase");

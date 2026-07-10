@@ -147,8 +147,8 @@ function run() {
     stageVoiceSummaries: {}
   });
   const oneTime = _internal.renderReport();
-  assert(oneTime.includes("Таны тайлан бэлэн боллоо"));
   assert(oneTime.includes("1. Гол зураглал"));
+  assert(oneTime.indexOf("1. Гол зураглал") < oneTime.indexOf("2. Энэ дүгнэлт юунд тулгуурласан бэ?"));
   assert(oneTime.includes("2. Энэ дүгнэлт юунд тулгуурласан бэ?"));
   assert(oneTime.includes("3. Таны хамгийн магадлалтай гол хэв маяг"));
   assert(oneTime.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"));

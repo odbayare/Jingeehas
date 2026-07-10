@@ -26,7 +26,6 @@ function setOrdinaryReport(stageAnswers = {}, extras = {}) {
 
 function assertSimpleStructure(report) {
   [
-    "Таны тайлан бэлэн боллоо",
     "1. Гол зураглал",
     "2. Энэ дүгнэлт юунд тулгуурласан бэ?",
     "3. Таны хамгийн магадлалтай гол хэв маяг",
@@ -34,6 +33,7 @@ function assertSimpleStructure(report) {
     "7. 7–14 хоногийн нэг хувьсагчийн туршилт",
     "Тайлангаа хадгалах"
   ].forEach(phrase => assert(report.includes(phrase), `ordinary report should include ${phrase}`));
+  assert(report.replace(/^Тайлан\s+/, "").startsWith("1. Гол зураглал"), "paid report should start with the case formulation");
   assert(report.indexOf("1. Гол зураглал") < report.indexOf("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), "paid report should keep one clear ordered structure");
   assert(report.indexOf("7. 7–14 хоногийн нэг хувьсагчийн туршилт") < report.indexOf("Тайлангаа хадгалах"), "save actions should come after the experiment");
 }
@@ -112,7 +112,7 @@ function run() {
   assert(!cycleReport.includes("Өдөржин өөрийн хэрэгцээ хамгийн сүүлд"));
   assert(!cycleReport.includes("надад ч гэсэн нэг юм хэрэгтэй"));
   assert(!cycleReport.includes("Нэмэлтээр анхаарах зүйл"));
-  assert(cycleReport.includes("Таны тайлан бэлэн боллоо"));
+  assert(cycleReport.includes("1. Гол зураглал"));
   assert(!cycleReport.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
   assert(!cycleReport.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд идэх хүсэл хэр өөр байна вэ?"));
   assert(!cycleReport.includes("Дэлгэрэнгүй тайлан харах"));

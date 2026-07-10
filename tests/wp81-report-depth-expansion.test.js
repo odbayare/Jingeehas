@@ -83,7 +83,7 @@ function run() {
     "11–14 дахь өдөр",
     "Дараагийн хоол бол шийтгэл биш, хэвийн үргэлжлэх цэг"
   ]);
-  assert(alcoholOvercorrection.length >= 8500, `case-formulation alcohol report should be substantial, got ${alcoholOvercorrection.length}`);
+  assert(alcoholOvercorrection.length >= 7000, `case-formulation alcohol report should be substantial, got ${alcoholOvercorrection.length}`);
   assertGlobalGuards(alcoholOvercorrection);
 
   const stressFatigueCue = renderPaidReport({

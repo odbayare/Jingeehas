@@ -154,7 +154,8 @@ setOneTime({ oneTimePaid: true });
 const paidBackendBefore = mockBackend.getMockBackendState();
 const paid = _internal.renderReport();
 assertNoSurfaces(paid, "ordinary paid report");
-assert(paid.includes("Таны тайлан бэлэн боллоо"), "ordinary paid report should render the WP62 report directly");
+assert(paid.includes("1. Гол зураглал"), "ordinary paid report should render the paid report directly");
+assert(paid.includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "ordinary paid report should include paid report depth");
 assertNoPaymentMutation(paidBackendBefore, "ordinary paid report");
 
 setSevenDay({

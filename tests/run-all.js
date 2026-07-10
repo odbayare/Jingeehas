@@ -65,6 +65,7 @@ const commands = [
   ["node", ["tests/wp84-food-response-context.test.js"]],
   ["node", ["tests/wp85-case-formulation-report.test.js"]],
   ["node", ["tests/wp86-humanized-case-formulation.test.js"]],
+  ["node", ["tests/wp87-report-reasoning-fix.test.js"]],
   ["node", ["tests/question-navigation.test.js"]],
   ["node", ["tests/gender-gating.test.js"]],
   ["node", ["tests/cycle-question-mapping.test.js"]],
