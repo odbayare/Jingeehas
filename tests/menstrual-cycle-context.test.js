@@ -98,7 +98,7 @@ function run() {
   let report = normalize(app._internal.renderReport());
   assert(report.includes("Таны тайлан бэлэн боллоо"), "ordinary paid report should use the clear WP62 report opening");
   assert(report.includes("1. Гол зураглал"), "ordinary paid report should include the clear case overview section");
-  assert(report.includes("3. Таны хамгийн магадлалтай 2–3 механизм"), "ordinary paid report should explain likely mechanisms");
+  assert(report.includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "ordinary paid report should explain likely mechanisms");
   assert(report.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), "ordinary paid report should include one 14-day experiment");
 
   const deterministicBanned = [

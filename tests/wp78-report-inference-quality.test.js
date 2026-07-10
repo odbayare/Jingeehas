@@ -44,7 +44,7 @@ function run() {
   [
     "1. Гол зураглал",
     "2. Энэ дүгнэлт юунд тулгуурласан бэ?",
-    "3. Таны хамгийн магадлалтай 2–3 механизм",
+    "3. Таны хамгийн магадлалтай гол хэв маяг",
     "4. Гол биш боловч ажиглах хэрэгтэй зүйл",
     "5. Танд тохирох эхний стратеги",
     "6. Одоогоор юуг хийхгүй байх вэ?",
@@ -59,9 +59,9 @@ function run() {
     assert(alcoholLoop.includes(section), `report should include ${section}`);
   });
 
-  assert(alcoholLoop.includes("Согтууруулах ундаа after-effect loop"), "report should infer alcohol after-effect loop");
+  assert(alcoholLoop.includes("Согтууруулах ундаа хэрэглэсэн үе ба маргаашийн хоолны савлагаа"), "report should infer alcohol after-effect pattern");
   assert(alcoholLoop.includes("Согтууруулах ундаа өөрөө илчлэгтэй."), "report should explain alcohol carefully");
-  assert(alcoholLoop.includes("маргааш нь хэт чанга барих"), "report should warn against overcorrection");
+  assert(alcoholLoop.includes("маргааш огцом хасалт хийх"), "report should warn against overcorrection");
   assert(alcoholLoop.includes("Алхалт"), "report should preserve movement feasibility context");
   assert(!alcoholLoop.includes(["Day", "1–3"].join(" ")), "report must not use English day labels");
   assert(!alcoholLoop.includes("Гол гацалт Гол гацалт"), "report must not duplicate old heading");
@@ -74,7 +74,7 @@ function run() {
     "S1-T01": "Өдөр бүр татдаг",
     "S1-T02": ["Стресстэй үед тамхи, кофе, зууш хамт давхцдаг"]
   });
-  assert(tobaccoContext.includes("Tobacco/coffee/snack context loop"), "report should infer tobacco context");
+  assert(tobaccoContext.includes("Тамхи, кофе, зууш нэг дор давтагдах үе"), "report should infer tobacco context");
   assert(tobaccoContext.includes("Энэ нь тамхийг жин барих арга болго гэсэн зөвлөгөө огт биш."), "report must not encourage smoking");
 
   const safetyFirst = renderPaidReport({

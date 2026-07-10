@@ -106,7 +106,7 @@ function run() {
 
   assert(!oneTime.includes("давтамжтай нийцэж байна"));
   assert(oneTime.includes("1. Гол зураглал"));
-  assert(oneTime.includes("3. Таны хамгийн магадлалтай 2–3 механизм"));
+  assert(oneTime.includes("3. Таны хамгийн магадлалтай гол хэв маяг"));
   assert(oneTime.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"));
   assert(!oneTime.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
   assert(!oneTime.includes("Trigger зураглал"));
@@ -117,8 +117,8 @@ function run() {
   assert(!oneTime.includes("trigger timing"));
   assert(!oneTime.includes("before/after eating pattern"));
   assert(!/Reward-Seeking[^.]{0,80}шалгуулах дохио/.test(oneTime));
-  assert(sectionText(oneTimeHtml, "3. Таны хамгийн магадлалтай 2–3 механизм").length > 20);
-  assert(!sectionText(oneTimeHtml, "3. Таны хамгийн магадлалтай 2–3 механизм").includes("давтамжтай нийцэж байна"));
+  assert(sectionText(oneTimeHtml, "3. Таны хамгийн магадлалтай гол хэв маяг").length > 20);
+  assert(!sectionText(oneTimeHtml, "3. Таны хамгийн магадлалтай гол хэв маяг").includes("давтамжтай нийцэж байна"));
   assert(!oneTime.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"));
 
   setOneTimeMode2();

@@ -120,7 +120,7 @@ function run() {
 
   _internal.demoCompletePayment("one-time");
   const paidOneTime = normalize(_internal.renderReport());
-  assert(paidOneTime.includes("3. Таны хамгийн магадлалтай 2–3 механизм"));
+  assert(paidOneTime.includes("3. Таны хамгийн магадлалтай гол хэв маяг"));
   assert(paidOneTime.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"));
   assert(!paidOneTime.includes("Нарийвчлах үнэ"));
   assert(!paidOneTime.includes("19,900₮ төлөөд 7 хоногоор нарийвчлах"));

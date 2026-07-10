@@ -205,7 +205,7 @@ withLocalStorageMutationSpy(() => {
   const paidHtml = _internal.renderReport();
   const paid = normalize(paidHtml);
   assertLaunchSafeOutput(paidHtml, "paid output", { requireSafety: false });
-  assert(paid.includes("3. Таны хамгийн магадлалтай 2–3 механизм"), "paid output must include paid report explanation");
+  assert(paid.includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "paid output must include paid report explanation");
   assert(paid.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), "paid output must include paid experiment depth");
   assert(!paid.includes("Бүрэн тайлан нээх 9,900₮"), "paid output must not show locked payment state");
   assert(!paid.includes("Төлбөр төлсний дараа"), "paid output must not show locked-state explanation");

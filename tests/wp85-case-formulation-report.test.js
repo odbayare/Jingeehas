@@ -47,6 +47,20 @@ function mechanismCount(text) {
   return (text.match(/Итгэлцлийн түвшин/g) || []).length;
 }
 
+function assertNoWp86InternalLabels(text) {
+  assertExcludesAll(text, [
+    "answer-by-answer",
+    "case mechanism",
+    "Evidence cluster",
+    "Loop explanation",
+    "First practical experiment",
+    "Digestive discomfort",
+    "restriction/rebound",
+    "late-heavy-meal",
+    "Sedentary-low-NEAT"
+  ]);
+}
+
 function run() {
   const dairyOnly = renderPaidReport({
     "S1-FR01": ["Сүү, сүүн бүтээгдэхүүн"],
@@ -54,9 +68,9 @@ function run() {
   });
   assertIncludesAll(dairyOnly, [
     "Гол зураглал",
-    "Таны хамгийн магадлалтай 2–3 механизм",
+    "Таны хамгийн магадлалтай гол хэв маяг",
     "Гол биш боловч ажиглах хэрэгтэй зүйл",
-    "Сүү, сүүн бүтээгдэхүүний дараах тавгүй мэдрэмж одоогоор жингийн гол механизм гэж харагдахгүй байна",
+    "Сүү, сүүн бүтээгдэхүүний дараах тавгүй мэдрэмж одоогоор жингийн гол шалтгаан гэж харагдахгүй байна",
     "хангалтгүй",
     "Хүнсний зохицол, шингэц ба цатгалан мэдрэмж"
   ]);
@@ -71,12 +85,13 @@ function run() {
     "S1-W06": "Маргааш илүү чанга барина гэж боддог"
   });
   assertIncludesAll(dairyRestriction, [
-    "Digestive discomfort → restriction/rebound loop",
-    "Evidence cluster",
-    "Loop explanation",
-    "First practical experiment",
+    "Оройн хүнд хоол, биеийн тавгүйрхэл ба дараагийн өдрийн хэт засах эрсдэл",
+    "Юунд тулгуурлаж байна вэ",
+    "Яаж давтагдаж болох вэ",
+    "Эхний туршиж үзэх зүйл",
     "өөрөө оношлохгүй"
   ]);
+  assertNoWp86InternalLabels(dairyRestriction);
   assertExcludesAll(dairyRestriction, ["lactose", "Сүү, сүүн бүтээгдэхүүнийг бүр мөсөн хас"]);
 
   const flourSweet = renderPaidReport({
@@ -88,7 +103,7 @@ function run() {
     "S1-FR05": ["Чихэр, шоколад, амттан", "Талх, нарийн боов"]
   });
   assertIncludesAll(flourSweet, [
-    "satiety instability + easy-overeat loop",
+    "Цатгалан мэдрэмж тогтворгүй болж, хэмжээгээ барихад хэцүү болох үе",
     "хоол холдсон",
     "уураг/ногоотой хослуулах",
     "Бүх гурилыг хорихгүй"
@@ -101,7 +116,7 @@ function run() {
     "S1-FR03": ["Их хэмжээгээр идсэн үед", "Орой эсвэл унтахын өмнө идсэн үед"]
   });
   assertIncludesAll(redMeat, [
-    "late-heavy-meal discomfort loop",
+    "Оройн хүнд хоол, биеийн тавгүйрхэл ба дараагийн өдрийн хэт засах эрсдэл",
     "оройн цаг",
     "порц",
     "бэлтгэл",
@@ -121,7 +136,7 @@ function run() {
     "S1-FR02": ["Гэдэс дүүрдэг"]
   });
   const count = mechanismCount(broadScenario);
-  assert(count >= 1 && count <= 3, `mechanism count must be 1-3, got ${count}`);
+  assert(count >= 1 && count <= 2, `mechanism count must be 1-2, got ${count}`);
   assertIncludesAll(broadScenario, [
     "Биеийн суурь зураглал",
     "Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл",
@@ -134,10 +149,12 @@ function run() {
   [dairyRestriction, flourSweet, redMeat, broadScenario].forEach(report => {
     assertIncludesAll(report, [
       "Итгэлцлийн түвшин",
-      "Evidence cluster",
-      "Loop explanation",
-      "First practical experiment"
+      "Юунд тулгуурлаж байна вэ",
+      "Яаж давтагдаж болох вэ",
+      "Эхний туршиж үзэх зүйл"
     ]);
+    assertNoWp86InternalLabels(report);
+    assert(!report.includes("механизмыг дэмжиж байгаа нэг дохио"), "must not repeat mechanical evidence wording");
   });
 
   assert(!/\bархи\b/i.test(appSource), "must not introduce user-facing архи");

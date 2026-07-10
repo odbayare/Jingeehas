@@ -29,13 +29,13 @@ const reportText = normalize(_internal.renderReport());
 const paidText = reportText.replace(/^Тайлан\s+/, "");
 
 assert(paidText.startsWith("Таны тайлан бэлэн боллоо"), "paid report must start with the WP62 paid report headline");
-assert(reportText.includes("Доорх тайлан answer-by-answer тайлбар биш."), "paid report must use the WP85 case-formulation intro");
-assert(reportText.includes("Таны хариултуудыг evidence болгон ашиглаж"), "paid report must use answers as case evidence");
+assert(reportText.includes("Доорх тайлан хариулт бүрийг тусад нь тайлбарлахгүй."), "paid report must use the WP86 humanized formulation intro");
+assert(reportText.includes("хамгийн түрүүнд шалгах нэг гол хэв маяг"), "paid report must use answers as human-readable evidence");
 
 [
   "1. Гол зураглал",
   "2. Энэ дүгнэлт юунд тулгуурласан бэ?",
-  "3. Таны хамгийн магадлалтай 2–3 механизм",
+  "3. Таны хамгийн магадлалтай гол хэв маяг",
   "4. Гол биш боловч ажиглах хэрэгтэй зүйл",
   "5. Танд тохирох эхний стратеги",
   "6. Одоогоор юуг хийхгүй байх вэ?",

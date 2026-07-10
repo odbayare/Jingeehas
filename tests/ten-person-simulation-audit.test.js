@@ -388,7 +388,7 @@ function validatePersona(persona) {
     if (result.text.includes(value)) return;
     assert(
       (result.text.includes("Гол зураг") && result.text.includes("Давтагддаг тойрог"))
-        || (result.text.includes("Гол зураглал") && result.text.includes("Таны хамгийн магадлалтай 2–3 механизм")),
+        || (result.text.includes("Гол зураглал") && result.text.includes("Таны хамгийн магадлалтай гол хэв маяг")),
       `${persona.name}: missing new report voice structure for legacy text ${value}`
     );
   });

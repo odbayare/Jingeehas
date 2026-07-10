@@ -148,7 +148,7 @@ setOneTime({ oneTimePaid: true });
 const paidHtml = _internal.renderReport();
 const paid = normalize(paidHtml);
 assertMonitoredOutput(paidHtml, "paid output", { requireSafety: false });
-assert(paid.includes("3. Таны хамгийн магадлалтай 2–3 механизм"), "paid output must keep paid explanation visible");
+assert(paid.includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "paid output must keep paid explanation visible");
 assert(paid.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), "paid output must keep paid experiment visible");
 
 setOneTime({

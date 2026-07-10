@@ -30,7 +30,7 @@ function assertSurfaceHidden(report) {
     "ordinary report should name visible context"
   );
   assert(
-    report.includes("Цаана нь ажиллаж байгаа зүйл") || report.includes("3. Таны хамгийн магадлалтай 2–3 механизм"),
+    report.includes("Цаана нь ажиллаж байгаа зүйл") || report.includes("3. Таны хамгийн магадлалтай гол хэв маяг"),
     "ordinary report should name hidden function"
   );
 }
@@ -85,7 +85,7 @@ function run() {
     "S1-V01": "Шөнийн ээлжийн дараа нойр тасалдаад эмнэлгийн цайны газар эсвэл ойр дэлгүүрийн бэлэн хоол амрах, өөрийгөө жаахан шагнах хамгийн ойрын арга болдог."
   });
   assertSurfaceHidden(shiftWork);
-  assert(shiftWork.includes("шөнийн ээлж"));
+  assert(/шөнийн ээлж/i.test(shiftWork));
   assert(shiftWork.includes("ээлжийн дараа"));
   assert(/ойр дэлгүүр|цайны газар|бэлэн хоол/.test(shiftWork));
   assert(/амрах|шагнах|тэнхээ/.test(shiftWork));

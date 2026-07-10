@@ -117,7 +117,7 @@ function run() {
   setOneTimeReport();
   const oneTimeText = normalize(_internal.renderReport());
   assert(oneTimeText.includes("1. Гол зураглал"));
-  assert(oneTimeText.includes("3. Таны хамгийн магадлалтай 2–3 механизм"));
+  assert(oneTimeText.includes("3. Таны хамгийн магадлалтай гол хэв маяг"));
   assert(oneTimeText.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"));
   assert(!oneTimeText.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
   assert(!oneTimeText.includes("7 хоногоор нарийвчлах"));

@@ -511,7 +511,7 @@ function validateScenario(scenario) {
   }
 
   if (scenario.hiddenIncludes) {
-    assert(text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?") || text.includes("2. Таны гол давтагдаж буй механизм") || text.includes("3. Таны хамгийн магадлалтай 2–3 механизм"), `${scenario.name}: missing food-need section`);
+    assert(text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?") || text.includes("2. Таны гол давтагдаж буй механизм") || text.includes("3. Таны хамгийн магадлалтай гол хэв маяг"), `${scenario.name}: missing food-need section`);
   }
   if (scenario.avoidIncludes) {
     assert(text.includes("Одоохондоо хэт яарахгүй зүйлс") || text.includes("6. Болгоомжлох зүйл") || text.includes("6. Одоогоор юуг хийхгүй байх вэ?"), `${scenario.name}: missing avoid section`);

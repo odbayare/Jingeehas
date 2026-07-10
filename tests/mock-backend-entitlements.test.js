@@ -78,7 +78,7 @@ function run() {
   assert(normalize(_internal.renderReport()).includes("Таны эхний зураглал бэлэн боллоо"), "unpaid local UI starts with paywall copy");
   _internal.demoCompletePayment("one-time");
   assert.strictEqual(_internal.hasOneTimeReportAccess(), true);
-  assert(normalize(_internal.renderReport()).includes("3. Таны хамгийн магадлалтай 2–3 механизм"), "one_time_report unlocks full one-time report");
+  assert(normalize(_internal.renderReport()).includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "one_time_report unlocks full one-time report");
 
   mockBackend.resetMockBackend();
   const sevenAssessment = mockBackend.createAssessment("seven_day");
