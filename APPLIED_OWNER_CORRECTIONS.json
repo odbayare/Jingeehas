@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "records": [
+    {
+      "id": "COPY-0005",
+      "source_file": "app.js",
+      "surface": "COMING_SOON",
+      "former_text_marker": "[CROSS_PROJECT_NAME_REMOVED]",
+      "approved_exact_text": "Нүүр хуудас руу буцах",
+      "approved_by": "product_owner",
+      "approval_date": "2026-07-15",
+      "status": "APPLIED",
+      "notes": "A name belonging to a different project was removed from this repository."
+    }
+  ]
+}

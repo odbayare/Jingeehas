@@ -3,9 +3,10 @@
 ## Generated provenance
 
 - Generator version: `2.0.0`
-- Extraction source commit: `37364d62617b973160f445043df118631faf4c0e`
+- Extraction source commit: `7e5d4bc9ad963b9e1532353adb626b337c5442e6`
 - Final PR head and final-head workflow IDs: maintained in PR #1 metadata after the implementation push to avoid a self-referential validation-only commit cycle
-- Approved replacement count: 1
+- Pending approved replacement count: 0
+- Applied owner correction count: 1
 - Production copy changed: YES — exact owner-authorized navigation and same-origin endpoint corrections only
 - External network attempts during extraction: 0
 
@@ -58,7 +59,7 @@ Only existing functions were added to CommonJS `_internal`; no function body or 
 ## Owner review pack generation
 
 - Generator version: `1.0.0`
-- Generated from commit: `37364d62617b973160f445043df118631faf4c0e`
+- Generated from commit: `7e5d4bc9ad963b9e1532353adb626b337c5442e6`
 - Catalog entries assigned: 1238
 - P0 unique items: 231
 - P1 unique items: 264
@@ -69,6 +70,7 @@ Only existing functions were added to CommonJS `_internal`; no function body or 
 - Cross-group items: 284
 - Unresolved source mappings: 433
 - Blank owner-decision blocks: 830
-- Approved replacement count: 1
+- Pending approved replacement count: 0
+- Applied owner correction count: 1
 - Review-pack integrity test: PASS
 - Authorized production correction limited to the home label, home path, and same-origin function endpoints

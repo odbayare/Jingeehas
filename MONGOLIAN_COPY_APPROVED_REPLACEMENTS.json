@@ -1,16 +1,5 @@
 {
   "schema_version": 1,
-  "approval_status": "APPROVED",
-  "replacements": [
-    {
-      "id": "COPY-0005",
-      "source_file": "app.js",
-      "surface": "COMING_SOON",
-      "current_exact_text": "Life\u0050attern нүүр хуудас руу буцах",
-      "approved_exact_text": "Нүүр хуудас руу буцах",
-      "approved_by": "product_owner",
-      "approval_date": "2026-07-15",
-      "notes": "The removed name belongs to a different project and is forbidden in this repository."
-    }
-  ]
+  "approval_status": "EMPTY_NOT_APPROVED",
+  "replacements": []
 }

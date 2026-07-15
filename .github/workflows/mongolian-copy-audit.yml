@@ -23,4 +23,6 @@ jobs:
         with:
           node-version: 22
       - name: Run test suite
+        env:
+          CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
         run: npm test

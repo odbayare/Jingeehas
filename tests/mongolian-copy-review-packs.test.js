@@ -57,8 +57,8 @@ for (const question of [...app.stageOneQuestions, ...app.dailyCore, ...app.daily
 }
 assert(/^## COPY-\d+/m.test(contents["08_P2_ACCESSIBILITY.md"]), "accessibility pack must contain attribute-only copy");
 
-assert.strictEqual(manifest.approval_status, "APPROVED");
-assert.strictEqual(manifest.replacements.length, 1);
+assert.strictEqual(manifest.approval_status, "EMPTY_NOT_APPROVED");
+assert.deepStrictEqual(manifest.replacements, []);
 assert(!fs.existsSync(path.join(root, "mongolian-copy-normalizer.js")));
 assert(!fs.existsSync(path.join(root, "mongolian-copy-domain-normalizer.js")));
 

@@ -196,7 +196,14 @@ Starting tracked occurrence count: **176**. This audit uses the required neutral
 
 - Final tracked occurrence count: 0
 - Final working-tree occurrence count excluding `.git` and `node_modules`: 0
+- Final parsed JSON occurrence count: 0
+- Final decoded JavaScript occurrence count: 0
+- Final generated-artifact and review-pack occurrence count: 0
+- Pending approved replacement count: 0
+- Applied neutral owner correction count: 1
 - Neutralized historical/generated evidence occurrences: 126
+
+The earlier raw-search verification missed an escaped JSON value. That value has been removed rather than retained for traceability. The applied-correction registry contains only the neutral marker and approved resulting text. The runtime-token guard now checks raw content, recursively decoded JSON keys and values, JavaScript escapes and adjacent string concatenation, URL encoding, and HTML entities.
 
 ## Endpoint verification basis
 

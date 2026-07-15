@@ -1,6 +1,6 @@
 {
   "generator_version": "1.0.0",
-  "generated_from_commit": "37364d62617b973160f445043df118631faf4c0e",
+  "generated_from_commit": "7e5d4bc9ad963b9e1532353adb626b337c5442e6",
   "catalog_entry_count": 1238,
   "unique_items_assigned": 1238,
   "unassigned_items": 0,
@@ -107,7 +107,8 @@
     "08_P2_ORDINARY_UI_BATCH_09.md",
     "99_NO_REVIEW_SIGNAL.md"
   ],
-  "approved_replacement_count": 1,
+  "pending_approved_replacement_count": 0,
+  "applied_owner_correction_count": 1,
   "assigned_ids": {
     "COPY-0001": [
       "04_P1_TERMINOLOGY_FAMILIES.md",
