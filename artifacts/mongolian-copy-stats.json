@@ -1,21 +1,13 @@
 {
+  "generator_version": "2.0.0",
   "raw_literal_count": 6386,
-  "review_entry_count": 1447,
-  "excluded_internal_count": 4752,
-  "duplicate_occurrence_count": 772,
-  "duplicate_group_count": 247,
-  "partial_or_missing": [
-    "diary-confirmation",
-    "upgrade-offer",
-    "advisor-dashboard",
-    "internal-tester-feedback",
-    "qpay-invoice",
-    "qpay-pending",
-    "qpay-paid",
-    "payment-error",
-    "sample-report",
-    "accessibility"
-  ],
+  "review_entry_count": 1238,
+  "excluded_internal_count": 4716,
+  "duplicate_occurrence_count": 468,
+  "duplicate_group_count": 195,
+  "yes_scenarios": 51,
+  "partial_or_missing": [],
   "question_count": 102,
-  "answer_option_count": 601
+  "answer_option_count": 601,
+  "network_attempts": 0
 }

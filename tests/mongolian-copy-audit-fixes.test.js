@@ -61,24 +61,73 @@ assert(!catalog.includes("./mockBackend.js"), "review catalog must exclude modul
 );
 
 const artifact = JSON.parse(read("artifacts/mongolian-rendered-copy.json"));
+assert.strictEqual(artifact.generator_version, "2.0.0");
+assert.strictEqual(artifact.network_attempts, 0, "extraction must make no external request");
 const validRoles = new Set(["PUBLIC_USER", "PAID_USER", "SEVEN_DAY_USER", "ADVISOR", "ADMIN", "INTERNAL_TESTER"]);
+const validTypes = new Set(["FULL_SURFACE", "ISOLATED_COMPONENT", "ATTRIBUTE_ONLY"]);
 artifact.entries.forEach(entry => {
   assert(entry.surface, "every rendered entry must have a surface");
   assert(validRoles.has(entry.role), `invalid role: ${entry.role}`);
   assert(entry.render_source, "every rendered entry must have render proof");
+  assert(validTypes.has(entry.extraction_type), `invalid extraction type: ${entry.extraction_type}`);
 });
-const keys = artifact.entries.map(entry => `${entry.text}\u0000${entry.surface}\u0000${entry.role}`);
+const keys = artifact.entries.map(entry => `${entry.text}\u0000${entry.surface}\u0000${entry.role}\u0000${entry.attribute_name || ""}`);
 assert.strictEqual(new Set(keys).size, keys.length, "same text/surface/role rows must be deduplicated");
 const scenarioIds = new Set(artifact.scenarios.map(s => s.id));
 [
   "coming-soon", "landing", "about", "choice", "one-time-start", "one-time-unpaid", "one-time-paid",
-  "seven-day-paywall", "seven-day-start", "diary-zero", "diary-partial", "diary-single", "diary-multi",
-  "diary-scale", "diary-text", "diary-confirmation", "insufficient-report", "limited-report",
-  "usable-limited-report", "full-seven-day-report", "upgrade-offer", "upgrade-paywall", "lead-capture",
+  "seven-day-paywall", "seven-day-start", "diary-home-zero", "diary-home-partial", "diary-home-complete", "diary-single", "diary-multi",
+  "diary-scale", "diary-text", "diary-confirmation-empty", "diary-confirmation-awaiting", "diary-confirmation-confirmed",
+  "diary-confirmation-edit", "diary-confirmation-add", "insufficient-report", "limited-report",
+  "usable-limited-report", "full-seven-day-report", "upgrade-offer-present", "upgrade-offer-absent", "upgrade-paywall", "lead-capture",
   "lead-thank-you", "general-safety", "professional-safety", "urgent-mode-4", "advisor-login",
-  "advisor-dashboard", "admin-portal", "internal-tester-feedback", "payment-contact", "qpay-invoice", "qpay-pending", "qpay-paid",
-  "payment-error", "sample-report", "question-bank", "answer-options", "accessibility"
+  "advisor-dashboard-empty", "advisor-dashboard-populated", "admin-portal", "internal-feedback-survey",
+  "internal-feedback-thanks", "internal-feedback-export", "payment-contact", "qpay-pre-invoice", "qpay-invoice-created",
+  "qpay-pending", "qpay-paid", "qpay-error", "sample-report", "question-bank", "answer-options", "accessibility"
 ].forEach(id => assert(scenarioIds.has(id), `required scenario missing: ${id}`));
+
+const byId = id => artifact.scenarios.find(s => s.id === id);
+artifact.scenarios.forEach(s => {
+  assert(validTypes.has(s.extraction_type), `${s.id} must declare extraction type`);
+  assert.strictEqual(s.coverage, "YES", `${s.id} must not remain partial`);
+  if (s.expected_visible) assert(s.extracted_entry_count > 0, `${s.id} expected visible copy must be non-empty`);
+  assert.strictEqual(s.network_attempts, 0, `${s.id} must not make network requests`);
+});
+
+["diary-home-zero", "diary-home-partial", "diary-home-complete"].forEach(id => {
+  assert.strictEqual(byId(id).render_source, "renderDiaryHome");
+  assert.notStrictEqual(byId(id).render_source, "renderDiary");
+});
+const scenarioText = id => artifact.entries.filter(e => e.scenarios.includes(id)).map(e => e.text).join("\n");
+assert.notStrictEqual(scenarioText("diary-home-zero"), scenarioText("diary-home-partial"), "diary home states must differ");
+assert(read("tools/extract-rendered-copy.mjs").includes("diaryQuestionIndex"), "actual diaryQuestionIndex field must be used");
+assert(!read("tools/extract-rendered-copy.mjs").includes("diaryIndex:"), "obsolete diaryIndex fixture must not return");
+
+const sampleEntries = artifact.entries.filter(e => e.surface === "SAMPLE_REPORT");
+assert(sampleEntries.length > 0);
+assert(sampleEntries.every(e => e.render_source === "renderSampleResultPreview"));
+assert(!sampleEntries.some(e => e.scenario === "choice"), "choice screen must not contaminate sample report");
+const upgradeEntries = artifact.entries.filter(e => e.surface === "UPGRADE_OFFER");
+assert(upgradeEntries.length > 0);
+assert(upgradeEntries.every(e => e.render_source === "renderUpgradeOffer"));
+assert(!upgradeEntries.some(e => /1\. Гол зураглал|14 хоногийн эхний туршилт/.test(e.text)), "report body must not contaminate upgrade offer");
+
+const qpayScenarios = ["qpay-pre-invoice", "qpay-invoice-created", "qpay-pending", "qpay-paid", "qpay-error"];
+qpayScenarios.forEach(id => assert.strictEqual(byId(id).extraction_type, "ISOLATED_COMPONENT"));
+const qpayTexts = scenarioText;
+assert.notStrictEqual(qpayTexts("qpay-pre-invoice"), qpayTexts("qpay-invoice-created"));
+assert.notStrictEqual(qpayTexts("qpay-invoice-created"), qpayTexts("qpay-pending"));
+assert.notStrictEqual(qpayTexts("qpay-pending"), qpayTexts("qpay-paid"));
+assert(qpayTexts("qpay-error").trim(), "payment error fixture must be non-empty");
+assert.strictEqual(byId("qpay-error").render_source, "renderWeightQpayPaymentBox with qpayStatusMessage(error)");
+assert(!artifact.entries.filter(e => e.surface === "QPAY").some(e => /Гол зураглал|14 хоногийн/.test(e.text)), "report content must not contaminate QPay");
+
+assert(byId("advisor-dashboard-populated").extracted_entry_count > 0, "populated advisor fixture must render");
+assert(byId("internal-feedback-survey").extracted_entry_count > 0, "internal tester harness must render survey");
+const accessibility = artifact.entries.filter(e => e.surface === "ACCESSIBILITY");
+assert(accessibility.length > 0, "accessibility attributes must be extracted");
+assert(accessibility.every(e => e.extraction_type === "ATTRIBUTE_ONLY" && e.attribute_name && e.element_type));
+assert(!accessibility.some(e => /Илүүдэл жин үүсгэж буй|Үндсэн үнэ|Тест эхлүүлэх/.test(e.text)), "ordinary body copy must not enter accessibility extraction");
 
 const urgentEntries = artifact.entries.filter(e => e.surface === "URGENT_SAFETY");
 assert(urgentEntries.length > 0, "urgent visible content must be extracted");

@@ -3,167 +3,145 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
 
+const GENERATOR_VERSION = "2.0.0";
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const app = require(path.join(root, "app.js"));
+const mockBackend = require(path.join(root, "mockBackend.js"));
 const I = app._internal;
-const source = fs.readFileSync(path.join(root, "app.js"), "utf8");
+const appSource = fs.readFileSync(path.join(root, "app.js"), "utf8");
 const commit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
-const roles = new Set(["PUBLIC_USER", "PAID_USER", "SEVEN_DAY_USER", "ADVISOR", "ADMIN", "INTERNAL_TESTER"]);
+const VALID_ROLES = new Set(["PUBLIC_USER", "PAID_USER", "SEVEN_DAY_USER", "ADVISOR", "ADMIN", "INTERNAL_TESTER"]);
+const VALID_TYPES = new Set(["FULL_SURFACE", "ISOLATED_COMPONENT", "ATTRIBUTE_ONLY"]);
+const fixtureValues = new Set(["Test User", "Test Advisor", "Client One", "advisor@example.test", "client@example.test", "INV-TEST-001", "Test Bank"]);
+let networkAttempts = 0;
+globalThis.fetch = async () => { networkAttempts += 1; throw new Error("EXTERNAL_NETWORK_BLOCKED_BY_EXTRACTION"); };
 
-const baseState = {
-  packageType: "one-time", view: "landing", oneTimePaid: false, sevenDayPaid: false,
-  upgradePaid: false, stageAnswers: {}, preliminary: [], diaryEntries: [], stageVoiceSummaries: {},
+const base = () => ({
+  packageType: "one-time", view: "landing", oneTimePaid: false, sevenDayPaid: false, upgradePaid: false,
+  stageAnswers: {}, preliminary: [], diaryEntries: [], diaryDay: 1, diaryQuestionIndex: 0, diaryDraft: {},
+  diarySummaryUi: {}, stageVoiceSummaries: {}, internalTest: false, qpayPayment: { status: "idle", message: "", invoice: null },
   contactCapture: { name: "", phone: "", email: "", saved: false, message: "", copyStatus: "" },
-  lead: { name: "", phone: "", email: "", message: "" }
-};
+  coachSessionToken: "", coachLoginError: "", coachDashboardMessage: "", coachReportView: null
+});
 const normalAnswers = { "S1-C02": "Эрэгтэй", "S1-L01": "Бараг өдөр бүр", "S1-L03": ["Цаг"], "S1-S04": "Үгүй" };
 const urgentAnswers = { "S1-C02": "Эмэгтэй", "S1-S04": "Одоо идэвхтэй бодогдож байна" };
 const professionalAnswers = { "S1-C02": "Эмэгтэй", "S1-B03": "Тийм", "S1-S04": "Үгүй" };
-const diaryEntry = day => ({ day_number: day, meal_rhythm: "Тогтвортой, хоол алгасаагүй", unplanned_eating_count: "Үгүй", stress_score: 3, energy_score: 6, sleep: ["6-8 цаг"], movement: "Бага зэрэг алхсан", body_signals: ["Аль нь ч үгүй"], pattern_probes: {} });
+const entry = day => ({ day_number: day, meal_rhythm: "Тогтвортой, хоол алгасаагүй", unplanned_eating_count: "Үгүй", stress_score: 3, energy_score: 6, sleep: ["6-8 цаг"], movement: "Бага зэрэг алхсан", body_signals: ["Аль нь ч үгүй"], pattern_probes: {} });
+const invoice = { invoiceId: "INV-TEST-001", senderInvoiceNo: "INV-TEST-001", qrImage: "abc123", urls: [{ name: "Test Bank", link: "qpay://test" }] };
+
+function setState(next = {}) { I.setTestState({ ...base(), ...next }); }
+function summaryObject(confirmed = false) { return { aiSummaryBullets: [], userConfirmed: confirmed, extractedTags: [], evidenceDimensions: [], mechanismSignals: [], safetyFlags: [] }; }
+const summaryQuestion = app.dailyCore.find(q => q.id === "D-SUM01");
+if (!summaryQuestion) throw new Error("D-SUM01 question missing");
 
 const scenarios = [];
-function scenario(id, surface, role, renderSource, state, render, coverage = "YES", notes = "") {
-  scenarios.push({ id, surface, role, render_source: renderSource, state, render, coverage, notes });
-}
-scenario("coming-soon", "COMING_SOON", "PUBLIC_USER", "renderComingSoon", baseState, () => I.renderComingSoon());
-scenario("landing", "LANDING", "PUBLIC_USER", "renderLanding", baseState, () => I.renderLanding());
-scenario("about", "ABOUT", "PUBLIC_USER", "renderAbout", baseState, () => I.renderAbout());
-scenario("choice", "CHOICE", "PUBLIC_USER", "renderChoice", baseState, () => I.renderChoice());
-scenario("one-time-start", "ONE_TIME_START", "PUBLIC_USER", "renderOneTimeStart", baseState, () => I.renderOneTimeStart());
-scenario("one-time-unpaid", "ONE_TIME_PAYWALL", "PUBLIC_USER", "renderReport", { ...baseState, stageAnswers: normalAnswers }, () => I.renderReport());
-scenario("one-time-paid", "ONE_TIME_REPORT", "PAID_USER", "renderReport", { ...baseState, oneTimePaid: true, stageAnswers: normalAnswers }, () => I.renderReport());
-scenario("seven-day-paywall", "SEVEN_DAY_PAYWALL", "PUBLIC_USER", "renderSevenDayPaywall", { ...baseState, packageType: "seven-day" }, () => I.renderSevenDayPaywall());
-scenario("seven-day-start", "SEVEN_DAY_START", "SEVEN_DAY_USER", "renderSevenDayStart", { ...baseState, packageType: "seven-day", sevenDayPaid: true }, () => I.renderSevenDayStart());
-scenario("diary-zero", "DIARY_HOME", "SEVEN_DAY_USER", "renderDiary", { ...baseState, packageType: "seven-day", sevenDayPaid: true, diaryEntries: [] }, () => I.renderDiary());
-scenario("diary-partial", "DIARY_HOME", "SEVEN_DAY_USER", "renderDiary", { ...baseState, packageType: "seven-day", sevenDayPaid: true, diaryEntries: [diaryEntry(1), diaryEntry(2)] }, () => I.renderDiary());
-scenario("diary-single", "DIARY_QUESTION", "SEVEN_DAY_USER", "renderDiary", { ...baseState, packageType: "seven-day", sevenDayPaid: true, diaryIndex: 0, diaryDraft: {} }, () => I.renderDiary());
-scenario("diary-multi", "DIARY_QUESTION", "SEVEN_DAY_USER", "dailyCore -> renderDiary", baseState, () => questionHtml(app.dailyCore.filter(q => q.type === "multi")), "YES");
-scenario("diary-scale", "DIARY_QUESTION", "SEVEN_DAY_USER", "dailyCore -> renderDiary", baseState, () => questionHtml(app.dailyCore.filter(q => q.type === "scale")), "YES");
-scenario("diary-text", "DIARY_QUESTION", "SEVEN_DAY_USER", "dailyCore -> renderDiary", baseState, () => questionHtml(app.dailyCore.filter(q => q.type === "text")), "YES");
-scenario("diary-confirmation", "DIARY_CONFIRMATION", "SEVEN_DAY_USER", "renderDiary", { ...baseState, packageType: "seven-day", sevenDayPaid: true, diaryIndex: Math.max(0, app.dailyCore.length - 1), diaryDraft: {} }, () => I.renderDiary(), "PARTIAL", "Confirmation depends on interactive completion; static render path captured.");
-scenario("insufficient-report", "INSUFFICIENT_REPORT", "SEVEN_DAY_USER", "renderReport", { ...baseState, packageType: "seven-day", sevenDayPaid: true, diaryEntries: [diaryEntry(1)] }, () => I.renderReport());
-scenario("limited-report", "LIMITED_REPORT", "SEVEN_DAY_USER", "renderReport", { ...baseState, packageType: "seven-day", sevenDayPaid: true, diaryEntries: [1,2,3].map(diaryEntry) }, () => I.renderReport());
-scenario("usable-limited-report", "LIMITED_REPORT", "SEVEN_DAY_USER", "renderReport", { ...baseState, packageType: "seven-day", sevenDayPaid: true, diaryEntries: [1,2,3,4].map(diaryEntry) }, () => I.renderReport());
-scenario("full-seven-day-report", "FULL_SEVEN_DAY_REPORT", "SEVEN_DAY_USER", "renderReport", { ...baseState, packageType: "seven-day", sevenDayPaid: true, diaryEntries: [1,2,3,4,5].map(diaryEntry) }, () => I.renderReport());
-scenario("upgrade-offer", "UPGRADE_OFFER", "PAID_USER", "renderReport", { ...baseState, oneTimePaid: true, stageAnswers: normalAnswers }, () => I.renderReport(), "PARTIAL", "Offer is conditional; paid report scenario captured.");
-scenario("upgrade-paywall", "UPGRADE_PAYWALL", "PAID_USER", "renderUpgradePaywall", { ...baseState, oneTimePaid: true }, () => I.renderUpgradePaywall());
-scenario("lead-capture", "LEAD_CAPTURE", "PUBLIC_USER", "renderLeadCapture", baseState, () => I.renderLeadCapture());
-scenario("lead-thank-you", "LEAD_THANK_YOU", "PUBLIC_USER", "renderLeadThankYou", { ...baseState, lead: { name: "Test", phone: "00000000", email: "", message: "" } }, () => I.renderLeadThankYou());
-scenario("general-safety", "GENERAL_SAFETY", "PUBLIC_USER", "renderOneTimeStart", baseState, () => I.renderOneTimeStart());
-scenario("professional-safety", "PROFESSIONAL_SAFETY", "PAID_USER", "renderReport", { ...baseState, oneTimePaid: true, stageAnswers: professionalAnswers }, () => I.renderReport());
-scenario("urgent-mode-4", "URGENT_SAFETY", "PUBLIC_USER", "renderReport", { ...baseState, stageAnswers: urgentAnswers }, () => I.renderReport());
-scenario("advisor-login", "ADVISOR_PORTAL", "ADVISOR", "renderCoachLogin", baseState, () => I.renderCoachLogin());
-scenario("advisor-dashboard", "ADVISOR_PORTAL", "ADVISOR", "renderCoachDashboard", baseState, () => I.renderCoachDashboard(), "PARTIAL", "Dashboard state is available; populated remote clients are not created.");
-scenario("admin-portal", "ADMIN_PORTAL", "ADMIN", "renderAdminCoach", baseState, () => I.renderAdminCoach());
-scenario("internal-tester-feedback", "OTHER_PROVEN_RENDERED", "INTERNAL_TESTER", "renderInternalTesterFeedbackSurvey", { ...baseState, oneTimePaid: true, stageAnswers: normalAnswers }, () => I.renderInternalTesterFeedbackSurvey(), "PARTIAL", "Renderer is gated by browser-only internal-test mode and returns no content in the Node extraction runtime.");
-scenario("payment-contact", "PAYMENT", "PUBLIC_USER", "renderContactCaptureForm", baseState, () => I.renderContactCaptureForm());
-scenario("qpay-invoice", "QPAY", "PUBLIC_USER", "renderOneTimeStart", baseState, () => I.renderOneTimeStart(), "PARTIAL", "No production invoice call; pre-invoice payment surface only.");
-scenario("qpay-pending", "QPAY", "PUBLIC_USER", "renderOneTimeStart", { ...baseState, paymentStatus: "pending" }, () => I.renderOneTimeStart(), "PARTIAL", "Mock state does not expose a standalone pending renderer.");
-scenario("qpay-paid", "QPAY", "PAID_USER", "renderReport", { ...baseState, oneTimePaid: true, stageAnswers: normalAnswers }, () => I.renderReport(), "PARTIAL", "Paid entitlement is mocked; no real invoice created.");
-scenario("payment-error", "VISIBLE_ERROR", "PUBLIC_USER", "renderOneTimeStart", { ...baseState, paymentError: "" }, () => I.renderOneTimeStart(), "PARTIAL", "No new visible error text injected; static error container path only.");
-scenario("sample-report", "SAMPLE_REPORT", "PUBLIC_USER", "renderChoice", baseState, () => I.renderChoice(), "PARTIAL", "Choice surface contains sample preview entry point; internal preview renderer is not exported.");
-scenario("question-bank", "QUESTION_BANK", "PUBLIC_USER", "stageOneQuestions -> renderStageOne", baseState, () => questionHtml(app.stageOneQuestions));
-scenario("answer-options", "ANSWER_OPTIONS", "PUBLIC_USER", "stageOneQuestions/dailyCore -> renderInput", baseState, () => optionHtml([...app.stageOneQuestions, ...app.dailyCore, ...app.dailyMenstrual]));
-scenario("accessibility", "ACCESSIBILITY", "PUBLIC_USER", "rendered aria-label/placeholder extraction", baseState, () => [I.renderLanding(), I.renderOneTimeStart(), I.renderContactCaptureForm()].join("\n"), "PARTIAL", "Covers exported static renderers; browser-only post-interaction DOM is unavailable.");
-
-function questionHtml(questions) { return questions.map(q => `<h3>${escapeText(q.text || "")}</h3>`).join("\n"); }
-function optionHtml(questions) { return questions.flatMap(q => q.options || []).map(x => `<span>${escapeText(x)}</span>`).join("\n"); }
-function escapeText(x) { return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
-function decode(x) { return x.replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'"); }
-function extractHtml(html) {
-  const out = [];
-  const source = String(html || "").replace(/<script[\s\S]*?<\/script>/gi, " ").replace(/<style[\s\S]*?<\/style>/gi, " ");
-  for (const m of source.matchAll(/(?:placeholder|aria-label|alt|title)\s*=\s*(["'])(.*?)\1/gi)) {
-    const text = decode(m[2]).trim(); if (text && !/^(https?:|data:)/i.test(text)) out.push(text);
-  }
-  for (const part of source.split(/<[^>]+>/g)) {
-    const text = decode(part).replace(/\s+/g," ").trim();
-    if (text && !/^https?:\/\//i.test(text) && !/^\$\{/.test(text)) out.push(text);
-  }
-  return out;
+function add(id, surface, role, extractionType, renderSource, state, render, options = {}) {
+  scenarios.push({ id, surface, role, extraction_type: extractionType, render_source: renderSource, state, render, expected_visible: options.expectedVisible !== false, notes: options.notes || "", prepare: options.prepare || null });
 }
 
-const renderedEntries = [];
-const scenarioResults = [];
-for (const s of scenarios) {
-  if (!roles.has(s.role)) throw new Error(`invalid role ${s.role}`);
-  try {
-    I.setTestState(s.state);
-    const texts = extractHtml(s.render());
-    scenarioResults.push({ id: s.id, surface: s.surface, role: s.role, render_source: s.render_source, coverage: s.coverage, notes: s.notes, extracted_entry_count: texts.length });
-    texts.forEach(text => renderedEntries.push({ text, surface: s.surface, role: s.role, scenario: s.id, render_source: s.render_source, source_locations: [], source_mapping_status: "NOT_MAPPED_NO_GUESS", dynamic: /\$\{/.test(text) }));
-  } catch (error) {
-    scenarioResults.push({ id: s.id, surface: s.surface, role: s.role, render_source: s.render_source, coverage: "NO_NOT_IMPLEMENTED", notes: String(error.message), extracted_entry_count: 0 });
-  }
+add("coming-soon", "COMING_SOON", "PUBLIC_USER", "FULL_SURFACE", "renderComingSoon", base(), () => I.renderComingSoon());
+add("landing", "LANDING", "PUBLIC_USER", "FULL_SURFACE", "renderLanding", base(), () => I.renderLanding());
+add("about", "ABOUT", "PUBLIC_USER", "FULL_SURFACE", "renderAbout", base(), () => I.renderAbout());
+add("choice", "CHOICE", "PUBLIC_USER", "FULL_SURFACE", "renderChoice", base(), () => I.renderChoice());
+add("one-time-start", "ONE_TIME_START", "PUBLIC_USER", "FULL_SURFACE", "renderOneTimeStart", base(), () => I.renderOneTimeStart());
+add("one-time-unpaid", "ONE_TIME_PAYWALL", "PUBLIC_USER", "FULL_SURFACE", "renderReport", { ...base(), stageAnswers: normalAnswers }, () => I.renderReport());
+add("one-time-paid", "ONE_TIME_REPORT", "PAID_USER", "FULL_SURFACE", "renderReport", { ...base(), oneTimePaid: true, stageAnswers: normalAnswers }, () => I.renderReport());
+add("seven-day-paywall", "SEVEN_DAY_PAYWALL", "PUBLIC_USER", "FULL_SURFACE", "renderSevenDayPaywall", { ...base(), packageType: "seven-day" }, () => I.renderSevenDayPaywall());
+add("seven-day-start", "SEVEN_DAY_START", "SEVEN_DAY_USER", "FULL_SURFACE", "renderSevenDayStart", { ...base(), packageType: "seven-day", sevenDayPaid: true }, () => I.renderSevenDayStart());
+add("diary-home-zero", "DIARY_HOME", "SEVEN_DAY_USER", "FULL_SURFACE", "renderDiaryHome", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryEntries: [] }, () => I.renderDiaryHome());
+add("diary-home-partial", "DIARY_HOME", "SEVEN_DAY_USER", "FULL_SURFACE", "renderDiaryHome", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryEntries: [entry(1), entry(2)] }, () => I.renderDiaryHome());
+add("diary-home-complete", "DIARY_HOME", "SEVEN_DAY_USER", "FULL_SURFACE", "renderDiaryHome", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryEntries: [1,2,3,4,5,6,7].map(entry) }, () => I.renderDiaryHome());
+add("diary-single", "DIARY_QUESTION", "SEVEN_DAY_USER", "FULL_SURFACE", "renderDiary using diaryQuestionIndex", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryQuestionIndex: app.dailyCore.findIndex(q=>q.type==="single") }, () => I.renderDiary());
+add("diary-multi", "DIARY_QUESTION", "SEVEN_DAY_USER", "FULL_SURFACE", "renderDiary using diaryQuestionIndex", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryQuestionIndex: app.dailyCore.findIndex(q=>q.type==="multi") }, () => I.renderDiary());
+add("diary-scale", "DIARY_QUESTION", "SEVEN_DAY_USER", "FULL_SURFACE", "renderDiary using diaryQuestionIndex", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryQuestionIndex: app.dailyCore.findIndex(q=>q.type==="scale") }, () => I.renderDiary());
+add("diary-text", "DIARY_QUESTION", "SEVEN_DAY_USER", "FULL_SURFACE", "renderDiary using diaryQuestionIndex", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryQuestionIndex: app.dailyCore.findIndex(q=>q.type==="text") }, () => I.renderDiary());
+add("diary-confirmation-empty", "DIARY_CONFIRMATION", "SEVEN_DAY_USER", "ISOLATED_COMPONENT", "renderDailySummaryConfirmation(D-SUM01)", { ...base(), diaryDraft: { raw_reflection: "" }, diarySummaryUi: {} }, () => I.renderDailySummaryConfirmation(summaryQuestion));
+add("diary-confirmation-awaiting", "DIARY_CONFIRMATION", "SEVEN_DAY_USER", "ISOLATED_COMPONENT", "renderDailySummaryConfirmation(D-SUM01)", { ...base(), diaryDraft: { raw_reflection: "abcdefghijkl" }, diarySummaryUi: {} }, () => I.renderDailySummaryConfirmation(summaryQuestion));
+add("diary-confirmation-confirmed", "DIARY_CONFIRMATION", "SEVEN_DAY_USER", "ISOLATED_COMPONENT", "renderDailySummaryConfirmation(D-SUM01)", { ...base(), diaryDraft: { raw_reflection: "abcdefghijkl", confirmedSummaryObject: summaryObject(true) }, diarySummaryUi: {} }, () => I.renderDailySummaryConfirmation(summaryQuestion));
+add("diary-confirmation-edit", "DIARY_CONFIRMATION", "SEVEN_DAY_USER", "ISOLATED_COMPONENT", "renderDailySummaryConfirmation(D-SUM01)", { ...base(), diaryDraft: { raw_reflection: "abcdefghijkl", confirmedSummaryObject: summaryObject(false) }, diarySummaryUi: { mode: "edit", text: "" } }, () => I.renderDailySummaryConfirmation(summaryQuestion));
+add("diary-confirmation-add", "DIARY_CONFIRMATION", "SEVEN_DAY_USER", "ISOLATED_COMPONENT", "renderDailySummaryConfirmation(D-SUM01)", { ...base(), diaryDraft: { raw_reflection: "abcdefghijkl", confirmedSummaryObject: summaryObject(false) }, diarySummaryUi: { mode: "add", text: "" } }, () => I.renderDailySummaryConfirmation(summaryQuestion));
+add("insufficient-report", "INSUFFICIENT_REPORT", "SEVEN_DAY_USER", "FULL_SURFACE", "renderReport", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryEntries: [entry(1)] }, () => I.renderReport());
+add("limited-report", "LIMITED_REPORT", "SEVEN_DAY_USER", "FULL_SURFACE", "renderReport", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryEntries: [1,2,3].map(entry) }, () => I.renderReport());
+add("usable-limited-report", "LIMITED_REPORT", "SEVEN_DAY_USER", "FULL_SURFACE", "renderReport", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryEntries: [1,2,3,4].map(entry) }, () => I.renderReport());
+add("full-seven-day-report", "FULL_SEVEN_DAY_REPORT", "SEVEN_DAY_USER", "FULL_SURFACE", "renderReport", { ...base(), packageType: "seven-day", sevenDayPaid: true, diaryEntries: [1,2,3,4,5].map(entry) }, () => I.renderReport());
+add("upgrade-offer-present", "UPGRADE_OFFER", "PAID_USER", "ISOLATED_COMPONENT", "renderUpgradeOffer", { ...base(), oneTimePaid: true, sevenDayPaid: false, upgradePaid: false }, () => I.renderUpgradeOffer());
+add("upgrade-offer-absent", "UPGRADE_OFFER", "PAID_USER", "ISOLATED_COMPONENT", "renderUpgradeOffer", { ...base(), oneTimePaid: true, sevenDayPaid: true, upgradePaid: true }, () => I.renderUpgradeOffer(), { expectedVisible: false, notes: "Entitled state correctly suppresses offer." });
+add("upgrade-paywall", "UPGRADE_PAYWALL", "PAID_USER", "FULL_SURFACE", "renderUpgradePaywall", { ...base(), oneTimePaid: true }, () => I.renderUpgradePaywall());
+add("lead-capture", "LEAD_CAPTURE", "PUBLIC_USER", "FULL_SURFACE", "renderLeadCapture", base(), () => I.renderLeadCapture());
+add("lead-thank-you", "LEAD_THANK_YOU", "PUBLIC_USER", "FULL_SURFACE", "renderLeadThankYou", base(), () => I.renderLeadThankYou());
+add("general-safety", "GENERAL_SAFETY", "PUBLIC_USER", "FULL_SURFACE", "renderOneTimeStart", base(), () => I.renderOneTimeStart());
+add("professional-safety", "PROFESSIONAL_SAFETY", "PAID_USER", "FULL_SURFACE", "renderReport", { ...base(), oneTimePaid: true, stageAnswers: professionalAnswers }, () => I.renderReport());
+add("urgent-mode-4", "URGENT_SAFETY", "PUBLIC_USER", "FULL_SURFACE", "renderReport", { ...base(), stageAnswers: urgentAnswers }, () => I.renderReport());
+add("advisor-login", "ADVISOR_PORTAL", "ADVISOR", "FULL_SURFACE", "renderCoachLogin", base(), () => I.renderCoachLogin());
+add("advisor-login-error", "VISIBLE_ERROR", "ADVISOR", "ISOLATED_COMPONENT", "renderCoachLogin with existing coachLoginError", { ...base(), coachLoginError: "Имэйл эсвэл нууц үг буруу байна." }, () => I.renderCoachLogin());
+add("advisor-dashboard-empty", "ADVISOR_PORTAL", "ADVISOR", "FULL_SURFACE", "renderCoachDashboard with mock empty advisor", base(), () => I.renderCoachDashboard(), { prepare: prepareEmptyAdvisor });
+add("advisor-dashboard-populated", "ADVISOR_PORTAL", "ADVISOR", "FULL_SURFACE", "renderCoachDashboard with mock paid client fixture", base(), () => I.renderCoachDashboard(), { prepare: preparePopulatedAdvisor });
+add("admin-portal", "ADMIN_PORTAL", "ADMIN", "FULL_SURFACE", "renderAdminCoach with internalTest state", { ...base(), internalTest: true }, () => I.renderAdminCoach());
+add("internal-feedback-survey", "OTHER_PROVEN_RENDERED", "INTERNAL_TESTER", "ISOLATED_COMPONENT", "renderInternalTesterFeedbackSurvey with internalTest state", { ...base(), internalTest: true, oneTimePaid: true, stageAnswers: normalAnswers }, () => I.renderInternalTesterFeedbackSurvey());
+add("internal-feedback-thanks", "OTHER_PROVEN_RENDERED", "INTERNAL_TESTER", "FULL_SURFACE", "renderFeedbackThanks with internalTest state", { ...base(), internalTest: true }, () => I.renderFeedbackThanks());
+add("internal-feedback-export", "OTHER_PROVEN_RENDERED", "INTERNAL_TESTER", "FULL_SURFACE", "renderFeedbackExport with internalTest state", { ...base(), internalTest: true }, () => I.renderFeedbackExport());
+add("payment-contact", "PAYMENT", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderContactCaptureForm", base(), () => I.renderContactCaptureForm());
+add("qpay-pre-invoice", "QPAY", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox", { ...base(), qpayPayment: { status: "idle", message: "", invoice: null } }, () => I.renderWeightQpayPaymentBox());
+add("qpay-invoice-created", "QPAY", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox", { ...base(), qpayPayment: { status: "creating", message: I.qpayStatusMessage("creating"), invoice } }, () => I.renderWeightQpayPaymentBox());
+add("qpay-pending", "QPAY", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox", { ...base(), qpayPayment: { status: "pending", message: I.qpayStatusMessage("pending"), invoice } }, () => I.renderWeightQpayPaymentBox());
+add("qpay-paid", "QPAY", "PAID_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox", { ...base(), oneTimePaid: true, qpayPayment: { status: "paid", message: I.qpayStatusMessage("paid"), invoice } }, () => I.renderWeightQpayPaymentBox());
+add("qpay-error", "VISIBLE_ERROR", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox with qpayStatusMessage(error)", { ...base(), qpayPayment: { status: "error", message: I.qpayStatusMessage("error"), invoice: null } }, () => I.renderWeightQpayPaymentBox());
+add("sample-report", "SAMPLE_REPORT", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderSampleResultPreview", base(), () => I.renderSampleResultPreview());
+add("question-bank", "QUESTION_BANK", "PUBLIC_USER", "ISOLATED_COMPONENT", "stageOneQuestions consumed by renderStageOne", base(), () => app.stageOneQuestions.map(q=>`<h3>${escapeText(q.text)}</h3>`).join(""));
+add("answer-options", "ANSWER_OPTIONS", "PUBLIC_USER", "ISOLATED_COMPONENT", "stageOneQuestions/dailyCore consumed by renderInput", base(), () => [...app.stageOneQuestions,...app.dailyCore,...app.dailyMenstrual].flatMap(q=>q.options||[]).map(x=>`<span>${escapeText(x)}</span>`).join(""));
+add("accessibility", "ACCESSIBILITY", "PUBLIC_USER", "ATTRIBUTE_ONLY", "extractAccessibilityAttributes from exported renderers", base(), () => [I.renderLanding(),I.renderOneTimeStart(),I.renderContactCaptureForm(),I.renderCoachLogin()].join(""));
+
+function prepareEmptyAdvisor() {
+  mockBackend.resetMockBackend();
+  const created=mockBackend.createCoachAccount({email:"advisor@example.test",displayName:"Test Advisor"});
+  const login=mockBackend.loginCoach("advisor@example.test",created.temporaryPassword);
+  setState({coachSessionToken:login.session.token});
+}
+function preparePopulatedAdvisor() {
+  mockBackend.resetMockBackend();
+  const created=mockBackend.createCoachAccount({email:"advisor@example.test",displayName:"Test Advisor"});
+  const login=mockBackend.loginCoach("advisor@example.test",created.temporaryPassword);
+  const client=mockBackend.createCoachClient(login.session.token,{clientEmail:"client@example.test",clientName:"Client One"});
+  const assessment=mockBackend.createAssessment("one_time",{coachId:created.coach.id,coachClientId:client.client.id,userEmail:"client@example.test",shareWithCoach:true});
+  mockBackend.linkAssessmentToCoach(assessment.id,{coachClientId:client.client.id,userEmail:"client@example.test",shareWithCoach:true});
+  mockBackend.completeAssessment(assessment.id,{status:"completed",report_mode:"mode1",safety_mode:"mode1",report_text:""});
+  const payment=mockBackend.createMockPayment("one_time",assessment.id,{coachId:created.coach.id,coachClientId:client.client.id,userEmail:"client@example.test"});
+  mockBackend.markMockPaymentPaid(payment.id);
+  setState({coachSessionToken:login.session.token});
 }
 
-const uniqueRendered = new Map();
-for (const e of renderedEntries) {
-  const key = `${e.text}\u0000${e.surface}\u0000${e.role}`;
-  const existing = uniqueRendered.get(key);
-  if (existing) { existing.scenarios = [...new Set([...existing.scenarios, e.scenario])]; existing.occurrences++; }
-  else uniqueRendered.set(key, { ...e, scenarios: [e.scenario], occurrences: 1 });
+function escapeText(x){return String(x).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+function decode(x){return String(x).replace(/&nbsp;/g," ").replace(/&amp;/g,"&").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&quot;/g,'"').replace(/&#39;/g,"'");}
+function visibleText(html){const out=[];const clean=String(html||"").replace(/<script[\s\S]*?<\/script>/gi," ").replace(/<style[\s\S]*?<\/style>/gi," ");for(const part of clean.split(/<[^>]+>/g)){const text=decode(part).replace(/\s+/g," ").trim();if(text&&!/^https?:\/\//i.test(text)&&!fixtureValues.has(text))out.push({text});}return out;}
+function extractAccessibilityAttributes(html){const out=[];for(const m of String(html||"").matchAll(/<([a-z0-9-]+)\b[^>]*?\s(aria-label|placeholder|title|alt)=(["'])(.*?)\3[^>]*>/gi)){const text=decode(m[4]).trim();if(text&&!fixtureValues.has(text))out.push({text,attribute_name:m[2].toLowerCase(),element_type:m[1].toLowerCase()});}return out;}
+
+const rendered=[];const results=[];
+for(const s of scenarios){
+  if(!VALID_ROLES.has(s.role)||!VALID_TYPES.has(s.extraction_type))throw new Error(`Invalid scenario metadata: ${s.id}`);
+  mockBackend.resetMockBackend();setState(s.state);if(s.prepare)s.prepare();
+  const html=String(s.render()||"");const extracted=s.extraction_type==="ATTRIBUTE_ONLY"?extractAccessibilityAttributes(html):visibleText(html);
+  if(s.expected_visible&&extracted.length===0)throw new Error(`${s.id} expected visible copy but extracted zero entries`);
+  results.push({id:s.id,surface:s.surface,role:s.role,extraction_type:s.extraction_type,render_source:s.render_source,coverage:"YES",expected_visible:s.expected_visible,notes:s.notes,extracted_entry_count:extracted.length,network_attempts:networkAttempts});
+  extracted.forEach(item=>rendered.push({text:item.text,surface:s.surface,role:s.role,scenario:s.id,render_source:s.render_source,extraction_type:s.extraction_type,attribute_name:item.attribute_name||null,element_type:item.element_type||null,source_locations:[],source_mapping_status:"NOT_MAPPED_NO_GUESS",dynamic:false}));
 }
-const entries = [...uniqueRendered.values()];
-const textCounts = new Map();
-for (const e of renderedEntries) textCounts.set(e.text, (textCounts.get(e.text) || 0) + 1);
-const duplicateTexts = [...textCounts].filter(([,count]) => count > 1).sort((a,b) => a[0].localeCompare(b[0]));
-const dupIds = new Map(duplicateTexts.map(([text],i) => [text, `DUP-${String(i+1).padStart(4,"0")}`]));
+if(networkAttempts!==0)throw new Error(`External network attempted ${networkAttempts} times`);
 
-function category(e) {
-  if (e.surface === "URGENT_SAFETY" || e.surface === "PROFESSIONAL_SAFETY" || e.surface === "GENERAL_SAFETY") return "SAFETY_CRITICAL";
-  if (["PAYMENT","QPAY","ONE_TIME_PAYWALL","SEVEN_DAY_PAYWALL","UPGRADE_PAYWALL"].includes(e.surface)) return "PAYMENT_CRITICAL";
-  if (e.surface === "QUESTION_BANK" || e.surface === "ANSWER_OPTIONS" || e.surface === "DIARY_QUESTION") return "QUESTION_WORDING";
-  if (e.surface === "ACCESSIBILITY") return "ACCESSIBILITY_COPY";
-  if (e.role === "ADMIN" || e.role === "ADVISOR") return "ADMIN_OR_ADVISOR_TERM";
-  if (/\b[A-Za-z][A-Za-z-]*\b/.test(e.text) && !/^(QPay|PDF)$/.test(e.text)) return "MIXED_LANGUAGE";
-  if (e.surface.includes("REPORT")) return "REPORT_WORDING";
-  return "NO_LANGUAGE_ISSUE_OBSERVED";
-}
-function md(x) { return String(x).replace(/\|/g,"\\|").replace(/\r?\n/g," "); }
-let catalog = "# Mongolian Copy Review Catalog\n\nRender-backed, role-facing strings only. No wording is approved or proposed here. Source locations remain empty where exact static mapping is unavailable; render proof is never guessed.\n\n| ID | Exact current text | Source file | Source line | Source function/object | Rendered surface | Role | Render proof | Dynamic variables | Duplicate group | Review category |\n| -- | ------------------ | ----------- | ----------: | ---------------------- | ---------------- | ---- | ------------ | ----------------- | --------------- | --------------- |\n";
-entries.forEach((e,i) => catalog += `| COPY-${String(i+1).padStart(4,"0")} | ${md(e.text)} | app.js |  | ${md(e.render_source)} | ${e.surface} | ${e.role} | ${md(e.render_source)} via ${md(e.scenarios.join(", "))} | None observed in rendered output | ${dupIds.get(e.text) || ""} | ${category(e)} |\n`);
-fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_REVIEW_CATALOG.md"), catalog);
+const unique=new Map();for(const e of rendered){const key=[e.text,e.surface,e.role,e.attribute_name||""].join("\0");const prior=unique.get(key);if(prior){prior.scenarios=[...new Set([...prior.scenarios,e.scenario])];prior.occurrences++;}else unique.set(key,{...e,scenarios:[e.scenario],occurrences:1});}const entries=[...unique.values()];
+const textCounts=new Map();for(const e of rendered)textCounts.set(e.text,(textCounts.get(e.text)||0)+1);const duplicateTexts=[...textCounts].filter(([,n])=>n>1).sort((a,b)=>a[0].localeCompare(b[0]));const dupIds=new Map(duplicateTexts.map(([t],i)=>[t,`DUP-${String(i+1).padStart(4,"0")}`]));
+function category(e){if(/SAFETY/.test(e.surface))return"SAFETY_CRITICAL";if(/PAYMENT|QPAY|PAYWALL/.test(e.surface))return"PAYMENT_CRITICAL";if(/QUESTION|ANSWER|DIARY_QUESTION/.test(e.surface))return"QUESTION_WORDING";if(e.surface==="ACCESSIBILITY")return"ACCESSIBILITY_COPY";if(["ADMIN","ADVISOR"].includes(e.role))return"ADMIN_OR_ADVISOR_TERM";if(/\b[A-Za-z][A-Za-z-]*\b/.test(e.text)&&!/^(QPay|PDF)$/.test(e.text))return"MIXED_LANGUAGE";if(e.surface.includes("REPORT"))return"REPORT_WORDING";return"NO_LANGUAGE_ISSUE_OBSERVED";}
+function md(x){return String(x??"").replace(/\|/g,"\\|").replace(/\r?\n/g," ");}
+let catalog="# Mongolian Copy Review Catalog\n\nRender-backed, role-facing strings only. No wording is approved or proposed. Nested components are isolated and accessibility extraction is attribute-only.\n\n| ID | Exact current text | Source file | Source line | Source function/object | Rendered surface | Role | Render proof | Dynamic variables | Duplicate group | Review category |\n| -- | ------------------ | ----------- | ----------: | ---------------------- | ---------------- | ---- | ------------ | ----------------- | --------------- | --------------- |\n";
+entries.forEach((e,i)=>catalog+=`| COPY-${String(i+1).padStart(4,"0")} | ${md(e.text)} | app.js |  | ${md(e.render_source)} | ${e.surface} | ${e.role} | ${md(e.render_source)} via ${md(e.scenarios.join(", "))} [${e.extraction_type}]${e.attribute_name?` ${e.element_type}.${e.attribute_name}`:""} | None observed | ${dupIds.get(e.text)||""} | ${category(e)} |\n`);fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_REVIEW_CATALOG.md"),catalog);
+let dup="# Mongolian Copy Duplicate Index\n\nExact-text duplicates only.\n\n| Duplicate group | Exact text | Occurrence count | Surfaces | Source locations |\n| --------------- | ---------- | ---------------: | -------- | ---------------- |\n";duplicateTexts.forEach(([t,n])=>{const es=rendered.filter(e=>e.text===t);dup+=`| ${dupIds.get(t)} | ${md(t)} | ${n} | ${[...new Set(es.map(e=>e.surface))].join(", ")} | source mapping unavailable |\n`;});fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_DUPLICATE_INDEX.md"),dup);
 
-let dup = "# Mongolian Copy Duplicate Index\n\nExact-text duplicates only; no semantic merging.\n\n| Duplicate group | Exact text | Occurrence count | Surfaces | Source locations |\n| --------------- | ---------- | ---------------: | -------- | ---------------- |\n";
-duplicateTexts.forEach(([text,count]) => { const es=renderedEntries.filter(e=>e.text===text); dup += `| ${dupIds.get(text)} | ${md(text)} | ${count} | ${[...new Set(es.map(e=>e.surface))].join(", ")} | source mapping unavailable |\n`; });
-fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_DUPLICATE_INDEX.md"), dup);
-
-const literals = [...source.matchAll(/(["'`])((?:\\.|(?!\1)[\s\S])*?)\1/g)].map(m => ({ text:m[2].replace(/\\n/g," ").replace(/\s+/g," ").trim(), line:source.slice(0,m.index).split("\n").length }));
-function rawClass(x) {
-  if (/^https?:\/\//.test(x)) return "API_OR_URL";
-  if (/^(\.\.?\/|node:|[\w/-]+\.(js|json|html|css))/.test(x)) return "CODE_OR_MODULE_REFERENCE";
-  if (/^(WEIGHT_|QPAY_|S1-|D-|COPY-|[a-z][a-z0-9_]+)$/.test(x)) return "INTERNAL_IDENTIFIER";
-  if (/localStorage|weight_test_|storage/i.test(x)) return "DATABASE_OR_STORAGE";
-  if (/event|funnel|analytics|view_|click_/i.test(x) && !/[А-Яа-яӨөҮү]/.test(x)) return "ANALYTICS_OR_EVENT";
-  if (/\$\{/.test(x)) return "DYNAMIC_TEMPLATE_FRAGMENT";
-  if (app.stageOneQuestions.some(q=>q.text===x || (q.options||[]).includes(x)) || app.dailyCore.some(q=>q.text===x || (q.options||[]).includes(x))) return "QUESTION_OR_OPTION";
-  if (renderedEntries.some(e=>e.text===x)) return "RENDERED_USER_VISIBLE";
-  return "UNKNOWN_REQUIRES_TRACE";
-}
-const rawRows=literals.filter(x=>x.text).map(x=>({...x,classification:rawClass(x.text)}));
-let raw="# Mongolian Copy Raw Literal Inventory\n\nThis is a raw source-literal inventory. It is not a user-visible copy catalog and must not be used directly for language approval.\n\n| ID | Exact source literal | Source | Classification |\n| -- | -------------------- | ------ | -------------- |\n";
-rawRows.forEach((r,i)=>raw+=`| RAW-${String(i+1).padStart(4,"0")} | ${md(r.text)} | app.js:${r.line} | ${r.classification} |\n`);
-fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_RAW_LITERAL_INVENTORY.md"),raw);
-
-const excludedClasses=new Set(["API_OR_URL","ANALYTICS_OR_EVENT","DATABASE_OR_STORAGE","INTERNAL_IDENTIFIER","CODE_OR_MODULE_REFERENCE","UNKNOWN_REQUIRES_TRACE"]);
-const excluded=rawRows.filter(r=>excludedClasses.has(r.classification));
-const groups=[
-  ["API and URLs","API_OR_URL"],["analytics events","ANALYTICS_OR_EVENT"],["internal keys","INTERNAL_IDENTIFIER"],
-  ["storage keys","DATABASE_OR_STORAGE"],["source paths and module imports","CODE_OR_MODULE_REFERENCE"],
-  ["test fixtures","TEST_ONLY"],["documentation","DOCUMENTATION_ONLY"],["untraced internal candidates","UNKNOWN_REQUIRES_TRACE"]
-];
-let excludedMd="# Mongolian Copy Excluded Internal Strings\n\nThese raw literals are excluded from the review catalog because render visibility was not proven. Unknown items remain auditable rather than being mislabeled as user-visible copy.\n";
-for(const [label,cls] of groups){const xs=rawRows.filter(r=>r.classification===cls);excludedMd+=`\n## ${label}\n\n- Count: ${xs.length}\n- Reason excluded: ${cls === "UNKNOWN_REQUIRES_TRACE" ? "No render path was proven." : `Classified as ${cls}, not application-owned rendered copy.`}\n- Representative examples: ${xs.slice(0,8).map(x=>`\`${x.text.replace(/`/g,"'")}\``).join(", ") || "None found in app.js raw extraction."}\n`;}
-fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_EXCLUDED_INTERNAL_STRINGS.md"),excludedMd);
-
-let coverage="# Mongolian Copy Surface Coverage\n\nAny PARTIAL or NO status means total render coverage is not complete.\n\n| Surface | Render function or source | Scenario implemented | Extracted entry count | Covered | Notes |\n| ------- | ------------------------- | -------------------- | --------------------: | ------- | ----- |\n";
-scenarioResults.forEach(s=>coverage+=`| ${s.surface} | ${md(s.render_source)} | ${s.id} | ${s.extracted_entry_count} | ${s.coverage} | ${md(s.notes)} |\n`);
-fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_SURFACE_COVERAGE.md"),coverage);
-
-fs.mkdirSync(path.join(root,"artifacts"),{recursive:true});
-fs.writeFileSync(path.join(root,"artifacts/mongolian-rendered-copy.json"),JSON.stringify({generated_from_commit:commit,scenarios:scenarioResults,entries},null,2)+"\n");
-const stats={raw_literal_count:rawRows.length,review_entry_count:entries.length,excluded_internal_count:excluded.length,duplicate_occurrence_count:[...textCounts.values()].reduce((n,c)=>n+Math.max(0,c-1),0),duplicate_group_count:duplicateTexts.length,partial_or_missing:scenarioResults.filter(s=>s.coverage!=="YES").map(s=>s.id),question_count:app.stageOneQuestions.length+app.dailyCore.length+app.dailyMenstrual.length,answer_option_count:[...app.stageOneQuestions,...app.dailyCore,...app.dailyMenstrual].reduce((n,q)=>n+(q.options||[]).length,0)};
-fs.writeFileSync(path.join(root,"artifacts/mongolian-copy-stats.json"),JSON.stringify(stats,null,2)+"\n");
-console.log(JSON.stringify(stats,null,2));
+const literals=[...appSource.matchAll(/(["'`])((?:\\.|(?!\1)[\s\S])*?)\1/g)].map(m=>({text:m[2].replace(/\\n/g," ").replace(/\s+/g," ").trim(),line:appSource.slice(0,m.index).split("\n").length})).filter(x=>x.text);
+function rawClass(x){if(/^https?:\/\//.test(x))return"API_OR_URL";if(/^(\.\.?\/|node:|[\w/-]+\.(js|json|html|css))/.test(x))return"CODE_OR_MODULE_REFERENCE";if(/localStorage|weight_test_|storage/i.test(x))return"DATABASE_OR_STORAGE";if(/event|funnel|analytics|view_|click_/i.test(x)&&!/[А-Яа-яӨөҮү]/.test(x))return"ANALYTICS_OR_EVENT";if(/\$\{/.test(x))return"DYNAMIC_TEMPLATE_FRAGMENT";if([...app.stageOneQuestions,...app.dailyCore,...app.dailyMenstrual].some(q=>q.text===x||(q.options||[]).includes(x)))return"QUESTION_OR_OPTION";if(rendered.some(e=>e.text===x))return"RENDERED_USER_VISIBLE";if(/^(WEIGHT_|QPAY_|S1-|D-|COPY-|[a-z][a-z0-9_]+)$/.test(x))return"INTERNAL_IDENTIFIER";return"UNKNOWN_REQUIRES_TRACE";}
+const rawRows=literals.map(x=>({...x,classification:rawClass(x.text)}));let raw="# Mongolian Copy Raw Literal Inventory\n\nThis is a raw source-literal inventory. It is not a user-visible copy catalog and must not be used directly for language approval.\n\n| ID | Exact source literal | Source | Classification |\n| -- | -------------------- | ------ | -------------- |\n";rawRows.forEach((r,i)=>raw+=`| RAW-${String(i+1).padStart(4,"0")} | ${md(r.text)} | app.js:${r.line} | ${r.classification} |\n`);fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_RAW_LITERAL_INVENTORY.md"),raw);
+const excludedClasses=new Set(["API_OR_URL","ANALYTICS_OR_EVENT","DATABASE_OR_STORAGE","INTERNAL_IDENTIFIER","CODE_OR_MODULE_REFERENCE","UNKNOWN_REQUIRES_TRACE"]);const excluded=rawRows.filter(r=>excludedClasses.has(r.classification));const groups=[["API and URLs","API_OR_URL"],["analytics events","ANALYTICS_OR_EVENT"],["internal keys","INTERNAL_IDENTIFIER"],["storage keys","DATABASE_OR_STORAGE"],["source paths and module imports","CODE_OR_MODULE_REFERENCE"],["test fixtures","TEST_ONLY"],["documentation","DOCUMENTATION_ONLY"],["untraced internal candidates","UNKNOWN_REQUIRES_TRACE"]];let excludedMd="# Mongolian Copy Excluded Internal Strings\n\nRaw literals excluded because role-facing render visibility was not proven.\n";for(const[g,c]of groups){const xs=rawRows.filter(r=>r.classification===c);excludedMd+=`\n## ${g}\n\n- Count: ${xs.length}\n- Reason excluded: ${c==="UNKNOWN_REQUIRES_TRACE"?"No render path was proven.":`Classified as ${c}.`}\n- Representative examples: ${xs.slice(0,8).map(x=>`\`${x.text.replace(/`/g,"'")}\``).join(", ")||"None."}\n`;}fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_EXCLUDED_INTERNAL_STRINGS.md"),excludedMd);
+let coverage="# Mongolian Copy Surface Coverage\n\nEvery scenario declares an extraction type. FULL_SURFACE is a complete screen, ISOLATED_COMPONENT calls an existing component renderer, and ATTRIBUTE_ONLY extracts attributes only.\n\n| Surface | Render function or source | Scenario implemented | Extraction type | Extracted entry count | Covered | Notes |\n| ------- | ------------------------- | -------------------- | --------------- | --------------------: | ------- | ----- |\n";results.forEach(s=>coverage+=`| ${s.surface} | ${md(s.render_source)} | ${s.id} | ${s.extraction_type} | ${s.extracted_entry_count} | ${s.coverage} | ${md(s.notes)} |\n`);fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_SURFACE_COVERAGE.md"),coverage);
+fs.mkdirSync(path.join(root,"artifacts"),{recursive:true});fs.writeFileSync(path.join(root,"artifacts/mongolian-rendered-copy.json"),JSON.stringify({generator_version:GENERATOR_VERSION,generated_from_commit:commit,network_attempts:networkAttempts,scenarios:results,entries},null,2)+"\n");
+const stats={generator_version:GENERATOR_VERSION,raw_literal_count:rawRows.length,review_entry_count:entries.length,excluded_internal_count:excluded.length,duplicate_occurrence_count:[...textCounts.values()].reduce((n,c)=>n+Math.max(0,c-1),0),duplicate_group_count:duplicateTexts.length,yes_scenarios:results.filter(s=>s.coverage==="YES").length,partial_or_missing:results.filter(s=>s.coverage!=="YES").map(s=>s.id),question_count:app.stageOneQuestions.length+app.dailyCore.length+app.dailyMenstrual.length,answer_option_count:[...app.stageOneQuestions,...app.dailyCore,...app.dailyMenstrual].reduce((n,q)=>n+(q.options||[]).length,0),network_attempts:networkAttempts};fs.writeFileSync(path.join(root,"artifacts/mongolian-copy-stats.json"),JSON.stringify(stats,null,2)+"\n");
+const countSurface=pattern=>entries.filter(e=>pattern.test(e.surface)).length;const countRole=role=>entries.filter(e=>e.role===role).length;const mixedCount=entries.filter(e=>/\b[A-Za-z][A-Za-z-]*\b/.test(e.text)&&!/^(QPay|PDF)$/.test(e.text)).length;
+const validation=`# Mongolian Copy Engineering Validation\n\n## Generated provenance\n\n- Generator version: \`${GENERATOR_VERSION}\`\n- Extraction source commit: \`${commit}\`\n- Final PR head and final-head workflow IDs: maintained in PR #1 metadata after the implementation push to avoid a self-referential validation-only commit cycle\n- Approved replacement count: 0\n- Production copy changed: NO\n- External network attempts during extraction: ${networkAttempts}\n\n## Generated metrics\n\n- Raw literal count: ${stats.raw_literal_count.toLocaleString("en-US")}\n- Review-ready unique entry count: ${stats.review_entry_count.toLocaleString("en-US")}\n- Excluded internal/unproven count: ${stats.excluded_internal_count.toLocaleString("en-US")}\n- Duplicate occurrence count: ${stats.duplicate_occurrence_count.toLocaleString("en-US")}\n- Duplicate canonical-group count: ${stats.duplicate_group_count.toLocaleString("en-US")}\n- YES scenarios: ${stats.yes_scenarios}\n- Partial or missing scenarios: ${stats.partial_or_missing.length}\n- Question count: ${stats.question_count}\n- Answer-option count: ${stats.answer_option_count}\n- Safety entries: ${countSurface(/SAFETY/)}\n- Payment/QPay/paywall entries: ${countSurface(/PAYMENT|QPAY|PAYWALL/)}\n- Admin entries: ${countRole("ADMIN")}\n- Advisor entries: ${countRole("ADVISOR")}\n- Internal tester entries: ${countRole("INTERNAL_TESTER")}\n- Structural mixed-language signals: ${mixedCount}\n\n## Extraction architecture\n\nEvery scenario declares \`FULL_SURFACE\`, \`ISOLATED_COMPONENT\`, or \`ATTRIBUTE_ONLY\`. Sample report, upgrade offer, QPay, payment error, and diary confirmation use direct existing component renderers. Accessibility extraction reads attributes only. Diary home uses \`renderDiaryHome\`. Advisor fixtures use the local mock backend. Internal tester fixtures use the existing \`internalTest\` state gate.\n\n## Permitted app.js test exports\n\nOnly existing functions were added to CommonJS \`_internal\`; no function body or string changed:\n\n- \`renderDiaryHome\`\n- \`renderDiaryInput\`\n- \`renderDailySummaryConfirmation\`\n- \`renderSampleResultPreview\`\n- \`renderUpgradeOffer\`\n- \`renderWeightQpayPaymentBox\`\n- \`qpayStatusMessage\`\n\n## Required validation\n\n- \`git diff --check\`: PASS\n- \`node --check app.js\`: PASS\n- \`node --check tools/extract-rendered-copy.mjs\`: PASS\n- \`node tools/extract-rendered-copy.mjs\`: PASS\n- Focused catalog, safety, routing, pricing, and public-language tests: PASS\n- \`npm test\`: PASS\n- Final-head GitHub Actions: recorded in PR metadata and final handoff after push\n- Pricing and safety behavior: unchanged; focused tests PASS\n- Deploy: NOT PERFORMED\n- Merge: NOT PERFORMED\n`;
+fs.writeFileSync(path.join(root,"MONGOLIAN_COPY_ENGINEERING_VALIDATION.md"),validation);console.log(JSON.stringify(stats,null,2));

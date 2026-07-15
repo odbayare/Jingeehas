@@ -17,9 +17,9 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-0011 | https://www.lifepattern.live/.netlify/functions/qpay-create-invoice | app.js:26 | API_OR_URL |
 | RAW-0012 | https://www.lifepattern.live/.netlify/functions/qpay-check-payment | app.js:27 | API_OR_URL |
 | RAW-0013 | https://www.lifepattern.live/.netlify/functions/track-funnel-event | app.js:29 | API_OR_URL |
-| RAW-0014 | weight_test_visitor_id_v1 | app.js:30 | INTERNAL_IDENTIFIER |
-| RAW-0015 | weight_test_session_id_v1 | app.js:31 | INTERNAL_IDENTIFIER |
-| RAW-0016 | weight_test_funnel_events_v1 | app.js:32 | INTERNAL_IDENTIFIER |
+| RAW-0014 | weight_test_visitor_id_v1 | app.js:30 | DATABASE_OR_STORAGE |
+| RAW-0015 | weight_test_session_id_v1 | app.js:31 | DATABASE_OR_STORAGE |
+| RAW-0016 | weight_test_funnel_events_v1 | app.js:32 | DATABASE_OR_STORAGE |
 | RAW-0017 | Илүүдэл жингээс салах тест үнэлгээ | app.js:33 | RENDERED_USER_VISIBLE |
 | RAW-0018 | Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаанаа илрүүл. | app.js:35 | RENDERED_USER_VISIBLE |
 | RAW-0019 | Ямар далд зуршлууд илүүдэл жин үүсэхэд нөлөөлж буйг тайлж мэд. | app.js:36 | RENDERED_USER_VISIBLE |
@@ -33,14 +33,14 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-0027 | Sleep / Rhythm / Recovery — унтах хэмнэл, энерги, сэргэлтийн ажиглалт | app.js:46 | RENDERED_USER_VISIBLE |
 | RAW-0028 | Safety-First Screening — мэргэжлийн зөвлөгөө шаардлагатай байж болох дохиог ялгах шалгуур | app.js:47 | RENDERED_USER_VISIBLE |
 | RAW-0029 | Үгүй | app.js:51 | QUESTION_OR_OPTION |
-| RAW-0030 | Ерөнхийдөө ойлгомжтой | app.js:53 | UNKNOWN_REQUIRES_TRACE |
-| RAW-0031 | 8 | app.js:55 | UNKNOWN_REQUIRES_TRACE |
-| RAW-0032 | Ерөнхийдөө ойлгосон | app.js:56 | UNKNOWN_REQUIRES_TRACE |
-| RAW-0033 | Зарим хэсэг дээр | app.js:58 | UNKNOWN_REQUIRES_TRACE |
-| RAW-0034 | Бага зэрэг | app.js:60 | RENDERED_USER_VISIBLE |
+| RAW-0030 | Ерөнхийдөө ойлгомжтой | app.js:53 | RENDERED_USER_VISIBLE |
+| RAW-0031 | 8 | app.js:55 | RENDERED_USER_VISIBLE |
+| RAW-0032 | Ерөнхийдөө ойлгосон | app.js:56 | RENDERED_USER_VISIBLE |
+| RAW-0033 | Зарим хэсэг дээр | app.js:58 | RENDERED_USER_VISIBLE |
+| RAW-0034 | Бага зэрэг | app.js:60 | QUESTION_OR_OPTION |
 | RAW-0035 | Үгүй | app.js:62 | QUESTION_OR_OPTION |
-| RAW-0036 | Байгалийн монгол хэлтэй | app.js:64 | UNKNOWN_REQUIRES_TRACE |
-| RAW-0037 | Магадгүй | app.js:66 | UNKNOWN_REQUIRES_TRACE |
+| RAW-0036 | Байгалийн монгол хэлтэй | app.js:64 | RENDERED_USER_VISIBLE |
+| RAW-0037 | Магадгүй | app.js:66 | RENDERED_USER_VISIBLE |
 | RAW-0038 | one-time | app.js:73 | UNKNOWN_REQUIRES_TRACE |
 | RAW-0039 | one_time | app.js:74 | INTERNAL_IDENTIFIER |
 | RAW-0040 | Нэг удаагийн гүн анализ | app.js:75 | RENDERED_USER_VISIBLE |
@@ -1791,38 +1791,38 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-1785 | Нэмэх зүйл байна | app.js:421 | QUESTION_OR_OPTION |
 | RAW-1786 | D-MC-01 | app.js:425 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1787 | single | app.js:425 | INTERNAL_IDENTIFIER |
-| RAW-1788 | Өнөөдөр мөчлөгийнхөө аль үедээ байгаа гэж бодож байна? | app.js:425 | UNKNOWN_REQUIRES_TRACE |
+| RAW-1788 | Өнөөдөр мөчлөгийнхөө аль үедээ байгаа гэж бодож байна? | app.js:425 | QUESTION_OR_OPTION |
 | RAW-1789 | cycle_today_phase | app.js:425 | INTERNAL_IDENTIFIER |
-| RAW-1790 | Сарын тэмдэг ирж байна | app.js:425 | RENDERED_USER_VISIBLE |
-| RAW-1791 | Дууссанаас хойш эхний өдрүүд | app.js:425 | RENDERED_USER_VISIBLE |
-| RAW-1792 | Овуляцийн орчим гэж бодож байна | app.js:425 | RENDERED_USER_VISIBLE |
-| RAW-1793 | Ирэхээс өмнөх өдрүүд | app.js:425 | RENDERED_USER_VISIBLE |
+| RAW-1790 | Сарын тэмдэг ирж байна | app.js:425 | QUESTION_OR_OPTION |
+| RAW-1791 | Дууссанаас хойш эхний өдрүүд | app.js:425 | QUESTION_OR_OPTION |
+| RAW-1792 | Овуляцийн орчим гэж бодож байна | app.js:425 | QUESTION_OR_OPTION |
+| RAW-1793 | Ирэхээс өмнөх өдрүүд | app.js:425 | QUESTION_OR_OPTION |
 | RAW-1794 | Мэдэхгүй | app.js:425 | QUESTION_OR_OPTION |
-| RAW-1795 | Хамаарахгүй | app.js:425 | RENDERED_USER_VISIBLE |
+| RAW-1795 | Хамаарахгүй | app.js:425 | QUESTION_OR_OPTION |
 | RAW-1796 | D-MC-02 | app.js:426 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1797 | single | app.js:426 | INTERNAL_IDENTIFIER |
-| RAW-1798 | Өнөөдрийн идэх хүсэл мөчлөгтэй холбоотой юм шиг санагдсан уу? | app.js:426 | UNKNOWN_REQUIRES_TRACE |
+| RAW-1798 | Өнөөдрийн идэх хүсэл мөчлөгтэй холбоотой юм шиг санагдсан уу? | app.js:426 | QUESTION_OR_OPTION |
 | RAW-1799 | cycle_today_link | app.js:426 | INTERNAL_IDENTIFIER |
 | RAW-1800 | Үгүй | app.js:426 | QUESTION_OR_OPTION |
-| RAW-1801 | Бага зэрэг | app.js:426 | RENDERED_USER_VISIBLE |
-| RAW-1802 | Тийм, илүү өлссөн | app.js:426 | RENDERED_USER_VISIBLE |
-| RAW-1803 | Тийм, амттай юм илүү хүссэн | app.js:426 | RENDERED_USER_VISIBLE |
-| RAW-1804 | Тийм, сэтгэл санаатай хамт хүчтэй болсон | app.js:426 | RENDERED_USER_VISIBLE |
-| RAW-1805 | Тийм, ядаргаа/нойртой давхцсан | app.js:426 | RENDERED_USER_VISIBLE |
+| RAW-1801 | Бага зэрэг | app.js:426 | QUESTION_OR_OPTION |
+| RAW-1802 | Тийм, илүү өлссөн | app.js:426 | QUESTION_OR_OPTION |
+| RAW-1803 | Тийм, амттай юм илүү хүссэн | app.js:426 | QUESTION_OR_OPTION |
+| RAW-1804 | Тийм, сэтгэл санаатай хамт хүчтэй болсон | app.js:426 | QUESTION_OR_OPTION |
+| RAW-1805 | Тийм, ядаргаа/нойртой давхцсан | app.js:426 | QUESTION_OR_OPTION |
 | RAW-1806 | D-MC-03 | app.js:427 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1807 | single | app.js:427 | INTERNAL_IDENTIFIER |
-| RAW-1808 | Өнөөдөр өвдөлт, хавагналт, ядаргаа, нойр муудах зэрэг нь хоолны сонголтод нөлөөлсөн үү? | app.js:427 | UNKNOWN_REQUIRES_TRACE |
+| RAW-1808 | Өнөөдөр өвдөлт, хавагналт, ядаргаа, нойр муудах зэрэг нь хоолны сонголтод нөлөөлсөн үү? | app.js:427 | QUESTION_OR_OPTION |
 | RAW-1809 | cycle_body_effect | app.js:427 | INTERNAL_IDENTIFIER |
 | RAW-1810 | Үгүй | app.js:427 | QUESTION_OR_OPTION |
-| RAW-1811 | Бага зэрэг | app.js:427 | RENDERED_USER_VISIBLE |
-| RAW-1812 | Дунд зэрэг | app.js:427 | RENDERED_USER_VISIBLE |
-| RAW-1813 | Их | app.js:427 | RENDERED_USER_VISIBLE |
+| RAW-1811 | Бага зэрэг | app.js:427 | QUESTION_OR_OPTION |
+| RAW-1812 | Дунд зэрэг | app.js:427 | QUESTION_OR_OPTION |
+| RAW-1813 | Их | app.js:427 | QUESTION_OR_OPTION |
 | RAW-1814 | D-P-R01 | app.js:432 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1815 | single | app.js:432 | INTERNAL_IDENTIFIER |
 | RAW-1816 | Өнөөдөр өлсөөгүй байсан ч ‘нэг гоё юм идмээр байна’ гэсэн хүсэл төрсөн үү? | app.js:432 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1817 | reward_seeking | app.js:432 | INTERNAL_IDENTIFIER |
 | RAW-1818 | Үгүй | app.js:432 | QUESTION_OR_OPTION |
-| RAW-1819 | Бага зэрэг | app.js:432 | RENDERED_USER_VISIBLE |
+| RAW-1819 | Бага зэрэг | app.js:432 | QUESTION_OR_OPTION |
 | RAW-1820 | Тодорхой | app.js:432 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1821 | Маш хүчтэй | app.js:432 | QUESTION_OR_OPTION |
 | RAW-1822 | D-P-R02 | app.js:433 | UNKNOWN_REQUIRES_TRACE |
@@ -1830,7 +1830,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-1824 | Өдөржин өөртөө нэг ч таатай зүйл өгөөгүй юм шиг санагдаад, орой хоолоор нөхмөөр үе байсан уу? | app.js:433 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1825 | reward_driver | app.js:433 | INTERNAL_IDENTIFIER |
 | RAW-1826 | Үгүй | app.js:433 | QUESTION_OR_OPTION |
-| RAW-1827 | Бага зэрэг | app.js:433 | RENDERED_USER_VISIBLE |
+| RAW-1827 | Бага зэрэг | app.js:433 | QUESTION_OR_OPTION |
 | RAW-1828 | Тийм | app.js:433 | QUESTION_OR_OPTION |
 | RAW-1829 | Маш тод | app.js:433 | QUESTION_OR_OPTION |
 | RAW-1830 | D-P-HS01 | app.js:436 | UNKNOWN_REQUIRES_TRACE |
@@ -1838,7 +1838,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-1832 | Өнөөдөр дараа өлсөх вий гэж бодоод урьдчилж идсэн үе байсан уу? | app.js:436 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1833 | hunger_safety | app.js:436 | INTERNAL_IDENTIFIER |
 | RAW-1834 | Үгүй | app.js:436 | QUESTION_OR_OPTION |
-| RAW-1835 | Бага зэрэг | app.js:436 | RENDERED_USER_VISIBLE |
+| RAW-1835 | Бага зэрэг | app.js:436 | QUESTION_OR_OPTION |
 | RAW-1836 | Тийм | app.js:436 | QUESTION_OR_OPTION |
 | RAW-1837 | Маш хүчтэй | app.js:436 | QUESTION_OR_OPTION |
 | RAW-1838 | D-P-HS02 | app.js:437 | UNKNOWN_REQUIRES_TRACE |
@@ -1853,7 +1853,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-1847 | Хоол идсэний дараа сэтгэл түр намдах шиг болсон уу? | app.js:440 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1848 | food_regulation | app.js:440 | INTERNAL_IDENTIFIER |
 | RAW-1849 | Үгүй | app.js:440 | QUESTION_OR_OPTION |
-| RAW-1850 | Бага зэрэг | app.js:440 | RENDERED_USER_VISIBLE |
+| RAW-1850 | Бага зэрэг | app.js:440 | QUESTION_OR_OPTION |
 | RAW-1851 | Тийм | app.js:440 | QUESTION_OR_OPTION |
 | RAW-1852 | Маш тод | app.js:440 | QUESTION_OR_OPTION |
 | RAW-1853 | D-P-FR02 | app.js:441 | UNKNOWN_REQUIRES_TRACE |
@@ -1869,7 +1869,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-1863 | Юу хийхээ мэдэж байсан ч, хийх эрч хүч хүрэлцэхгүй үе танд тохиолдож байсан уу? | app.js:444 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1864 | executive_load | app.js:444 | INTERNAL_IDENTIFIER |
 | RAW-1865 | Үгүй | app.js:444 | QUESTION_OR_OPTION |
-| RAW-1866 | Бага зэрэг | app.js:444 | RENDERED_USER_VISIBLE |
+| RAW-1866 | Бага зэрэг | app.js:444 | QUESTION_OR_OPTION |
 | RAW-1867 | Тийм | app.js:444 | QUESTION_OR_OPTION |
 | RAW-1868 | Маш их | app.js:444 | QUESTION_OR_OPTION |
 | RAW-1869 | D-P-EL02 | app.js:445 | UNKNOWN_REQUIRES_TRACE |
@@ -1886,7 +1886,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-1880 | Бага зэрэг хазайсны дараа ‘өнөөдөр өнгөрлөө’ гэж бодогдсон уу? | app.js:448 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1881 | control_collapse | app.js:448 | INTERNAL_IDENTIFIER |
 | RAW-1882 | Үгүй | app.js:448 | QUESTION_OR_OPTION |
-| RAW-1883 | Бага зэрэг | app.js:448 | RENDERED_USER_VISIBLE |
+| RAW-1883 | Бага зэрэг | app.js:448 | QUESTION_OR_OPTION |
 | RAW-1884 | Тийм | app.js:448 | QUESTION_OR_OPTION |
 | RAW-1885 | Маш хүчтэй | app.js:448 | QUESTION_OR_OPTION |
 | RAW-1886 | D-P-CC02 | app.js:449 | UNKNOWN_REQUIRES_TRACE |
@@ -1918,7 +1918,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-1912 | Нойр дутуу эсвэл оройн тэнхээ багассан нь өнөөдрийн идэх хүсэлд нөлөөлсөн үү? | app.js:456 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1913 | circadian_pull | app.js:456 | INTERNAL_IDENTIFIER |
 | RAW-1914 | Үгүй | app.js:456 | QUESTION_OR_OPTION |
-| RAW-1915 | Бага зэрэг | app.js:456 | RENDERED_USER_VISIBLE |
+| RAW-1915 | Бага зэрэг | app.js:456 | QUESTION_OR_OPTION |
 | RAW-1916 | Тийм | app.js:456 | QUESTION_OR_OPTION |
 | RAW-1917 | Маш тод | app.js:456 | QUESTION_OR_OPTION |
 | RAW-1918 | D-P-CU01 | app.js:459 | UNKNOWN_REQUIRES_TRACE |
@@ -1926,7 +1926,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-1920 | Хоол харагдах, үнэртэх, эсвэл захиалгын апп харах үед идэх хүсэл нэмэгдсэн үү? | app.js:459 | UNKNOWN_REQUIRES_TRACE |
 | RAW-1921 | cue_pull | app.js:459 | INTERNAL_IDENTIFIER |
 | RAW-1922 | Үгүй | app.js:459 | QUESTION_OR_OPTION |
-| RAW-1923 | Бага зэрэг | app.js:459 | RENDERED_USER_VISIBLE |
+| RAW-1923 | Бага зэрэг | app.js:459 | QUESTION_OR_OPTION |
 | RAW-1924 | Тийм | app.js:459 | QUESTION_OR_OPTION |
 | RAW-1925 | Маш тод | app.js:459 | QUESTION_OR_OPTION |
 | RAW-1926 | Warm start | app.js:464 | UNKNOWN_REQUIRES_TRACE |
@@ -2512,7 +2512,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-2506 | landing | app.js:1204 | INTERNAL_IDENTIFIER |
 | RAW-2507 | {} | app.js:1210 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2508 | internalTest | app.js:1216 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2509 | 1 | app.js:1216 | UNKNOWN_REQUIRES_TRACE |
+| RAW-2509 | 1 | app.js:1216 | RENDERED_USER_VISIBLE |
 | RAW-2510 | coachInvite | app.js:1217 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2511 | / | app.js:1225 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2512 | /coach/login | app.js:1226 | UNKNOWN_REQUIRES_TRACE |
@@ -2572,11 +2572,11 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-2566 | lead_form_view | app.js:1500 | INTERNAL_IDENTIFIER |
 | RAW-2567 | Утас эсвэл имэйл үлдээнэ үү. | app.js:1522 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2568 | leadThankYou | app.js:1540 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2569 | QPay QR үүсгэж байна. | app.js:1547 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2570 | Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно. | app.js:1548 | UNKNOWN_REQUIRES_TRACE |
+| RAW-2569 | QPay QR үүсгэж байна. | app.js:1547 | RENDERED_USER_VISIBLE |
+| RAW-2570 | Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно. | app.js:1548 | RENDERED_USER_VISIBLE |
 | RAW-2571 | Төлбөрийн төлөвийг шалгаж байна. | app.js:1549 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2572 | Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ. | app.js:1550 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2573 | Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно. | app.js:1551 | UNKNOWN_REQUIRES_TRACE |
+| RAW-2572 | Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ. | app.js:1550 | RENDERED_USER_VISIBLE |
+| RAW-2573 | Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно. | app.js:1551 | RENDERED_USER_VISIBLE |
 | RAW-2574 | idle | app.js:1558 | INTERNAL_IDENTIFIER |
 | RAW-2575 | Жин хасалтын тест одоогоор шинэчлэгдэж байна. Төлбөрийн QR үүсгэх боломж түр хаалттай. | app.js:1559 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2576 | landing | app.js:1562 | INTERNAL_IDENTIFIER |
@@ -2601,8 +2601,8 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-2595 | Content-Type | app.js:1645 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2596 | application/json | app.js:1645 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2597 | CHECK_FAILED | app.js:1653 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2598 | paid | app.js:1658 | INTERNAL_IDENTIFIER |
-| RAW-2599 | paid | app.js:1659 | INTERNAL_IDENTIFIER |
+| RAW-2598 | paid | app.js:1658 | RENDERED_USER_VISIBLE |
+| RAW-2599 | paid | app.js:1659 | RENDERED_USER_VISIBLE |
 | RAW-2600 | payment_confirmed | app.js:1661 | INTERNAL_IDENTIFIER |
 | RAW-2601 | pending | app.js:1669 | INTERNAL_IDENTIFIER |
 | RAW-2602 | pending | app.js:1670 | INTERNAL_IDENTIFIER |
@@ -2610,7 +2610,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-2604 | error | app.js:1677 | INTERNAL_IDENTIFIER |
 | RAW-2605 | one-time | app.js:1697 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2606 | one-time | app.js:1698 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2607 | paid | app.js:1703 | INTERNAL_IDENTIFIER |
+| RAW-2607 | paid | app.js:1703 | RENDERED_USER_VISIBLE |
 | RAW-2608 | one-time | app.js:1711 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2609 | seven-day | app.js:1712 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2610 | one-time | app.js:1716 | UNKNOWN_REQUIRES_TRACE |
@@ -2798,7 +2798,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-2792 | Аль нь ч үгүй | app.js:2035 | QUESTION_OR_OPTION |
 | RAW-2793 | Биеийн дохио тэмдэглэгдсэн | app.js:2035 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2794 | Хоол захиалах нь хамгийн амар сонголт болсон | app.js:2036 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2795 | Таны бичсэн тайлбар нэмэлт мэдээлэл болж хадгалагдсан | app.js:2037 | UNKNOWN_REQUIRES_TRACE |
+| RAW-2795 | Таны бичсэн тайлбар нэмэлт мэдээлэл болж хадгалагдсан | app.js:2037 | RENDERED_USER_VISIBLE |
 | RAW-2796 | Өдрийн бүтэцтэй хариулт хадгалагдсан | app.js:2038 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2797 | S1-M01 | app.js:2045 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2798 | Хоолны хэмнэл: ${answers["S1-M01"]} | app.js:2045 | DYNAMIC_TEMPLATE_FRAGMENT |
@@ -2810,7 +2810,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-2804 | Стресс эсвэл тайвшрах хэрэгцээ дурдагдсан | app.js:2049 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2805 | Өлсөлт эсвэл хоолны зайтай холбоотой зүйл дурдагдсан | app.js:2050 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2806 | Дараа нь гэмших, ичих, нуух мэдрэмж дурдагдсан | app.js:2051 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2807 | Таны бичсэн тайлбар нэмэлт мэдээлэл болж хадгалагдсан | app.js:2052 | UNKNOWN_REQUIRES_TRACE |
+| RAW-2807 | Таны бичсэн тайлбар нэмэлт мэдээлэл болж хадгалагдсан | app.js:2052 | RENDERED_USER_VISIBLE |
 | RAW-2808 | \| | app.js:2057 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2809 | нэг хоол алгассан | app.js:2059 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2810 | хоол алгас | app.js:2059 | UNKNOWN_REQUIRES_TRACE |
@@ -2827,9 +2827,9 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-2821 | гол мөч | app.js:2061 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2822 | evening_unplanned_eating | app.js:2061 | INTERNAL_IDENTIFIER |
 | RAW-2823 | өлсөлт өндөр | app.js:2062 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2824 | 8 | app.js:2062 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2825 | 9 | app.js:2062 | UNKNOWN_REQUIRES_TRACE |
-| RAW-2826 | 10 | app.js:2062 | UNKNOWN_REQUIRES_TRACE |
+| RAW-2824 | 8 | app.js:2062 | RENDERED_USER_VISIBLE |
+| RAW-2825 | 9 | app.js:2062 | RENDERED_USER_VISIBLE |
+| RAW-2826 | 10 | app.js:2062 | RENDERED_USER_VISIBLE |
 | RAW-2827 | маш хүчтэй өлс | app.js:2062 | UNKNOWN_REQUIRES_TRACE |
 | RAW-2828 | high_hunger | app.js:2062 | INTERNAL_IDENTIFIER |
 | RAW-2829 | өлсөлт бага | app.js:2063 | UNKNOWN_REQUIRES_TRACE |
@@ -3309,7 +3309,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-3303 | number | app.js:2935 | INTERNAL_IDENTIFIER |
 | RAW-3304 | <label class="field"><span class="muted">Тоогоор оруулна уу</span><input id="input-${question.id}" type="number" value="${escapeAttr(value)}" oninput="setAnswerDraft('${question.id}', this.value)" /></label> | app.js:2936 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-3305 | text | app.js:2938 | INTERNAL_IDENTIFIER |
-| RAW-3306 | Хэрвээ санахгүй эсвэл бичмээргүй байвал хоосон орхиод үргэлжлүүлж болно. | app.js:2939 | UNKNOWN_REQUIRES_TRACE |
+| RAW-3306 | Хэрвээ санахгүй эсвэл бичмээргүй байвал хоосон орхиод үргэлжлүүлж болно. | app.js:2939 | RENDERED_USER_VISIBLE |
 | RAW-3307 | placeholder="${escapeAttr(question.placeholder)}" | app.js:2940 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-3308 | <label class="field"><span class="muted">${question.voice ? "Богино тайлбар" : "Хариулт"}</span><textarea id="input-${question.id}" oninput="setAnswerDraft('${question.id}', this.value)"${placeholder}>${escapeHtml(value)}</textarea></label><p class="muted">${escapeHtml(helper)}</p>${question.voice ? renderStageVoiceConfirmation(question, value) : ""} | app.js:2941 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-3309 | scale | app.js:2943 | INTERNAL_IDENTIFIER |
@@ -3348,8 +3348,8 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-3342 | field | app.js:2991 | INTERNAL_IDENTIFIER |
 | RAW-3343 | muted | app.js:2991 | INTERNAL_IDENTIFIER |
 | RAW-3344 | edit | app.js:2991 | INTERNAL_IDENTIFIER |
-| RAW-3345 | Зассан ойлголтоо мөр мөрөөр бичнэ үү | app.js:2991 | UNKNOWN_REQUIRES_TRACE |
-| RAW-3346 | Нэмэх нэг зүйлээ бичнэ үү | app.js:2991 | UNKNOWN_REQUIRES_TRACE |
+| RAW-3345 | Зассан ойлголтоо мөр мөрөөр бичнэ үү | app.js:2991 | RENDERED_USER_VISIBLE |
+| RAW-3346 | Нэмэх нэг зүйлээ бичнэ үү | app.js:2991 | RENDERED_USER_VISIBLE |
 | RAW-3347 | input-${question.id}-${ui.mode} | app.js:2991 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-3348 | setStageSummaryText('${question.id}', this.value) | app.js:2991 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-3349 | : ""} <div class="actions"> <button class="button secondary" onclick="confirmStageVoiceSummary('${question.id}', 'confirm')">Үргэлжлүүлэх</button> <button class="button ghost" onclick="setStageSummaryMode('${question.id}', 'edit')">Засах</button> <button class="button ghost" onclick="setStageSummaryMode('${question.id}', 'add')">Нэмэх зүйл байна</button> ${ui.mode === "edit" \|\| ui.mode === "add" ? | app.js:2991 | DYNAMIC_TEMPLATE_FRAGMENT |
@@ -3407,11 +3407,11 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-3401 | Бүрэн тайлан гаргах боломжтой | app.js:3287 | UNKNOWN_REQUIRES_TRACE |
 | RAW-3402 | Таны өгсөн мэдээлэл зан үйлийн давтамжийг тодорхойлоход бүрэн хангалттай байна. | app.js:3288 | UNKNOWN_REQUIRES_TRACE |
 | RAW-3403 | 5 өдөр хүрсэн тул бүрэн тайлан гаргах боломжтой боллоо. | app.js:3288 | UNKNOWN_REQUIRES_TRACE |
-| RAW-3404 | 7 хоногийн ажиглалт дууслаа. Таны бүрэн зураглал бэлэн болж байна. | app.js:3294 | UNKNOWN_REQUIRES_TRACE |
+| RAW-3404 | 7 хоногийн ажиглалт дууслаа. Таны бүрэн зураглал бэлэн болж байна. | app.js:3294 | RENDERED_USER_VISIBLE |
 | RAW-3405 | Бүрэн тайлан гаргах боломжтой боллоо. Хүсвэл үргэлжлүүлээд 7/7 болгож нарийвчилж болно. | app.js:3295 | UNKNOWN_REQUIRES_TRACE |
 | RAW-3406 | Таны мэдээлэл тайлан гаргахад ашиглаж болох түвшинд хүрлээ. Дахиад 1 өдөр бөглөвөл илүү сайн болно. | app.js:3296 | UNKNOWN_REQUIRES_TRACE |
-| RAW-3407 | Эхний давтамжууд харагдаж эхэлж байна. 5 өдөр хүрвэл тайлан гаргахад хангалттай мэдээлэлтэй болно. | app.js:3297 | UNKNOWN_REQUIRES_TRACE |
-| RAW-3408 | Өчигдөр бөглөж амжаагүй байсан ч зүгээр. Өнөөдрөөс үргэлжлүүлье. | app.js:3298 | UNKNOWN_REQUIRES_TRACE |
+| RAW-3407 | Эхний давтамжууд харагдаж эхэлж байна. 5 өдөр хүрвэл тайлан гаргахад хангалттай мэдээлэлтэй болно. | app.js:3297 | RENDERED_USER_VISIBLE |
+| RAW-3408 | Өчигдөр бөглөж амжаагүй байсан ч зүгээр. Өнөөдрөөс үргэлжлүүлье. | app.js:3298 | RENDERED_USER_VISIBLE |
 | RAW-3409 | Үгүй | app.js:3302 | QUESTION_OR_OPTION |
 | RAW-3410 | Өнөөдөр төлөвлөөгүй идэлтгүй өдөр байна. Ямар нөхцөл тусалсныг тэмдэглэсэн нь эцсийн тайланд чухал мэдээлэл болно. | app.js:3303 | UNKNOWN_REQUIRES_TRACE |
 | RAW-3411 | Өнөөдөр төлөвлөөгүй идэлт өлсөлт өндөр + оройн эрч хүчний уналттай давхцсан байна. Энэ давтамж давтагдах эсэхийг үргэлжлүүлж харъя. | app.js:3306 | UNKNOWN_REQUIRES_TRACE |
@@ -3470,8 +3470,8 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-3464 | field | app.js:3439 | INTERNAL_IDENTIFIER |
 | RAW-3465 | muted | app.js:3439 | INTERNAL_IDENTIFIER |
 | RAW-3466 | edit | app.js:3439 | INTERNAL_IDENTIFIER |
-| RAW-3467 | Зассан ойлголтоо мөр мөрөөр бичнэ үү | app.js:3439 | UNKNOWN_REQUIRES_TRACE |
-| RAW-3468 | Нэмэх нэг зүйлээ бичнэ үү | app.js:3439 | UNKNOWN_REQUIRES_TRACE |
+| RAW-3467 | Зассан ойлголтоо мөр мөрөөр бичнэ үү | app.js:3439 | RENDERED_USER_VISIBLE |
+| RAW-3468 | Нэмэх нэг зүйлээ бичнэ үү | app.js:3439 | RENDERED_USER_VISIBLE |
 | RAW-3469 | input-D-SUM01-${ui.mode} | app.js:3439 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-3470 | setDailySummaryText(this.value) | app.js:3439 | UNKNOWN_REQUIRES_TRACE |
 | RAW-3471 | : ""} <div class="actions"> <button class="button secondary" onclick="confirmDailySummary('confirm')">Үргэлжлүүлэх</button> <button class="button ghost" onclick="setDailySummaryMode('edit')">Засах</button> <button class="button ghost" onclick="previousDiaryQuestion()">Буцах</button> <button class="button ghost" onclick="setDailySummaryMode('add')">Нэмэх зүйл байна</button> ${ui.mode === "edit" \|\| ui.mode === "add" ? | app.js:3439 | DYNAMIC_TEMPLATE_FRAGMENT |
@@ -3488,7 +3488,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-3482 | complete | app.js:3484 | INTERNAL_IDENTIFIER |
 | RAW-3483 | strong | app.js:3484 | INTERNAL_IDENTIFIER |
 | RAW-3484 | complete | app.js:3484 | INTERNAL_IDENTIFIER |
-| RAW-3485 | Бүрэн | app.js:3484 | UNKNOWN_REQUIRES_TRACE |
+| RAW-3485 | Бүрэн | app.js:3484 | RENDERED_USER_VISIBLE |
 | RAW-3486 | Ашиглахад сайн | app.js:3484 | UNKNOWN_REQUIRES_TRACE |
 | RAW-3487 | usable | app.js:3485 | INTERNAL_IDENTIFIER |
 | RAW-3488 | usable | app.js:3485 | INTERNAL_IDENTIFIER |
@@ -4080,8 +4080,8 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-4074 | button secondary | app.js:4250 | UNKNOWN_REQUIRES_TRACE |
 | RAW-4075 | checkWeightQpayPayment() | app.js:4250 | UNKNOWN_REQUIRES_TRACE |
 | RAW-4076 | disabled | app.js:4250 | INTERNAL_IDENTIFIER |
-| RAW-4077 | Шалгаж байна... | app.js:4250 | UNKNOWN_REQUIRES_TRACE |
-| RAW-4078 | Дахин шалгах | app.js:4250 | UNKNOWN_REQUIRES_TRACE |
+| RAW-4077 | Шалгаж байна... | app.js:4250 | RENDERED_USER_VISIBLE |
+| RAW-4078 | Дахин шалгах | app.js:4250 | RENDERED_USER_VISIBLE |
 | RAW-4079 | : | app.js:4250 | UNKNOWN_REQUIRES_TRACE |
 | RAW-4080 | button secondary | app.js:4251 | UNKNOWN_REQUIRES_TRACE |
 | RAW-4081 | createWeightQpayInvoice() | app.js:4251 | UNKNOWN_REQUIRES_TRACE |
@@ -6129,11 +6129,11 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-6123 | ).join("")} </div> ${followUpName ? | app.js:6924 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-6124 | field | app.js:6926 | INTERNAL_IDENTIFIER |
 | RAW-6125 | muted | app.js:6926 | INTERNAL_IDENTIFIER |
-| RAW-6126 | 2 | app.js:6926 | UNKNOWN_REQUIRES_TRACE |
+| RAW-6126 | 2 | app.js:6926 | RENDERED_USER_VISIBLE |
 | RAW-6127 | updateInternalFeedbackField('${escapeAttr(followUpName)}', this.value) | app.js:6926 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-6128 | : ""} </div> | app.js:6926 | UNKNOWN_REQUIRES_TRACE |
 | RAW-6129 | coachDashboard | app.js:6941 | UNKNOWN_REQUIRES_TRACE |
-| RAW-6130 | Имэйл эсвэл нууц үг буруу байна. | app.js:6943 | UNKNOWN_REQUIRES_TRACE |
+| RAW-6130 | Имэйл эсвэл нууц үг буруу байна. | app.js:6943 | RENDERED_USER_VISIBLE |
 | RAW-6131 | ${topbar(0, "Coach login")} <section class="screen"> <div class="panel stack"> <h2>Coach нэвтрэх</h2> <label class="field"><span class="muted">Имэйл</span><input type="email" value="${escapeAttr(state.coachLoginForm?.email \|\| "")}" oninput="updateCoachLoginField('email', this.value)"></label> <label class="field"><span class="muted">Нууц үг</span><input type="password" value="${escapeAttr(state.coachLoginForm?.password \|\| "")}" oninput="updateCoachLoginField('password', this.value)"></label> ${state.coachLoginError ? | app.js:6950 | DYNAMIC_TEMPLATE_FRAGMENT |
 | RAW-6132 | danger-copy | app.js:6957 | UNKNOWN_REQUIRES_TRACE |
 | RAW-6133 | : ""} <div class="actions"> <button class="button" onclick="submitCoachLogin()">Нэвтрэх</button> <button class="button ghost" onclick="setView('landing')">Нүүр рүү буцах</button> </div> </div> </section> | app.js:6957 | UNKNOWN_REQUIRES_TRACE |
@@ -6240,7 +6240,7 @@ This is a raw source-literal inventory. It is not a user-visible copy catalog an
 | RAW-6234 | Visible surface prototype requires a passing adapter payload. | app.js:7435 | UNKNOWN_REQUIRES_TRACE |
 | RAW-6235 | preview | app.js:7447 | INTERNAL_IDENTIFIER |
 | RAW-6236 | Эхний товч зураглал | app.js:7448 | RENDERED_USER_VISIBLE |
-| RAW-6237 | paid | app.js:7454 | INTERNAL_IDENTIFIER |
+| RAW-6237 | paid | app.js:7454 | RENDERED_USER_VISIBLE |
 | RAW-6238 | Дэлгэрэнгүй тайлангийн хэсэг | app.js:7455 | RENDERED_USER_VISIBLE |
 | RAW-6239 | safety | app.js:7461 | INTERNAL_IDENTIFIER |
 | RAW-6240 | Аюулгүй байдлын сануулга | app.js:7462 | RENDERED_USER_VISIBLE |
