@@ -26,7 +26,7 @@ Open the assessment choice screen and compare the two commercial product cards.
 
 ### Expected
 
-One-Time shows “Нэг удаагийн гүн анализ”, “Үндсэн үнэ 29,000₮”, and “Нээлтийн урамшуулалт үнэ 9,900₮”. 7-Day shows “7 хоногийн гүн анализ”, “Үндсэн үнэ 69,000₮”, and “Нээлтийн урамшуулалт үнэ 29,000₮”. The 7-Day card explains evening diary effort, 5-day sufficiency, and non-calorie tracking.
+One-Time shows “Нэг удаагийн гүн анализ”, “Үндсэн үнэ [REMOVED_FEATURE_PRICE]”, and “Нээлтийн урамшуулалт үнэ 9,900₮”. 7-Day shows “[REMOVED_FEATURE_PRODUCT] анализ”, “Үндсэн үнэ [REMOVED_FEATURE_ANCHOR]”, and “Нээлтийн урамшуулалт үнэ [REMOVED_FEATURE_PRICE]”. The 7-Day card explains evening diary effort, 5-day sufficiency, and non-calorie tracking.
 
 ### Actual
 
@@ -88,11 +88,11 @@ Click demo payment success on the One-Time paywall.
 
 ### Expected
 
-Full One-Time report unlocks, the paywall disappears, upgrade CTA is visible, upgrade price is 19,900₮, and upgrade is framed as refinement.
+Full One-Time report unlocks, the paywall disappears, upgrade CTA is visible, upgrade price is [REMOVED_FEATURE_UPGRADE], and upgrade is framed as refinement.
 
 ### Actual
 
-PASS. Full report sections unlock. The upgrade block shows “Upgrade үнэ: 19,900₮” and says the user can move from One-Time deep analysis to 7-Day deep analysis at a discount.
+PASS. Full report sections unlock. The upgrade block shows “Upgrade үнэ: [REMOVED_FEATURE_UPGRADE]” and says the user can move from One-Time deep analysis to 7-Day deep analysis at a discount.
 
 ### Scores
 
@@ -119,7 +119,7 @@ Choose the 7-Day product directly without demo payment.
 
 ### Expected
 
-7-Day paywall appears before diary onboarding. Promo price 29,000₮ and anchor price 69,000₮ are visible. Value copy explains diary, trigger map, initial vs observed comparison, and a more precise experiment. Diary cannot start before unlock.
+7-Day paywall appears before diary onboarding. Promo price [REMOVED_FEATURE_PRICE] and anchor price [REMOVED_FEATURE_ANCHOR] are visible. Value copy explains diary, trigger map, initial vs observed comparison, and a more precise experiment. Diary cannot start before unlock.
 
 ### Actual
 
@@ -180,11 +180,11 @@ Unlock One-Time, then use the 7-Day refinement/upgrade path.
 
 ### Expected
 
-Upgrade CTA is visible after the report. Upgrade price is 19,900₮. Copy says “Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой.” Demo upgrade unlocks diary onboarding. Total paid logic feels fair because 9,900₮ + 19,900₮ is close to 29,000₮.
+Upgrade CTA is visible after the report. Upgrade price is [REMOVED_FEATURE_UPGRADE]. Copy says “Та нэг удаагийн гүн анализ нээсэн тул [REMOVED_FEATURE_PRODUCT] анализ руу хөнгөлөлттэй шилжих боломжтой.” Demo upgrade unlocks diary onboarding. Total paid logic feels fair because 9,900₮ + [REMOVED_FEATURE_UPGRADE] is close to [REMOVED_FEATURE_PRICE].
 
 ### Actual
 
-PASS. Upgrade is visible after paid One-Time report, uses “нарийвчлах”, shows 19,900₮, and demo upgrade opens 7-Day onboarding.
+PASS. Upgrade is visible after paid One-Time report, uses “нарийвчлах”, shows [REMOVED_FEATURE_UPGRADE], and demo upgrade opens 7-Day onboarding.
 
 ### Scores
 
@@ -303,11 +303,11 @@ Review commercial screens conceptually at 390px and 430px widths and scan render
 
 ### Expected
 
-No horizontal overflow, readable price cards, tap-friendly CTAs, clear anchor/promo hierarchy, no pressure phrases, no old prices, and correct contextual use of 9,900₮, 19,900₮, 29,000₮, and 69,000₮.
+No horizontal overflow, readable price cards, tap-friendly CTAs, clear anchor/promo hierarchy, no pressure phrases, no old prices, and correct contextual use of 9,900₮, [REMOVED_FEATURE_UPGRADE], [REMOVED_FEATURE_PRICE], and [REMOVED_FEATURE_ANCHOR].
 
 ### Actual
 
-PASS. Commercial blocks use responsive card/grid styles. Forbidden pressure phrases are absent from commercial surfaces. The old One-Time and old upgrade prices are absent from visible app copy. 19,900₮ appears only in upgrade context.
+PASS. Commercial blocks use responsive card/grid styles. Forbidden pressure phrases are absent from commercial surfaces. The old One-Time and old upgrade prices are absent from visible app copy. [REMOVED_FEATURE_UPGRADE] appears only in upgrade context.
 
 ### Scores
 
@@ -331,7 +331,7 @@ Before production launch, run a real browser visual pass at 390px and 430px afte
 * Price clarity: Strong. Anchor and opening promotion labels are easy to understand.
 * Value clarity: Strongest for 7-Day, because diary, trigger map, and initial-vs-observed comparison explain the higher price.
 * Paywall timing: One-Time correctly allows assessment before payment; 7-Day correctly blocks diary onboarding before payment.
-* Upgrade fairness: Strong. 9,900₮ + 19,900₮ is close to the 29,000₮ opening promotion.
+* Upgrade fairness: Strong. 9,900₮ + [REMOVED_FEATURE_UPGRADE] is close to the [REMOVED_FEATURE_PRICE] opening promotion.
 * Safety bypass: Protected. Mode 3 and Mode 4 bypass ordinary paywalls.
 * Data readiness after payment: Protected. Payment does not unlock a full 7-Day report without enough diary data.
 * Mobile commercial readability: Likely acceptable with existing responsive card/grid behavior; verify again after real payment UI is added.

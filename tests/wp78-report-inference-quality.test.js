@@ -13,7 +13,7 @@ function renderPaidReport(stageAnswers, extras = {}) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-C01": "35",
@@ -22,7 +22,7 @@ function renderPaidReport(stageAnswers, extras = {}) {
       ...stageAnswers
     },
     preliminary: [],
-    diaryEntries: [],
+    removedEntries: [],
     stageVoiceSummaries: {},
     ...extras
   });

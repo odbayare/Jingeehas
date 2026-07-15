@@ -11,7 +11,7 @@ _internal.setTestState({
   packageType: "one-time",
   view: "report",
   oneTimePaid: true,
-  sevenDayPaid: false,
+  removedFeaturePaid: false,
   upgradePaid: false,
   stageAnswers: {
     "S1-C02": "Эрэгтэй",
@@ -21,7 +21,7 @@ _internal.setTestState({
     "S1-S04": "Үгүй"
   },
   preliminary: [],
-  diaryEntries: [],
+  removedEntries: [],
   stageVoiceSummaries: {}
 });
 
@@ -62,8 +62,8 @@ assert.strictEqual((reportText.match(/Тайлангаа хадгалах/g) || 
   ["Таны эхний", "ажиглалт"].join(" "),
   ["Гүн тайлангийн", "хэсэг"].join(" "),
   ["Төлбөртэй", "тайланд"].join(" "),
-  "7 хоногоор нарийвчлах",
-  "19,900₮ төлөөд 7 хоногоор нарийвчлах"
+  "[REMOVED_FEATURE_REFINEMENT]",
+  "[REMOVED_FEATURE_UPGRADE] төлөөд [REMOVED_FEATURE_REFINEMENT]"
 ].forEach(forbidden => {
   assert(!paidText.includes(forbidden), `paid report must not include teaser/upsell copy: ${forbidden}`);
 });
@@ -80,7 +80,7 @@ _internal.setTestState({
     "S1-S04": "Үгүй"
   },
   preliminary: [],
-  diaryEntries: [],
+  removedEntries: [],
   stageVoiceSummaries: {}
 });
 const noCautionText = normalize(_internal.renderReport());

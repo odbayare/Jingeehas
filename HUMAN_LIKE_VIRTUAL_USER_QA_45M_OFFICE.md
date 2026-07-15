@@ -51,7 +51,7 @@ Use this run to test:
 
 ### Run 2 — Optional 7-Day Deep Assessment
 
-Choose `7 хоногийн гүн зураглал`.
+Choose `[REMOVED_FEATURE_PRODUCT] зураглал`.
 
 Use the same setup pattern, then enter 5 diary days. This run checks whether observed daily data strengthens:
 

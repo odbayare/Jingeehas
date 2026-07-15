@@ -2,48 +2,222 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0269 — P0
+## COPY-0405 — P0
 
 **Exact current text**
 
-> 7 хоногийн тэмдэглэлээр таны өдөр тутмын бодит давтамж илүү тод харагдана. Анхны сэтгэгдэл ба өдөр тутмын ажиглалт хоёр хаана давхцаж, хаана зөрж байгааг эндээс харна.
+> Буцах
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
+- Surface: PAYMENT
 - Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2881
-- Source function/object: renderSevenDayPaywall
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0406 — P0
+
+**Exact current text**
+
+> 9,900₮ төлөөд бүрэн тайлангаа нээх
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-pre-invoice
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-pre-invoice [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> 9,900₮ төлөөд бүрэн тайлангаа нээх
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0407 — P0
+
+**Exact current text**
+
+> Сонголт руу буцах
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-pre-invoice, qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 3
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-pre-invoice, qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> 9,900₮ төлөөд бүрэн тайлангаа нээх
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0408 — P0
+
+**Exact current text**
+
+> QPay QR үүсгэж байна.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 1476
+- Source function/object: qpayStatusMessage
 - Source mapping: RESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> </div>
+> return {
 
 **Source item**
 
-> <p>7 хоногийн тэмдэглэлээр таны өдөр тутмын бодит давтамж илүү тод харагдана. Анхны сэтгэгдэл ба өдөр тутмын ажиглалт хоёр хаана давхцаж, хаана зөрж байгааг эндээс харна.</p>
+> creating: "QPay QR үүсгэж байна.",
 
 **Source context after**
 
-> <ul>
+> pending: "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
 
 **Rendered context**
 
-> 29,000₮
-> 7 хоногийн тэмдэглэлээр таны өдөр тутмын бодит давтамж илүү тод харагдана. Анхны сэтгэгдэл ба өдөр тутмын ажиглалт хоёр хаана давхцаж, хаана зөрж байгааг эндээс харна.
-> Эхлэх богино асуулт
+> Сонголт руу буцах
+> QPay QR үүсгэж байна.
+> Утаснаас төлөх бол банкны апп сонгож болно.
 
 **Dynamic values**
 
@@ -61,284 +235,48 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0270 — P0
+## COPY-0409 — P0
 
 **Exact current text**
 
-> Эхлэх богино асуулт
+> Утаснаас төлөх бол банкны апп сонгож болно.
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
+- Surface: QPAY
 - Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 7 хоногийн тэмдэглэлээр таны өдөр тутмын бодит давтамж илүү тод харагдана. Анхны сэтгэгдэл ба өдөр тутмын ажиглалт хоёр хаана давхцаж, хаана зөрж байгааг эндээс харна.
-> Эхлэх богино асуулт
-> 7 өдөр богино тэмдэглэл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0271 — P0
-
-**Exact current text**
-
-> 7 өдөр богино тэмдэглэл
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Эхлэх богино асуулт
-> 7 өдөр богино тэмдэглэл
-> Орой бүр 3–5 минут
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0272 — P0
-
-**Exact current text**
-
-> Орой бүр 3–5 минут
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 7 өдөр богино тэмдэглэл
-> Орой бүр 3–5 минут
-> 5 өдөр бөглөсөн ч тайлан гарна
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0273 — P0
-
-**Exact current text**
-
-> 5 өдөр бөглөсөн ч тайлан гарна
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Орой бүр 3–5 минут
-> 5 өдөр бөглөсөн ч тайлан гарна
-> Калори тоолохгүй, давтагддаг мөчүүдийг ажиглана
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0274 — P0
-
-**Exact current text**
-
-> Калори тоолохгүй, давтагддаг мөчүүдийг ажиглана
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2887
-- Source function/object: renderSevenDayPaywall
+- Source line: 3311
+- Source function/object: renderQpayDesktopPaymentSurface
 - Source mapping: RESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <li>5 өдөр бөглөсөн ч тайлан гарна</li>
+> <div class="qpay-secondary-apps">
 
 **Source item**
 
-> <li>Калори тоолохгүй, давтагддаг мөчүүдийг ажиглана</li>
+> <p class="muted">Утаснаас төлөх бол банкны апп сонгож болно.</p>
 
 **Source context after**
 
-> </ul>
+> ${renderQpayAppGrid(invoice, { emptyText: "Банкны аппын холбоос ирээгүй байна." })}
 
 **Rendered context**
 
-> 5 өдөр бөглөсөн ч тайлан гарна
-> Калори тоолохгүй, давтагддаг мөчүүдийг ажиглана
-> 29,000₮ төлөөд эхлүүлэх
+> QPay QR үүсгэж байна.
+> Утаснаас төлөх бол банкны апп сонгож болно.
+> T
 
 **Dynamic values**
 
@@ -356,29 +294,29 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0275 — P0
+## COPY-0410 — P0
 
 **Exact current text**
 
-> 29,000₮ төлөөд эхлүүлэх
+> T
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
+- Surface: QPAY
 - Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 4
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -395,9 +333,9 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Калори тоолохгүй, давтагддаг мөчүүдийг ажиглана
-> 29,000₮ төлөөд эхлүүлэх
-> Буцах
+> Утаснаас төлөх бол банкны апп сонгож болно.
+> T
+> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
 
 **Dynamic values**
 
@@ -415,48 +353,48 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0276 — P0
+## COPY-0411 — P0
 
 **Exact current text**
 
-> Буцах
+> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
+- Surface: QPAY
 - Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
+- Source line: 3323
+- Source function/object: renderQpayMobilePaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <div class="stack">
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <p class="muted">Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.</p>
 
 **Source context after**
 
-> None
+> ${renderQpayAppGrid(invoice)}
 
 **Rendered context**
 
-> 29,000₮ төлөөд эхлүүлэх
-> Буцах
-> Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.
+> T
+> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> QR кодоор төлөх
 
 **Dynamic values**
 
@@ -474,47 +412,48 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0277 — P0
+## COPY-0412 — P0
 
 **Exact current text**
 
-> Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.
+> QR кодоор төлөх
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: SEVEN_DAY_PAYWALL
+- Surface: QPAY
 - Role: PUBLIC_USER
-- Scenario: seven-day-paywall
-- Render source: renderSevenDayPaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderSevenDayPaywall via seven-day-paywall [FULL_SURFACE]
+- Source line: 3327
+- Source function/object: renderQpayMobilePaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <details class="qpay-mobile-qr-toggle">
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <summary>QR кодоор төлөх</summary>
 
 **Source context after**
 
-> None
+> <img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr">
 
 **Rendered context**
 
-> Буцах
-> Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.
+> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> QR кодоор төлөх
+> Лавлах дугаар: INV-TEST-001
 
 **Dynamic values**
 
@@ -532,29 +471,29 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0466 — P0
+## COPY-0413 — P0
 
 **Exact current text**
 
-> 7 хоногоор нарийвчлах
+> Лавлах дугаар: INV-TEST-001
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -571,8 +510,9 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> 7 хоногоор нарийвчлах
-> Энэ зураглалыг 7 хоногоор илүү тодруулж болно
+> QR кодоор төлөх
+> Лавлах дугаар: INV-TEST-001
+> Шалгаж байна...
 
 **Dynamic values**
 
@@ -590,813 +530,47 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0467 — P0
+## COPY-0414 — P0
 
 **Exact current text**
 
-> Энэ зураглалыг 7 хоногоор илүү тодруулж болно
+> Шалгаж байна...
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 7 хоногоор нарийвчлах
-> Энэ зураглалыг 7 хоногоор илүү тодруулж болно
-> Нарийвчлах үнэ:
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0468 — P0
-
-**Exact current text**
-
-> Нарийвчлах үнэ:
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Энэ зураглалыг 7 хоногоор илүү тодруулж болно
-> Нарийвчлах үнэ:
-> 19,900₮
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0469 — P0
-
-**Exact current text**
-
-> 19,900₮
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 18
-- Source function/object: module/object scope
-- Source mapping: RESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> sevenDayAnchor: "69,000₮",
-
-**Source item**
-
-> upgrade: "19,900₮"
-
-**Source context after**
-
-> };
-
-**Rendered context**
-
-> Нарийвчлах үнэ:
-> 19,900₮
-> 7 хоногийн нээлтийн үнэ 29,000₮
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0470 — P0
-
-**Exact current text**
-
-> 7 хоногийн нээлтийн үнэ 29,000₮
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 19,900₮
-> 7 хоногийн нээлтийн үнэ 29,000₮
-> Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0471 — P0
-
-**Exact current text**
-
-> Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 7 хоногийн нээлтийн үнэ 29,000₮
-> Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой.
-> Орой бүр 3–5 минутын богино тэмдэглэл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0472 — P0
-
-**Exact current text**
-
-> Орой бүр 3–5 минутын богино тэмдэглэл
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой.
-> Орой бүр 3–5 минутын богино тэмдэглэл
-> Идэх хүсэл эхэлдэг нөхцлийн зураглал
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0473 — P0
-
-**Exact current text**
-
-> Идэх хүсэл эхэлдэг нөхцлийн зураглал
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 4439
-- Source function/object: renderUpgradePaywall
-- Source mapping: RESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <li>Орой бүр 3–5 минутын богино тэмдэглэл</li>
-
-**Source item**
-
-> <li>Идэх хүсэл эхэлдэг нөхцлийн зураглал</li>
-
-**Source context after**
-
-> <li>Эхний зураглал ба бодит ажиглалтын харьцуулалт</li>
-
-**Rendered context**
-
-> Орой бүр 3–5 минутын богино тэмдэглэл
-> Идэх хүсэл эхэлдэг нөхцлийн зураглал
-> Эхний зураглал ба бодит ажиглалтын харьцуулалт
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0474 — P0
-
-**Exact current text**
-
-> Эхний зураглал ба бодит ажиглалтын харьцуулалт
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 4440
-- Source function/object: renderUpgradePaywall
-- Source mapping: RESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <li>Идэх хүсэл эхэлдэг нөхцлийн зураглал</li>
-
-**Source item**
-
-> <li>Эхний зураглал ба бодит ажиглалтын харьцуулалт</li>
-
-**Source context after**
-
-> <li>Идэх хүсэл яг ямар хэрэгцээтэй давхцаж байгааг нарийвчлах</li>
-
-**Rendered context**
-
-> Идэх хүсэл эхэлдэг нөхцлийн зураглал
-> Эхний зураглал ба бодит ажиглалтын харьцуулалт
-> Идэх хүсэл яг ямар хэрэгцээтэй давхцаж байгааг нарийвчлах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0475 — P0
-
-**Exact current text**
-
-> Идэх хүсэл яг ямар хэрэгцээтэй давхцаж байгааг нарийвчлах
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 4441
-- Source function/object: renderUpgradePaywall
-- Source mapping: RESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <li>Эхний зураглал ба бодит ажиглалтын харьцуулалт</li>
-
-**Source item**
-
-> <li>Идэх хүсэл яг ямар хэрэгцээтэй давхцаж байгааг нарийвчлах</li>
-
-**Source context after**
-
-> <li>Илүү тод 14 хоногийн туршилт</li>
-
-**Rendered context**
-
-> Эхний зураглал ба бодит ажиглалтын харьцуулалт
-> Идэх хүсэл яг ямар хэрэгцээтэй давхцаж байгааг нарийвчлах
-> Илүү тод 14 хоногийн туршилт
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0476 — P0
-
-**Exact current text**
-
-> Илүү тод 14 хоногийн туршилт
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Идэх хүсэл яг ямар хэрэгцээтэй давхцаж байгааг нарийвчлах
-> Илүү тод 14 хоногийн туршилт
-> 19,900₮ төлөөд 7 хоногоор нарийвчлах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0477 — P0
-
-**Exact current text**
-
-> 19,900₮ төлөөд 7 хоногоор нарийвчлах
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Илүү тод 14 хоногийн туршилт
-> 19,900₮ төлөөд 7 хоногоор нарийвчлах
-> Тайлан руу буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0478 — P0
-
-**Exact current text**
-
-> Тайлан руу буцах
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 4447
-- Source function/object: renderUpgradePaywall
-- Source mapping: RESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment('upgrade')">Дотоод туршилтаар нээх</button>`)}
-
-**Source item**
-
-> <button class="button ghost" onclick="setView('report')">Тайлан руу буцах</button>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> 19,900₮ төлөөд 7 хоногоор нарийвчлах
-> Тайлан руу буцах
-> Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0479 — P0
-
-**Exact current text**
-
-> Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: UPGRADE_PAYWALL
-- Role: PAID_USER
-- Scenario: upgrade-paywall
-- Render source: renderUpgradePaywall
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderUpgradePaywall via upgrade-paywall [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Тайлан руу буцах
-> Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0654 — P0
-
-**Exact current text**
-
-> Тайлан сэргээх холбоо барих мэдээлэл
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
+- Surface: QPAY
 - Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
+- Scenario: qpay-invoice-created
+- Render source: renderWeightQpayPaymentBox
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2729
-- Source function/object: renderContactCaptureForm
+- Source line: 3355
+- Source function/object: renderWeightQpayPaymentBox
 - Source mapping: RESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <div>
+> ${invoice
 
 **Source item**
 
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
+> ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Шалгаж байна..." : "Дахин шалгах"}</button>`
 
 **Source context after**
 
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
+> : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR үүсгэж байна..." : `${oneTimePrice} төлөөд бүрэн тайлангаа нээх`}</button>`}
 
 **Rendered context**
 
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
+> Лавлах дугаар: INV-TEST-001
+> Шалгаж байна...
 
 **Dynamic values**
 
@@ -1414,48 +588,751 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0655 — P0
+## COPY-0415 — P0
 
 **Exact current text**
 
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
+> Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
+- Surface: QPAY
 - Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
+- Scenario: qpay-pending
+- Render source: renderWeightQpayPaymentBox
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2730
-- Source function/object: renderContactCaptureForm
+- Source line: 1477
+- Source function/object: qpayStatusMessage
 - Source mapping: RESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox via qpay-pending [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
+> creating: "QPay QR үүсгэж байна.",
 
 **Source item**
 
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
+> pending: "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
 
 **Source context after**
 
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
+> checking: "Төлбөрийн төлөвийг шалгаж байна.",
 
 **Rendered context**
 
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
+> Лавлах дугаар: INV-TEST-001
+> Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.
+> Дахин шалгах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0416 — P0
+
+**Exact current text**
+
+> Дахин шалгах
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-pending [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.
+> Дахин шалгах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0417 — P0
+
+**Exact current text**
+
+> Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 1479
+- Source function/object: qpayStatusMessage
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> checking: "Төлбөрийн төлөвийг шалгаж байна.",
+
+**Source item**
+
+> paid: "Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
+
+**Source context after**
+
+> error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно."
+
+**Rendered context**
+
+> Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
+> Утаснаас төлөх бол банкны апп сонгож болно.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0418 — P0
+
+**Exact current text**
+
+> Утаснаас төлөх бол банкны апп сонгож болно.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3311
+- Source function/object: renderQpayDesktopPaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="qpay-secondary-apps">
+
+**Source item**
+
+> <p class="muted">Утаснаас төлөх бол банкны апп сонгож болно.</p>
+
+**Source context after**
+
+> ${renderQpayAppGrid(invoice, { emptyText: "Банкны аппын холбоос ирээгүй байна." })}
+
+**Rendered context**
+
+> Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
+> Утаснаас төлөх бол банкны апп сонгож болно.
+> T
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0419 — P0
+
+**Exact current text**
+
+> T
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Утаснаас төлөх бол банкны апп сонгож болно.
+> T
+> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0420 — P0
+
+**Exact current text**
+
+> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3323
+- Source function/object: renderQpayMobilePaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="stack">
+
+**Source item**
+
+> <p class="muted">Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.</p>
+
+**Source context after**
+
+> ${renderQpayAppGrid(invoice)}
+
+**Rendered context**
+
+> T
+> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> QR кодоор төлөх
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0421 — P0
+
+**Exact current text**
+
+> QR кодоор төлөх
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3327
+- Source function/object: renderQpayMobilePaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <details class="qpay-mobile-qr-toggle">
+
+**Source item**
+
+> <summary>QR кодоор төлөх</summary>
+
+**Source context after**
+
+> <img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr">
+
+**Rendered context**
+
+> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> QR кодоор төлөх
+> Лавлах дугаар: INV-TEST-001
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0422 — P0
+
+**Exact current text**
+
+> Лавлах дугаар: INV-TEST-001
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> QR кодоор төлөх
+> Лавлах дугаар: INV-TEST-001
+> Дахин шалгах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0423 — P0
+
+**Exact current text**
+
+> Дахин шалгах
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Лавлах дугаар: INV-TEST-001
+> Дахин шалгах
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0424 — P0
+
+**Exact current text**
+
+> Сонголт руу буцах
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Дахин шалгах
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0425 — P0
+
+**Exact current text**
+
+> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-error
+- Render source: renderWeightQpayPaymentBox with qpayStatusMessage(error)
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 1480
+- Source function/object: qpayStatusMessage
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox with qpayStatusMessage(error) via qpay-error [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> paid: "Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
+
+**Source item**
+
+> error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно."
+
+**Source context after**
+
+> }[status] || "";
+
+**Rendered context**
+
+> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно.
+> 9,900₮ төлөөд бүрэн тайлангаа нээх
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0426 — P0
+
+**Exact current text**
+
+> 9,900₮ төлөөд бүрэн тайлангаа нээх
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-error
+- Render source: renderWeightQpayPaymentBox with qpayStatusMessage(error)
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox with qpayStatusMessage(error) via qpay-error [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно.
+> 9,900₮ төлөөд бүрэн тайлангаа нээх
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0427 — P0
+
+**Exact current text**
+
+> Сонголт руу буцах
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-error
+- Render source: renderWeightQpayPaymentBox with qpayStatusMessage(error)
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox with qpayStatusMessage(error) via qpay-error [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> 9,900₮ төлөөд бүрэн тайлангаа нээх
+> Сонголт руу буцах
 
 **Dynamic values**
 

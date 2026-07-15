@@ -11,8 +11,7 @@ function renderedChoiceSurfaces() {
   return normalize([
     _internal.renderLanding(),
     _internal.renderAbout(),
-    _internal.renderChoice(),
-    _internal.renderSevenDayStart()
+    _internal.renderChoice()
   ].join("\n"));
 }
 
@@ -30,7 +29,7 @@ function setOneTimeReport() {
       { key: "decisionDefault", score: 4, label: "дунд зэрэг нийцэж байна" }
     ],
     stageVoiceSummaries: {},
-    diaryEntries: []
+    removedEntries: []
   });
 }
 
@@ -45,16 +44,16 @@ function setMode2Report() {
     },
     preliminary: [{ key: "executive", score: 4, label: "дунд зэрэг нийцэж байна" }],
     stageVoiceSummaries: {},
-    diaryEntries: []
+    removedEntries: []
   });
 }
 
 function setMode3Report() {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     stageAnswers: { "S1-B03": "Тийм" },
-    diaryEntries: Array.from({ length: 5 }, (_, index) => ({
+    removedEntries: Array.from({ length: 5 }, (_, index) => ({
       day_number: index + 1,
       meal_rhythm: "2-3 тогтмол хоол",
       unplanned_eating_count: "Үгүй",
@@ -94,21 +93,11 @@ function run() {
   ].forEach(copy => assert(choiceText.includes(copy), `choice copy missing: ${copy}`));
 
   [
-    "Орой бүр 3–5 минут",
-    "5 өдөр бөглөсөн ч тайлан гарна",
-    "Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш",
-    "калори тоолохгүй",
-    "давтагддаг мөчүүдийг ажиглана",
-    "Энэ нь илүү их тураах төлөвлөгөө биш"
-  ].forEach(copy => assert(choiceText.includes(copy), `7-day effort copy missing: ${copy}`));
-
-  [
     "Тайлан ямар харагдах вэ?",
     "Жишээ үр дүн",
     "Хамгийн тод харагдаж буй зүйл",
     "Энэ юу гэсэн үг вэ?",
     "Эхний зөөлөн алхам",
-    "7 хоногоор нарийвчилбал",
     "Орой ядарсан үед хоол бодож, сонгож, бэлдэх тэнхээ үлдэхгүй байна."
   ].forEach(copy => assert(choiceText.includes(copy), `sample preview missing: ${copy}`));
 
@@ -120,7 +109,7 @@ function run() {
   assert(oneTimeText.includes("3. Таны хамгийн магадлалтай гол хэв маяг"));
   assert(oneTimeText.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"));
   assert(!oneTimeText.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"));
-  assert(!oneTimeText.includes("7 хоногоор нарийвчлах"));
+  assert(!oneTimeText.includes("[REMOVED_FEATURE_REFINEMENT]"));
   assert(!oneTimeText.includes("Миний pattern-ийг 7 хоногоор шалгах"));
   assertNoPressureCopy(oneTimeText);
 

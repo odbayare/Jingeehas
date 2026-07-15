@@ -79,7 +79,7 @@ User-facing PDF/Markdown was checked for absence of:
 - `Саналын экспорт`
 - `Сонголт руу буцах`
 - `Шинээр эхлэх`
-- standalone `7 хоногоор нарийвчлах`
+- standalone `[REMOVED_FEATURE_REFINEMENT]`
 - `Route`
 - `Verdict`
 - `Checklist`

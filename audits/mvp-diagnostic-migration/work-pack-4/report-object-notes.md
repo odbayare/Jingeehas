@@ -48,7 +48,7 @@ The object includes:
 - `wrongSelfExplanation`
 - `firstGentleChange`
 - `fourteenDayExperiment`
-- `sevenDayDiaryConfirmation`
+- `removedFeatureDiaryConfirmation`
 - `safetyBlock`
 - `evidenceExplanation`
 - `copyConstraints`

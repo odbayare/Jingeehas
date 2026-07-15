@@ -188,7 +188,7 @@ function run() {
       copyStatus: ""
     },
     stageAnswers: {},
-    diaryEntries: []
+    removedEntries: []
   });
   let start = normalize(_internal.renderOneTimeStart());
   assert(start.includes("Coach-ийн урилга илэрлээ"));
@@ -205,7 +205,7 @@ function run() {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     coachInvite: null,
     coachDiscountConsent: false,
@@ -218,7 +218,7 @@ function run() {
       copyStatus: ""
     },
     stageAnswers: { "S1-C01": "33", "S1-S04": "Үгүй" },
-    diaryEntries: []
+    removedEntries: []
   });
   paywall = normalize(_internal.renderReport());
   assert(paywall.includes("Төлөх үнэ 9,900₮"));

@@ -60,19 +60,16 @@ function run() {
     "control_collapse"
   ], "question/option copy");
 
-  assert(questionCopy.includes("ингэе гэж бодоогүй байсан ч"), "daily diary should ask about lived unplanned moments");
-  assert(/хамгийн амар сонголт/i.test(questionCopy), "daily/probe copy should include natural default-choice phrasing");
+  assert(/хамгийн амар сонголт/i.test(questionCopy), "question copy should include natural default-choice phrasing");
   assert(questionCopy.includes("сэтгэл түр намдах"), "probe copy should include natural regulation phrasing");
-  assert(questionCopy.includes("Тайлбар хадгалагдлаа"), "summary confirmation should use natural saved-note copy");
+  assert(fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8").includes("Тайлбар хадгалагдлаа"), "stage summary confirmation should use natural saved-note copy");
 
   _internal.setTestState({
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
     upgradePaid: false,
     stageAnswers: { "S1-B03": "Тийм" },
-    diaryEntries: []
   });
   const professional = normalize(_internal.renderReport());
   assert(professional.includes("онош гэсэн үг биш"), "safety copy should include non-diagnostic reassurance");
@@ -82,7 +79,6 @@ function run() {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-L01": "Бараг өдөр бүр",
@@ -92,7 +88,6 @@ function run() {
     preliminary: [
       { key: "executive", score: 5, label: "хүчтэй нийцэж байна" }
     ],
-    diaryEntries: []
   });
   const report = normalize(_internal.renderReport());
   const livedIndex = Math.max(

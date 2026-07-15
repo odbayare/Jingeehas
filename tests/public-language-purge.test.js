@@ -20,7 +20,7 @@ function setBase(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-L01": "Бараг өдөр бүр",
@@ -28,7 +28,6 @@ function setBase(overrides = {}) {
       "S1-L03": ["Цаг", "Ядаргаа", "Юу хийхээ шийдэх"]
     },
     preliminary: [{ key: "executive", score: 5, label: "хүчтэй нийцэж байна" }],
-    diaryEntries: [],
     ...overrides
   });
 }
@@ -41,22 +40,14 @@ function publicScreensText() {
   const oneTimeStart = _internal.renderOneTimeStart();
   const oneTimePaywall = _internal.renderReport();
 
-  setBase({ packageType: "seven-day", view: "sevenDayStart", sevenDayPaid: false });
-  const sevenDayPaywall = _internal.renderSevenDayPaywall();
-
-  setBase({ packageType: "seven-day", view: "sevenDayStart", sevenDayPaid: true });
-  const sevenDayStart = _internal.renderSevenDayStart();
-
   setBase();
   _internal.startLeadCapture("one-time");
   const leadCapture = _internal.renderLeadCapture();
   const leadThankYou = _internal.renderLeadThankYou();
 
-  setBase({ packageType: "seven-day", sevenDayPaid: true, diaryEntries: [{ day_number: 1, meal_rhythm: "Тогтуун, хоол алгасаагүй" }] });
-  const insufficientReport = _internal.renderReport();
   const questionText = allQuestionObjects().map(question => [question.text, ...(question.options || [])].join(" ")).join("\n");
 
-  return normalize([landing, about, choice, oneTimeStart, oneTimePaywall, sevenDayPaywall, sevenDayStart, leadCapture, leadThankYou, insufficientReport, questionText].join("\n"));
+  return normalize([landing, about, choice, oneTimeStart, oneTimePaywall, leadCapture, leadThankYou, questionText].join("\n"));
 }
 
 function run() {
@@ -91,14 +82,13 @@ function run() {
     "craving"
   ], "public entry/paywall/lead screens");
 
-  assert(publicText.includes("Эхний хэсгийг үнэгүй харах"));
-  assert(publicText.includes("Идэх хүсэл эхэлдэг нөхцөл"));
-  assert(publicText.includes("7 хоногийн тэмдэглэл"));
+  assert(publicText.includes("Нэг удаагийн гүн анализ"));
+  assert(publicText.includes("Хамгийн тод давтагддаг нөхцөл"));
+  assert(publicText.includes("9,900₮ төлөөд тайлангаа нээх"));
   assert(publicText.includes("тайлангийн жишээ"));
-  assert(publicText.includes("Тэмдэглэлээ үргэлжлүүлэх"));
   assert(publicText.includes("Утас эсвэл имэйл"));
   assert(publicText.includes("Нойр муу хоносны маргааш амттай юм руу илүү амархан татагддаг уу?"));
-  assert(publicText.includes("7 хоногийн гүн анализ руу шилжих боломж"));
+  assert(!publicText.includes("[REMOVED_FEATURE_PRICE]"));
 
   setBase({ oneTimePaid: false });
   const paywall = normalize(_internal.renderReport());

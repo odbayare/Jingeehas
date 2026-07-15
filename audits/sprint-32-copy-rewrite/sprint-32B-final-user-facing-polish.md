@@ -59,7 +59,7 @@ User-facing Markdown/PDF export now strips standalone navigation and button line
 - `Сонголт руу буцах`
 - `Саналын экспорт`
 - `Санал илгээх`
-- `7 хоногоор нарийвчлах`
+- `[REMOVED_FEATURE_REFINEMENT]`
 - `Дэлгэрэнгүй тайлан харах`
 
 These remain available in app UI where appropriate, but do not appear in the clean report export.
@@ -95,7 +95,7 @@ Updated user-facing export tests to assert:
 - old intro sentence is absent
 - new intro sentence is present
 - standalone navigation/action labels are absent
-- standalone `7 хоногоор нарийвчлах` CTA is absent from clean export
+- standalone `[REMOVED_FEATURE_REFINEMENT]` CTA is absent from clean export
 - User 08 does not include a separate `Сарын тэмдэг ирэхийн өмнөх өдрүүдэд` section after the experiment
 
 Updated existing exact wording tests for the new heading and 7-day refinement text.
@@ -141,7 +141,7 @@ PDF/export checks:
 - text extraction succeeded
 - no internal route/verdict/checklist labels found
 - no navigation/button leakage found
-- no standalone `7 хоногоор нарийвчлах` CTA found
+- no standalone `[REMOVED_FEATURE_REFINEMENT]` CTA found
 - rendered page 1 and page 8 were legible with no visible clipping or overlap
 
 ## Remaining Concerns

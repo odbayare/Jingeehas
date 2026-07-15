@@ -63,7 +63,7 @@ The prototype button text may still say `Төлбөр амжилттай гэж 
 Amounts:
 
 * `one_time`: 9,900 MNT
-* `seven_day`: 29,000 MNT
+* `removed_feature`: 29,000 MNT
 * `upgrade`: 19,900 MNT
 
 ## Entitlement Rules
@@ -72,16 +72,16 @@ Amounts:
 
 * `one_time_report`
 
-`seven_day` creates:
+`removed_feature` creates:
 
-* `seven_day_access`
+* `removed_feature_access`
 
 `upgrade` creates:
 
 * `upgrade_access`
-* `seven_day_access`
+* `removed_feature_access`
 
-Compatibility note: the app still mirrors successful mock payments into the old `oneTimePaid`, `sevenDayPaid`, and `upgradePaid` fields so existing tests and prototype state keep working. New access helpers also check the mock entitlement state.
+Compatibility note: the app still mirrors successful mock payments into the old `oneTimePaid`, `removedFeaturePaid`, and `upgradePaid` fields so existing tests and prototype state keep working. New access helpers also check the mock entitlement state.
 
 ## Safety Rules
 

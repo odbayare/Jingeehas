@@ -8,7 +8,7 @@ PASS - WP27 fixes the WP26 blocker by connecting a runtime-built visible surface
 
 - Added `buildRuntimeVisibleSurfacePayload(reportContext = {})` in `app.js`.
 - Passed `buildRuntimeVisibleSurfacePayload(reportContext)` into the one-time report integration call site.
-- Passed `buildRuntimeVisibleSurfacePayload(reportContext)` into the seven-day report integration call site.
+- Passed `buildRuntimeVisibleSurfacePayload(reportContext)` into the removed-feature report integration call site.
 - Kept both guards false.
 
 ## Guard Decision

@@ -2,7 +2,7 @@
 
 ## Business Rules
 
-- Standard public Weight Test One-Time price: `29,000₮`.
+- Standard public Weight Test One-Time price: `[REMOVED_FEATURE_PRICE]`.
 - Coach invite discounted One-Time price: `9,900₮`.
 - Coach commission per paid discounted assessment: `4,000₮`.
 - Platform share before fees/tax: `5,900₮`.
@@ -83,7 +83,7 @@ Coach dashboard includes:
 If a user opens a coach invite link or matching invite exists, the One-Time start screen shows:
 
 - coach name
-- standard price `29,000₮`
+- standard price `[REMOVED_FEATURE_PRICE]`
 - coach discounted price `9,900₮`
 - explicit consent checkbox
 - accept and decline actions
@@ -151,7 +151,7 @@ Added `tests/coach-subadmin.test.js` covering:
 
 Updated existing pricing/payment tests to reflect Sprint 27 price split:
 
-- public standard One-Time = `29,000₮`
+- public standard One-Time = `[REMOVED_FEATURE_PRICE]`
 - coach invite discount = `9,900₮`
 
 ## Validation Results

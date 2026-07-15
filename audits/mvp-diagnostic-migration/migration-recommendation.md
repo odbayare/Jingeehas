@@ -87,7 +87,7 @@ Introduce a report object before changing copy:
   wrong_self_explanation,
   first_gentle_change,
   fourteen_day_experiment,
-  seven_day_confirmation_plan,
+  removed_feature_confirmation_plan,
   safety_route,
   evidence_sources
 }

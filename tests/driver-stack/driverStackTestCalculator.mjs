@@ -84,11 +84,11 @@ const MECHANISM_NAME_TO_KEY = Object.fromEntries(
 
 export function emptyTestState(overrides = {}) {
   return {
-    packageType: "seven-day",
+    packageType: "removed-feature",
     stageAnswers: {},
     stageVoiceSummaries: {},
     preliminary: [],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   };
 }
@@ -160,9 +160,9 @@ export function strengthFromNormalizedScore(normalizedScore, isSafety = false) {
 
 function evidenceStrengthFor(score, isSafety = false) {
   if (isSafety) return "safety";
-  const diaryDays = new Set(score.evidence_items.map(item => item.day_number).filter(Boolean)).size;
-  if (score.normalizedScore >= 7 || diaryDays >= 3) return "strong";
-  if (score.normalizedScore >= 4 || diaryDays >= 2) return "moderate";
+  const removedDays = new Set(score.evidence_items.map(item => item.day_number).filter(Boolean)).size;
+  if (score.normalizedScore >= 7 || removedDays >= 3) return "strong";
+  if (score.normalizedScore >= 4 || removedDays >= 2) return "moderate";
   if (score.normalizedScore > 0) return "possible";
   return "insufficient";
 }
@@ -403,7 +403,7 @@ function addStageSignals(scores, state) {
 }
 
 function addDiarySignals(scores, state) {
-  (state.diaryEntries || []).forEach(entry => {
+  (state.removedEntries || []).forEach(entry => {
     const dayNumber = entry.day_number;
     const mealText = String(entry.meal_rhythm || "");
     const momentText = String(entry.main_moment_time || "");
@@ -602,7 +602,7 @@ export function buildInteractionPattern(driverScores, primaryDriver, secondaryDr
     return match("loneliness_comfort_reward_deficit", ["loneliness", "emptiness", "loneliness_soothing", "comfort", "self_reward"], "Loneliness or emptiness makes food a soothing or attention substitute.", "non_food_connection_slot");
   }
   const fallback = [primaryDriver?.key, ...secondaryDrivers.map(driver => driver.key)].filter(Boolean).slice(0, 3);
-  return match("general_driver_stack", fallback, "Several drivers overlap; diary evidence should clarify which one is easiest to change first.", "seven_day_confirmation");
+  return match("general_driver_stack", fallback, "Several drivers overlap; diary evidence should clarify which one is easiest to change first.", "removed_feature_confirmation");
 }
 
 export function buildVulnerableMoment(input, driverScores, interactionPattern, safetyRoute) {
@@ -718,7 +718,7 @@ export function buildFirstGentleChange(driverScores, interactionPattern, safetyR
     pcos_body_uncertainty_control: ["body_neutral_private_tracking", ["body_change_uncertainty", "control_regain"], "Use body-neutral tracking and one non-punitive control cue."],
     medical_first_body_signal: ["professional_discussion_summary", ["medical_concern"], "Collect body-signal notes for a professional conversation before changing diet rules."]
   };
-  const [id, targets, action] = map[interactionPattern.id] || ["seven_day_confirmation", [], "Use 7-day diary confirmation before choosing the first change."];
+  const [id, targets, action] = map[interactionPattern.id] || ["removed_feature_confirmation", [], "Use 7-day diary confirmation before choosing the first change."];
   return {
     id,
     targets,
@@ -770,7 +770,7 @@ function fieldsForDriver(key) {
   return map[key] || ["raw_reflection", "food_function"];
 }
 
-export function buildSevenDayConfirmationTargets(driverScores, vulnerableMoment) {
+export function buildRemovedFeatureConfirmationTargets(driverScores, vulnerableMoment) {
   const candidates = Object.values(driverScores)
     .filter(score => score.layer !== "safety")
     .filter(score => score.normalizedScore >= 3)
@@ -869,13 +869,13 @@ export function calculateTestDriverStack(input = {}) {
   const wrongSelfExplanation = wrongSelfExplanationFor(scores);
   const firstGentleChange = buildFirstGentleChange(scores, interaction, safetyRoute);
   const experiment = buildFourteenDayExperimentHypothesis(firstGentleChange, vulnerableMoment, interaction);
-  const confirmationTargets = buildSevenDayConfirmationTargets(scores, vulnerableMoment);
+  const confirmationTargets = buildRemovedFeatureConfirmationTargets(scores, vulnerableMoment);
 
   return {
     version: "driver-stack-v0-test-only",
     source: {
       stage_answer_count: Object.values(state.stageAnswers || {}).filter(value => Array.isArray(value) ? value.length : value !== "" && value !== undefined && value !== null).length,
-      diary_entry_count: (state.diaryEntries || []).length,
+      diary_entry_count: (state.removedEntries || []).length,
       evidence_quality: sourceEvidenceQuality(state, mechanismEvidence),
       current_report_mode: currentModeFromSafetyRoute(mechanismEvidence.safetyRoute)
     },
@@ -907,7 +907,7 @@ export function calculateTestDriverStack(input = {}) {
     wrong_self_explanation: wrongSelfExplanation,
     first_gentle_change: firstGentleChange,
     fourteen_day_experiment_hypothesis: experiment,
-    seven_day_diary_confirmation_targets: confirmationTargets,
+    removed_feature_diary_confirmation_targets: confirmationTargets,
     evidence_sources: evidenceSources(scores),
     copy_constraints: [
       "no_diet_plan",

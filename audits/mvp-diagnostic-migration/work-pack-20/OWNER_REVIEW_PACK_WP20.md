@@ -336,7 +336,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-W04": ["Мацаг"],
@@ -344,7 +344,7 @@ function setOneTime(overrides = {}) {
       "S1-F01": ["Дараа өлсөхөөс санаа зовсон", "Өөрийгөө шагнамаар"]
     },
     preliminary: [{ key: "hungerSafety", score: 5, label: "хүчтэй нийцэж байна" }],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -477,10 +477,10 @@ function setOneTime(overrides = {}) {
   assert.strictEqual(sanitized.pass, true, "sanitized malicious payload should still render safe allowed surfaces");
   assertNoForbiddenText(sanitized.html, "sanitized malicious prototype");
 
-  setOneTime({ oneTimePaid: false, sevenDayPaid: false, upgradePaid: false });
+  setOneTime({ oneTimePaid: false, removedFeaturePaid: false, upgradePaid: false });
   const entitlementBefore = {
     oneTime: _internal.hasOneTimeReportAccess(),
-    sevenDay: _internal.hasSevenDayAccess(),
+    removedFeature: _internal.hasRemovedFeatureAccess(),
     upgrade: _internal.hasUpgradeAccess()
   };
   _internal.renderVisibleSurfacePrototype(payload, {
@@ -491,7 +491,7 @@ function setOneTime(overrides = {}) {
   });
   assert.deepStrictEqual({
     oneTime: _internal.hasOneTimeReportAccess(),
-    sevenDay: _internal.hasSevenDayAccess(),
+    removedFeature: _internal.hasRemovedFeatureAccess(),
     upgrade: _internal.hasUpgradeAccess()
   }, entitlementBefore, "visible prototype must not change entitlement restore/reload behavior");
 
@@ -526,8 +526,8 @@ function setOneTime(overrides = {}) {
 
   [
     "const STORAGE_KEY = \"weightLossDeepPatternMvp\";",
-    "oneTime: \"29,000₮\"",
-    "sevenDayAnchor: \"69,000₮\"",
+    "oneTime: \"[REMOVED_FEATURE_PRICE]\"",
+    "removedFeatureAnchor: \"[REMOVED_FEATURE_ANCHOR]\"",
     "const WEIGHT_TEST_PRODUCT_CODE = \"WEIGHT_TEST_ONE_TIME\";",
     "const WEIGHT_TEST_AMOUNT_MNT = 9900;",
     "create: \"/.netlify/functions/qpay-create-invoice\"",

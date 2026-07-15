@@ -2,7 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0552 — P0
+## COPY-0295 — P0
 
 **Exact current text**
 
@@ -61,7 +61,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0553 — P0
+## COPY-0296 — P0
 
 **Exact current text**
 
@@ -80,7 +80,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7375
+- Source line: 6352
 - Source function/object: buildRuntimeVisibleSurfacePayload
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -119,7 +119,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0554 — P0
+## COPY-0297 — P0
 
 **Exact current text**
 
@@ -138,7 +138,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3492
+- Source line: 2762
 - Source function/object: reportMode
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -177,7 +177,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0555 — P0
+## COPY-0298 — P0
 
 **Exact current text**
 
@@ -196,7 +196,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7589
+- Source line: 6558
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -236,7 +236,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0556 — P0
+## COPY-0299 — P0
 
 **Exact current text**
 
@@ -255,7 +255,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7590
+- Source line: 6559
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -295,7 +295,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0557 — P0
+## COPY-0300 — P0
 
 **Exact current text**
 
@@ -314,7 +314,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7591
+- Source line: 6560
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -354,7 +354,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0558 — P0
+## COPY-0301 — P0
 
 **Exact current text**
 
@@ -413,7 +413,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0559 — P0
+## COPY-0302 — P0
 
 **Exact current text**
 
@@ -472,7 +472,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0560 — P0
+## COPY-0303 — P0
 
 **Exact current text**
 
@@ -531,7 +531,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0561 — P0
+## COPY-0304 — P0
 
 **Exact current text**
 
@@ -550,7 +550,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7374
+- Source line: 6351
 - Source function/object: buildRuntimeVisibleSurfacePayload
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -589,7 +589,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0610 — P0
+## COPY-0353 — P0
 
 **Exact current text**
 
@@ -648,7 +648,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0612 — P0
+## COPY-0355 — P0
 
 **Exact current text**
 
@@ -707,7 +707,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0760 — P0
+## COPY-0501 — P0
 
 **Exact current text**
 
@@ -726,7 +726,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 375
+- Source line: 360
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -766,7 +766,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0761 — P0
+## COPY-0502 — P0
 
 **Exact current text**
 
@@ -785,7 +785,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 376
+- Source line: 361
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -825,7 +825,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0762 — P0
+## COPY-0503 — P0
 
 **Exact current text**
 
@@ -844,7 +844,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 377
+- Source line: 362
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -884,7 +884,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0763 — P0
+## COPY-0504 — P0
 
 **Exact current text**
 
@@ -903,7 +903,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 378
+- Source line: 363
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -943,7 +943,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0764 — P0
+## COPY-0505 — P0
 
 **Exact current text**
 
@@ -962,7 +962,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 379
+- Source line: 364
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -1002,7 +1002,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0777 — P0
+## COPY-0518 — P0
 
 **Exact current text**
 
@@ -1021,7 +1021,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 392
+- Source line: 377
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -1061,7 +1061,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0783 — P0
+## COPY-0524 — P0
 
 **Exact current text**
 
@@ -1075,7 +1075,7 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 25
 - Duplicate group: None
@@ -1083,7 +1083,7 @@ Safety-critical routing or interpretation text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1120,7 +1120,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0891 — P0
+## COPY-0632 — P0
 
 **Exact current text**
 
@@ -1134,15 +1134,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 21
+- Occurrence count: 18
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1179,7 +1179,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0914 — P0
+## COPY-0655 — P0
 
 **Exact current text**
 
@@ -1193,15 +1193,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 12
+- Occurrence count: 11
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1238,7 +1238,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1074 — P0
+## COPY-0815 — P0
 
 **Exact current text**
 
@@ -1252,7 +1252,7 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 3
 - Duplicate group: None
@@ -1260,7 +1260,7 @@ Safety-critical routing or interpretation text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1297,7 +1297,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1114 — P0
+## COPY-0855 — P0
 
 **Exact current text**
 
@@ -1311,15 +1311,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 4
+- Occurrence count: 3
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1356,7 +1356,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1115 — P0
+## COPY-0856 — P0
 
 **Exact current text**
 
@@ -1370,15 +1370,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1415,7 +1415,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1116 — P0
+## COPY-0857 — P0
 
 **Exact current text**
 
@@ -1429,15 +1429,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**

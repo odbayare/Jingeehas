@@ -42,7 +42,7 @@ Generated from `app.js` on 2026-06-25.
 - Эхлээд өөрт тохирох түвшнээ сонгоно. Нэг удаагийн зураглал нь одоогийн хариултаар эхний тайлан гаргана. 7 хоногийн үнэлгээ тэр зураглалыг бодит өдрүүдийн богино ажиглалтаар нарийвчилна.
 - Нэг удаагийн гүн зураглал
 - 10–15 минутанд хамгийн тод давтагддаг нөхцөл, нөлөөлж буй 1–2 шалтгаан, одоогоор болгоомжлох зүйл, эхний зөөлөн алхам гарна.
-- 7 хоногийн гүн зураглал
+- [REMOVED_FEATURE_PRODUCT] зураглал
 - Эхний богино асуулт + орой бүр 3–5 минутын тэмдэглэл. 5 өдөр бөглөсөн ч тайлан гарна, калори тоолохгүй, зөвхөн давтагддаг мөчүүдийг ажиглана.
 - Харьцуулалт
 - Нэг удаагийн:
@@ -71,7 +71,7 @@ Generated from `app.js` on 2026-06-25.
 - Хурдан эхлэх
 - Нэг удаагийн гүн анализ
 - Үндсэн үнэ
-- 29,000₮
+- [REMOVED_FEATURE_PRICE]
 - Нээлтийн урамшуулалт үнэ
 - 9,900₮
 - 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
@@ -84,15 +84,15 @@ Generated from `app.js` on 2026-06-25.
 - Одоогоор зайлсхийх зүйлс
 - Эхний зөөлөн алхам
 - 14 хоногийн эхний туршилт
-- 7 хоногоор нарийвчлах боломж
+- [REMOVED_FEATURE_REFINEMENT] боломж
 - Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.
 - 9,900₮ төлөөд тайлангаа нээх
 - Илүү нарийвчилсан
-- 7 хоногийн гүн анализ
+- [REMOVED_FEATURE_PRODUCT] анализ
 - Үндсэн үнэ
-- 69,000₮
+- [REMOVED_FEATURE_ANCHOR]
 - Нээлтийн урамшуулалт үнэ
-- 29,000₮
+- [REMOVED_FEATURE_PRICE]
 - Орой бүр 3–5 минутын богино тэмдэглэлээр таны идэх хүсэл бодит амьдрал дээр ямар үед давтагдаж байгааг харна.
 - Эхлэх асуулт
 - Орой бүр 3–5 минут
@@ -104,7 +104,7 @@ Generated from `app.js` on 2026-06-25.
 - Идэх хүсэл яг ямар үүрэгтэй давтагдаж байгааг тодруулах
 - Илүү тод 14 хоногийн туршилт
 - Энэ нь илүү их тураах төлөвлөгөө биш. Зүгээр л 7 хоногийн богино ажиглалт. Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш, калори тоолохгүй, зөвхөн давтагддаг мөчүүдийг ажиглана.
-- 29,000₮ төлөөд 7 хоногийн үнэлгээ эхлүүлэх
+- [REMOVED_FEATURE_PRICE] төлөөд 7 хоногийн үнэлгээ эхлүүлэх
 - Жишээ үр дүн
 - Тайлан ямар харагдах вэ?
 - Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.
@@ -119,27 +119,27 @@ Generated from `app.js` on 2026-06-25.
 
 ### 7-Day Paywall
 
-- 7 хоногийн гүн зураглал
+- [REMOVED_FEATURE_PRODUCT] зураглал
 - Нээлтийн эрх
-- 7 хоногийн гүн анализаа нээх
+- [REMOVED_FEATURE_PRODUCT] анализаа нээх
 - Үндсэн үнэ
-- 69,000₮
+- [REMOVED_FEATURE_ANCHOR]
 - Нээлтийн урамшуулалт үнэ
-- 29,000₮
+- [REMOVED_FEATURE_PRICE]
 - 7 хоногийн тэмдэглэлээр таны өдөр тутмын бодит давтамж илүү тод харагдана. Анхны сэтгэгдэл ба өдөр тутмын ажиглалт хоёр хаана давхцаж, хаана зөрж байгааг эндээс харна.
 - Эхлэх богино асуулт
 - 7 өдөр богино тэмдэглэл
 - Орой бүр 3–5 минут
 - 5 өдөр бөглөсөн ч тайлан гарна
 - Калори тоолохгүй, давтагддаг мөчүүдийг ажиглана
-- 29,000₮ төлөөд эхлүүлэх
+- [REMOVED_FEATURE_PRICE] төлөөд эхлүүлэх
 - Буцах
 - Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.
 
 ### 7-Day Start Unlocked
 
-- 7 хоногийн гүн зураглал
-- 7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна
+- [REMOVED_FEATURE_PRODUCT] зураглал
+- [REMOVED_FEATURE_PRODUCT] зураглал таны өдөр тутмын давтамжийг харна
 - Эхний богино асуултаар эхэлнэ. Дараа нь орой бүр 3–5 минутын тэмдэглэл бөглөж, 7 хоногийн дараа илүү нарийвчилсан тайлан гарна.
 - Эхлэл: 8-10 минут
 - Орой бүр: 3–5 минут
@@ -166,10 +166,10 @@ Generated from `app.js` on 2026-06-25.
 - Одоогоор зайлсхийх зүйлс
 - Эхний зөөлөн алхам
 - 14 хоногийн эхний туршилт
-- 7 хоногийн гүн анализ руу шилжих боломж
+- [REMOVED_FEATURE_PRODUCT] анализ руу шилжих боломж
 - Нээх үнэ
 - Үндсэн үнэ
-- 29,000₮
+- [REMOVED_FEATURE_PRICE]
 - Нээлтийн урамшуулалт үнэ
 - 9,900₮
 - 9,900₮ төлөөд бүрэн тайлангаа нээх
@@ -234,7 +234,7 @@ Generated from `app.js` on 2026-06-25.
 - Гүн зураглалын тайлан
 - Таны нэг удаагийн гүн анализ бэлэн боллоо
 - Энэ бол таны одоогийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн тэмдэглэл илүү тодруулна.
-- 7 хоногоор нарийвчлах
+- [REMOVED_FEATURE_REFINEMENT]
 - Таны хариултаас хамгийн тод харагдаж буй зүйл
 - Та юу хийхээ мэдэхгүйдээ биш. Харин өдөржин олон шийдвэр гаргасны дараа орой дахин хоол бодож, сонгож, бэлдэх тэнхээ үлдэхгүй байна. Тэр үед хамгийн амар сонголт л ялж байна.
 - Энэ нь орой тэнхээ багасах үед сонголт амархан өөрчлөгддөг давтамжтай нийцэж байна.
@@ -281,7 +281,7 @@ Generated from `app.js` on 2026-06-25.
 - Энэ хэсгийг 7 хоногоор илүү тодруулж болно. Дараах хэсгийг тэмдэглэл илүү тод харуулна:
 - Шийдвэрийн ачаалал яг ямар өдөр, ямар нөхцөлд давтагддагийг харна.
 - Өмнөх 30 минут, оройн тэнхээ, орчны дохио, бэлэн сонголтын нөхцөлийг тэмдэглэл дээр тодруулна.
-- 7 хоногоор нарийвчлах
+- [REMOVED_FEATURE_REFINEMENT]
 - Сонголт руу буцах
 - Шинээр эхлэх
 
@@ -424,7 +424,7 @@ Generated from `app.js` on 2026-06-25.
 - ); if (/өлс хоол уда 5\+/.test(text)) bullets.push(
 - ); if (/стресс stress тайвш/i.test(text)) bullets.push(
 - ).join("")} </select> <label class="field-label">Юу тодорхой болвол авах шийдвэр гаргах вэ?</label> <textarea class="input" rows="4" oninput="updateLeadField('comment', this.value)" placeholder="Жишээ: тайлангийн жишээ, төлбөрийн баталгаа, илүү дэлгэрэнгүй тайлбар...">${...}</textarea> ${state.leadError ?
-- )">${...} төлөөд 7 хоногоор нарийвчлах</button> ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment(
+- )">${...} төлөөд [REMOVED_FEATURE_REFINEMENT]</button> ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment(
 - )">${...} төлөөд бүрэн тайлангаа нээх</button> ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment(
 - )">${...} төлөөд эхлүүлэх</button> ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment(
 - )">7 хоногийн тэмдэглэл нээх</button>`} <button class="button ghost" onclick="setView(
@@ -435,9 +435,9 @@ Generated from `app.js` on 2026-06-25.
 - )">Нэмэх зүйл байна</button> ${ui.mode === "edit" ui.mode === "add" ? `<button class="button" onclick="confirmDailySummary(
 - )">Сонголт руу буцах</button> ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment(
 - )">Тийм, зөв</button> <button class="button ghost" onclick="setDailySummaryMode(
-- )">Эхний зураглал руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div> </div> </section> `; } if (isOneTime && !hasOneTimeReportAccess()) { return renderOneTimePaywall({ mode, primary, primaryMechanism, tags }); } if (!isOneTime && !hasSevenDayAccess()) { return renderSevenDayPaywall(); } if (!isOneTime && !readiness.canGenerateFullReport) { return ` ${...} <section class="screen"> <div class="panel stack"> <h2>${...}</h2> <p class="muted">${...}</p> <div class="two-col"> <div class="mini-stat"><strong>${...}/7</strong><span>Өдөр бөглөсөн</span></div> <div class="mini-stat"><strong>${...}</strong><span>Хариултын хүрэлцээ</span></div> </div> ${...}</span>`).join("") `<span class="muted">Дохио харахад мэдээлэл бага байна.</span>`}</div></div>` : ""} <p>Энэ нь бүрэн тайлан биш тул 14 хоногийн туршилт өгөхгүй. Тэмдэглэлээ үргэлжлүүлж 5/7 өдөр хүрвэл бүрэн тайлан гарна.</p> <div class="actions"> <button class="button" onclick="startDiary()">Тэмдэглэлээ үргэлжлүүлэх</button> <button class="button ghost" onclick="setView(
+- )">Эхний зураглал руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div> </div> </section> `; } if (isOneTime && !hasOneTimeReportAccess()) { return renderOneTimePaywall({ mode, primary, primaryMechanism, tags }); } if (!isOneTime && !hasRemovedFeatureAccess()) { return renderRemovedFeaturePaywall(); } if (!isOneTime && !readiness.canGenerateFullReport) { return ` ${...} <section class="screen"> <div class="panel stack"> <h2>${...}</h2> <p class="muted">${...}</p> <div class="two-col"> <div class="mini-stat"><strong>${...}/7</strong><span>Өдөр бөглөсөн</span></div> <div class="mini-stat"><strong>${...}</strong><span>Хариултын хүрэлцээ</span></div> </div> ${...}</span>`).join("") `<span class="muted">Дохио харахад мэдээлэл бага байна.</span>`}</div></div>` : ""} <p>Энэ нь бүрэн тайлан биш тул 14 хоногийн туршилт өгөхгүй. Тэмдэглэлээ үргэлжлүүлж 5/7 өдөр хүрвэл бүрэн тайлан гарна.</p> <div class="actions"> <button class="button" onclick="startDiary()">Тэмдэглэлээ үргэлжлүүлэх</button> <button class="button ghost" onclick="setView(
 - )">Яаралтай зөвлөмж харах</button>` : `<button class="button" onclick="setView(
-- )">Явц руу буцах</button> </div> </div> </section> `; } if (isOneTime) { return renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }); } return ` ${...} <section class="screen"> <div class="panel"> <div class="report-section"> <h2>${...}</h2> <p class="muted">${...}</p> ${...} </div> <div class="report-section"> <h3>Хариултын хүрэлцээ</h3> <p>${...}</p> </div> <div class="report-section"> <h3>Эхний зураглал ба бодит ажиглалт</h3> <p>Эхний тестээр: ${...}.</p> <p>${...}`}</p> </div> ${...}</h3><ul>${...}</li>`).join("")}</ul></div>`).join("") : `<p class="muted">Баталгаажуулсан нэмэлт тайлбар байхгүй. Энэ тайлан бүтэцтэй хариултад суурилж байна.</p>`} </div>` : ""} <div class="report-section"> <h3>${...}</h3> ${...}</p><p>${...}</p><p>Энэ таны сул тал гэсэн үг биш. Тухайн зан үйл танд ${...} үүрэг гүйцэтгэж байж магадгүй.</p>` : `<p>Гол зураглал гаргахад мэдээлэл хангалтгүй байна.</p>`} </div> <div class="report-section"> <h3>Давхар нөлөөлж буй давтамжууд</h3> <div class="pill-row">${...}</span>`).join("") `<span class="muted">Одоогоор давхар давтамж харахад мэдээлэл хангалтгүй.</span>`}</div> </div> <div class="report-section"> <h3>Илэрч буй зан үйлүүд</h3> <ul>${...}</li>`).join("")}</ul> </div> <div class="report-section"> <h3>Энэ зан үйл ямар үүрэгтэй байж болох вэ?</h3> <p>Таны идэлт дараах үүргүүдийг гүйцэтгэж байна:</p> <ul>${...}</strong> — ${...}</li>`).join("")}</ul> </div> <div class="report-section"> <h3>Давтагддаг тойрог</h3> <div class="cycle-map">${...}</p>`).join("<span>↓</span>")}</div> </div> <div class="report-section"> <h3>Идэх хүсэл эхэлдэг нөхцөл</h3> <p class="muted">Нөхцлийн зураглал нь таны идэлтийг “ямар хоол идсэн бэ?” гэж биш, “ямар нөхцөл давтагдахад идэх сонголт өөрчлөгдөж байна вэ?” гэж харуулдаг.</p> ${...} </div> ${...} дэх өдөр</h3><ul>${...}</li>`).join("")}</ul></div>`).join("") : `<p class="muted">Баталгаажуулсан нэмэлт тайлбар байхгүй. Энэ тайлан тэмдэглэлийн бүтэцтэй хариултад суурилж байна.</p>`} </div>` : ""} <div class="report-section"> <h3>Идэхийн өмнөх 30 минут</h3> <p>Төлөвлөөгүй идэлтийн өмнөх 30 минутанд хамгийн их давтагдсан зүйлс:</p> <ul>${...}</li>`).join("")}</ul> </div> <div class="report-section"> <h3>Идсэний дараах 30 минут</h3> <ul>${...}</li>`).join("")}</ul> </div> ${...}</strong> — энэ нь яг ямар өдөр, ямар нөхцөлд давтагдаж байгааг харна. ${...}</li>`).join("") "<li>Өдөр тутмын нөхцлийн зураглал болон идэхийн өмнөх/дараах давтамжийг тодруулна.</li>"}</ul> <div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div> </div>` : ""} <div class="report-section"> <h3>Асуудал яг юу биш вэ?</h3> <p>${...}</p> </div> <div class="report-section"> <h3>Өмнөх аргууд яагаад удаан ажиллаагүй байж болох вэ?</h3> <p>${...}</p> </div> <div class="report-section"> <h3>Одоогоор зайлсхийх зүйлс</h3> <ul>${...}</li>`).join("")}</ul> </div> <div class="report-section"> <h3>Эхэлж өөрчлөх хамгийн амар цэг</h3> <p>${...}</p> </div> <div class="report-section"> <h3>14 хоногийн туршилт</h3> <p><strong>Зорилго:</strong> ${...}</p> <p><strong>Өдөр бүр хийх:</strong></p> <ul>${...}</li>`).join("")}</ul> <p><strong>Ажиглах зүйл:</strong> ${...}</p> <p><strong>Амжилттай явж байгаагийн шинж:</strong> ${...}</p> <p><strong>Хэрвээ тасалдвал:</strong> ${...}</p> ${...} ${...} </div> ${...} <div class="actions"><button class="button secondary" onclick="setView(
+- )">Явц руу буцах</button> </div> </div> </section> `; } if (isOneTime) { return renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }); } return ` ${...} <section class="screen"> <div class="panel"> <div class="report-section"> <h2>${...}</h2> <p class="muted">${...}</p> ${...} </div> <div class="report-section"> <h3>Хариултын хүрэлцээ</h3> <p>${...}</p> </div> <div class="report-section"> <h3>Эхний зураглал ба бодит ажиглалт</h3> <p>Эхний тестээр: ${...}.</p> <p>${...}`}</p> </div> ${...}</h3><ul>${...}</li>`).join("")}</ul></div>`).join("") : `<p class="muted">Баталгаажуулсан нэмэлт тайлбар байхгүй. Энэ тайлан бүтэцтэй хариултад суурилж байна.</p>`} </div>` : ""} <div class="report-section"> <h3>${...}</h3> ${...}</p><p>${...}</p><p>Энэ таны сул тал гэсэн үг биш. Тухайн зан үйл танд ${...} үүрэг гүйцэтгэж байж магадгүй.</p>` : `<p>Гол зураглал гаргахад мэдээлэл хангалтгүй байна.</p>`} </div> <div class="report-section"> <h3>Давхар нөлөөлж буй давтамжууд</h3> <div class="pill-row">${...}</span>`).join("") `<span class="muted">Одоогоор давхар давтамж харахад мэдээлэл хангалтгүй.</span>`}</div> </div> <div class="report-section"> <h3>Илэрч буй зан үйлүүд</h3> <ul>${...}</li>`).join("")}</ul> </div> <div class="report-section"> <h3>Энэ зан үйл ямар үүрэгтэй байж болох вэ?</h3> <p>Таны идэлт дараах үүргүүдийг гүйцэтгэж байна:</p> <ul>${...}</strong> — ${...}</li>`).join("")}</ul> </div> <div class="report-section"> <h3>Давтагддаг тойрог</h3> <div class="cycle-map">${...}</p>`).join("<span>↓</span>")}</div> </div> <div class="report-section"> <h3>Идэх хүсэл эхэлдэг нөхцөл</h3> <p class="muted">Нөхцлийн зураглал нь таны идэлтийг “ямар хоол идсэн бэ?” гэж биш, “ямар нөхцөл давтагдахад идэх сонголт өөрчлөгдөж байна вэ?” гэж харуулдаг.</p> ${...} </div> ${...} дэх өдөр</h3><ul>${...}</li>`).join("")}</ul></div>`).join("") : `<p class="muted">Баталгаажуулсан нэмэлт тайлбар байхгүй. Энэ тайлан тэмдэглэлийн бүтэцтэй хариултад суурилж байна.</p>`} </div>` : ""} <div class="report-section"> <h3>Идэхийн өмнөх 30 минут</h3> <p>Төлөвлөөгүй идэлтийн өмнөх 30 минутанд хамгийн их давтагдсан зүйлс:</p> <ul>${...}</li>`).join("")}</ul> </div> <div class="report-section"> <h3>Идсэний дараах 30 минут</h3> <ul>${...}</li>`).join("")}</ul> </div> ${...}</strong> — энэ нь яг ямар өдөр, ямар нөхцөлд давтагдаж байгааг харна. ${...}</li>`).join("") "<li>Өдөр тутмын нөхцлийн зураглал болон идэхийн өмнөх/дараах давтамжийг тодруулна.</li>"}</ul> <div class="actions"><button class="button secondary" onclick="startRemovedFeatureRefinement()">[REMOVED_FEATURE_REFINEMENT]</button></div> </div>` : ""} <div class="report-section"> <h3>Асуудал яг юу биш вэ?</h3> <p>${...}</p> </div> <div class="report-section"> <h3>Өмнөх аргууд яагаад удаан ажиллаагүй байж болох вэ?</h3> <p>${...}</p> </div> <div class="report-section"> <h3>Одоогоор зайлсхийх зүйлс</h3> <ul>${...}</li>`).join("")}</ul> </div> <div class="report-section"> <h3>Эхэлж өөрчлөх хамгийн амар цэг</h3> <p>${...}</p> </div> <div class="report-section"> <h3>14 хоногийн туршилт</h3> <p><strong>Зорилго:</strong> ${...}</p> <p><strong>Өдөр бүр хийх:</strong></p> <ul>${...}</li>`).join("")}</ul> <p><strong>Ажиглах зүйл:</strong> ${...}</p> <p><strong>Амжилттай явж байгаагийн шинж:</strong> ${...}</p> <p><strong>Хэрвээ тасалдвал:</strong> ${...}</p> ${...} ${...} </div> ${...} <div class="actions"><button class="button secondary" onclick="setView(
 - ]) bullets.push(`Төлөвлөгөө алдагдсаны дараах response: ${answers[
 - ]) bullets.push(`Төлөвлөөгүй идэхийн өмнөх ойр дохио: ${[].concat(answers[
 - ]); if (/амттай шагна нэг гоё reward уйд/.test(text)) add([
@@ -459,8 +459,8 @@ Generated from `app.js` on 2026-06-25.
 - && /Тийм Маш Бага/.test(text)) mechanismsForAnswer.push(mechanismNamesByKey.perfectionism); if (question.id ===
 - <div class="sample-preview"> <div> <p class="eyebrow">Жишээ үр дүн</p> <h2>Тайлан ямар харагдах вэ?</h2> <p class="muted">Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.</p> </div> <div class="sample-grid"> <div> <h3>Хамгийн тод харагдаж буй зүйл</h3> <p>Орой ядарсан үед хоол бодож, сонгож, бэлдэх тэнхээ үлдэхгүй байна.</p> </div> <div> <h3>Энэ юу гэсэн үг вэ?</h3> <p>Та юу хийхээ мэдэхгүйдээ биш. Харин орой тэнхээ багасах үед хамгийн амар сонголт л ялж байна.</p> </div> <div> <h3>Эхний зөөлөн алхам</h3> <p>Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.</p> </div> <div> <h3>7 хоногоор нарийвчилбал</h3> <p>Энэ нь яг ямар өдөр, ямар нөхцөлд давтагддагийг богино тэмдэглэлээр тодруулна.</p> </div> </div> </div>
 - <section class="hero"> <div class="hero-inner"> <div class="hero-copy"> <p class="eyebrow">Жин хасалтыг гацаадаг давтамжийг харах үнэлгээ</p> <h1>Яагаад хичээсэн ч жин буурахгүй байна вэ?</h1> <p class="lead">Юу идсэнээс гадна, ямар өдөр ямар мэдрэмж, өлсөлт, ядаргаа, орчин давхцахад таны сонголт өөрчлөгддөгийг харна.</p> <div class="hero-actions"> <button class="button" onclick="setView('choice')">Миний зураглалыг эхлүүлэх</button> <button class="button secondary" onclick="setView('about')">Үнэлгээний ялгааг харах</button> </div> </div> </div> </section> <section class="screen"> <div class="grid"> <div class="panel stack"> <h2>Ерөнхий зөвлөгөө биш, давтамжийн зураглал</h2> <ul> <li>“Та юу иддэг вэ?” биш — “яагаад тэр сонголт руу дахин дахин ордог вэ?” гэдгийг харна.</li> <li>Жин хасалтыг гацааж буй 2-3 давтагддаг хэв маягийг гаргана.</li> <li>Өмнөх аргууд яагаад удаан ажиллаагүй байж болохыг тайлбарлана.</li> <li>Танд тохиромжгүй байж болох аргуудыг анхааруулна.</li> <li>Эхний 14 хоногт турших бодит алхам өгнө.</li> </ul> </div> <div class="aside"> <div class="mini-stat"><strong>10-15 мин</strong><span class="muted">Нэг удаагийн гүн зураглал</span></div> <div class="mini-stat"><strong>Орой бүр 3–5 минут</strong><span class="muted">7 хоногийн богино тэмдэглэл</span></div> </div> </div> ${...} </section>
-- ${...} <section class="screen"> <div class="panel stack choice-panel"> <h2>Та ямар түвшний зураглал авах вэ?</h2> <p class="muted">Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.</p> <div class="choice-grid"> <div class="card stack choice-card"> <p class="choice-kicker">Хурдан эхлэх</p> <h3>Нэг удаагийн гүн анализ</h3> <div class="price-stack"> <p class="price-line"><span>Үндсэн үнэ</span> ${...}</p> <p class="price promo"><span>Нээлтийн урамшуулалт үнэ</span> ${...}</p> </div> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p> <div class="pill-row"><span class="pill">10–15 минут</span><span class="pill">Эхний хэсгийг үнэгүй харах</span><span class="pill">Бүрэн эхний тайлан</span></div> <ul> <li>Хамгийн тод давтагддаг нөхцөл</li> <li>Давхар нөлөөлж буй 1–2 зүйл</li> <li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li> <li>Одоогоор зайлсхийх зүйлс</li> <li>Эхний зөөлөн алхам</li> <li>14 хоногийн эхний туршилт</li> <li>7 хоногоор нарийвчлах боломж</li> </ul> <p class="muted">Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.</p> <button class="button choice-button" onclick="choosePackage('one-time')">${...} төлөөд тайлангаа нээх</button> </div> <div class="card stack choice-card choice-card-featured"> <p class="choice-kicker">Илүү нарийвчилсан</p> <h3>7 хоногийн гүн анализ</h3> <div class="price-stack"> <p class="price-line"><span>Үндсэн үнэ</span> ${...}</p> <p class="price promo"><span>Нээлтийн урамшуулалт үнэ</span> ${...}</p> </div> <p class="muted">Орой бүр 3–5 минутын богино тэмдэглэлээр таны идэх хүсэл бодит амьдрал дээр ямар үед давтагдаж байгааг харна.</p> <div class="pill-row"><span class="pill">Эхлэх асуулт</span><span class="pill">Орой бүр 3–5 минут</span><span class="pill">5 өдөр бөглөсөн ч тайлан гарна</span></div> <ul> <li>Эхлэх богино асуулт</li> <li>7 өдөр богино тэмдэглэл</li> <li>Идэх хүсэл эхэлдэг нөхцөл</li> <li>Эхний зураглал ба ажиглалтын харьцуулалт</li> <li>Идэх хүсэл яг ямар үүрэгтэй давтагдаж байгааг тодруулах</li> <li>Илүү тод 14 хоногийн туршилт</li> </ul> <p class="muted">Энэ нь илүү их тураах төлөвлөгөө биш. Зүгээр л 7 хоногийн богино ажиглалт. Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш, калори тоолохгүй, зөвхөн давтагддаг мөчүүдийг ажиглана.</p> <button class="button choice-button" onclick="choosePackage('seven-day')">${...} төлөөд 7 хоногийн үнэлгээ эхлүүлэх</button> </div> </div> ${...} </div> </section>
-- ${...} <section class="screen"> <div class="panel stack"> <h2>Үнэлгээний хоёр зам</h2> <p class="muted">Эхлээд өөрт тохирох түвшнээ сонгоно. Нэг удаагийн зураглал нь одоогийн хариултаар эхний тайлан гаргана. 7 хоногийн үнэлгээ тэр зураглалыг бодит өдрүүдийн богино ажиглалтаар нарийвчилна.</p> <div class="two-col"> <div class="card"><h3>Нэг удаагийн гүн зураглал</h3><p>10–15 минутанд хамгийн тод давтагддаг нөхцөл, нөлөөлж буй 1–2 шалтгаан, одоогоор болгоомжлох зүйл, эхний зөөлөн алхам гарна.</p></div> <div class="card"><h3>7 хоногийн гүн зураглал</h3><p>Эхний богино асуулт + орой бүр 3–5 минутын тэмдэглэл. 5 өдөр бөглөсөн ч тайлан гарна, калори тоолохгүй, зөвхөн давтагддаг мөчүүдийг ажиглана.</p></div> </div> <div class="card"> <h3>Харьцуулалт</h3> <div class="two-col"> <p><strong>Нэг удаагийн:</strong> тухайн мөчийн хариултад суурилсан эхний зураглал.</p> <p><strong>7 хоногийн:</strong> илүү их тураах төлөвлөгөө биш, бодит өдөр тутмын давтамжийг нарийвчлах богино ажиглалт.</p> </div> </div> ${...} <div class="actions"> <button class="button" onclick="setView('choice')">Сонголтоо хийх</button> <button class="button ghost" onclick="setView('landing')">Буцах</button> </div> </div> </section>
+- ${...} <section class="screen"> <div class="panel stack choice-panel"> <h2>Та ямар түвшний зураглал авах вэ?</h2> <p class="muted">Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.</p> <div class="choice-grid"> <div class="card stack choice-card"> <p class="choice-kicker">Хурдан эхлэх</p> <h3>Нэг удаагийн гүн анализ</h3> <div class="price-stack"> <p class="price-line"><span>Үндсэн үнэ</span> ${...}</p> <p class="price promo"><span>Нээлтийн урамшуулалт үнэ</span> ${...}</p> </div> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p> <div class="pill-row"><span class="pill">10–15 минут</span><span class="pill">Эхний хэсгийг үнэгүй харах</span><span class="pill">Бүрэн эхний тайлан</span></div> <ul> <li>Хамгийн тод давтагддаг нөхцөл</li> <li>Давхар нөлөөлж буй 1–2 зүйл</li> <li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li> <li>Одоогоор зайлсхийх зүйлс</li> <li>Эхний зөөлөн алхам</li> <li>14 хоногийн эхний туршилт</li> <li>[REMOVED_FEATURE_REFINEMENT] боломж</li> </ul> <p class="muted">Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.</p> <button class="button choice-button" onclick="choosePackage('one-time')">${...} төлөөд тайлангаа нээх</button> </div> <div class="card stack choice-card choice-card-featured"> <p class="choice-kicker">Илүү нарийвчилсан</p> <h3>[REMOVED_FEATURE_PRODUCT] анализ</h3> <div class="price-stack"> <p class="price-line"><span>Үндсэн үнэ</span> ${...}</p> <p class="price promo"><span>Нээлтийн урамшуулалт үнэ</span> ${...}</p> </div> <p class="muted">Орой бүр 3–5 минутын богино тэмдэглэлээр таны идэх хүсэл бодит амьдрал дээр ямар үед давтагдаж байгааг харна.</p> <div class="pill-row"><span class="pill">Эхлэх асуулт</span><span class="pill">Орой бүр 3–5 минут</span><span class="pill">5 өдөр бөглөсөн ч тайлан гарна</span></div> <ul> <li>Эхлэх богино асуулт</li> <li>7 өдөр богино тэмдэглэл</li> <li>Идэх хүсэл эхэлдэг нөхцөл</li> <li>Эхний зураглал ба ажиглалтын харьцуулалт</li> <li>Идэх хүсэл яг ямар үүрэгтэй давтагдаж байгааг тодруулах</li> <li>Илүү тод 14 хоногийн туршилт</li> </ul> <p class="muted">Энэ нь илүү их тураах төлөвлөгөө биш. Зүгээр л 7 хоногийн богино ажиглалт. Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш, калори тоолохгүй, зөвхөн давтагддаг мөчүүдийг ажиглана.</p> <button class="button choice-button" onclick="choosePackage('removed-feature')">${...} төлөөд 7 хоногийн үнэлгээ эхлүүлэх</button> </div> </div> ${...} </div> </section>
+- ${...} <section class="screen"> <div class="panel stack"> <h2>Үнэлгээний хоёр зам</h2> <p class="muted">Эхлээд өөрт тохирох түвшнээ сонгоно. Нэг удаагийн зураглал нь одоогийн хариултаар эхний тайлан гаргана. 7 хоногийн үнэлгээ тэр зураглалыг бодит өдрүүдийн богино ажиглалтаар нарийвчилна.</p> <div class="two-col"> <div class="card"><h3>Нэг удаагийн гүн зураглал</h3><p>10–15 минутанд хамгийн тод давтагддаг нөхцөл, нөлөөлж буй 1–2 шалтгаан, одоогоор болгоомжлох зүйл, эхний зөөлөн алхам гарна.</p></div> <div class="card"><h3>[REMOVED_FEATURE_PRODUCT] зураглал</h3><p>Эхний богино асуулт + орой бүр 3–5 минутын тэмдэглэл. 5 өдөр бөглөсөн ч тайлан гарна, калори тоолохгүй, зөвхөн давтагддаг мөчүүдийг ажиглана.</p></div> </div> <div class="card"> <h3>Харьцуулалт</h3> <div class="two-col"> <p><strong>Нэг удаагийн:</strong> тухайн мөчийн хариултад суурилсан эхний зураглал.</p> <p><strong>7 хоногийн:</strong> илүү их тураах төлөвлөгөө биш, бодит өдөр тутмын давтамжийг нарийвчлах богино ажиглалт.</p> </div> </div> ${...} <div class="actions"> <button class="button" onclick="setView('choice')">Сонголтоо хийх</button> <button class="button ghost" onclick="setView('landing')">Буцах</button> </div> </div> </section>
 - ${...} <section class="screen"> <div class="panel stack"> <h2>Энэ тест таныг шүүхгүй</h2> <p>Бид таны идэлт, өлсөлт, стресс, таатай мэдрэмж авах хэрэгцээ, нойр, орчин хоорондоо яаж холбогдож байгааг зураглана.</p> <div class="pill-row"> <span class="pill">10-15 минут</span> <span class="pill">Бичгээр богино тайлбар оруулж болно</span> <span class="pill">Зөв/буруу хариулт байхгүй</span> <span class="pill">Зарим асуултыг алгасаж болно</span> </div> <div class="actions"> <button class="button" onclick="beginAssessment('one-time')">Тест эхлүүлэх</button> <button class="button ghost" onclick="setView('choice')">Буцах</button> </div> </div> </section>
 - 1-3 кг нэмсэн
 - 14 хоногт 70% биелэлт гэж юу болохыг урьдчилж тодорхойлох.
@@ -474,8 +474,8 @@ Generated from `app.js` on 2026-06-25.
 - 5+ цаг
 - 6-8 цаг
 - 6–8 цаг
-- 7 хоногийн гүн анализ
-- 7 хоногоор нарийвчлах эрх
+- [REMOVED_FEATURE_PRODUCT] анализ
+- [REMOVED_FEATURE_REFINEMENT] эрх
 - 7 хоногт 1-2
 - 7 хоногт хэд хэд
 - 70% амжилт failure мэт санагдах, planned imperfection хэцүү байгаа эсэхийг ажиглана.

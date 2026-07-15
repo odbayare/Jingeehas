@@ -13,7 +13,7 @@ Current commercial products:
 Current prototype payment state:
 
 * `oneTimePaid`
-* `sevenDayPaid`
+* `removedFeaturePaid`
 * `upgradePaid`
 
 Current protected behaviors:
@@ -51,9 +51,9 @@ Target capabilities:
 
 ### 7-Day paid
 
-* Product type: `seven_day`
+* Product type: `removed_feature`
 * Amount: 29,000 MNT during opening promotion
-* Grants entitlement: `seven_day_access`
+* Grants entitlement: `removed_feature_access`
 * Allows diary onboarding and diary entry creation.
 * Does not bypass report data readiness.
 * A 0-1 day diary state remains insufficient even after payment.
@@ -64,7 +64,7 @@ Target capabilities:
 * Product type: `upgrade`
 * Amount: 19,900 MNT
 * Requires an active `one_time_report` entitlement or a paid One-Time payment.
-* Grants entitlement: `seven_day_access`
+* Grants entitlement: `removed_feature_access`
 * User keeps the One-Time report.
 * Allows diary onboarding and 7-Day refinement.
 
@@ -113,7 +113,7 @@ Fields:
 * `id`
 * `user_id` nullable
 * `session_id`
-* `assessment_type`: `one_time | seven_day`
+* `assessment_type`: `one_time | removed_feature`
 * `status`: `started | completed | report_ready | locked | unlocked`
 * `report_mode`: `mode1 | mode2 | mode3 | mode4`
 * `safety_route`
@@ -161,7 +161,7 @@ Fields:
 * `id`
 * `assessment_id`
 * `report_mode`: `mode1 | mode2 | mode3 | mode4`
-* `report_kind`: `preview | one_time_full | seven_day_limited | seven_day_full | professional_summary | urgent_safety`
+* `report_kind`: `preview | one_time_full | removed_feature_limited | removed_feature_full | professional_summary | urgent_safety`
 * `readiness_key`: `insufficient | limited | usable | full`
 * `content_json`
 * `content_text`
@@ -184,7 +184,7 @@ Fields:
 * `user_id` nullable
 * `session_id`
 * `assessment_id` nullable
-* `product_type`: `one_time | seven_day | upgrade`
+* `product_type`: `one_time | removed_feature | upgrade`
 * `amount_mnt`
 * `status`: `pending | paid | failed | expired | cancelled`
 * `provider`: `qpay`
@@ -211,7 +211,7 @@ Fields:
 * `id`
 * `user_id` nullable
 * `session_id`
-* `entitlement_type`: `one_time_report | seven_day_access | upgrade_access | professional_summary`
+* `entitlement_type`: `one_time_report | removed_feature_access | upgrade_access | professional_summary`
 * `assessment_id` nullable
 * `payment_id` nullable
 * `status`: `active | expired | revoked`
@@ -221,7 +221,7 @@ Fields:
 Notes:
 
 * `professional_summary` may be created without payment.
-* `upgrade_access` can be represented as both `upgrade_access` and `seven_day_access`, but the effective frontend access flag should be `hasSevenDayAccess`.
+* `upgrade_access` can be represented as both `upgrade_access` and `removed_feature_access`, but the effective frontend access flag should be `hasRemovedFeatureAccess`.
 
 ## 5. API endpoints
 
@@ -296,7 +296,7 @@ Rules:
 
 ### POST `/api/diary/:assessment_id/entries`
 
-Creates or updates a diary entry. Requires `seven_day_access` unless the route is a safety-only action.
+Creates or updates a diary entry. Requires `removed_feature_access` unless the route is a safety-only action.
 
 ### GET `/api/entitlements`
 
@@ -307,7 +307,7 @@ Response:
 ```json
 {
   "hasOneTimeReportAccess": true,
-  "hasSevenDayAccess": false,
+  "hasRemovedFeatureAccess": false,
   "hasUpgradeAccess": false,
   "hasProfessionalSummaryAccess": true
 }
@@ -351,9 +351,9 @@ Response when paid:
 {
   "payment_id": "pay_...",
   "status": "paid",
-  "entitlements": ["seven_day_access"],
+  "entitlements": ["removed_feature_access"],
   "unlock_state": {
-    "hasSevenDayAccess": true
+    "hasRemovedFeatureAccess": true
   }
 }
 ```
@@ -395,13 +395,13 @@ QPay implementation notes:
 Replace demo booleans:
 
 * `oneTimePaid`
-* `sevenDayPaid`
+* `removedFeaturePaid`
 * `upgradePaid`
 
 with backend entitlement flags:
 
 * `hasOneTimeReportAccess`
-* `hasSevenDayAccess`
+* `hasRemovedFeatureAccess`
 * `hasUpgradeAccess`
 * `hasProfessionalSummaryAccess`
 

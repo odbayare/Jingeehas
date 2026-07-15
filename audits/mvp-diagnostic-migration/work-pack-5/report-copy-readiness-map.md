@@ -9,7 +9,7 @@
 | `wrongSelfExplanation` | Буруу өөр тайлбар | Partial | Turn key values into a gentle correction of self-blame. | Harsh wording could reinforce shame instead of reducing it. |
 | `firstGentleChange` | Эхний зөөлөн өөрчлөлт | Partial | Convert action IDs into specific, small, doable steps. | If too vague or too advice-like, it may feel like another diet instruction. |
 | `fourteenDayExperiment` | 14 хоногийн туршилтын таамаг | Partial | Write a clear hypothesis, daily action, tracking signal, and recovery rule. | The experiment could sound prescriptive if the copy is not framed as a test. |
-| `sevenDayDiaryConfirmation` | 7 хоногийн баталгаажуулах тэмдэглэл | Partial | Translate target driver keys into diary prompts or observation targets. | Raw keys would make diary confirmation unusable for real users. |
+| `removedFeatureDiaryConfirmation` | 7 хоногийн баталгаажуулах тэмдэглэл | Partial | Translate target driver keys into diary prompts or observation targets. | Raw keys would make diary confirmation unusable for real users. |
 | `safetyBlock` | Аюулгүй байдлын чиглэл | Partial | Keep professional-first copy plain, non-alarming, and not blocked by payment. | Poor wording can sound diagnostic, fear-based, or like withheld support. |
 | `evidenceExplanation` | Дотоод evidence layer, not primary user copy | Not ready for user-facing copy | Summarize only selected evidence in human terms; keep raw score/debug details internal. | Exposing score internals can reduce trust and create false precision. |
 | `ownerReviewFlags` | Owner QA only | Not user-facing | Hide entirely from production report rendering. | If exposed, it would break the user experience and reveal implementation details. |

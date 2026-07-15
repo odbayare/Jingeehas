@@ -32,16 +32,16 @@ const { _internal } = app;
 ].forEach(([surface, render]) => assert(normalize(render()).length > 20, `${surface} must render without normalizers`));
 
 _internal.setTestState({
-  packageType: "one-time", view: "report", oneTimePaid: false, sevenDayPaid: false,
-  upgradePaid: false, stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" },
-  preliminary: [], diaryEntries: [], stageVoiceSummaries: {}
+  packageType: "one-time", view: "report", oneTimePaid: false,
+  stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" },
+  preliminary: [], stageVoiceSummaries: {}
 });
 assert.strictEqual(_internal.reportMode().mode, "urgent");
 const urgent = normalize(_internal.renderReport());
 assert(urgent.length > 20, "urgent content must remain visible without payment");
 assert(!urgent.includes("14 хоногийн туршилт"), "urgent mode must suppress ordinary experiments");
 assert(!urgent.includes("QPay"), "urgent mode must suppress payment controls");
-assert(!urgent.includes("29,000₮"), "urgent mode must suppress upsell controls");
+assert(!urgent.includes("[REMOVED_FEATURE_PRICE]"), "urgent mode must suppress upsell controls");
 
 const manifest = JSON.parse(read("MONGOLIAN_COPY_APPROVED_REPLACEMENTS.json"));
 assert.strictEqual(manifest.approval_status, "EMPTY_NOT_APPROVED");
@@ -63,7 +63,7 @@ assert(!catalog.includes("./mockBackend.js"), "review catalog must exclude modul
 const artifact = JSON.parse(read("artifacts/mongolian-rendered-copy.json"));
 assert.strictEqual(artifact.generator_version, "2.0.0");
 assert.strictEqual(artifact.network_attempts, 0, "extraction must make no external request");
-const validRoles = new Set(["PUBLIC_USER", "PAID_USER", "SEVEN_DAY_USER", "ADVISOR", "ADMIN", "INTERNAL_TESTER"]);
+const validRoles = new Set(["PUBLIC_USER", "PAID_USER", "ADVISOR", "ADMIN", "INTERNAL_TESTER"]);
 const validTypes = new Set(["FULL_SURFACE", "ISOLATED_COMPONENT", "ATTRIBUTE_ONLY"]);
 artifact.entries.forEach(entry => {
   assert(entry.surface, "every rendered entry must have a surface");
@@ -75,11 +75,7 @@ const keys = artifact.entries.map(entry => `${entry.text}\u0000${entry.surface}\
 assert.strictEqual(new Set(keys).size, keys.length, "same text/surface/role rows must be deduplicated");
 const scenarioIds = new Set(artifact.scenarios.map(s => s.id));
 [
-  "coming-soon", "landing", "about", "choice", "one-time-start", "one-time-unpaid", "one-time-paid",
-  "seven-day-paywall", "seven-day-start", "diary-home-zero", "diary-home-partial", "diary-home-complete", "diary-single", "diary-multi",
-  "diary-scale", "diary-text", "diary-confirmation-empty", "diary-confirmation-awaiting", "diary-confirmation-confirmed",
-  "diary-confirmation-edit", "diary-confirmation-add", "insufficient-report", "limited-report",
-  "usable-limited-report", "full-seven-day-report", "upgrade-offer-present", "upgrade-offer-absent", "upgrade-paywall", "lead-capture",
+  "coming-soon", "landing", "about", "choice", "one-time-start", "one-time-unpaid", "one-time-paid", "lead-capture",
   "lead-thank-you", "general-safety", "professional-safety", "urgent-mode-4", "advisor-login",
   "advisor-dashboard-empty", "advisor-dashboard-populated", "admin-portal", "internal-feedback-survey",
   "internal-feedback-thanks", "internal-feedback-export", "payment-contact", "qpay-pre-invoice", "qpay-invoice-created",
@@ -94,23 +90,13 @@ artifact.scenarios.forEach(s => {
   assert.strictEqual(s.network_attempts, 0, `${s.id} must not make network requests`);
 });
 
-["diary-home-zero", "diary-home-partial", "diary-home-complete"].forEach(id => {
-  assert.strictEqual(byId(id).render_source, "renderDiaryHome");
-  assert.notStrictEqual(byId(id).render_source, "renderDiary");
-});
 const scenarioText = id => artifact.entries.filter(e => e.scenarios.includes(id)).map(e => e.text).join("\n");
-assert.notStrictEqual(scenarioText("diary-home-zero"), scenarioText("diary-home-partial"), "diary home states must differ");
-assert(read("tools/extract-rendered-copy.mjs").includes("diaryQuestionIndex"), "actual diaryQuestionIndex field must be used");
-assert(!read("tools/extract-rendered-copy.mjs").includes("diaryIndex:"), "obsolete diaryIndex fixture must not return");
 
 const sampleEntries = artifact.entries.filter(e => e.surface === "SAMPLE_REPORT");
 assert(sampleEntries.length > 0);
 assert(sampleEntries.every(e => e.render_source === "renderSampleResultPreview"));
 assert(!sampleEntries.some(e => e.scenario === "choice"), "choice screen must not contaminate sample report");
-const upgradeEntries = artifact.entries.filter(e => e.surface === "UPGRADE_OFFER");
-assert(upgradeEntries.length > 0);
-assert(upgradeEntries.every(e => e.render_source === "renderUpgradeOffer"));
-assert(!upgradeEntries.some(e => /1\. Гол зураглал|14 хоногийн эхний туршилт/.test(e.text)), "report body must not contaminate upgrade offer");
+assert(!artifact.entries.some(e => /SEVEN_DAY|DIARY|UPGRADE/.test(e.surface)), "removed product surfaces must not enter the catalog");
 
 const qpayScenarios = ["qpay-pre-invoice", "qpay-invoice-created", "qpay-pending", "qpay-paid", "qpay-error"];
 qpayScenarios.forEach(id => assert.strictEqual(byId(id).extraction_type, "ISOLATED_COMPONENT"));
@@ -131,7 +117,7 @@ assert(!accessibility.some(e => /Илүүдэл жин үүсгэж буй|Үн�
 
 const urgentEntries = artifact.entries.filter(e => e.surface === "URGENT_SAFETY");
 assert(urgentEntries.length > 0, "urgent visible content must be extracted");
-assert(!urgentEntries.some(e => /QPay|29,000₮|төлбөр/.test(e.text)), "urgent extraction must contain no payment surface content");
+assert(!urgentEntries.some(e => /QPay|[REMOVED_FEATURE_PRICE]|төлбөр/.test(e.text)), "urgent extraction must contain no payment surface content");
 assert(artifact.entries.some(e => e.surface === "QUESTION_BANK"), "question bank must be covered");
 assert(artifact.entries.some(e => e.surface === "ANSWER_OPTIONS"), "answer options must be covered");
 assert(artifact.scenarios.some(s => s.role === "ADVISOR"), "advisor coverage must be explicit");

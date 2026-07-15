@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0729 — P2
+## COPY-0470 — P2
 
 **Exact current text**
 
@@ -21,7 +21,7 @@ Questions and their owning options are kept together verbatim. No wording is pro
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 344
+- Source line: 329
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -78,7 +78,7 @@ Question wording requiring owner review.
 - Сарын тэмдгийн мөчлөгтэй холбоотой мэт санагдсан
 - Сайн мэдэхгүй
 
-## COPY-0730 — P2
+## COPY-0471 — P2
 
 **Exact current text**
 
@@ -97,7 +97,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 345
+- Source line: 330
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -149,7 +149,7 @@ Question wording requiring owner review.
 - Өөрчлөлтгүй
 - Мэдэхгүй
 
-## COPY-0732 — P2
+## COPY-0473 — P2
 
 **Exact current text**
 
@@ -168,7 +168,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 347
+- Source line: 332
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -216,7 +216,7 @@ Question wording requiring owner review.
 - Бараг өдөр бүр
 - Өдөрт олон удаа
 
-## COPY-0733 — P2
+## COPY-0474 — P2
 
 **Exact current text**
 
@@ -235,7 +235,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 348
+- Source line: 333
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -287,7 +287,7 @@ Question wording requiring owner review.
 - Сарын тэмдэг ирэхийн өмнөх өдрүүдэд
 - Мэдэхгүй
 
-## COPY-0734 — P2
+## COPY-0475 — P2
 
 **Exact current text**
 
@@ -306,7 +306,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 349
+- Source line: 334
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -354,7 +354,7 @@ Question wording requiring owner review.
 - Ихэвчлэн
 - Бараг үргэлж
 
-## COPY-0735 — P2
+## COPY-0476 — P2
 
 **Exact current text**
 
@@ -373,7 +373,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 350
+- Source line: 335
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -421,7 +421,7 @@ Question wording requiring owner review.
 - Ихэвчлэн тэгдэг
 - Заримдаа идэж чаддаггүй
 
-## COPY-0736 — P2
+## COPY-0477 — P2
 
 **Exact current text**
 
@@ -440,7 +440,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 351
+- Source line: 336
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -492,7 +492,7 @@ Question wording requiring owner review.
 - Баяртай эсвэл өөрийгөө шагнамаар үе
 - Мэдэхгүй
 
-## COPY-0737 — P2
+## COPY-0478 — P2
 
 **Exact current text**
 
@@ -511,7 +511,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 352
+- Source line: 337
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]

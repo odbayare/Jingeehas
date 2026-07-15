@@ -13,13 +13,13 @@ function renderPaidReport(stageAnswers, extras = {}) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-S04": "Үгүй",
       ...stageAnswers
     },
-    diaryEntries: [],
+    removedEntries: [],
     ...extras
   });
   return _internal.renderReport();

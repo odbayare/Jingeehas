@@ -15,7 +15,7 @@ const commit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding:
 const entries = artifact.entries.map((entry, index) => ({ ...entry, id: `COPY-${String(index + 1).padStart(4, "0")}` }));
 const byText = new Map();
 entries.forEach(entry => { const list = byText.get(entry.text) || []; list.push(entry); byText.set(entry.text, list); });
-const allQuestions = [...app.stageOneQuestions, ...app.dailyCore, ...app.dailyMenstrual];
+const allQuestions = [...app.stageOneQuestions];
 const safetyQuestionIds = new Set(["S1-S04", "S1-B01", "S1-B02", "S1-B03", "S1-B04", "S1-B05"]);
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "MONGOLIAN_COPY_APPROVED_REPLACEMENTS.json"), "utf8"));
 const appliedCorrections = JSON.parse(fs.readFileSync(path.join(root, "APPLIED_OWNER_CORRECTIONS.json"), "utf8"));
@@ -92,10 +92,10 @@ const brandOnly = /^(QPay|PDF)$/;
 const mixed = entries.filter(e => /[A-Za-z]/.test(e.text) && !brandOnly.test(e.text));
 const safetyTexts = new Set(allQuestions.filter(q => safetyQuestionIds.has(q.id)).flatMap(q => [q.text, ...(q.options || [])]));
 const safety = entries.filter(e => /SAFETY/.test(e.surface) || safetyTexts.has(e.text));
-const payment = entries.filter(e => /^(PAYMENT|QPAY|ONE_TIME_PAYWALL|SEVEN_DAY_PAYWALL|UPGRADE_PAYWALL)$/.test(e.surface) || (e.surface === "VISIBLE_ERROR" && /qpay|payment/i.test(e.scenarios.join(" "))));
+const payment = entries.filter(e => /^(PAYMENT|QPAY|ONE_TIME_PAYWALL)$/.test(e.surface) || (e.surface === "VISIBLE_ERROR" && /qpay|payment/i.test(e.scenarios.join(" "))));
 const report = entries.filter(e => /REPORT/.test(e.surface) && !safety.includes(e) && !payment.includes(e));
 const template = entries.filter(e => e.dynamic || /\$\{|[.!?]\s+[а-яөү]|[.!?]{2,}/.test(e.text));
-const questionEntries = entries.filter(e => ["QUESTION_BANK", "ANSWER_OPTIONS", "DIARY_QUESTION"].includes(e.surface));
+const questionEntries = entries.filter(e => ["QUESTION_BANK", "ANSWER_OPTIONS"].includes(e.surface));
 const assignedSpecial = new Set([...mixed, ...safety, ...payment, ...report, ...template, ...questionEntries].map(e => e.id));
 const advisorAdmin = entries.filter(e => ["ADVISOR", "ADMIN"].includes(e.role));
 const accessibility = entries.filter(e => e.surface === "ACCESSIBILITY");
@@ -122,10 +122,8 @@ const questionDomains = [
   ["SLEEP_ENERGY", q => q.module === "Sleep / energy"],
   ["WORK_CONTEXT", q => ["Executive load","Өдөр тутмын хөдөлгөөн ба ажлын нөхцөл"].includes(q.module)],
   ["BODY_MEDICAL", q => ["Body / medical","Хөдөлгөөний боломж"].includes(q.module)],
-  ["MENSTRUAL_CYCLE", q => q.module === "Menstrual cycle" || q.id.startsWith("D-MC")],
-  ["SAFETY", q => q.module === "Safety"],
-  ["PATTERN_PROBES", q => q.id.startsWith("D-P")],
-  ["DIARY", q => q.id.startsWith("D-")]
+  ["MENSTRUAL_CYCLE", q => q.module === "Menstrual cycle"],
+  ["SAFETY", q => q.module === "Safety"]
 ];
 const usedQuestions = new Set();
 for (const [domain, predicate] of questionDomains) {
@@ -136,7 +134,7 @@ for (const [domain, predicate] of questionDomains) {
     let body = `# P2 Questions — ${domain} — Batch ${String(chunkIndex + 1).padStart(2, "0")}\n\nQuestions and their owning options are kept together verbatim. No wording is proposed.\n\n`;
     chunk.forEach(q => {
       const qEntries = byText.get(q.text) || []; const optionEntries = (q.options || []).flatMap(option => byText.get(option) || []);
-      [...qEntries, ...optionEntries].filter(e => ["QUESTION_BANK", "ANSWER_OPTIONS", "DIARY_QUESTION"].includes(e.surface)).forEach(e => assignments.get(e.id).add(name));
+      [...qEntries, ...optionEntries].filter(e => ["QUESTION_BANK", "ANSWER_OPTIONS"].includes(e.surface)).forEach(e => assignments.get(e.id).add(name));
       const primary = qEntries.find(e => e.surface === "QUESTION_BANK") || qEntries[0];
       if (primary) { ownerDecisionFields += 1; body += entryBlock(primary, "question"); }
       else body += `## ${q.id} — P2\n\n**Exact current text**\n\n${quote(q.text)}\n\n**Answer options**\n\n${(q.options || []).map(option => `- ${option}`).join("\n") || "- None"}\n\n**Source mapping**\n\nUNRESOLVED\n\n**Owner decision**\n\n- Decision: \`PENDING\`\n- Approved exact text:\n- Approved by:\n- Approval date:\n- Notes:\n\n`;
@@ -157,8 +155,8 @@ let adminBody="# P2 Advisor and Admin UI\n\nRole-facing evidence only.\n\n";advi
 
 const familyDefs = [
   ["TERM-01", "assessment_name_01", /үнэлгээ|assessment/i], ["TERM-02", "test_name_01", /тест|test/i], ["TERM-03", "report_name_01", /тайлан|report/i],
-  ["TERM-04", "initial_result_name_01", /эхний зураглал|эхний үр дүн/i], ["TERM-05", "seven_day_product_name_01", /7 хоног/i],
-  ["TERM-06", "advisor_role_name_01", /Coach|coach|зөвлөх|advisor/i], ["TERM-07", "diary_tracking_name_01", /тэмдэглэл|diary|tracking/i],
+  ["TERM-04", "initial_result_name_01", /эхний зураглал|эхний үр дүн/i],
+  ["TERM-06", "advisor_role_name_01", /Coach|coach|зөвлөх|advisor/i],
   ["TERM-08", "evidence_observation_name_01", /нотолгоо|evidence|ажиглалт/i], ["TERM-09", "payment_document_name_01", /нэхэмжлэл|invoice/i],
   ["TERM-10", "experiment_program_plan_name_01", /туршилт|хөтөлбөр|төлөвлөгөө|experiment|program|plan/i]
 ];

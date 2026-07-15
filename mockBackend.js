@@ -1,9 +1,7 @@
 const MOCK_BACKEND_STORAGE_KEY = "weightLossMockBackendState";
 
 const PRODUCT_AMOUNTS = {
-  one_time: 9900,
-  seven_day: 29000,
-  upgrade: 19900
+  one_time: 9900
 };
 
 const COACH_PARTNER = {
@@ -165,6 +163,7 @@ function getCurrentSession() {
 }
 
 function createAssessment(assessmentType = "one_time", attrs = {}) {
+  if (assessmentType !== "one_time") throw new Error(`Unsupported assessment type: ${assessmentType}`);
   const session = getCurrentSession();
   const state = readState();
   const timestamp = nowIso();
@@ -313,28 +312,6 @@ function createEntitlementFromPayment(paymentInput) {
     created.push(createEntitlement(state, {
       session_id: payment.session_id,
       entitlement_type: "one_time_report",
-      assessment_id: payment.assessment_id,
-      payment_id: payment.id
-    }));
-  }
-  if (payment.product_type === "seven_day") {
-    created.push(createEntitlement(state, {
-      session_id: payment.session_id,
-      entitlement_type: "seven_day_access",
-      assessment_id: payment.assessment_id,
-      payment_id: payment.id
-    }));
-  }
-  if (payment.product_type === "upgrade") {
-    created.push(createEntitlement(state, {
-      session_id: payment.session_id,
-      entitlement_type: "upgrade_access",
-      assessment_id: payment.assessment_id,
-      payment_id: payment.id
-    }));
-    created.push(createEntitlement(state, {
-      session_id: payment.session_id,
-      entitlement_type: "seven_day_access",
       assessment_id: payment.assessment_id,
       payment_id: payment.id
     }));
@@ -786,8 +763,6 @@ function createProfessionalSummaryEntitlement(assessmentId = null) {
 function getAccessState(assessmentId = null) {
   return {
     hasOneTimeReportAccess: hasEntitlement("one_time_report", assessmentId),
-    hasSevenDayAccess: hasEntitlement("seven_day_access", assessmentId),
-    hasUpgradeAccess: hasEntitlement("upgrade_access", assessmentId),
     hasProfessionalSummaryAccess: hasEntitlement("professional_summary", assessmentId)
   };
 }
@@ -798,14 +773,6 @@ function canAccessProfessionalSummary(reportMode, assessmentId = null) {
 
 function canAccessUrgentSafety(reportMode) {
   return reportMode === "mode4";
-}
-
-function canShowUpgradeCta(reportMode) {
-  return reportMode !== "mode4";
-}
-
-function canGenerateSevenDayReport(diaryEntries = []) {
-  return Array.isArray(diaryEntries) && diaryEntries.length >= 5;
 }
 
 function trackEvent(eventType, attrs = {}) {
@@ -951,8 +918,6 @@ const api = {
   getAccessState,
   canAccessProfessionalSummary,
   canAccessUrgentSafety,
-  canShowUpgradeCta,
-  canGenerateSevenDayReport,
   trackEvent,
   createLeadIntent,
   getLeadIntents,

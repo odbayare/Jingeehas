@@ -21,7 +21,7 @@ buildRuntimeVisibleSurfacePayload(reportContext)
 | Call site | Payload state | Guard state | Default output |
 | --- | --- | --- | --- |
 | one-time `renderReport()` branch | runtime payload connected | `ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = false` | unchanged |
-| seven-day `renderReport()` branch | runtime payload connected | `ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = false` | unchanged |
+| removed-feature `renderReport()` branch | runtime payload connected | `ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = false` | unchanged |
 
 ## Available Report Context
 

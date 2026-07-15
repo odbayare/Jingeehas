@@ -2,7 +2,7 @@
 
 ## 1. Executive summary
 
-WP82 adds a source-safe QA-only skip-paywall control for the one-time report flow. The repository source keeps production behavior unchanged: coming-soon mode remains enabled, QPay/payment access remains required for public one-time reports, and the one-time/seven-day payment cards remain in source.
+WP82 adds a source-safe QA-only skip-paywall control for the one-time report flow. The repository source keeps production behavior unchanged: coming-soon mode remains enabled, QPay/payment access remains required for public one-time reports, and the one-time/removed-feature payment cards remain in source.
 
 The QA draft can now be built from the committed source and modified only in the temporary publish copy so that:
 
@@ -13,7 +13,7 @@ The QA draft can now be built from the committed source and modified only in the
 
 ## 2. Owner QA issue
 
-The prior QA draft removed QPay verification friction, but still let the owner land on the assessment/payment selection screen after testing. That screen included the one-time and seven-day paid cards, which was distracting and fake during report-quality QA.
+The prior QA draft removed QPay verification friction, but still let the owner land on the assessment/payment selection screen after testing. That screen included the one-time and removed-feature paid cards, which was distracting and fake during report-quality QA.
 
 The owner needs to review report content and flow, not click through a simulated paywall.
 
@@ -23,8 +23,8 @@ The previous draft bypass granted report access, but the app still had normal pu
 
 - `Үнэлгээний сонголт`
 - `Нэг удаагийн гүн анализ`
-- `7 хоногийн гүн анализ`
-- one-time and seven-day payment card CTAs
+- `[REMOVED_FEATURE_PRODUCT] анализ`
+- one-time and removed-feature payment card CTAs
 
 That was correct for production, but too much friction for a QA-only draft focused on the expanded one-time report.
 
@@ -46,7 +46,7 @@ When the temporary QA publish copy sets both QA flags to `true`, the one-time fl
 - skips the assessment selection/payment card screen;
 - grants one-time report access without QPay;
 - opens the expanded WP81 report directly after completing Stage 1;
-- does not automatically unlock the seven-day flow.
+- does not automatically unlock the removed-feature flow.
 
 ## 5. Production payment flow unchanged confirmation
 
@@ -56,9 +56,9 @@ Production source remains safe by default:
 - `WEIGHT_TEST_QA_PAYMENT_BYPASS = false`
 - `WEIGHT_TEST_QA_SKIP_PAYWALL = false`
 - one-time payment card copy remains in source
-- seven-day payment card copy remains in source
+- removed-feature payment card copy remains in source
 - `9,900₮` remains in source
-- `29,000₮` remains in source
+- `[REMOVED_FEATURE_PRICE]` remains in source
 - `WEIGHT_TEST_ONE_TIME` remains in source
 - QPay create/check endpoint strings remain unchanged
 
@@ -83,7 +83,7 @@ The new test verifies:
 - QA skip-paywall branch exists;
 - a temporary QA-flipped app copy skips the assessment selection screen;
 - completing the one-time questionnaire opens the expanded report directly;
-- QA bypass does not unlock the seven-day flow;
+- QA bypass does not unlock the removed-feature flow;
 - QPay is not requested in the QA direct report;
 - WP81 expanded report sections remain present.
 
@@ -116,7 +116,7 @@ Guard greps also confirmed:
 
 - `WEIGHT_TEST_COMING_SOON_MODE = true`
 - `9,900₮`
-- `29,000₮`
+- `[REMOVED_FEATURE_PRICE]`
 - `WEIGHT_TEST_ONE_TIME`
 - QPay create/check endpoint strings
 

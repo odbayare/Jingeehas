@@ -16,7 +16,7 @@ function resetUnpaid(overrides = {}) {
     view: "oneTimeStart",
     currentAssessmentId: null,
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     qpayPayment: { status: "idle", message: "", invoice: null },
     ...overrides
@@ -62,23 +62,15 @@ resetUnpaid({
 });
 assert.strictEqual(_internal.canStartPaidAssessment("one-time"), false, "QPay invoice creation state must not allow test start");
 
-["stage1", "preliminary", "report"].forEach(view => {
+["stage1", "report"].forEach(view => {
   resetUnpaid({ view });
   assert.strictEqual(_internal.enforcePaidFirstGate(), true, `${view} restore must be redirected for unpaid one-time user`);
   assert.strictEqual(_internal.getTestState().view, "oneTimeStart", `${view} restore must return to one-time payment gate`);
 });
 
-["stage1", "preliminary", "unlock", "diaryHome", "diary", "reportReady", "report"].forEach(view => {
-  resetUnpaid({ packageType: "seven-day", view });
-  assert.strictEqual(_internal.enforcePaidFirstGate(), true, `${view} restore must be redirected for unpaid seven-day user`);
-  assert.strictEqual(_internal.getTestState().view, "sevenDayStart", `${view} restore must return to seven-day payment gate`);
-});
-
-resetUnpaid({ packageType: "seven-day", view: "sevenDayStart" });
-assert.strictEqual(_internal.canStartPaidAssessment("seven-day"), false, "unpaid seven-day user must not be start-eligible");
-assert.strictEqual(_internal.beginAssessment("seven-day"), false, "unpaid seven-day beginAssessment must be blocked");
-assert.strictEqual(_internal.startDiary(), false, "unpaid seven-day user must not enter diary");
-assert.notStrictEqual(_internal.getTestState().view, "diary", "unpaid seven-day user must not see diary questions");
+resetUnpaid({ view: "preliminary" });
+assert.strictEqual(_internal.enforcePaidFirstGate(), false, "free preliminary result must remain available before payment");
+assert.notStrictEqual(_internal.getTestState().view, "diary", "unpaid removed-feature user must not see diary questions");
 
 resetUnpaid({
   qpayPayment: { status: "paid", message: "Төлбөр баталгаажлаа.", invoice: null }
@@ -97,7 +89,7 @@ _internal.setTestState({
   view: "oneTimeStart",
   currentAssessmentId: assessment.id,
   oneTimePaid: false,
-  sevenDayPaid: false,
+  removedFeaturePaid: false,
   upgradePaid: false,
   qpayPayment: { status: "idle", message: "", invoice: null }
 });

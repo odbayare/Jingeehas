@@ -428,7 +428,7 @@ The test-only calculator should consume current exported evidence, not replace i
 ```text
 stageAnswers
 stageVoiceSummaries
-diaryEntries
+removedEntries
 current mechanism evidence from calculateMechanismEvidence()
 current ranked patterns from rankedPatterns()
 safety route from reportMode()
@@ -691,7 +691,7 @@ The contract should be generated from current answers, diary evidence, old mecha
   "wrong_self_explanation": {},
   "first_gentle_change": {},
   "fourteen_day_experiment_hypothesis": {},
-  "seven_day_diary_confirmation_targets": [],
+  "removed_feature_diary_confirmation_targets": [],
   "evidence_sources": [],
   "copy_constraints": []
 }
@@ -893,7 +893,7 @@ Example:
 }
 ```
 
-## `seven_day_diary_confirmation_targets`
+## `removed_feature_diary_confirmation_targets`
 
 Each target should specify what diary evidence would confirm, weaken, or redirect the stack.
 
@@ -1081,7 +1081,7 @@ Scope: test fixture planning only. These are not user-facing personas and should
 
 ## Fixture Design Principles
 
-- Each fixture should include current `stageAnswers` and optional `diaryEntries`.
+- Each fixture should include current `stageAnswers` and optional `removedEntries`.
 - Each fixture should still pass through the current mechanism engine.
 - Expected results should assert new driver-stack fields, not report copy.
 - Safety fixtures must verify ordinary report/experiment suppression.
@@ -1302,7 +1302,7 @@ name
 description
 stageAnswers
 stageVoiceSummaries if needed
-diaryEntries if needed
+removedEntries if needed
 expectedCurrentMode
 expectedOldMechanisms
 expectedDriverStack
@@ -1395,7 +1395,7 @@ Assertions:
 - `interaction_pattern` has stable ID.
 - `vulnerable_moment` has required components.
 - `first_gentle_change` targets modifiable driver.
-- `seven_day_diary_confirmation_targets` are present.
+- `removed_feature_diary_confirmation_targets` are present.
 
 ### 5. Vulnerable Moment Tests
 

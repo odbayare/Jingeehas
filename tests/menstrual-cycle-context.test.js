@@ -11,12 +11,12 @@ function setState(nextState) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: true,
     stageVoiceSummaries: {},
     stageSummaryUi: {},
-    diaryEntries: [],
-    diaryDraft: {},
+    removedEntries: [],
+    removedDraft: {},
     ...nextState
   });
 }
@@ -41,41 +41,8 @@ function run() {
 
   const functionQuestion = app.stageOneQuestions.find(question => question.id === "S1-F01");
   const cravingQuestion = app.stageOneQuestions.find(question => question.id === "S1-R02");
-  const dailyFunctionQuestion = app.dailyCore.find(question => question.id === "D-C05");
   assert(functionQuestion.options.includes("Сарын тэмдгийн мөчлөгтэй холбоотой мэт санагдсан"));
   assert(cravingQuestion.options.includes("Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"));
-  assert(dailyFunctionQuestion.options.includes("Сарын тэмдэгтэй холбоотой мэт санагдсан"));
-
-  setState({
-    packageType: "seven-day",
-    stageAnswers: { "S1-C02": "Эмэгтэй", "MC-GATE": "Үгүй, хамаарахгүй" },
-    diaryDraft: { unplanned_eating_count: "Тийм, нэг удаа" },
-    preliminary: [{ key: "reward" }]
-  });
-  let diaryIds = app._internal.getDiaryQuestions().map(question => question.id);
-  assert(!diaryIds.includes("D-MC-01"), "daily menstrual questions should not render when inactive");
-
-  setState({
-    packageType: "seven-day",
-    stageAnswers: { "S1-C02": "Эмэгтэй",
-      "MC-GATE": "Тийм, хамаарна" },
-    diaryDraft: { unplanned_eating_count: "Тийм, нэг удаа" },
-    preliminary: [{ key: "reward" }]
-  });
-  diaryIds = app._internal.getDiaryQuestions().map(question => question.id);
-  assert(diaryIds.includes("D-MC-01"), "daily menstrual phase question should render when active");
-  assert(diaryIds.includes("D-MC-02"), "daily menstrual appetite question should render when active");
-  assert(!diaryIds.includes("D-MC-03"), "third daily cycle question should wait for cycle-linked answer");
-
-  setState({
-    packageType: "seven-day",
-    stageAnswers: { "S1-C02": "Эмэгтэй",
-      "MC-GATE": "Тийм, хамаарна" },
-    diaryDraft: { unplanned_eating_count: "Тийм, нэг удаа", cycle_today_link: "Тийм, амттай юм илүү хүссэн" },
-    preliminary: [{ key: "reward" }]
-  });
-  diaryIds = app._internal.getDiaryQuestions().map(question => question.id);
-  assert(diaryIds.includes("D-MC-03"), "third daily cycle question should render after a cycle-linked answer");
 
   setState({
     stageAnswers: {

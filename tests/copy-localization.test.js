@@ -51,13 +51,13 @@ function setOneTimeReward() {
     },
     preliminary: [{ key: "reward", score: 5, label: "хүчтэй нийцэж байна" }],
     stageVoiceSummaries: {},
-    diaryEntries: []
+    removedEntries: []
   });
 }
 
-function setSevenDayFull() {
+function setRemovedFeatureFull() {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     preliminary: [
       { key: "executive", score: 5, label: "хүчтэй нийцэж байна" },
@@ -67,7 +67,7 @@ function setSevenDayFull() {
       "S1-L01": "Бараг өдөр бүр",
       "S1-L02": ["Delivery", "Snack"]
     },
-    diaryEntries: Array.from({ length: 5 }, (_, index) => entry(index + 1))
+    removedEntries: Array.from({ length: 5 }, (_, index) => entry(index + 1))
   });
 }
 
@@ -75,34 +75,34 @@ function renderedSurfaces() {
   const surfaces = [];
   setOneTimeReward();
   surfaces.push(_internal.renderReport());
-  setSevenDayFull();
+  setRemovedFeatureFull();
   surfaces.push(_internal.renderReport());
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     stageAnswers: {
       "S1-W01": "4-7 кг нэмсэн",
       "S1-W02": ["Эм"],
       "S1-B01": ["Сахар унасан мэт", "Толгой эргэх"]
     },
-    diaryEntries: Array.from({ length: 5 }, (_, index) => entry(index + 1, {
+    removedEntries: Array.from({ length: 5 }, (_, index) => entry(index + 1, {
       body_signals: ["Аль нь ч үгүй"],
       meal_rhythm: "Тогтвортой, хоол алгасаагүй"
     }))
   });
   surfaces.push(_internal.renderReport());
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     stageAnswers: { "S1-B03": "Тийм" },
-    diaryEntries: Array.from({ length: 5 }, (_, index) => entry(index + 1))
+    removedEntries: Array.from({ length: 5 }, (_, index) => entry(index + 1))
   });
   surfaces.push(_internal.renderReport());
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" },
-    diaryEntries: Array.from({ length: 5 }, (_, index) => entry(index + 1))
+    removedEntries: Array.from({ length: 5 }, (_, index) => entry(index + 1))
   });
   surfaces.push(_internal.renderReport());
   return normalize(surfaces.join("\n"));
@@ -145,16 +145,13 @@ function run() {
   ].forEach(value => assert(!text.includes(value), `mixed copy rendered: ${value}`));
 
   [
-    "Таны тайлан бэлэн боллоо",
-    "Гол зураг",
-    "Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?",
-    "Давтагддаг тойрог",
-    "Яагаад ингэж хэлж байна вэ?",
-    "Гол буруу ойлголт",
-    "Одоохондоо хэт яарахгүй зүйлс",
-    "Хамгийн хялбар эхлэх цэг",
-    "14 хоногийн туршилт",
-    "Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"
+    "1. Гол зураглал",
+    "2. Энэ дүгнэлт юунд тулгуурласан бэ?",
+    "3. Таны хамгийн магадлалтай гол хэв маяг",
+    "5. Танд тохирох эхний стратеги",
+    "6. Одоогоор юуг хийхгүй байх вэ?",
+    "7. 7–14 хоногийн нэг хувьсагчийн туршилт",
+    "9. Хэзээ мэргэжлийн хүнтэй ярилцах вэ?"
   ].forEach(value => assert(text.includes(value), `localized heading missing: ${value}`));
 
   const source = require("fs").readFileSync(require("path").join(__dirname, "..", "app.js"), "utf8");

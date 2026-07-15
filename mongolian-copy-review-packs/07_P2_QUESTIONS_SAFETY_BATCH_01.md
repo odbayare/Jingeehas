@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0774 — P2
+## COPY-0515 — P2
 
 **Exact current text**
 
@@ -21,7 +21,7 @@ Questions and their owning options are kept together verbatim. No wording is pro
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 389
+- Source line: 374
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -69,7 +69,7 @@ Question wording requiring owner review.
 - Ихэвчлэн
 - Маш хүчтэй
 
-## COPY-0775 — P2
+## COPY-0516 — P2
 
 **Exact current text**
 
@@ -88,7 +88,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 390
+- Source line: 375
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -136,7 +136,7 @@ Question wording requiring owner review.
 - Ихэвчлэн
 - Маш хүчтэй
 
-## COPY-0776 — P2
+## COPY-0517 — P2
 
 **Exact current text**
 
@@ -155,7 +155,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 391
+- Source line: 376
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -203,7 +203,7 @@ Question wording requiring owner review.
 - Одоо давтагддаг
 - Хариулахгүй
 
-## COPY-0777 — P2
+## COPY-0518 — P2
 
 **Exact current text**
 
@@ -222,7 +222,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 392
+- Source line: 377
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]

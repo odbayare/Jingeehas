@@ -12,8 +12,8 @@ The disabled shadow path returns an ignored internal no-op signal and does not a
 
 - one-time paid report
 - one-time unpaid/paywall branch
-- seven-day full report
-- seven-day readiness hold
+- removed-feature full report
+- removed-feature readiness hold
 - professional-first branch
 - urgent safety branch
 

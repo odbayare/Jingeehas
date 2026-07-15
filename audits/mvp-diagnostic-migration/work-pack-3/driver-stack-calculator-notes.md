@@ -32,7 +32,7 @@ The patch adds the approved calculator export names:
 - `buildVulnerableMoment(input, driverScores, interactionPattern, safetyRoute)`
 - `buildFirstGentleChange(driverScores, interactionPattern, safetyRoute)`
 - `buildFourteenDayExperimentHypothesis(firstGentleChange, vulnerableMoment, interactionPattern)`
-- `buildSevenDayConfirmationTargets(driverScores, vulnerableMoment)`
+- `buildRemovedFeatureConfirmationTargets(driverScores, vulnerableMoment)`
 
 It also tightens fixture assertions so wrong primaries, wrong hidden food functions, unrelated score saturation, and missing safety overrides fail tests.
 
@@ -124,7 +124,7 @@ The calculator accepts a current app-style state shape:
 - `stageAnswers`
 - `stageVoiceSummaries`
 - `preliminary`
-- `diaryEntries`
+- `removedEntries`
 
 It imports existing app exports in read-only fashion:
 
@@ -152,7 +152,7 @@ The output follows the Work Pack 2/2A driver-stack contract:
 - `wrong_self_explanation`
 - `first_gentle_change`
 - `fourteen_day_experiment_hypothesis`
-- `seven_day_diary_confirmation_targets`
+- `removed_feature_diary_confirmation_targets`
 - `evidence_sources`
 - `copy_constraints`
 

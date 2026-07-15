@@ -22,7 +22,7 @@ The Weight Loss Test now blocks unpaid users before questions, diary, and report
 - package selection handler
 - QPay invoice creation
 - QPay payment check
-- one-time, seven-day, and upgrade access helpers
+- one-time, removed-feature, and upgrade access helpers
 - restored local state views
 - stage completion
 - diary start

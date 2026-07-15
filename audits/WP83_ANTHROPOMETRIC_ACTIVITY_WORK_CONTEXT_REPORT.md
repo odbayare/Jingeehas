@@ -120,7 +120,7 @@ Note: local `npm` was not available in this shell, so the project test script wa
 
 No blocking implementation issues remain for WP83 source/test scope.
 
-One follow-up candidate: the seven-day diary could later ask recurring work-shift context day by day, but WP83 only required stage-one questionnaire/report integration.
+One follow-up candidate: the removed-feature diary could later ask recurring work-shift context day by day, but WP83 only required stage-one questionnaire/report integration.
 
 ## 12. Guard confirmations
 
@@ -130,7 +130,7 @@ Confirmed:
 - `WEIGHT_TEST_QA_PAYMENT_BYPASS = false` remains in repo source.
 - `WEIGHT_TEST_QA_SKIP_PAYWALL = false` remains in repo source.
 - `9,900₮` remains in repo source.
-- `29,000₮` remains in repo source.
+- `[REMOVED_FEATURE_PRICE]` remains in repo source.
 - `WEIGHT_TEST_ONE_TIME` remains in repo source.
 - QPay endpoint strings remain present and unchanged.
 - No production deploy was run.

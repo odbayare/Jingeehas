@@ -12,7 +12,7 @@ Production URL:
 
 The one-time start screen rendered a direct `beginAssessment('one-time')` button. `beginAssessment()` created an assessment and moved `state.view` to `stage1` without verifying paid access.
 
-Additional risk existed from restored local state: saved `stage1`, `preliminary`, `report`, `diary`, or `reportReady` views could be rendered before access was checked.
+Additional risk existed from restored local state: saved `stage1`, `preliminary`, `report`, `diary`, or `removedReportState` views could be rendered before access was checked.
 
 ## Fix
 

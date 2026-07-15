@@ -12,10 +12,7 @@ const mockBackend = typeof require === "function"
 const PRICING = {
   oneTime: "9,900₮",
   oneTimeAnchor: "9,900₮",
-  coachOneTime: "9,900₮",
-  sevenDay: "29,000₮",
-  sevenDayAnchor: "69,000₮",
-  upgrade: "19,900₮"
+  coachOneTime: "9,900₮"
 };
 const STANDARD_WEIGHT_PRICE_MNT = 9900;
 const COACH_WEIGHT_PRICE_MNT = 9900;
@@ -75,18 +72,6 @@ const VALIDATION_PRODUCTS = {
     label: "Нэг удаагийн гүн анализ",
     priceLabel: PRICING.oneTime,
     priceMnt: STANDARD_WEIGHT_PRICE_MNT
-  },
-  "seven-day": {
-    productType: "seven_day",
-    label: "7 хоногийн гүн анализ",
-    priceLabel: PRICING.sevenDay,
-    priceMnt: 29000
-  },
-  upgrade: {
-    productType: "upgrade",
-    label: "7 хоногоор нарийвчлах эрх",
-    priceLabel: PRICING.upgrade,
-    priceMnt: 19900
   }
 };
 
@@ -403,30 +388,6 @@ const stageOneQuestions = [
   { id: "S1-V04", module: "Voice checkpoint", type: "text", text: "Танд тогтвортой үргэлжлэхэд хамгийн их туслах нэг нөхцөл юу вэ?", voice: true }
 ];
 
-const dailyCore = [
-  { id: "D-C01", type: "single", text: "Өнөөдөр хоолны хэмнэл ямархуу өнгөрөв?", field: "meal_rhythm", options: ["Тогтуун, хоол алгасаагүй", "Нэг хоол алгассан", "Хоол хоорондын зай хэтэрсэн", "Өдөр бага идээд орой нөхсөн", "Юу идснээ сайн санахгүй байна"] },
-  { id: "D-C02", type: "single", text: "Өнөөдөр ‘ингэе гэж бодоогүй байсан ч’ идэж, уусан зүйл гарсан уу?", field: "unplanned_eating_count", options: ["Үгүй", "Тийм, нэг удаа", "Тийм, хоёр удаа", "Тийм, гурваас олон удаа"] },
-  { id: "D-C03", type: "single", text: "Тэр үе ихэвчлэн хэзээ байсан бэ?", field: "main_moment_time", options: ["Өглөө", "Өдөр", "Орой", "Шөнө", "Хүмүүстэй хамт байх үед", "Өнөөдөр тийм зүйл гараагүй"] },
-  { id: "D-C04", type: "scale", text: "Тэр үед та үнэхээр өлссөн байсан уу? 0 = огт өлсөөгүй, 10 = маш их өлссөн", field: "hunger_level" },
-  { id: "D-C05", type: "multi", text: "Тэр хүслийг юутай хамгийн ойр тайлбарлах вэ?", field: "food_function", options: ["Өлссөндөө", "Амттай юм идмээр байсан", "Тайвширмаар байсан", "Өөрийгөө жаахан шагнамаар байсан", "Уйдсан", "Ядарсан", "Дараа өлсөхөөс санаа зовсон", "Харагдаад эсвэл үнэртээд идмээр болсон", "Татгалзах эвгүй байсан", "Хамгийн амар нь тэр байсан", "Бие эвгүйрхэх вий гэж санаа зовсон", "Сарын тэмдэгтэй холбоотой мэт санагдсан"] },
-  { id: "D-C06", type: "single", text: "Өнөөдөр сэтгэлд хамгийн их үлдсэн мэдрэмж аль нь байсан бэ?", field: "emotion", options: ["Тайван", "Стресс", "Ууртай", "Гунигтай", "Ганцаардсан", "Санаа зовсон", "Ядарсан", "Хоосон юм шиг", "Өөрийгөө баярлуулмаар санагдсан", "Сайн ялгахгүй байна"] },
-  { id: "D-C07", type: "scale", text: "Өнөөдрийн стрессийг 0–10 дээр тавивал хэд орчим байсан бэ?", field: "stress_score" },
-  { id: "D-C08", type: "scale", text: "Орой болоход тэнхээ хэр үлдсэн байсан бэ? 0 = огт үлдээгүй, 10 = хангалттай байсан", field: "energy_score" },
-  { id: "D-C09", type: "multi", text: "Өчигдөр шөнө хэр унтсан бэ?", field: "sleep", options: ["4 цагаас бага", "4–6 цаг", "6–8 цаг", "8 цагаас дээш", "Олон сэрсэн, чанар муу", "Сайн амарсан"] },
-  { id: "D-C10", type: "multi", text: "Өнөөдөр та юу юу уув?", field: "drinks", options: ["Хар кофе", "Сүүтэй кофе", "Сүүтэй цай", "Жүүс / хийжүүлсэн ундаа", "Сэргээх ундаа", "Согтууруулах ундаа", "Ус голдуу", "Онцгой зүйл байгаагүй"] },
-  { id: "D-C11", type: "multi", text: "Хоол холдох үед эсвэл орой биеэр ямар нэг шинж мэдрэгдсэн үү?", field: "body_signals", options: ["Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Толгой өвдөх", "Сахар унасан мэт санагдах", "Хавагнах", "Аль нь ч үгүй"] },
-  { id: "D-C12", type: "single", text: "Өнөөдрийн хөдөлгөөн хэр байсан бэ?", field: "movement", options: ["Маш бага", "Бага зэрэг алхсан", "20+ минут хөдөлсөн", "Дасгал хийсэн", "Өвдөлт/ядаргаанаас болоод бараг хөдөлсөнгүй"] },
-  { id: "D-C13", type: "text", text: "Өнөөдөр төлөвлөөгүй идэлт гараагүй бол ямар нөхцөл тусалсан бэ?", field: "what_helped" },
-  { id: "D-V01", type: "text", text: "Өнөөдрийн идэлтэд хамгийн их нөлөөлсөн нэг мөчийг богино бичнэ үү. Юуны дараа болсон бэ?", field: "raw_reflection" },
-  { id: "D-SUM01", type: "single", text: "Тайлбар хадгалагдлаа", field: "summary_confirmation", options: ["Үргэлжлүүлэх", "Засах", "Нэмэх зүйл байна"] }
-];
-
-const dailyMenstrual = [
-  { id: "D-MC-01", type: "single", text: "Өнөөдөр мөчлөгийнхөө аль үедээ байгаа гэж бодож байна?", field: "cycle_today_phase", options: ["Сарын тэмдэг ирж байна", "Дууссанаас хойш эхний өдрүүд", "Овуляцийн орчим гэж бодож байна", "Ирэхээс өмнөх өдрүүд", "Мэдэхгүй", "Хамаарахгүй"] },
-  { id: "D-MC-02", type: "single", text: "Өнөөдрийн идэх хүсэл мөчлөгтэй холбоотой юм шиг санагдсан уу?", field: "cycle_today_link", options: ["Үгүй", "Бага зэрэг", "Тийм, илүү өлссөн", "Тийм, амттай юм илүү хүссэн", "Тийм, сэтгэл санаатай хамт хүчтэй болсон", "Тийм, ядаргаа/нойртой давхцсан"] },
-  { id: "D-MC-03", type: "single", text: "Өнөөдөр өвдөлт, хавагналт, ядаргаа, нойр муудах зэрэг нь хоолны сонголтод нөлөөлсөн үү?", field: "cycle_body_effect", options: ["Үгүй", "Бага зэрэг", "Дунд зэрэг", "Их"] }
-];
-
 const probeBank = {
   reward: [
     { id: "D-P-R01", type: "single", text: "Өнөөдөр өлсөөгүй байсан ч ‘нэг гоё юм идмээр байна’ гэсэн хүсэл төрсөн үү?", field: "reward_seeking", options: ["Үгүй", "Бага зэрэг", "Тодорхой", "Маш хүчтэй"] },
@@ -638,15 +599,11 @@ function enrichQuestion(question, source) {
 function allQuestionObjects() {
   return [
     ...stageOneQuestions,
-    ...dailyCore,
-    ...dailyMenstrual,
     ...Object.values(probeBank).flat()
   ];
 }
 
 stageOneQuestions.forEach(question => enrichQuestion(question, "stage"));
-dailyCore.forEach(question => enrichQuestion(question, "daily"));
-dailyMenstrual.forEach(question => enrichQuestion(question, "daily"));
 Object.values(probeBank).flat().forEach(question => enrichQuestion(question, "daily"));
 
 function getQuestionMetadata(questionId) {
@@ -940,13 +897,8 @@ function evidenceLabelFor(item, context) {
   return "possible";
 }
 
-function evidenceQualityFor(currentState = state) {
-  if (currentState.packageType === "one-time") return "one_time";
-  const readiness = reportReadiness(currentState.diaryEntries || []);
-  if (readiness.key === "insufficient") return "insufficient";
-  if (readiness.key === "limited") return "limited";
-  if (readiness.key === "usable") return "usable";
-  return "full";
+function evidenceQualityFor() {
+  return "one_time";
 }
 
 function safetyRouteForMode(mode) {
@@ -990,28 +942,6 @@ function calculateMechanismEvidence(currentState = state) {
     }));
   });
 
-  (scopedState.diaryEntries || []).forEach(entry => {
-    const tags = entryEvidenceTags(entry);
-    const mechanismSignals = mapTagsToMechanismSignals(tags);
-    const dimensions = mapTagsToDimensions(tags);
-    mechanismSignals.forEach(mechanismName => addMechanismEvidence(evidence, mechanismName, 2, "diary", {
-      day: entry.day_number,
-      tags,
-      dimensions,
-      reportUse: ["trigger_map", "before_30", "cycle_map"],
-      direct: true
-    }));
-    if (entry.confirmedSummaryObject?.userConfirmed) {
-      (entry.confirmedSummaryObject.mechanismSignals || []).forEach(mechanismName => addMechanismEvidence(evidence, mechanismName, 2.5, "confirmedSummaries", {
-        day: entry.day_number,
-        tags: entry.confirmedSummaryObject.extractedTags || [],
-        dimensions: entry.confirmedSummaryObject.evidenceDimensions || [],
-        reportUse: ["confirmed_summary", "hidden_function"],
-        direct: true
-      }));
-    }
-  });
-
   scoreRepeatedDays(evidence);
   applyContradictionRules(evidence);
   applyScenarioPriorityRules(evidence, scopedState);
@@ -1029,7 +959,6 @@ function calculateMechanismEvidence(currentState = state) {
   const sorted = Object.entries(evidence)
     .filter(([, item]) => item.score > 0)
     .sort(([, a], [, b]) => {
-      if (evidenceQuality !== "one_time" && b.diaryScore !== a.diaryScore) return b.diaryScore - a.diaryScore;
       if (b.repeatedDays.length !== a.repeatedDays.length) return b.repeatedDays.length - a.repeatedDays.length;
       return b.score - a.score;
     });
@@ -1067,22 +996,15 @@ function identifyMechanismCombinations(evidence) {
 
 const initialState = {
   view: "landing",
-  packageType: null,
+  packageType: "one-time",
   stageIndex: 0,
   stageAnswers: {},
   safetyFlags: [],
   preliminary: [],
-  diaryDay: 1,
-  diaryQuestionIndex: 0,
-  diaryDraft: {},
-  diarySummaryUi: {},
   stageVoiceSummaries: {},
   stageSummaryUi: {},
   lastInsight: "",
-  diaryEntries: [],
   oneTimePaid: false,
-  sevenDayPaid: false,
-  upgradePaid: false,
   paymentSessionId: "",
   qpayPayment: {
     status: "idle",
@@ -1207,7 +1129,7 @@ function loadState() {
   try {
     if (!hasBrowserRuntime) return { ...initialState };
     const params = new URLSearchParams(window.location.search || "");
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    const stored = migrateLegacySevenDayState(JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"));
     const pathView = initialViewFromPath(window.location.pathname || "");
     return {
       ...initialState,
@@ -1219,6 +1141,16 @@ function loadState() {
   } catch {
     return { ...initialState };
   }
+}
+
+function migrateLegacySevenDayState(input = {}) {
+  const stored = input && typeof input === "object" ? { ...input } : {};
+  const obsoleteViews = new Set(["sevenDayStart", "unlock", "diaryHome", "diary", "reportReady", "upgradePaywall"]);
+  const obsoleteFields = ["sevenDayPaid", "upgradePaid", "diaryEntries", "diaryDraft", "diaryDay", "diaryQuestionIndex", "diarySummaryUi"];
+  obsoleteFields.forEach(field => delete stored[field]);
+  if (stored.packageType !== "one-time") stored.packageType = "one-time";
+  if (obsoleteViews.has(stored.view)) stored.view = stored.oneTimePaid ? "report" : "choice";
+  return stored;
 }
 
 function initialViewFromPath(pathname = "") {
@@ -1280,9 +1212,15 @@ function choosePackage(packageType) {
     render({ scrollToTop: true });
     return;
   }
-  state.packageType = packageType;
-  state.view = packageType === "one-time" ? "oneTimeStart" : "sevenDayStart";
-  if (packageType === "one-time") refreshCoachInvite();
+  if (packageType !== "one-time") {
+    state.view = "choice";
+    saveState();
+    render({ scrollToTop: true });
+    return;
+  }
+  state.packageType = "one-time";
+  state.view = "oneTimeStart";
+  refreshCoachInvite();
   saveState();
   render({ scrollToTop: true });
 }
@@ -1403,23 +1341,24 @@ function editContactCapture() {
   render({ scrollToTop: true });
 }
 
-function beginAssessment(packageType = state.packageType || "one-time") {
+function beginAssessment(packageType = "one-time") {
+  if (packageType !== "one-time") return false;
   if (isComingSoonModeActive()) {
-    state.packageType = packageType;
+    state.packageType = "one-time";
     state.view = "landing";
     saveState();
     render({ scrollToTop: true });
     return false;
   }
   if (!canStartPaidAssessment(packageType)) {
-    state.packageType = packageType;
-    state.view = packageType === "seven-day" ? "sevenDayStart" : "oneTimeStart";
+    state.packageType = "one-time";
+    state.view = "oneTimeStart";
     saveState();
     render({ scrollToTop: true });
     return false;
   }
-  const coachInvite = packageType === "one-time" && state.coachDiscountConsent ? state.coachInvite : null;
-  const assessment = mockBackend.createAssessment(packageType === "seven-day" ? "seven_day" : "one_time", {
+  const coachInvite = state.coachDiscountConsent ? state.coachInvite : null;
+  const assessment = mockBackend.createAssessment("one_time", {
     coachClientId: coachInvite?.client?.id || null,
     coachId: coachInvite?.coach?.id || null,
     userEmail: coachInvite?.client?.client_email_normalized || "",
@@ -1432,7 +1371,7 @@ function beginAssessment(packageType = state.packageType || "one-time") {
       shareWithCoach: true
     });
   }
-  state.packageType = packageType;
+  state.packageType = "one-time";
   state.currentAssessmentId = assessment.id;
   state.stageIndex = 0;
   state.stageAnswers = {};
@@ -1441,7 +1380,7 @@ function beginAssessment(packageType = state.packageType || "one-time") {
   state.view = "stage1";
   saveState();
   trackWeightFunnelOnce("test_started", {
-    package_type: packageType,
+    package_type: "one-time",
     assessment_id: assessment.id
   }, assessment.id);
   render({ scrollToTop: true });
@@ -1449,7 +1388,8 @@ function beginAssessment(packageType = state.packageType || "one-time") {
 }
 
 function demoCompletePayment(kind) {
-  const productType = kind === "one-time" ? "one_time" : kind === "seven-day" ? "seven_day" : "upgrade";
+  if (kind !== "one-time") return false;
+  const productType = "one_time";
   mockBackend.trackEvent("demo_unlock", {
     productType,
     sourceScreen: state.view,
@@ -1461,20 +1401,9 @@ function demoCompletePayment(kind) {
     userEmail: kind === "one-time" && state.coachDiscountConsent ? state.coachInvite?.client?.client_email_normalized : ""
   });
   mockBackend.markMockPaymentPaid(payment.id);
-  if (kind === "one-time") {
-    state.oneTimePaid = true;
-    state.view = "report";
-  } else if (kind === "seven-day") {
-    state.sevenDayPaid = true;
-    state.packageType = "seven-day";
-    state.view = state.preliminary.length ? "unlock" : "sevenDayStart";
-  } else if (kind === "upgrade") {
-    state.upgradePaid = true;
-    state.sevenDayPaid = true;
-    state.packageType = "seven-day";
-    if (!state.preliminary.length) state.preliminary = rankedPatterns(false).slice(0, 4);
-    state.view = "unlock";
-  }
+  state.oneTimePaid = true;
+  state.packageType = "one-time";
+  state.view = "report";
   saveState();
   render({ scrollToTop: true });
 }
@@ -1681,10 +1610,6 @@ async function checkWeightQpayPayment() {
   render();
 }
 
-function hasSevenDayAccess() {
-  const access = mockBackend.getAccessState(state.currentAssessmentId || null);
-  return Boolean(isInternalTestMode() || state.sevenDayPaid || state.upgradePaid || access.hasSevenDayAccess);
-}
 
 function isQaPaymentBypassEnabled() {
   return Boolean(WEIGHT_TEST_QA_PAYMENT_BYPASS);
@@ -1703,28 +1628,18 @@ function hasOneTimeReportAccess() {
   return Boolean(isQaPaymentBypassEnabled() || isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === "paid" || access.hasOneTimeReportAccess);
 }
 
-function hasUpgradeAccess() {
-  const access = mockBackend.getAccessState(state.currentAssessmentId || null);
-  return Boolean(state.upgradePaid || access.hasUpgradeAccess);
+
+function canStartPaidAssessment(packageType = "one-time") {
+  return packageType === "one-time" && hasOneTimeReportAccess();
 }
 
-function canStartPaidAssessment(packageType = state.packageType || "one-time") {
-  if (packageType === "seven-day") return hasSevenDayAccess();
-  return hasOneTimeReportAccess() || hasSevenDayAccess() || hasUpgradeAccess();
-}
-
-function paidGateFallbackView(packageType = state.packageType || "one-time") {
-  return packageType === "seven-day" ? "sevenDayStart" : "oneTimeStart";
+function paidGateFallbackView() {
+  return "oneTimeStart";
 }
 
 function isPaidGatedView(view = state.view) {
   return [
     "stage1",
-    "preliminary",
-    "unlock",
-    "diaryHome",
-    "diary",
-    "reportReady",
     "report"
   ].includes(view);
 }
@@ -1770,6 +1685,11 @@ function shouldShowSubstanceFollowUp(question, answers = state.stageAnswers) {
 
 function effectiveStageAnswers(answers = state.stageAnswers) {
   const next = { ...(answers || {}) };
+  Object.entries(state.stageVoiceSummaries || {}).forEach(([questionId, summary]) => {
+    if (summary?.userConfirmed && Array.isArray(summary.confirmedSummary) && summary.confirmedSummary.length) {
+      next[questionId] = summary.confirmedSummary.join(" ");
+    }
+  });
   if (!hasAlcoholUse(next)) {
     ALCOHOL_FOLLOW_UP_IDS.forEach(id => delete next[id]);
     if (Array.isArray(next["S1-F01"])) {
@@ -1872,23 +1792,7 @@ function shouldShowStageQuestion(question, answers = state.stageAnswers) {
 function stageQuestions() {
   const visible = question => shouldShowStageQuestion(question);
   const prepare = question => genderSafeQuestion(question);
-  if (state.packageType !== "seven-day") return stageOneQuestions.filter(visible).map(prepare);
-  const setupModules = new Set([
-    "Warm start",
-    "Basic context",
-    "Weight trajectory",
-    "Past attempts",
-    "Meal rhythm",
-    "Hidden function",
-    "Restriction response",
-    "Executive load",
-    "Environment",
-    "Body / medical",
-    MENSTRUAL_CONTEXT_MODULE,
-    "Safety"
-  ]);
-  const setupIds = new Set(["S1-H02", "S1-H03", "S1-V01", "S1-V02"]);
-  return stageOneQuestions.filter(question => (setupModules.has(question.module) || setupIds.has(question.id)) && visible(question)).map(prepare);
+  return stageOneQuestions.filter(visible).map(prepare);
 }
 
 function currentQuestion() {
@@ -1919,8 +1823,7 @@ function calculateSafetyFlags() {
   return [
     ...calculateStageSafetyFlags(),
     ...calculateMenstrualSafetyFlags(),
-    ...Object.values(state.stageVoiceSummaries || {}).flatMap(summary => summary.safetyFlags || []),
-    ...calculateDiarySafetyFlags(state.diaryEntries)
+    ...Object.values(state.stageVoiceSummaries || {}).flatMap(summary => summary.safetyFlags || [])
   ];
 }
 
@@ -2012,33 +1915,6 @@ function splitSummaryText(text) {
     .slice(0, 6);
 }
 
-function generateDailySummaryBullets(draft = {}) {
-  const bullets = [];
-  const functions = draft.food_function || [];
-  const reflection = String(draft.raw_reflection || "").trim();
-
-  if (draft.meal_rhythm?.includes("Нэг хоол алгассан")) bullets.push("Нэг хоол алгассан");
-  if (draft.meal_rhythm?.includes("5+")) bullets.push("Хоолны хооронд 5+ цагийн зай гарсан");
-  if (draft.meal_rhythm?.includes("орой нөхсөн")) bullets.push("Өдөр бага идээд орой нөхөж идсэн давтамж тэмдэглэгдсэн");
-  if (draft.main_moment_time === "Орой") bullets.push("Гол мөч орой гарсан");
-  if (Number(draft.hunger_level) >= 7) bullets.push("Тэр үед өлсөлт өндөр байсан");
-  if (Number(draft.hunger_level) <= 3 && draft.unplanned_eating_count && draft.unplanned_eating_count !== "Үгүй") bullets.push("Өлсөлт бага үед идэх хүсэл гарсан");
-  if (functions.includes("Амттай юм хүссэн") || functions.includes("Өөрийгөө шагнамаар байсан")) bullets.push("Өөрийгөө баярлуулах эсвэл амттай юм идэх хүсэл давхцсан");
-  if (functions.includes("Тайвширмаар байсан")) bullets.push("Хоол тайвшруулах үүрэгтэй байсан гэж тэмдэглэгдсэн");
-  if (functions.includes("Дараа өлсөхөөс санаа зовсон")) bullets.push("Дараа өлсөхөөс болгоомжилсон мэдрэмж ажиглагдсан");
-  if (functions.includes("Хамгийн амар сонголт байсан")) bullets.push("Ядарсан үед хамгийн амар сонголт нөлөөлсөн");
-  if (functions.includes("Хоол харагдаад/үнэртээд идмээр болсон")) bullets.push("Орчны дохио идэх хүслийг асаасан");
-  if (functions.includes("Хүмүүсийн дунд татгалзах эвгүй байсан")) bullets.push("Хүмүүсийн дунд татгалзах эвгүй мэдрэмж сонголтод нөлөөлсөн");
-  if (functions.includes("Бие муудах/сахар унах вий гэж санаа зовсон")) bullets.push("Биеийн дохионд санаа зовсон мэдрэмж тэмдэглэгдсэн");
-  if (["Стресс", "Уур", "Гуниг", "Санаа зовнил", "Ганцаардал"].includes(draft.emotion)) bullets.push(`${draft.emotion} мэдрэмж идэх хүсэлтэй давхцсан`);
-  if (Number(draft.energy_score) <= 3) bullets.push("Оройн эрч хүч бага байсан");
-  if ((draft.body_signals || []).some(item => item !== "Аль нь ч үгүй")) bullets.push("Биеийн дохио тэмдэглэгдсэн");
-  if (/delivery|захиал/i.test(reflection)) bullets.push("Хоол захиалах нь хамгийн амар сонголт болсон");
-  if (reflection && bullets.length < 3) bullets.push("Таны бичсэн тайлбар нэмэлт мэдээлэл болж хадгалагдсан");
-  if (!bullets.length) bullets.push("Өдрийн бүтэцтэй хариулт хадгалагдсан");
-  return unique(bullets).slice(0, 6);
-}
-
 function generateStageSummaryBullets(rawText = "", answers = {}) {
   const text = String(rawText || "").trim();
   const bullets = [];
@@ -2096,14 +1972,14 @@ function safetyFlagsFromTags(tags = [], prefix = "SUMMARY") {
   return [];
 }
 
-function createConfirmedSummaryObject({ kind, id, dayNumber, rawText, structured = {}, aiSummaryBullets = [], mode = "confirm", editText = "", addText = "" }) {
+function createConfirmedSummaryObject({ id, rawText, structured = {}, aiSummaryBullets = [], mode = "confirm", editText = "", addText = "" }) {
   const edited = mode === "edit" ? splitSummaryText(editText) : null;
   let confirmed = edited && edited.length ? edited : [...aiSummaryBullets];
   if (mode === "add") confirmed = [...confirmed, ...splitSummaryText(addText)];
   confirmed = unique(confirmed).slice(0, 8);
   const extractedTags = extractTagsFromEvidence(structured, confirmed);
   return {
-    ...(kind === "stage" ? { checkpointId: id } : { diaryDay: dayNumber, promptId: id }),
+    checkpointId: id,
     rawText: rawText || null,
     aiSummaryBullets,
     userConfirmed: true,
@@ -2112,73 +1988,22 @@ function createConfirmedSummaryObject({ kind, id, dayNumber, rawText, structured
     extractedTags,
     evidenceDimensions: mapTagsToDimensions(extractedTags),
     mechanismSignals: mapTagsToMechanismSignals(extractedTags),
-    safetyFlags: safetyFlagsFromTags(extractedTags, kind === "stage" ? id : `D-${dayNumber || "X"}`)
+    safetyFlags: safetyFlagsFromTags(extractedTags, id)
   };
 }
 
-function diaryEntrySafetyFlags(entry) {
-  const evidenceOnly = {
-    meal_rhythm: entry.meal_rhythm,
-    unplanned_eating_count: entry.unplanned_eating_count,
-    main_moment_time: entry.main_moment_time,
-    hunger_level: entry.hunger_level,
-    food_function: entry.food_function,
-    emotion: entry.emotion,
-    stress_score: entry.stress_score,
-    energy_score: entry.energy_score,
-    sleep: entry.sleep,
-    body_signals: entry.body_signals,
-    movement: entry.movement,
-    pattern_probes: entry.pattern_probes,
-    voice_confirmed_summary: entry.voice_confirmed_summary
-  };
-  const values = flattenEntryValues(evidenceOnly);
-  const joined = values.join(" | ");
-  const flags = [];
-  const urgentTerms = [
-    "будилах",
-    "ухаан балар",
-    "ухаан ал",
-    "таталт",
-    "seizure",
-    "faint",
-    "confusion",
-    "өөртөө хор",
-    "амиа",
-    "үхье",
-    "suicide",
-    "self-harm",
-    "kill myself"
-  ];
-  const professionalTerms = [
-    "бага/өндөр гарсан",
-    "санаа зовоосон",
-    "даралт өссөн мэт",
-    "сахар унасан мэт",
-    "хавагнах"
-  ];
 
-  if (containsAny(joined, urgentTerms)) flags.push(`D-${entry.day_number || "X"}:urgent`);
-  if (containsAny(joined, professionalTerms)) flags.push(`D-${entry.day_number || "X"}:professional`);
-  return unique([...(entry.confirmedSummaryObject?.safetyFlags || []), ...flags]);
-}
-
-function calculateDiarySafetyFlags(entries = []) {
-  return entries.flatMap(diaryEntrySafetyFlags);
-}
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
   return isEmptyAnswer(value) ? [] : [value];
 }
 
-function menstrualCycleEvidence(answers = state.stageAnswers, diaryEntries = state.diaryEntries, diaryDraft = state.diaryDraft) {
+function menstrualCycleEvidence(answers = state.stageAnswers) {
   const gateActive = hasMenstrualCycleContext(answers);
   const directCycleOptions = [
     ...asArray(answers["S1-F01"]),
-    ...asArray(answers["S1-R02"]),
-    ...asArray(diaryDraft.food_function),
-    ...diaryEntries.flatMap(entry => asArray(entry.food_function))
+    ...asArray(answers["S1-R02"])
   ].some(value => containsAny(value, ["сарын тэмдэг", "мөчлөг"]));
   if (!gateActive && !directCycleOptions) {
     return {
@@ -2199,12 +2024,7 @@ function menstrualCycleEvidence(answers = state.stageAnswers, diaryEntries = sta
   const intakeChange = answers["MC-05"] || "";
   const modifiers = asArray(answers["MC-06"]);
   const disruption = answers["MC-07"] || "";
-  const diaryCycleValues = diaryEntries.flatMap(entry => [
-    entry.cycle_today_phase,
-    entry.cycle_today_link,
-    entry.cycle_body_effect,
-    ...asArray(entry.food_function)
-  ].flat()).filter(Boolean);
+  const diaryCycleValues = [];
 
   if (containsAny(cyclePattern, ["зөрдөг", "тогтмол биш", "ирээгүй"])) tags.add("irregular_cycle_professional_check");
   if (cyclePattern === "Сүүлийн 3 сард ирээгүй") tags.add("amenorrhea_3_months");
@@ -2261,105 +2081,24 @@ function addScore(scores, key, amount = 1) {
   scores[key] = (scores[key] || 0) + amount;
 }
 
-function calculateScores(includeDiary = true) {
+function calculateScores() {
   const scores = {};
   const stageAnswers = effectiveStageAnswers(state.stageAnswers);
   stageOneQuestions.forEach(question => {
     const value = stageAnswers[question.id];
     if (!question.scores || value === undefined || value === "") return;
     const values = Array.isArray(value) ? value : [value];
-    values.forEach(answer => {
-      (question.scores[answer] || []).forEach(key => addScore(scores, key));
-    });
+    values.forEach(answer => (question.scores[answer] || []).forEach(key => addScore(scores, key)));
   });
-
-  if (includeDiary) {
-    state.diaryEntries.forEach(entry => {
-      const f = entry.food_function || [];
-      if (entry.meal_rhythm?.includes("5+") || entry.meal_rhythm?.includes("5 цагаас дээш") || entry.meal_rhythm?.includes("зай хэтэрсэн")) addScore(scores, "hungerSafety", 1.5);
-      if (entry.meal_rhythm?.includes("орой нөхсөн")) addScore(scores, "hungerSafety", 1.5);
-      if (entry.unplanned_eating_count && entry.unplanned_eating_count !== "Үгүй") addScore(scores, "cue", 0.5);
-      if (Number(entry.hunger_level) >= 7) addScore(scores, "hungerSafety", 1);
-      if (f.includes("Амттай юм хүссэн") || f.includes("Амттай юм идмээр байсан") || f.includes("Өөрийгөө шагнамаар байсан") || f.includes("Өөрийгөө жаахан шагнамаар санагдсан") || f.includes("Өөрийгөө жаахан шагнамаар байсан") || f.includes("Уйдсан")) addScore(scores, "reward", 1.5);
-      if (f.includes("Тайвширмаар байсан")) addScore(scores, "regulation", 1.5);
-      if (f.includes("Хамгийн амар сонголт байсан") || f.includes("Хамгийн амар сонголт тэр байсан") || f.includes("Хамгийн амар нь тэр байсан")) addScore(scores, "executive", 1.5);
-      if (f.includes("Хоол харагдаад/үнэртээд идмээр болсон") || f.includes("Харагдаад эсвэл үнэртээд идмээр болсон")) addScore(scores, "cue", 1.5);
-      if (f.includes("Дараа өлсөхөөс санаа зовсон")) addScore(scores, "hungerSafety", 1.5);
-      if (f.includes("Бие муудах/сахар унах вий гэж санаа зовсон") || f.includes("Бие эвгүйрхэх вий гэж санаа зовсон")) addScore(scores, "glucose", 1.5);
-      if (["Стресс", "Уур", "Ууртай", "Гуниг", "Гунигтай", "Ганцаардал", "Ганцаардсан", "Санаа зовнил", "Санаа зовсон"].includes(entry.emotion)) addScore(scores, "regulation", 1);
-      if (Number(entry.stress_score) >= 7) addScore(scores, "regulation", 0.75);
-      if (Number(entry.energy_score) <= 3) addScore(scores, "executive", 0.75);
-      if ((entry.sleep || []).some(v => ["4 цагаас бага", "4-6 цаг", "4–6 цаг", "Чанар муу", "Олон сэрсэн, чанар муу"].includes(v))) addScore(scores, "circadian", 1);
-      if ((entry.body_signals || []).some(v => ["Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Толгой өвдөх"].includes(v))) addScore(scores, "physiological", 1);
-      if ((entry.body_signals || []).some(v => ["Сахар унасан мэт", "Сахар унасан мэт санагдах"].includes(v))) addScore(scores, "glucose", 1);
-      Object.entries(entry.pattern_probes || {}).forEach(([field, value]) => {
-        const signal = Array.isArray(value) ? value.join(" ") : value;
-        if (/Тийм|Тодорхой|Маш|Бага\/өндөр|санаа зовоосон/.test(signal)) {
-          if (field.includes("reward")) addScore(scores, "reward", 1);
-          if (field.includes("hunger") || field.includes("uncertain")) addScore(scores, "hungerSafety", 1);
-          if (field.includes("regulation") || field.includes("emotion")) addScore(scores, "regulation", 1);
-          if (field.includes("executive") || field.includes("default")) addScore(scores, "executive", 1);
-          if (field.includes("collapse") || field.includes("tighten")) addScore(scores, "collapse", 1);
-          if (field.includes("glucose") || field.includes("measured")) addScore(scores, "glucose", 1);
-          if (field.includes("circadian")) addScore(scores, "circadian", 1);
-          if (field.includes("cue")) addScore(scores, "cue", 1);
-        }
-      });
-      (entry.confirmedSummaryObject?.extractedTags || []).forEach(tag => {
-        if (tag === "reward_pull") addScore(scores, "reward", 1);
-        if (tag === "food_as_regulation") addScore(scores, "regulation", 1);
-        if (tag === "hunger_safety" || tag === "skipped_meal" || tag === "meal_gap_5h_plus") addScore(scores, "hungerSafety", 1);
-        if (tag === "glucose_like_signal") addScore(scores, "glucose", 1);
-        if (tag === "executive_load" || tag === "default_delivery") addScore(scores, "executive", 1);
-        if (tag === "cue_trigger") addScore(scores, "cue", 1);
-        if (tag === "control_collapse" || tag === "shame_guilt") addScore(scores, "collapse", 1);
-      });
-    });
-  }
-
   return scores;
 }
 
-function rankedPatterns(includeDiary = true) {
-  const evidence = calculateMechanismEvidence({
-    ...state,
-    diaryEntries: includeDiary ? state.diaryEntries : []
-  });
-  const orderedNames = [
-    evidence.primaryMechanism,
-    ...evidence.secondaryMechanisms,
-    ...evidence.supportingMechanisms,
-    ...Object.entries(evidence.mechanisms)
-      .filter(([name, item]) => item.score > 0 && ![
-        evidence.primaryMechanism,
-        ...evidence.secondaryMechanisms,
-        ...evidence.supportingMechanisms
-      ].includes(name))
-      .sort(([, a], [, b]) => b.score - a.score)
-      .map(([name]) => name)
-  ].filter(Boolean);
-  const rankedFromEvidence = orderedNames
-    .map(name => [name, evidence.mechanisms[name]])
-    .map(([name, item]) => ({
-      key: mechanismKeyForName(name),
-      score: item.score,
-      label: labelForEvidence(item.evidenceLabel),
-      evidenceLabel: item.evidenceLabel,
-      repeatedDays: item.repeatedDays,
-      contradictions: item.contradictionSignals
-    }))
-    .filter(item => item.key);
-  if (rankedFromEvidence.length) return rankedFromEvidence;
-
-  const scores = calculateScores(includeDiary);
-  return Object.entries(scores)
-    .filter(([key]) => mechanisms[key])
-    .sort((a, b) => b[1] - a[1])
-    .map(([key, score]) => ({
-      key,
-      score,
-      label: score >= 5 ? "хүчтэй нийцэж байна" : score >= 3 ? "дунд зэрэг нийцэж байна" : "боломжит pattern"
-    }));
+function rankedPatterns() {
+  const evidence = calculateMechanismEvidence(state);
+  const orderedNames = [evidence.primaryMechanism, ...evidence.secondaryMechanisms, ...evidence.supportingMechanisms].filter(Boolean);
+  const ranked = orderedNames.map(name => { const item = evidence.mechanisms[name]; return { key: mechanismKeyForName(name), score: item.score, label: labelForEvidence(item.evidenceLabel), evidenceLabel: item.evidenceLabel, repeatedDays: [], contradictions: item.contradictionSignals }; }).filter(item => item.key);
+  if (ranked.length) return ranked;
+  return Object.entries(calculateScores()).filter(([key]) => mechanisms[key]).sort((a,b)=>b[1]-a[1]).map(([key,score])=>({ key, score, label: score >= 5 ? "хүчтэй нийцэж байна" : score >= 3 ? "дунд зэрэг нийцэж байна" : "боломжит pattern" }));
 }
 
 function completeStageOne() {
@@ -2528,10 +2267,6 @@ function renderSampleResultPreview() {
           <h3>Эхний зөөлөн алхам</h3>
           <p>Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.</p>
         </div>
-        <div>
-          <h3>7 хоногоор нарийвчилбал</h3>
-          <p>Энэ нь аль өдөр, ямар үед илүү хүчтэй болдгийг богино тэмдэглэлээр тодруулна.</p>
-        </div>
       </div>
     </div>
   `;
@@ -2542,19 +2277,8 @@ function renderAbout() {
     ${topbar(0)}
     <section class="screen">
       <div class="panel stack">
-        <h2>Үнэлгээний хоёр зам</h2>
-        <p class="muted">Эхлээд өөрт тохирох түвшнээ сонгоно. Нэг удаагийн зураглал нь одоогийн хариултаар эхний тайлан гаргана. 7 хоногийн үнэлгээ тэр зураглалыг бодит өдрүүдийн богино ажиглалтаар нарийвчилна.</p>
-        <div class="two-col">
-          <div class="card"><h3>Нэг удаагийн гүн зураглал</h3><p>10–15 минутанд хамгийн тод давтагддаг нөхцөл, нөлөөлж буй 1–2 шалтгаан, одоогоор болгоомжлох зүйл, эхний зөөлөн алхам гарна.</p></div>
-          <div class="card"><h3>7 хоногийн гүн зураглал</h3><p>Эхний богино асуулт + орой бүр 3–5 минутын тэмдэглэл. 5 өдөр бөглөсөн ч тайлан гарна, калори тоолохгүй, зөвхөн давтагддаг мөчүүдийг ажиглана.</p></div>
-        </div>
-        <div class="card">
-          <h3>Харьцуулалт</h3>
-          <div class="two-col">
-            <p><strong>Нэг удаагийн:</strong> тухайн мөчийн хариултад суурилсан эхний зураглал.</p>
-            <p><strong>7 хоногийн:</strong> илүү их тураах төлөвлөгөө биш, бодит өдөр тутмын давтамжийг нарийвчлах богино ажиглалт.</p>
-          </div>
-        </div>
+        <h2>Нэг удаагийн гүн зураглал</h2>
+        <p class="muted">10–15 минутанд хамгийн тод давтагддаг нөхцөл, нөлөөлж буй 1–2 шалтгаан, одоогоор болгоомжлох зүйл, эхний зөөлөн алхмыг харна.</p>
         ${renderSampleResultPreview()}
         <div class="actions">
           <button class="button" onclick="setView('choice')">Сонголтоо хийх</button>
@@ -2591,60 +2315,21 @@ function displayModuleName(moduleName, question = null) {
 }
 
 function renderChoice() {
-  if (shouldQaSkipOneTimePaywall("one-time")) {
-    return renderOneTimeStart();
-  }
+  if (shouldQaSkipOneTimePaywall("one-time")) return renderOneTimeStart();
   return `
     ${topbar(0, "Үнэлгээний сонголт")}
-    <section class="screen">
-      <div class="panel stack choice-panel">
-        <h2>Та ямар түвшний зураглал авах вэ?</h2>
-        <p class="muted">Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.</p>
-        <div class="choice-grid">
-          <div class="card stack choice-card">
-            <p class="choice-kicker">Хурдан эхлэх</p>
-            <h3>Нэг удаагийн гүн анализ</h3>
-            <div class="price-stack">
-              <p class="price promo"><span>Үндсэн үнэ</span> ${PRICING.oneTime}</p>
-            </div>
-            <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
-            <div class="pill-row"><span class="pill">10–15 минут</span><span class="pill">Эхний хэсгийг үнэгүй харах</span><span class="pill">Бүрэн эхний тайлан</span></div>
-            <ul>
-              <li>Хамгийн тод давтагддаг нөхцөл</li>
-              <li>Давхар нөлөөлж буй 1–2 зүйл</li>
-              <li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li>
-              <li>Одоогоор зайлсхийх зүйлс</li>
-              <li>Эхний зөөлөн алхам</li>
-              <li>14 хоногийн эхний туршилт</li>
-              <li>7 хоногоор нарийвчлах боломж</li>
-            </ul>
-            <p class="muted">Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.</p>
-            <button class="button choice-button" onclick="choosePackage('one-time')">${PRICING.oneTime} төлөөд тайлангаа нээх</button>
-          </div>
-          <div class="card stack choice-card choice-card-featured">
-            <p class="choice-kicker">Илүү нарийвчилсан</p>
-            <h3>7 хоногийн гүн анализ</h3>
-            <div class="price-stack">
-              <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.sevenDayAnchor}</p>
-              <p class="price promo"><span>Нээлтийн урамшуулалт үнэ</span> ${PRICING.sevenDay}</p>
-            </div>
-            <p class="muted">Орой бүр 3–5 минутын богино тэмдэглэлээр таны идэх хүсэл бодит амьдрал дээр ямар үед давтагдаж байгааг харна.</p>
-            <div class="pill-row"><span class="pill">Эхлэх асуулт</span><span class="pill">Орой бүр 3–5 минут</span><span class="pill">5 өдөр бөглөсөн ч тайлан гарна</span></div>
-            <ul>
-              <li>Эхлэх богино асуулт</li>
-              <li>7 өдөр богино тэмдэглэл</li>
-              <li>Идэх хүсэл эхэлдэг нөхцөл</li>
-              <li>Эхний зураглал ба ажиглалтын харьцуулалт</li>
-              <li>Идэх хүсэл яг ямар үүрэгтэй давтагдаж байгааг тодруулах</li>
-              <li>Илүү тод 14 хоногийн туршилт</li>
-            </ul>
-            <p class="muted">Энэ нь илүү их тураах төлөвлөгөө биш. Зүгээр л 7 хоногийн богино ажиглалт. Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш, калори тоолохгүй, зөвхөн давтагддаг мөчүүдийг ажиглана.</p>
-            <button class="button choice-button" onclick="choosePackage('seven-day')">${PRICING.sevenDay} төлөөд 7 хоногийн үнэлгээ эхлүүлэх</button>
-          </div>
-        </div>
-        ${renderSampleResultPreview()}
+    <section class="screen"><div class="panel stack choice-panel">
+      <h2>Нэг удаагийн гүн анализ</h2>
+      <div class="card stack choice-card">
+        <p class="choice-kicker">Хурдан эхлэх</p><h3>Нэг удаагийн гүн анализ</h3>
+        <p class="price promo"><span>Үндсэн үнэ</span> ${PRICING.oneTime}</p>
+        <p>Нэг удаагийн зураглал нь эхний тайлан өгнө.</p>
+        <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
+        <ul><li>Хамгийн тод давтагддаг нөхцөл</li><li>Давхар нөлөөлж буй 1–2 зүйл</li><li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li><li>Одоогоор зайлсхийх зүйлс</li><li>Эхний зөөлөн алхам</li><li>14 хоногийн эхний туршилт</li></ul>
+        <button class="button choice-button" onclick="choosePackage(&#39;one-time&#39;)">${PRICING.oneTime} төлөөд тайлангаа нээх</button>
       </div>
-    </section>
+      ${renderSampleResultPreview()}
+    </div></section>
   `;
 }
 
@@ -2867,60 +2552,7 @@ function renderValidationSummary() {
   `;
 }
 
-function renderSevenDayPaywall() {
-  return `
-    ${topbar(0, "7 хоногийн гүн зураглал")}
-    <section class="screen">
-      <div class="panel stack paywall-panel">
-        <p class="choice-kicker">Нээлтийн эрх</p>
-        <h2>7 хоногийн гүн анализаа нээх</h2>
-        <div class="price-stack">
-          <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.sevenDayAnchor}</p>
-          <p class="price promo"><span>Нээлтийн урамшуулалт үнэ</span> ${PRICING.sevenDay}</p>
-        </div>
-        <p>7 хоногийн тэмдэглэлээр таны өдөр тутмын бодит давтамж илүү тод харагдана. Анхны сэтгэгдэл ба өдөр тутмын ажиглалт хоёр хаана давхцаж, хаана зөрж байгааг эндээс харна.</p>
-        <ul>
-          <li>Эхлэх богино асуулт</li>
-          <li>7 өдөр богино тэмдэглэл</li>
-          <li>Орой бүр 3–5 минут</li>
-          <li>5 өдөр бөглөсөн ч тайлан гарна</li>
-          <li>Калори тоолохгүй, давтагддаг мөчүүдийг ажиглана</li>
-        </ul>
-        <div class="actions">
-          <button class="button secondary" onclick="startLeadCapture('seven-day')">${PRICING.sevenDay} төлөөд эхлүүлэх</button>
-          ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment('seven-day')">Дотоод туршилтаар нээх</button>`)}
-          <button class="button ghost" onclick="setView('choice')">Буцах</button>
-        </div>
-        <p class="muted">Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.</p>
-      </div>
-    </section>
-  `;
-}
 
-function renderSevenDayStart() {
-  if (!hasSevenDayAccess()) return renderSevenDayPaywall();
-  return `
-    ${topbar(0, "7 хоногийн гүн зураглал")}
-    <section class="screen">
-      <div class="panel stack">
-        <h2>7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна</h2>
-        <p>Эхний богино асуултаар эхэлнэ. Дараа нь орой бүр 3–5 минутын тэмдэглэл бөглөж, 7 хоногийн дараа илүү нарийвчилсан тайлан гарна.</p>
-        <div class="pill-row">
-          <span class="pill">Эхлэл: 8-10 минут</span>
-          <span class="pill">Орой бүр: 3–5 минут</span>
-          <span class="pill">5/7 өдөр бөглөсөн ч тайлан гарна</span>
-          <span class="pill">Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш</span>
-          <span class="pill">Калори тоолохгүй</span>
-          <span class="pill">Зөвхөн давтагддаг мөчүүдийг ажиглана</span>
-        </div>
-        <div class="actions">
-          <button class="button" onclick="beginAssessment('seven-day')">7 хоногийн үнэлгээ эхлүүлэх</button>
-          <button class="button ghost" onclick="setView('choice')">Буцах</button>
-        </div>
-      </div>
-    </section>
-  `;
-}
 
 function renderInput(question, value, setterName) {
   if (question.type === "info") {
@@ -3030,20 +2662,12 @@ function confirmStageVoiceSummary(id, mode) {
 }
 
 function toggleMulti(id, option, max) {
-  const question = stageOneQuestions.find(item => item.id === id) || getDiaryQuestions().find(item => item.id === id);
-  if (stageOneQuestions.some(item => item.id === id)) {
-    const current = getValue(question);
-    let next = current.includes(option) ? current.filter(item => item !== option) : [...current, option];
-    if (next.length > max) next = next.slice(1);
-    setAnswer(question, next);
-    return;
-  }
-  const current = state.diaryDraft[question.field] || [];
+  const question = stageOneQuestions.find(item => item.id === id);
+  if (!question) return;
+  const current = getValue(question);
   let next = current.includes(option) ? current.filter(item => item !== option) : [...current, option];
   if (next.length > max) next = next.slice(1);
-  state.diaryDraft[question.field] = next;
-  saveState();
-  render();
+  setAnswer(question, next);
 }
 
 function renderStageOne() {
@@ -3066,7 +2690,7 @@ function renderStageOne() {
           <h2 class="question-text">${question.text}</h2>
           ${renderInput(question, getValue(question), "updateQuestionValue")}
           <div class="actions">
-            <button class="button" onclick="nextStageQuestion()">${state.stageIndex === questions.length - 1 ? (state.packageType === "one-time" ? "Тайлан харах" : "Тэмдэглэлийн чиглэл харах") : "Үргэлжлүүлэх"}</button>
+            <button class="button" onclick="nextStageQuestion()">${state.stageIndex === questions.length - 1 ? "Тайлан харах" : "Үргэлжлүүлэх"}</button>
           </div>
         </div>
         <aside class="aside">
@@ -3099,12 +2723,8 @@ function renderPreliminary() {
             <p class="muted">${publicHtml(`${item.label}. ${mechanisms[item.key].observation}`)}</p>
           </div>`).join("") || `<p class="muted">Одоогоор зураглал гаргахад мэдээлэл бага байна.</p>`}
         </div>
-        <div class="card">
-          <h3>Дараагийн 7 хоногт бид шалгах зүйл</h3>
-          <ul>${patterns.slice(0, 3).map(item => `<li>${publicHtml(mechanisms[item.key].observation)}</li>`).join("")}</ul>
-        </div>
         <div class="actions">
-        ${safety.mode === "urgent" ? `<button class="button danger" onclick="setView('report')">Яаралтай зөвлөмж харах</button>` : `<button class="button" onclick="setView('${hasSevenDayAccess() ? "unlock" : "sevenDayStart"}')">7 хоногийн тэмдэглэл нээх</button>`}
+          <button class="button${safety.mode === "urgent" ? " danger" : ""}" onclick="setView('report')">${safety.mode === "urgent" ? "Яаралтай зөвлөмж харах" : "Тайлан харах"}</button>
           <button class="button ghost" onclick="setView('stage1')">Засах</button>
         </div>
       </div>
@@ -3112,379 +2732,29 @@ function renderPreliminary() {
   `;
 }
 
-function renderUnlock() {
-  if (!hasSevenDayAccess()) return renderSevenDayPaywall();
-  return `
-    ${topbar(100, "Тэмдэглэл нээх")}
-    <section class="screen">
-      <div class="panel stack">
-        <h2>Орой бүр 3–5 минут</h2>
-        <p class="muted">Бид нэг өдрийг “сайн” эсвэл “муу” гэж дүгнэхгүй. Зүгээр л ямар нөхцөл давтагдахад идэх сонголт өөрчлөгдөж байгааг ажиглана.</p>
-        <div class="two-col">
-          <div class="mini-stat"><strong>7/7</strong><span>Бүрэн тайлан</span></div>
-          <div class="mini-stat"><strong>5-6/7</strong><span>Ашиглахад сайн тайлан</span></div>
-          <div class="mini-stat"><strong>4/7</strong><span>Хязгаартай тайлан</span></div>
-          <div class="mini-stat"><strong>2-3/7</strong><span>Эхний зураглал</span></div>
-        </div>
-        <div class="card">
-          <h3>Орой хэдэн цагт сануулах вэ?</h3>
-          <div class="pill-row">
-            <span class="pill">20:00</span>
-            <span class="pill">21:00</span>
-            <span class="pill">22:00</span>
-            <span class="pill warn">Өөр цаг</span>
-            <span class="pill warn">Сануулга хэрэггүй</span>
-          </div>
-          <p class="muted">Сануулгын цагийг одоогоор хадгалахгүй. Та орой өөрт тохирох цагтаа тэмдэглэлээ нээж бөглөж болно.</p>
-        </div>
-        <div class="actions">
-          <button class="button" onclick="startDiary()">1 дэх өдрөө эхлүүлэх</button>
-          <button class="button secondary" onclick="setView('report')">Одоогийн мэдээллээр тайлан харах</button>
-        </div>
-      </div>
-    </section>
-  `;
-}
 
-function startDiary() {
-  if (!hasSevenDayAccess()) {
-    state.view = "sevenDayStart";
-    saveState();
-    render({ scrollToTop: true });
-    return false;
-  }
-  state.view = "diary";
-  state.diaryDay = Math.min(7, Math.max(1, state.diaryEntries.length + 1));
-  state.diaryQuestionIndex = 0;
-  state.diaryDraft = {};
-  saveState();
-  render({ scrollToTop: true });
-  return true;
-}
 
-function getDiaryQuestions() {
-  const cycleQuestions = getDailyMenstrualQuestions();
-  const prepare = question => genderSafeQuestion(question);
-  if (state.diaryDraft.unplanned_eating_count === "Үгүй") {
-    return [
-      dailyCore[0],
-      dailyCore[1],
-      dailyCore[6],
-      dailyCore[7],
-      dailyCore[8],
-      dailyCore[11],
-      dailyCore[12],
-      ...cycleQuestions,
-      dailyCore[14]
-    ].map(prepare);
-  }
-  const topKeys = (state.preliminary.length ? state.preliminary : rankedPatterns(false)).slice(0, 3).map(item => item.key);
-  const probes = topKeys.flatMap(key => probeBank[key] || []).slice(0, 4);
-  return [...dailyCore.slice(0, 12), ...cycleQuestions, ...probes, dailyCore[13], dailyCore[14]].map(prepare);
-}
 
-function getDailyMenstrualQuestions() {
-  if (!isFemaleUser() || !hasMenstrualCycleContext()) return [];
-  const questions = [dailyMenstrual[0], dailyMenstrual[1]];
-  if (state.diaryDraft.cycle_today_link && state.diaryDraft.cycle_today_link !== "Үгүй") {
-    questions.push(dailyMenstrual[2]);
-  }
-  return questions;
-}
 
-function setDiaryValue(id, value) {
-  const question = getDiaryQuestions().find(item => item.id === id);
-  state.diaryDraft[question.field] = value;
-  saveState();
-  render();
-}
 
-function setDiaryDraftValue(id, value) {
-  const question = getDiaryQuestions().find(item => item.id === id);
-  state.diaryDraft[question.field] = value;
-  saveState();
-}
 
-function nextDiaryQuestion() {
-  const questions = getDiaryQuestions();
-  if (state.diaryQuestionIndex >= questions.length - 1) {
-    saveDiaryEntry();
-    return;
-  }
-  state.diaryQuestionIndex += 1;
-  saveState();
-  render({ scrollToTop: true });
-}
 
-function previousDiaryQuestion() {
-  state.diaryQuestionIndex = Math.max(0, state.diaryQuestionIndex - 1);
-  saveState();
-  render({ scrollToTop: true });
-}
 
-function saveDiaryEntry() {
-  const entry = {
-    diary_id: `diary-${Date.now()}`,
-    day_number: state.diaryDay,
-    date: new Date().toISOString().slice(0, 10),
-    ...state.diaryDraft,
-    pattern_probes: {}
-  };
-  getDiaryQuestions().forEach(question => {
-    if (question.id.startsWith("D-P")) {
-      entry.pattern_probes[question.field] = state.diaryDraft[question.field];
-      delete entry[question.field];
-    }
-  });
-  state.lastInsight = dailyMicroInsight(entry);
-  state.diaryEntries = state.diaryEntries.filter(item => item.day_number !== state.diaryDay).concat(entry).sort((a, b) => a.day_number - b.day_number);
-  state.safetyFlags = calculateSafetyFlags();
-  state.diaryDraft = {};
-  state.diaryQuestionIndex = 0;
-  state.diaryDay = Math.min(7, state.diaryEntries.length + 1);
-  state.view = state.diaryEntries.length >= 5 ? "reportReady" : "diaryHome";
-  saveState();
-  render({ scrollToTop: true });
-}
 
-function reportReadiness(entries = state.diaryEntries) {
-  const count = entries.length;
-  if (count <= 1) {
-    return {
-      key: "insufficient",
-      count,
-      canGenerateFullReport: false,
-      canShowExperiment: false,
-      title: "Бүрэн тайлан гаргахад мэдээлэл хангалтгүй байна",
-      copy: "0-1 өдөр нь таны давтамжийг дүгнэхэд хангалтгүй. Тэмдэглэлээ үргэлжлүүлээд дор хаяж 2-3 өдөр хүрвэл эхний зураглал харагдаж эхэлнэ. 5 өдөр бөглөсөн ч бүрэн тайлан гарна."
-    };
-  }
-  if (count <= 3) {
-    return {
-      key: "limited",
-      count,
-      canGenerateFullReport: false,
-      canShowExperiment: false,
-      title: "Хязгаартай эхний зураглал",
-      copy: "2-3 өдрийн мэдээлэл дээр зарим дохио харагдаж болно. Гэхдээ энэ нь бүрэн тайлан биш, эхний reflection хэвээр байна."
-    };
-  }
-  if (count === 4) {
-    return {
-      key: "usable",
-      count,
-      canGenerateFullReport: false,
-      canShowExperiment: false,
-      title: "Ашиглаж болох ч хязгаартай зураглал",
-      copy: "4 өдрийн мэдээлэл зан үйлийн давтамжийг тодорхойлоход ашиглаж болох түвшинд хүрсэн. Дахиад 1 өдөр бөглөвөл бүрэн тайлан гаргах босгонд хүрнэ."
-    };
-  }
-  return {
-    key: count >= 6 ? "complete" : "strong",
-    count,
-    canGenerateFullReport: true,
-    canShowExperiment: true,
-    title: "Бүрэн тайлан гаргах боломжтой",
-    copy: count >= 6 ? "Таны өгсөн мэдээлэл зан үйлийн давтамжийг тодорхойлоход бүрэн хангалттай байна." : "5 өдөр хүрсэн тул бүрэн тайлан гаргах боломжтой боллоо."
-  };
-}
 
-function progressCopy() {
-  const count = state.diaryEntries.length;
-  if (count >= 7) return "7 хоногийн ажиглалт дууслаа. Таны бүрэн зураглал бэлэн болж байна.";
-  if (count >= 5) return "Бүрэн тайлан гаргах боломжтой боллоо. Хүсвэл үргэлжлүүлээд 7/7 болгож нарийвчилж болно.";
-  if (count >= 4) return "Таны мэдээлэл тайлан гаргахад ашиглаж болох түвшинд хүрлээ. Дахиад 1 өдөр бөглөвөл илүү сайн болно.";
-  if (count >= 2) return "Эхний давтамжууд харагдаж эхэлж байна. 5 өдөр хүрвэл тайлан гаргахад хангалттай мэдээлэлтэй болно.";
-  return "Өчигдөр бөглөж амжаагүй байсан ч зүгээр. Өнөөдрөөс үргэлжлүүлье.";
-}
 
-function dailyMicroInsight(entry) {
-  if (entry.unplanned_eating_count === "Үгүй") {
-    return "Өнөөдөр төлөвлөөгүй идэлтгүй өдөр байна. Ямар нөхцөл тусалсныг тэмдэглэсэн нь эцсийн тайланд чухал мэдээлэл болно.";
-  }
-  if (Number(entry.hunger_level) >= 7 && Number(entry.energy_score) <= 3) {
-    return "Өнөөдөр төлөвлөөгүй идэлт өлсөлт өндөр + оройн эрч хүчний уналттай давхцсан байна. Энэ давтамж давтагдах эсэхийг үргэлжлүүлж харъя.";
-  }
-  if ((entry.food_function || []).includes("Тайвширмаар байсан")) {
-    return "Өнөөдөр идэх хүсэл “тайвшрах” үүрэгтэй байсан гэж тэмдэглэгдлээ. Энэ мөч хэдэн өдөр давтагдахыг харъя.";
-  }
-  if ((entry.food_function || []).some(item => item.includes("шагна") || item.includes("Амттай"))) {
-    return "Өнөөдөр таатай мэдрэмж авах хүсэл тэмдэглэгдлээ. Энэ нь өлсөлт, эрч хүч, орчны нөлөөтэй хэр давхцаж байгааг үргэлжлүүлж харъя.";
-  }
-  return "Өнөөдрийн тэмдэглэл хадгалагдлаа. Энэ бол эцсийн дүгнэлт биш, давталт харах нэг ажиглалт.";
-}
 
-function renderDiaryHome() {
-  const readiness = reportReadiness();
-  return `
-    ${topbar(Math.round((state.diaryEntries.length / 7) * 100), "7 хоногийн тэмдэглэл")}
-    <section class="screen">
-      <div class="panel stack">
-        <h2>Тэмдэглэлийн явц</h2>
-        <p class="muted">${progressCopy()}</p>
-        ${state.lastInsight ? `<div class="card"><h3>Өдрийн богино дохио</h3><p>${state.lastInsight}</p></div>` : ""}
-        <div class="two-col">
-          <div class="mini-stat"><strong>${state.diaryEntries.length}/7</strong><span>Өдөр бөглөсөн</span></div>
-          <div class="mini-stat"><strong>${dataQuality().label}</strong><span>Мэдээллийн чанар</span></div>
-        </div>
-        <div class="actions">
-          <button class="button" onclick="startDiary()" ${state.diaryEntries.length >= 7 ? "disabled" : ""}>Дараагийн өдөр бөглөх</button>
-          <button class="button secondary" onclick="setView('${readiness.canGenerateFullReport ? "reportReady" : "report"}')">${readiness.canGenerateFullReport ? "Тайлан харах" : "Одоогийн зураглал харах"}</button>
-        </div>
-      </div>
-    </section>
-  `;
-}
 
-function renderReportReady() {
-  return `
-    ${topbar(100, "Бүрэн тайлан")}
-    <section class="screen">
-      <div class="panel stack">
-        <h2>Таны 7 хоногийн зураглал бэлэн боллоо</h2>
-        <p>Бид эхний асуултаар гарсан давтамжуудыг 7 хоногийн тэмдэглэлтэй харьцуулж, аль нь бодит амьдрал дээр давтагдсан, аль нь сул байсан, аль нь таны тойргийг үргэлжлүүлж байгааг нэгтгэлээ.</p>
-        <div class="actions">
-          <button class="button" onclick="setView('report')">Миний бүрэн тайланг харах</button>
-          <button class="button ghost" onclick="setView('diaryHome')">Тэмдэглэлийн явц руу буцах</button>
-        </div>
-      </div>
-    </section>
-  `;
-}
 
-function renderDiary() {
-  const questions = getDiaryQuestions();
-  const question = questions[state.diaryQuestionIndex];
-  const progress = Math.round(((state.diaryEntries.length + state.diaryQuestionIndex / questions.length) / 7) * 100);
-  const backButton = state.diaryQuestionIndex > 0
-    ? `<div class="question-top-actions"><button class="button secondary compact" onclick="previousDiaryQuestion()">Буцах</button></div>`
-    : "";
-  return `
-    ${topbar(progress, `Тэмдэглэлийн ${state.diaryDay} дэх өдөр`)}
-    <section class="screen">
-      <div class="grid">
-        <div class="panel">
-          ${backButton}
-          <p class="muted">Асуулт ${state.diaryQuestionIndex + 1}/${questions.length}</p>
-          <h2 class="question-text">${question.text}</h2>
-          ${renderDiaryInput(question)}
-          <div class="actions">
-            <button class="button" onclick="nextDiaryQuestion()">${state.diaryQuestionIndex === questions.length - 1 ? "Өдрийг хадгалах" : "Үргэлжлүүлэх"}</button>
-          </div>
-        </div>
-        <aside class="aside">
-          <div class="card">
-            <h3>Өнөөдрийн чиглэл</h3>
-            <div class="pill-row">${(state.preliminary || []).slice(0, 3).map(item => `<span class="pill">${publicMechanismShort(item.key)}</span>`).join("")}</div>
-          </div>
-          <div class="card"><p class="muted">Нэмэлт тайлбарыг одоогоор бичгээр хадгална.</p></div>
-        </aside>
-      </div>
-    </section>
-  `;
-}
 
-function renderDiaryInput(question) {
-  const value = state.diaryDraft[question.field] ?? (question.type === "multi" ? [] : "");
-  if (question.id === "D-SUM01") {
-    return renderDailySummaryConfirmation(question);
-  }
-  if (question.type === "text") {
-    return `<label class="field"><span class="muted">1-2 өгүүлбэр хангалттай</span><textarea id="input-${question.id}" oninput="setDiaryDraftValue('${question.id}', this.value)">${escapeHtml(value)}</textarea></label><p class="muted">Хэрвээ санахгүй эсвэл бичмээргүй байвал хоосон орхиод үргэлжлүүлж болно.</p>`;
-  }
-  if (question.type === "scale") {
-    return `<div class="scale">${Array.from({ length: 11 }, (_, i) => `<button class="option ${String(value) === String(i) ? "selected" : ""}" onclick="setDiaryValue('${question.id}', '${i}')">${i}</button>`).join("")}</div>`;
-  }
-  if (question.type === "single") {
-    return `<div class="option-list">${question.options.map(option => `
-      <button class="option ${value === option ? "selected" : ""}" onclick="setDiaryValue('${question.id}', '${escapeJs(option)}')">
-        <input type="radio" ${value === option ? "checked" : ""} tabindex="-1" />
-        <span>${option}</span>
-      </button>`).join("")}</div>`;
-  }
-  if (question.type === "multi") {
-    const values = Array.isArray(value) ? value : [];
-    return `<div class="option-list">${question.options.map(option => `
-      <button class="option ${values.includes(option) ? "selected" : ""}" onclick="toggleMulti('${question.id}', '${escapeJs(option)}', ${question.max || 99})">
-        <input type="checkbox" ${values.includes(option) ? "checked" : ""} tabindex="-1" />
-        <span>${option}</span>
-      </button>`).join("")}</div>`;
-  }
-  return "";
-}
 
-function renderDailySummaryConfirmation(question) {
-  const existing = state.diaryDraft.confirmedSummaryObject;
-  const ui = state.diarySummaryUi || {};
-  const reflection = String(state.diaryDraft.raw_reflection || "").trim();
-  if (!existing && reflection.length < 12) {
-    return `
-      <div class="card stack">
-        <h3>Тайлбар хадгалагдлаа</h3>
-        <p class="muted">Өнөөдрийн сонгосон хариултууд хадгалагдсан. Бичмээр зүйл байхгүй бол үргэлжлүүлж болно.</p>
-        <div class="actions">
-          <button class="button secondary" onclick="confirmDailySummary('confirm')">Үргэлжлүүлэх</button>
-          <button class="button ghost" onclick="previousDiaryQuestion()">Буцах</button>
-        </div>
-      </div>
-    `;
-  }
-  const bullets = existing?.aiSummaryBullets || generateDailySummaryBullets(state.diaryDraft);
-  return `
-    <div class="card stack">
-      <h3>Тайлбар хадгалагдлаа</h3>
-      <p class="muted">Таны бичсэн тайлбар хадгалагдлаа. Дараагийн асуултад үргэлжлүүлж болно.</p>
-      ${bullets.length ? `<ul>${bullets.map(bullet => `<li>${escapeHtml(bullet)}</li>`).join("")}</ul>` : ""}
-      ${existing?.userConfirmed ? `<p class="pill">Баталгаажсан</p>` : ""}
-      ${ui.mode === "edit" || ui.mode === "add" ? `<label class="field"><span class="muted">${ui.mode === "edit" ? "Зассан ойлголтоо мөр мөрөөр бичнэ үү" : "Нэмэх нэг зүйлээ бичнэ үү"}</span><textarea id="input-D-SUM01-${ui.mode}" oninput="setDailySummaryText(this.value)">${escapeHtml(ui.text || "")}</textarea></label>` : ""}
-      <div class="actions">
-        <button class="button secondary" onclick="confirmDailySummary('confirm')">Үргэлжлүүлэх</button>
-        <button class="button ghost" onclick="setDailySummaryMode('edit')">Засах</button>
-        <button class="button ghost" onclick="previousDiaryQuestion()">Буцах</button>
-        <button class="button ghost" onclick="setDailySummaryMode('add')">Нэмэх зүйл байна</button>
-        ${ui.mode === "edit" || ui.mode === "add" ? `<button class="button" onclick="confirmDailySummary('${ui.mode}')">Баталгаажуулах</button>` : ""}
-      </div>
-    </div>
-  `;
-}
 
-function setDailySummaryMode(mode) {
-  state.diarySummaryUi = { mode, text: "" };
-  saveState();
-  render();
-}
 
-function setDailySummaryText(text) {
-  state.diarySummaryUi = { ...(state.diarySummaryUi || {}), text };
-  saveState();
-}
 
-function confirmDailySummary(mode) {
-  const ui = state.diarySummaryUi || {};
-  const aiSummaryBullets = generateDailySummaryBullets(state.diaryDraft);
-  state.diaryDraft.confirmedSummaryObject = createConfirmedSummaryObject({
-    kind: "diary",
-    id: "D-V01",
-    dayNumber: state.diaryDay,
-    rawText: state.diaryDraft.raw_reflection || "",
-    structured: state.diaryDraft,
-    aiSummaryBullets,
-    mode,
-    editText: ui.text,
-    addText: ui.text
-  });
-  state.diaryDraft.summary_confirmation = mode === "edit" ? "Засах" : mode === "add" ? "Нэмэх зүйл байна" : "Тийм, зөв";
-  state.diarySummaryUi = {};
-  saveState();
-  render({ scrollToTop: true });
-}
 
 function dataQuality() {
-  const readiness = reportReadiness();
-  if (readiness.key === "complete" || readiness.key === "strong") return { key: readiness.key, label: readiness.key === "complete" ? "Бүрэн" : "Ашиглахад сайн", copy: readiness.copy };
-  if (readiness.key === "usable") return { key: "usable", label: "Хязгаартай", copy: readiness.copy };
-  if (readiness.key === "limited") return { key: "limited", label: "Эхний", copy: readiness.copy };
-  return { key: "insufficient", label: "Дутуу", copy: readiness.copy };
+  const answered = Object.values(state.stageAnswers || {}).filter(value => !isEmptyAnswer(value)).length;
+  return answered >= 8 ? { key: "one_time", label: "Бүрэн", copy: "Нэг удаагийн үнэлгээний хариулт тайлан гаргахад хүрэлцэж байна." } : { key: "limited", label: "Эхний", copy: "Тайлан одоогийн хариултад тулгуурлана." };
 }
 
 function reportMode() {
@@ -3498,36 +2768,7 @@ function reportMode() {
   return { mode: "deep", title: "Тайлан" };
 }
 
-function repeatedEvidence(primaryKey) {
-  const entries = state.diaryEntries;
-  if (!entries.length) return [];
-  const lines = [];
-  const mealGapDays = entries.filter(entry => entry.meal_rhythm?.includes("5+") || entry.meal_rhythm?.includes("орой нөхсөн")).length;
-  const stressDays = entries.filter(entry => Number(entry.stress_score) >= 7 || ["Стресс", "Уур", "Гуниг", "Санаа зовнил"].includes(entry.emotion)).length;
-  const lowEnergyDays = entries.filter(entry => Number(entry.energy_score) <= 3).length;
-  const rewardDays = entries.filter(entry => (entry.food_function || []).some(v => ["Амттай юм хүссэн", "Өөрийгөө шагнамаар байсан", "Уйдсан"].includes(v))).length;
-  const bodyDays = entries.filter(entry => (entry.body_signals || []).some(v => v !== "Аль нь ч үгүй")).length;
-  if (mealGapDays) lines.push(`${mealGapDays} өдөр хоолны зай уртсах эсвэл орой нөхөх давтамж гарсан.`);
-  if (stressDays) lines.push(`${stressDays} өдөр стресс/мэдрэмж өндөр байсан.`);
-  if (lowEnergyDays) lines.push(`${lowEnergyDays} өдөр оройн эрч хүч бага байсан.`);
-  if (rewardDays) lines.push(`${rewardDays} өдөр өөрийгөө баярлуулах эсвэл амттай зүйл хүсэх үүрэг тэмдэглэгдсэн.`);
-  if (bodyDays) lines.push(`${bodyDays} өдөр биеийн дохио тэмдэглэгдсэн.`);
-  if (!lines.length && primaryKey) lines.push(`${publicMechanismShort(primaryKey)} давтамжийг батлахад тэмдэглэлийн мэдээлэл одоогоор бага байна.`);
-  return lines;
-}
 
-function confirmedNarrativeEvidence(entries = state.diaryEntries) {
-  return entries
-    .map(entry => entry.confirmedSummaryObject)
-    .filter(summary => summary?.userConfirmed)
-    .map(summary => ({
-      day: summary.diaryDay,
-      bullets: summary.confirmedSummary || [],
-      tags: summary.extractedTags || [],
-      dimensions: summary.evidenceDimensions || [],
-      mechanisms: summary.mechanismSignals || []
-    }));
-}
 
 function confirmedStageEvidence(summaries = state.stageVoiceSummaries) {
   return Object.values(summaries || {})
@@ -3541,25 +2782,9 @@ function confirmedStageEvidence(summaries = state.stageVoiceSummaries) {
     }));
 }
 
-function entryEvidenceTags(entry) {
-  const structuredTags = extractTagsFromEvidence({
-    meal_rhythm: entry.meal_rhythm,
-    unplanned_eating_count: entry.unplanned_eating_count,
-    main_moment_time: entry.main_moment_time,
-    hunger_level: entry.hunger_level,
-    food_function: entry.food_function,
-    emotion: entry.emotion,
-    stress_score: entry.stress_score,
-    energy_score: entry.energy_score,
-    body_signals: entry.body_signals,
-    movement: entry.movement,
-    pattern_probes: entry.pattern_probes
-  }, []);
-  return unique([...(entry.confirmedSummaryObject?.extractedTags || []), ...structuredTags]);
-}
 
-function allReportTags(entries = state.diaryEntries) {
-  return unique(entries.flatMap(entryEvidenceTags));
+function allReportTags() {
+  return allStageReportTags();
 }
 
 function allStageReportTags() {
@@ -3573,131 +2798,13 @@ function allStageReportTags() {
   ]);
 }
 
-function countEntries(entries, predicate) {
-  return entries.filter(predicate).length;
-}
 
-function impactLabel(count, total) {
-  if (!total || !count) return "Мэдээлэл хангалтгүй";
-  const ratio = count / total;
-  if (ratio >= 0.6) return "Хүчтэй";
-  if (ratio >= 0.35) return "Дунд";
-  return "Бага";
-}
 
-function triggerMapRows(entries = state.diaryEntries) {
-  const total = entries.length;
-  const rows = [
-    {
-      trigger: "Хоолны хооронд 5+ цаг эсвэл хоол алгасалт",
-      count: countEntries(entries, entry => entry.meal_rhythm?.includes("5+") || entry.meal_rhythm?.includes("алгас")),
-    },
-    {
-      trigger: "Оройн тэнхээ 3/10-аас бага",
-      count: countEntries(entries, entry => Number(entry.energy_score) <= 3),
-    },
-    {
-      trigger: "Стресс 7+/10 эсвэл хүчтэй мэдрэмж",
-      count: countEntries(entries, entry => Number(entry.stress_score) >= 7 || ["Стресс", "Уур", "Гуниг", "Санаа зовнил"].includes(entry.emotion)),
-    },
-    {
-      trigger: "Өөрийгөө баярлуулах хүсэл",
-      count: countEntries(entries, entry => entryEvidenceTags(entry).includes("reward_pull")),
-    },
-    {
-      trigger: "Хоол захиалга эсвэл бэлэн сонголт",
-      count: countEntries(entries, entry => entryEvidenceTags(entry).includes("default_delivery") || entryEvidenceTags(entry).includes("executive_load")),
-    },
-    {
-      trigger: "Биеийн дохио / сахар унах мэт санаа зовоосон мэдрэмж",
-      count: countEntries(entries, entry => entryEvidenceTags(entry).includes("glucose_like_signal") || entryEvidenceTags(entry).includes("bp_concern")),
-    }
-  ];
-  return rows
-    .filter(row => row.count > 0 || total < 5)
-    .map(row => ({
-      ...row,
-      frequency: total ? `${row.count}/${total}` : "Мэдээлэл хангалтгүй",
-      impact: impactLabel(row.count, total)
-    }));
-}
 
-function renderTriggerMapTable(rows) {
-  return `
-    <div class="table-scroll" tabindex="0">
-      <table class="report-table">
-        <thead><tr><th>Эхэлдэг нөхцөл</th><th>Давтамж</th><th>Нөлөө</th></tr></thead>
-        <tbody>${rows.map(row => `<tr><td>${publicHtml(row.trigger)}</td><td>${publicHtml(row.frequency)}</td><td>${publicHtml(row.impact)}</td></tr>`).join("")}</tbody>
-      </table>
-    </div>
-  `;
-}
 
-function surfaceBehaviors(entries = state.diaryEntries, tags = allReportTags(entries)) {
-  const behaviors = [];
-  if (tags.includes("evening_unplanned_eating")) behaviors.push("Орой төлөвлөөгүй идэлт давтагдах");
-  if (tags.includes("skipped_meal") || tags.includes("meal_gap_5h_plus")) behaviors.push("Хоолны хэмнэл алдагдах, хоолны зай уртсах");
-  if (tags.includes("default_delivery")) behaviors.push("Ядарсан үед хоол захиалга эсвэл бэлэн сонголт руу шилжих");
-  if (tags.includes("reward_pull")) behaviors.push("Өлсөлтөөс гадна өөрийгөө баярлуулах хүсэл идэвхжих");
-  if (tags.includes("food_as_regulation")) behaviors.push("Стресс/мэдрэмжийн үед идэх хүсэл нэмэгдэх");
-  if (tags.includes("control_collapse")) behaviors.push("Төлөвлөгөө алдагдахад бүхэлдээ нурсан мэт мэдрэгдэх");
-  return behaviors.length ? behaviors : ["Таны илэрч буй зан үйлийг илүү тод харахад тэмдэглэл үргэлжлүүлэх шаардлагатай байна"];
-}
 
-function hiddenFunctionItems(entries = state.diaryEntries, tags = allReportTags(entries)) {
-  const total = entries.length;
-  const items = [];
-  const lowEnergy = countEntries(entries, entry => Number(entry.energy_score) <= 3);
-  const reward = countEntries(entries, entry => entryEvidenceTags(entry).includes("reward_pull"));
-  const regulation = countEntries(entries, entry => entryEvidenceTags(entry).includes("food_as_regulation"));
-  const safety = countEntries(entries, entry => entryEvidenceTags(entry).includes("hunger_safety") || entryEvidenceTags(entry).includes("meal_gap_5h_plus"));
-  const executive = countEntries(entries, entry => entryEvidenceTags(entry).includes("executive_load") || entryEvidenceTags(entry).includes("default_delivery"));
-  const social = countEntries(entries, entry => entryEvidenceTags(entry).includes("social_pressure"));
-  const body = countEntries(entries, entry => entryEvidenceTags(entry).includes("glucose_like_signal") || entryEvidenceTags(entry).includes("bp_concern"));
-  const shame = countEntries(entries, entry => entryEvidenceTags(entry).includes("shame_guilt"));
-  const role = countEntries(entries, entry => entryEvidenceTags(entry).includes("role_overload"));
-  const circadian = countEntries(entries, entry => entryEvidenceTags(entry).includes("circadian_crash"));
 
-  if (role || tags.includes("role_overload")) items.push({ name: "Өөрийгөө хамгийн сүүлд тавьсны дараах нөхөх хариу", evidence: total ? `${role}/${total} өдөр бусдын хэрэгцээ, өөрийн цаг/хоол хойшлох мэдээлэл давтагдсан.` : "Өөрийн цаг, өөрийн хоол хамгийн сүүлд үлдэх дохио гарсан." });
-  if (circadian || tags.includes("circadian_crash")) items.push({ name: "Нойр/эрч хүчний хэмнэл нөхөх", evidence: total ? `${circadian}/${total} өдөр нойр, өглөөний хоолгүй хэмнэл эсвэл оройн эрч хүчний уналт давтагдсан.` : "Нойр, кофеин, өглөөний хоолгүй хэмнэл, оройн эрч хүчний уналтын шинж гарсан." });
-  if (lowEnergy || (!total && tags.includes("executive_load"))) items.push({ name: "Тэнхээ нөхөх", evidence: total ? `${lowEnergy}/${total} өдөр оройн эрч хүч бага байсан тул хоол эрч хүчний цоорхойг нөхөх үүрэгтэй байж магадгүй.` : "Эрч хүчний уналтын давтамжийг 7 хоногийн тэмдэглэл илүү тодруулна." });
-  if (executive || (!total && tags.includes("default_delivery"))) items.push({ name: "Олон шийдвэрийн дараах ядаргаанаас гарах", evidence: total ? `${executive}/${total} өдөр хамгийн амар бэлэн сонголт нөлөөлсөн.` : "Ядарч туйлдсан үедээ бэлэн бөгөөд хялбар хоол сонгох хандлага тань давамгайлдаг." });
-  if (safety || (!total && tags.includes("hunger_safety"))) items.push({ name: "Дараа өлсөхөөс хамгаалах", evidence: total ? `${safety}/${total} өдөр хоолны зай, өлсөлт, аюулгүй байдлын санаа зовнил давхцсан.` : "Хоол хасах үед хамгаалах хариу гарч байж магадгүй." });
-  if (reward || (!total && tags.includes("reward_pull"))) items.push({ name: "Таатай мэдрэмж авах", evidence: total ? `${reward}/${total} өдөр өөрийгөө баярлуулах хүсэл тэмдэглэгдсэн.` : "Таатай мэдрэмж авах хэрэгцээ тэмдэглэгдсэн." });
-  if (regulation || (!total && tags.includes("food_as_regulation"))) items.push({ name: "Сэтгэл санааг түр тогтворжуулах", evidence: total ? `${regulation}/${total} өдөр стресс/мэдрэмж хоолтой давхцсан.` : "Стресс/мэдрэмжийн дохио бүтэцтэй хариулт дээр гарсан." });
-  if (social || (!total && tags.includes("social_pressure"))) items.push({ name: "Хүмүүсийн дунд татгалзахгүй байх", evidence: total ? `${social}/${total} өдөр хүмүүсийн дундах дарамт тэмдэглэгдсэн.` : "Хүмүүсийн дундах дарамт таны хариулт дээр гарсан." });
-  if (tags.includes("autonomy_rebellion")) items.push({ name: "Өөрөө сонгох мэдрэмжээ хамгаалах", evidence: "Хязгаарлалт нэмэгдэхэд эсэргүүцэх дохио гарсан." });
-  if (body) items.push({ name: "Биеийн таагүй мэдрэмжийг намдаах", evidence: `${body}/${total} өдөр биеийн дохио эсвэл сахар унах мэт санаа зовнил тэмдэглэгдсэн.` });
-  if (shame) items.push({ name: "Ичгүүрээс зайлсхийх", evidence: `${shame}/${total} өдөр гэмшил/ичгүүрийн дараах нөлөөний дохио гарсан.` });
-  if (tags.includes("body_safety")) items.push({ name: "Бусдын хараанаас аюулгүй зай авах", evidence: "Биеэ бусдад анзаарагдахтай холбоотой тавгүй дохио гарсан." });
-  return items.length ? items : [{ name: "Давтамж тодруулах", evidence: "Зан үйлийн үүргийг илүү тодруулахын тулд баталгаажсан тайлбар болон тэмдэглэл нэмэх хэрэгтэй." }];
-}
 
-function beforeEatingItems(entries = state.diaryEntries, tags = allReportTags(entries)) {
-  const items = [];
-  if (tags.includes("high_hunger")) items.push("Өлсөлт өндөр болсон");
-  if (tags.includes("low_hunger_craving")) items.push("Өлсөлт бага үед амттай зүйл эсвэл өөрийгөө баярлуулах хүсэл гарсан");
-  if (tags.includes("skipped_meal") || tags.includes("meal_gap_5h_plus")) items.push("Хоолны урт зай эсвэл хоол алгасалт байсан");
-  if (countEntries(entries, entry => Number(entry.energy_score) <= 3)) items.push("Оройн эрч хүчний уналт давтагдсан");
-  if (tags.includes("food_as_regulation")) items.push("Стресс/мэдрэмж өндөр байсан");
-  if (tags.includes("reward_pull")) items.push("Өөрийгөө баярлуулах хүсэл идэвхжсэн");
-  if (tags.includes("executive_load") || tags.includes("default_delivery")) items.push("Хамгийн амар сонголт хэрэгтэй мэдрэмж давамгайлсан");
-  if (tags.includes("cue_trigger")) items.push("Хоол харагдах, үнэртэх, захиалгын дохио нөлөөлсөн");
-  if (tags.includes("social_pressure")) items.push("Хүмүүсийн дундах дарамт эсвэл татгалзах эвгүй байдал нөлөөлсөн");
-  if (tags.includes("glucose_like_signal")) items.push("Сахар унах мэт биеийн дохио санаа зовоосон");
-  return items.length ? items : ["Төлөвлөөгүй идэлтийн өмнөх 30 минутын мэдээлэл хязгаарлагдмал байна."];
-}
-
-function afterEatingItems(entries = state.diaryEntries, tags = allReportTags(entries)) {
-  const items = [];
-  if (tags.includes("food_as_regulation")) items.push("Түр тайвшрах эсвэл хөнгөрөх мэдрэмж авах");
-  if (tags.includes("reward_pull")) items.push("Таатай мэдрэмж авах");
-  if (tags.includes("shame_guilt")) items.push("Дараа нь ичих/гэмших мэдрэмж нэмэгдэх");
-  if (tags.includes("control_collapse")) items.push("“Маргааш чанга барина” эсвэл нурсан мэт хариу асаах");
-  if (tags.includes("glucose_like_signal")) items.push("Биеийн таагүй мэдрэмж намдаахыг хайх");
-  if (!items.length) items.push("Идсэний дараах нөлөөний мэдээлэл хязгаарлагдмал байна. Дараагийн тэмдэглэлд энэ хэсгийг илүү тодруулж болно.");
-  return items;
-}
 
 function cycleMapSteps(primaryKey, tags = allReportTags()) {
   if (primaryKey === "executive" || tags.includes("executive_load") || tags.includes("default_delivery")) {
@@ -4055,9 +3162,7 @@ function selectedHiddenFunctions(primaryKey, secondaryKeys = [], tags = allRepor
 }
 
 function compressedSurfaceBehaviors(primaryKey, tags = allReportTags()) {
-  return surfaceBehaviors(state.diaryEntries, tags)
-    .filter(item => !item.includes("илүү тод харахад"))
-    .slice(0, 3);
+  return [];
 }
 
 function refinementBullets(primary, secondary = []) {
@@ -4304,7 +3409,6 @@ function renderOneTimePaywall({ mode, primary, primaryMechanism, tags }) {
                 <li>Одоогоор хэт яарахгүй зүйлс</li>
                 <li>Эхний зөөлөн алхам</li>
                 <li>14 хоногийн эхний туршилт</li>
-                <li>7 хоногийн гүн анализ руу шилжих боломж</li>
               </ul>
             </div>
           </div>
@@ -4409,48 +3513,7 @@ function printCurrentReport() {
   return true;
 }
 
-function renderUpgradeOffer() {
-  if (!hasOneTimeReportAccess() || hasSevenDayAccess()) return "";
-  return `
-    <div class="report-section paywall-panel">
-      <p class="choice-kicker">7 хоногоор нарийвчлах</p>
-      <h3>Энэ зураглалыг 7 хоногоор илүү тодруулж болно</h3>
-      <p class="price"><span class="price-label">Нарийвчлах үнэ:</span> ${PRICING.upgrade}</p>
-      <p>Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой.</p>
-      <p class="muted">7 хоногийн богино тэмдэглэл нь аль өдөр, ямар үед илүү хүчтэй болдгийг нарийвчилна.</p>
-      <div class="actions">
-        <button class="button secondary" onclick="startSevenDayRefinement()">${PRICING.upgrade} төлөөд 7 хоногоор нарийвчлах</button>
-      </div>
-    </div>
-  `;
-}
 
-function renderUpgradePaywall() {
-  return `
-    ${topbar(100, "7 хоногоор нарийвчлах")}
-    <section class="screen">
-      <div class="panel stack paywall-panel">
-        <p class="choice-kicker">7 хоногоор нарийвчлах</p>
-        <h2>Энэ зураглалыг 7 хоногоор илүү тодруулж болно</h2>
-        <p class="price"><span class="price-label">Нарийвчлах үнэ:</span> ${PRICING.upgrade} <span>7 хоногийн нээлтийн үнэ ${PRICING.sevenDay}</span></p>
-        <p>Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой.</p>
-        <ul>
-          <li>Орой бүр 3–5 минутын богино тэмдэглэл</li>
-          <li>Идэх хүсэл эхэлдэг нөхцлийн зураглал</li>
-          <li>Эхний зураглал ба бодит ажиглалтын харьцуулалт</li>
-          <li>Идэх хүсэл яг ямар хэрэгцээтэй давхцаж байгааг нарийвчлах</li>
-          <li>Илүү тод 14 хоногийн туршилт</li>
-        </ul>
-        <div class="actions">
-          <button class="button secondary" onclick="startLeadCapture('upgrade')">${PRICING.upgrade} төлөөд 7 хоногоор нарийвчлах</button>
-          ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment('upgrade')">Дотоод туршилтаар нээх</button>`)}
-          <button class="button ghost" onclick="setView('report')">Тайлан руу буцах</button>
-        </div>
-        <p class="muted">Энэ бүртгэл бодит төлбөр авахгүй. Та авах сонирхолтой эсэхээ л үлдээж байна.</p>
-      </div>
-    </section>
-  `;
-}
 
 function livedExplanationFor(primaryKey) {
   return {
@@ -5580,7 +4643,7 @@ function wp78EvidenceReceipts(insights, answers = state.stageAnswers) {
   add("MC-03", "Мөчлөгийн үед идэх хүсэл өөрчлөгдөх үе");
   add("MC-04", "Мөчлөгтэй давхцах хоолны хүсэл");
   if (insights.clusters.some(item => item.key === "stress")) add("S1-E01", "Стрессийн дараах идэх хүсэл");
-  if (insights.clusters.some(item => item.key === "fatigue")) add("S1-L01", "Ядаргаа ба шийдвэрийн ачаалал");
+  if (insights.clusters.some(item => item.key === "fatigue")) add("S1-L01", "Ядаргаа ба олон сонголт хийх ачаалал");
   return unique(receipts).slice(0, 8);
 }
 
@@ -5616,7 +4679,8 @@ function wp78ReportInsights(primaryKey, secondary = [], tags = [], answers = sta
   ) {
     addCluster("restrict", "Нэг удаа хазайсны дараах хэт чангаруулах тойрог", "Өлсөхийг сахилга бат гэж ойлгох үе байна. Нүүрс ус багасч, хоолны хэмжээ хасагдана. Дараа нь нэг хазайлт → гэмшил/өөрийгөө буруутгах → маргааш илүү чанга барих → өлсөлт/ядаргаа → дахин хэтрүүлэх хэлбэрээр эргэж магадгүй.", "Энд асуудал нь зөвхөн нэг удаагийн сонголт биш. Тэр сонголтын дараа та өөртөө ямар дүрэм тавьж, дараагийн хоолыг хэвийн үргэлжлүүлэх үү эсвэл бүхэл өдрийг алдсан гэж үзэх үү гэдэг нь буцаад хүчтэй идэх тойрог үүсгэдэг.", ["маргааш нь хэт чанга барих", "хоол алгасах", "мацаг нэмэх", "өөрийгөө шийтгэх дасгал хийх"], "Дэглэм хазайсан өдөр дараагийн хоолоо 'reset' гэж нэрлээд, ердийн хэмжээтэй хэвийн хоол руу буцах нэг өгүүлбэр бэлд.");
   }
-  if (wp78HasTextIn(["S1-W02", "S1-W04", "S1-V01"], ["эм", "эмийн", "даралт", "хоолны дуршил"], answers)) {
+  const medicalContextText = ["S1-W02", "S1-W04", "S1-V01"].map(id => wp81AnswerText(id, answers)).join(" ");
+  if (/(^|[\s,;/])эм(?:ийн)?(?=$|[\s,;/])|даралт|хоолны дуршил/i.test(medicalContextText)) {
     const medicalCopy = medicalContextCopy(answers);
     addCluster("medical", "Биеийн өөрчлөлттэй холбоотой санаа зовнил", "Эмийн хэрэглээ эсвэл биеийн өөрчлөлтийн тухай санаа зовнил хяналтаа буцаах гэж хэт чанга барих оролдлоготой давхцаж байна.", `${medicalCopy.checkSentence} Гол нь бие урьдчилж таахад хэцүү санагдахад өөрийгөө буруутгах эсвэл хэт чанга барих хандлага нэмэгдэж байгаа эсэхийг ялгах юм.`, ["эмийн хэрэглээг өөрөө оношлоод орхих", "бие өөрчлөгдөх мэдрэмжийг шийтгэлтэй хоолны дүрэм болгох"], "Эм, даралт, хоолны дуршлын өөрчлөлтөө мэргэжлийн хүнтэй ярилцах богино асуулт болгон бич.");
   }
@@ -5639,7 +4703,7 @@ function wp78ReportInsights(primaryKey, secondary = [], tags = [], answers = sta
     addCluster("shift", "Шөнийн ээлж ба ойр бэлэн сонголт", "Шөнийн ээлжийн дараа нойр, тэнхээ, хоолны цаг солигдож, цайны газар, ойр дэлгүүр эсвэл бэлэн хоол хамгийн амар сонголт болж байна.", "Ээлжийн дараа давслаг, амттай, бэлэн хоол зүгээр нэг дуршил биш, амрах эсвэл тэнхээ нөхөх хамгийн ойрын арга шиг санагдаж болно.", ["шөнийн ээлжийн дараа хатуу хязгаарлалт эхлүүлэх", "ойр дэлгүүрийг цорын ганц төлөвлөгөө болгох"], "Ээлжийн дараа авах нэг бэлэн хоол, ус, амрах 10 минутын зөөлөн дараалал бэлд.");
   }
   if (wp78HasAny("S1-F01", ["Ядарсан", "Хамгийн амар сонголт нь тэр байсан", "Хамгийн хялбар сонголт нь тэр байсан"], answers) || wp78HasAny("S1-L01", ["7 хоногт хэд хэд", "Бараг өдөр бүр", "Маш их"], answers) || primaryKey === "executive" || primaryKey === "circadian") {
-    addCluster("fatigue", "Ядаргаа ба хамгийн хялбар сонголт ялах", "Та юу хийхээ мэдэж байсан ч оройн тэнхээ, шийдвэрийн ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.", "Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө их шийдвэр шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.", ["өдөр бүр шинэ шийдвэр шаардах төлөвлөгөө", "ядарсан үед хэт нарийн хоолны дүрэм эхлүүлэх"], "Ядарсан өдөр ашиглах 2 бэлэн, бага хүч шаардсан хоолны сонголтоо урьдчилж нэрлэ.");
+    addCluster("fatigue", "Ядаргаа ба хамгийн хялбар сонголт ялах", "Та юу хийхээ мэдэж байсан ч оройн тэнхээ, олон сонголт хийх ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.", "Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө олон сонголт шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.", ["өдөр бүр шинэ шийдвэр шаардах төлөвлөгөө", "ядарсан үед хэт нарийн хоолны дүрэм эхлүүлэх"], "Ядарсан өдөр ашиглах 2 бэлэн, бага хүч шаардсан хоолны сонголтоо урьдчилж нэрлэ.");
   }
   if (wp78HasAny("S1-T01", ["Өмнө татдаг байсан, одоо больсон", "Хааяа татдаг", "Өдөр бүр татдаг"], answers) && wp78HasAny("S1-T02", ["Тамхи татах үед хоол багасдаг", "Тамхи татахгүй үед идэх хүсэл нэмэгддэг", "Тамхинаас гарах үед хоолны дуршил нэмэгдсэн", "Стресстэй үед тамхи, кофе, зууш хамт давхцдаг"], answers)) {
     addCluster("tobacco", "Тамхи, кофе, стресс, зуушны хам давтамж", "Тамхи, кофе, стресс, амны зуршил, зуушны хүсэл нэг хэмнэл дээр давхцаж байж магадгүй.", "Энэ нь тамхийг жин барих арга болго гэсэн зөвлөгөө огт биш. Харин хоолны дуршил, кофе, стресс, амны зуршил хамт хөдөлж байгаа эсэхийг ялгах хэрэгтэй гэсэн дохио.", ["тамхийг хоолны дуршил дарах арга болгох", "тамхинаас гарах үеийн хоолны дуршлыг буруутгал болгох"], "Стресс өндөр үед тамхи/кофе/зууш гурвыг нэг дор тэмдэглээд, аль нь эхэлж байгааг 7 хоног ажигла.");
@@ -6387,6 +5451,7 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
   const experimentRows = caseExperimentRows(mechanisms, firstStep, answers);
   const professionalItems = filteredProfessionalItemsForCaseReport(wp81ProfessionalGuidance(mode, tags, answers), answers);
   const avoidItems = caseAvoidItems(mechanisms);
+  const stageEvidence = confirmedStageEvidence();
   return `
     ${topbar(100, "Тайлан")}
     <section class="screen">
@@ -6399,6 +5464,7 @@ function renderClearOneTimePaidReport({ mode, primary, secondary = [], tags = []
         <div class="report-section">
           <h3>2. Энэ дүгнэлт юунд тулгуурласан бэ?</h3>
           <div class="stack">${evidencePoints.map(item => `<div class="card stack"><p>${publicHtml(item.text)}</p><p class="muted">${publicHtml(item.why)}</p></div>`).join("")}</div>
+          ${stageEvidence.length ? `<div class="stack">${stageEvidence.map(item => `<div class="card"><ul>${item.bullets.map(bullet => `<li>${publicHtml(bullet)}</li>`).join("")}</ul></div>`).join("")}</div>` : ""}
         </div>
         ${anthropometricSummaryHtml(answers, { safetyFirst: mode.mode === "check" })}
         ${workContextSummaryHtml(answers, { safetyFirst: mode.mode === "check" })}
@@ -6507,16 +5573,10 @@ function renderHumanReadableReport({ mode, primary, secondary = [], tags = [], i
           ${renderStagedExperiment(voice)}
         </div>
         ${compressCycleReport ? "" : menstrualCycleExperimentModifierHtml()}
-        ${isOneTime ? `<div class="report-section">
-          <h3>7 хоногийн тэмдэглэл юуг тодруулах вэ?</h3>
-          <ul>${refinementItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-          <div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>
-        </div>` : ""}
         ${mode.mode === "check" ? professionalCheckHtml(tags, true) : ""}
-        ${isOneTime ? renderUpgradeOffer() : ""}
         ${renderReportDeliveryActions()}
         ${renderInternalTesterFeedbackSurvey()}
-        <div class="actions"><button class="button secondary" onclick="setView('${isOneTime ? "choice" : "diaryHome"}')">${isOneTime ? "Сонголт руу буцах" : "Тэмдэглэл рүү буцах"}</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
+        <div class="actions"><button class="button secondary" onclick="setView('choice')">Сонголт руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
       </div>
     </section>
   `;
@@ -6755,7 +5815,7 @@ function foodResponseInterpretations(flags = foodResponseFlags()) {
   add(flags.dairy && flags.digestive, "Сүү, сүүн бүтээгдэхүүний биеийн мэдрэмж", "Сүү, сүүн бүтээгдэхүүнтэй үед гэдэс дүүрэх, хий, өтгөн өөрчлөгдөх зэрэг давтагдвал онош гэж үзэхгүй. Бага порц, тараг/аарц шиг исгэсэн хэлбэр, идэх цагийг ялгаж ажиглаад, давтамжтай хүчтэй байвал мэргэжлийн хүнтэй ярилцах нь зөв.");
   add(flags.friedFatty || flags.digestive, "Тослог/шарсан хоол ба шингэц", "Тослог, шарсан эсвэл их хэмжээтэй оройн хоол хүнд оргих, нойр хүрэх, цээж хорсох мэдрэмжтэй давхцвал цаг, порц, бэлтгэх аргыг өөрчлөх нэг хувьсагчийн туршилт илүү зөөлөн эхлэл болно.");
   add(flags.swelling, "Маргаашийн хавагнасан мэт мэдрэмж", "Давслаг зууш, чихэрлэг ундаа, их хэмжээтэй оройн хоолны дараах маргаашийн хүнд/хавагнасан мэдрэмж нь заавал нэг шөнийн өөх нэмэлт гэсэн үг биш. Хоолны хэмжээ, давс, шингэн, нойр хамт нөлөөлж болно.");
-  add(flags.easyOvereat, "Хэмжээ барихад хэцүү хүнс", "Хэмжээг нь барихад хэцүү хүнс бол зан чанарын сул тал биш. Амт, бүтэц, харагдах байдал, савлагаа, ядарсан үеийн шийдвэрийн ачаалал нийлээд порц автоматаар томрох нөхцөл үүсгэдэг.");
+  add(flags.easyOvereat, "Хэмжээ барихад хэцүү хүнс", "Хэмжээг нь барихад хэцүү хүнс бол зан чанарын сул тал биш. Амт, бүтэц, харагдах байдал, савлагаа, ядарсан үеийн олон сонголтын ачаалал нийлээд порц автоматаар томрох нөхцөл үүсгэдэг.");
   add(flags.alcoholFood, "Согтууруулах ундаа хэрэглэсэн үеийн хоол", "Согтууруулах ундаа хэрэглэсэн үеийн зууш, оройн хоол, маргаашийн өлсөлт нь өмнөх report-ийн after-effect loop-тэй нийлж болно. Энд гол нь буруутгах биш, өмнөх хоол, ус, маргаашийн сэргэлтийг төлөвлөх юм.");
   add(flags.eliminationRisk, "Хэт олон хүнс бүрэн хасах эрсдэл", "Олон хүнсийг нэг дор бүрэн хасах нь эхэндээ хяналттай мэт боловч дараа нь өлсөлт, хориглосон хоол бодогдох, нэг удаа хазайхад бүх зүйл нурсан мэт санагдах эрсдэлийг нэмэгдүүлж болно.");
   add(flags.sustainingFoods.length, "Тогтвортой санагддаг хоол", `Танд цатгалан, хөнгөн, тогтвортой санагддаг сонголтууд: ${flags.sustainingFoods.join(", ")}. Эдгээрийг давтагдах үндсэн хоол болгон ашиглах нь хоригийн жагсаалтаас илүү бодитой эхлэл байж болно.`);
@@ -6826,88 +5886,7 @@ function contextAdaptedExperimentRows(firstStep, insights, answers = state.stage
 }
 
 function renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags }) {
-  return renderHumanReadableReport({
-    mode,
-    primary,
-    secondary: compressedSecondaryPatterns(ranked),
-    tags,
-    isOneTime: true
-  });
-
-  const selectedSecondary = compressedSecondaryPatterns(ranked);
-  const selectedSecondaryKeys = selectedSecondary.map(item => item.key);
-  const hiddenItems = selectedHiddenFunctions(primary?.key, selectedSecondaryKeys, tags);
-  const surfaceItems = compressedSurfaceBehaviors(primary?.key, tags);
-  const cycleSteps = cycleMapSteps(primary?.key, tags).slice(0, 4);
-  const avoidItems = avoidListFor(primary?.key, tags).slice(0, 5);
-  const leverage = leveragePoint(primary?.key, mode.mode === "check" ? tags.filter(tag => !["glucose_like_signal", "bp_concern"].includes(tag)) : tags);
-  const experiment = experimentFor(primary?.key, mode.mode === "check" ? tags.filter(tag => !["glucose_like_signal", "bp_concern"].includes(tag)) : tags);
-  const refinements = refinementBullets(primary, selectedSecondary);
-
-  return `
-    ${topbar(100, mode.title)}
-    <section class="screen">
-      <div class="panel">
-        <div class="report-section">
-          <h2>Таны нэг удаагийн гүн анализ бэлэн боллоо</h2>
-          <p class="muted">Энэ бол таны одоогийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн тэмдэглэл илүү тодруулна.</p>
-          <div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>
-        </div>
-        <div class="report-section">
-          <h3>Таны хариултаас хамгийн тод харагдаж буй зүйл</h3>
-          ${primary ? `<p>${livedExplanationFor(primary.key)}</p><p>${publicMechanismFitSentence(primary.key)}</p><p>Энэ таны сул тал гэсэн үг биш. Тухайн зан үйл танд ${publicMechanismHiddenFunction(primary.key)} үүрэг гүйцэтгэж байж магадгүй.</p>` : `<p>Одоогоор нэг гол зураглал гаргахад мэдээлэл хангалтгүй байна.</p>`}
-        </div>
-        <div class="report-section">
-          <h3>Давхар нөлөөлж буй давтамжууд</h3>
-          <div class="pill-row">${selectedSecondary.map(item => `<span class="pill">${publicMechanismShort(item.key)}</span>`).join("") || `<span class="muted">Одоогоор хоёрдогч давтамжийг 7 хоногийн тэмдэглэлээр тодруулах нь зөв.</span>`}</div>
-        </div>
-        ${surfaceItems.length ? `<div class="report-section">
-          <h3>Илэрч буй зан үйлүүд</h3>
-          <ul>${surfaceItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-        </div>` : ""}
-        <div class="report-section">
-          <h3>Энэ зан үйл ямар үүрэгтэй байж болох вэ?</h3>
-          <p>Тухайн үед энэ идэлт танд дараах байдлаар тусалж байсан байж магадгүй:</p>
-          <ul>${hiddenItems.map(item => `<li><strong>${publicHtml(item.name)}</strong> — ${publicHtml(item.evidence)}</li>`).join("")}</ul>
-        </div>
-        <div class="report-section">
-          <h3>Давтагддаг тойрог</h3>
-          <div class="cycle-map">${cycleSteps.map(step => `<p>${publicHtml(step)}</p>`).join("<span>↓</span>")}</div>
-        </div>
-        <div class="report-section">
-          <h3>Асуудал яг юу биш вэ?</h3>
-          <p>${publicHtml(notRealProblemCopy(primary?.key, tags))}</p>
-        </div>
-        <div class="report-section">
-          <h3>Одоогоор зайлсхийх зүйлс</h3>
-          <ul>${avoidItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-        </div>
-        <div class="report-section">
-          <h3>Эхний зөөлөн алхам</h3>
-          <p>${publicHtml(leverage.copy)}</p>
-          ${mode.mode === "check" ? `<p class="danger-copy">Биеийн талаа нэмэлтээр шалгуулахад илүүдэхгүй. Тиймээс эхний туршилт илүү зөөлөн, аюулгүй байна.</p>` : ""}
-        </div>
-        <div class="report-section">
-          <h3>14 хоногийн эхний туршилт</h3>
-          <p><strong>Зорилго:</strong> ${publicHtml(experiment.goal)}</p>
-          <p><strong>Өдөр бүр хийх:</strong></p>
-          <ul>${experiment.actions.slice(0, 3).map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-          <p><strong>Ажиглах зүйл:</strong> ${publicHtml(experiment.track.slice(0, 3).join(", "))}</p>
-          <p><strong>Хэрвээ тасалдвал:</strong> ${publicHtml(experiment.recovery)}</p>
-        </div>
-        <div class="report-section">
-          <h3>Илүү нарийвчилж болох хэсгүүд</h3>
-          <p>Энэ хэсгийг 7 хоногоор илүү тодруулж болно. Дараах хэсгийг тэмдэглэл илүү тод харуулна:</p>
-          <ul>${refinements.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-          <div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>
-        </div>
-        ${mode.mode === "check" ? professionalCheckHtml(tags, true) : ""}
-        ${renderUpgradeOffer()}
-        ${renderInternalTesterFeedbackSurvey()}
-        <div class="actions"><button class="button secondary" onclick="setView('choice')">Сонголт руу буцах</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
-      </div>
-    </section>
-  `;
+  return renderHumanReadableReport({ mode, primary, secondary: compressedSecondaryPatterns(ranked), tags, isOneTime: true });
 }
 
 function feedbackChoiceField(name, label, options, followUpName = "", followUpLabel = "") {
@@ -7337,9 +6316,7 @@ function buildRuntimeVisibleSurfacePayload(reportContext = {}) {
   const readinessCopy = readiness?.count
     ? `${readiness.count}/7 өдрийн ажиглалттай байна.`
     : "Эхний зураглалд одоогийн хариултыг ашиглав.";
-  const packageCopy = packageType === "one-time"
-    ? "Энэ хэсэг нэг удаагийн хариултад тулгуурлана."
-    : "Энэ хэсэг 7 хоногийн тэмдэглэлд тулгуурлана.";
+  const packageCopy = "Энэ хэсэг нэг удаагийн хариултад тулгуурлана.";
 
   return {
     version: "runtime-visible-surface-payload-v0",
@@ -7553,17 +6530,10 @@ function renderReport() {
   const primary = ranked[0];
   const secondary = ranked.slice(1, 3);
   const primaryMechanism = primary ? mechanisms[primary.key] : null;
-  const isOneTime = state.packageType === "one-time";
   const ctaPatterns = [primary, ...secondary].filter(Boolean).slice(0, 3);
-  const readiness = reportReadiness();
-  const narrativeEvidence = confirmedNarrativeEvidence();
+  const readiness = { key: "one_time" };
   const stageEvidence = confirmedStageEvidence();
   const tags = unique([...allReportTags(), ...allStageReportTags()]);
-  const triggerRows = triggerMapRows().slice(0, 5);
-  const hiddenItems = hiddenFunctionItems(state.diaryEntries, tags).slice(0, 3);
-  const surfaceItems = surfaceBehaviors(state.diaryEntries, tags).slice(0, 3);
-  const beforeItems = beforeEatingItems(state.diaryEntries, tags).slice(0, 5);
-  const afterItems = afterEatingItems(state.diaryEntries, tags).slice(0, 4);
   const cycleSteps = cycleMapSteps(primary?.key, tags);
   const avoidItems = avoidListFor(primary?.key, tags).slice(0, 6);
   const leverage = leveragePoint(primary?.key, tags);
@@ -7576,7 +6546,6 @@ function renderReport() {
     packageType: state.packageType,
     readiness,
     stageEvidence,
-    narrativeEvidence,
     tags
   });
 
@@ -7640,7 +6609,7 @@ function renderReport() {
     `, reportContext, { hasPaidAccess: false }).html;
   }
 
-  if (isOneTime && !hasOneTimeReportAccess()) {
+  if (!hasOneTimeReportAccess()) {
     const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
     return renderReportWithConnectedRuntimeVisibleSurface(
       renderOneTimePaywall({ mode, primary, primaryMechanism, tags }),
@@ -7649,176 +6618,10 @@ function renderReport() {
     ).html;
   }
 
-  if (!isOneTime && !hasSevenDayAccess()) {
-    const reportContext = { mode, ranked, primary, secondary, packageType: state.packageType, readiness, quality, tags };
-    return renderReportWithConnectedRuntimeVisibleSurface(
-      renderSevenDayPaywall(),
-      reportContext,
-      { hasPaidAccess: false }
-    ).html;
-  }
-
-  if (!isOneTime && !readiness.canGenerateFullReport) {
-    return `
-      ${topbar(Math.round((state.diaryEntries.length / 7) * 100), "Тайлангийн бэлэн байдал")}
-      <section class="screen">
-        <div class="panel stack">
-          <h2>${readiness.title}</h2>
-          <p class="muted">${readiness.copy}</p>
-          <div class="two-col">
-            <div class="mini-stat"><strong>${readiness.count}/7</strong><span>Өдөр бөглөсөн</span></div>
-            <div class="mini-stat"><strong>${quality.label}</strong><span>Хариултын хүрэлцээ</span></div>
-          </div>
-          ${readiness.key !== "insufficient" ? `<div class="card"><h3>Эхний дохионууд</h3><div class="pill-row">${ranked.slice(0, 3).map(item => `<span class="pill">${publicMechanismShort(item.key)}</span>`).join("") || `<span class="muted">Дохио харахад мэдээлэл бага байна.</span>`}</div></div>` : ""}
-          <p>Энэ нь бүрэн тайлан биш тул 14 хоногийн туршилт өгөхгүй. Тэмдэглэлээ үргэлжлүүлж 5/7 өдөр хүрвэл бүрэн тайлан гарна.</p>
-          <div class="actions">
-            <button class="button" onclick="startDiary()">Тэмдэглэлээ үргэлжлүүлэх</button>
-            <button class="button ghost" onclick="setView('diaryHome')">Явц руу буцах</button>
-          </div>
-        </div>
-      </section>
-    `;
-  }
-
-  if (isOneTime) {
-    trackWeightFunnelOnce("report_generated", {
-      assessment_id: state.currentAssessmentId || "",
-      package_type: state.packageType || "one-time",
-      readiness: readiness.key || ""
-    }, state.currentAssessmentId || state.paymentSessionId || "one-time-report");
-    return renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags });
-  }
-
-  const reportContext = { mode, primary, secondary, packageType: state.packageType, readiness, quality, tags };
-  trackWeightFunnelOnce("report_generated", {
-    assessment_id: state.currentAssessmentId || "",
-    package_type: state.packageType || "seven-day",
-    readiness: readiness.key || ""
-  }, state.currentAssessmentId || state.paymentSessionId || "seven-day-report");
-  return renderReportWithConnectedRuntimeVisibleSurface(
-    renderHumanReadableReport({
-      mode,
-      primary,
-      secondary,
-      tags,
-      isOneTime: false
-    }),
-    reportContext,
-    {
-      hasPaidAccess: hasSevenDayAccess(),
-      placement: "before-section-end"
-    }
-  ).html;
-
-  return `
-    ${topbar(100, mode.title)}
-    <section class="screen">
-      <div class="panel">
-        <div class="report-section">
-          <h2>${isOneTime ? "Таны нэг удаагийн гүн анализ бэлэн боллоо" : mode.mode === "check" ? "Нэг зүйл анхаарал татаж байна — мөн шалгуулахад илүүдэхгүй дохио байна" : ordinaryReportOpeningTitle(primary?.key, tags)}</h2>
-          <p class="muted">${isOneTime ? "Энэ тайлан таны одоогийн хариулт болон баталгаажуулсан тайлбар дээр суурилсан. Зарим зүйл бодит өдөр тутамд яаж давтагддагийг 7 хоногийн тэмдэглэл илүү тодруулж болно." : quality.copy}</p>
-          ${isOneTime ? `<div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>` : ""}
-        </div>
-        <div class="report-section">
-          <h3>Хариултын хүрэлцээ</h3>
-          <p>${isOneTime ? "Энэ нь таны одоогийн хариултад суурилсан эхний зураглал. Өдөр тутмын давтамжийг батлахын тулд 7 хоногийн тэмдэглэл хэрэгтэй." : quality.copy}</p>
-        </div>
-        <div class="report-section">
-          <h3>Эхний зураглал ба бодит ажиглалт</h3>
-          <p>Эхний тестээр: ${publicHtml((state.preliminary || []).slice(0, 3).map(item => publicMechanismShort(item.key)).join(", ") || "давтагдаж байгаа эсэхийг харахад мэдээлэл хангалтгүй")}.</p>
-          <p>${publicHtml(isOneTime ? "Энэ нь нэг удаагийн өөрийн ажиглалтад суурилсан зураглал. Өдөр тутмын давтамж, идэх хүсэл эхэлдэг цаг, идэхийн өмнөх ба дараах өөрчлөлтийг 7 хоногийн тэмдэглэл илүү тодруулна." : `7 хоногийн ажиглалтаар: ${repeatedEvidence(primary?.key).join(" ") || "өдөр тутамд яаж давтагдаж байгааг ойлгоход мэдээлэл хязгаарлагдмал байна."}`)}</p>
-        </div>
-        ${isOneTime ? `<div class="report-section">
-          <h3>Баталгаажуулсан тайлбар</h3>
-          ${stageEvidence.length ? stageEvidence.map((item, index) => `<div class="card"><h3>Тайлбар ${index + 1}</h3><ul>${item.bullets.map(bullet => `<li>${publicHtml(bullet)}</li>`).join("")}</ul></div>`).join("") : `<p class="muted">Баталгаажуулсан нэмэлт тайлбар байхгүй. Энэ тайлан бүтэцтэй хариултад суурилж байна.</p>`}
-        </div>` : ""}
-        <div class="report-section">
-          <h3>${isOneTime ? "Таны хариултаас хамгийн тод харагдаж буй зүйл" : "Гол давтагдаж буй нөхцөл"}</h3>
-          ${primary ? `<p>${livedExplanationFor(primary.key)}</p><p>${publicMechanismFitSentence(primary.key, primary.label)}</p><p>Энэ таны сул тал гэсэн үг биш. Тухайн зан үйл танд ${publicMechanismHiddenFunction(primary.key)} үүрэг гүйцэтгэж байж магадгүй.</p>` : `<p>Гол зураглал гаргахад мэдээлэл хангалтгүй байна.</p>`}
-        </div>
-        <div class="report-section">
-          <h3>Давхар нөлөөлж буй давтамжууд</h3>
-          <div class="pill-row">${secondary.map(item => `<span class="pill">${publicMechanismShort(item.key)}</span>`).join("") || `<span class="muted">Одоогоор давхар нөлөө давтагдаж байгаа эсэхийг харахад мэдээлэл хангалтгүй.</span>`}</div>
-        </div>
-        <div class="report-section">
-          <h3>Илэрч буй зан үйлүүд</h3>
-          <ul>${surfaceItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-        </div>
-        <div class="report-section">
-          <h3>Энэ зан үйл ямар үүрэгтэй байж болох вэ?</h3>
-          <p>Таны идэлт дараах үүргүүдийг гүйцэтгэж байна:</p>
-          <ul>${hiddenItems.map(item => `<li><strong>${publicHtml(item.name)}</strong> — ${publicHtml(item.evidence)}</li>`).join("")}</ul>
-        </div>
-        <div class="report-section">
-          <h3>Давтагддаг тойрог</h3>
-          <div class="cycle-map">${cycleSteps.map(step => `<p>${publicHtml(step)}</p>`).join("<span>↓</span>")}</div>
-        </div>
-        <div class="report-section">
-          <h3>Идэх хүсэл эхэлдэг нөхцөл</h3>
-          <p class="muted">Нөхцлийн зураглал нь таны идэлтийг “ямар хоол идсэн бэ?” гэж биш, “ямар нөхцөл давтагдахад идэх сонголт өөрчлөгдөж байна вэ?” гэж харуулдаг.</p>
-          ${renderTriggerMapTable(triggerRows)}
-        </div>
-        ${!isOneTime ? `<div class="report-section">
-          <h3>Баталгаажуулсан тайлбар</h3>
-          ${narrativeEvidence.length ? narrativeEvidence.map(item => `<div class="card"><h3>${publicHtml(item.day)} дэх өдөр</h3><ul>${item.bullets.map(bullet => `<li>${publicHtml(bullet)}</li>`).join("")}</ul></div>`).join("") : `<p class="muted">Баталгаажуулсан нэмэлт тайлбар байхгүй. Энэ тайлан тэмдэглэлийн бүтэцтэй хариултад суурилж байна.</p>`}
-        </div>` : ""}
-        <div class="report-section">
-          <h3>Идэхийн өмнөх 30 минут</h3>
-          <p>Төлөвлөөгүй идэлтийн өмнөх 30 минутанд хамгийн их давтагдсан зүйлс:</p>
-          <ul>${beforeItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-        </div>
-        <div class="report-section">
-          <h3>Идсэний дараах 30 минут</h3>
-          <ul>${afterItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-        </div>
-        ${isOneTime ? `<div class="report-section">
-          <h3>Илүү нарийвчилж болох хэсгүүд</h3>
-          <p>Энэ хэсгийг 7 хоногоор илүү тодруулж болно:</p>
-          <ul>${ctaPatterns.map(item => `<li><strong>${publicMechanismShort(item.key)}</strong> — энэ нь яг ямар өдөр, ямар нөхцөлд давтагдаж байгааг харна. ${item.key === "hungerSafety" ? "Ялангуяа хоолны хоорондын зай, оройн эрч хүч, төлөвлөөгүй идэлттэй хэрхэн давхцаж байгааг 7 хоногийн тэмдэглэл илүү тод харуулна." : ""}</li>`).join("") || "<li>Өдөр тутмын нөхцлийн зураглал болон идэхийн өмнөх/дараах давтамжийг тодруулна.</li>"}</ul>
-          <div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>
-        </div>` : ""}
-        <div class="report-section">
-          <h3>Асуудал яг юу биш вэ?</h3>
-          <p>${publicHtml(notRealProblemCopy(primary?.key, tags))}</p>
-        </div>
-        <div class="report-section">
-          <h3>Өмнөх аргууд яагаад удаан ажиллаагүй байж болох вэ?</h3>
-          <p>${publicHtml(previousAttemptsCopy(primary?.key, tags))}</p>
-        </div>
-        <div class="report-section">
-          <h3>Одоогоор зайлсхийх зүйлс</h3>
-          <ul>${avoidItems.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-        </div>
-        <div class="report-section">
-          <h3>Эхэлж өөрчлөх хамгийн амар цэг</h3>
-          <p>${publicHtml(leverage.copy)}</p>
-        </div>
-        <div class="report-section">
-          <h3>14 хоногийн туршилт</h3>
-          <p><strong>Зорилго:</strong> ${publicHtml(experiment.goal)}</p>
-          <p><strong>Өдөр бүр хийх:</strong></p>
-          <ul>${experiment.actions.map(item => `<li>${publicHtml(item)}</li>`).join("")}</ul>
-          <p><strong>Ажиглах зүйл:</strong> ${publicHtml(experiment.track.join(", "))}</p>
-          <p><strong>Амжилттай явж байгаагийн шинж:</strong> ${publicHtml(experiment.success)}</p>
-          <p><strong>Хэрвээ тасалдвал:</strong> ${publicHtml(experiment.recovery)}</p>
-          ${mode.mode === "check" ? `<p class="danger-copy">Биеийн дохио байгаа тул мацаг, хоол алгасах, огцом хязгаарлалт, өндөр ачаалалтай сорил санал болгохгүй.</p>` : ""}
-          ${isOneTime ? `<p class="muted">Энэ туршилтыг 7 хоногийн тэмдэглэл дээр илүү нарийвчилж, нөхцлийн зураглал, давтагддаг цикл, эхэлж өөрчлөх хамгийн амар цэгийг тодруулж болно.</p><div class="actions"><button class="button secondary" onclick="startSevenDayRefinement()">7 хоногоор нарийвчлах</button></div>` : ""}
-        </div>
-        ${mode.mode === "check" ? professionalCheckHtml(tags, true) : ""}
-        ${renderInternalTesterFeedbackSurvey()}
-        <div class="actions"><button class="button secondary" onclick="setView('${isOneTime ? "choice" : "diaryHome"}')">${isOneTime ? "Сонголт руу буцах" : "Тэмдэглэл рүү буцах"}</button><button class="button ghost" onclick="resetState()">Шинээр эхлэх</button></div>
-      </div>
-    </section>
-  `;
+  trackWeightFunnelOnce("report_generated", { assessment_id: state.currentAssessmentId || "", package_type: "one-time", readiness: "one_time" }, state.currentAssessmentId || state.paymentSessionId || "one-time-report");
+  return renderOneTimeReport({ mode, ranked, primary, secondary, primaryMechanism, tags });
 }
 
-function startSevenDayRefinement() {
-  state.packageType = "seven-day";
-  if (!state.preliminary.length) state.preliminary = rankedPatterns(false).slice(0, 4);
-  state.view = hasSevenDayAccess() ? "unlock" : "upgradePaywall";
-  saveState();
-  render({ scrollToTop: true });
-}
 
 function escapeHtml(value) {
   return String(value ?? "").replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;" }[char]));
@@ -7913,9 +6716,7 @@ function publicMechanismFitSentence(key, label = "") {
 
 function publicValidationProductLabel(productType) {
   return {
-    one_time: "Нэг удаагийн гүн анализ",
-    seven_day: "7 хоногийн гүн анализ",
-    upgrade: "7 хоногоор нарийвчлах эрх"
+    one_time: "Нэг удаагийн гүн анализ"
   }[productType] || productType;
 }
 
@@ -7938,17 +6739,11 @@ function render(options = {}) {
     about: renderAbout,
     choice: renderChoice,
     oneTimeStart: renderOneTimeStart,
-    sevenDayStart: renderSevenDayStart,
     leadCapture: renderLeadCapture,
     leadThankYou: renderLeadThankYou,
     validationSummary: renderValidationSummary,
     stage1: renderStageOne,
     preliminary: renderPreliminary,
-    unlock: renderUnlock,
-    diaryHome: renderDiaryHome,
-    diary: renderDiary,
-    reportReady: renderReportReady,
-    upgradePaywall: renderUpgradePaywall,
     report: renderReport,
     coachLogin: renderCoachLogin,
     coachDashboard: renderCoachDashboard,
@@ -7975,19 +6770,12 @@ if (typeof module !== "undefined") {
     initialState,
     mechanisms,
     stageOneQuestions,
-    dailyCore,
-    dailyMenstrual,
     probeBank,
-    reportReadiness,
-    diaryEntrySafetyFlags,
-    calculateDiarySafetyFlags,
-    generateDailySummaryBullets,
     generateStageSummaryBullets,
     extractTagsFromEvidence,
     mapTagsToDimensions,
     mapTagsToMechanismSignals,
     createConfirmedSummaryObject,
-    confirmedNarrativeEvidence,
     confirmedStageEvidence,
     allQuestionObjects,
     getQuestionMetadata,
@@ -8016,7 +6804,6 @@ if (typeof module !== "undefined") {
       hasAlcoholUse,
       hasTobaccoUse,
       shouldShowStageQuestion,
-      getDiaryQuestions,
       hasMenstrualCycleContext,
       menstrualCycleEvidence,
       menstrualCycleContextHtml,
@@ -8038,13 +6825,7 @@ if (typeof module !== "undefined") {
       foodResponseFirstExperiment,
       sanitizeVisibleSurfacePrototypeText,
       setTestState(nextState) {
-        state = {
-          ...initialState,
-          oneTimePaid: true,
-          sevenDayPaid: true,
-          upgradePaid: true,
-          ...nextState
-        };
+        state = { ...initialState, oneTimePaid: true, ...migrateLegacySevenDayState(nextState) };
       },
       getTestState() {
         return state;
@@ -8054,10 +6835,6 @@ if (typeof module !== "undefined") {
       updateQuestionValue,
       setAnswerDraft,
       toggleMulti,
-      nextDiaryQuestion,
-      previousDiaryQuestion,
-      setDiaryValue,
-      setDiaryDraftValue,
       demoCompletePayment,
       startLeadCapture,
       updateLeadField,
@@ -8110,27 +6887,15 @@ if (typeof module !== "undefined") {
       renderLeadCapture,
       renderLeadThankYou,
       renderValidationSummary,
-      renderSevenDayStart,
-      renderSevenDayPaywall,
-      renderDiaryHome,
-      renderDiary,
-      renderDiaryInput,
-      renderDailySummaryConfirmation,
       renderSampleResultPreview,
-      renderUpgradeOffer,
       renderWeightQpayPaymentBox,
       qpayStatusMessage,
       hasOneTimeReportAccess,
-      hasSevenDayAccess,
-      hasUpgradeAccess,
       canStartPaidAssessment,
       enforcePaidFirstGate,
       beginAssessment,
       createWeightQpayInvoice,
       completeStageOne,
-      startDiary,
-      renderUnlock,
-      renderUpgradePaywall,
       renderReport,
       renderCoachLogin,
       renderCoachDashboard,

@@ -75,7 +75,7 @@ No P0/P1/P2 blockers were found in the final validation pass. Some report string
 - `WEIGHT_TEST_QA_PAYMENT_BYPASS` remains `false`.
 - `WEIGHT_TEST_QA_SKIP_PAYWALL` remains `false`.
 - QPay endpoint/source logic was not changed.
-- Prices remain `9,900₮` and `29,000₮`.
+- Prices remain `9,900₮` and `[REMOVED_FEATURE_PRICE]`.
 - `.netlify/state.json` was not edited.
 - `audits/sprint-36-paid-depth-prototype/` was not edited or staged.
 - Protected untracked migration audit folders were not edited or staged.

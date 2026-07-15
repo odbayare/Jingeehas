@@ -20,7 +20,7 @@
   - Одоогоор болгоомжлох зүйлс
   - Эхний жижиг өөрчлөлт
   - 14 хоногийн туршилт
-  - 7 хоногоор нарийвчлах, only where applicable
+  - [REMOVED_FEATURE_REFINEMENT], only where applicable
 - Evidence is now a short supporting note instead of dominating the main report.
 - The 14-day experiment now uses staged copy:
   - Эхний 3 өдөр

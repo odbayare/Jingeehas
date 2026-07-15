@@ -16,7 +16,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     qpayPayment: {
       status: "idle",
@@ -42,7 +42,7 @@ function setOneTime(overrides = {}) {
       copyStatus: ""
     },
     stageVoiceSummaries: {},
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -62,12 +62,12 @@ function diaryEntry(overrides = {}) {
   };
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: false,
     qpayPayment: {
       status: "idle",
@@ -76,7 +76,7 @@ function setSevenDay(overrides = {}) {
     },
     currentAssessmentId: null,
     preliminary: [{ key: "hungerSafety", score: 4, label: "дунд зэрэг нийцэж байна" }],
-    diaryEntries: [
+    removedEntries: [
       diaryEntry({ day_number: 1 }),
       diaryEntry({ day_number: 2 }),
       diaryEntry({ day_number: 3 }),
@@ -183,9 +183,6 @@ assert(appSource.includes("const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = tr
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time price label must remain unchanged");
 assert(appSource.includes('oneTimeAnchor: "9,900₮"'), "one-time anchor price label must remain unchanged");
 assert(appSource.includes('coachOneTime: "9,900₮"'), "coach one-time price label must remain unchanged");
-assert(appSource.includes('sevenDay: "29,000₮"'), "seven-day price label must remain unchanged");
-assert(appSource.includes('sevenDayAnchor: "69,000₮"'), "seven-day anchor price label must remain unchanged");
-assert(appSource.includes('upgrade: "19,900₮"'), "upgrade price label must remain unchanged");
 assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price constant must remain unchanged");
 assert(appSource.includes("const COACH_WEIGHT_PRICE_MNT = 9900;"), "coach price constant must remain unchanged");
 assert(appSource.includes("const COACH_COMMISSION_MNT = 4000;"), "coach commission constant must remain unchanged");
@@ -195,15 +192,11 @@ assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIM
 assert(appSource.includes('create: "/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
 assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
 assert(appSource.includes("return state.coachDiscountConsent && state.coachInvite ? COACH_WEIGHT_PRICE_MNT : STANDARD_WEIGHT_PRICE_MNT;"), "current one-time amount helper must remain unchanged");
-assert(appSource.includes("return Boolean(isInternalTestMode() || state.sevenDayPaid || state.upgradePaid || access.hasSevenDayAccess);"), "seven-day access helper source must remain unchanged");
 assert(appSource.includes("return Boolean(isQaPaymentBypassEnabled() || isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === \"paid\" || access.hasOneTimeReportAccess);"), "one-time access helper source must keep paid-state and entitlement guards");
-assert(appSource.includes("return Boolean(state.upgradePaid || access.hasUpgradeAccess);"), "upgrade access helper source must remain unchanged");
 
-assert(mockBackendSource.includes("const PRODUCT_AMOUNTS = {\n  one_time: 9900,\n  seven_day: 29000,\n  upgrade: 19900\n};"), "mock backend product amounts must remain unchanged");
+assert(mockBackendSource.includes("const PRODUCT_AMOUNTS = {\n  one_time: 9900\n};"), "mock backend must retain only the one-time amount");
 assert(mockBackendSource.includes('product_code: productType === "one_time" ? "WEIGHT_TEST_ONE_TIME" : productType'), "mock backend product code mapping must remain unchanged");
 assert(mockBackendSource.includes('entitlement_type: "one_time_report"'), "mock backend one-time entitlement type must remain unchanged");
-assert(mockBackendSource.includes('entitlement_type: "seven_day_access"'), "mock backend seven-day entitlement type must remain unchanged");
-assert(mockBackendSource.includes('entitlement_type: "upgrade_access"'), "mock backend upgrade entitlement type must remain unchanged");
 
 mockBackend.resetMockBackend();
 mockBackend.startSession();
@@ -211,25 +204,17 @@ mockBackend.startSession();
 _internal.setTestState({
   packageType: "one-time",
   oneTimePaid: false,
-  sevenDayPaid: false,
-  upgradePaid: false,
   qpayPayment: { status: "idle", message: "", invoice: null },
   currentAssessmentId: null
 });
 assert.strictEqual(_internal.hasOneTimeReportAccess(), false, "one-time access should be false without local flag, paid QPay state, or entitlement");
-assert.strictEqual(_internal.hasSevenDayAccess(), false, "seven-day access should be false without local flag, upgrade flag, or entitlement");
-assert.strictEqual(_internal.hasUpgradeAccess(), false, "upgrade access should be false without local flag or entitlement");
 
-_internal.setTestState({ oneTimePaid: true, sevenDayPaid: true, upgradePaid: true });
+_internal.setTestState({ oneTimePaid: true });
 assert.strictEqual(_internal.hasOneTimeReportAccess(), true, "one-time local paid flag should grant one-time report access");
-assert.strictEqual(_internal.hasSevenDayAccess(), true, "seven-day local paid flag should grant seven-day access");
-assert.strictEqual(_internal.hasUpgradeAccess(), true, "upgrade local paid flag should grant upgrade access");
 
 _internal.setTestState({
   packageType: "one-time",
   oneTimePaid: false,
-  sevenDayPaid: false,
-  upgradePaid: false,
   qpayPayment: { status: "paid", message: "", invoice: null },
   currentAssessmentId: null
 });
@@ -242,8 +227,6 @@ mockBackend.markMockPaymentPaid(oneTimePayment.id);
 _internal.setTestState({
   packageType: "one-time",
   oneTimePaid: false,
-  sevenDayPaid: false,
-  upgradePaid: false,
   qpayPayment: { status: "idle", message: "", invoice: null },
   currentAssessmentId: assessment.id
 });
@@ -288,33 +271,6 @@ withLocalStorageMutationSpy(() => {
     assert(text.includes("Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно"), "payment failed output should include retry/recreate-QR wording");
   }, "payment failed output");
 
-  setSevenDay({
-    diaryEntries: [diaryEntry({ pattern_probes: { measured_today: "Тийм, санаа зовоосон" } })]
-  });
-  assertRenderDoesNotMutateMockBackend(() => {
-    const html = _internal.renderReport();
-    const text = normalize(html);
-    assert.strictEqual(_internal.reportMode().mode, "professional", "professional setup must route to professional mode");
-    assertSafeRenderedOutput(html, "professional output");
-    assert(text.includes("Доорх богино нэгтгэлийг мэргэжлийн хүнтэй ярилцахдаа авч очиж болно."), "professional output should keep professional safety summary visible");
-    assert(!text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "professional output must not show ordinary paid depth");
-    assert(!text.includes("14 хоногийн туршилт"), "professional output must not show ordinary paid experiment");
-    assert(!text.includes("төлөөд бүрэн тайлангаа нээх"), "professional output must not show paid CTA");
-  }, "professional output");
-
-  setSevenDay({
-    diaryEntries: [diaryEntry({ pattern_probes: { glucose_signals: ["Будилах / ухаан балартах"] } })]
-  });
-  assertRenderDoesNotMutateMockBackend(() => {
-    const html = _internal.renderReport();
-    const text = normalize(html);
-    assert.strictEqual(_internal.reportMode().mode, "urgent", "urgent setup must route to urgent mode");
-    assertSafeRenderedOutput(html, "urgent output");
-    assert(text.includes("Эхлээд таны аюулгүй байдал чухал"), "urgent output should keep immediate safety guidance visible");
-    assert(!text.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "urgent output must not show ordinary paid depth");
-    assert(!text.includes("14 хоногийн туршилт"), "urgent output must not show ordinary paid experiment");
-    assert(!text.includes("төлөөд бүрэн тайлангаа нээх"), "urgent output must not show paid CTA");
-  }, "urgent output");
 });
 
 console.log("payment-qpay-production-hardening-audit tests passed");

@@ -21,7 +21,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2439
+- Source line: 2178
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -80,7 +80,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 40
+- Source line: 37
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -139,7 +139,7 @@ METHODOLOGY_NAME
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 41
+- Source line: 38
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -198,7 +198,7 @@ METHODOLOGY_NAME
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 42
+- Source line: 39
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -257,7 +257,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 43
+- Source line: 40
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -316,7 +316,7 @@ METHODOLOGY_NAME
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 44
+- Source line: 41
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -375,7 +375,7 @@ METHODOLOGY_NAME
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 45
+- Source line: 42
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -434,7 +434,7 @@ METHODOLOGY_NAME
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 46
+- Source line: 43
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -493,7 +493,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 47
+- Source line: 44
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -533,7 +533,7 @@ METHODOLOGY_NAME
 - Approval date:
 - Notes:
 
-## COPY-0139 — P0
+## COPY-0101 — P0
 
 **Exact current text**
 
@@ -552,7 +552,7 @@ METHODOLOGY_NAME
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2698
+- Source line: 2383
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
@@ -592,7 +592,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0259 — P0
+## COPY-0220 — P0
 
 **Exact current text**
 
@@ -611,7 +611,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4356
+- Source line: 3460
 - Source function/object: renderReportDeliveryActions
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -651,125 +651,7 @@ TECHNICAL_INSTRUCTION
 - Approval date:
 - Notes:
 
-## COPY-0371 — P0
-
-**Exact current text**
-
-> 2-3 өдрийн мэдээлэл дээр зарим дохио харагдаж болно. Гэхдээ энэ нь бүрэн тайлан биш, эхний reflection хэвээр байна.
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
-- Surface: LIMITED_REPORT
-- Role: SEVEN_DAY_USER
-- Scenario: limited-report
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3269
-- Source function/object: reportReadiness
-- Source mapping: RESOLVED
-- Render proof: renderReport via limited-report [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> title: "Хязгаартай эхний зураглал",
-
-**Source item**
-
-> copy: "2-3 өдрийн мэдээлэл дээр зарим дохио харагдаж болно. Гэхдээ энэ нь бүрэн тайлан биш, эхний reflection хэвээр байна."
-
-**Source context after**
-
-> };
-
-**Rendered context**
-
-> Хязгаартай эхний зураглал
-> 2-3 өдрийн мэдээлэл дээр зарим дохио харагдаж болно. Гэхдээ энэ нь бүрэн тайлан биш, эхний reflection хэвээр байна.
-> 3/7
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0443 — P0
-
-**Exact current text**
-
-> Хэвлэх / PDF хадгалах
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: TECHNICAL_INSTRUCTION
-- Surface: FULL_SEVEN_DAY_REPORT
-- Role: SEVEN_DAY_USER
-- Scenario: full-seven-day-report
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 4356
-- Source function/object: renderReportDeliveryActions
-- Source mapping: RESOLVED
-- Render proof: renderReport via full-seven-day-report [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
-
-**Source item**
-
-> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Тайлан хуулж авах
-> Хэвлэх / PDF хадгалах
-> Тэмдэглэл рүү буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-TECHNICAL_INSTRUCTION
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0513 — P0
+## COPY-0256 — P0
 
 **Exact current text**
 
@@ -788,7 +670,7 @@ TECHNICAL_INSTRUCTION
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2698
+- Source line: 2383
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -828,7 +710,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0548 — P0
+## COPY-0291 — P0
 
 **Exact current text**
 
@@ -847,7 +729,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4356
+- Source line: 3460
 - Source function/object: renderReportDeliveryActions
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -887,7 +769,7 @@ TECHNICAL_INSTRUCTION
 - Approval date:
 - Notes:
 
-## COPY-0562 — P0
+## COPY-0305 — P0
 
 **Exact current text**
 
@@ -906,7 +788,7 @@ TECHNICAL_INSTRUCTION
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6951
+- Source line: 5930
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -945,7 +827,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0563 — P0
+## COPY-0306 — P0
 
 **Exact current text**
 
@@ -964,7 +846,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6954
+- Source line: 5933
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -1004,7 +886,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0568 — P0
+## COPY-0311 — P0
 
 **Exact current text**
 
@@ -1023,7 +905,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6951
+- Source line: 5930
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -1062,7 +944,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0569 — P0
+## COPY-0312 — P0
 
 **Exact current text**
 
@@ -1081,7 +963,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6954
+- Source line: 5933
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -1121,7 +1003,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0575 — P0
+## COPY-0318 — P0
 
 **Exact current text**
 
@@ -1179,7 +1061,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0577 — P0
+## COPY-0320 — P0
 
 **Exact current text**
 
@@ -1238,7 +1120,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0596 — P0
+## COPY-0339 — P0
 
 **Exact current text**
 
@@ -1297,7 +1179,7 @@ UNRESOLVED_LATIN_TERM
 - Approval date:
 - Notes:
 
-## COPY-0598 — P0
+## COPY-0341 — P0
 
 **Exact current text**
 
@@ -1355,7 +1237,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0599 — P0
+## COPY-0342 — P0
 
 **Exact current text**
 
@@ -1414,7 +1296,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0600 — P0
+## COPY-0343 — P0
 
 **Exact current text**
 
@@ -1433,7 +1315,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7095
+- Source line: 6074
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -1473,7 +1355,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0601 — P0
+## COPY-0344 — P0
 
 **Exact current text**
 
@@ -1492,7 +1374,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7096
+- Source line: 6075
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -1532,7 +1414,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0603 — P0
+## COPY-0346 — P0
 
 **Exact current text**
 
@@ -1551,7 +1433,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7098
+- Source line: 6077
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -1591,7 +1473,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0604 — P0
+## COPY-0347 — P0
 
 **Exact current text**
 
@@ -1610,7 +1492,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7104
+- Source line: 6083
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -1650,7 +1532,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0605 — P0
+## COPY-0348 — P0
 
 **Exact current text**
 
@@ -1669,7 +1551,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7105
+- Source line: 6084
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -1708,7 +1590,7 @@ ADMIN_OR_ADVISOR_TERM
 - Approval date:
 - Notes:
 
-## COPY-0633 — P0
+## COPY-0376 — P0
 
 **Exact current text**
 
@@ -1727,7 +1609,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7131
+- Source line: 6110
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -1750,6 +1632,124 @@ ADMIN_OR_ADVISOR_TERM
 > Ямар хэсэг?
 > Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?
 > Аль хэсэг?
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0394 — P0
+
+**Exact current text**
+
+> Дотоод туршилтын санал асуулгын JSON таталт.
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-export
+- Render source: renderFeedbackExport with internalTest state
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6183
+- Source function/object: renderFeedbackExport
+- Source mapping: RESOLVED
+- Render proof: renderFeedbackExport with internalTest state via internal-feedback-export [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <h2>Саналын экспорт</h2>
+
+**Source item**
+
+> <p class="muted">Дотоод туршилтын санал асуулгын JSON таталт.</p>
+
+**Source context after**
+
+> <pre class="feedback-export-json">${escapeHtml(JSON.stringify(records, null, 2))}</pre>
+
+**Rendered context**
+
+> Дахин эхлэх
+> Дотоод туршилтын санал асуулгын JSON таталт.
+> []
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0408 — P0
+
+**Exact current text**
+
+> QPay QR үүсгэж байна.
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 1476
+- Source function/object: qpayStatusMessage
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> return {
+
+**Source item**
+
+> creating: "QPay QR үүсгэж байна.",
+
+**Source context after**
+
+> pending: "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
+
+**Rendered context**
+
+> Сонголт руу буцах
+> QPay QR үүсгэж байна.
+> Утаснаас төлөх бол банкны апп сонгож болно.
 
 **Dynamic values**
 

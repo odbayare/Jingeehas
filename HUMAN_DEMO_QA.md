@@ -44,7 +44,7 @@ This is not a scoring or logic test. It is a comprehension, trust, emotional res
 ### Path 3 — 7-Day Executive Load / Decision-Default
 
 1. Open the app.
-2. Choose `7 хоногийн гүн зураглал`.
+2. Choose `[REMOVED_FEATURE_PRODUCT] зураглал`.
 3. Setup answers:
    - knows what to do
    - no energy to decide or prepare food

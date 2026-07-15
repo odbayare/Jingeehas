@@ -31,7 +31,7 @@ function run(stageAnswers, stageSummaryText = "") {
     },
     stageVoiceSummaries,
     preliminary: [],
-    diaryEntries: []
+    removedEntries: []
   });
   return {
     text: normalize(_internal.renderReport()),

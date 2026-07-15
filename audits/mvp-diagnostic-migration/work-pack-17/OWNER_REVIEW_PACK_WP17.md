@@ -419,7 +419,7 @@ All tests passed
 Command:
 
 ```text
-node -e 'const app=require("./app.js"); const {_internal}=app; const leaks=["previewSections","paidSections","safetyGuidanceSections","internalDiagnostics","ownerDebug","runtimeGate","decisionStatus","rendererMode","fixtureName","all_or_nothing_restriction_rebound","pcos_body_uncertainty_control"]; function check(label,setup){setup(); const html=_internal.renderReport(); const found=leaks.filter(x=>String(html).includes(x)); if(found.length) throw new Error(label+" leaked "+found.join(","));} function one(over={}){_internal.setTestState({packageType:"one-time",view:"report",oneTimePaid:true,sevenDayPaid:false,upgradePaid:false,stageAnswers:{"S1-W04":["Мацаг"],"S1-M01":"Өдөр бага идээд орой нөхөх","S1-F01":["Дараа өлсөхөөс санаа зовсон","Өөрийгөө шагнамаар"]},preliminary:[{key:"hungerSafety",score:5,label:"хүчтэй нийцэж байна"}],diaryEntries:[],...over});} function seven(over={}){_internal.setTestState({packageType:"seven-day",view:"report",oneTimePaid:false,sevenDayPaid:true,upgradePaid:false,stageAnswers:{"S1-W04":["Мацаг","Орой хоол идэхгүй"]},preliminary:[{key:"hungerSafety",score:5,label:"хүчтэй нийцэж байна"},{key:"executive",score:4,label:"дунд зэрэг нийцэж байна"}],diaryEntries:Array.from({length:5},(_,i)=>({day_number:i+1,meal_rhythm:"Хоолны хооронд 5+ цагийн зай гарсан",unplanned_eating_count:"Тийм, 1 удаа",main_moment_time:"Орой",hunger_level:"8",food_function:["Өөрийгөө шагнамаар байсан"],emotion:"Ядаргаа",energy_score:"2",stress_score:"5",body_signals:["Аль нь ч үгүй"],pattern_probes:{}})),...over});} check("one-time paid",()=>one()); check("one-time unpaid",()=>one({oneTimePaid:false})); check("seven-day",()=>seven()); check("professional",()=>seven({stageAnswers:{"S1-S03":"Одоо давтагддаг"}})); check("urgent",()=>seven({stageAnswers:{"S1-S04":"Одоо идэвхтэй бодогдож байна"}})); console.log("WP17 returned HTML adapter leak scan passed");'
+node -e 'const app=require("./app.js"); const {_internal}=app; const leaks=["previewSections","paidSections","safetyGuidanceSections","internalDiagnostics","ownerDebug","runtimeGate","decisionStatus","rendererMode","fixtureName","all_or_nothing_restriction_rebound","pcos_body_uncertainty_control"]; function check(label,setup){setup(); const html=_internal.renderReport(); const found=leaks.filter(x=>String(html).includes(x)); if(found.length) throw new Error(label+" leaked "+found.join(","));} function one(over={}){_internal.setTestState({packageType:"one-time",view:"report",oneTimePaid:true,removedFeaturePaid:false,upgradePaid:false,stageAnswers:{"S1-W04":["Мацаг"],"S1-M01":"Өдөр бага идээд орой нөхөх","S1-F01":["Дараа өлсөхөөс санаа зовсон","Өөрийгөө шагнамаар"]},preliminary:[{key:"hungerSafety",score:5,label:"хүчтэй нийцэж байна"}],removedEntries:[],...over});} function seven(over={}){_internal.setTestState({packageType:"removed-feature",view:"report",oneTimePaid:false,removedFeaturePaid:true,upgradePaid:false,stageAnswers:{"S1-W04":["Мацаг","Орой хоол идэхгүй"]},preliminary:[{key:"hungerSafety",score:5,label:"хүчтэй нийцэж байна"},{key:"executive",score:4,label:"дунд зэрэг нийцэж байна"}],removedEntries:Array.from({length:5},(_,i)=>({day_number:i+1,meal_rhythm:"Хоолны хооронд 5+ цагийн зай гарсан",unplanned_eating_count:"Тийм, 1 удаа",main_moment_time:"Орой",hunger_level:"8",food_function:["Өөрийгөө шагнамаар байсан"],emotion:"Ядаргаа",energy_score:"2",stress_score:"5",body_signals:["Аль нь ч үгүй"],pattern_probes:{}})),...over});} check("one-time paid",()=>one()); check("one-time unpaid",()=>one({oneTimePaid:false})); check("removed-feature",()=>seven()); check("professional",()=>seven({stageAnswers:{"S1-S03":"Одоо давтагддаг"}})); check("urgent",()=>seven({stageAnswers:{"S1-S04":"Одоо идэвхтэй бодогдож байна"}})); console.log("WP17 returned HTML adapter leak scan passed");'
 ```
 
 Result: PASS.
@@ -599,7 +599,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-W04": ["Мацаг"],
@@ -607,17 +607,17 @@ function setOneTime(overrides = {}) {
       "S1-F01": ["Дараа өлсөхөөс санаа зовсон", "Өөрийгөө шагнамаар"]
     },
     preliminary: [{ key: "hungerSafety", score: 5, label: "хүчтэй нийцэж байна" }],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: false,
     stageAnswers: {
       "S1-W04": ["Мацаг", "Орой хоол идэхгүй"]
@@ -626,7 +626,7 @@ function setSevenDay(overrides = {}) {
       { key: "hungerSafety", score: 5, label: "хүчтэй нийцэж байна" },
       { key: "executive", score: 4, label: "дунд зэрэг нийцэж байна" }
     ],
-    diaryEntries: entries(5),
+    removedEntries: entries(5),
     ...overrides
   });
 }
@@ -665,25 +665,25 @@ function assertRenderUnchanged(setup, label) {
   [
     ["one-time paid", () => setOneTime()],
     ["one-time unpaid", () => setOneTime({ oneTimePaid: false })],
-    ["seven-day full", () => setSevenDay()],
-    ["seven-day readiness hold", () => setSevenDay({ diaryEntries: entries(3) })],
-    ["professional", () => setSevenDay({ stageAnswers: { "S1-S03": "Одоо давтагддаг" } })],
-    ["urgent", () => setSevenDay({ stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } })]
+    ["removed-feature full", () => setRemovedFeature()],
+    ["removed-feature readiness hold", () => setRemovedFeature({ removedEntries: entries(3) })],
+    ["professional", () => setRemovedFeature({ stageAnswers: { "S1-S03": "Одоо давтагддаг" } })],
+    ["urgent", () => setRemovedFeature({ stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } })]
   ].forEach(([label, setup]) => assertRenderUnchanged(setup, label));
 
-  setOneTime({ oneTimePaid: false, sevenDayPaid: false, upgradePaid: false });
+  setOneTime({ oneTimePaid: false, removedFeaturePaid: false, upgradePaid: false });
   assert.strictEqual(_internal.hasOneTimeReportAccess(), false);
-  assert.strictEqual(_internal.hasSevenDayAccess(), false);
+  assert.strictEqual(_internal.hasRemovedFeatureAccess(), false);
   assert.strictEqual(_internal.hasUpgradeAccess(), false);
   _internal.prepareRuntimeAdapterShadowSignal({}, null, { enabled: false });
   assert.strictEqual(_internal.hasOneTimeReportAccess(), false);
-  assert.strictEqual(_internal.hasSevenDayAccess(), false);
+  assert.strictEqual(_internal.hasRemovedFeatureAccess(), false);
   assert.strictEqual(_internal.hasUpgradeAccess(), false);
 
   [
     "const STORAGE_KEY = \"weightLossDeepPatternMvp\";",
-    "oneTime: \"29,000₮\"",
-    "sevenDayAnchor: \"69,000₮\"",
+    "oneTime: \"[REMOVED_FEATURE_PRICE]\"",
+    "removedFeatureAnchor: \"[REMOVED_FEATURE_ANCHOR]\"",
     "const WEIGHT_TEST_PRODUCT_CODE = \"WEIGHT_TEST_ONE_TIME\";",
     "const WEIGHT_TEST_AMOUNT_MNT = 9900;",
     "create: \"/.netlify/functions/qpay-create-invoice\"",
@@ -851,8 +851,8 @@ The disabled shadow path returns an ignored internal no-op signal and does not a
 
 - one-time paid report
 - one-time unpaid/paywall branch
-- seven-day full report
-- seven-day readiness hold
+- removed-feature full report
+- removed-feature readiness hold
 - professional-first branch
 - urgent safety branch
 
@@ -924,7 +924,7 @@ Production runtime rendering is NOT approved by WP17.
 
 | Risk | Severity | Trigger | Mitigation | Status |
 | --- | --- | --- | --- | --- |
-| visible report output changed | BLOCKER | Any returned report HTML differs because of shadow integration. | Disabled helper output is ignored; tests compare returned report HTML across one-time, seven-day, professional, urgent, and readiness branches. | Controlled |
+| visible report output changed | BLOCKER | Any returned report HTML differs because of shadow integration. | Disabled helper output is ignored; tests compare returned report HTML across one-time, removed-feature, professional, urgent, and readiness branches. | Controlled |
 | shadow flag accidentally enabled | BLOCKER | `ENABLE_RUNTIME_ADAPTER_SHADOW` is changed away from `false`. | Tests assert `ENABLE_RUNTIME_ADAPTER_SHADOW = false` in source and `_internal.ENABLE_RUNTIME_ADAPTER_SHADOW === false`. | Controlled |
 | adapter output rendered to users | BLOCKER | Adapter fields or sections appear in user-facing HTML. | Returned HTML leak scan checks adapter fields and raw fixture names are absent. | Controlled |
 | localStorage mutation | HIGH | Shadow helper reads localStorage, writes localStorage, adds keys, or persists diagnostics. | Test installs a throwing localStorage descriptor and proves helper does not access it. | Controlled |

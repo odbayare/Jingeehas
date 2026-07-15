@@ -9,7 +9,7 @@ The test-only calculator should consume current exported evidence, not replace i
 ```text
 stageAnswers
 stageVoiceSummaries
-diaryEntries
+removedEntries
 current mechanism evidence from calculateMechanismEvidence()
 current ranked patterns from rankedPatterns()
 safety route from reportMode()

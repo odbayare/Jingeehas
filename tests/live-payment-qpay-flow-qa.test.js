@@ -15,8 +15,6 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
-    upgradePaid: false,
     qpayPayment: {
       status: "idle",
       message: "",
@@ -41,7 +39,7 @@ function setOneTime(overrides = {}) {
       copyStatus: ""
     },
     stageVoiceSummaries: {},
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -136,9 +134,6 @@ assert(appSource.includes("const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = tr
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time price label must remain unchanged");
 assert(appSource.includes('oneTimeAnchor: "9,900₮"'), "one-time anchor price label must remain unchanged");
 assert(appSource.includes('coachOneTime: "9,900₮"'), "coach price label must remain unchanged");
-assert(appSource.includes('sevenDay: "29,000₮"'), "seven-day price label must remain unchanged");
-assert(appSource.includes('sevenDayAnchor: "69,000₮"'), "seven-day anchor price label must remain unchanged");
-assert(appSource.includes('upgrade: "19,900₮"'), "upgrade price label must remain unchanged");
 assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price constant must remain unchanged");
 assert(appSource.includes("const COACH_WEIGHT_PRICE_MNT = 9900;"), "coach price constant must remain unchanged");
 assert(appSource.includes("const COACH_COMMISSION_MNT = 4000;"), "coach commission constant must remain unchanged");
@@ -150,9 +145,7 @@ assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "Q
 assert(appSource.includes("productCode: WEIGHT_TEST_PRODUCT_CODE"), "QPay create payload must keep product code");
 assert(appSource.includes("amountMnt: currentOneTimePriceMnt()"), "QPay create payload must keep current one-time amount helper");
 assert(appSource.includes("return state.coachDiscountConsent && state.coachInvite ? COACH_WEIGHT_PRICE_MNT : STANDARD_WEIGHT_PRICE_MNT;"), "current one-time amount helper must remain unchanged");
-assert(appSource.includes("return Boolean(isInternalTestMode() || state.sevenDayPaid || state.upgradePaid || access.hasSevenDayAccess);"), "seven-day access helper source must remain unchanged");
 assert(appSource.includes("return Boolean(isQaPaymentBypassEnabled() || isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === \"paid\" || access.hasOneTimeReportAccess);"), "one-time access helper source must keep paid-state and entitlement guards");
-assert(appSource.includes("return Boolean(state.upgradePaid || access.hasUpgradeAccess);"), "upgrade access helper source must remain unchanged");
 
 mockBackend.resetMockBackend();
 mockBackend.startSession();
@@ -160,14 +153,10 @@ mockBackend.startSession();
 _internal.setTestState({
   packageType: "one-time",
   oneTimePaid: false,
-  sevenDayPaid: false,
-  upgradePaid: false,
   qpayPayment: { status: "idle", message: "", invoice: null },
   currentAssessmentId: null
 });
 assert.strictEqual(_internal.hasOneTimeReportAccess(), false, "one-time access should be false without payment or entitlement");
-assert.strictEqual(_internal.hasSevenDayAccess(), false, "seven-day access should be false without payment or entitlement");
-assert.strictEqual(_internal.hasUpgradeAccess(), false, "upgrade access should be false without payment or entitlement");
 
 _internal.setTestState({
   packageType: "one-time",
@@ -184,8 +173,6 @@ mockBackend.markMockPaymentPaid(payment.id);
 _internal.setTestState({
   packageType: "one-time",
   oneTimePaid: false,
-  sevenDayPaid: false,
-  upgradePaid: false,
   qpayPayment: { status: "idle", message: "", invoice: null },
   currentAssessmentId: assessment.id
 });

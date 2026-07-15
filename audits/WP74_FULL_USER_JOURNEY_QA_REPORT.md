@@ -67,7 +67,7 @@ Checks:
 
 Remaining issue:
 
-- Daily journal question `D-P-CE01` still says `оройн тэнхээ`. This was outside the selected A-038/A-088 patch but is visible in seven-day journaling and should be reviewed in WP75.
+- Daily journal question `D-P-CE01` still says `оройн тэнхээ`. This was outside the selected A-038/A-088 patch but is visible in removed-feature journaling and should be reviewed in WP75.
 
 ## 6. Report generation findings
 
@@ -89,7 +89,7 @@ WP73 regression checks pass:
 - no stray trailing ` 4.` in generated cycle text
 - no narrow reward-deficit `амттан` wording where broad `амттай зүйл` is intended
 - one-time report uses uncertainty language
-- compressed seven-day report keeps menstrual-cycle meaning
+- compressed removed-feature report keeps menstrual-cycle meaning
 - body-signal route keeps professional safety guidance
 
 Remaining issues:
@@ -156,7 +156,7 @@ Recommended WP75 copy fixes:
 
 - Remove duplicated professional safety route sentence:
   - `Ярилцах товч нэгтгэл доор байна. ярилцахад авч очих богино нэгтгэл гаргана.`
-- Review seven-day daily prompt `D-P-CE01` for `оройн тэнхээ`.
+- Review removed-feature daily prompt `D-P-CE01` for `оройн тэнхээ`.
 - Review preview/paywall wording that still uses `Эхний зөөлөн алхам` and repeated `дохио`.
 - Consider splitting the long A-001 intro into shorter visual chunks if browser mobile QA shows density.
 - Review remaining old-domain references in historical audit files only if an owner-facing launch pack will include those files.
@@ -186,7 +186,7 @@ Needs WP75 fixes first?
 WP75 should be a no-deploy polish/fix pass:
 
 1. Fix the duplicated professional safety route sentence.
-2. Review seven-day daily prompt `D-P-CE01` and preview/paywall `дохио` / `Эхний зөөлөн алхам` wording.
+2. Review removed-feature daily prompt `D-P-CE01` and preview/paywall `дохио` / `Эхний зөөлөн алхам` wording.
 3. Run browser viewport QA at 375px, 390px, and 430px.
 4. Re-run `npm test`.
 5. Prepare a separate read-only Netlify/DNS connection plan for `jingeehas.fit`.

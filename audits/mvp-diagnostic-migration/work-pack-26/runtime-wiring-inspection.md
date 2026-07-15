@@ -18,7 +18,7 @@ const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = false;
 `renderReport()` calls `renderReportWithRuntimeVisibleSurface(...)` for:
 
 - one-time report output
-- seven-day report output
+- removed-feature report output
 
 Both call sites pass `null` as the adapter payload argument.
 

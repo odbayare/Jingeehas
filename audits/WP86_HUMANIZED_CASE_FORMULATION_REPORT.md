@@ -126,7 +126,7 @@ Confirmed in source:
 - `WEIGHT_TEST_QA_PAYMENT_BYPASS = false`
 - `WEIGHT_TEST_QA_SKIP_PAYWALL = false`
 - `9,900₮`
-- `29,000₮`
+- `[REMOVED_FEATURE_PRICE]`
 - `WEIGHT_TEST_ONE_TIME`
 - QPay endpoint strings remain present and unchanged:
   - `qpay-create-invoice`

@@ -68,7 +68,7 @@ Assertions:
 - `interaction_pattern` has stable ID.
 - `vulnerable_moment` has required components.
 - `first_gentle_change` targets modifiable driver.
-- `seven_day_diary_confirmation_targets` are present.
+- `removed_feature_diary_confirmation_targets` are present.
 
 ### 5. Vulnerable Moment Tests
 

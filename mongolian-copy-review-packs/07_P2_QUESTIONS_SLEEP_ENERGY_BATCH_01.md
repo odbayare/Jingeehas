@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0757 — P2
+## COPY-0498 — P2
 
 **Exact current text**
 
@@ -21,7 +21,7 @@ Questions and their owning options are kept together verbatim. No wording is pro
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 372
+- Source line: 357
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -70,7 +70,7 @@ Question wording requiring owner review.
 - Чанар муу
 - Тогтворгүй
 
-## COPY-0758 — P2
+## COPY-0499 — P2
 
 **Exact current text**
 
@@ -89,7 +89,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 373
+- Source line: 358
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -137,7 +137,7 @@ Question wording requiring owner review.
 - Ихэвчлэн
 - Маш тод
 
-## COPY-0759 — P2
+## COPY-0500 — P2
 
 **Exact current text**
 
@@ -156,7 +156,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 374
+- Source line: 359
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]

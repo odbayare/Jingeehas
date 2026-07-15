@@ -19,11 +19,11 @@ const assert = require("assert");
   assert(medical.copy_constraints.includes("no_paywall_blocks_safety"));
 
   const urgent = buildDriverStack({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     stageAnswers: {
       "S1-S04": "Одоо идэвхтэй бодогдож байна"
     },
-    diaryEntries: []
+    removedEntries: []
   });
   assert.strictEqual(urgent.safety_route.mode, "mode4");
   assert.strictEqual(urgent.safety_route.ordinary_report_allowed, false);
@@ -38,7 +38,7 @@ const assert = require("assert");
       "S1-S03": "Одоо давтагддаг"
     },
     stageVoiceSummaries: {},
-    diaryEntries: []
+    removedEntries: []
   });
   assert(compensatory.driver_scores.compensatory_behavior || compensatory.driver_scores.professional_first);
   assert(compensatory.safety_route.safety_drivers.includes("professional_first"));

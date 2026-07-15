@@ -16,7 +16,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-L01": "Бараг өдөр бүр",
@@ -26,23 +26,23 @@ function setOneTime(overrides = {}) {
     preliminary: [
       { key: "executive", score: 5, label: "хүчтэй нийцэж байна" }
     ],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
-    view: "sevenDayStart",
+    packageType: "removed-feature",
+    view: "removedFeatureStart",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     preliminary: [
       { key: "executive", score: 5, label: "хүчтэй нийцэж байна" }
     ],
     stageAnswers: {},
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -80,40 +80,18 @@ function run() {
   assert.strictEqual(_internal.hasOneTimeReportAccess(), true);
   assert(normalize(_internal.renderReport()).includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "one_time_report unlocks full one-time report");
 
-  mockBackend.resetMockBackend();
-  const sevenAssessment = mockBackend.createAssessment("seven_day");
-  const sevenPayment = mockBackend.createMockPayment("seven_day", sevenAssessment.id);
-  assert.strictEqual(sevenPayment.amount_mnt, 29000);
-  mockBackend.markMockPaymentPaid(sevenPayment.id);
-  assert(mockBackend.hasEntitlement("seven_day_access", sevenAssessment.id), "paid seven_day should create seven_day_access entitlement");
-  assert.strictEqual(mockBackend.getAccessState(sevenAssessment.id).hasSevenDayAccess, true);
-
-  setSevenDay({ currentAssessmentId: sevenAssessment.id });
-  assert.strictEqual(_internal.hasSevenDayAccess(), true);
-  assert(normalize(_internal.renderSevenDayStart()).includes("7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна"), "seven_day_access unlocks diary onboarding");
-  assert.strictEqual(mockBackend.canGenerateSevenDayReport([]), false, "seven_day access should not bypass 0-1/7 readiness");
-  assert(normalize(_internal.renderReport()).includes("Бүрэн тайлан гаргахад мэдээлэл хангалтгүй байна"), "paid seven_day still respects readiness gate");
-
-  mockBackend.resetMockBackend();
-  const upgradeAssessment = mockBackend.createAssessment("one_time");
-  const upgradePayment = mockBackend.createMockPayment("upgrade", upgradeAssessment.id);
-  assert.strictEqual(upgradePayment.amount_mnt, 19900);
-  mockBackend.markMockPaymentPaid(upgradePayment.id);
-  assert(mockBackend.hasEntitlement("upgrade_access", upgradeAssessment.id), "upgrade should create upgrade_access entitlement");
-  assert(mockBackend.hasEntitlement("seven_day_access", upgradeAssessment.id), "upgrade should also create seven_day_access entitlement");
+  assert.throws(() => mockBackend.createAssessment("removed_feature"), /Unsupported assessment type/);
+  assert.throws(() => mockBackend.createMockPayment("removed_feature", assessment.id), /Unsupported product type/);
+  assert.throws(() => mockBackend.createMockPayment("upgrade", assessment.id), /Unsupported product type/);
 
   assert.strictEqual(mockBackend.canAccessProfessionalSummary("mode3"), true, "Mode 3 should be accessible without one_time_report");
   assert.strictEqual(mockBackend.canAccessUrgentSafety("mode4"), true, "Mode 4 should be accessible without payment");
-  assert.strictEqual(mockBackend.canShowUpgradeCta("mode4"), false, "Mode 4 should not show upgrade CTA");
 
   _internal.setTestState({
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
-    upgradePaid: false,
     stageAnswers: { "S1-B03": "Тийм" },
-    diaryEntries: []
   });
   assert(normalize(_internal.renderReport()).includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"), "Mode 3 renders professional-first without payment");
 
@@ -121,10 +99,10 @@ function run() {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" },
-    diaryEntries: []
+    removedEntries: []
   });
   const urgent = normalize(_internal.renderReport());
   assert(urgent.includes("Одоо жин хасах тухай биш"), "Mode 4 renders urgent safety without payment");

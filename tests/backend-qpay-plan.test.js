@@ -42,7 +42,7 @@ const readme = fs.readFileSync(readmePath, "utf8");
 
 [
   "one_time_report",
-  "seven_day_access",
+  "removed_feature_access",
   "upgrade_access",
   "professional_summary",
   "Mode 3",

@@ -278,7 +278,7 @@ function valueAfter(text, label, endLabels = []) {
 
 function removeReviewChrome(text) {
   const blockedStandaloneLines = new Set([
-    "7 хоногоор нарийвчлах",
+    "[REMOVED_FEATURE_REFINEMENT]",
     "Эхний хариу руу буцах",
     "Шинээр эхлэх",
     "Сонголт руу буцах",
@@ -331,13 +331,13 @@ function runPersona(persona, internalTest = true) {
     view: "report",
     internalTest,
     oneTimePaid: true,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: true,
     stageAnswers: {
       ...persona.selectedAnswers,
       ...persona.freeTextAnswers
     },
-    diaryEntries: [],
+    removedEntries: [],
     preliminary: []
   });
   const html = _internal.renderReport();

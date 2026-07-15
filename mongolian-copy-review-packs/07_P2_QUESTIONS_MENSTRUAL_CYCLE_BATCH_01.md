@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0765 — P2
+## COPY-0506 — P2
 
 **Exact current text**
 
@@ -21,7 +21,7 @@ Questions and their owning options are kept together verbatim. No wording is pro
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 380
+- Source line: 365
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -67,7 +67,7 @@ Question wording requiring owner review.
 - Үгүй, хамаарахгүй
 - Хариулахгүй
 
-## COPY-0766 — P2
+## COPY-0507 — P2
 
 **Exact current text**
 
@@ -86,7 +86,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 381
+- Source line: 366
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -130,7 +130,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0767 — P2
+## COPY-0508 — P2
 
 **Exact current text**
 
@@ -149,7 +149,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 382
+- Source line: 367
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -198,7 +198,7 @@ Question wording requiring owner review.
 - Мэдэхгүй
 - Хариулахгүй
 
-## COPY-0768 — P2
+## COPY-0509 — P2
 
 **Exact current text**
 
@@ -217,7 +217,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 383
+- Source line: 368
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -267,7 +267,7 @@ Question wording requiring owner review.
 - Сайн мэдэхгүй
 - Хариулахгүй
 
-## COPY-0769 — P2
+## COPY-0510 — P2
 
 **Exact current text**
 
@@ -286,7 +286,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 384
+- Source line: 369
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -336,7 +336,7 @@ Question wording requiring owner review.
 - Тодорхой биш
 - Хариулахгүй
 
-## COPY-0770 — P2
+## COPY-0511 — P2
 
 **Exact current text**
 
@@ -355,7 +355,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 385
+- Source line: 370
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -406,7 +406,7 @@ Question wording requiring owner review.
 - Онц ялгаа анзаардаггүй
 - Хариулахгүй
 
-## COPY-0771 — P2
+## COPY-0512 — P2
 
 **Exact current text**
 
@@ -425,7 +425,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 386
+- Source line: 371
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -475,7 +475,7 @@ Question wording requiring owner review.
 - Тодорхой хэлж мэдэхгүй
 - Хариулахгүй
 
-## COPY-0772 — P2
+## COPY-0513 — P2
 
 **Exact current text**
 
@@ -494,7 +494,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 387
+- Source line: 372
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -543,7 +543,7 @@ Question wording requiring owner review.
 - Аль нь ч биш
 - Хариулахгүй
 
-## COPY-0773 — P2
+## COPY-0514 — P2
 
 **Exact current text**
 
@@ -562,7 +562,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 388
+- Source line: 373
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -608,107 +608,3 @@ Question wording requiring owner review.
 - Үгүй
 - Сайн мэдэхгүй
 - Хариулахгүй
-
-## D-MC-01 — P2
-
-**Exact current text**
-
-> Өнөөдөр мөчлөгийнхөө аль үедээ байгаа гэж бодож байна?
-
-**Answer options**
-
-- Сарын тэмдэг ирж байна
-- Дууссанаас хойш эхний өдрүүд
-- Овуляцийн орчим гэж бодож байна
-- Ирэхээс өмнөх өдрүүд
-- Мэдэхгүй
-- Хамаарахгүй
-
-**Source mapping**
-
-UNRESOLVED
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-**Answer options for D-MC-01**
-
-- Сарын тэмдэг ирж байна
-- Дууссанаас хойш эхний өдрүүд
-- Овуляцийн орчим гэж бодож байна
-- Ирэхээс өмнөх өдрүүд
-- Мэдэхгүй
-- Хамаарахгүй
-
-## D-MC-02 — P2
-
-**Exact current text**
-
-> Өнөөдрийн идэх хүсэл мөчлөгтэй холбоотой юм шиг санагдсан уу?
-
-**Answer options**
-
-- Үгүй
-- Бага зэрэг
-- Тийм, илүү өлссөн
-- Тийм, амттай юм илүү хүссэн
-- Тийм, сэтгэл санаатай хамт хүчтэй болсон
-- Тийм, ядаргаа/нойртой давхцсан
-
-**Source mapping**
-
-UNRESOLVED
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-**Answer options for D-MC-02**
-
-- Үгүй
-- Бага зэрэг
-- Тийм, илүү өлссөн
-- Тийм, амттай юм илүү хүссэн
-- Тийм, сэтгэл санаатай хамт хүчтэй болсон
-- Тийм, ядаргаа/нойртой давхцсан
-
-## D-MC-03 — P2
-
-**Exact current text**
-
-> Өнөөдөр өвдөлт, хавагналт, ядаргаа, нойр муудах зэрэг нь хоолны сонголтод нөлөөлсөн үү?
-
-**Answer options**
-
-- Үгүй
-- Бага зэрэг
-- Дунд зэрэг
-- Их
-
-**Source mapping**
-
-UNRESOLVED
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-**Answer options for D-MC-03**
-
-- Үгүй
-- Бага зэрэг
-- Дунд зэрэг
-- Их

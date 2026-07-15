@@ -15,10 +15,10 @@ function renderPaidReport(stageAnswers, extras = {}) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     preliminary: [],
-    diaryEntries: [],
+    removedEntries: [],
     stageVoiceSummaries: {},
     safetyFlags: [],
     stageAnswers: {

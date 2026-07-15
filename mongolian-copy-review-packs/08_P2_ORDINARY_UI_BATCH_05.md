@@ -2,48 +2,47 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0130 — P2
+## COPY-0238 — P2
 
 **Exact current text**
 
-> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
+> Бүртгэл хүлээн авлаа
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
+- Surface: LEAD_THANK_YOU
 - Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
+- Scenario: lead-thank-you
+- Render source: renderLeadThankYou
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2660
-- Source function/object: renderOneTimeStart
+- Source line: 2496
+- Source function/object: renderLeadThankYou
 - Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <h2>Энэ тест таныг шүүхгүй</h2>
+> return `
 
 **Source item**
 
-> <p>Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.</p>
+> ${topbar(100, "Бүртгэл хүлээн авлаа")}
 
 **Source context after**
 
-> <div class="card stack">
+> <section class="screen">
 
 **Rendered context**
 
-> Энэ тест таныг шүүхгүй
-> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
-> Зөв, буруу хариулт байхгүй.
+> Бүртгэл хүлээн авлаа
+> Эхний хэрэглэгчийн эрх
 
 **Dynamic values**
 
@@ -61,21 +60,21 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0131 — P2
+## COPY-0239 — P2
 
 **Exact current text**
 
-> Зөв, буруу хариулт байхгүй.
+> Эхний хэрэглэгчийн эрх
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
+- Surface: LEAD_THANK_YOU
 - Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
+- Scenario: lead-thank-you
+- Render source: renderLeadThankYou
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
@@ -83,7 +82,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -100,9 +99,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
-> Зөв, буруу хариулт байхгүй.
-> Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.
+> Бүртгэл хүлээн авлаа
+> Эхний хэрэглэгчийн эрх
+> Баярлалаа
 
 **Dynamic values**
 
@@ -120,21 +119,21 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0132 — P2
+## COPY-0240 — P2
 
 **Exact current text**
 
-> Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.
+> Баярлалаа
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
+- Surface: LEAD_THANK_YOU
 - Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
+- Scenario: lead-thank-you
+- Render source: renderLeadThankYou
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
@@ -142,7 +141,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -159,9 +158,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Зөв, буруу хариулт байхгүй.
-> Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.
-> Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.
+> Эхний хэрэглэгчийн эрх
+> Баярлалаа
+> Баярлалаа. Таны сонирхлыг бүртгэлээ. Нээлтийн эхний хэрэглэгчийн эрх бэлэн болох үед бид холбогдоно.
 
 **Dynamic values**
 
@@ -179,21 +178,80 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0133 — P2
+## COPY-0241 — P2
 
 **Exact current text**
 
-> Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.
+> Баярлалаа. Таны сонирхлыг бүртгэлээ. Нээлтийн эхний хэрэглэгчийн эрх бэлэн болох үед бид холбогдоно.
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
+- Surface: LEAD_THANK_YOU
 - Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
+- Scenario: lead-thank-you
+- Render source: renderLeadThankYou
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2501
+- Source function/object: renderLeadThankYou
+- Source mapping: RESOLVED
+- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <h2>Баярлалаа</h2>
+
+**Source item**
+
+> <p>Баярлалаа. Таны сонирхлыг бүртгэлээ. Нээлтийн эхний хэрэглэгчийн эрх бэлэн болох үед бид холбогдоно.</p>
+
+**Source context after**
+
+> <div class="card">
+
+**Rendered context**
+
+> Баярлалаа
+> Баярлалаа. Таны сонирхлыг бүртгэлээ. Нээлтийн эхний хэрэглэгчийн эрх бэлэн болох үед бид холбогдоно.
+> Нэг удаагийн гүн анализ
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0242 — P2
+
+**Exact current text**
+
+> Нэг удаагийн гүн анализ
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: LEAD_THANK_YOU
+- Role: PUBLIC_USER
+- Scenario: lead-thank-you
+- Render source: renderLeadThankYou
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
@@ -201,7 +259,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -218,362 +276,8 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.
-> Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.
-> 10-15 минут
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0134 — P2
-
-**Exact current text**
-
-> 10-15 минут
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2667
-- Source function/object: renderOneTimeStart
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="pill-row">
-
-**Source item**
-
-> <span class="pill">10-15 минут</span>
-
-**Source context after**
-
-> <span class="pill">Бичгээр богино тайлбар оруулж болно</span>
-
-**Rendered context**
-
-> Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.
-> 10-15 минут
-> Бичгээр богино тайлбар оруулж болно
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0135 — P2
-
-**Exact current text**
-
-> Бичгээр богино тайлбар оруулж болно
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2668
-- Source function/object: renderOneTimeStart
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <span class="pill">10-15 минут</span>
-
-**Source item**
-
-> <span class="pill">Бичгээр богино тайлбар оруулж болно</span>
-
-**Source context after**
-
-> <span class="pill">Зөв/буруу хариулт байхгүй</span>
-
-**Rendered context**
-
-> 10-15 минут
-> Бичгээр богино тайлбар оруулж болно
-> Зөв/буруу хариулт байхгүй
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0136 — P2
-
-**Exact current text**
-
-> Зөв/буруу хариулт байхгүй
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2669
-- Source function/object: renderOneTimeStart
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <span class="pill">Бичгээр богино тайлбар оруулж болно</span>
-
-**Source item**
-
-> <span class="pill">Зөв/буруу хариулт байхгүй</span>
-
-**Source context after**
-
-> <span class="pill">Зарим асуултыг алгасаж болно</span>
-
-**Rendered context**
-
-> Бичгээр богино тайлбар оруулж болно
-> Зөв/буруу хариулт байхгүй
-> Зарим асуултыг алгасаж болно
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0137 — P2
-
-**Exact current text**
-
-> Зарим асуултыг алгасаж болно
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2670
-- Source function/object: renderOneTimeStart
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <span class="pill">Зөв/буруу хариулт байхгүй</span>
-
-**Source item**
-
-> <span class="pill">Зарим асуултыг алгасаж болно</span>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Зөв/буруу хариулт байхгүй
-> Зарим асуултыг алгасаж болно
-> Төлбөр баталгаажсаны дараа тест эхэлнэ
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0138 — P2
-
-**Exact current text**
-
-> Төлбөр баталгаажсаны дараа тест эхэлнэ
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2697
-- Source function/object: renderOneTimeStart
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="card stack paywall-panel">
-
-**Source item**
-
-> <h3>Төлбөр баталгаажсаны дараа тест эхэлнэ</h3>
-
-**Source context after**
-
-> <p class="muted">QPay нэхэмжлэл үүсэх нь төлбөр биш. Зөвхөн төлбөр баталгаажсаны дараа асуултууд нээгдэнэ.</p>
-
-**Rendered context**
-
-> Зарим асуултыг алгасаж болно
-> Төлбөр баталгаажсаны дараа тест эхэлнэ
-> QPay нэхэмжлэл үүсэх нь төлбөр биш. Зөвхөн төлбөр баталгаажсаны дараа асуултууд нээгдэнэ.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0140 — P2
-
-**Exact current text**
-
-> Үндсэн үнэ
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> QPay нэхэмжлэл үүсэх нь төлбөр биш. Зөвхөн төлбөр баталгаажсаны дараа асуултууд нээгдэнэ.
-> Үндсэн үнэ
+> Баярлалаа. Таны сонирхлыг бүртгэлээ. Нээлтийн эхний хэрэглэгчийн эрх бэлэн болох үед бид холбогдоно.
+> Нэг удаагийн гүн анализ
 > 9,900₮
 
 **Dynamic values**
@@ -592,7 +296,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0141 — P2
+## COPY-0243 — P2
 
 **Exact current text**
 
@@ -603,18 +307,370 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
+- Surface: LEAD_THANK_YOU
 - Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
+- Scenario: lead-thank-you
+- Render source: renderLeadThankYou
 - Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Нэг удаагийн гүн анализ
+> 9,900₮
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0244 — P2
+
+**Exact current text**
+
+> Сонголт руу буцах
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: LEAD_THANK_YOU
+- Role: PUBLIC_USER
+- Scenario: lead-thank-you
+- Render source: renderLeadThankYou
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> 9,900₮
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0349 — P2
+
+**Exact current text**
+
+> Дотоод туршилтын хувилбар — энэ шатанд бодит төлбөр авахгүй.
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6098
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="report-section feedback-survey" id="internal-feedback-survey">
+
+**Source item**
+
+> <p class="choice-kicker">Дотоод туршилтын хувилбар — энэ шатанд бодит төлбөр авахгүй.</p>
+
+**Source context after**
+
+> <h3>Туршилтын санал асуулга</h3>
+
+**Rendered context**
+
+> Дотоод туршилтын хувилбар — энэ шатанд бодит төлбөр авахгүй.
+> Туршилтын санал асуулга
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0350 — P2
+
+**Exact current text**
+
+> Туршилтын санал асуулга
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6099
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <p class="choice-kicker">Дотоод туршилтын хувилбар — энэ шатанд бодит төлбөр авахгүй.</p>
+
+**Source item**
+
+> <h3>Туршилтын санал асуулга</h3>
+
+**Source context after**
+
+> <p>Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.</p>
+
+**Rendered context**
+
+> Дотоод туршилтын хувилбар — энэ шатанд бодит төлбөр авахгүй.
+> Туршилтын санал асуулга
+> Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0351 — P2
+
+**Exact current text**
+
+> Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6100
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <h3>Туршилтын санал асуулга</h3>
+
+**Source item**
+
+> <p>Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.</p>
+
+**Source context after**
+
+> ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
+
+**Rendered context**
+
+> Туршилтын санал асуулга
+> Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.
+> Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0352 — P2
+
+**Exact current text**
+
+> Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6101
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <p>Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.</p>
+
+**Source item**
+
+> ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
+
+**Source context after**
+
+> ${feedbackChoiceField("questionClarity", "Асуултууд ойлгомжтой байсан уу?", ["Маш ойлгомжтой", "Ерөнхийдөө ойлгомжтой", "Зарим нь ойлгомжгүй", "Ихэнх нь ойлгомжгүй"], "unclearQuestions", "Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.")}
+
+**Rendered context**
+
+> Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.
+> Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?
+> Үгүй
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0354 — P2
+
+**Exact current text**
+
+> Бага зэрэг
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -631,9 +687,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Үндсэн үнэ
-> 9,900₮
-> Төлөх үнэ
+> Үгүй
+> Бага зэрэг
+> Тийм
 
 **Dynamic values**
 
@@ -651,29 +707,206 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0142 — P2
+## COPY-0356 — P2
 
 **Exact current text**
 
-> Төлөх үнэ
+> Аль хэсэг дээр?
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6101
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <p>Та тайлангаа уншаад доорх асуултад үнэнээр нь хариулаарай. Бид энэ мэдээллийг тестийн ойлгомж, найруулга, хэрэгцээг сайжруулахад ашиглана.</p>
+
+**Source item**
+
+> ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
+
+**Source context after**
+
+> ${feedbackChoiceField("questionClarity", "Асуултууд ойлгомжтой байсан уу?", ["Маш ойлгомжтой", "Ерөнхийдөө ойлгомжтой", "Зарим нь ойлгомжгүй", "Ихэнх нь ойлгомжгүй"], "unclearQuestions", "Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.")}
+
+**Rendered context**
+
+> Тийм
+> Аль хэсэг дээр?
+> Асуултууд ойлгомжтой байсан уу?
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0357 — P2
+
+**Exact current text**
+
+> Асуултууд ойлгомжтой байсан уу?
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6102
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
+
+**Source item**
+
+> ${feedbackChoiceField("questionClarity", "Асуултууд ойлгомжтой байсан уу?", ["Маш ойлгомжтой", "Ерөнхийдөө ойлгомжтой", "Зарим нь ойлгомжгүй", "Ихэнх нь ойлгомжгүй"], "unclearQuestions", "Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.")}
+
+**Source context after**
+
+> <div class="feedback-question">
+
+**Rendered context**
+
+> Аль хэсэг дээр?
+> Асуултууд ойлгомжтой байсан уу?
+> Маш ойлгомжтой
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0358 — P2
+
+**Exact current text**
+
+> Маш ойлгомжтой
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6102
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
+
+**Source item**
+
+> ${feedbackChoiceField("questionClarity", "Асуултууд ойлгомжтой байсан уу?", ["Маш ойлгомжтой", "Ерөнхийдөө ойлгомжтой", "Зарим нь ойлгомжгүй", "Ихэнх нь ойлгомжгүй"], "unclearQuestions", "Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.")}
+
+**Source context after**
+
+> <div class="feedback-question">
+
+**Rendered context**
+
+> Асуултууд ойлгомжтой байсан уу?
+> Маш ойлгомжтой
+> Ерөнхийдөө ойлгомжтой
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0359 — P2
+
+**Exact current text**
+
+> Ерөнхийдөө ойлгомжтой
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -690,9 +923,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> 9,900₮
-> Төлөх үнэ
-> Бүртгэл шаардлагагүй.
+> Маш ойлгомжтой
+> Ерөнхийдөө ойлгомжтой
+> Зарим нь ойлгомжгүй
 
 **Dynamic values**
 
@@ -710,48 +943,48 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0143 — P2
+## COPY-0360 — P2
 
 **Exact current text**
 
-> Бүртгэл шаардлагагүй.
+> Зарим нь ойлгомжгүй
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2718
-- Source function/object: renderNoAccountPaymentIntro
+- Source line: 6102
+- Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <div class="no-account-note">
+> ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
 
 **Source item**
 
-> <p><strong>Бүртгэл шаардлагагүй.</strong></p>
+> ${feedbackChoiceField("questionClarity", "Асуултууд ойлгомжтой байсан уу?", ["Маш ойлгомжтой", "Ерөнхийдөө ойлгомжтой", "Зарим нь ойлгомжгүй", "Ихэнх нь ойлгомжгүй"], "unclearQuestions", "Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.")}
 
 **Source context after**
 
-> <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
+> <div class="feedback-question">
 
 **Rendered context**
 
-> Төлөх үнэ
-> Бүртгэл шаардлагагүй.
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
+> Ерөнхийдөө ойлгомжтой
+> Зарим нь ойлгомжгүй
+> Ихэнх нь ойлгомжгүй
 
 **Dynamic values**
 
@@ -769,38 +1002,215 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0144 — P2
+## COPY-0361 — P2
 
 **Exact current text**
 
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
+> Ихэнх нь ойлгомжгүй
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2719
-- Source function/object: renderNoAccountPaymentIntro
+- Source line: 6102
+- Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <p><strong>Бүртгэл шаардлагагүй.</strong></p>
+> ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
 
 **Source item**
 
-> <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
+> ${feedbackChoiceField("questionClarity", "Асуултууд ойлгомжтой байсан уу?", ["Маш ойлгомжтой", "Ерөнхийдөө ойлгомжтой", "Зарим нь ойлгомжгүй", "Ихэнх нь ойлгомжгүй"], "unclearQuestions", "Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.")}
+
+**Source context after**
+
+> <div class="feedback-question">
+
+**Rendered context**
+
+> Зарим нь ойлгомжгүй
+> Ихэнх нь ойлгомжгүй
+> Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0362 — P2
+
+**Exact current text**
+
+> Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6102
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> ${feedbackChoiceField("discomfort", "Тест бөглөх явцад эвгүй, ичмээр, шүүсэн мэдрэмж төрсөн үү?", ["Үгүй", "Бага зэрэг", "Тийм"], "discomfortDetail", "Аль хэсэг дээр?")}
+
+**Source item**
+
+> ${feedbackChoiceField("questionClarity", "Асуултууд ойлгомжтой байсан уу?", ["Маш ойлгомжтой", "Ерөнхийдөө ойлгомжтой", "Зарим нь ойлгомжгүй", "Ихэнх нь ойлгомжгүй"], "unclearQuestions", "Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.")}
+
+**Source context after**
+
+> <div class="feedback-question">
+
+**Rendered context**
+
+> Ихэнх нь ойлгомжгүй
+> Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.
+> Тайлан таны нөхцөлтэй хэр нийцсэн бэ?
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0363 — P2
+
+**Exact current text**
+
+> Тайлан таны нөхцөлтэй хэр нийцсэн бэ?
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6104
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="feedback-question">
+
+**Source item**
+
+> <p><strong>Тайлан таны нөхцөлтэй хэр нийцсэн бэ?</strong></p>
+
+**Source context after**
+
+> <label class="field"><span class="muted">1 = огт нийцээгүй, 10 = маш сайн нийцсэн</span><input type="number" min="1" max="10" value="${escapeAttr(form.fitRating)}" oninput="updateInternalFeedbackField('fitRating', this.value)"></label>
+
+**Rendered context**
+
+> Ойлгомжгүй санагдсан асуулт байвал бичнэ үү.
+> Тайлан таны нөхцөлтэй хэр нийцсэн бэ?
+> 1 = огт нийцээгүй, 10 = маш сайн нийцсэн
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0364 — P2
+
+**Exact current text**
+
+> 1 = огт нийцээгүй, 10 = маш сайн нийцсэн
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6105
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <p><strong>Тайлан таны нөхцөлтэй хэр нийцсэн бэ?</strong></p>
+
+**Source item**
+
+> <label class="field"><span class="muted">1 = огт нийцээгүй, 10 = маш сайн нийцсэн</span><input type="number" min="1" max="10" value="${escapeAttr(form.fitRating)}" oninput="updateInternalFeedbackField('fitRating', this.value)"></label>
 
 **Source context after**
 
@@ -808,9 +1218,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Бүртгэл шаардлагагүй.
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
-> Тайлан сэргээх холбоо барих мэдээлэл
+> Тайлан таны нөхцөлтэй хэр нийцсэн бэ?
+> 1 = огт нийцээгүй, 10 = маш сайн нийцсэн
+> Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?
 
 **Dynamic values**
 
@@ -828,166 +1238,48 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0145 — P2
+## COPY-0365 — P2
 
 **Exact current text**
 
-> Тайлан сэргээх холбоо барих мэдээлэл
+> Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2729
-- Source function/object: renderContactCaptureForm
+- Source line: 6107
+- Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
-
-> <div>
-
-**Source item**
-
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-
-**Source context after**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Rendered context**
-
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0146 — P2
-
-**Exact current text**
-
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2730
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-
-**Source item**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Source context after**
-
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
-
-**Rendered context**
-
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0147 — P2
-
-**Exact current text**
-
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2731
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Source item**
-
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
-
-**Source context after**
 
 > </div>
 
+**Source item**
+
+> ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
+
+**Source context after**
+
+> ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
+
 **Rendered context**
 
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-> Нэр (сонголтоор)
+> 1 = огт нийцээгүй, 10 = маш сайн нийцсэн
+> Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?
+> Тийм, шууд ойлгосон
 
 **Dynamic values**
 
@@ -1005,48 +1297,48 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0148 — P2
+## COPY-0366 — P2
 
 **Exact current text**
 
-> Нэр (сонголтоор)
+> Тийм, шууд ойлгосон
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2734
-- Source function/object: renderContactCaptureForm
+- Source line: 6107
+- Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <label class="field">
+> </div>
 
 **Source item**
 
-> <span>Нэр (сонголтоор)</span>
+> ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
 
 **Source context after**
 
-> <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
+> ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
 
 **Rendered context**
 
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-> Нэр (сонголтоор)
-> Утас
+> Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?
+> Тийм, шууд ойлгосон
+> Ерөнхийдөө ойлгосон
 
 **Dynamic values**
 
@@ -1064,29 +1356,29 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0149 — P2
+## COPY-0367 — P2
 
 **Exact current text**
 
-> Утас
+> Ерөнхийдөө ойлгосон
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1103,9 +1395,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Нэр (сонголтоор)
-> Утас
-> Имэйл
+> Тийм, шууд ойлгосон
+> Ерөнхийдөө ойлгосон
+> Дахин уншиж байж ойлгосон
 
 **Dynamic values**
 
@@ -1123,29 +1415,265 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0150 — P2
+## COPY-0368 — P2
 
 **Exact current text**
 
-> Имэйл
+> Дахин уншиж байж ойлгосон
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6107
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> </div>
+
+**Source item**
+
+> ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
+
+**Source context after**
+
+> ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
+
+**Rendered context**
+
+> Ерөнхийдөө ойлгосон
+> Дахин уншиж байж ойлгосон
+> Ойлгоогүй
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0369 — P2
+
+**Exact current text**
+
+> Ойлгоогүй
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6107
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> </div>
+
+**Source item**
+
+> ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
+
+**Source context after**
+
+> ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
+
+**Rendered context**
+
+> Дахин уншиж байж ойлгосон
+> Ойлгоогүй
+> Ойлгомжгүй байсан хэсгийг бичнэ үү.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0370 — P2
+
+**Exact current text**
+
+> Ойлгомжгүй байсан хэсгийг бичнэ үү.
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6107
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> </div>
+
+**Source item**
+
+> ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
+
+**Source context after**
+
+> ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
+
+**Rendered context**
+
+> Ойлгоогүй
+> Ойлгомжгүй байсан хэсгийг бичнэ үү.
+> Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0371 — P2
+
+**Exact current text**
+
+> Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6108
+- Source function/object: renderInternalTesterFeedbackSurvey
+- Source mapping: RESOLVED
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> ${feedbackChoiceField("simpleResultClarity", "Тайлангийн эхний “Гол гацалт” хэсэг ойлгомжтой байсан уу?", ["Тийм, шууд ойлгосон", "Ерөнхийдөө ойлгосон", "Дахин уншиж байж ойлгосон", "Ойлгоогүй"], "simpleResultClarityDetail", "Ойлгомжгүй байсан хэсгийг бичнэ үү.")}
+
+**Source item**
+
+> ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
+
+**Source context after**
+
+> ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
+
+**Rendered context**
+
+> Ойлгомжгүй байсан хэсгийг бичнэ үү.
+> Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?
+> Зарим хэсэг дээр
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0372 — P2
+
+**Exact current text**
+
+> Зарим хэсэг дээр
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1162,9 +1690,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Утас
-> Имэйл
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
+> Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?
+> Зарим хэсэг дээр
+> Яагаад?
 
 **Dynamic values**
 
@@ -1182,147 +1710,29 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0151 — P2
+## COPY-0373 — P2
 
 **Exact current text**
 
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
+> Яагаад?
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2745
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> </label>
-
-**Source item**
-
-> <p class="muted">Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.</p>
-
-**Source context after**
-
-> ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
-
-**Rendered context**
-
-> Имэйл
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0152 — P2
-
-**Exact current text**
-
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2748
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="actions">
-
-**Source item**
-
-> <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх</button>
-
-**Source context after**
-
-> <button class="button ghost" onclick="setView('choice')">Буцах</button>
-
-**Rendered context**
-
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
-> Буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0153 — P2
-
-**Exact current text**
-
-> Буцах
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
+- Surface: OTHER_PROVEN_RENDERED
+- Role: INTERNAL_TESTER
+- Scenario: internal-feedback-survey
+- Render source: renderInternalTesterFeedbackSurvey with internalTest state
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1339,420 +1749,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
-> Буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0278 — P2
-
-**Exact current text**
-
-> 7 хоногийн гүн зураглал
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: SEVEN_DAY_START
-- Role: SEVEN_DAY_USER
-- Scenario: seven-day-start
-- Render source: renderSevenDayStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderSevenDayStart via seven-day-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 7 хоногийн гүн зураглал
-> 7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0279 — P2
-
-**Exact current text**
-
-> 7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: SEVEN_DAY_START
-- Role: SEVEN_DAY_USER
-- Scenario: seven-day-start
-- Render source: renderSevenDayStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2906
-- Source function/object: renderSevenDayStart
-- Source mapping: RESOLVED
-- Render proof: renderSevenDayStart via seven-day-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="panel stack">
-
-**Source item**
-
-> <h2>7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна</h2>
-
-**Source context after**
-
-> <p>Эхний богино асуултаар эхэлнэ. Дараа нь орой бүр 3–5 минутын тэмдэглэл бөглөж, 7 хоногийн дараа илүү нарийвчилсан тайлан гарна.</p>
-
-**Rendered context**
-
-> 7 хоногийн гүн зураглал
-> 7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна
-> Эхний богино асуултаар эхэлнэ. Дараа нь орой бүр 3–5 минутын тэмдэглэл бөглөж, 7 хоногийн дараа илүү нарийвчилсан тайлан гарна.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0280 — P2
-
-**Exact current text**
-
-> Эхний богино асуултаар эхэлнэ. Дараа нь орой бүр 3–5 минутын тэмдэглэл бөглөж, 7 хоногийн дараа илүү нарийвчилсан тайлан гарна.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: SEVEN_DAY_START
-- Role: SEVEN_DAY_USER
-- Scenario: seven-day-start
-- Render source: renderSevenDayStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2907
-- Source function/object: renderSevenDayStart
-- Source mapping: RESOLVED
-- Render proof: renderSevenDayStart via seven-day-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h2>7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна</h2>
-
-**Source item**
-
-> <p>Эхний богино асуултаар эхэлнэ. Дараа нь орой бүр 3–5 минутын тэмдэглэл бөглөж, 7 хоногийн дараа илүү нарийвчилсан тайлан гарна.</p>
-
-**Source context after**
-
-> <div class="pill-row">
-
-**Rendered context**
-
-> 7 хоногийн гүн зураглал таны өдөр тутмын давтамжийг харна
-> Эхний богино асуултаар эхэлнэ. Дараа нь орой бүр 3–5 минутын тэмдэглэл бөглөж, 7 хоногийн дараа илүү нарийвчилсан тайлан гарна.
-> Эхлэл: 8-10 минут
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0281 — P2
-
-**Exact current text**
-
-> Эхлэл: 8-10 минут
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: SEVEN_DAY_START
-- Role: SEVEN_DAY_USER
-- Scenario: seven-day-start
-- Render source: renderSevenDayStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2909
-- Source function/object: renderSevenDayStart
-- Source mapping: RESOLVED
-- Render proof: renderSevenDayStart via seven-day-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="pill-row">
-
-**Source item**
-
-> <span class="pill">Эхлэл: 8-10 минут</span>
-
-**Source context after**
-
-> <span class="pill">Орой бүр: 3–5 минут</span>
-
-**Rendered context**
-
-> Эхний богино асуултаар эхэлнэ. Дараа нь орой бүр 3–5 минутын тэмдэглэл бөглөж, 7 хоногийн дараа илүү нарийвчилсан тайлан гарна.
-> Эхлэл: 8-10 минут
-> Орой бүр: 3–5 минут
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0282 — P2
-
-**Exact current text**
-
-> Орой бүр: 3–5 минут
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: SEVEN_DAY_START
-- Role: SEVEN_DAY_USER
-- Scenario: seven-day-start
-- Render source: renderSevenDayStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2910
-- Source function/object: renderSevenDayStart
-- Source mapping: RESOLVED
-- Render proof: renderSevenDayStart via seven-day-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <span class="pill">Эхлэл: 8-10 минут</span>
-
-**Source item**
-
-> <span class="pill">Орой бүр: 3–5 минут</span>
-
-**Source context after**
-
-> <span class="pill">5/7 өдөр бөглөсөн ч тайлан гарна</span>
-
-**Rendered context**
-
-> Эхлэл: 8-10 минут
-> Орой бүр: 3–5 минут
-> 5/7 өдөр бөглөсөн ч тайлан гарна
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0283 — P2
-
-**Exact current text**
-
-> 5/7 өдөр бөглөсөн ч тайлан гарна
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: SEVEN_DAY_START
-- Role: SEVEN_DAY_USER
-- Scenario: seven-day-start
-- Render source: renderSevenDayStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2911
-- Source function/object: renderSevenDayStart
-- Source mapping: RESOLVED
-- Render proof: renderSevenDayStart via seven-day-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <span class="pill">Орой бүр: 3–5 минут</span>
-
-**Source item**
-
-> <span class="pill">5/7 өдөр бөглөсөн ч тайлан гарна</span>
-
-**Source context after**
-
-> <span class="pill">Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш</span>
-
-**Rendered context**
-
-> Орой бүр: 3–5 минут
-> 5/7 өдөр бөглөсөн ч тайлан гарна
-> Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0284 — P2
-
-**Exact current text**
-
-> Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: SEVEN_DAY_START
-- Role: SEVEN_DAY_USER
-- Scenario: seven-day-start
-- Render source: renderSevenDayStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderSevenDayStart via seven-day-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 5/7 өдөр бөглөсөн ч тайлан гарна
-> Нэг өдөр алгаслаа гээд бүтэлгүйтсэн гэсэн үг биш
-> Калори тоолохгүй
+> Зарим хэсэг дээр
+> Яагаад?
+> Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?
 
 **Dynamic values**
 

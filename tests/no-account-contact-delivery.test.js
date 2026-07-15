@@ -18,7 +18,7 @@ function resetOneTime(overrides = {}) {
     view: "oneTimeStart",
     currentAssessmentId: null,
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     qpayPayment: { status: "idle", message: "", invoice: null },
     contactCapture: {

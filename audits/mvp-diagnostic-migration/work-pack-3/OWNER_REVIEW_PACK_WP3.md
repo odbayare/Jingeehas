@@ -256,11 +256,11 @@ const MECHANISM_NAME_TO_KEY = Object.fromEntries(
 
 export function emptyTestState(overrides = {}) {
   return {
-    packageType: "seven-day",
+    packageType: "removed-feature",
     stageAnswers: {},
     stageVoiceSummaries: {},
     preliminary: [],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   };
 }
@@ -332,9 +332,9 @@ export function strengthFromNormalizedScore(normalizedScore, isSafety = false) {
 
 function evidenceStrengthFor(score, isSafety = false) {
   if (isSafety) return "safety";
-  const diaryDays = new Set(score.evidence_items.map(item => item.day_number).filter(Boolean)).size;
-  if (score.normalizedScore >= 7 || diaryDays >= 3) return "strong";
-  if (score.normalizedScore >= 4 || diaryDays >= 2) return "moderate";
+  const removedDays = new Set(score.evidence_items.map(item => item.day_number).filter(Boolean)).size;
+  if (score.normalizedScore >= 7 || removedDays >= 3) return "strong";
+  if (score.normalizedScore >= 4 || removedDays >= 2) return "moderate";
   if (score.normalizedScore > 0) return "possible";
   return "insufficient";
 }
@@ -575,7 +575,7 @@ function addStageSignals(scores, state) {
 }
 
 function addDiarySignals(scores, state) {
-  (state.diaryEntries || []).forEach(entry => {
+  (state.removedEntries || []).forEach(entry => {
     const dayNumber = entry.day_number;
     const mealText = String(entry.meal_rhythm || "");
     const momentText = String(entry.main_moment_time || "");
@@ -774,7 +774,7 @@ export function buildInteractionPattern(driverScores, primaryDriver, secondaryDr
     return match("loneliness_comfort_reward_deficit", ["loneliness", "emptiness", "loneliness_soothing", "comfort", "self_reward"], "Loneliness or emptiness makes food a soothing or attention substitute.", "non_food_connection_slot");
   }
   const fallback = [primaryDriver?.key, ...secondaryDrivers.map(driver => driver.key)].filter(Boolean).slice(0, 3);
-  return match("general_driver_stack", fallback, "Several drivers overlap; diary evidence should clarify which one is easiest to change first.", "seven_day_confirmation");
+  return match("general_driver_stack", fallback, "Several drivers overlap; diary evidence should clarify which one is easiest to change first.", "removed_feature_confirmation");
 }
 
 export function buildVulnerableMoment(input, driverScores, interactionPattern, safetyRoute) {
@@ -890,7 +890,7 @@ export function buildFirstGentleChange(driverScores, interactionPattern, safetyR
     pcos_body_uncertainty_control: ["body_neutral_private_tracking", ["body_change_uncertainty", "control_regain"], "Use body-neutral tracking and one non-punitive control cue."],
     medical_first_body_signal: ["professional_discussion_summary", ["medical_concern"], "Collect body-signal notes for a professional conversation before changing diet rules."]
   };
-  const [id, targets, action] = map[interactionPattern.id] || ["seven_day_confirmation", [], "Use 7-day diary confirmation before choosing the first change."];
+  const [id, targets, action] = map[interactionPattern.id] || ["removed_feature_confirmation", [], "Use 7-day diary confirmation before choosing the first change."];
   return {
     id,
     targets,
@@ -942,7 +942,7 @@ function fieldsForDriver(key) {
   return map[key] || ["raw_reflection", "food_function"];
 }
 
-export function buildSevenDayConfirmationTargets(driverScores, vulnerableMoment) {
+export function buildRemovedFeatureConfirmationTargets(driverScores, vulnerableMoment) {
   const candidates = Object.values(driverScores)
     .filter(score => score.layer !== "safety")
     .filter(score => score.normalizedScore >= 3)
@@ -1041,13 +1041,13 @@ export function calculateTestDriverStack(input = {}) {
   const wrongSelfExplanation = wrongSelfExplanationFor(scores);
   const firstGentleChange = buildFirstGentleChange(scores, interaction, safetyRoute);
   const experiment = buildFourteenDayExperimentHypothesis(firstGentleChange, vulnerableMoment, interaction);
-  const confirmationTargets = buildSevenDayConfirmationTargets(scores, vulnerableMoment);
+  const confirmationTargets = buildRemovedFeatureConfirmationTargets(scores, vulnerableMoment);
 
   return {
     version: "driver-stack-v0-test-only",
     source: {
       stage_answer_count: Object.values(state.stageAnswers || {}).filter(value => Array.isArray(value) ? value.length : value !== "" && value !== undefined && value !== null).length,
-      diary_entry_count: (state.diaryEntries || []).length,
+      diary_entry_count: (state.removedEntries || []).length,
       evidence_quality: sourceEvidenceQuality(state, mechanismEvidence),
       current_report_mode: currentModeFromSafetyRoute(mechanismEvidence.safetyRoute)
     },
@@ -1079,7 +1079,7 @@ export function calculateTestDriverStack(input = {}) {
     wrong_self_explanation: wrongSelfExplanation,
     first_gentle_change: firstGentleChange,
     fourteen_day_experiment_hypothesis: experiment,
-    seven_day_diary_confirmation_targets: confirmationTargets,
+    removed_feature_diary_confirmation_targets: confirmationTargets,
     evidence_sources: evidenceSources(scores),
     copy_constraints: [
       "no_diet_plan",
@@ -1151,12 +1151,12 @@ export const driverStackFixtures = [
     name: "shift_work_recovery_only",
     description: "Shift work disrupts recovery rhythm without loneliness or meal-gap dominance.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-N01": "4-6 цаг",
         "S1-N02": "Маш тод"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Тогтуун, хоол алгасаагүй",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Шөнийн ээлжийн дараа",
@@ -1183,12 +1183,12 @@ export const driverStackFixtures = [
     name: "shift_work_loneliness_combo",
     description: "Shift work and lonely recovery windows make food a soothing/default point.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-E02": ["Ганцаардал", "Хоосон мэт мэдрэмж"],
         "S1-R02": ["Ганцаардсан үед"]
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Тогтуун, хоол алгасаагүй",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Шөнийн ээлжийн дараа",
@@ -1215,13 +1215,13 @@ export const driverStackFixtures = [
     name: "remote_work_visible_snacks",
     description: "Remote work desk snacks and food images create cue-based eating without hunger dominance.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-L04": "Харагдвал бараг автоматаар иддэг",
         "S1-L05": "Маш хүчтэй",
         "S1-R02": ["Хоолны зураг эсвэл захиалгын апп харахад"]
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         unplanned_eating_count: "Тийм, хоёр удаа",
         main_moment_time: "Гэрээс ажиллаж байх үед",
         hunger_level: "2",
@@ -1245,13 +1245,13 @@ export const driverStackFixtures = [
     name: "stress_delivery_app_comfort",
     description: "Stress and delivery-app default make food a comfort/decompression tool.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-E01": "Ихэвчлэн тэгдэг",
         "S1-E02": ["Стресс", "Санаа зовнил"],
         "S1-L02": ["Хоол захиалах"]
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Ажлын дараа",
         hunger_level: "3",
@@ -1277,12 +1277,12 @@ export const driverStackFixtures = [
     name: "meal_gap_evening_hunger",
     description: "Long meal gaps lead to evening hunger and low-friction default food.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-M01": "Өдөр бага идээд орой нөхдөг",
         "S1-M02": "Бараг өдөр бүр"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Хоол хоорондын зай хэтэрсэн",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Орой",
@@ -1307,13 +1307,13 @@ export const driverStackFixtures = [
     name: "all_or_nothing_restriction_rebound",
     description: "All-or-nothing restriction and stricter-tomorrow restart create rebound.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-W04": ["Мацаг", "Нүүрс ус хасах"],
         "S1-W06": "Маргааш илүү чанга барина",
         "S1-X03": "Маш хүчтэй"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Нэг хоол алгассан",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Орой",
@@ -1338,12 +1338,12 @@ export const driverStackFixtures = [
     name: "social_weekend_alcohol_monday_restart",
     description: "Weekend social table plus alcohol leads to Monday restart thinking.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-F01": ["Татгалзах эвгүй байсан"],
         "S1-W06": "Маргааш илүү чанга барина"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Weekend хүмүүсийн уулзалтын үед",
         hunger_level: "4",
@@ -1382,7 +1382,7 @@ export const driverStackFixtures = [
           bullets: ["Зураг харах үед ичих, нуух хүсэл нэмэгддэг", "Ичсэн үедээ маргааш илүү чанга барина гэж боддог"]
         })
       },
-      diaryEntries: []
+      removedEntries: []
     },
     expected: {
       primary: "body_change_uncertainty",
@@ -1412,7 +1412,7 @@ export const driverStackFixtures = [
           bullets: ["PCOS болон дааврын өөрчлөлтөөс болж бие өөрчлөгдөхөд эргэлзээ төрдөг", "Control буцааж авахын тулд чанга дүрэм хэрэгтэй мэт санагддаг"]
         })
       },
-      diaryEntries: []
+      removedEntries: []
     },
     expected: {
       primary: "body_change_uncertainty",
@@ -1429,12 +1429,12 @@ export const driverStackFixtures = [
     name: "medication_body_concern_professional_check",
     description: "Medication/body concern should suppress ordinary experiment and route professional-first.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-B03": "Тийм",
         "S1-B02": "Тийм, санаа зовоосон"
       },
-      diaryEntries: repeat(2, day => entry(day, {
+      removedEntries: repeat(2, day => entry(day, {
         meal_rhythm: "Тогтуун, хоол алгасаагүй",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Өдөр",
@@ -1463,13 +1463,13 @@ export const futureDriverStackFixtures = [
     name: "sleep_disruption_circadian_reward",
     description: "Future helper fixture retained outside the approved WP3B result set.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-N01": "4-6 цаг",
         "S1-N02": "Маш тод",
         "S1-R01": "Бараг өдөр бүр"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Тогтуун, хоол алгасаагүй",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Орой",
@@ -1485,12 +1485,12 @@ export const futureDriverStackFixtures = [
     name: "stage_reward_diary_meal_gap_contradiction",
     description: "Future helper fixture retained outside the approved WP3B result set.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-R01": "Өдөрт олон удаа",
         "S1-R02": ["Амт, үнэр, мэдрэмж татах үед"]
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Хоол хоорондын зай хэтэрсэн",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Орой",
@@ -1524,7 +1524,7 @@ const assert = require("assert");
     buildVulnerableMoment,
     buildFirstGentleChange,
     buildFourteenDayExperimentHypothesis,
-    buildSevenDayConfirmationTargets
+    buildRemovedFeatureConfirmationTargets
   } = calculator;
 
   [
@@ -1537,7 +1537,7 @@ const assert = require("assert");
     buildVulnerableMoment,
     buildFirstGentleChange,
     buildFourteenDayExperimentHypothesis,
-    buildSevenDayConfirmationTargets
+    buildRemovedFeatureConfirmationTargets
   ].forEach(fn => assert.strictEqual(typeof fn, "function"));
 
   assert.strictEqual(normalizeDriverScore(5, 10), 5);
@@ -1567,8 +1567,8 @@ const assert = require("assert");
   assert(stack.wrong_self_explanation.key);
   assert(stack.first_gentle_change.id);
   assert(stack.fourteen_day_experiment_hypothesis.hypothesis);
-  assert(Array.isArray(stack.seven_day_diary_confirmation_targets));
-  assert(stack.seven_day_diary_confirmation_targets.length >= 2);
+  assert(Array.isArray(stack.removed_feature_diary_confirmation_targets));
+  assert(stack.removed_feature_diary_confirmation_targets.length >= 2);
   assert(Array.isArray(stack.evidence_sources));
   assert(stack.copy_constraints.includes("no_one_type_label"));
   assert(stack.copy_constraints.includes("no_ordinary_experiment_when_professional_first"));
@@ -1781,11 +1781,11 @@ const assert = require("assert");
   assert(medical.copy_constraints.includes("no_paywall_blocks_safety"));
 
   const urgent = buildDriverStack({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     stageAnswers: {
       "S1-S04": "Одоо идэвхтэй бодогдож байна"
     },
-    diaryEntries: []
+    removedEntries: []
   });
   assert.strictEqual(urgent.safety_route.mode, "mode4");
   assert.strictEqual(urgent.safety_route.ordinary_report_allowed, false);
@@ -1800,7 +1800,7 @@ const assert = require("assert");
       "S1-S03": "Одоо давтагддаг"
     },
     stageVoiceSummaries: {},
-    diaryEntries: []
+    removedEntries: []
   });
   assert(compensatory.driver_scores.compensatory_behavior || compensatory.driver_scores.professional_first);
   assert(compensatory.safety_route.safety_drivers.includes("professional_first"));
@@ -1886,7 +1886,7 @@ The patch adds the approved calculator export names:
 - `buildVulnerableMoment(input, driverScores, interactionPattern, safetyRoute)`
 - `buildFirstGentleChange(driverScores, interactionPattern, safetyRoute)`
 - `buildFourteenDayExperimentHypothesis(firstGentleChange, vulnerableMoment, interactionPattern)`
-- `buildSevenDayConfirmationTargets(driverScores, vulnerableMoment)`
+- `buildRemovedFeatureConfirmationTargets(driverScores, vulnerableMoment)`
 
 It also tightens fixture assertions so wrong primaries, wrong hidden food functions, unrelated score saturation, and missing safety overrides fail tests.
 
@@ -1978,7 +1978,7 @@ The calculator accepts a current app-style state shape:
 - `stageAnswers`
 - `stageVoiceSummaries`
 - `preliminary`
-- `diaryEntries`
+- `removedEntries`
 
 It imports existing app exports in read-only fashion:
 
@@ -2006,7 +2006,7 @@ The output follows the Work Pack 2/2A driver-stack contract:
 - `wrong_self_explanation`
 - `first_gentle_change`
 - `fourteen_day_experiment_hypothesis`
-- `seven_day_diary_confirmation_targets`
+- `removed_feature_diary_confirmation_targets`
 - `evidence_sources`
 - `copy_constraints`
 
@@ -2552,7 +2552,7 @@ Possible future items:
 - add more contradiction fixtures
 - add fixtures for `binge_risk`, `compensatory_behavior`, and `severe_body_distress`
 - add fixtures for cafeteria, nearby store, and strict diet
-- add fixture snapshots for one-time versus seven-day evidence quality
+- add fixture snapshots for one-time versus removed-feature evidence quality
 
 Only after owner approval should a future Work Pack 4 propose runtime integration.
 

@@ -14,7 +14,7 @@ const assert = require("assert");
     buildVulnerableMoment,
     buildFirstGentleChange,
     buildFourteenDayExperimentHypothesis,
-    buildSevenDayConfirmationTargets
+    buildRemovedFeatureConfirmationTargets
   } = calculator;
 
   [
@@ -27,7 +27,7 @@ const assert = require("assert");
     buildVulnerableMoment,
     buildFirstGentleChange,
     buildFourteenDayExperimentHypothesis,
-    buildSevenDayConfirmationTargets
+    buildRemovedFeatureConfirmationTargets
   ].forEach(fn => assert.strictEqual(typeof fn, "function"));
 
   assert.strictEqual(normalizeDriverScore(5, 10), 5);
@@ -57,8 +57,8 @@ const assert = require("assert");
   assert(stack.wrong_self_explanation.key);
   assert(stack.first_gentle_change.id);
   assert(stack.fourteen_day_experiment_hypothesis.hypothesis);
-  assert(Array.isArray(stack.seven_day_diary_confirmation_targets));
-  assert(stack.seven_day_diary_confirmation_targets.length >= 2);
+  assert(Array.isArray(stack.removed_feature_diary_confirmation_targets));
+  assert(stack.removed_feature_diary_confirmation_targets.length >= 2);
   assert(Array.isArray(stack.evidence_sources));
   assert(stack.copy_constraints.includes("no_one_type_label"));
   assert(stack.copy_constraints.includes("no_ordinary_experiment_when_professional_first"));

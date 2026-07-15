@@ -13,8 +13,8 @@ function questionText(stageAnswers) {
   _internal.setTestState({
     packageType: "one-time",
     stageAnswers,
-    diaryDraft: {},
-    diaryEntries: []
+    removedDraft: {},
+    removedEntries: []
   });
   return _internal.stageQuestions()
     .flatMap(question => [question.id, question.text, question.intro, ...(question.options || [])])
@@ -29,7 +29,7 @@ _internal.setTestState({
   packageType: "one-time",
   view: "report",
   oneTimePaid: true,
-  sevenDayPaid: false,
+  removedFeaturePaid: false,
   upgradePaid: false,
   stageAnswers: {
     "S1-C02": "Эрэгтэй",
@@ -40,7 +40,7 @@ _internal.setTestState({
     "S1-S04": "Үгүй"
   },
   preliminary: [],
-  diaryEntries: [],
+  removedEntries: [],
   stageVoiceSummaries: {}
 });
 
@@ -69,7 +69,7 @@ assert(!reportText.includes("6. Болгоомжлох зүйл"), "owner report
   ["Таны эхний", "ажиглалт"].join(" "),
   ["Гүн тайлангийн", "хэсэг"].join(" "),
   ["Төлбөртэй", "тайланд"].join(" "),
-  "7 хоногоор нарийвчлах"
+  "[REMOVED_FEATURE_REFINEMENT]"
 ].forEach(forbidden => {
   assert(!reportText.includes(forbidden), `owner paid report must not mix teaser or upsell copy: ${forbidden}`);
 });

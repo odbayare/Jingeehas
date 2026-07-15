@@ -2,7 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0197 — P1
+## COPY-0158 — P1
 
 **Exact current text**
 
@@ -60,7 +60,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0198 — P1
+## COPY-0159 — P1
 
 **Exact current text**
 
@@ -79,7 +79,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6395
+- Source line: 5460
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -119,7 +119,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0199 — P1
+## COPY-0160 — P1
 
 **Exact current text**
 
@@ -178,7 +178,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0200 — P1
+## COPY-0161 — P1
 
 **Exact current text**
 
@@ -197,7 +197,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6397
+- Source line: 5462
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -237,7 +237,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0201 — P1
+## COPY-0162 — P1
 
 **Exact current text**
 
@@ -256,7 +256,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6400
+- Source line: 5465
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -296,7 +296,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0202 — P1
+## COPY-0163 — P1
 
 **Exact current text**
 
@@ -315,7 +315,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6262
+- Source line: 5326
 - Source function/object: caseEvidencePoints
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -355,7 +355,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0203 — P1
+## COPY-0164 — P1
 
 **Exact current text**
 
@@ -414,7 +414,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0204 — P1
+## COPY-0165 — P1
 
 **Exact current text**
 
@@ -433,7 +433,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6407
+- Source line: 5473
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -473,7 +473,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0205 — P1
+## COPY-0166 — P1
 
 **Exact current text**
 
@@ -532,7 +532,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0206 — P1
+## COPY-0167 — P1
 
 **Exact current text**
 
@@ -551,7 +551,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6283
+- Source line: 5347
 - Source function/object: caseMechanismCardHtml
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -591,7 +591,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0207 — P1
+## COPY-0168 — P1
 
 **Exact current text**
 
@@ -650,7 +650,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0208 — P1
+## COPY-0169 — P1
 
 **Exact current text**
 
@@ -669,7 +669,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6284
+- Source line: 5348
 - Source function/object: caseMechanismCardHtml
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -691,7 +691,7 @@ Report interpretation or recommendation text.
 
 > бага
 > Юунд тулгуурлаж байна вэ:
-> Та юу хийхээ мэдэж байсан ч оройн тэнхээ, шийдвэрийн ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.
+> Та юу хийхээ мэдэж байсан ч оройн тэнхээ, олон сонголт хийх ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.
 
 **Dynamic values**
 
@@ -709,11 +709,11 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0209 — P1
+## COPY-0170 — P1
 
 **Exact current text**
 
-> Та юу хийхээ мэдэж байсан ч оройн тэнхээ, шийдвэрийн ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.
+> Та юу хийхээ мэдэж байсан ч оройн тэнхээ, олон сонголт хийх ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.
 
 **Classification**
 
@@ -728,7 +728,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5642
+- Source line: 4706
 - Source function/object: wp78ReportInsights
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -740,7 +740,7 @@ Report heading, summary, or instruction requiring owner review.
 
 **Source item**
 
-> addCluster("fatigue", "Ядаргаа ба хамгийн хялбар сонголт ялах", "Та юу хийхээ мэдэж байсан ч оройн тэнхээ, шийдвэрийн ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.", "Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө их шийдвэр шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.", ["өдөр бүр шинэ шийдвэр шаардах төлөвлөгөө", "ядарсан үед хэт нарийн хоолны дүрэм эхлүүлэх"], "Ядарсан өдөр ашиглах 2 бэлэн, бага хүч шаардсан хоолны сонголтоо урьдчилж нэрлэ.");
+> addCluster("fatigue", "Ядаргаа ба хамгийн хялбар сонголт ялах", "Та юу хийхээ мэдэж байсан ч оройн тэнхээ, олон сонголт хийх ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.", "Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө олон сонголт шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.", ["өдөр бүр шинэ шийдвэр шаардах төлөвлөгөө", "ядарсан үед хэт нарийн хоолны дүрэм эхлүүлэх"], "Ядарсан өдөр ашиглах 2 бэлэн, бага хүч шаардсан хоолны сонголтоо урьдчилж нэрлэ.");
 
 **Source context after**
 
@@ -749,8 +749,8 @@ Report heading, summary, or instruction requiring owner review.
 **Rendered context**
 
 > Юунд тулгуурлаж байна вэ:
-> Та юу хийхээ мэдэж байсан ч оройн тэнхээ, шийдвэрийн ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.
-> Ядаргаа ба шийдвэрийн ачаалал: Бараг өдөр бүр
+> Та юу хийхээ мэдэж байсан ч оройн тэнхээ, олон сонголт хийх ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.
+> Ядаргаа ба олон сонголт хийх ачаалал: Бараг өдөр бүр
 
 **Dynamic values**
 
@@ -768,11 +768,11 @@ Uncertainty construction in report or recommendation copy.
 - Approval date:
 - Notes:
 
-## COPY-0210 — P1
+## COPY-0171 — P1
 
 **Exact current text**
 
-> Ядаргаа ба шийдвэрийн ачаалал: Бараг өдөр бүр
+> Ядаргаа ба олон сонголт хийх ачаалал: Бараг өдөр бүр
 
 **Classification**
 
@@ -807,8 +807,8 @@ Uncertainty construction in report or recommendation copy.
 
 **Rendered context**
 
-> Та юу хийхээ мэдэж байсан ч оройн тэнхээ, шийдвэрийн ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.
-> Ядаргаа ба шийдвэрийн ачаалал: Бараг өдөр бүр
+> Та юу хийхээ мэдэж байсан ч оройн тэнхээ, олон сонголт хийх ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.
+> Ядаргаа ба олон сонголт хийх ачаалал: Бараг өдөр бүр
 > Яаж давтагдаж болох вэ:
 
 **Dynamic values**
@@ -827,7 +827,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0211 — P1
+## COPY-0172 — P1
 
 **Exact current text**
 
@@ -846,7 +846,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6286
+- Source line: 5350
 - Source function/object: caseMechanismCardHtml
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -866,9 +866,9 @@ Report heading, summary, or instruction requiring owner review.
 
 **Rendered context**
 
-> Ядаргаа ба шийдвэрийн ачаалал: Бараг өдөр бүр
+> Ядаргаа ба олон сонголт хийх ачаалал: Бараг өдөр бүр
 > Яаж давтагдаж болох вэ:
-> Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө их шийдвэр шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.
+> Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө олон сонголт шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.
 
 **Dynamic values**
 
@@ -886,11 +886,11 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0212 — P1
+## COPY-0173 — P1
 
 **Exact current text**
 
-> Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө их шийдвэр шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.
+> Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө олон сонголт шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.
 
 **Classification**
 
@@ -905,7 +905,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5642
+- Source line: 4706
 - Source function/object: wp78ReportInsights
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -917,7 +917,7 @@ Report heading, summary, or instruction requiring owner review.
 
 **Source item**
 
-> addCluster("fatigue", "Ядаргаа ба хамгийн хялбар сонголт ялах", "Та юу хийхээ мэдэж байсан ч оройн тэнхээ, шийдвэрийн ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.", "Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө их шийдвэр шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.", ["өдөр бүр шинэ шийдвэр шаардах төлөвлөгөө", "ядарсан үед хэт нарийн хоолны дүрэм эхлүүлэх"], "Ядарсан өдөр ашиглах 2 бэлэн, бага хүч шаардсан хоолны сонголтоо урьдчилж нэрлэ.");
+> addCluster("fatigue", "Ядаргаа ба хамгийн хялбар сонголт ялах", "Та юу хийхээ мэдэж байсан ч оройн тэнхээ, олон сонголт хийх ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.", "Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө олон сонголт шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.", ["өдөр бүр шинэ шийдвэр шаардах төлөвлөгөө", "ядарсан үед хэт нарийн хоолны дүрэм эхлүүлэх"], "Ядарсан өдөр ашиглах 2 бэлэн, бага хүч шаардсан хоолны сонголтоо урьдчилж нэрлэ.");
 
 **Source context after**
 
@@ -926,7 +926,7 @@ Report heading, summary, or instruction requiring owner review.
 **Rendered context**
 
 > Яаж давтагдаж болох вэ:
-> Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө их шийдвэр шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.
+> Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө олон сонголт шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.
 > Жингийн зорилтод яагаад нөлөөлж болох вэ:
 
 **Dynamic values**
@@ -945,7 +945,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0213 — P1
+## COPY-0174 — P1
 
 **Exact current text**
 
@@ -964,7 +964,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6287
+- Source line: 5351
 - Source function/object: caseMechanismCardHtml
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -984,7 +984,7 @@ Report interpretation or recommendation text.
 
 **Rendered context**
 
-> Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө их шийдвэр шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.
+> Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө олон сонголт шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.
 > Жингийн зорилтод яагаад нөлөөлж болох вэ:
 > Энэ давталт хоолны цаг, стресс/ядаргаа, орчны бэлэн сонголт, дараах өөртөө хандах хандлагатай нийлж жингийн зорилтыг тогтворгүй болгож болно.
 
@@ -1004,7 +1004,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0214 — P1
+## COPY-0175 — P1
 
 **Exact current text**
 
@@ -1023,7 +1023,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6164
+- Source line: 5228
 - Source function/object: caseMechanismCandidates
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1063,7 +1063,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0215 — P1
+## COPY-0176 — P1
 
 **Exact current text**
 
@@ -1082,7 +1082,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6288
+- Source line: 5352
 - Source function/object: caseMechanismCardHtml
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1122,7 +1122,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0216 — P1
+## COPY-0177 — P1
 
 **Exact current text**
 
@@ -1141,7 +1141,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6165
+- Source line: 5229
 - Source function/object: caseMechanismCandidates
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1181,7 +1181,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0217 — P1
+## COPY-0178 — P1
 
 **Exact current text**
 
@@ -1200,7 +1200,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6289
+- Source line: 5353
 - Source function/object: caseMechanismCardHtml
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1240,7 +1240,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0218 — P1
+## COPY-0179 — P1
 
 **Exact current text**
 
@@ -1259,7 +1259,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6166
+- Source line: 5230
 - Source function/object: caseMechanismCandidates
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1299,7 +1299,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0219 — P1
+## COPY-0180 — P1
 
 **Exact current text**
 
@@ -1318,7 +1318,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6290
+- Source line: 5354
 - Source function/object: caseMechanismCardHtml
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1358,7 +1358,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0220 — P1
+## COPY-0181 — P1
 
 **Exact current text**
 
@@ -1377,7 +1377,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5642
+- Source line: 4706
 - Source function/object: wp78ReportInsights
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1389,7 +1389,7 @@ Report heading, summary, or instruction requiring owner review.
 
 **Source item**
 
-> addCluster("fatigue", "Ядаргаа ба хамгийн хялбар сонголт ялах", "Та юу хийхээ мэдэж байсан ч оройн тэнхээ, шийдвэрийн ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.", "Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө их шийдвэр шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.", ["өдөр бүр шинэ шийдвэр шаардах төлөвлөгөө", "ядарсан үед хэт нарийн хоолны дүрэм эхлүүлэх"], "Ядарсан өдөр ашиглах 2 бэлэн, бага хүч шаардсан хоолны сонголтоо урьдчилж нэрлэ.");
+> addCluster("fatigue", "Ядаргаа ба хамгийн хялбар сонголт ялах", "Та юу хийхээ мэдэж байсан ч оройн тэнхээ, олон сонголт хийх ачаалал, бэлэн сонголтын ойр байдал давхцахад хамгийн амар зүйл ялж магадгүй.", "Орой хоол бодож, сонгож, бэлдэх хүртэл хүнд болдог. Энэ нь мэдлэг дутагдсан гэсэн үг биш. Төлөвлөгөө олон сонголт шаардаж, харин бодит өдөр тэнхээ багатай байвал хамгийн бага хүч шаардсан сонголт ажилладаг.", ["өдөр бүр шинэ шийдвэр шаардах төлөвлөгөө", "ядарсан үед хэт нарийн хоолны дүрэм эхлүүлэх"], "Ядарсан өдөр ашиглах 2 бэлэн, бага хүч шаардсан хоолны сонголтоо урьдчилж нэрлэ.");
 
 **Source context after**
 
@@ -1417,7 +1417,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0221 — P1
+## COPY-0182 — P1
 
 **Exact current text**
 
@@ -1436,7 +1436,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6411
+- Source line: 5477
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1476,7 +1476,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0222 — P1
+## COPY-0183 — P1
 
 **Exact current text**
 
@@ -1495,7 +1495,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6412
+- Source line: 5478
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1535,7 +1535,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0223 — P1
+## COPY-0184 — P1
 
 **Exact current text**
 
@@ -1554,7 +1554,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6415
+- Source line: 5481
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1594,7 +1594,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0224 — P1
+## COPY-0185 — P1
 
 **Exact current text**
 
@@ -1613,7 +1613,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5814
+- Source line: 4878
 - Source function/object: wp81FirstStep
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1653,7 +1653,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0225 — P1
+## COPY-0186 — P1
 
 **Exact current text**
 
@@ -1672,7 +1672,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6417
+- Source line: 5483
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1712,7 +1712,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0226 — P1
+## COPY-0187 — P1
 
 **Exact current text**
 
@@ -1731,7 +1731,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6420
+- Source line: 5486
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]

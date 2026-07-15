@@ -23,7 +23,7 @@ No scoring, branching, safety routing, payment gate, QPay, coming-soon, DNS, or 
 - `experimentFor`
 - `surfaceContextInsight`
 - one-time paid report output
-- compressed seven-day menstrual-cycle report output
+- compressed removed-feature menstrual-cycle report output
 - reward/reward-deficit output
 - fatigue/circadian output
 - collapse/restriction-binge output
@@ -67,7 +67,7 @@ The new test covers:
 - generated reports do not contain duplicate `Гол гацалт Гол гацалт`
 - generated cycle text does not contain stray trailing ` 4.`
 - one-time report voice keeps natural uncertainty language
-- compressed seven-day report voice keeps menstrual-cycle meaning while avoiding mechanical copy
+- compressed removed-feature report voice keeps menstrual-cycle meaning while avoiding mechanical copy
 - body-signal route keeps professional safety guidance intact
 
 ## 7. Validation results

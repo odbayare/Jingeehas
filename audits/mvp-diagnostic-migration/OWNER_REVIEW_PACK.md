@@ -28,7 +28,7 @@ Scope: audit-only migration planning for the Weight Test MVP. No app logic, ques
    - one-time: directly to `report`
    - 7-day: to `preliminary`, then unlock/paywall/diary flow
 8. The diary flow uses `dailyCore`, `dailyMenstrual`, and adaptive `probeBank` questions chosen by the top preliminary mechanisms.
-9. `saveDiaryEntry()` persists a local diary entry, updates safety flags, and routes to `reportReady` after 5+ entries.
+9. `saveDiaryEntry()` persists a local diary entry, updates safety flags, and routes to `removedReportState` after 5+ entries.
 10. `renderReport()` decides safety/report mode, paywall/readiness, and then renders either urgent/professional output, one-time report, limited diary state, or full observed report.
 
 ## Current Scoring and Routing Model
@@ -296,7 +296,7 @@ hidden_food_function
 wrong_self_explanation
 first_gentle_change
 fourteen_day_experiment
-seven_day_confirmation_plan
+removed_feature_confirmation_plan
 safety_route
 evidence_sources
 ```
@@ -509,7 +509,7 @@ Introduce a report object before changing copy:
   wrong_self_explanation,
   first_gentle_change,
   fourteen_day_experiment,
-  seven_day_confirmation_plan,
+  removed_feature_confirmation_plan,
   safety_route,
   evidence_sources
 }

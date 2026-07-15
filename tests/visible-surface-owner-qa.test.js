@@ -53,7 +53,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-W04": ["Мацаг"],
@@ -61,7 +61,7 @@ function setOneTime(overrides = {}) {
       "S1-F01": ["Дараа өлсөхөөс санаа зовсон", "Өөрийгөө шагнамаар"]
     },
     preliminary: [{ key: "hungerSafety", score: 5, label: "хүчтэй нийцэж байна" }],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }

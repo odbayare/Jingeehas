@@ -14,7 +14,7 @@
 ## Changes Made
 
 - Clarified that the first visible signal remains free before payment.
-- Clarified what the paid report adds: repeated conditions, secondary influences, non-rushed avoidance guidance, first gentle step, 14-day experiment, and seven-day refinement path.
+- Clarified what the paid report adds: repeated conditions, secondary influences, non-rushed avoidance guidance, first gentle step, 14-day experiment, and removed-feature refinement path.
 - Split paywall explanation into "currently visible" and "added in full report" groups for easier scanning.
 - Renamed the price block heading to focus on opening the full report.
 - Added copy that payment confirmation opens the report on the same screen while the free signal and safety guidance remain visible.

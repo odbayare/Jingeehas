@@ -495,7 +495,7 @@ Shadow integration is needed before visible report rendering because the current
 - bypass safety/professional-first routes;
 - hide safety guidance behind payment;
 - expose paid-depth content to unpaid users;
-- change existing one-time or seven-day report HTML;
+- change existing one-time or removed-feature report HTML;
 - write new data into localStorage;
 - alter QPay or mock entitlement behavior.
 
@@ -604,7 +604,7 @@ The recommended WP17 touchpoint is inside `renderReport()` in `app.js`, immediat
 - `leverage`
 - `experiment`
 
-The shadow helper should run before the existing safety, payment, readiness, one-time, and seven-day return branches. It must not change those branches.
+The shadow helper should run before the existing safety, payment, readiness, one-time, and removed-feature return branches. It must not change those branches.
 
 Why this touchpoint:
 
@@ -665,12 +665,12 @@ WP17 must add focused tests before or with implementation. Required test coverag
 
 - disabled shadow flag leaves `_internal.renderReport()` output unchanged for one-time paid report;
 - disabled shadow flag leaves `_internal.renderReport()` output unchanged for unpaid one-time paywall;
-- disabled shadow flag leaves `_internal.renderReport()` output unchanged for seven-day readiness/paywall paths;
+- disabled shadow flag leaves `_internal.renderReport()` output unchanged for removed-feature readiness/paywall paths;
 - disabled shadow flag leaves professional-first and urgent safety routes unchanged;
 - shadow helper does not call `saveState()`;
 - shadow helper does not read or write `localStorage`;
 - shadow helper does not alter `state`;
-- shadow helper does not alter `hasOneTimeReportAccess()`, `hasSevenDayAccess()`, or `hasUpgradeAccess()`;
+- shadow helper does not alter `hasOneTimeReportAccess()`, `hasRemovedFeatureAccess()`, or `hasUpgradeAccess()`;
 - enabled test-only shadow path returns an internal-only payload or validation result;
 - enabled test-only shadow path preserves `runtimeSafetyGate.canRenderInRuntime === false`;
 - enabled test-only shadow path preserves `paymentGate.safetyGuidanceRequiresPayment === false`;
@@ -777,7 +777,7 @@ Runtime implementation is NOT approved by WP16.
 Read-only inspection covered:
 
 - state loading and persistence: `loadState()`, `saveState()`, `resetState()`, `setView()`;
-- payment and entitlement paths: QPay helpers, `hasOneTimeReportAccess()`, `hasSevenDayAccess()`, `hasUpgradeAccess()`;
+- payment and entitlement paths: QPay helpers, `hasOneTimeReportAccess()`, `hasRemovedFeatureAccess()`, `hasUpgradeAccess()`;
 - answer mutation paths: `setAnswer()`, `setAnswerDraft()`;
 - report rendering helpers: `renderHumanReadableReport()`, `renderOneTimeReport()`, paywall renderers;
 - main report branch: `renderReport()`;
@@ -793,8 +793,8 @@ Read-only inspection covered:
 | `saveState()` | Writes full `state` to `localStorage` under `weightLossDeepPatternMvp` | Unsafe | Any shadow output stored here would change localStorage shape and create production behavior drift | Do not touch. Shadow path must not call this. |
 | Answer update functions such as `setAnswer()` and `setAnswerDraft()` | Mutate stage answers, recalculate safety flags, save state, and sometimes render | Unsafe | Too early; adapter would run during input changes and could affect state, performance, or safety flags | Do not touch. |
 | Payment/QPay functions and access helpers | Create/check QPay invoices, mark payment status, and evaluate access | Unsafe | Could alter payment, entitlement, QPay status, or paywall behavior | Do not touch. Shadow adapter must not depend on these to enable rendering. |
-| `renderHumanReadableReport()` | Builds existing visible report HTML for one-time and seven-day full reports | Limited | Already inside visible rendering; adding adapter output here risks copy or markup drift | Do not invoke adapter here. Existing HTML must remain unchanged. |
-| `renderOneTimeReport()` | Delegates one-time paid rendering to `renderHumanReadableReport()` | Limited | Too narrow for seven-day, safety, paywall, and readiness coverage | Do not use as primary touchpoint. |
+| `renderHumanReadableReport()` | Builds existing visible report HTML for one-time and removed-feature full reports | Limited | Already inside visible rendering; adding adapter output here risks copy or markup drift | Do not invoke adapter here. Existing HTML must remain unchanged. |
+| `renderOneTimeReport()` | Delegates one-time paid rendering to `renderHumanReadableReport()` | Limited | Too narrow for removed-feature, safety, paywall, and readiness coverage | Do not use as primary touchpoint. |
 | `renderReport()` after report inputs are computed and before existing return branches | Computes mode, ranked patterns, primary/secondary mechanisms, readiness, evidence, tags, and report helper data before safety/payment/readiness branches return HTML | Best candidate | Must prove no returned HTML, state, localStorage, payment, or entitlement changes | Recommended WP17 touchpoint, behind disabled shadow guard only. |
 | `render()` route dispatcher | Chooses route renderer and writes returned HTML into `#app` | Unsafe | Any adapter call here is too close to DOM output and applies to every route | Do not touch for shadow adapter invocation. |
 | `module.exports._internal` | Exposes functions for Node tests | Good for tests only | Could accidentally expose public browser globals if misused elsewhere | May expose a test-only shadow helper or test setter if WP17 is approved. |
@@ -832,10 +832,10 @@ The shadow call must be shaped so the existing branches remain the authority:
 - urgent route still returns urgent safety copy;
 - professional route still returns professional-first copy;
 - unpaid one-time route still returns the one-time paywall;
-- unpaid seven-day route still returns the seven-day paywall;
-- insufficient seven-day route still returns readiness copy;
+- unpaid removed-feature route still returns the removed-feature paywall;
+- insufficient removed-feature route still returns readiness copy;
 - paid one-time route still returns the existing one-time report;
-- paid seven-day route still returns the existing seven-day report.
+- paid removed-feature route still returns the existing removed-feature report.
 
 ## Why this touchpoint is safest
 
@@ -897,9 +897,9 @@ With the shadow flag disabled, all user-visible behavior must remain unchanged:
 - same professional-first route;
 - same one-time unpaid paywall;
 - same one-time paid report;
-- same seven-day paywall;
-- same seven-day readiness gate;
-- same seven-day report;
+- same removed-feature paywall;
+- same removed-feature readiness gate;
+- same removed-feature report;
 - same internal tester feedback UI;
 - same buttons and route changes;
 - same report copy;
@@ -948,7 +948,7 @@ ENABLE_RUNTIME_ADAPTER_SHADOW = false
 WP17 must preserve:
 
 - `hasOneTimeReportAccess()` behavior;
-- `hasSevenDayAccess()` behavior;
+- `hasRemovedFeatureAccess()` behavior;
 - `hasUpgradeAccess()` behavior;
 - QPay create/check endpoint values;
 - QPay product code;
@@ -1157,7 +1157,7 @@ Shadow invocation means:
 | output destination | Return only an internal test/QA validation object when explicitly enabled in tests. | Rendering adapter payload fields to DOM, report HTML, paywalls, coach/admin surfaces, PDF, backend, analytics, or deploy paths. | Assert returned report HTML does not contain adapter field names or adapter content. |
 | no-visible-output rule | Keep user-facing report HTML byte-for-byte unchanged when `ENABLE_RUNTIME_ADAPTER_SHADOW = false`. | Any visible UI, copy, button, route, paywall, safety, or report-section change. | Snapshot/compare existing report outputs with the flag false. |
 | no payment mutation | Preserve payment, QPay, pricing, entitlement, mockBackend access, and coach payment behavior. | Calling QPay endpoints, changing product codes, changing prices, changing access helpers, or treating adapter payment fields as entitlements. | Assert access helpers and QPay/payment diffs remain unchanged. |
-| no report mutation | Preserve existing report branch order, returned HTML, report copy, scoring, evidence, and readiness behavior. | Replacing report renderers, changing report copy, changing scoring, or wiring adapter sections into visible reports. | Assert one-time, seven-day, safety, professional, and readiness flows remain unchanged. |
+| no report mutation | Preserve existing report branch order, returned HTML, report copy, scoring, evidence, and readiness behavior. | Replacing report renderers, changing report copy, changing scoring, or wiring adapter sections into visible reports. | Assert one-time, removed-feature, safety, professional, and readiness flows remain unchanged. |
 | no localStorage mutation unless explicitly approved | Do not read localStorage, write localStorage, call `saveState()`, or persist shadow diagnostics. | Adding storage keys, persisted flags, adapter payloads, owner debug, diagnostics, or shadow state. | Assert storage key and state shape remain unchanged; spy or inspect that shadow path does not call storage APIs. |
 | console logging policy | No production console logging from the shadow path; test logs may come only from explicit test commands. | Logging adapter payloads, internal diagnostics, fixture names, owner debug, or user-sensitive report context in browser runtime. | Assert no shadow helper console output is required for pass/fail behavior. |
 | internal QA capture policy | Keep internal QA capture limited to test process output or owner-review artifacts. | Persisting QA payloads in browser state, localStorage, backend, PDF, deploy artifacts, or visible UI. | Assert generated QA artifacts are explicit test outputs only and not runtime state. |
@@ -1325,7 +1325,7 @@ WP17 must not:
 - change safety copy;
 - change professional-first branch order;
 - change `hasOneTimeReportAccess()`;
-- change `hasSevenDayAccess()`;
+- change `hasRemovedFeatureAccess()`;
 - change `hasUpgradeAccess()`;
 - change `saveState()`;
 - change `loadState()`;
@@ -1377,14 +1377,14 @@ Future WP17 tests must prove the disabled shadow path changes nothing visible.
 | --- | --- | --- | --- |
 | feature flag default false | Unit/static contract | `ENABLE_RUNTIME_ADAPTER_SHADOW` exists only in the approved WP17 scope and defaults to `false`. | Yes |
 | no visible output when flag false | Snapshot/regression | `_internal.renderReport()` output is unchanged when `ENABLE_RUNTIME_ADAPTER_SHADOW = false`. | Yes |
-| no report mutation when flag false | Snapshot/regression | One-time, seven-day, readiness, professional, and urgent report branches return the same HTML as before. | Yes |
-| no payment mutation | Unit/regression | `hasOneTimeReportAccess()`, `hasSevenDayAccess()`, `hasUpgradeAccess()`, QPay constants, prices, and product codes are unchanged. | Yes |
+| no report mutation when flag false | Snapshot/regression | One-time, removed-feature, readiness, professional, and urgent report branches return the same HTML as before. | Yes |
+| no payment mutation | Unit/regression | `hasOneTimeReportAccess()`, `hasRemovedFeatureAccess()`, `hasUpgradeAccess()`, QPay constants, prices, and product codes are unchanged. | Yes |
 | no localStorage mutation unless explicitly approved | Unit/regression | Shadow helper does not read localStorage, write localStorage, call `saveState()`, add storage keys, or persist adapter diagnostics. | Yes |
 | adapter invocation isolated | Unit/integration | Enabled test-only shadow path returns internal validation only and does not feed payload into returned HTML or runtime state. | Yes |
 | adapter failure contained | Unit/integration | Adapter failure in enabled test-only mode fails tests only; disabled shadow mode cannot break user report rendering. | Yes |
 | internal keys not rendered | HTML scan | Returned HTML does not include raw fixture names, mechanism keys, `ownerDebug`, `internalDiagnostics`, or adapter field names. | Yes |
 | safety guidance not payment-gated | Unit/regression | `paymentGate.safetyGuidanceRequiresPayment === false` remains true and safety/professional guidance stays outside payment gates. | Yes |
-| existing report flow unchanged | End-to-end regression | Stage, diary, one-time report, seven-day report, paywall, professional, urgent, and readiness flows remain unchanged. | Yes |
+| existing report flow unchanged | End-to-end regression | Stage, diary, one-time report, removed-feature report, paywall, professional, urgent, and readiness flows remain unchanged. | Yes |
 | current tests still pass | Full regression | `npm test` passes. | Yes |
 | runtime adapter contract still pass | Adapter contract test | `runtimeAdapterPrototype.test.js` passes and exported payload shape/gates remain exact. | Yes |
 | no deploy/PDF/payment/backend touched | Scope diff check | Deploy files, PDF scripts, payment/QPay/backend/pricing/entitlement files, and forbidden product files have empty diffs. | Yes |
@@ -1582,7 +1582,7 @@ Runtime implementation is NOT approved by WP16.
 | adapter output rendered to users | BLOCKER | Adapter payload, preview sections, paid sections, safety sections, diagnostics, or owner debug appear in DOM or returned HTML. | Keep adapter output internal-only and scan returned HTML for adapter field names/content. | Block WP17 commit until no-render tests pass. |
 | payment/entitlement mutation | BLOCKER | QPay constants, prices, product codes, access helpers, mockBackend payment state, or entitlement behavior changes. | Do not touch payment/QPay/backend/pricing/entitlement files or helper behavior. | Block WP17 commit until forbidden diffs and access tests pass. |
 | localStorage regression | HIGH | Shadow path reads/writes storage, calls `saveState()`, adds keys, or persists adapter diagnostics. | Forbid localStorage access unless separately approved; test state and storage shape. | Block WP17 commit until storage no-mutation tests pass. |
-| existing report flow broken | HIGH | One-time, seven-day, readiness, professional, urgent, stage, or diary flow changes. | Add branch coverage for existing report flow with flag false. | Block WP17 commit until full report-flow regression passes. |
+| existing report flow broken | HIGH | One-time, removed-feature, readiness, professional, urgent, stage, or diary flow changes. | Add branch coverage for existing report flow with flag false. | Block WP17 commit until full report-flow regression passes. |
 | adapter failure breaks user flow | HIGH | Adapter error throws into runtime report rendering or blocks user navigation/report output. | Contain adapter failures to test-only enabled path; disabled path must not invoke risky code. | Block WP17 commit until failure-containment tests pass. |
 | internal keys visible | BLOCKER | Fixture names, mechanism keys, `ownerDebug`, `internalDiagnostics`, test-only status, or runtime gate metadata appear to users. | Scan returned HTML and user-facing fields for internal keys. | Block WP17 commit until leakage scans pass. |
 | safety guidance hidden | BLOCKER | Safety/professional guidance becomes payment-gated or ordinary experiments appear on professional-first route. | Preserve `paymentGate.safetyGuidanceRequiresPayment === false` and safety/professional branch priority. | Block WP17 commit until safety/payment tests pass. |

@@ -107,25 +107,12 @@ function run() {
   assert(reportUse.confirmed_summary);
 
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "one-time",
+    oneTimePaid: true,
     preliminary: [{ key: "executive", score: 5, label: "хүчтэй нийцэж байна" }],
-    stageAnswers: responses,
-    diaryEntries: Array.from({ length: 5 }, (_, index) => ({
-      day_number: index + 1,
-      meal_rhythm: "Хоолны хооронд 5+ цагийн зай гарсан",
-      unplanned_eating_count: "Тийм, 1 удаа",
-      main_moment_time: "Орой",
-      hunger_level: "8",
-      food_function: ["Хамгийн амар сонголт байсан"],
-      emotion: "Ядаргаа",
-      energy_score: "2",
-      stress_score: "4",
-      body_signals: ["Аль нь ч үгүй"],
-      pattern_probes: {},
-      confirmedSummaryObject: confirmed
-    }))
+    stageAnswers: responses
   });
-  assert(_internal.renderReport().includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"));
+  assert(_internal.renderReport().includes("3. Таны хамгийн магадлалтай гол хэв маяг"));
   assert(mechanismNamesByKey.decisionDefault === "Decision-Default Mismatch");
 }
 

@@ -15,10 +15,10 @@ function renderPaidReport(stageAnswers, extras = {}) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     preliminary: [],
-    diaryEntries: [],
+    removedEntries: [],
     stageVoiceSummaries: {},
     safetyFlags: [],
     stageAnswers: {
@@ -111,6 +111,21 @@ function run() {
   ]);
   assert(stressFatigueCue.length >= 8000, `stress/fatigue/cue report should be substantial, got ${stressFatigueCue.length}`);
   assertGlobalGuards(stressFatigueCue);
+
+  const sleepOnlyContext = renderPaidReport({
+    "S1-W02": ["Нойр муудсан"],
+    "S1-N01": "4-6 цаг",
+    "S1-N02": "Ихэвчлэн"
+  });
+  assert(!sleepOnlyContext.includes("Биеийн өөрчлөлттэй холбоотой санаа зовнил"), "sleep label must not trigger medication context through the embedded substring 'эм'");
+  assert(!sleepOnlyContext.includes("Эм, даралт, хоолны дуршлын өөрчлөлтөө"), "sleep-only answers must not receive medication guidance");
+
+  const medicationContext = renderPaidReport({
+    "S1-W02": ["Эм хэрэглэж эхэлсэн"]
+  });
+  assert(medicationContext.includes("Эм, даралт, хоолны дуршлын өөрчлөлтөө мэргэжлийн хүнтэй ярилцах"), "the exact medication option must retain rendered medical-context guidance");
+  assert(appSource.includes('["S1-W02", "S1-W04", "S1-V01"]'), "medical-context routing must remain scoped to stable question IDs");
+  assert(appSource.includes('(^|[\\s,;/])эм(?:ийн)?(?=$|[\\s,;/])'), "medical-context routing must retain token boundaries instead of arbitrary substring matching");
 
   const bodySignalSafety = renderPaidReport({
     "S1-B01": ["Толгой эргэх", "Зүрх дэлсэх", "Сахар унасан мэт"],

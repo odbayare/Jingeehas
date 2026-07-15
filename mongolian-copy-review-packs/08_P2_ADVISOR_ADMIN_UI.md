@@ -2,7 +2,7 @@
 
 Role-facing evidence only.
 
-## COPY-0562 — P2
+## COPY-0305 — P2
 
 **Exact current text**
 
@@ -21,7 +21,7 @@ Role-facing evidence only.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6951
+- Source line: 5930
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -60,7 +60,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0563 — P2
+## COPY-0306 — P2
 
 **Exact current text**
 
@@ -79,7 +79,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6954
+- Source line: 5933
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -119,7 +119,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0564 — P2
+## COPY-0307 — P2
 
 **Exact current text**
 
@@ -178,7 +178,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0565 — P2
+## COPY-0308 — P2
 
 **Exact current text**
 
@@ -197,7 +197,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6956
+- Source line: 5935
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -237,7 +237,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0566 — P2
+## COPY-0309 — P2
 
 **Exact current text**
 
@@ -256,7 +256,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6959
+- Source line: 5938
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -296,7 +296,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0567 — P2
+## COPY-0310 — P2
 
 **Exact current text**
 
@@ -315,7 +315,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6960
+- Source line: 5939
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -354,7 +354,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0568 — P2
+## COPY-0311 — P2
 
 **Exact current text**
 
@@ -373,7 +373,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6951
+- Source line: 5930
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -412,7 +412,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0569 — P2
+## COPY-0312 — P2
 
 **Exact current text**
 
@@ -431,7 +431,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6954
+- Source line: 5933
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -471,7 +471,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0570 — P2
+## COPY-0313 — P2
 
 **Exact current text**
 
@@ -530,7 +530,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0571 — P2
+## COPY-0314 — P2
 
 **Exact current text**
 
@@ -549,7 +549,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6956
+- Source line: 5935
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -589,7 +589,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0572 — P2
+## COPY-0315 — P2
 
 **Exact current text**
 
@@ -608,7 +608,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6943
+- Source line: 5922
 - Source function/object: submitCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -648,7 +648,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0573 — P2
+## COPY-0316 — P2
 
 **Exact current text**
 
@@ -667,7 +667,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6959
+- Source line: 5938
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -707,7 +707,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0574 — P2
+## COPY-0317 — P2
 
 **Exact current text**
 
@@ -726,7 +726,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6960
+- Source line: 5939
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -765,7 +765,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0575 — P2
+## COPY-0318 — P2
 
 **Exact current text**
 
@@ -823,7 +823,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0576 — P2
+## COPY-0319 — P2
 
 **Exact current text**
 
@@ -842,7 +842,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7027
+- Source line: 6006
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -882,7 +882,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0577 — P2
+## COPY-0320 — P2
 
 **Exact current text**
 
@@ -941,7 +941,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0578 — P2
+## COPY-0321 — P2
 
 **Exact current text**
 
@@ -1000,7 +1000,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0579 — P2
+## COPY-0322 — P2
 
 **Exact current text**
 
@@ -1019,7 +1019,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7031
+- Source line: 6010
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1059,7 +1059,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0580 — P2
+## COPY-0323 — P2
 
 **Exact current text**
 
@@ -1078,7 +1078,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7032
+- Source line: 6011
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1118,7 +1118,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0581 — P2
+## COPY-0324 — P2
 
 **Exact current text**
 
@@ -1137,7 +1137,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7033
+- Source line: 6012
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1177,7 +1177,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0582 — P2
+## COPY-0325 — P2
 
 **Exact current text**
 
@@ -1236,7 +1236,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0583 — P2
+## COPY-0326 — P2
 
 **Exact current text**
 
@@ -1255,7 +1255,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7034
+- Source line: 6013
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1295,7 +1295,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0584 — P2
+## COPY-0327 — P2
 
 **Exact current text**
 
@@ -1314,7 +1314,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7035
+- Source line: 6014
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1354,7 +1354,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0585 — P2
+## COPY-0328 — P2
 
 **Exact current text**
 
@@ -1373,7 +1373,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7036
+- Source line: 6015
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1413,7 +1413,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0586 — P2
+## COPY-0329 — P2
 
 **Exact current text**
 
@@ -1432,7 +1432,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7039
+- Source line: 6018
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1472,7 +1472,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0587 — P2
+## COPY-0330 — P2
 
 **Exact current text**
 
@@ -1491,7 +1491,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7040
+- Source line: 6019
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1531,7 +1531,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0588 — P2
+## COPY-0331 — P2
 
 **Exact current text**
 
@@ -1550,7 +1550,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7041
+- Source line: 6020
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1590,7 +1590,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0589 — P2
+## COPY-0332 — P2
 
 **Exact current text**
 
@@ -1609,7 +1609,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7042
+- Source line: 6021
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1649,7 +1649,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0590 — P2
+## COPY-0333 — P2
 
 **Exact current text**
 
@@ -1708,7 +1708,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0591 — P2
+## COPY-0334 — P2
 
 **Exact current text**
 
@@ -1727,7 +1727,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7047
+- Source line: 6026
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1767,7 +1767,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0592 — P2
+## COPY-0335 — P2
 
 **Exact current text**
 
@@ -1786,7 +1786,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7055
+- Source line: 6034
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty [FULL_SURFACE]
@@ -1825,7 +1825,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0593 — P2
+## COPY-0336 — P2
 
 **Exact current text**
 
@@ -1884,7 +1884,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0594 — P2
+## COPY-0337 — P2
 
 **Exact current text**
 
@@ -1943,7 +1943,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0595 — P2
+## COPY-0338 — P2
 
 **Exact current text**
 
@@ -2002,7 +2002,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0596 — P2
+## COPY-0339 — P2
 
 **Exact current text**
 
@@ -2061,7 +2061,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0597 — P2
+## COPY-0340 — P2
 
 **Exact current text**
 
@@ -2119,7 +2119,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0598 — P2
+## COPY-0341 — P2
 
 **Exact current text**
 
@@ -2177,7 +2177,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0599 — P2
+## COPY-0342 — P2
 
 **Exact current text**
 
@@ -2236,7 +2236,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0600 — P2
+## COPY-0343 — P2
 
 **Exact current text**
 
@@ -2255,7 +2255,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7095
+- Source line: 6074
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -2295,7 +2295,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0601 — P2
+## COPY-0344 — P2
 
 **Exact current text**
 
@@ -2314,7 +2314,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7096
+- Source line: 6075
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -2354,7 +2354,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0602 — P2
+## COPY-0345 — P2
 
 **Exact current text**
 
@@ -2413,7 +2413,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0603 — P2
+## COPY-0346 — P2
 
 **Exact current text**
 
@@ -2432,7 +2432,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7098
+- Source line: 6077
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -2472,7 +2472,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0604 — P2
+## COPY-0347 — P2
 
 **Exact current text**
 
@@ -2491,7 +2491,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7104
+- Source line: 6083
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -2531,7 +2531,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0605 — P2
+## COPY-0348 — P2
 
 **Exact current text**
 
@@ -2550,7 +2550,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 7105
+- Source line: 6084
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]

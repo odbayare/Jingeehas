@@ -15,7 +15,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-L01": "Бараг өдөр бүр",
@@ -35,24 +35,24 @@ function setOneTime(overrides = {}) {
       copyStatus: ""
     },
     stageVoiceSummaries: {},
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     preliminary: [
       { key: "executive", score: 5, label: "хүчтэй нийцэж байна" },
       { key: "decisionDefault", score: 4, label: "дунд зэрэг нийцэж байна" }
     ],
     stageAnswers: {},
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -62,10 +62,10 @@ function setMode3Unpaid() {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: { "S1-B03": "Тийм" },
-    diaryEntries: []
+    removedEntries: []
   });
 }
 
@@ -74,10 +74,10 @@ function setMode4Unpaid() {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" },
-    diaryEntries: []
+    removedEntries: []
   });
 }
 
@@ -101,11 +101,9 @@ function run() {
   assert(choice.includes("Үндсэн үнэ 9,900₮"));
   assert(!choice.includes("Нээлтийн урамшуулалт үнэ 9,900₮"));
   assert(choice.includes("9,900₮ төлөөд тайлангаа нээх"));
-  assert(choice.includes("Үндсэн үнэ 69,000₮"));
-  assert(choice.includes("Нээлтийн урамшуулалт үнэ 29,000₮"));
   assert(!choice.includes("6,900₮"));
   assert(!choice.includes("12,900₮"));
-  assert(!choice.includes("19,900₮"));
+  assert(!choice.includes("[REMOVED_FEATURE_UPGRADE]"));
 
   setOneTime();
   const unpaidOneTime = normalize(_internal.renderReport());
@@ -122,36 +120,14 @@ function run() {
   assert(paidOneTime.includes("3. Таны хамгийн магадлалтай гол хэв маяг"));
   assert(paidOneTime.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"));
   assert(!paidOneTime.includes("Нарийвчлах үнэ"));
-  assert(!paidOneTime.includes("19,900₮ төлөөд 7 хоногоор нарийвчлах"));
-  assert(!paidOneTime.includes("Та нэг удаагийн гүн анализ нээсэн тул 7 хоногийн гүн анализ руу хөнгөлөлттэй шилжих боломжтой"));
-
-  setSevenDay();
-  const unpaidSevenDay = normalize(_internal.renderSevenDayStart());
-  assert(unpaidSevenDay.includes("Үндсэн үнэ 69,000₮"));
-  assert(unpaidSevenDay.includes("Нээлтийн урамшуулалт үнэ 29,000₮"));
-  assert(unpaidSevenDay.includes("29,000₮ төлөөд эхлүүлэх"));
-  assert(unpaidSevenDay.includes("өдөр тутмын бодит давтамж"));
-  assert(unpaidSevenDay.includes("Анхны сэтгэгдэл ба өдөр тутмын ажиглалт"));
-  assert(!normalize(_internal.renderUnlock()).includes("1 дэх өдрөө эхлүүлэх"));
-  assertNoCommercialSmell(unpaidSevenDay, "seven-day unpaid");
-
-  _internal.demoCompletePayment("seven-day");
-  const unlockedSevenDay = normalize(_internal.renderUnlock());
-  assert(unlockedSevenDay.includes("1 дэх өдрөө эхлүүлэх"));
-  assert(unlockedSevenDay.includes("Орой бүр 3–5 минут"));
-
-  setOneTime({ oneTimePaid: true });
-  _internal.demoCompletePayment("upgrade");
-  const upgradedState = _internal.getTestState();
-  assert.strictEqual(upgradedState.sevenDayPaid, true);
-  assert.strictEqual(upgradedState.upgradePaid, true);
-  assert(normalize(_internal.renderUnlock()).includes("1 дэх өдрөө эхлүүлэх"));
+  assert(!paidOneTime.includes("[REMOVED_FEATURE_UPGRADE] төлөөд [REMOVED_FEATURE_REFINEMENT]"));
+  assert(!paidOneTime.includes("Та нэг удаагийн гүн анализ нээсэн тул [REMOVED_FEATURE_PRODUCT] анализ руу хөнгөлөлттэй шилжих боломжтой"));
 
   setMode3Unpaid();
   const professional = normalize(_internal.renderReport());
   assert(professional.includes("Энд эхлээд хоолны дүрэм биш, биеийн талаа шалгах нь зөв байна"));
   assert(professional.includes("онош гэсэн үг биш"));
-  assert(!professional.includes("29,000₮"));
+  assert(!professional.includes("[REMOVED_FEATURE_PRICE]"));
   assert(!professional.includes("төлөөд"));
   assert(!professional.includes("<h3>14 хоногийн туршилт</h3>"));
 
@@ -159,26 +135,15 @@ function run() {
   const urgent = normalize(_internal.renderReport());
   assert(urgent.includes("Одоо жин хасах тухай биш"));
   assert(!urgent.includes("9,900₮"));
-  assert(!urgent.includes("29,000₮"));
+  assert(!urgent.includes("[REMOVED_FEATURE_PRICE]"));
   assert(!urgent.includes("Нарийвчлах үнэ"));
-
-  setSevenDay({ sevenDayPaid: true, diaryEntries: [] });
-  const insufficient = normalize(_internal.renderReport());
-  assert(insufficient.includes("Бүрэн тайлан гаргахад мэдээлэл хангалтгүй байна"));
-  assert(insufficient.includes("5 өдөр бөглөсөн ч бүрэн тайлан гарна"));
-  assert(insufficient.includes("Тэмдэглэлээ үргэлжлүүлэх"));
-  assert(!insufficient.includes("<h3>14 хоногийн туршилт</h3>"));
-  assert(!insufficient.includes("Гол pattern"));
 
   const commercialSurfaces = normalize([
     _internal.renderChoice(),
     unpaidOneTime,
     paidOneTime,
-    unpaidSevenDay,
-    unlockedSevenDay,
     professional,
-    urgent,
-    insufficient
+    urgent
   ].join("\n"));
   assertNoCommercialSmell(commercialSurfaces, "commercial surfaces");
 

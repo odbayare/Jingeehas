@@ -12,11 +12,11 @@ function runReport(stageAnswers) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers,
     preliminary: [],
-    diaryEntries: [],
+    removedEntries: [],
     stageVoiceSummaries: {}
   });
   return {

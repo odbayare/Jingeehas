@@ -41,7 +41,7 @@ The contract should be generated from current answers, diary evidence, old mecha
   "wrong_self_explanation": {},
   "first_gentle_change": {},
   "fourteen_day_experiment_hypothesis": {},
-  "seven_day_diary_confirmation_targets": [],
+  "removed_feature_diary_confirmation_targets": [],
   "evidence_sources": [],
   "copy_constraints": []
 }
@@ -243,7 +243,7 @@ Example:
 }
 ```
 
-## `seven_day_diary_confirmation_targets`
+## `removed_feature_diary_confirmation_targets`
 
 Each target should specify what diary evidence would confirm, weaken, or redirect the stack.
 

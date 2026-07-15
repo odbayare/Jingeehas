@@ -4,7 +4,7 @@ Scope: test fixture planning only. These are not user-facing personas and should
 
 ## Fixture Design Principles
 
-- Each fixture should include current `stageAnswers` and optional `diaryEntries`.
+- Each fixture should include current `stageAnswers` and optional `removedEntries`.
 - Each fixture should still pass through the current mechanism engine.
 - Expected results should assert new driver-stack fields, not report copy.
 - Safety fixtures must verify ordinary report/experiment suppression.
@@ -225,7 +225,7 @@ name
 description
 stageAnswers
 stageVoiceSummaries if needed
-diaryEntries if needed
+removedEntries if needed
 expectedCurrentMode
 expectedOldMechanisms
 expectedDriverStack

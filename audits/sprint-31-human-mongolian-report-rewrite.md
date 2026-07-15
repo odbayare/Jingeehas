@@ -16,7 +16,7 @@ Sprint 31 rewrote the public report voice only. The work focused on:
 - `Одоогоор болгоомжлох зүйлс`
 - `Эхний жижиг өөрчлөлт`
 - `14 хоногийн туршилт`
-- `7 хоногоор нарийвчлах`
+- `[REMOVED_FEATURE_REFINEMENT]`
 - menstrual-cycle report notes
 - PDF/Markdown export wording
 

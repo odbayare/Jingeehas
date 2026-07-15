@@ -22,7 +22,7 @@ Default runtime report behavior remains unchanged because the guard is false.
 
 ## Runtime Wiring
 
-`renderReport()` routes ordinary one-time and seven-day report HTML through `renderReportWithRuntimeVisibleSurface(...)` with:
+`renderReport()` routes ordinary one-time and removed-feature report HTML through `renderReportWithRuntimeVisibleSurface(...)` with:
 
 ```js
 enabled: ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION

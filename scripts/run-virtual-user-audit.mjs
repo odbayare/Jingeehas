@@ -184,11 +184,11 @@ function runPersona(persona) {
     packageType: persona.packageType,
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: true,
     stageAnswers: persona.stageAnswers,
     stageVoiceSummaries,
-    diaryEntries: persona.diaryEntries || [],
+    removedEntries: persona.removedEntries || [],
     preliminary: []
   };
 
@@ -219,7 +219,7 @@ function runPersona(persona) {
     paywallReportAccessState: {
       packageType: state.packageType,
       oneTimePaid: state.oneTimePaid,
-      sevenDayPaid: state.sevenDayPaid,
+      removedFeaturePaid: state.removedFeaturePaid,
       upgradePaid: state.upgradePaid,
       reportAccess: "internal-audit-unlocked"
     },
@@ -244,7 +244,7 @@ const personas = [
   {
     id: "user-01",
     label: "Executive load / evening collapse",
-    packageType: "seven-day",
+    packageType: "removed-feature",
     expectedMode: "deep",
     expectedMechanisms: [M.executive, M.decisionDefault],
     profile: {
@@ -270,7 +270,7 @@ const personas = [
       "S1-L03": ["Цаг", "Ядаргаа", "Юу хийхээ шийдэх"],
       "S1-S04": "Үгүй"
     },
-    diaryEntries: entries(5, (day) => diary(day, {
+    removedEntries: entries(5, (day) => diary(day, {
       meal_rhythm: day === 3 ? "2-3 тогтмол хоол" : "Хоолны хооронд 5+ цагийн зай гарсан",
       hunger_level: day === 3 ? "4" : "8",
       food_function: ["Хамгийн амар сонголт байсан", "Ядарсан"],
@@ -283,7 +283,7 @@ const personas = [
   {
     id: "user-02",
     label: "Stress regulation / food as calming",
-    packageType: "seven-day",
+    packageType: "removed-feature",
     expectedMode: "deep",
     expectedMechanisms: [M.regulation],
     profile: {
@@ -307,7 +307,7 @@ const personas = [
       "S1-F02": "Түр гайгүй болоод гэмшдэг",
       "S1-S04": "Үгүй"
     },
-    diaryEntries: entries(5, (day) => diary(day, {
+    removedEntries: entries(5, (day) => diary(day, {
       hunger_level: "4",
       food_function: ["Тайвширмаар байсан"],
       emotion: day % 2 ? "Стресс" : "Санаа зовнил",
@@ -348,7 +348,7 @@ const personas = [
   {
     id: "user-04",
     label: "Hunger safety / scarcity pattern",
-    packageType: "seven-day",
+    packageType: "removed-feature",
     expectedMode: "deep",
     expectedMechanisms: [M.hungerSafety],
     profile: {
@@ -372,7 +372,7 @@ const personas = [
       "S1-H01": "Хэт өлстлөө хүлээгээд хэтрүүлдэг",
       "S1-S04": "Үгүй"
     },
-    diaryEntries: entries(5, (day) => diary(day, {
+    removedEntries: entries(5, (day) => diary(day, {
       meal_rhythm: "Хоолны хооронд 5+ цагийн зай гарсан",
       hunger_level: "9",
       food_function: ["Биеэрээ өлссөн", "Дараа өлсөхөөс санаа зовсон"],
@@ -382,7 +382,7 @@ const personas = [
   {
     id: "user-05",
     label: "Reward deficit / daily pleasure gap",
-    packageType: "seven-day",
+    packageType: "removed-feature",
     expectedMode: "deep",
     expectedMechanisms: [M.rewardDeficit, M.reward, M.roleOverload],
     profile: {
@@ -404,7 +404,7 @@ const personas = [
       "S1-E02": ["Хоосон/flat мэдрэмж", "Ядаргаа"],
       "S1-S04": "Үгүй"
     },
-    diaryEntries: entries(5, (day) => diary(day, {
+    removedEntries: entries(5, (day) => diary(day, {
       food_function: ["Өөрийгөө шагнамаар байсан", "Ядарсан"],
       emotion: "Ядаргаа",
       energy_score: "2",
@@ -444,7 +444,7 @@ const personas = [
   {
     id: "user-07",
     label: "Sleep/circadian mismatch",
-    packageType: "seven-day",
+    packageType: "removed-feature",
     expectedMode: "deep",
     expectedMechanisms: [M.circadian, M.executive, M.reward],
     profile: {
@@ -467,7 +467,7 @@ const personas = [
       "S1-E02": ["Ядаргаа", "Хоосон/flat мэдрэмж"],
       "S1-S04": "Үгүй"
     },
-    diaryEntries: entries(5, (day) => diary(day, {
+    removedEntries: entries(5, (day) => diary(day, {
       sleep: ["4-6 цаг", "Чанар муу"],
       energy_score: "2",
       emotion: "Ядаргаа",
@@ -478,7 +478,7 @@ const personas = [
   {
     id: "user-08",
     label: "Medical / medication / physiological friction",
-    packageType: "seven-day",
+    packageType: "removed-feature",
     expectedMode: "professional",
     expectedMechanisms: [M.medical, M.glucose],
     profile: {
@@ -500,7 +500,7 @@ const personas = [
       "S1-B04": ["Хавагнадаг", "Маш их ядардаг"],
       "S1-S04": "Үгүй"
     },
-    diaryEntries: entries(5, (day) => diary(day, {
+    removedEntries: entries(5, (day) => diary(day, {
       meal_rhythm: "2-3 тогтмол хоол",
       hunger_level: "5",
       food_function: ["Мэдэхгүй"],
@@ -511,7 +511,7 @@ const personas = [
   {
     id: "user-09",
     label: "Glucose/BP concern",
-    packageType: "seven-day",
+    packageType: "removed-feature",
     expectedMode: "professional",
     expectedMechanisms: [M.glucose, M.physiological, M.medical],
     profile: {
@@ -534,7 +534,7 @@ const personas = [
       "S1-B03": "Тийм",
       "S1-S04": "Үгүй"
     },
-    diaryEntries: entries(5, (day) => diary(day, {
+    removedEntries: entries(5, (day) => diary(day, {
       meal_rhythm: "Хоолны хооронд 5+ цагийн зай гарсан",
       hunger_level: "8",
       food_function: ["Биеэрээ өлссөн", "Дараа өлсөхөөс санаа зовсон"],
@@ -773,7 +773,7 @@ ${auditTable(results)}
 2. ${openingFinding}
 3. The word "давтамж" still appears often; it is accurate but can feel repeated in a paid report.
 4. Executive-load phrasing is improved, but some users may still find it abstract without a concrete evening example.
-5. One-time reports have less diary-backed specificity than seven-day reports, which is expected but commercially important.
+5. One-time reports have less diary-backed specificity than removed-feature reports, which is expected but commercially important.
 6. Medical users are correctly routed, but their report value depends heavily on how clear the professional discussion summary feels.
 7. Cue/default users can overlap with reward users, so the report should keep environment-specific examples prominent.
 8. Restriction-collapse reports can feel emotionally intense; wording should continue avoiding shame amplification.

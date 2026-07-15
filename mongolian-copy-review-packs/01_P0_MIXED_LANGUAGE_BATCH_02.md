@@ -2,125 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0651 — P0
-
-**Exact current text**
-
-> Дотоод туршилтын санал асуулгын JSON таталт.
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
-- Surface: OTHER_PROVEN_RENDERED
-- Role: INTERNAL_TESTER
-- Scenario: internal-feedback-export
-- Render source: renderFeedbackExport with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 7204
-- Source function/object: renderFeedbackExport
-- Source mapping: RESOLVED
-- Render proof: renderFeedbackExport with internalTest state via internal-feedback-export [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h2>Саналын экспорт</h2>
-
-**Source item**
-
-> <p class="muted">Дотоод туршилтын санал асуулгын JSON таталт.</p>
-
-**Source context after**
-
-> <pre class="feedback-export-json">${escapeHtml(JSON.stringify(records, null, 2))}</pre>
-
-**Rendered context**
-
-> Дахин эхлэх
-> Дотоод туршилтын санал асуулгын JSON таталт.
-> []
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0665 — P0
-
-**Exact current text**
-
-> QPay QR үүсгэж байна.
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
-- Surface: QPAY
-- Role: PUBLIC_USER
-- Scenario: qpay-invoice-created
-- Render source: renderWeightQpayPaymentBox
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 1547
-- Source function/object: qpayStatusMessage
-- Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> return {
-
-**Source item**
-
-> creating: "QPay QR үүсгэж байна.",
-
-**Source context after**
-
-> pending: "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
-
-**Rendered context**
-
-> Сонголт руу буцах
-> QPay QR үүсгэж байна.
-> Утаснаас төлөх бол банкны апп сонгож болно.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0667 — P0
+## COPY-0410 — P0
 
 **Exact current text**
 
@@ -179,7 +61,7 @@ UNRESOLVED_LATIN_TERM
 - Approval date:
 - Notes:
 
-## COPY-0668 — P0
+## COPY-0411 — P0
 
 **Exact current text**
 
@@ -198,7 +80,7 @@ UNRESOLVED_LATIN_TERM
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4218
+- Source line: 3323
 - Source function/object: renderQpayMobilePaymentSurface
 - Source mapping: RESOLVED
 - Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
@@ -238,7 +120,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0669 — P0
+## COPY-0412 — P0
 
 **Exact current text**
 
@@ -257,7 +139,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4222
+- Source line: 3327
 - Source function/object: renderQpayMobilePaymentSurface
 - Source mapping: RESOLVED
 - Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
@@ -297,7 +179,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0670 — P0
+## COPY-0413 — P0
 
 **Exact current text**
 
@@ -356,7 +238,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0676 — P0
+## COPY-0419 — P0
 
 **Exact current text**
 
@@ -415,7 +297,7 @@ UNRESOLVED_LATIN_TERM
 - Approval date:
 - Notes:
 
-## COPY-0677 — P0
+## COPY-0420 — P0
 
 **Exact current text**
 
@@ -434,7 +316,7 @@ UNRESOLVED_LATIN_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4218
+- Source line: 3323
 - Source function/object: renderQpayMobilePaymentSurface
 - Source mapping: RESOLVED
 - Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
@@ -474,7 +356,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0678 — P0
+## COPY-0421 — P0
 
 **Exact current text**
 
@@ -493,7 +375,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4222
+- Source line: 3327
 - Source function/object: renderQpayMobilePaymentSurface
 - Source mapping: RESOLVED
 - Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
@@ -533,7 +415,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0679 — P0
+## COPY-0422 — P0
 
 **Exact current text**
 
@@ -592,7 +474,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0682 — P0
+## COPY-0425 — P0
 
 **Exact current text**
 
@@ -611,7 +493,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 1551
+- Source line: 1480
 - Source function/object: qpayStatusMessage
 - Source mapping: RESOLVED
 - Render proof: renderWeightQpayPaymentBox with qpayStatusMessage(error) via qpay-error [ISOLATED_COMPONENT]
@@ -650,7 +532,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0942 — P0
+## COPY-0683 — P0
 
 **Exact current text**
 
@@ -664,15 +546,15 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 335
+- Source line: 320
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -709,7 +591,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-1165 — P0
+## COPY-0906 — P0
 
 **Exact current text**
 
@@ -723,7 +605,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
@@ -731,7 +613,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -768,7 +650,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-1238 — P0
+## COPY-0916 — P0
 
 **Exact current text**
 

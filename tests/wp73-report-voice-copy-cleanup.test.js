@@ -22,37 +22,37 @@ function setOneTime(stageAnswers = {}, extras = {}) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-S04": "Үгүй",
       ...stageAnswers
     },
-    diaryEntries: [],
+    removedEntries: [],
     ...extras
   });
   return _internal.renderReport();
 }
 
-function setSevenDay(stageAnswers = {}, diaryEntries = [], extras = {}) {
+function setRemovedFeature(stageAnswers = {}, removedEntries = [], extras = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     internalTest: true,
     oneTimePaid: false,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: false,
     stageAnswers: {
       "S1-S04": "Үгүй",
       ...stageAnswers
     },
-    diaryEntries,
+    removedEntries,
     ...extras
   });
   return _internal.renderReport();
 }
 
-function rewardDiaryEntries() {
+function rewardObservationFixtures() {
   return Array.from({ length: 5 }, (_, index) => ({
     day_number: index + 1,
     meal_rhythm: "2-3 тогтмол хоол",
@@ -68,7 +68,7 @@ function rewardDiaryEntries() {
   }));
 }
 
-function collapseDiaryEntries() {
+function collapseObservationFixtures() {
   return Array.from({ length: 5 }, (_, index) => ({
     day_number: index + 1,
     meal_rhythm: "2-3 тогтмол хоол",
@@ -107,21 +107,21 @@ function run() {
   assert(!collapseOneTime.includes("Эхний жижиг өөрчлөлт"), "one-time report should avoid mechanical first-change wording");
   assert(!cycleText(collapseOneTimeHtml).includes(" 4."), "collapse cycle text should not contain stray trailing numbers");
 
-  const rewardSevenDay = normalize(setSevenDay({
+  const rewardOneTimeEquivalent = normalize(setOneTime({
     "S1-V01": "Өөрийн хэрэгцээ өдөржин хойшлогдоод орой амттай зүйл хүсдэг."
-  }, rewardDiaryEntries()));
-  assert(rewardSevenDay.includes("Хамгийн хялбар эхлэх цэг") || rewardSevenDay.includes("Авч хэрэгжүүлж болох эхний алхам"), "seven-day report should use natural first-step wording");
-  assert(!rewardSevenDay.includes("Эхний жижиг өөрчлөлт"), "seven-day report should avoid mechanical first-change wording");
+  }));
+  assert(rewardOneTimeEquivalent.includes("Танд тохирох эхний стратеги"), "one-time report should use natural first-step wording");
+  assert(!rewardOneTimeEquivalent.includes("Эхний жижиг өөрчлөлт"), "one-time report should avoid mechanical first-change wording");
 
-  const compressedCycle = normalize(setSevenDay({
+  const compressedCycle = normalize(setOneTime({
     "S1-C02": "Эмэгтэй",
     "MC-GATE": "Тийм, хамаарна",
     "MC-03": "Сарын тэмдэг ирэхээс хэд хоногийн өмнө",
     "MC-04": ["Амттай юм, гурилан зүйл илүү хүсдэг", "Сэтгэл санаа савлах үед идэх хүсэл нэмэгддэг", "Ядаргаа, нойр муудахтай давхцдаг"],
     "S1-R02": ["Сарын тэмдэг ирэхийн өмнөх өдрүүдэд"]
-  }, rewardDiaryEntries()));
-  assert(compressedCycle.includes("Сарын тэмдэг ирэхээс өмнөх"), "compressed seven-day report should keep menstrual-cycle meaning");
-  assert(!compressedCycle.includes("Эхний жижиг өөрчлөлт"), "compressed seven-day report should avoid mechanical first-change wording");
+  }));
+  assert(/сарын тэмдэг ирэх(ийн|ээс) өмнөх/i.test(compressedCycle), "one-time report should keep menstrual-cycle meaning");
+  assert(!compressedCycle.includes("Эхний жижиг өөрчлөлт"), "compressed removed-feature report should avoid mechanical first-change wording");
 
   const bodySafety = normalize(setOneTime({
     "S1-B01": ["Сахар унасан мэт", "Толгой эргэх"],
@@ -130,12 +130,12 @@ function run() {
   assert(bodySafety.includes("мэргэжлийн хүнтэй ярилцах"), "body-signal route should keep professional safety guidance");
   assert(bodySafety.includes("хоолоо огцом хасах") || bodySafety.includes("мацаг"), "body-signal route should not weaken safety caution");
 
-  const collapseSevenDay = normalize(setSevenDay({
+  const collapseOneTimeEquivalent = normalize(setOneTime({
     "S1-W06": "Өнөөдөр өнгөрлөө, маргаашаас",
     "S1-F02": "Одоо бүх юм дууссан"
-  }, collapseDiaryEntries()));
-  assert(!collapseSevenDay.includes("Гол гацалт Гол гацалт"), "seven-day report should not duplicate the main-stuck heading");
-  assert(!collapseSevenDay.includes("Эхний жижиг өөрчлөлт"), "seven-day collapse report should avoid mechanical first-change wording");
+  }));
+  assert(!collapseOneTimeEquivalent.includes("Гол гацалт Гол гацалт"), "one-time report should not duplicate the main-stuck heading");
+  assert(!collapseOneTimeEquivalent.includes("Эхний жижиг өөрчлөлт"), "one-time collapse report should avoid mechanical first-change wording");
 }
 
 run();

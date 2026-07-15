@@ -33,7 +33,7 @@ WP18 does not implement visible report rendering, does not change `app.js`, does
 - No adapter payload section is rendered into returned report HTML.
 - No `previewSections`, `paidSections`, or `safetyGuidanceSections` surface is wired to visible UI.
 - No new browser global, UI control, localStorage persistence, payment call, QPay call, backend call, pricing rule, entitlement rule, deploy path, or PDF path was introduced by WP17.
-- `tests/runtime-adapter-shadow-integration.test.js` asserts disabled shadow output invariance across one-time, paywall, seven-day, readiness hold, professional, and urgent report paths.
+- `tests/runtime-adapter-shadow-integration.test.js` asserts disabled shadow output invariance across one-time, paywall, removed-feature, readiness hold, professional, and urgent report paths.
 - `tests/runtime-adapter-shadow-integration.test.js` scans returned HTML for adapter field names, internal metadata names, and raw fixture names.
 - `tests/run-all.js` registers `tests/runtime-adapter-shadow-integration.test.js`.
 - WP17 owner artifacts record passing validation, including `npm test`, `node --check app.js`, and the WP17 returned HTML adapter leak scan.

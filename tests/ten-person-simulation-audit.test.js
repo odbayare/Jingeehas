@@ -76,7 +76,7 @@ function buildState(persona) {
     stageAnswers: persona.stageAnswers || {},
     stageVoiceSummaries,
     preliminary: persona.preliminary || [],
-    diaryEntries: persona.diaryEntries || []
+    removedEntries: persona.removedEntries || []
   };
 }
 
@@ -131,7 +131,7 @@ const personas = [
   {
     id: "45m-office-executive-load",
     name: "45M Office Worker / Executive Load",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-C01": "45",
       "S1-C02": "Эрэгтэй",
@@ -148,7 +148,7 @@ const personas = [
       "S1-B03": "Үгүй",
       "S1-S04": "Үгүй"
     },
-    diaryEntries: repeat(5, day => diary(day, {
+    removedEntries: repeat(5, day => diary(day, {
       meal_rhythm: day === 2 ? "2-3 тогтмол хоол" : "Хоолны хооронд 5+ цагийн зай гарсан",
       unplanned_eating_count: day === 2 ? "Үгүй" : "Тийм, 1 удаа",
       hunger_level: day === 2 ? "4" : "8",
@@ -167,7 +167,7 @@ const personas = [
   {
     id: "36f-mother-role-overload",
     name: "36F Mother / Role Overload + Reward Deficit",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-C01": "36",
       "S1-C02": "Эмэгтэй",
@@ -178,7 +178,7 @@ const personas = [
       "S1-S04": "Үгүй"
     },
     stageSummaries: [{ id: "S1-V01", bullets: ["Хүүхдүүд унтсаны дараа өөрийн цаг эхэлдэг", "Орой reward хэрэгцээ нэмэгддэг", "Бусдын хэрэгцээ түрүүнд явдаг"] }],
-    diaryEntries: repeat(5, day => diary(day, {
+    removedEntries: repeat(5, day => diary(day, {
       food_function: ["Өөрийгөө шагнамаар байсан", "Ядарсан"],
       emotion: "Ядаргаа",
       energy_score: "2",
@@ -214,7 +214,7 @@ const personas = [
   {
     id: "40m-fasting-rebound",
     name: "40M Fasting Rebound / Hunger-Safety",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-C01": "40",
       "S1-C02": "Эрэгтэй",
@@ -226,7 +226,7 @@ const personas = [
       "S1-G02": "Тийм",
       "S1-S04": "Үгүй"
     },
-    diaryEntries: repeat(5, day => diary(day, {
+    removedEntries: repeat(5, day => diary(day, {
       meal_rhythm: "Өдөр бага идээд орой нөхсөн",
       hunger_level: "9",
       food_function: ["Биеэрээ өлссөн", "Дараа өлсөхөөс санаа зовсон"],
@@ -240,7 +240,7 @@ const personas = [
   {
     id: "33f-stress-eating",
     name: "33F Stress Eating / Food-as-Regulation",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-C01": "33",
       "S1-C02": "Эмэгтэй",
@@ -250,7 +250,7 @@ const personas = [
       "S1-F02": "Түр гайгүй болоод гэмшдэг",
       "S1-S04": "Үгүй"
     },
-    diaryEntries: repeat(5, day => diary(day, {
+    removedEntries: repeat(5, day => diary(day, {
       stress_score: "8",
       emotion: day % 2 ? "Стресс" : "Санаа зовнил",
       food_function: ["Тайвширмаар байсан"],
@@ -284,7 +284,7 @@ const personas = [
   {
     id: "50f-medication-friction",
     name: "50F Medical/Medication Friction",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-C01": "50",
       "S1-C02": "Эмэгтэй",
@@ -294,7 +294,7 @@ const personas = [
       "S1-B04": ["Маш их ядардаг"],
       "S1-S04": "Үгүй"
     },
-    diaryEntries: repeat(5, day => diary(day, {
+    removedEntries: repeat(5, day => diary(day, {
       meal_rhythm: "2-3 тогтмол хоол",
       hunger_level: "5",
       food_function: ["Мэдэхгүй"],
@@ -330,7 +330,7 @@ const personas = [
   {
     id: "39m-social-alcohol",
     name: "39M Social/Alcohol Pattern",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-C01": "39",
       "S1-C02": "Эрэгтэй",
@@ -339,7 +339,7 @@ const personas = [
       "S1-X01": "Уур/эсэргүүцэл",
       "S1-S04": "Үгүй"
     },
-    diaryEntries: repeat(5, day => diary(day, {
+    removedEntries: repeat(5, day => diary(day, {
       main_moment_time: day >= 4 ? "Хүмүүсийн дунд эсвэл арга хэмжээний үеэр" : "Орой",
       food_function: day >= 4 ? ["Хүмүүсийн дунд татгалзах эвгүй байсан", "Амттай юм хүссэн"] : ["Өөрийгөө шагнамаар байсан"],
       drinks: day >= 4 ? ["Согтууруулах ундаа"] : [],
@@ -353,7 +353,7 @@ const personas = [
   {
     id: "42f-sleep-circadian",
     name: "42F Sleep/Circadian",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-C01": "42",
       "S1-C02": "Эмэгтэй",
@@ -363,7 +363,7 @@ const personas = [
       "S1-F01": ["Ядарсан", "Амттай юм хүссэн"],
       "S1-S04": "Үгүй"
     },
-    diaryEntries: repeat(5, day => diary(day, {
+    removedEntries: repeat(5, day => diary(day, {
       sleep: ["4-6 цаг", "Чанар муу"],
       energy_score: "2",
       emotion: "Ядаргаа",
@@ -394,11 +394,11 @@ function validatePersona(persona) {
   });
   assertNoAiSmell(result.text, persona.name);
   if (persona.packageType === "one-time" && !persona.suppressExperiment) {
-    assert(!result.text.includes("7 хоногоор нарийвчлах"), `${persona.name}: WP62 one-time report should not mix in 7-day CTA`);
+    assert(!result.text.includes("[REMOVED_FEATURE_REFINEMENT]"), `${persona.name}: WP62 one-time report should not mix in 7-day CTA`);
   }
-  if (persona.packageType === "seven-day" && result.mode === "deep") {
-    assert(result.text.includes("Яагаад ингэж хэлж байна вэ?"), `${persona.name}: evidence note missing`);
-    assert(result.text.includes("14 хоногийн туршилт"), `${persona.name}: staged experiment missing`);
+  if (persona.packageType === "one-time" && result.mode === "deep") {
+    assert(result.text.includes("Яагаад ингэж хэлж байна вэ?") || result.text.includes("2. Энэ дүгнэлт юунд тулгуурласан бэ?"), `${persona.name}: evidence note missing`);
+    assert(result.text.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), `${persona.name}: staged experiment missing`);
   }
   if (persona.suppressExperiment || ["professional", "urgent"].includes(result.mode)) {
     assert(!result.text.includes("<h3>14 хоногийн туршилт</h3>"), `${persona.name}: experiment should be suppressed`);

@@ -15,7 +15,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     qpayPayment: {
       status: "idle",
@@ -41,7 +41,7 @@ function setOneTime(overrides = {}) {
       { key: "decisionDefault", score: 4, label: "дунд зэрэг нийцэж байна" }
     ],
     stageVoiceSummaries: {},
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -61,12 +61,12 @@ function diaryEntry(overrides = {}) {
   };
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: false,
     qpayPayment: {
       status: "idle",
@@ -75,7 +75,7 @@ function setSevenDay(overrides = {}) {
     },
     currentAssessmentId: null,
     preliminary: [{ key: "hungerSafety", score: 4, label: "дунд зэрэг нийцэж байна" }],
-    diaryEntries: [
+    removedEntries: [
       diaryEntry({ day_number: 1 }),
       diaryEntry({ day_number: 2 }),
       diaryEntry({ day_number: 3 }),
@@ -175,9 +175,6 @@ assert(appSource.includes("const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = tr
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time price label must remain unchanged");
 assert(appSource.includes('oneTimeAnchor: "9,900₮"'), "one-time anchor price label must remain unchanged");
 assert(appSource.includes('coachOneTime: "9,900₮"'), "coach price label must remain unchanged");
-assert(appSource.includes('sevenDay: "29,000₮"'), "seven-day price label must remain unchanged");
-assert(appSource.includes('sevenDayAnchor: "69,000₮"'), "seven-day anchor price label must remain unchanged");
-assert(appSource.includes('upgrade: "19,900₮"'), "upgrade price label must remain unchanged");
 assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price constant must remain unchanged");
 assert(appSource.includes("const COACH_WEIGHT_PRICE_MNT = 9900;"), "coach price constant must remain unchanged");
 assert(appSource.includes("const WEIGHT_TEST_AMOUNT_MNT = 9900;"), "QPay amount constant must remain unchanged");
@@ -241,9 +238,7 @@ withLocalStorageMutationSpy(() => {
   });
   assertTrustedOutput(_internal.renderReport(), "body trust paid output");
 
-  setSevenDay({
-    diaryEntries: [diaryEntry({ pattern_probes: { measured_today: "Тийм, санаа зовоосон" } })]
-  });
+  setOneTime({ oneTimePaid: false, stageAnswers: { "S1-S03": "Одоо давтагддаг" } });
   const professionalHtml = _internal.renderReport();
   const professional = normalize(professionalHtml);
   assert.strictEqual(_internal.reportMode().mode, "professional", "professional setup must route to professional mode");
@@ -252,9 +247,7 @@ withLocalStorageMutationSpy(() => {
   assert(!professional.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "professional output must not show paid depth");
   assert(!professional.includes("14 хоногийн туршилт"), "professional output must not show paid experiment");
 
-  setSevenDay({
-    diaryEntries: [diaryEntry({ pattern_probes: { glucose_signals: ["Будилах / ухаан балартах"] } })]
-  });
+  setOneTime({ oneTimePaid: false, stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } });
   const urgentHtml = _internal.renderReport();
   const urgent = normalize(urgentHtml);
   assert.strictEqual(_internal.reportMode().mode, "urgent", "urgent setup must route to urgent mode");

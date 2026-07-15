@@ -21,8 +21,8 @@ No production deploy was performed. QPay remains disabled. Scoring, report gener
 | 2 | Coach login | PASS | Coach login creates a coach session and lands on own dashboard. |
 | 3 | Disabled coach cannot login | PASS | Disabled coach login throws safe invalid-login behavior. |
 | 4 | Coach adds client email | PASS | Email is normalized, client status starts as `invited`, duplicate active client for the same coach is blocked. Same email under another coach is isolated by coach scope. |
-| 5 | Invited client sees discount | PASS | Invite flow shows base `29,000₮`, coach price `9,900₮`, coach name, consent checkbox, and report-sharing explanation. |
-| 6 | Client declines coach sharing | PASS | Decline keeps standard `29,000₮` flow and coach report access is denied with Mongolian reason text. |
+| 5 | Invited client sees discount | PASS | Invite flow shows base `[REMOVED_FEATURE_PRICE]`, coach price `9,900₮`, coach name, consent checkbox, and report-sharing explanation. |
+| 6 | Client declines coach sharing | PASS | Decline keeps standard `[REMOVED_FEATURE_PRICE]` flow and coach report access is denied with Mongolian reason text. |
 | 7 | Client accepts, pays mock, completes report | PASS | Paid mock coach assessment uses `9,900₮`, creates one `4,000₮` commission row, platform share is `5,900₮`, and report access is logged. |
 | 8 | Duplicate paid check | PASS | Re-checking an already-paid payment does not duplicate commission. |
 | 9 | Coach report access allowed | PASS | Coach can view own consenting paid completed report and no internal mechanism keys are exposed in the tested report text. |

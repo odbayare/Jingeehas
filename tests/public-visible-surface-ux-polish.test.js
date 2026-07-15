@@ -37,7 +37,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     qpayPayment: {
       status: "idle",
@@ -50,7 +50,7 @@ function setOneTime(overrides = {}) {
       "S1-F01": ["Дараа өлсөхөөс санаа зовсон", "Өөрийгөө шагнамаар"]
     },
     preliminary: [{ key: "hungerSafety", score: 5, label: "хүчтэй нийцэж байна" }],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -70,12 +70,12 @@ function diaryEntry(overrides = {}) {
   };
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: false,
     qpayPayment: {
       status: "idle",
@@ -83,7 +83,7 @@ function setSevenDay(overrides = {}) {
       invoice: null
     },
     preliminary: [{ key: "hungerSafety", score: 4, label: "дунд зэрэг нийцэж байна" }],
-    diaryEntries: [
+    removedEntries: [
       diaryEntry({ day_number: 1 }),
       diaryEntry({ day_number: 2 }),
       diaryEntry({ day_number: 3 }),
@@ -172,9 +172,6 @@ assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "Q
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time pricing label must remain unchanged");
 assert(appSource.includes('oneTimeAnchor: "9,900₮"'), "one-time anchor pricing label must remain unchanged");
 assert(appSource.includes('coachOneTime: "9,900₮"'), "coach one-time pricing label must remain unchanged");
-assert(appSource.includes('sevenDay: "29,000₮"'), "seven-day pricing label must remain unchanged");
-assert(appSource.includes('sevenDayAnchor: "69,000₮"'), "seven-day anchor pricing label must remain unchanged");
-assert(appSource.includes('upgrade: "19,900₮"'), "upgrade pricing label must remain unchanged");
 assert(appSource.includes('const STANDARD_WEIGHT_PRICE_MNT = 9900;'), "standard price constant must remain unchanged");
 assert(appSource.includes('const COACH_WEIGHT_PRICE_MNT = 9900;'), "coach price constant must remain unchanged");
 assert(appSource.includes('const WEIGHT_TEST_AMOUNT_MNT = 9900;'), "QPay amount constant must remain unchanged");
@@ -188,13 +185,13 @@ mockBackend.resetMockBackend();
 withLocalStorageMutationSpy(() => {
   renderCase(
     "ordinary unpaid locked report",
-    () => setOneTime({ oneTimePaid: false, sevenDayPaid: false, upgradePaid: false }),
+    () => setOneTime({ oneTimePaid: false, removedFeaturePaid: false, upgradePaid: false }),
     ["preview", "safety"]
   );
 
   renderCase(
     "ordinary paid report",
-    () => setOneTime({ oneTimePaid: true, sevenDayPaid: false, upgradePaid: false }),
+    () => setOneTime({ oneTimePaid: true, removedFeaturePaid: false, upgradePaid: false }),
     []
   );
 
@@ -202,8 +199,6 @@ withLocalStorageMutationSpy(() => {
     "payment failed report",
     () => setOneTime({
       oneTimePaid: false,
-      sevenDayPaid: false,
-      upgradePaid: false,
       qpayPayment: {
         status: "error",
         message: "Төлбөр баталгаажаагүй байна.",
@@ -215,18 +210,14 @@ withLocalStorageMutationSpy(() => {
 
   renderCase(
     "professional route report",
-    () => setSevenDay({
-      diaryEntries: [diaryEntry({ pattern_probes: { measured_today: "Тийм, санаа зовоосон" } })]
-    }),
+    () => setOneTime({ oneTimePaid: false, stageAnswers: { "S1-S03": "Одоо давтагддаг" } }),
     ["safety"]
   );
   assert.strictEqual(_internal.reportMode().mode, "professional", "professional setup must route to professional mode");
 
   renderCase(
     "urgent route report",
-    () => setSevenDay({
-      diaryEntries: [diaryEntry({ pattern_probes: { glucose_signals: ["Будилах / ухаан балартах"] } })]
-    }),
+    () => setOneTime({ oneTimePaid: false, stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } }),
     ["safety"]
   );
   assert.strictEqual(_internal.reportMode().mode, "urgent", "urgent setup must route to urgent mode");

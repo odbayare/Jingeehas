@@ -137,7 +137,7 @@ This pattern is required because the report should not collapse the person into 
 | `wrongSelfExplanation` | Буруу өөр тайлбар | Gently challenge self-blame or over-simple explanations. |
 | `firstGentleChange` | Эхний зөөлөн өөрчлөлт | Offer one small change that lowers friction. |
 | `fourteenDayExperiment` | 14 хоногийн туршилтын таамаг | Frame the next step as a low-pressure test. |
-| `sevenDayDiaryConfirmation` | 7 хоногийн баталгаажуулах тэмдэглэл | Tell the user what to observe, not what to judge. |
+| `removedFeatureDiaryConfirmation` | 7 хоногийн баталгаажуулах тэмдэглэл | Tell the user what to observe, not what to judge. |
 | `safetyBlock` | Аюулгүй байдлын чиглэл | Separate safety from ordinary advice; no diagnosis, no fear, no payment gate. |
 | `evidenceExplanation` | Optional internal-to-user evidence summary | Use only selected plain-language evidence; never expose raw scoring or debug details. |
 | `ownerReviewFlags` | Hidden | Never render to users. |
@@ -256,7 +256,7 @@ Future runtime integration must follow these rules:
 1. Never render internal keys directly in user-facing sections.
 2. Never render `ownerReviewFlags`.
 3. Never render raw debug fields, raw scores, or fixture names.
-4. Always translate `visibleCondition`, `secondaryDrivers`, `vulnerableMoment`, `hiddenFoodFunction`, `wrongSelfExplanation`, `firstGentleChange`, `fourteenDayExperiment`, and `sevenDayDiaryConfirmation` through an approved copy layer.
+4. Always translate `visibleCondition`, `secondaryDrivers`, `vulnerableMoment`, `hiddenFoodFunction`, `wrongSelfExplanation`, `firstGentleChange`, `fourteenDayExperiment`, and `removedFeatureDiaryConfirmation` through an approved copy layer.
 5. Always preserve the driver-stack framing; do not convert the report into one type, one persona, or one route.
 6. Always frame the first change as gentle and optional to test.
 7. Always frame the 14-day experiment as a hypothesis, not a command.
@@ -444,7 +444,7 @@ This map translates internal driver keys and report-object IDs into future user-
 
 ## 8. 7 хоног ажиглаж баталгаажуулах зүйл
 
-- Source WP4 field: `sevenDayDiaryConfirmation`
+- Source WP4 field: `removedFeatureDiaryConfirmation`
 - User-facing goal: Give observation targets that confirm or challenge the driver stack.
 - Copy formula: `Эхний 7 хоногт зөв буруу гэж дүгнэхгүй. Зөвхөн <signals> ажиглана.`
 - Example sentence pattern: `Эхний 7 хоногт зөв буруу гэж дүгнэхгүй. Зөвхөн хоол хоорондын зай, оройн өлсөлт, ядаргаа, хамгийн амархан сонголт хэр хүчтэй татаж байгааг тэмдэглэнэ.`

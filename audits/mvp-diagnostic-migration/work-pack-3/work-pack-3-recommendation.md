@@ -150,7 +150,7 @@ Possible future items:
 - add more contradiction fixtures
 - add fixtures for `binge_risk`, `compensatory_behavior`, and `severe_body_distress`
 - add fixtures for cafeteria, nearby store, and strict diet
-- add fixture snapshots for one-time versus seven-day evidence quality
+- add fixture snapshots for one-time versus removed-feature evidence quality
 
 Only after owner approval should a future Work Pack 4 propose runtime integration.
 

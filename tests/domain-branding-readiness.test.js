@@ -46,7 +46,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     qpayPayment: {
       status: "idle",
@@ -64,7 +64,7 @@ function setOneTime(overrides = {}) {
       { key: "decisionDefault", score: 4, label: "дунд зэрэг нийцэж байна" }
     ],
     stageVoiceSummaries: {},
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -152,9 +152,6 @@ assert(indexHtml.includes('<script src="app.js"></script>'), "app script referen
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time price label must remain unchanged");
 assert(appSource.includes('oneTimeAnchor: "9,900₮"'), "one-time anchor price label must remain unchanged");
 assert(appSource.includes('coachOneTime: "9,900₮"'), "coach price label must remain unchanged");
-assert(appSource.includes('sevenDay: "29,000₮"'), "seven-day price label must remain unchanged");
-assert(appSource.includes('sevenDayAnchor: "69,000₮"'), "seven-day anchor price label must remain unchanged");
-assert(appSource.includes('upgrade: "19,900₮"'), "upgrade price label must remain unchanged");
 assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price constant must remain unchanged");
 assert(appSource.includes("const COACH_WEIGHT_PRICE_MNT = 9900;"), "coach price constant must remain unchanged");
 assert(appSource.includes("const COACH_COMMISSION_MNT = 4000;"), "coach commission constant must remain unchanged");
@@ -163,9 +160,7 @@ assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIM
 assert(appSource.includes('create: "/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
 assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
 assert(appSource.includes("return state.coachDiscountConsent && state.coachInvite ? COACH_WEIGHT_PRICE_MNT : STANDARD_WEIGHT_PRICE_MNT;"), "current one-time amount helper must remain unchanged");
-assert(appSource.includes("return Boolean(isInternalTestMode() || state.sevenDayPaid || state.upgradePaid || access.hasSevenDayAccess);"), "seven-day access helper source must remain unchanged");
 assert(appSource.includes("return Boolean(isQaPaymentBypassEnabled() || isInternalTestMode() || state.oneTimePaid || state.qpayPayment?.status === \"paid\" || access.hasOneTimeReportAccess);"), "one-time access helper source must keep paid-state and entitlement guards");
-assert(appSource.includes("return Boolean(state.upgradePaid || access.hasUpgradeAccess);"), "upgrade access helper source must remain unchanged");
 
 assertNoTerms(indexHtml, ["internalDiagnostics", "ownerDebug", "runtimeGate", "fixtureName"], "public HTML");
 assertNoTerms(indexHtml, ["хатуу дэглэм", "сахилгагүй", "оношилгоо", "эмчилгээ"], "public HTML");

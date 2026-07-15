@@ -15,10 +15,10 @@ function renderPaidReport(stageAnswers, extras = {}) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     preliminary: [],
-    diaryEntries: [],
+    removedEntries: [],
     stageVoiceSummaries: {},
     safetyFlags: [],
     stageAnswers: {
@@ -108,7 +108,6 @@ function run() {
   assert(appSource.includes("const WEIGHT_TEST_QA_PAYMENT_BYPASS = false;"));
   assert(appSource.includes("const WEIGHT_TEST_QA_SKIP_PAYWALL = false;"));
   assert(appSource.includes("9,900₮"));
-  assert(appSource.includes("29,000₮"));
   assert(appSource.includes("WEIGHT_TEST_ONE_TIME"));
   assert(appSource.includes("qpay-create-invoice") && appSource.includes("qpay-check-payment"));
   assert(!appSource.includes("цусны бүлгээр"));

@@ -22,7 +22,7 @@ _internal.setTestState({
   packageType: "one-time",
   view: "landing",
   oneTimePaid: false,
-  sevenDayPaid: false,
+  removedFeaturePaid: false,
   upgradePaid: false,
   contactCapture: {
     name: "Virtual QA",

@@ -19,7 +19,7 @@ When a user clicks a paid CTA, the app opens `Нээлтийн туршилты�
 
 Captured fields:
 
-* product type: `one_time | seven_day | upgrade`
+* product type: `one_time | removed_feature | upgrade`
 * product label
 * price in MNT
 * name

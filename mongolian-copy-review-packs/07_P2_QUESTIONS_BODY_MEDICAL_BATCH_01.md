@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0743 — P2
+## COPY-0484 — P2
 
 **Exact current text**
 
@@ -21,7 +21,7 @@ Questions and their owning options are kept together verbatim. No wording is pro
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 358
+- Source line: 343
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -74,7 +74,7 @@ Question wording requiring owner review.
 - Одоогоор хөдөлгөөн эхлүүлэхэд хэцүү байна
 - Сайн мэдэхгүй
 
-## COPY-0744 — P2
+## COPY-0485 — P2
 
 **Exact current text**
 
@@ -93,7 +93,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 359
+- Source line: 344
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -145,7 +145,7 @@ Question wording requiring owner review.
 - Өмнө эхлээд тасалдсан болохоор итгэлгүй байгаа
 - Одоогоор хөдөлгөөнөөс илүү хоол/нойроо эхэлж цэгцлэх хэрэгтэй санагдаж байна
 
-## COPY-0760 — P2
+## COPY-0501 — P2
 
 **Exact current text**
 
@@ -164,7 +164,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 375
+- Source line: 360
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -215,7 +215,7 @@ Question wording requiring owner review.
 - Будилах/ухаан балартах
 - Аль нь ч үгүй
 
-## COPY-0761 — P2
+## COPY-0502 — P2
 
 **Exact current text**
 
@@ -234,7 +234,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 376
+- Source line: 361
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -282,7 +282,7 @@ Question wording requiring owner review.
 - Тийм, өндөр даралт гарч байсан
 - Тийм, санаа зовоосон
 
-## COPY-0762 — P2
+## COPY-0503 — P2
 
 **Exact current text**
 
@@ -301,7 +301,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 377
+- Source line: 362
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -347,7 +347,7 @@ Question wording requiring owner review.
 - Тийм
 - Мэдэхгүй
 
-## COPY-0763 — P2
+## COPY-0504 — P2
 
 **Exact current text**
 
@@ -366,7 +366,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 378
+- Source line: 363
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]
@@ -414,7 +414,7 @@ Question wording requiring owner review.
 - Маш их ядардаг
 - Аль нь ч үгүй
 
-## COPY-0764 — P2
+## COPY-0505 — P2
 
 **Exact current text**
 
@@ -433,7 +433,7 @@ Question wording requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 379
+- Source line: 364
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: stageOneQuestions consumed by renderStageOne via question-bank [ISOLATED_COMPONENT]

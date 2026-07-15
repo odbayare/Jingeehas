@@ -2,7 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-1117 — P0
+## COPY-0858 — P0
 
 **Exact current text**
 
@@ -16,15 +16,15 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -61,7 +61,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1118 — P0
+## COPY-0859 — P0
 
 **Exact current text**
 
@@ -75,15 +75,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -120,7 +120,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1119 — P0
+## COPY-0860 — P0
 
 **Exact current text**
 
@@ -134,15 +134,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -179,7 +179,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1120 — P0
+## COPY-0861 — P0
 
 **Exact current text**
 
@@ -193,7 +193,7 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
@@ -201,7 +201,7 @@ Safety-critical routing or interpretation text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -238,7 +238,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1121 — P0
+## COPY-0862 — P0
 
 **Exact current text**
 
@@ -252,15 +252,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 375
+- Source line: 360
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -297,7 +297,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1122 — P0
+## COPY-0863 — P0
 
 **Exact current text**
 
@@ -311,7 +311,7 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
@@ -319,7 +319,7 @@ Safety-critical routing or interpretation text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -356,7 +356,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1123 — P0
+## COPY-0864 — P0
 
 **Exact current text**
 
@@ -370,15 +370,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 376
+- Source line: 361
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -415,7 +415,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1124 — P0
+## COPY-0865 — P0
 
 **Exact current text**
 
@@ -429,15 +429,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 376
+- Source line: 361
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -474,7 +474,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1125 — P0
+## COPY-0866 — P0
 
 **Exact current text**
 
@@ -488,7 +488,7 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
@@ -496,7 +496,7 @@ Safety-critical routing or interpretation text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -533,7 +533,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1126 — P0
+## COPY-0867 — P0
 
 **Exact current text**
 
@@ -547,15 +547,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 378
+- Source line: 363
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -592,7 +592,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1127 — P0
+## COPY-0868 — P0
 
 **Exact current text**
 
@@ -606,15 +606,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 378
+- Source line: 363
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -651,7 +651,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1128 — P0
+## COPY-0869 — P0
 
 **Exact current text**
 
@@ -665,15 +665,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 378
+- Source line: 363
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -710,7 +710,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1129 — P0
+## COPY-0870 — P0
 
 **Exact current text**
 
@@ -724,15 +724,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 378
+- Source line: 363
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -769,7 +769,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1130 — P0
+## COPY-0871 — P0
 
 **Exact current text**
 
@@ -783,7 +783,7 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
@@ -791,7 +791,7 @@ Safety-critical routing or interpretation text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -828,7 +828,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1131 — P0
+## COPY-0872 — P0
 
 **Exact current text**
 
@@ -842,15 +842,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 379
+- Source line: 364
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -887,7 +887,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1132 — P0
+## COPY-0873 — P0
 
 **Exact current text**
 
@@ -901,15 +901,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 379
+- Source line: 364
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -946,7 +946,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1133 — P0
+## COPY-0874 — P0
 
 **Exact current text**
 
@@ -960,15 +960,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 379
+- Source line: 364
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1005,7 +1005,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1172 — P0
+## COPY-0913 — P0
 
 **Exact current text**
 
@@ -1019,15 +1019,15 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 392
+- Source line: 377
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1064,7 +1064,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1173 — P0
+## COPY-0914 — P0
 
 **Exact current text**
 
@@ -1078,7 +1078,7 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
@@ -1086,7 +1086,7 @@ Safety-critical routing or interpretation text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1123,7 +1123,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-1174 — P0
+## COPY-0915 — P0
 
 **Exact current text**
 
@@ -1137,7 +1137,7 @@ Safety-critical routing or interpretation text.
 - Surface: ANSWER_OPTIONS
 - Role: PUBLIC_USER
 - Scenario: answer-options
-- Render source: stageOneQuestions/dailyCore consumed by renderInput
+- Render source: stageOneQuestions consumed by renderInput
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
@@ -1145,7 +1145,7 @@ Safety-critical routing or interpretation text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: stageOneQuestions/dailyCore consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1164,7 +1164,6 @@ Safety-critical routing or interpretation text.
 
 > Одоо хааяа бодогддог
 > Одоо идэвхтэй бодогдож байна
-> Тогтуун, хоол алгасаагүй
 
 **Dynamic values**
 

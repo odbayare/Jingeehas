@@ -2,7 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0154 — P0
+## COPY-0116 — P0
 
 **Exact current text**
 
@@ -21,7 +21,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4273
+- Source line: 3378
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -60,7 +60,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0155 — P0
+## COPY-0117 — P0
 
 **Exact current text**
 
@@ -119,7 +119,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0156 — P0
+## COPY-0118 — P0
 
 **Exact current text**
 
@@ -178,7 +178,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0157 — P0
+## COPY-0119 — P0
 
 **Exact current text**
 
@@ -197,7 +197,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4279
+- Source line: 3384
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -237,7 +237,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0158 — P0
+## COPY-0120 — P0
 
 **Exact current text**
 
@@ -256,7 +256,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4281
+- Source line: 3386
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -296,7 +296,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0159 — P0
+## COPY-0121 — P0
 
 **Exact current text**
 
@@ -315,7 +315,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 108
+- Source line: 93
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -355,7 +355,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0160 — P0
+## COPY-0122 — P0
 
 **Exact current text**
 
@@ -374,7 +374,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4457
+- Source line: 3520
 - Source function/object: livedExplanationFor
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -414,7 +414,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0161 — P0
+## COPY-0123 — P0
 
 **Exact current text**
 
@@ -433,7 +433,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4288
+- Source line: 3393
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -473,7 +473,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0162 — P0
+## COPY-0124 — P0
 
 **Exact current text**
 
@@ -492,7 +492,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4289
+- Source line: 3394
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -532,7 +532,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0163 — P0
+## COPY-0125 — P0
 
 **Exact current text**
 
@@ -551,7 +551,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4292
+- Source line: 3397
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -591,7 +591,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0164 — P0
+## COPY-0126 — P0
 
 **Exact current text**
 
@@ -610,7 +610,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4294
+- Source line: 3399
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -650,7 +650,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0165 — P0
+## COPY-0127 — P0
 
 **Exact current text**
 
@@ -669,7 +669,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4295
+- Source line: 3400
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -709,7 +709,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0166 — P0
+## COPY-0128 — P0
 
 **Exact current text**
 
@@ -768,7 +768,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0167 — P0
+## COPY-0129 — P0
 
 **Exact current text**
 
@@ -787,7 +787,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4300
+- Source line: 3405
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -827,7 +827,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0168 — P0
+## COPY-0130 — P0
 
 **Exact current text**
 
@@ -886,7 +886,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0169 — P0
+## COPY-0131 — P0
 
 **Exact current text**
 
@@ -905,7 +905,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4303
+- Source line: 3408
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -945,7 +945,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0170 — P0
+## COPY-0132 — P0
 
 **Exact current text**
 
@@ -964,7 +964,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4304
+- Source line: 3409
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -1004,7 +1004,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0171 — P0
+## COPY-0133 — P0
 
 **Exact current text**
 
@@ -1063,7 +1063,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0172 — P0
+## COPY-0134 — P0
 
 **Exact current text**
 
@@ -1104,65 +1104,6 @@ Payment, price, entitlement, invoice, or recovery text.
 
 > Эхний зөөлөн алхам
 > 14 хоногийн эхний туршилт
-> 7 хоногийн гүн анализ руу шилжих боломж
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0173 — P0
-
-**Exact current text**
-
-> 7 хоногийн гүн анализ руу шилжих боломж
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 4307
-- Source function/object: renderOneTimePaywall
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <li>14 хоногийн эхний туршилт</li>
-
-**Source item**
-
-> <li>7 хоногийн гүн анализ руу шилжих боломж</li>
-
-**Source context after**
-
-> </ul>
-
-**Rendered context**
-
-> 14 хоногийн эхний туршилт
-> 7 хоногийн гүн анализ руу шилжих боломж
 > Бүрэн тайлан нээх
 
 **Dynamic values**
@@ -1181,7 +1122,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0174 — P0
+## COPY-0135 — P0
 
 **Exact current text**
 
@@ -1220,7 +1161,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> 7 хоногийн гүн анализ руу шилжих боломж
+> 14 хоногийн эхний туршилт
 > Бүрэн тайлан нээх
 > Төлбөр баталгаажсаны дараа тайлан энэ дэлгэц дээр шууд нээгдэнэ. Эхний дохио болон аюулгүй байдлын сануулга төлбөргүй хэсэгт үлдэнэ.
 
@@ -1240,7 +1181,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0175 — P0
+## COPY-0136 — P0
 
 **Exact current text**
 
@@ -1259,7 +1200,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4314
+- Source line: 3418
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -1299,7 +1240,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0176 — P0
+## COPY-0137 — P0
 
 **Exact current text**
 
@@ -1358,7 +1299,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0177 — P0
+## COPY-0138 — P0
 
 **Exact current text**
 
@@ -1417,7 +1358,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0178 — P0
+## COPY-0139 — P0
 
 **Exact current text**
 
@@ -1459,6 +1400,65 @@ Payment, price, entitlement, invoice, or recovery text.
 > 9,900₮
 > Төлөх үнэ
 > Бүртгэл шаардлагагүй.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0140 — P0
+
+**Exact current text**
+
+> Бүртгэл шаардлагагүй.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2403
+- Source function/object: renderNoAccountPaymentIntro
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="no-account-note">
+
+**Source item**
+
+> <p><strong>Бүртгэл шаардлагагүй.</strong></p>
+
+**Source context after**
+
+> <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
+
+**Rendered context**
+
+> Төлөх үнэ
+> Бүртгэл шаардлагагүй.
+> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
 
 **Dynamic values**
 

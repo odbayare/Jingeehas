@@ -12,13 +12,13 @@ function setOrdinaryReport(stageAnswers = {}, extras = {}) {
     packageType: "one-time",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-S04": "Үгүй",
       ...stageAnswers
     },
-    diaryEntries: [],
+    removedEntries: [],
     ...extras
   });
   return normalize(_internal.renderReport());
@@ -63,7 +63,7 @@ function assertNoConfusingReportWords(report) {
     "Товч хариу",
     "Дэлгэрэнгүй тайлан",
     "7 хоногийн тэмдэглэл юуг тодруулах вэ?",
-    "7 хоногоор нарийвчлах",
+    "[REMOVED_FEATURE_REFINEMENT]",
     "Илүү нарийвчилж болох хэсгүүд",
     "Гүн зураглалд харах хэсэг"
   ].forEach(phrase => assert(!report.includes(phrase), `public report should not contain confusing phrase: ${phrase}`));

@@ -16,14 +16,14 @@ Future WP17 tests must prove the disabled shadow path changes nothing visible.
 | --- | --- | --- | --- |
 | feature flag default false | Unit/static contract | `ENABLE_RUNTIME_ADAPTER_SHADOW` exists only in the approved WP17 scope and defaults to `false`. | Yes |
 | no visible output when flag false | Snapshot/regression | `_internal.renderReport()` output is unchanged when `ENABLE_RUNTIME_ADAPTER_SHADOW = false`. | Yes |
-| no report mutation when flag false | Snapshot/regression | One-time, seven-day, readiness, professional, and urgent report branches return the same HTML as before. | Yes |
-| no payment mutation | Unit/regression | `hasOneTimeReportAccess()`, `hasSevenDayAccess()`, `hasUpgradeAccess()`, QPay constants, prices, and product codes are unchanged. | Yes |
+| no report mutation when flag false | Snapshot/regression | One-time, removed-feature, readiness, professional, and urgent report branches return the same HTML as before. | Yes |
+| no payment mutation | Unit/regression | `hasOneTimeReportAccess()`, `hasRemovedFeatureAccess()`, `hasUpgradeAccess()`, QPay constants, prices, and product codes are unchanged. | Yes |
 | no localStorage mutation unless explicitly approved | Unit/regression | Shadow helper does not read localStorage, write localStorage, call `saveState()`, add storage keys, or persist adapter diagnostics. | Yes |
 | adapter invocation isolated | Unit/integration | Enabled test-only shadow path returns internal validation only and does not feed payload into returned HTML or runtime state. | Yes |
 | adapter failure contained | Unit/integration | Adapter failure in enabled test-only mode fails tests only; disabled shadow mode cannot break user report rendering. | Yes |
 | internal keys not rendered | HTML scan | Returned HTML does not include raw fixture names, mechanism keys, `ownerDebug`, `internalDiagnostics`, or adapter field names. | Yes |
 | safety guidance not payment-gated | Unit/regression | `paymentGate.safetyGuidanceRequiresPayment === false` remains true and safety/professional guidance stays outside payment gates. | Yes |
-| existing report flow unchanged | End-to-end regression | Stage, diary, one-time report, seven-day report, paywall, professional, urgent, and readiness flows remain unchanged. | Yes |
+| existing report flow unchanged | End-to-end regression | Stage, diary, one-time report, removed-feature report, paywall, professional, urgent, and readiness flows remain unchanged. | Yes |
 | current tests still pass | Full regression | `npm test` passes. | Yes |
 | runtime adapter contract still pass | Adapter contract test | `runtimeAdapterPrototype.test.js` passes and exported payload shape/gates remain exact. | Yes |
 | no deploy/PDF/payment/backend touched | Scope diff check | Deploy files, PDF scripts, payment/QPay/backend/pricing/entitlement files, and forbidden product files have empty diffs. | Yes |

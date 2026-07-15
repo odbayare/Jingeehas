@@ -13,7 +13,7 @@ Runtime implementation is NOT approved by WP16.
 Read-only inspection covered:
 
 - state loading and persistence: `loadState()`, `saveState()`, `resetState()`, `setView()`;
-- payment and entitlement paths: QPay helpers, `hasOneTimeReportAccess()`, `hasSevenDayAccess()`, `hasUpgradeAccess()`;
+- payment and entitlement paths: QPay helpers, `hasOneTimeReportAccess()`, `hasRemovedFeatureAccess()`, `hasUpgradeAccess()`;
 - answer mutation paths: `setAnswer()`, `setAnswerDraft()`;
 - report rendering helpers: `renderHumanReadableReport()`, `renderOneTimeReport()`, paywall renderers;
 - main report branch: `renderReport()`;
@@ -29,8 +29,8 @@ Read-only inspection covered:
 | `saveState()` | Writes full `state` to `localStorage` under `weightLossDeepPatternMvp` | Unsafe | Any shadow output stored here would change localStorage shape and create production behavior drift | Do not touch. Shadow path must not call this. |
 | Answer update functions such as `setAnswer()` and `setAnswerDraft()` | Mutate stage answers, recalculate safety flags, save state, and sometimes render | Unsafe | Too early; adapter would run during input changes and could affect state, performance, or safety flags | Do not touch. |
 | Payment/QPay functions and access helpers | Create/check QPay invoices, mark payment status, and evaluate access | Unsafe | Could alter payment, entitlement, QPay status, or paywall behavior | Do not touch. Shadow adapter must not depend on these to enable rendering. |
-| `renderHumanReadableReport()` | Builds existing visible report HTML for one-time and seven-day full reports | Limited | Already inside visible rendering; adding adapter output here risks copy or markup drift | Do not invoke adapter here. Existing HTML must remain unchanged. |
-| `renderOneTimeReport()` | Delegates one-time paid rendering to `renderHumanReadableReport()` | Limited | Too narrow for seven-day, safety, paywall, and readiness coverage | Do not use as primary touchpoint. |
+| `renderHumanReadableReport()` | Builds existing visible report HTML for one-time and removed-feature full reports | Limited | Already inside visible rendering; adding adapter output here risks copy or markup drift | Do not invoke adapter here. Existing HTML must remain unchanged. |
+| `renderOneTimeReport()` | Delegates one-time paid rendering to `renderHumanReadableReport()` | Limited | Too narrow for removed-feature, safety, paywall, and readiness coverage | Do not use as primary touchpoint. |
 | `renderReport()` after report inputs are computed and before existing return branches | Computes mode, ranked patterns, primary/secondary mechanisms, readiness, evidence, tags, and report helper data before safety/payment/readiness branches return HTML | Best candidate | Must prove no returned HTML, state, localStorage, payment, or entitlement changes | Recommended WP17 touchpoint, behind disabled shadow guard only. |
 | `render()` route dispatcher | Chooses route renderer and writes returned HTML into `#app` | Unsafe | Any adapter call here is too close to DOM output and applies to every route | Do not touch for shadow adapter invocation. |
 | `module.exports._internal` | Exposes functions for Node tests | Good for tests only | Could accidentally expose public browser globals if misused elsewhere | May expose a test-only shadow helper or test setter if WP17 is approved. |
@@ -68,10 +68,10 @@ The shadow call must be shaped so the existing branches remain the authority:
 - urgent route still returns urgent safety copy;
 - professional route still returns professional-first copy;
 - unpaid one-time route still returns the one-time paywall;
-- unpaid seven-day route still returns the seven-day paywall;
-- insufficient seven-day route still returns readiness copy;
+- unpaid removed-feature route still returns the removed-feature paywall;
+- insufficient removed-feature route still returns readiness copy;
 - paid one-time route still returns the existing one-time report;
-- paid seven-day route still returns the existing seven-day report.
+- paid removed-feature route still returns the existing removed-feature report.
 
 ## Why this touchpoint is safest
 
@@ -133,9 +133,9 @@ With the shadow flag disabled, all user-visible behavior must remain unchanged:
 - same professional-first route;
 - same one-time unpaid paywall;
 - same one-time paid report;
-- same seven-day paywall;
-- same seven-day readiness gate;
-- same seven-day report;
+- same removed-feature paywall;
+- same removed-feature readiness gate;
+- same removed-feature report;
 - same internal tester feedback UI;
 - same buttons and route changes;
 - same report copy;
@@ -184,7 +184,7 @@ ENABLE_RUNTIME_ADAPTER_SHADOW = false
 WP17 must preserve:
 
 - `hasOneTimeReportAccess()` behavior;
-- `hasSevenDayAccess()` behavior;
+- `hasRemovedFeatureAccess()` behavior;
 - `hasUpgradeAccess()` behavior;
 - QPay create/check endpoint values;
 - QPay product code;

@@ -84,7 +84,7 @@ function run() {
     coachInviteToken: client.inviteToken,
     coachDiscountConsent: false,
     stageAnswers: {},
-    diaryEntries: []
+    removedEntries: []
   });
   const inviteCopy = visibleText(_internal.renderOneTimeStart());
   assert(inviteCopy.includes("Үндсэн үнэ: 9,900₮"));

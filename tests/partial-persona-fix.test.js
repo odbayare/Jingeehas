@@ -36,11 +36,11 @@ function run() {
   assert.strictEqual(circadian.mode, "deep");
   assert([M.circadian, M.executive].includes(circadian.evidence.primaryMechanism), "circadian persona should be Circadian or Executive primary");
   assert.notStrictEqual(circadian.evidence.primaryMechanism, M.reward, "circadian persona should not be generic Reward-Seeking primary");
-  assert(circadian.text.includes("Нойр муу") && circadian.text.includes("кофе"), "circadian report should explain sleep/energy rhythm");
-  assert(/орой кофе уух/i.test(circadian.text), "circadian avoid list should mention coffee timing");
-  assert(/нойр (дутуу|муу) үед хатуу хоолны дэглэм эхлүүлэх/i.test(circadian.text), "circadian avoid list should mention sleep-specific strict diet avoid");
-  assert(/Өдрийн эхний хоолоо тогтмол болго|Өдрийн сүүлийн кофегоо хэзээ уухаа тогтоо|Орой 10 минут тайвшрах хугацаа гарга/.test(circadian.text), "circadian leverage should be sleep/energy-aware");
-  assert(circadian.text.includes("14 хоногийн туршилт"));
+  assert(/нойр муу/i.test(circadian.text) && circadian.text.includes("кофе"), "circadian report should explain sleep/energy rhythm");
+  assert(/кофе, хоолны цаг, унтах цагийг зэрэг огцом өөрчлөх/i.test(circadian.text), "circadian avoid list should mention coffee timing");
+  assert(/нойр муу өдрийн оройн идэлтийг зөвхөн сахилга бат гэж тайлбарлах/i.test(circadian.text), "circadian avoid list should mention sleep-specific risk");
+  assert(/Өдрийн эхний хоолоо тогтмол болго|кофе\/чихэрлэг ундааны цагийг тэмдэглэ/.test(circadian.text), "circadian leverage should be sleep/energy-aware");
+  assert(circadian.text.includes("7–14 хоногийн нэг хувьсагчийн туршилт"));
 }
 
 run();

@@ -17,7 +17,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-L01": "Бараг өдөр бүр",
@@ -27,23 +27,23 @@ function setOneTime(overrides = {}) {
     preliminary: [
       { key: "executive", score: 5, label: "хүчтэй нийцэж байна" }
     ],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   mockBackend.resetMockBackend();
   _internal.setTestState({
-    packageType: "seven-day",
-    view: "sevenDayStart",
+    packageType: "removed-feature",
+    view: "removedFeatureStart",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     preliminary: [
       { key: "executive", score: 5, label: "хүчтэй нийцэж байна" }
     ],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -74,33 +74,11 @@ function run() {
   assert.strictEqual(leads[0].willingness, "Тийм, энэ үнээр авахад бэлэн");
   assert(normalize(_internal.renderLeadThankYou()).includes("Баярлалаа. Таны сонирхлыг бүртгэлээ"));
 
-  setSevenDay();
-  _internal.startLeadCapture("seven-day");
-  capture = normalize(_internal.renderLeadCapture());
-  assert(capture.includes("7 хоногийн гүн анализ"));
-  assert(capture.includes("29,000₮"));
-
-  setOneTime({ oneTimePaid: true, view: "upgradePaywall" });
-  _internal.startLeadCapture("upgrade");
-  capture = normalize(_internal.renderLeadCapture());
-  assert(capture.includes("7 хоногоор нарийвчлах эрх"));
-  assert(capture.includes("19,900₮"));
-
-  _internal.updateLeadField("contact", "99112233");
-  _internal.updateLeadField("willingness", "Сонирхож байна, гэхдээ эхлээд тайлангийн жишээ хармаар байна");
-  _internal.submitLeadCapture();
   const summary = mockBackend.summarizeLeadIntents();
   assert.strictEqual(summary.totalLeads, 1);
-  assert.strictEqual(summary.byProduct.upgrade.count, 1);
-  assert.strictEqual(summary.byProduct.upgrade.averagePriceMnt, 19900);
-  assert.strictEqual(summary.willingness["Сонирхож байна, гэхдээ эхлээд тайлангийн жишээ хармаар байна"], 1);
+  assert.strictEqual(summary.byProduct.one_time.count, 1);
+  assert.strictEqual(summary.byProduct.one_time.averagePriceMnt, 9900);
   assert(normalize(_internal.renderValidationSummary()).includes("Сонирхлын нэгтгэл"));
-
-  mockBackend.resetMockBackend();
-  setSevenDay();
-  _internal.demoCompletePayment("seven-day");
-  assert.strictEqual(_internal.hasSevenDayAccess(), true, "Demo unlock should still work for internal testing");
-  assert.strictEqual(mockBackend.summarizeLeadIntents().demoUnlocks, 1);
 
   setOneTime({
     stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" },

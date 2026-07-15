@@ -67,7 +67,7 @@
 
 ## 8. 7 хоног ажиглаж баталгаажуулах зүйл
 
-- Source WP4 field: `sevenDayDiaryConfirmation`
+- Source WP4 field: `removedFeatureDiaryConfirmation`
 - User-facing goal: Give observation targets that confirm or challenge the driver stack.
 - Copy formula: `Эхний 7 хоногт зөв буруу гэж дүгнэхгүй. Зөвхөн <signals> ажиглана.`
 - Example sentence pattern: `Эхний 7 хоногт зөв буруу гэж дүгнэхгүй. Зөвхөн хоол хоорондын зай, оройн өлсөлт, ядаргаа, хамгийн амархан сонголт хэр хүчтэй татаж байгааг тэмдэглэнэ.`

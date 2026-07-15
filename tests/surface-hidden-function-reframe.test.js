@@ -12,13 +12,13 @@ function render(stageAnswers = {}) {
     packageType: "one-time",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: true,
     stageAnswers: {
       "S1-S04": "Үгүй",
       ...stageAnswers
     },
-    diaryEntries: [],
+    removedEntries: [],
     preliminary: []
   });
   return normalize(_internal.renderReport());

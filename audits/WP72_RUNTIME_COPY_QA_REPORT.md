@@ -77,7 +77,7 @@ Confirmed present:
 
 ### 4.2 Fatigue / easy ready choice
 
-Reviewed a seven-day report scenario with high executive/default-choice signals.
+Reviewed a removed-feature report scenario with high executive/default-choice signals.
 
 Result:
 
@@ -87,7 +87,7 @@ Result:
 
 ### 4.3 Stress eating
 
-Reviewed a seven-day stress/regulation scenario.
+Reviewed a removed-feature stress/regulation scenario.
 
 Result:
 
@@ -97,7 +97,7 @@ Result:
 
 ### 4.4 Restriction-binge / `өнөөдөр өнгөрлөө`
 
-Reviewed one-time and seven-day collapse scenarios with `Өнөөдөр өнгөрлөө, маргаашаас`.
+Reviewed one-time and removed-feature collapse scenarios with `Өнөөдөр өнгөрлөө, маргаашаас`.
 
 Result:
 
@@ -132,7 +132,7 @@ These are remaining runtime copy issues outside the exact WP71 selected-string r
 
 - Reward-deficit report voice still uses `амттан` in at least one visible path. This narrows broader `амттай зүйл`.
 - Some executive/collapse runtime report paths still use older voice-library wording even after selected source strings were updated.
-- One-time report voice and compressed seven-day report voice are not fully aligned with the selected editor revisions.
+- One-time report voice and compressed removed-feature report voice are not fully aligned with the selected editor revisions.
 
 ## 6. Semantic drift found
 
@@ -160,7 +160,7 @@ The selected WP71 patch was intentionally limited to 23 IDs. Runtime QA shows th
 Recommended next WP:
 
 - WP73: report-voice runtime copy cleanup.
-- Scope should include one-time report voice, seven-day compressed report paths, hidden function evidence lines, reward-deficit wording, executive/default-choice wording, and collapse/shame wording.
+- Scope should include one-time report voice, removed-feature compressed report paths, hidden function evidence lines, reward-deficit wording, executive/default-choice wording, and collapse/shame wording.
 - Keep it source-copy-only unless tests reveal functional defects.
 - Do not deploy until WP73 passes `npm test` and a runtime report-output review.
 

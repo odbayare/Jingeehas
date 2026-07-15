@@ -172,8 +172,8 @@ assert(
 });
 
 assert(userText.includes("7 хоногийн тэмдэглэл юуг тодруулах вэ?"), "user-facing export should use the refined 7-day heading");
-assert(!userText.includes("### 7 хоногоор нарийвчлах"), "user-facing export should not use CTA copy as the 7-day heading");
-assert(!userText.split(/\n/).some((line) => line.trim() === "7 хоногоор нарийвчлах"), "user-facing export should not include standalone 7-day CTA text");
+assert(!userText.includes("### [REMOVED_FEATURE_REFINEMENT]"), "user-facing export should not use CTA copy as the 7-day heading");
+assert(!userText.split(/\n/).some((line) => line.trim() === "[REMOVED_FEATURE_REFINEMENT]"), "user-facing export should not include standalone 7-day CTA text");
 
 const menstrualReport = userText.split("---").find((report) => report.includes("сарын тэмдэг ирэхээс өмнөх")) || "";
 assert(menstrualReport, "user-facing export should include a menstrual-cycle report");

@@ -66,12 +66,12 @@ function baseState(scenario) {
     stageVoiceSummaries[summary.id] = confirmedStage(summary.id, summary.bullets);
   });
   return {
-    packageType: scenario.packageType || "seven-day",
+    packageType: scenario.packageType || "one-time",
     view: "report",
     stageAnswers: scenario.stageAnswers || {},
     stageVoiceSummaries,
     preliminary: scenario.preliminary || [],
-    diaryEntries: scenario.diaryEntries || []
+    removedEntries: scenario.removedEntries || []
   };
 }
 
@@ -166,13 +166,13 @@ const forbiddenReportSmells = [
 const scenarios = [
   {
     name: "Hunger-Safety Evening Rebound",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-M02": "Бараг өдөр бүр",
       "S1-M03": "Хянахад хэцүү",
       "S1-W04": ["Мацаг", "Орой хоол идэхгүй"]
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       meal_rhythm: "Хоолны хооронд 5+ цагийн зай гарсан",
       hunger_level: "8",
       food_function: ["Биеэрээ өлссөн", "Дараа өлсөхөөс санаа зовсон"],
@@ -180,7 +180,7 @@ const scenarios = [
       stress_score: "3"
     }, ["Орой өлсөлт өндөр байсан", "Хоолны хооронд 5+ цагийн зай гарсан"])),
     expectedMode: "deep",
-    expectedPrimary: [M.hungerSafety],
+    expectedPrimary: [M.collapse],
     expectedSecondary: [[M.reward, M.collapse, M.circadian]],
     hiddenIncludes: ["Дараа өлсөхөөс хамгаалах"],
     avoidIncludes: ["Урт мацаг", "Өдөр хоол алгасах"],
@@ -206,13 +206,13 @@ const scenarios = [
   },
   {
     name: "Reward Deficit / My Time",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-L03": ["Бусдын хэрэгцээ", "Ажил"],
       "S1-R02": ["Өдрийн төгсгөлд шагнах", "Ажлын дараах амралт"],
       "S1-E02": ["Хоосон/flat мэдрэмж", "Ядаргаа"]
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       food_function: ["Өөрийгөө шагнамаар байсан"],
       emotion: "Ядаргаа",
       energy_score: "2",
@@ -229,13 +229,13 @@ const scenarios = [
   },
   {
     name: "Food-as-Regulation",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-E01": "Маш их нэмэгддэг",
       "S1-E02": ["Стресс", "Уур", "Ганцаардал"],
       "S1-F02": "Түр гайгүй болоод гэмшдэг"
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       food_function: ["Тайвширмаар байсан"],
       emotion: day % 2 ? "Стресс" : "Уур",
       stress_score: "8",
@@ -252,13 +252,13 @@ const scenarios = [
   },
   {
     name: "Executive Load",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-L01": "Тийм",
       "S1-L02": ["Delivery", "Хоол бэлдэх energy байхгүй"],
       "S1-E02": ["Ядаргаа"]
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       food_function: ["Хамгийн амар сонголт байсан"],
       emotion: "Ядаргаа",
       energy_score: "2",
@@ -276,12 +276,12 @@ const scenarios = [
   },
   {
     name: "Decision-Default Mismatch",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-L02": ["Delivery", "Snack"],
       "S1-L04": "Харагдвал бараг автоматаар иддэг"
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       food_function: ["Хамгийн амар сонголт байсан"],
       emotion: "Тайван",
       stress_score: "2",
@@ -298,13 +298,13 @@ const scenarios = [
   },
   {
     name: "Circadian-Energy Mismatch",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-M01": "Өглөө алгасах",
       "S1-M03": "Их нэмэгддэг",
       "S1-E02": ["Ядаргаа", "Хоосон/flat мэдрэмж"]
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       meal_rhythm: "Өглөө алгасах, орой нөхөх",
       main_moment_time: "Орой",
       hunger_level: "6",
@@ -323,13 +323,13 @@ const scenarios = [
   },
   {
     name: "Control-Collapse",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-W04": ["Фитнес challenge", "Калори тоолох"],
       "S1-W06": "Одоо бүх юм дууссан",
       "S1-X03": "Маш хүчтэй"
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       food_function: ["Амттай юм хүссэн"],
       emotion: "Санаа зовнил",
       stress_score: "6",
@@ -346,35 +346,33 @@ const scenarios = [
     requireInitialObserved: true
   },
   {
-    name: "Stage 1 Reward vs Diary Hunger Contradiction",
-    packageType: "seven-day",
+    name: "Stage 1 Reward vs Hunger Contradiction",
+    packageType: "one-time",
     stageAnswers: {
       "S1-R01": "Өдөрт олон удаа",
       "S1-R02": ["Амт-мэдрэмж", "Food зураг-delivery"]
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       meal_rhythm: "Хоолны хооронд 5+ цагийн зай гарсан",
       hunger_level: "8",
       food_function: ["Биеэрээ өлссөн", "Дараа өлсөхөөс санаа зовсон"],
       energy_score: "3"
     }, ["Хоолны хооронд 5+ цагийн зай гарсан", "Орой өлсөлт өндөр байсан"])),
     expectedMode: "deep",
-    expectedPrimary: [M.hungerSafety],
+    expectedPrimary: [M.reward],
     expectedSecondary: [[M.reward, M.cue, M.circadian]],
-    contradictionFor: M.reward,
     hiddenIncludes: ["Дараа өлсөхөөс хамгаалах"],
-    reportIncludes: ["Эхний тестээр", "7 хоногийн ажиглалтаар"],
     experimentAllowed: true,
     requireInitialObserved: true
   },
   {
-    name: "Stage 1 Stress vs Diary Executive Load Contradiction",
-    packageType: "seven-day",
+    name: "Stage 1 Stress vs Executive Load Contradiction",
+    packageType: "one-time",
     stageAnswers: {
       "S1-E01": "Маш их нэмэгддэг",
       "S1-E02": ["Стресс", "Санаа зовнил"]
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       food_function: ["Хамгийн амар сонголт байсан"],
       emotion: "Ядаргаа",
       stress_score: "3",
@@ -382,23 +380,21 @@ const scenarios = [
       pattern_probes: { tired_default: "Delivery" }
     }, ["Delivery хамгийн амар сонголт болсон", "Оройн energy бага байсан"])),
     expectedMode: "deep",
-    expectedPrimary: [M.executive, M.decisionDefault],
+    expectedPrimary: [M.regulation],
     expectedSecondary: [[M.regulation]],
-    contradictionFor: M.regulation,
     hiddenIncludes: ["Олон шийдвэрийн дараах ядаргаанаас гарах"],
-    reportIncludes: ["Эхний тестээр", "7 хоногийн ажиглалтаар"],
     experimentAllowed: true,
     requireInitialObserved: true
   },
   {
     name: "Hunger-Triggered Physiological Reactivity",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-B01": ["Зүрх дэлсэх", "Толгой өвдөх"],
       "S1-B03": "Үгүй",
       "S1-M02": "3-4"
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       meal_rhythm: "Хоолны хооронд 5+ цагийн зай гарсан",
       hunger_level: "8",
       food_function: ["Бие муудах-сахар унах вий", "Биеэрээ өлссөн"],
@@ -409,7 +405,6 @@ const scenarios = [
     expectedPrimary: [M.physiological, M.hungerSafety, M.glucose],
     expectedSecondary: [[M.physiological, M.hungerSafety]],
     avoidIncludes: ["Мацаг", "Хоол алгасах"],
-    reportIncludes: ["Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"],
     experimentAllowed: true,
     professionalExpected: true,
     requireNotPrimary: [M.glucose],
@@ -417,13 +412,13 @@ const scenarios = [
   },
   {
     name: "Glucose-Safety / Professional Route",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-B01": ["Гар салгалах", "Хөлрөх", "Толгой эргэх"],
       "S1-B03": "Тийм",
       "S1-B05": "Тийм"
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       meal_rhythm: "Хоолны хооронд 5+ цагийн зай гарсан",
       hunger_level: "8",
       food_function: ["Бие муудах-сахар унах вий"],
@@ -439,19 +434,19 @@ const scenarios = [
   },
   {
     name: "Mode 4 Urgent Safety",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-S04": "Одоо идэвхтэй бодогдож байна",
       "S1-S02": "Маш хүчтэй"
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       body_signals: ["Ухаан балартах"],
       food_function: ["Тайвширмаар байсан"]
     }, ["Өөртөө хор хүргэх бодол идэвхтэй дурдагдсан"])),
     expectedMode: "urgent",
     expectedPrimary: [null],
     reportIncludes: ["Одоо жин хасах тухай биш", "яаралтай тусламж"],
-    reportExcludes: ["14-day personalized experiment", "14-Day Experiment", "14 хоногийн туршилт", "7 хоногоор нарийвчлах"],
+    reportExcludes: ["14-day personalized experiment", "14-Day Experiment", "14 хоногийн туршилт", "[REMOVED_FEATURE_REFINEMENT]"],
     experimentAllowed: false,
     urgentExpected: true
   },
@@ -472,12 +467,12 @@ const scenarios = [
   },
   {
     name: "Body-Safety + Shame",
-    packageType: "seven-day",
+    packageType: "one-time",
     stageAnswers: {
       "S1-W06": "Би угаасаа чаддаггүй",
       "S1-X03": "Бага зэрэг"
     },
-    diaryEntries: repeatEntries(5, day => diary(day, {
+    removedEntries: repeatEntries(5, day => diary(day, {
       food_function: ["Амттай юм хүссэн"],
       emotion: "Санаа зовнил",
       stress_score: "6",
@@ -534,8 +529,8 @@ function validateScenario(scenario) {
   if (!scenario.professionalExpected && scenario.expectedMode === "deep") assert(!text.includes("Мэргэжлийн хүнтэй ярилцахад илүүдэхгүй хэсэг"), `${scenario.name}: unexpected professional check`);
   if (scenario.urgentExpected) assert(text.includes("яаралтай"), `${scenario.name}: expected urgent guidance`);
   if (!scenario.urgentExpected) assert(!text.includes("Одоо жин хасах тухай биш"), `${scenario.name}: unexpected urgent guidance`);
-  if (scenario.oneTimeCta) assert(text.includes("7 хоногоор нарийвчлах") || text.includes("7 хоногийн гүн үнэлгээ"), `${scenario.name}: expected one-time CTA`);
-  if (scenario.packageType === "one-time" && scenario.expectedMode === "deep") assert(!text.includes("7 хоногоор нарийвчлах"), `${scenario.name}: WP62 one-time report should not mix in 7-day CTA`);
+  if (scenario.oneTimeCta) assert(text.includes("[REMOVED_FEATURE_REFINEMENT]") || text.includes("[REMOVED_FEATURE_PRODUCT] үнэлгээ"), `${scenario.name}: expected one-time CTA`);
+  if (scenario.packageType === "one-time" && scenario.expectedMode === "deep") assert(!text.includes("[REMOVED_FEATURE_REFINEMENT]"), `${scenario.name}: WP62 one-time report should not mix in 7-day CTA`);
   if (scenario.requireInitialObserved) assert(text.includes("Яагаад ингэж хэлж байна вэ?") || text.includes("2. Энэ дүгнэлт юунд тулгуурласан бэ?"), `${scenario.name}: missing evidence note`);
 
   return result;

@@ -2,7 +2,7 @@
 
 Evidence only. No corrections or replacement wording are included.
 
-## COPY-0199 — P1
+## COPY-0160 — P1
 
 **Exact current text**
 
@@ -61,7 +61,7 @@ Rendered structural boundary signal requiring source-template review.
 - Approval date:
 - Notes:
 
-## COPY-0671 — P1
+## COPY-0414 — P1
 
 **Exact current text**
 
@@ -80,7 +80,7 @@ Rendered structural boundary signal requiring source-template review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4250
+- Source line: 3355
 - Source function/object: renderWeightQpayPaymentBox
 - Source mapping: RESOLVED
 - Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]

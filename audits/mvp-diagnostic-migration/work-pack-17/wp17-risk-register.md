@@ -2,7 +2,7 @@
 
 | Risk | Severity | Trigger | Mitigation | Status |
 | --- | --- | --- | --- | --- |
-| visible report output changed | BLOCKER | Any returned report HTML differs because of shadow integration. | Disabled helper output is ignored; tests compare returned report HTML across one-time, seven-day, professional, urgent, and readiness branches. | Controlled |
+| visible report output changed | BLOCKER | Any returned report HTML differs because of shadow integration. | Disabled helper output is ignored; tests compare returned report HTML across one-time, removed-feature, professional, urgent, and readiness branches. | Controlled |
 | shadow flag accidentally enabled | BLOCKER | `ENABLE_RUNTIME_ADAPTER_SHADOW` is changed away from `false`. | Tests assert `ENABLE_RUNTIME_ADAPTER_SHADOW = false` in source and `_internal.ENABLE_RUNTIME_ADAPTER_SHADOW === false`. | Controlled |
 | adapter output rendered to users | BLOCKER | Adapter fields or sections appear in user-facing HTML. | Returned HTML leak scan checks adapter fields and raw fixture names are absent. | Controlled |
 | localStorage mutation | HIGH | Shadow helper reads localStorage, writes localStorage, adds keys, or persists diagnostics. | Test installs a throwing localStorage descriptor and proves helper does not access it. | Controlled |

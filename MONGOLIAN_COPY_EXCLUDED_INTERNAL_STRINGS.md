@@ -16,9 +16,9 @@ Raw literals excluded because role-facing render visibility was not proven.
 
 ## internal keys
 
-- Count: 1378
+- Count: 1169
 - Reason excluded: Classified as INTERNAL_IDENTIFIER.
-- Representative examples: `function`, `one_time`, `seven_day`, `upgrade`, `reward`, `planned_evening_reward`, `regulation`, `pre_eating_regulation_pause`
+- Representative examples: `function`, `one_time`, `reward`, `planned_evening_reward`, `regulation`, `pre_eating_regulation_pause`, `safety`, `anchor_meals`
 
 ## storage keys
 
@@ -46,6 +46,6 @@ Raw literals excluded because role-facing render visibility was not proven.
 
 ## untraced internal candidates
 
-- Count: 3329
+- Count: 3141
 - Reason excluded: No render path was proven.
-- Representative examples: `weightLossDeepPatternMvp`, `/.netlify/functions/qpay-create-invoice`, `/.netlify/functions/qpay-check-payment`, `one-time`, `seven-day`, `7 хоногоор нарийвчлах эрх`, `Өөртөө нэг таатай зүйл өгөх үе`, `Сэтгэл санаагаа баярлуулахыг хүсэх үе`
+- Representative examples: `weightLossDeepPatternMvp`, `/.netlify/functions/qpay-create-invoice`, `/.netlify/functions/qpay-check-payment`, `8`, `one-time`, `Өөртөө нэг таатай зүйл өгөх үе`, `Сэтгэл санаагаа баярлуулахыг хүсэх үе`, `Стресс үед хоолоор амсхийх үе`

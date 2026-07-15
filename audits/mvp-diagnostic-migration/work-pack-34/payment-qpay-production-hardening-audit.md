@@ -10,7 +10,7 @@ WP34 is audit-only. It inspects payment/QPay production readiness and adds regre
 - `WEIGHT_TEST_PRODUCT_CODE`.
 - QPay create/check endpoint strings.
 - One-time amount helper behavior.
-- `hasOneTimeReportAccess()`, `hasSevenDayAccess()`, and `hasUpgradeAccess()`.
+- `hasOneTimeReportAccess()`, `hasRemovedFeatureAccess()`, and `hasUpgradeAccess()`.
 - `mockBackend.js` product amount map, product-code mapping, and entitlement type creation.
 - Unpaid one-time report output.
 - Paid one-time report output.

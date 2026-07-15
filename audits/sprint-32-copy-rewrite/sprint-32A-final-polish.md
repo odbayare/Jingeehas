@@ -17,7 +17,7 @@ QPay: disabled
 1. `MONGOLIAN_REPORT_STYLE_BIBLE.md` was mostly English.
 2. The section `Тэр үед хоол танд юу өгч байсан байж болох вэ?` used the same generic intro across ordinary reports.
 3. Evidence notes felt too generic.
-4. `7 хоногоор нарийвчлах` appeared as both a heading and CTA.
+4. `[REMOVED_FEATURE_REFINEMENT]` appeared as both a heading and CTA.
 5. Menstrual-cycle report repeated similar context notes.
 6. Several headings could be more natural.
 
@@ -76,11 +76,11 @@ Updated user-facing headings:
 - `Үүнийг юунаас харсан бэ?` -> `Яагаад ингэж хэлж байна вэ?`
 - `Асуудал яг юу биш вэ?` -> `Гол буруу ойлголт`
 - `Одоогоор болгоомжлох зүйлс` -> `Одоохондоо хэт яарахгүй зүйлс`
-- `7 хоногоор нарийвчлах` heading -> `7 хоногийн тэмдэглэл юуг тодруулах вэ?`
+- `[REMOVED_FEATURE_REFINEMENT]` heading -> `7 хоногийн тэмдэглэл юуг тодруулах вэ?`
 
 The CTA remains:
 
-`7 хоногоор нарийвчлах`
+`[REMOVED_FEATURE_REFINEMENT]`
 
 ### Menstrual-cycle Compression
 

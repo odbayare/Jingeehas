@@ -28,7 +28,7 @@ function setStage(index, answers = {}) {
     stageAnswers: answers,
     stageVoiceSummaries: {},
     stageSummaryUi: {},
-    diaryEntries: []
+    removedEntries: []
   });
 }
 
@@ -104,20 +104,6 @@ function run() {
   assert(savedTextQuestion.includes("Тайлбар хадгалагдлаа"));
   assert(savedTextQuestion.includes("Таны бичсэн тайлбар хадгалагдлаа. Дараагийн асуултад үргэлжлүүлж болно."));
   assertAbsent(savedTextQuestion, blockedTerms, "saved free-text question");
-
-  _internal.setTestState({
-    packageType: "seven-day",
-    view: "diary",
-    internalTest: true,
-    sevenDayPaid: true,
-    diaryQuestionIndex: 1,
-    diaryDraft: { meal_rhythm: "Тогтуун, хоол алгасаагүй" },
-    diaryEntries: []
-  });
-  const diarySecondQuestion = normalize(_internal.renderDiary());
-  assert(diarySecondQuestion.includes("Буцах"), "diary question screens after the first should show Back");
-  _internal.previousDiaryQuestion();
-  assert.strictEqual(_internal.getTestState().diaryDraft.meal_rhythm, "Тогтуун, хоол алгасаагүй", "diary Back should preserve prior answer");
 
   const publicAndInternalText = normalize([
     _internal.renderLanding(),

@@ -89,7 +89,7 @@ withLocalStorageMutationSpy(() => {
     packageType: "one-time",
     view: "oneTimeStart",
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     qpayPayment: {
       status: "pending",

@@ -2,11 +2,11 @@
 
 | User | Route | Pattern Fit | Mongolian | Safety | Actionability | Commercial Value | Repetition Risk | Verdict |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
-| 01 | 5 | 5 | 5 | 5 | 5 | 5 | 4 | PASS |
-| 02 | 5 | 5 | 5 | 5 | 5 | 5 | 4 | PASS |
+| 01 | 5 | 4 | 5 | 5 | 5 | 5 | 4 | PASS |
+| 02 | 5 | 4 | 5 | 5 | 5 | 5 | 4 | PASS |
 | 03 | 5 | 5 | 5 | 5 | 5 | 5 | 4 | PASS |
-| 04 | 5 | 5 | 5 | 5 | 5 | 5 | 4 | PASS |
-| 05 | 5 | 4 | 5 | 5 | 5 | 5 | 4 | PASS |
+| 04 | 5 | 4 | 5 | 5 | 5 | 5 | 4 | PASS |
+| 05 | 5 | 5 | 5 | 5 | 5 | 5 | 4 | PASS |
 | 06 | 5 | 5 | 5 | 5 | 5 | 5 | 4 | PASS |
 | 07 | 5 | 5 | 5 | 5 | 5 | 5 | 4 | PASS |
 | 08 | 5 | 4 | 5 | 5 | 5 | 5 | 4 | PASS |
@@ -35,7 +35,7 @@
 2. Ordinary report openings now use deterministic mechanism-aware variants.
 3. The word "давтамж" still appears often; it is accurate but can feel repeated in a paid report.
 4. Executive-load phrasing is improved, but some users may still find it abstract without a concrete evening example.
-5. One-time reports have less diary-backed specificity than seven-day reports, which is expected but commercially important.
+5. One-time reports have less diary-backed specificity than removed-feature reports, which is expected but commercially important.
 6. Medical users are correctly routed, but their report value depends heavily on how clear the professional discussion summary feels.
 7. Cue/default users can overlap with reward users, so the report should keep environment-specific examples prominent.
 8. Restriction-collapse reports can feel emotionally intense; wording should continue avoiding shame amplification.

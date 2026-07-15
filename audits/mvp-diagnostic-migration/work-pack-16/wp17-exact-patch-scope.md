@@ -60,7 +60,7 @@ WP17 must not:
 - change safety copy;
 - change professional-first branch order;
 - change `hasOneTimeReportAccess()`;
-- change `hasSevenDayAccess()`;
+- change `hasRemovedFeatureAccess()`;
 - change `hasUpgradeAccess()`;
 - change `saveState()`;
 - change `loadState()`;

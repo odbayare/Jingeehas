@@ -47,7 +47,7 @@ assert(user03.includes("буцаад хүчтэй идэх тойрог"));
 assert(!user03.includes("дараагийн хоолноос хэвийн үргэлжлүүлэх замгүй болох үүрэг"));
 
 const user05 = report("user-05");
-assert(user05.includes("Өөрийн хоол, амралт өдөржин хойшлогдохоор"));
+assert(user05.includes("өөрийн хоол, амралтын хамгаалагдсан жижиг зай"));
 assert(user05.includes("өөрийн хоол"));
 assert(user05.includes("үлдэгдэл цагт найдахгүй"));
 assert(!user05.includes("Өдөр олон зүйл шийдэж өнгөрнө"));

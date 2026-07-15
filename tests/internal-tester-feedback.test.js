@@ -15,7 +15,7 @@ function baseAssessmentState(overrides = {}) {
     packageType: "one-time",
     currentAssessmentId: assessment.id,
     oneTimePaid: false,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     qpayPayment: { status: "idle", message: "", invoice: null },
     contactCapture: {
@@ -37,7 +37,7 @@ function baseAssessmentState(overrides = {}) {
       "S1-F02": "Одоо бүх юм дууссан",
       "S1-S04": "Үгүй"
     },
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
   return assessment;
@@ -111,19 +111,9 @@ function run() {
   assert(!normalize(_internal.renderFeedbackExport()).includes("Саналын экспорт"), "feedback export should be internal-only");
 
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "one-time",
     internalTest: true,
-    diaryEntries: [{
-      day_number: 1,
-      meal_rhythm: "Тогтвортой",
-      unplanned_eating_count: "Үгүй",
-      stress_score: 3,
-      energy_score: 5,
-      sleep: ["6-8 цаг"],
-      movement: "Бага зэрэг",
-      body_signals: ["Аль нь ч үгүй"],
-      pattern_probes: { glucose_signals: ["Будилах / ухаан балартах"] }
-    }]
+    stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" }
   });
   const urgent = normalize(_internal.renderReport());
   assert(urgent.includes("Одоо жин хасах тухай биш"));

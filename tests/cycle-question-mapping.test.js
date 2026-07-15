@@ -11,8 +11,8 @@ function visibleIds(stageAnswers) {
   _internal.setTestState({
     packageType: "one-time",
     stageAnswers,
-    diaryEntries: [],
-    diaryDraft: {}
+    removedEntries: [],
+    removedDraft: {}
   });
   return _internal.stageQuestions().map(question => question.id);
 }

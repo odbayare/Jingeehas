@@ -48,7 +48,7 @@
   "paywallReportAccessState": {
     "packageType": "one-time",
     "oneTimePaid": true,
-    "sevenDayPaid": true,
+    "removedFeaturePaid": true,
     "upgradePaid": true,
     "reportAccess": "internal-audit-unlocked"
   },

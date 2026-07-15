@@ -48,7 +48,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-W04": ["Мацаг"],
@@ -56,17 +56,17 @@ function setOneTime(overrides = {}) {
       "S1-F01": ["Дараа өлсөхөөс санаа зовсон", "Өөрийгөө шагнамаар"]
     },
     preliminary: [{ key: "hungerSafety", score: 5, label: "хүчтэй нийцэж байна" }],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: false,
     stageAnswers: {
       "S1-W04": ["Мацаг", "Орой хоол идэхгүй"]
@@ -75,7 +75,7 @@ function setSevenDay(overrides = {}) {
       { key: "hungerSafety", score: 5, label: "хүчтэй нийцэж байна" },
       { key: "executive", score: 4, label: "дунд зэрэг нийцэж байна" }
     ],
-    diaryEntries: entries(5),
+    removedEntries: entries(5),
     ...overrides
   });
 }
@@ -114,25 +114,18 @@ function assertRenderUnchanged(setup, label) {
   [
     ["one-time paid", () => setOneTime()],
     ["one-time unpaid", () => setOneTime({ oneTimePaid: false })],
-    ["seven-day full", () => setSevenDay()],
-    ["seven-day readiness hold", () => setSevenDay({ diaryEntries: entries(3) })],
-    ["professional", () => setSevenDay({ stageAnswers: { "S1-S03": "Одоо давтагддаг" } })],
-    ["urgent", () => setSevenDay({ stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } })]
+    ["professional", () => setOneTime({ stageAnswers: { "S1-S03": "Одоо давтагддаг" } })],
+    ["urgent", () => setOneTime({ stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } })]
   ].forEach(([label, setup]) => assertRenderUnchanged(setup, label));
 
-  setOneTime({ oneTimePaid: false, sevenDayPaid: false, upgradePaid: false });
+  setOneTime({ oneTimePaid: false });
   assert.strictEqual(_internal.hasOneTimeReportAccess(), false);
-  assert.strictEqual(_internal.hasSevenDayAccess(), false);
-  assert.strictEqual(_internal.hasUpgradeAccess(), false);
   _internal.prepareRuntimeAdapterShadowSignal({}, null, { enabled: false });
   assert.strictEqual(_internal.hasOneTimeReportAccess(), false);
-  assert.strictEqual(_internal.hasSevenDayAccess(), false);
-  assert.strictEqual(_internal.hasUpgradeAccess(), false);
 
   [
     "const STORAGE_KEY = \"weightLossDeepPatternMvp\";",
     "oneTime: \"9,900₮\"",
-    "sevenDayAnchor: \"69,000₮\"",
     "const WEIGHT_TEST_PRODUCT_CODE = \"WEIGHT_TEST_ONE_TIME\";",
     "const WEIGHT_TEST_AMOUNT_MNT = 9900;",
     "create: \"/.netlify/functions/qpay-create-invoice\"",

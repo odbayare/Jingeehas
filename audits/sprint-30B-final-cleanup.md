@@ -7,7 +7,7 @@ Sprint 30A fixed the `Товч хариу` layer for the menstrual-cycle persona
 ## Issues Fixed
 
 - User 08 detailed report now uses a menstrual-cycle contextual report voice when strong premenstrual appetite/craving evidence is present and self-neglect evidence is weak or absent.
-- Feedback survey/export wording now uses `29,000₮-өөр`.
+- Feedback survey/export wording now uses `[REMOVED_FEATURE_PRICE]-өөр`.
 - Sprint 30 Markdown/PDF export no longer includes the interactive label `Дэлгэрэнгүй тайлан харах`.
 - Public refinement copy no longer uses `Нурах давтамж`.
 
@@ -39,12 +39,12 @@ After:
 
 Good wording:
 
-`Энэ тайланг 29,000₮-өөр авахад үнэ цэнтэй санагдах уу?`
+`Энэ тайланг [REMOVED_FEATURE_PRICE]-өөр авахад үнэ цэнтэй санагдах уу?`
 
 Rejected variants:
 
 - `29,000 төлж`
-- `29,000₮ төлж`
+- `[REMOVED_FEATURE_PRICE] төлж`
 - `29,000-өөр`
 
 ## PDF / Markdown Export Cleanup

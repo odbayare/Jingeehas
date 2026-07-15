@@ -116,9 +116,9 @@
   ],
   "safetyRoute": "mode1",
   "paywallReportAccessState": {
-    "packageType": "seven-day",
+    "packageType": "removed-feature",
     "oneTimePaid": true,
-    "sevenDayPaid": true,
+    "removedFeaturePaid": true,
     "upgradePaid": true,
     "reportAccess": "internal-audit-unlocked"
   },

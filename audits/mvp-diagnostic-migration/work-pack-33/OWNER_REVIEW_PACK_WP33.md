@@ -19,7 +19,7 @@ READY TO DEPLOY CONVERSION PAYWALL UX POLISH
 
 - Unpaid one-time report now states that the first visible signal remains free.
 - Paid unlock explanation now separates what is visible now from what the full report adds.
-- Full report value is described as deeper context, secondary influences, safer pacing, first gentle step, 14-day experiment, and seven-day refinement path.
+- Full report value is described as deeper context, secondary influences, safer pacing, first gentle step, 14-day experiment, and removed-feature refinement path.
 - Payment failed copy now avoids harsh failure language and tells the user the first signal remains visible.
 - Paywall content gained a focused responsive detail grid for readability.
 

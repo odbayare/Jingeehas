@@ -214,7 +214,7 @@ export function buildDriverStackReportObject(stack, options = {}) {
     wrongSelfExplanation: stack.wrong_self_explanation,
     firstGentleChange,
     fourteenDayExperiment,
-    sevenDayDiaryConfirmation: stack.seven_day_diary_confirmation_targets,
+    removedFeatureDiaryConfirmation: stack.removed_feature_diary_confirmation_targets,
     safetyBlock: {
       mode: safety.mode,
       ordinaryReportAllowed: safety.ordinaryReportAllowed,
@@ -301,7 +301,7 @@ export function renderDriverStackReportMarkdown(reportObject) {
     "",
     "## 7 хоногийн баталгаажуулах тэмдэглэл",
     "",
-    `- ${reportObject.sevenDayDiaryConfirmation.map(target => target.driver_key).join(", ")}`,
+    `- ${reportObject.removedFeatureDiaryConfirmation.map(target => target.driver_key).join(", ")}`,
     "",
     "## Техникийн owner review snapshot",
     "",
@@ -318,7 +318,7 @@ export function renderDriverStackReportMarkdown(reportObject) {
     `- Hidden food function: ${reportObject.hiddenFoodFunction.key}`,
     `- First gentle change: ${reportObject.firstGentleChange.id}`,
     `- Fourteen day experiment: ${reportObject.fourteenDayExperiment?.id || "suppressed"}`,
-    `- Seven day confirmation: ${reportObject.sevenDayDiaryConfirmation.map(target => target.driver_key).join(", ")}`,
+    `- Seven day confirmation: ${reportObject.removedFeatureDiaryConfirmation.map(target => target.driver_key).join(", ")}`,
     "",
     "## Owner Review Flags",
     "",
@@ -367,7 +367,7 @@ const { execFileSync } = require("child_process");
     "wrongSelfExplanation",
     "firstGentleChange",
     "fourteenDayExperiment",
-    "sevenDayDiaryConfirmation",
+    "removedFeatureDiaryConfirmation",
     "safetyBlock",
     "evidenceExplanation",
     "copyConstraints",
@@ -408,7 +408,7 @@ const { execFileSync } = require("child_process");
     assert(Object.prototype.hasOwnProperty.call(report.wrongSelfExplanation, "key"));
     assert(report.firstGentleChange.id);
     assert(!Object.prototype.hasOwnProperty.call(report.firstGentleChange, "avoid"), `${report.fixtureName}: must not expose raw WP3 avoid copy`);
-    assert(Array.isArray(report.sevenDayDiaryConfirmation));
+    assert(Array.isArray(report.removedFeatureDiaryConfirmation));
     assert(report.copyConstraints.includes("no_one_type_label"));
     assert(report.copyConstraints.includes("no_ordinary_experiment_when_professional_first"));
     assert(!Object.prototype.hasOwnProperty.call(report, "sourceVersion"));
@@ -524,7 +524,7 @@ const { execFileSync } = require("child_process");
       "visibleCondition",
       "wrongSelfExplanation",
       "fourteenDayExperiment",
-      "sevenDayDiaryConfirmation",
+      "removedFeatureDiaryConfirmation",
       "safetyBlock",
       "ownerReviewFlags",
       "approvedFixtureNames",
@@ -538,7 +538,7 @@ const { execFileSync } = require("child_process");
       "runtimeIntegration",
       "sourceCommit",
       "fourteenDayExperimentId",
-      "sevenDayConfirmationTargets",
+      "removedFeatureConfirmationTargets",
       "safetyBlockPresent",
       "ordinaryExperimentAllowed",
       "ownerReviewReady"
@@ -642,7 +642,7 @@ The object includes:
 - `wrongSelfExplanation`
 - `firstGentleChange`
 - `fourteenDayExperiment`
-- `sevenDayDiaryConfirmation`
+- `removedFeatureDiaryConfirmation`
 - `safetyBlock`
 - `evidenceExplanation`
 - `copyConstraints`

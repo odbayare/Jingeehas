@@ -56,7 +56,7 @@ function setOneTimeReward() {
       ])
     },
     preliminary: [{ key: "reward", score: 5, label: "хүчтэй нийцэж байна" }],
-    diaryEntries: []
+    removedEntries: []
   });
 }
 
@@ -72,16 +72,16 @@ function setOneTimeMode2() {
       "S1-B01": ["Сахар унасан мэт", "Толгой эргэх"]
     },
     preliminary: [{ key: "reward", score: 4, label: "дунд зэрэг нийцэж байна" }],
-    diaryEntries: []
+    removedEntries: []
   });
 }
 
 function setMode3() {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     stageAnswers: { "S1-B03": "Тийм" },
-    diaryEntries: Array.from({ length: 5 }, (_, index) => ({
+    removedEntries: Array.from({ length: 5 }, (_, index) => ({
       day_number: index + 1,
       meal_rhythm: "2-3 тогтмол хоол",
       unplanned_eating_count: "Тийм, 1 удаа",

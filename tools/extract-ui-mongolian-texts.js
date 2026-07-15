@@ -52,26 +52,26 @@ addRendered("About", _internal.renderAbout);
 addRendered("Choice", _internal.renderChoice);
 
 setState({
-  packageType: "seven-day",
-  view: "sevenDayStart",
-  sevenDayPaid: false,
+  packageType: "removed-feature",
+  view: "removedFeatureStart",
+  removedFeaturePaid: false,
   upgradePaid: false,
   preliminary: [{ key: "executive", score: 5, label: "хүчтэй нийцэж байна" }],
   stageAnswers: {},
-  diaryEntries: []
+  removedEntries: []
 });
-addRendered("7-Day Paywall", _internal.renderSevenDayStart);
+addRendered("7-Day Paywall", _internal.renderRemovedFeatureStart);
 
 setState({
-  packageType: "seven-day",
-  view: "sevenDayStart",
-  sevenDayPaid: true,
+  packageType: "removed-feature",
+  view: "removedFeatureStart",
+  removedFeaturePaid: true,
   upgradePaid: false,
   preliminary: [{ key: "executive", score: 5, label: "хүчтэй нийцэж байна" }],
   stageAnswers: {},
-  diaryEntries: []
+  removedEntries: []
 });
-addRendered("7-Day Start Unlocked", _internal.renderSevenDayStart);
+addRendered("7-Day Start Unlocked", _internal.renderRemovedFeatureStart);
 
 setState({
   packageType: "one-time",
@@ -83,7 +83,7 @@ setState({
     "S1-L03": ["Цаг", "Ядаргаа"]
   },
   preliminary: [{ key: "executive", score: 5, label: "хүчтэй нийцэж байна" }],
-  diaryEntries: []
+  removedEntries: []
 });
 addRendered("One-Time Paywall", _internal.renderReport);
 
@@ -104,15 +104,15 @@ setState({
     "S1-L03": ["Цаг", "Ядаргаа"]
   },
   preliminary: [{ key: "executive", score: 5, label: "хүчтэй нийцэж байна" }],
-  diaryEntries: []
+  removedEntries: []
 });
 addRendered("One-Time Full Report", _internal.renderReport);
 
 setState({
-  packageType: "seven-day",
+  packageType: "removed-feature",
   view: "report",
-  sevenDayPaid: true,
-  diaryEntries: [],
+  removedFeaturePaid: true,
+  removedEntries: [],
   preliminary: [{ key: "executive", score: 5, label: "хүчтэй нийцэж байна" }],
   stageAnswers: {}
 });
@@ -123,7 +123,7 @@ setState({
   view: "report",
   oneTimePaid: false,
   stageAnswers: { "S1-B03": "Тийм" },
-  diaryEntries: []
+  removedEntries: []
 });
 addRendered("Mode 3 Professional", _internal.renderReport);
 
@@ -132,7 +132,7 @@ setState({
   view: "report",
   oneTimePaid: false,
   stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" },
-  diaryEntries: []
+  removedEntries: []
 });
 addRendered("Mode 4 Urgent", _internal.renderReport);
 

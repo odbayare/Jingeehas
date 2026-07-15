@@ -12,11 +12,8 @@ function paidReport(stageAnswers) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
-    upgradePaid: false,
     stageAnswers,
     preliminary: [],
-    diaryEntries: [],
     stageVoiceSummaries: {}
   });
   return normalize(_internal.renderReport());

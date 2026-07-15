@@ -61,7 +61,7 @@ function run() {
     stageAnswers: {},
     stageVoiceSummaries: {},
     stageSummaryUi: {},
-    diaryEntries: []
+    removedEntries: []
   });
 
   let html = _internal.renderStageOne();
@@ -95,7 +95,7 @@ function run() {
     stageAnswers: {},
     stageVoiceSummaries: {},
     stageSummaryUi: {},
-    diaryEntries: []
+    removedEntries: []
   });
   scrollCalls.length = 0;
   _internal.toggleMulti("S1-W02", "Нойр муудсан", 99);
@@ -110,7 +110,7 @@ function run() {
     stageAnswers: {},
     stageVoiceSummaries: {},
     stageSummaryUi: {},
-    diaryEntries: []
+    removedEntries: []
   });
   _internal.setAnswerDraft("S1-W05", "Ажил ихсээд үргэлжлүүлэхэд хэцүү болсон.");
   assert.strictEqual(_internal.getTestState().stageIndex, stageIndexFor(app, "S1-W05"), "text input should not auto-advance");
@@ -119,29 +119,6 @@ function run() {
   assert(text.includes("Таны бичсэн тайлбар хадгалагдлаа. Дараагийн асуултад үргэлжлүүлж болно."));
   assert(!text.includes("Reflection"));
   assert(!text.includes("context"));
-
-  _internal.setTestState({
-    packageType: "seven-day",
-    view: "diary",
-    internalTest: true,
-    sevenDayPaid: true,
-    diaryDay: 1,
-    diaryQuestionIndex: 3,
-    diaryDraft: { unplanned_eating_count: "Тийм, нэг удаа" },
-    preliminary: [{ key: "reward" }, { key: "hungerSafety" }, { key: "regulation" }],
-    diaryEntries: []
-  });
-  scrollCalls.length = 0;
-  _internal.setDiaryValue("D-C04", "7");
-  assert.strictEqual(_internal.getTestState().diaryQuestionIndex, 3, "scale answer should not auto-advance");
-  assert.deepStrictEqual(scrollCalls, [], "scale answer should not scroll without Continue");
-  _internal.nextDiaryQuestion();
-  assert.strictEqual(_internal.getTestState().diaryQuestionIndex, 4, "diary Continue should advance");
-  assert(scrollCalls.some(call => call && call.top === 0), "diary Continue should scroll to top");
-  html = _internal.renderDiary();
-  assert(html.includes("question-top-actions"), "diary Back should render after the first question");
-  _internal.previousDiaryQuestion();
-  assert.strictEqual(_internal.getTestState().diaryDraft.hunger_level, "7", "diary Back should preserve scale answer");
 
   scrollCalls.length = 0;
   _internal.setTestState({
@@ -154,8 +131,7 @@ function run() {
       "S1-S02": "Үгүй",
       "S1-S04": "Үгүй"
     },
-    internalFeedbackForm: { fitRating: "8" },
-    diaryEntries: []
+    internalFeedbackForm: { fitRating: "8" }
   });
   _internal.submitInternalFeedback();
   assert.strictEqual(_internal.getTestState().view, "feedbackThanks", "feedback submit should change view");
@@ -171,8 +147,7 @@ function run() {
       "S1-C01": "33",
       "S1-S04": "Одоо идэвхтэй бодогдож байна"
     },
-    safetyFlags: ["S1-S04:urgent"],
-    diaryEntries: []
+    safetyFlags: ["S1-S04:urgent"]
   });
   const urgentReport = normalize(_internal.renderReport());
   assert(urgentReport.includes("Яаралтай аюулгүй байдлын зөвлөмж"), "Mode 4 urgent report should remain visible");

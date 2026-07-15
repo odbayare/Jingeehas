@@ -82,27 +82,11 @@ function run() {
       stageAnswers: {},
       stageVoiceSummaries: {},
       stageSummaryUi: {},
-      diaryEntries: []
+      removedEntries: []
     });
     assertAbsent(normalize(_internal.renderStageOne()), bannedPhrases);
   });
 
-  const renderedDiaryQuestionCount = 18;
-  Array.from({ length: renderedDiaryQuestionCount }).forEach((_, diaryQuestionIndex) => {
-    mockBackend.resetMockBackend();
-    _internal.setTestState({
-      packageType: "seven-day",
-      view: "diary",
-      internalTest: false,
-      sevenDayPaid: true,
-      diaryDay: 1,
-      diaryQuestionIndex,
-      diaryDraft: { unplanned_eating_count: "Тийм, нэг удаа" },
-      preliminary: [{ key: "reward" }, { key: "hungerSafety" }, { key: "regulation" }],
-      diaryEntries: []
-    });
-    assertAbsent(normalize(_internal.renderDiary()), bannedPhrases);
-  });
 }
 
 run();

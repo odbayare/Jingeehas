@@ -33,7 +33,7 @@ function setOneTime(overrides = {}) {
     packageType: "one-time",
     view: "report",
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     stageAnswers: {
       "S1-W04": ["Мацаг"],
@@ -41,7 +41,7 @@ function setOneTime(overrides = {}) {
       "S1-F01": ["Дараа өлсөхөөс санаа зовсон", "Өөрийгөө шагнамаар"]
     },
     preliminary: [{ key: "hungerSafety", score: 5, label: "хүчтэй нийцэж байна" }],
-    diaryEntries: [],
+    removedEntries: [],
     ...overrides
   });
 }
@@ -61,15 +61,15 @@ function diaryEntry(overrides = {}) {
   };
 }
 
-function setSevenDay(overrides = {}) {
+function setRemovedFeature(overrides = {}) {
   _internal.setTestState({
-    packageType: "seven-day",
+    packageType: "removed-feature",
     view: "report",
     oneTimePaid: false,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: false,
     preliminary: [{ key: "hungerSafety", score: 4, label: "дунд зэрэг нийцэж байна" }],
-    diaryEntries: [
+    removedEntries: [
       diaryEntry({ day_number: 1 }),
       diaryEntry({ day_number: 2 }),
       diaryEntry({ day_number: 3 }),
@@ -158,18 +158,14 @@ assert(paid.includes("1. Гол зураглал"), "ordinary paid report should
 assert(paid.includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "ordinary paid report should include paid report depth");
 assertNoPaymentMutation(paidBackendBefore, "ordinary paid report");
 
-setSevenDay({
-  diaryEntries: [diaryEntry({ pattern_probes: { measured_today: "Тийм, санаа зовоосон" } })]
-});
+setOneTime({ stageAnswers: { "S1-S03": "Одоо давтагддаг" } });
 assert.strictEqual(_internal.reportMode().mode, "professional", "professional setup must route to professional mode");
 const professional = _internal.renderReport();
 assertSurfaces(professional, ["safety"], "professional report");
 assert(!professional.includes('data-surface="preview"'), "professional report must suppress preview");
 assert(!professional.includes('data-surface="paid"'), "professional report must suppress paid");
 
-setSevenDay({
-  diaryEntries: [diaryEntry({ pattern_probes: { glucose_signals: ["Будилах / ухаан балартах"] } })]
-});
+setOneTime({ stageAnswers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } });
 assert.strictEqual(_internal.reportMode().mode, "urgent", "urgent setup must route to urgent mode");
 const urgent = _internal.renderReport();
 assertSurfaces(urgent, ["safety"], "urgent report");

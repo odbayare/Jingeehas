@@ -104,7 +104,7 @@ Shadow integration is needed before visible report rendering because the current
 - bypass safety/professional-first routes;
 - hide safety guidance behind payment;
 - expose paid-depth content to unpaid users;
-- change existing one-time or seven-day report HTML;
+- change existing one-time or removed-feature report HTML;
 - write new data into localStorage;
 - alter QPay or mock entitlement behavior.
 
@@ -213,7 +213,7 @@ The recommended WP17 touchpoint is inside `renderReport()` in `app.js`, immediat
 - `leverage`
 - `experiment`
 
-The shadow helper should run before the existing safety, payment, readiness, one-time, and seven-day return branches. It must not change those branches.
+The shadow helper should run before the existing safety, payment, readiness, one-time, and removed-feature return branches. It must not change those branches.
 
 Why this touchpoint:
 
@@ -274,12 +274,12 @@ WP17 must add focused tests before or with implementation. Required test coverag
 
 - disabled shadow flag leaves `_internal.renderReport()` output unchanged for one-time paid report;
 - disabled shadow flag leaves `_internal.renderReport()` output unchanged for unpaid one-time paywall;
-- disabled shadow flag leaves `_internal.renderReport()` output unchanged for seven-day readiness/paywall paths;
+- disabled shadow flag leaves `_internal.renderReport()` output unchanged for removed-feature readiness/paywall paths;
 - disabled shadow flag leaves professional-first and urgent safety routes unchanged;
 - shadow helper does not call `saveState()`;
 - shadow helper does not read or write `localStorage`;
 - shadow helper does not alter `state`;
-- shadow helper does not alter `hasOneTimeReportAccess()`, `hasSevenDayAccess()`, or `hasUpgradeAccess()`;
+- shadow helper does not alter `hasOneTimeReportAccess()`, `hasRemovedFeatureAccess()`, or `hasUpgradeAccess()`;
 - enabled test-only shadow path returns an internal-only payload or validation result;
 - enabled test-only shadow path preserves `runtimeSafetyGate.canRenderInRuntime === false`;
 - enabled test-only shadow path preserves `paymentGate.safetyGuidanceRequiresPayment === false`;

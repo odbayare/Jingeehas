@@ -6,6 +6,832 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 
 **Exact current text**
 
+> Хурдан эхлэх
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2324
+- Source function/object: renderChoice
+- Source mapping: RESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="card stack choice-card">
+
+**Source item**
+
+> <p class="choice-kicker">Хурдан эхлэх</p><h3>Нэг удаагийн гүн анализ</h3>
+
+**Source context after**
+
+> <p class="price promo"><span>Үндсэн үнэ</span> ${PRICING.oneTime}</p>
+
+**Rendered context**
+
+> Нэг удаагийн гүн анализ
+> Хурдан эхлэх
+> Үндсэн үнэ
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0071 — P2
+
+**Exact current text**
+
+> Үндсэн үнэ
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Хурдан эхлэх
+> Үндсэн үнэ
+> 9,900₮
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0072 — P2
+
+**Exact current text**
+
+> 9,900₮
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Үндсэн үнэ
+> 9,900₮
+> Нэг удаагийн зураглал нь эхний тайлан өгнө.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0073 — P2
+
+**Exact current text**
+
+> Нэг удаагийн зураглал нь эхний тайлан өгнө.
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2326
+- Source function/object: renderChoice
+- Source mapping: RESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <p class="price promo"><span>Үндсэн үнэ</span> ${PRICING.oneTime}</p>
+
+**Source item**
+
+> <p>Нэг удаагийн зураглал нь эхний тайлан өгнө.</p>
+
+**Source context after**
+
+> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
+
+**Rendered context**
+
+> 9,900₮
+> Нэг удаагийн зураглал нь эхний тайлан өгнө.
+> 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0074 — P2
+
+**Exact current text**
+
+> 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2327
+- Source function/object: renderChoice
+- Source mapping: RESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <p>Нэг удаагийн зураглал нь эхний тайлан өгнө.</p>
+
+**Source item**
+
+> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
+
+**Source context after**
+
+> <ul><li>Хамгийн тод давтагддаг нөхцөл</li><li>Давхар нөлөөлж буй 1–2 зүйл</li><li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li><li>Одоогоор зайлсхийх зүйлс</li><li>Эхний зөөлөн алхам</li><li>14 хоногийн эхний туршилт</li></ul>
+
+**Rendered context**
+
+> Нэг удаагийн зураглал нь эхний тайлан өгнө.
+> 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
+> Хамгийн тод давтагддаг нөхцөл
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0075 — P2
+
+**Exact current text**
+
+> Хамгийн тод давтагддаг нөхцөл
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
+> Хамгийн тод давтагддаг нөхцөл
+> Давхар нөлөөлж буй 1–2 зүйл
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0076 — P2
+
+**Exact current text**
+
+> Давхар нөлөөлж буй 1–2 зүйл
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2328
+- Source function/object: renderChoice
+- Source mapping: RESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
+
+**Source item**
+
+> <ul><li>Хамгийн тод давтагддаг нөхцөл</li><li>Давхар нөлөөлж буй 1–2 зүйл</li><li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li><li>Одоогоор зайлсхийх зүйлс</li><li>Эхний зөөлөн алхам</li><li>14 хоногийн эхний туршилт</li></ul>
+
+**Source context after**
+
+> <button class="button choice-button" onclick="choosePackage(&#39;one-time&#39;)">${PRICING.oneTime} төлөөд тайлангаа нээх</button>
+
+**Rendered context**
+
+> Хамгийн тод давтагддаг нөхцөл
+> Давхар нөлөөлж буй 1–2 зүйл
+> Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0077 — P2
+
+**Exact current text**
+
+> Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2328
+- Source function/object: renderChoice
+- Source mapping: RESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
+
+**Source item**
+
+> <ul><li>Хамгийн тод давтагддаг нөхцөл</li><li>Давхар нөлөөлж буй 1–2 зүйл</li><li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li><li>Одоогоор зайлсхийх зүйлс</li><li>Эхний зөөлөн алхам</li><li>14 хоногийн эхний туршилт</li></ul>
+
+**Source context after**
+
+> <button class="button choice-button" onclick="choosePackage(&#39;one-time&#39;)">${PRICING.oneTime} төлөөд тайлангаа нээх</button>
+
+**Rendered context**
+
+> Давхар нөлөөлж буй 1–2 зүйл
+> Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох
+> Одоогоор зайлсхийх зүйлс
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0078 — P2
+
+**Exact current text**
+
+> Одоогоор зайлсхийх зүйлс
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох
+> Одоогоор зайлсхийх зүйлс
+> Эхний зөөлөн алхам
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0079 — P2
+
+**Exact current text**
+
+> Эхний зөөлөн алхам
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Одоогоор зайлсхийх зүйлс
+> Эхний зөөлөн алхам
+> 14 хоногийн эхний туршилт
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0080 — P2
+
+**Exact current text**
+
+> 14 хоногийн эхний туршилт
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Эхний зөөлөн алхам
+> 14 хоногийн эхний туршилт
+> 9,900₮ төлөөд тайлангаа нээх
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0081 — P2
+
+**Exact current text**
+
+> 9,900₮ төлөөд тайлангаа нээх
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> 14 хоногийн эхний туршилт
+> 9,900₮ төлөөд тайлангаа нээх
+> Жишээ үр дүн
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0082 — P2
+
+**Exact current text**
+
+> Жишээ үр дүн
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2253
+- Source function/object: renderSampleResultPreview
+- Source mapping: RESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <div>
+
+**Source item**
+
+> <p class="eyebrow">Жишээ үр дүн</p>
+
+**Source context after**
+
+> <h2>Тайлан ямар харагдах вэ?</h2>
+
+**Rendered context**
+
+> 9,900₮ төлөөд тайлангаа нээх
+> Жишээ үр дүн
+> Тайлан ямар харагдах вэ?
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0083 — P2
+
+**Exact current text**
+
+> Тайлан ямар харагдах вэ?
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2254
+- Source function/object: renderSampleResultPreview
+- Source mapping: RESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <p class="eyebrow">Жишээ үр дүн</p>
+
+**Source item**
+
+> <h2>Тайлан ямар харагдах вэ?</h2>
+
+**Source context after**
+
+> <p class="muted">Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.</p>
+
+**Rendered context**
+
+> Жишээ үр дүн
+> Тайлан ямар харагдах вэ?
+> Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0084 — P2
+
+**Exact current text**
+
 > Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.
 
 **Classification**
@@ -13,18 +839,18 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
+- Surface: CHOICE
 - Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
+- Scenario: choice
+- Render source: renderChoice
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2516
+- Source line: 2255
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
+- Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -61,7 +887,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0071 — P2
+## COPY-0085 — P2
 
 **Exact current text**
 
@@ -72,18 +898,18 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
+- Surface: CHOICE
 - Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
+- Scenario: choice
+- Render source: renderChoice
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2520
+- Source line: 2259
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
+- Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -120,7 +946,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0072 — P2
+## COPY-0086 — P2
 
 **Exact current text**
 
@@ -131,18 +957,18 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
+- Surface: CHOICE
 - Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
+- Scenario: choice
+- Render source: renderChoice
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2521
+- Source line: 2260
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
+- Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -179,7 +1005,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0073 — P2
+## COPY-0087 — P2
 
 **Exact current text**
 
@@ -190,10 +1016,10 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
+- Surface: CHOICE
 - Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
+- Scenario: choice
+- Render source: renderChoice
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
@@ -201,7 +1027,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
+- Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -238,7 +1064,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0074 — P2
+## COPY-0088 — P2
 
 **Exact current text**
 
@@ -249,18 +1075,18 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
+- Surface: CHOICE
 - Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
+- Scenario: choice
+- Render source: renderChoice
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2525
+- Source line: 2264
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
+- Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -279,831 +1105,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 > Энэ юу гэсэн үг вэ?
 > Та юу хийхээ мэдэхгүйдээ биш. Харин орой тэнхээ багасах үед хамгийн амар сонголт л ялж байна.
-> Эхний зөөлөн алхам
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0075 — P2
-
-**Exact current text**
-
-> Эхний зөөлөн алхам
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
-- Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Та юу хийхээ мэдэхгүйдээ биш. Харин орой тэнхээ багасах үед хамгийн амар сонголт л ялж байна.
-> Эхний зөөлөн алхам
 > Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0076 — P2
-
-**Exact current text**
-
-> Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
-- Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2529
-- Source function/object: renderSampleResultPreview
-- Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Эхний зөөлөн алхам</h3>
-
-**Source item**
-
-> <p>Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.</p>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Эхний зөөлөн алхам
-> Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.
-> 7 хоногоор нарийвчилбал
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0077 — P2
-
-**Exact current text**
-
-> 7 хоногоор нарийвчилбал
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
-- Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2532
-- Source function/object: renderSampleResultPreview
-- Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div>
-
-**Source item**
-
-> <h3>7 хоногоор нарийвчилбал</h3>
-
-**Source context after**
-
-> <p>Энэ нь аль өдөр, ямар үед илүү хүчтэй болдгийг богино тэмдэглэлээр тодруулна.</p>
-
-**Rendered context**
-
-> Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.
-> 7 хоногоор нарийвчилбал
-> Энэ нь аль өдөр, ямар үед илүү хүчтэй болдгийг богино тэмдэглэлээр тодруулна.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0078 — P2
-
-**Exact current text**
-
-> Энэ нь аль өдөр, ямар үед илүү хүчтэй болдгийг богино тэмдэглэлээр тодруулна.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
-- Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2533
-- Source function/object: renderSampleResultPreview
-- Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>7 хоногоор нарийвчилбал</h3>
-
-**Source item**
-
-> <p>Энэ нь аль өдөр, ямар үед илүү хүчтэй болдгийг богино тэмдэглэлээр тодруулна.</p>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> 7 хоногоор нарийвчилбал
-> Энэ нь аль өдөр, ямар үед илүү хүчтэй болдгийг богино тэмдэглэлээр тодруулна.
-> Сонголтоо хийх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0079 — P2
-
-**Exact current text**
-
-> Сонголтоо хийх
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
-- Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2560
-- Source function/object: renderAbout
-- Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="actions">
-
-**Source item**
-
-> <button class="button" onclick="setView('choice')">Сонголтоо хийх</button>
-
-**Source context after**
-
-> <button class="button ghost" onclick="setView('landing')">Буцах</button>
-
-**Rendered context**
-
-> Энэ нь аль өдөр, ямар үед илүү хүчтэй болдгийг богино тэмдэглэлээр тодруулна.
-> Сонголтоо хийх
-> Буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0080 — P2
-
-**Exact current text**
-
-> Буцах
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
-- Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Сонголтоо хийх
-> Буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0081 — P2
-
-**Exact current text**
-
-> Үнэлгээний сонголт
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2598
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> return `
-
-**Source item**
-
-> ${topbar(0, "Үнэлгээний сонголт")}
-
-**Source context after**
-
-> <section class="screen">
-
-**Rendered context**
-
-> Үнэлгээний сонголт
-> Та ямар түвшний зураглал авах вэ?
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0082 — P2
-
-**Exact current text**
-
-> Та ямар түвшний зураглал авах вэ?
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2601
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="panel stack choice-panel">
-
-**Source item**
-
-> <h2>Та ямар түвшний зураглал авах вэ?</h2>
-
-**Source context after**
-
-> <p class="muted">Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.</p>
-
-**Rendered context**
-
-> Үнэлгээний сонголт
-> Та ямар түвшний зураглал авах вэ?
-> Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0083 — P2
-
-**Exact current text**
-
-> Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2602
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h2>Та ямар түвшний зураглал авах вэ?</h2>
-
-**Source item**
-
-> <p class="muted">Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.</p>
-
-**Source context after**
-
-> <div class="choice-grid">
-
-**Rendered context**
-
-> Та ямар түвшний зураглал авах вэ?
-> Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.
-> Хурдан эхлэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0084 — P2
-
-**Exact current text**
-
-> Хурдан эхлэх
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2605
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="card stack choice-card">
-
-**Source item**
-
-> <p class="choice-kicker">Хурдан эхлэх</p>
-
-**Source context after**
-
-> <h3>Нэг удаагийн гүн анализ</h3>
-
-**Rendered context**
-
-> Нэг удаагийн зураглал нь эхний тайлан өгнө. 7 хоногийн зураглал бол илүү их тураах төлөвлөгөө биш, харин тэр эхний зураглалыг бодит өдрүүд дээр нарийвчлах богино ажиглалт.
-> Хурдан эхлэх
-> Нэг удаагийн гүн анализ
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0085 — P2
-
-**Exact current text**
-
-> Нэг удаагийн гүн анализ
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Хурдан эхлэх
-> Нэг удаагийн гүн анализ
-> Үндсэн үнэ
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0086 — P2
-
-**Exact current text**
-
-> Үндсэн үнэ
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 2
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Нэг удаагийн гүн анализ
-> Үндсэн үнэ
-> 9,900₮
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0087 — P2
-
-**Exact current text**
-
-> 9,900₮
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Үндсэн үнэ
-> 9,900₮
-> 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0088 — P2
-
-**Exact current text**
-
-> 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2610
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> </div>
-
-**Source item**
-
-> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
-
-**Source context after**
-
-> <div class="pill-row"><span class="pill">10–15 минут</span><span class="pill">Эхний хэсгийг үнэгүй харах</span><span class="pill">Бүрэн эхний тайлан</span></div>
-
-**Rendered context**
-
-> 9,900₮
-> 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
-> 10–15 минут
 
 **Dynamic values**
 
@@ -1125,7 +1127,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> 10–15 минут
+> Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.
 
 **Classification**
 
@@ -1140,29 +1142,28 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 2268
+- Source function/object: renderSampleResultPreview
+- Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <h3>Эхний зөөлөн алхам</h3>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <p>Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.</p>
 
 **Source context after**
 
-> None
+> </div>
 
 **Rendered context**
 
-> 10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.
-> 10–15 минут
-> Эхний хэсгийг үнэгүй харах
+> Та юу хийхээ мэдэхгүйдээ биш. Харин орой тэнхээ багасах үед хамгийн амар сонголт л ялж байна.
+> Ядарсан өдөр хэрэглэх 2 бэлэн оройн хоолны сонголт, өдөр алгасахгүй нэг тогтмол хоол.
 
 **Dynamic values**
 
@@ -1184,44 +1185,43 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Эхний хэсгийг үнэгүй харах
+> Нэг удаагийн гүн зураглал
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2611
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
+> None
 
 **Source item**
 
-> <div class="pill-row"><span class="pill">10–15 минут</span><span class="pill">Эхний хэсгийг үнэгүй харах</span><span class="pill">Бүрэн эхний тайлан</span></div>
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <ul>
+> None
 
 **Rendered context**
 
-> 10–15 минут
-> Эхний хэсгийг үнэгүй харах
-> Бүрэн эхний тайлан
+> Нэг удаагийн гүн зураглал
+> Энэ тест таныг шүүхгүй
 
 **Dynamic values**
 
@@ -1243,44 +1243,44 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Бүрэн эхний тайлан
+> Энэ тест таныг шүүхгүй
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2611
-- Source function/object: renderChoice
+- Source line: 2344
+- Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
+> <div class="panel stack">
 
 **Source item**
 
-> <div class="pill-row"><span class="pill">10–15 минут</span><span class="pill">Эхний хэсгийг үнэгүй харах</span><span class="pill">Бүрэн эхний тайлан</span></div>
+> <h2>Энэ тест таныг шүүхгүй</h2>
 
 **Source context after**
 
-> <ul>
+> <p>Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.</p>
 
 **Rendered context**
 
-> Эхний хэсгийг үнэгүй харах
-> Бүрэн эхний тайлан
-> Хамгийн тод давтагддаг нөхцөл
+> Нэг удаагийн гүн зураглал
+> Энэ тест таныг шүүхгүй
+> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
 
 **Dynamic values**
 
@@ -1302,44 +1302,44 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Хамгийн тод давтагддаг нөхцөл
+> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Source line: 2345
+- Source function/object: renderOneTimeStart
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <h2>Энэ тест таныг шүүхгүй</h2>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <p>Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.</p>
 
 **Source context after**
 
-> None
+> <div class="card stack">
 
 **Rendered context**
 
-> Бүрэн эхний тайлан
-> Хамгийн тод давтагддаг нөхцөл
-> Давхар нөлөөлж буй 1–2 зүйл
+> Энэ тест таныг шүүхгүй
+> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
+> Зөв, буруу хариулт байхгүй.
 
 **Dynamic values**
 
@@ -1361,44 +1361,44 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Давхар нөлөөлж буй 1–2 зүйл
+> Зөв, буруу хариулт байхгүй.
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2614
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <li>Хамгийн тод давтагддаг нөхцөл</li>
+> None
 
 **Source item**
 
-> <li>Давхар нөлөөлж буй 1–2 зүйл</li>
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li>
+> None
 
 **Rendered context**
 
-> Хамгийн тод давтагддаг нөхцөл
-> Давхар нөлөөлж буй 1–2 зүйл
-> Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох
+> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
+> Зөв, буруу хариулт байхгүй.
+> Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.
 
 **Dynamic values**
 
@@ -1420,44 +1420,44 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох
+> Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2615
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <li>Давхар нөлөөлж буй 1–2 зүйл</li>
+> None
 
 **Source item**
 
-> <li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li>
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <li>Одоогоор зайлсхийх зүйлс</li>
+> None
 
 **Rendered context**
 
-> Давхар нөлөөлж буй 1–2 зүйл
-> Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох
-> Одоогоор зайлсхийх зүйлс
+> Зөв, буруу хариулт байхгүй.
+> Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.
+> Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.
 
 **Dynamic values**
 
@@ -1479,17 +1479,17 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Одоогоор зайлсхийх зүйлс
+> Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
@@ -1497,7 +1497,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
@@ -1514,9 +1514,9 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох
-> Одоогоор зайлсхийх зүйлс
-> Эхний зөөлөн алхам
+> Та өөрийгөө сайн тайлбарлах гэж хичээх шаардлагагүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоход хангалттай.
+> Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.
+> 10-15 минут
 
 **Dynamic values**
 
@@ -1538,44 +1538,44 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Эхний зөөлөн алхам
+> 10-15 минут
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Source line: 2352
+- Source function/object: renderOneTimeStart
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <div class="pill-row">
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <span class="pill">10-15 минут</span>
 
 **Source context after**
 
-> None
+> <span class="pill">Бичгээр богино тайлбар оруулж болно</span>
 
 **Rendered context**
 
-> Одоогоор зайлсхийх зүйлс
-> Эхний зөөлөн алхам
-> 14 хоногийн эхний туршилт
+> Зарим асуулт таны өмнөх оролдлого, ядаргаа, өлсөлт, стресс, биеийн дохионы тухай асууна. Энэ нь таныг буруутгах гэсэн биш, давтагддаг нөхцөлийг харах гэсэн юм.
+> 10-15 минут
+> Бичгээр богино тайлбар оруулж болно
 
 **Dynamic values**
 
@@ -1597,44 +1597,44 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> 14 хоногийн эхний туршилт
+> Бичгээр богино тайлбар оруулж болно
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Source line: 2353
+- Source function/object: renderOneTimeStart
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <span class="pill">10-15 минут</span>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <span class="pill">Бичгээр богино тайлбар оруулж болно</span>
 
 **Source context after**
 
-> None
+> <span class="pill">Зөв/буруу хариулт байхгүй</span>
 
 **Rendered context**
 
-> Эхний зөөлөн алхам
-> 14 хоногийн эхний туршилт
-> 7 хоногоор нарийвчлах боломж
+> 10-15 минут
+> Бичгээр богино тайлбар оруулж болно
+> Зөв/буруу хариулт байхгүй
 
 **Dynamic values**
 
@@ -1656,44 +1656,44 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> 7 хоногоор нарийвчлах боломж
+> Зөв/буруу хариулт байхгүй
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2619
-- Source function/object: renderChoice
+- Source line: 2354
+- Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <li>14 хоногийн эхний туршилт</li>
+> <span class="pill">Бичгээр богино тайлбар оруулж болно</span>
 
 **Source item**
 
-> <li>7 хоногоор нарийвчлах боломж</li>
+> <span class="pill">Зөв/буруу хариулт байхгүй</span>
 
 **Source context after**
 
-> </ul>
+> <span class="pill">Зарим асуултыг алгасаж болно</span>
 
 **Rendered context**
 
-> 14 хоногийн эхний туршилт
-> 7 хоногоор нарийвчлах боломж
-> Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.
+> Бичгээр богино тайлбар оруулж болно
+> Зөв/буруу хариулт байхгүй
+> Зарим асуултыг алгасаж болно
 
 **Dynamic values**
 
@@ -1715,44 +1715,44 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.
+> Зарим асуултыг алгасаж болно
 
 **Classification**
 
 - Priority: P2
 - Review group: ordinary
 - Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
+- Surface: ONE_TIME_START
 - Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
 - Extraction type: FULL_SURFACE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2621
-- Source function/object: renderChoice
+- Source line: 2355
+- Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> </ul>
+> <span class="pill">Зөв/буруу хариулт байхгүй</span>
 
 **Source item**
 
-> <p class="muted">Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.</p>
+> <span class="pill">Зарим асуултыг алгасаж болно</span>
 
 **Source context after**
 
-> <button class="button choice-button" onclick="choosePackage('one-time')">${PRICING.oneTime} төлөөд тайлангаа нээх</button>
+> </div>
 
 **Rendered context**
 
-> 7 хоногоор нарийвчлах боломж
-> Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.
-> 9,900₮ төлөөд тайлангаа нээх
+> Зөв/буруу хариулт байхгүй
+> Зарим асуултыг алгасаж болно
+> Төлбөр баталгаажсаны дараа тест эхэлнэ
 
 **Dynamic values**
 

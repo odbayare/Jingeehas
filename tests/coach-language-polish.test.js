@@ -42,7 +42,7 @@ function run() {
     coachInviteToken: client.inviteToken,
     coachDiscountConsent: false,
     stageAnswers: {},
-    diaryEntries: []
+    removedEntries: []
   });
   const discountCopy = visibleText(_internal.renderOneTimeStart());
   assert(discountCopy.includes("Coach-ийн хөнгөлөлттэй үнэ: 9,900₮"));

@@ -13,25 +13,25 @@ Production release is NOT approved by WP21.
 - Pass: `true`
 
 ```html
-<section class="visible-surface-prototype" data-surface="preview">
+<section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="preview">
         <h2>Эхний товч зураглал</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Ил харагдаж байгаа зүйл</h3>
       <p>Хэт чанга барьсан өдөр, эсвэл хоолоо удаан хойшлуулсны дараа орой болон дараагийн хоолон дээр өлсөлт огцом хүчтэй санагдаж магадгүй. Энэ нь зангийн алдаа биш. Бие дараагийн хоол найдвартай ирэхийг, өлсөлтөө тайван нөхөх боломж хэрэгтэйг сануулж байгаа дохио байж болно.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Ил харагдаж байгаа зүйл</h3>
       <p>Биеийн өөрчлөлт ойлгомжгүй санагдах үед хоол, жин, хэмжилтээр нэг юм барьж авах хүсэл нэмэгдэж магадгүй. Энэ нь биеэ буруутгах шалтгаан биш; тодорхойгүй үед илүү тогтвортой санагдах нэг зүйл хайж байгаа оролдлого байж болно.</p>
     </div>
 
       </section>
 
-      <section class="visible-surface-prototype" data-surface="safety">
+      <section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="safety">
         <h2>Аюулгүй байдлын сануулга</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Зөөлөн мэргэжлийн гүүр</h3>
       <p>Энэ нь онош биш. Хэрэв биеийн дохио, мөчлөг, эсвэл хэрэглэж буй эмтэй холбоотой санаа зовнил давтагдаж байвал шалтгаан гэж дүгнэхээс өмнө мэргэжлийн хүнтэй тайван тодруулах хэрэгтэй байж магадгүй.</p>
     </div>
@@ -48,65 +48,65 @@ Production release is NOT approved by WP21.
 - Pass: `true`
 
 ```html
-<section class="visible-surface-prototype" data-surface="preview">
+<section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="preview">
         <h2>Эхний товч зураглал</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Ил харагдаж байгаа зүйл</h3>
       <p>Хэт чанга барьсан өдөр, эсвэл хоолоо удаан хойшлуулсны дараа орой болон дараагийн хоолон дээр өлсөлт огцом хүчтэй санагдаж магадгүй. Энэ нь зангийн алдаа биш. Бие дараагийн хоол найдвартай ирэхийг, өлсөлтөө тайван нөхөх боломж хэрэгтэйг сануулж байгаа дохио байж болно.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Ил харагдаж байгаа зүйл</h3>
       <p>Биеийн өөрчлөлт ойлгомжгүй санагдах үед хоол, жин, хэмжилтээр нэг юм барьж авах хүсэл нэмэгдэж магадгүй. Энэ нь биеэ буруутгах шалтгаан биш; тодорхойгүй үед илүү тогтвортой санагдах нэг зүйл хайж байгаа оролдлого байж болно.</p>
     </div>
 
       </section>
 
-      <section class="visible-surface-prototype" data-surface="paid">
-        <h2>Гүн тайлангийн хэсэг</h2>
+      <section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="paid">
+        <h2>Дэлгэрэнгүй тайлангийн хэсэг</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Цаана нь ажиллаж байгаа зүйл</h3>
       <p>Энд зөвхөн өлсөлт биш, “аль хэдийн алдсан” гэсэн мэдрэмжээс түр гарах хэрэгцээ ч давхардаж байж магадгүй. Дараа нь “маргаашнаас бүр ч чангална” гэсэн бодол нэмэгдэхээр хоол түр тайвшруулах, өөрийгөө шийтгэсэн мэдрэмжээс гаргах арга шиг ажиллаж магадгүй.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Эхний зөөлөн өөрчлөлт</h3>
       <p>Маргаашийг хүлээж өөрийгөө дахин чангалах биш, дараагийн хоолоо алгасахгүй, шийтгэлгүй эхлүүл. Гол нь төгс хоол сонгох биш; өлсөлтөө тайван дарах, сууж идэх, тэр өдрийг цааш үргэлжлүүлэх жижиг зөөлөн алхам хийх юм.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>14 хоногийн туршилтын таамаг</h3>
       <p>Хэрэв дараагийн хоолыг шийтгэл биш шинэ эхлэл болгож үзвэл оройн хэцүү мөч багасч, долоо хоногийн эхэнд бүхнийг дахин эхлүүлэх дарамт сулрах эсэхийг ажиглана. Энэ бол тушаал биш, таны биед юу илүү зөөлөн нөлөөлж байгааг шалгах жижиг туршилт.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>7 хоногийн баталгаажуулах тэмдэглэл</h3>
       <p>Долоо хоногт оройн өлсөлт, хоолоо хойшлуулсан эсэх, төлөвлөгөө хазайсны дараа өөрийгөө буруутгасан эсэх, дараагийн хоолоо шийтгэлгүй үргэлжлүүлж чадсан эсэхээ богино тэмдэглэ. Энэ нь өөрийгөө шүүхэд биш, аль мөчид дахин эхлэх дарамт нэмэгддэгийг танихад зориулагдана.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Эхний зөөлөн өөрчлөлт</h3>
       <p>Хоолыг улам чангалж өөрийгөө батлахын оронд 7 хоногийн турш нойр, өлсөх, энергийн хэмнэлээ биеийг шүүхгүйгээр богино тэмдэглэ. Зорилго нь буруутан олох биш, ямар үед таны бие арай тогтвортой санагдаж байгааг анзаарах.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>14 хоногийн туршилтын таамаг</h3>
       <p>Хэрэв хяналтаа буцааж авах оролдлогыг илүү зөөлөн ажиглалт руу шилжүүлбэл хоолны хатуу шийдвэр багасч, давтагдаж байгаа биеийн дохиог илүү тайван ялгах боломж нэмэгдэх эсэхийг шалгана. Мэргэжлийн тодруулга хэрэгтэй байж магадгүй хэсгийг хойшлуулахгүй, тайван асуулт болгон авч явна.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>7 хоногийн баталгаажуулах тэмдэглэл</h3>
       <p>Долоо хоногт нойр, өлсөх, энергийн хэмнэл болон давтагдаж байгаа биеийн дохиог дүгнэлтгүй богино тэмдэглэ. Хэрэв нэг хэв шинж давтагдвал өөрөө оношлохын оронд мэргэжлийн хүнтэй тайван тодруулах асуулт болгон авч явна.</p>
     </div>
 
       </section>
 
-      <section class="visible-surface-prototype" data-surface="safety">
+      <section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="safety">
         <h2>Аюулгүй байдлын сануулга</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Зөөлөн мэргэжлийн гүүр</h3>
       <p>Энэ нь онош биш. Хэрэв биеийн дохио, мөчлөг, эсвэл хэрэглэж буй эмтэй холбоотой санаа зовнил давтагдаж байвал шалтгаан гэж дүгнэхээс өмнө мэргэжлийн хүнтэй тайван тодруулах хэрэгтэй байж магадгүй.</p>
     </div>
@@ -123,25 +123,25 @@ Production release is NOT approved by WP21.
 - Pass: `true`
 
 ```html
-<section class="visible-surface-prototype" data-surface="preview">
+<section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="preview">
         <h2>Эхний товч зураглал</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Ил харагдаж байгаа зүйл</h3>
       <p>Хэт чанга барьсан өдөр, эсвэл хоолоо удаан хойшлуулсны дараа орой болон дараагийн хоолон дээр өлсөлт огцом хүчтэй санагдаж магадгүй. Энэ нь зангийн алдаа биш. Бие дараагийн хоол найдвартай ирэхийг, өлсөлтөө тайван нөхөх боломж хэрэгтэйг сануулж байгаа дохио байж болно.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Ил харагдаж байгаа зүйл</h3>
       <p>Биеийн өөрчлөлт ойлгомжгүй санагдах үед хоол, жин, хэмжилтээр нэг юм барьж авах хүсэл нэмэгдэж магадгүй. Энэ нь биеэ буруутгах шалтгаан биш; тодорхойгүй үед илүү тогтвортой санагдах нэг зүйл хайж байгаа оролдлого байж болно.</p>
     </div>
 
       </section>
 
-      <section class="visible-surface-prototype" data-surface="safety">
+      <section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="safety">
         <h2>Аюулгүй байдлын сануулга</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Зөөлөн мэргэжлийн гүүр</h3>
       <p>Энэ нь онош биш. Хэрэв биеийн дохио, мөчлөг, эсвэл хэрэглэж буй эмтэй холбоотой санаа зовнил давтагдаж байвал шалтгаан гэж дүгнэхээс өмнө мэргэжлийн хүнтэй тайван тодруулах хэрэгтэй байж магадгүй.</p>
     </div>
@@ -158,25 +158,25 @@ Production release is NOT approved by WP21.
 - Pass: `true`
 
 ```html
-<section class="visible-surface-prototype" data-surface="preview">
+<section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="preview">
         <h2>Эхний товч зураглал</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Ил харагдаж байгаа зүйл</h3>
       <p>Хэт чанга барьсан өдөр, эсвэл хоолоо удаан хойшлуулсны дараа орой болон дараагийн хоолон дээр өлсөлт огцом хүчтэй санагдаж магадгүй. Энэ нь зангийн алдаа биш. Бие дараагийн хоол найдвартай ирэхийг, өлсөлтөө тайван нөхөх боломж хэрэгтэйг сануулж байгаа дохио байж болно.</p>
     </div>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Ил харагдаж байгаа зүйл</h3>
       <p>Биеийн өөрчлөлт ойлгомжгүй санагдах үед хоол, жин, хэмжилтээр нэг юм барьж авах хүсэл нэмэгдэж магадгүй. Энэ нь биеэ буруутгах шалтгаан биш; тодорхойгүй үед илүү тогтвортой санагдах нэг зүйл хайж байгаа оролдлого байж болно.</p>
     </div>
 
       </section>
 
-      <section class="visible-surface-prototype" data-surface="safety">
+      <section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="safety">
         <h2>Аюулгүй байдлын сануулга</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Зөөлөн мэргэжлийн гүүр</h3>
       <p>Энэ нь онош биш. Хэрэв биеийн дохио, мөчлөг, эсвэл хэрэглэж буй эмтэй холбоотой санаа зовнил давтагдаж байвал шалтгаан гэж дүгнэхээс өмнө мэргэжлийн хүнтэй тайван тодруулах хэрэгтэй байж магадгүй.</p>
     </div>
@@ -193,10 +193,10 @@ Production release is NOT approved by WP21.
 - Pass: `true`
 
 ```html
-<section class="visible-surface-prototype" data-surface="safety">
+<section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="safety">
         <h2>Аюулгүй байдлын сануулга</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Зөөлөн мэргэжлийн гүүр</h3>
       <p>Энэ нь онош биш. Хэрэв биеийн дохио, мөчлөг, эсвэл хэрэглэж буй эмтэй холбоотой санаа зовнил давтагдаж байвал шалтгаан гэж дүгнэхээс өмнө мэргэжлийн хүнтэй тайван тодруулах хэрэгтэй байж магадгүй.</p>
     </div>
@@ -213,10 +213,10 @@ Production release is NOT approved by WP21.
 - Pass: `true`
 
 ```html
-<section class="visible-surface-prototype" data-surface="safety">
+<section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="safety">
         <h2>Аюулгүй байдлын сануулга</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Зөөлөн мэргэжлийн гүүр</h3>
       <p>Энэ нь онош биш. Хэрэв биеийн дохио, мөчлөг, эсвэл хэрэглэж буй эмтэй холбоотой санаа зовнил давтагдаж байвал шалтгаан гэж дүгнэхээс өмнө мэргэжлийн хүнтэй тайван тодруулах хэрэгтэй байж магадгүй.</p>
     </div>
@@ -233,10 +233,10 @@ Production release is NOT approved by WP21.
 - Pass: `true`
 
 ```html
-<section class="visible-surface-prototype" data-surface="safety">
+<section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="safety">
         <h2>Аюулгүй байдлын сануулга</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Зөөлөн мэргэжлийн гүүр</h3>
       <p>Энэ нь онош биш. Хэрэв биеийн дохио, мөчлөг, эсвэл хэрэглэж буй эмтэй холбоотой санаа зовнил давтагдаж байвал шалтгаан гэж дүгнэхээс өмнө мэргэжлийн хүнтэй тайван тодруулах хэрэгтэй байж магадгүй.</p>
     </div>
@@ -253,10 +253,10 @@ Production release is NOT approved by WP21.
 - Pass: `true`
 
 ```html
-<section class="visible-surface-prototype" data-surface="safety">
+<section class="visible-surface-prototype runtime-visible-surface-integration" data-surface="safety">
         <h2>Аюулгүй байдлын сануулга</h2>
 
-    <div class="report-section">
+    <div class="report-section visible-surface-card">
       <h3>Зөөлөн мэргэжлийн гүүр</h3>
       <p>Энэ нь онош биш. Хэрэв биеийн дохио, мөчлөг, эсвэл хэрэглэж буй эмтэй холбоотой санаа зовнил давтагдаж байвал шалтгаан гэж дүгнэхээс өмнө мэргэжлийн хүнтэй тайван тодруулах хэрэгтэй байж магадгүй.</p>
     </div>

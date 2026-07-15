@@ -5,9 +5,9 @@ All replacement content added by PR #1 is treated as provisional and unapproved.
 | File | Function or surface | Original text from main | Replacement introduced by PR #1 | Classification | Required action |
 | ---- | ------------------- | ----------------------- | ------------------------------- | -------------- | --------------- |
 | provisional normalizer | arbitrary rendered UI text and attributes | Нэг удаагийн гүн анализ | Нэг удаагийн гүн зураглал | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
-| provisional normalizer | arbitrary rendered UI text and attributes | 7 хоногийн гүн анализ | 7 хоногийн гүн зураглал | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
+| provisional normalizer | arbitrary rendered UI text and attributes | [REMOVED_FEATURE_PRODUCT] анализ | [REMOVED_FEATURE_PRODUCT] зураглал | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | Таны нэг удаагийн гүн анализ бэлэн боллоо | Таны нэг удаагийн гүн зураглал бэлэн боллоо | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
-| provisional normalizer | arbitrary rendered UI text and attributes | 7 хоногийн гүн анализаа нээх | 7 хоногийн гүн зураглалаа нээх | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
+| provisional normalizer | arbitrary rendered UI text and attributes | [REMOVED_FEATURE_PRODUCT] анализаа нээх | [REMOVED_FEATURE_PRODUCT] зураглалаа нээх | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | Body attention discomfort болон shame avoidance feedback-ээс зугтах cycle үүсгэж байна. | Биедээ анхаарал хандуулахад эвгүйрхэх, буруутгагдахаас зайлсхийх мэдрэмж давтагдаж, тэмдэглэхээс ухрах тойрог үүсэж байна. | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | Delivery, snack харагдах, үнэр, social cue идэлт эхлүүлж байгаа эсэхийг ажиглана. | Хүргэлт, зууш харагдах, үнэр, хамтын орчны дохио идэлтийг эхлүүлж байгаа эсэхийг ажиглана. | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | Guilt/shame, tracking-ээс зугтах, нуух behavior cycle-г үргэлжлүүлж байгаа эсэхийг ажиглана. | Буруутгал, ичгүүр, тэмдэглэхээс зайлсхийх, нуух зан үйлийн тойрог үргэлжилж байгаа эсэхийг ажиглана. | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
@@ -72,7 +72,7 @@ All replacement content added by PR #1 is treated as provisional and unapproved.
 | provisional normalizer | arbitrary rendered UI text and attributes | Дохио map | Дохионы зураглал | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | дохио map | дохионы зураглал | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | one_time | нэг удаагийн үнэлгээ | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
-| provisional normalizer | arbitrary rendered UI text and attributes | seven_day | 7 хоногийн үнэлгээ | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
+| provisional normalizer | arbitrary rendered UI text and attributes | removed_feature | 7 хоногийн үнэлгээ | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | 9,900 MNT | 9,900 ₮ | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | 29,000 MNT | 29,000 ₮ | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |
 | provisional normalizer | arbitrary rendered UI text and attributes | 19,900 MNT | 19,900 ₮ | UNAPPROVED_GENERATED_COPY | REMOVE_RUNTIME_REWRITER |

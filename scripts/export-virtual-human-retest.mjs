@@ -303,7 +303,7 @@ function cleanExtractedValue(value) {
 
 function removeReviewChrome(text) {
   const blockedStandaloneLines = new Set([
-    "7 хоногоор нарийвчлах",
+    "[REMOVED_FEATURE_REFINEMENT]",
     "Эхний хариу руу буцах",
     "Шинээр эхлэх",
     "Сонголт руу буцах",
@@ -410,13 +410,13 @@ function runPersona(persona) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: true,
     stageAnswers: {
       ...persona.selectedAnswers,
       ...persona.freeTextAnswers
     },
-    diaryEntries: [],
+    removedEntries: [],
     preliminary: []
   });
   const html = _internal.renderReport();
@@ -462,13 +462,13 @@ function runPersonaUserFacing(persona) {
     view: "report",
     internalTest: false,
     oneTimePaid: true,
-    sevenDayPaid: true,
+    removedFeaturePaid: true,
     upgradePaid: true,
     stageAnswers: {
       ...persona.selectedAnswers,
       ...persona.freeTextAnswers
     },
-    diaryEntries: [],
+    removedEntries: [],
     preliminary: []
   });
   const html = _internal.renderReport();

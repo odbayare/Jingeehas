@@ -15,10 +15,10 @@ function renderPaidReport(stageAnswers, extras = {}) {
     view: "report",
     internalTest: true,
     oneTimePaid: true,
-    sevenDayPaid: false,
+    removedFeaturePaid: false,
     upgradePaid: false,
     preliminary: [],
-    diaryEntries: [],
+    removedEntries: [],
     stageVoiceSummaries: {},
     safetyFlags: [],
     stageAnswers: {
@@ -166,7 +166,6 @@ function run() {
   assert(appSource.includes("const WEIGHT_TEST_QA_PAYMENT_BYPASS = false;"), "QA payment bypass must stay false");
   assert(appSource.includes("const WEIGHT_TEST_QA_SKIP_PAYWALL = false;"), "QA skip paywall must stay false");
   assert(appSource.includes('oneTime: "9,900₮"'), "one-time price must stay 9,900₮");
-  assert(appSource.includes('sevenDay: "29,000₮"'), "seven-day price must stay 29,000₮");
   assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";'), "product code must remain unchanged");
   assert(appSource.includes("qpay-create-invoice") && appSource.includes("qpay-check-payment"), "QPay endpoint strings must remain unchanged");
 }

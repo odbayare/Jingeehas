@@ -34,12 +34,12 @@ export const driverStackFixtures = [
     name: "shift_work_recovery_only",
     description: "Shift work disrupts recovery rhythm without loneliness or meal-gap dominance.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-N01": "4-6 цаг",
         "S1-N02": "Маш тод"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Тогтуун, хоол алгасаагүй",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Шөнийн ээлжийн дараа",
@@ -66,12 +66,12 @@ export const driverStackFixtures = [
     name: "shift_work_loneliness_combo",
     description: "Shift work and lonely recovery windows make food a soothing/default point.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-E02": ["Ганцаардал", "Хоосон мэт мэдрэмж"],
         "S1-R02": ["Ганцаардсан үед"]
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Тогтуун, хоол алгасаагүй",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Шөнийн ээлжийн дараа",
@@ -98,13 +98,13 @@ export const driverStackFixtures = [
     name: "remote_work_visible_snacks",
     description: "Remote work desk snacks and food images create cue-based eating without hunger dominance.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-L04": "Харагдвал бараг автоматаар иддэг",
         "S1-L05": "Маш хүчтэй",
         "S1-R02": ["Хоолны зураг эсвэл захиалгын апп харахад"]
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         unplanned_eating_count: "Тийм, хоёр удаа",
         main_moment_time: "Гэрээс ажиллаж байх үед",
         hunger_level: "2",
@@ -128,13 +128,13 @@ export const driverStackFixtures = [
     name: "stress_delivery_app_comfort",
     description: "Stress and delivery-app default make food a comfort/decompression tool.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-E01": "Ихэвчлэн тэгдэг",
         "S1-E02": ["Стресс", "Санаа зовнил"],
         "S1-L02": ["Хоол захиалах"]
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Ажлын дараа",
         hunger_level: "3",
@@ -160,12 +160,12 @@ export const driverStackFixtures = [
     name: "meal_gap_evening_hunger",
     description: "Long meal gaps lead to evening hunger and low-friction default food.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-M01": "Өдөр бага идээд орой нөхдөг",
         "S1-M02": "Бараг өдөр бүр"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Хоол хоорондын зай хэтэрсэн",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Орой",
@@ -190,13 +190,13 @@ export const driverStackFixtures = [
     name: "all_or_nothing_restriction_rebound",
     description: "All-or-nothing restriction and stricter-tomorrow restart create rebound.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-W04": ["Мацаг", "Нүүрс ус хасах"],
         "S1-W06": "Маргааш илүү чанга барина",
         "S1-X03": "Маш хүчтэй"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Нэг хоол алгассан",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Орой",
@@ -221,12 +221,12 @@ export const driverStackFixtures = [
     name: "social_weekend_alcohol_monday_restart",
     description: "Weekend social table plus alcohol leads to Monday restart thinking.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-F01": ["Татгалзах эвгүй байсан"],
         "S1-W06": "Маргааш илүү чанга барина"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Weekend хүмүүсийн уулзалтын үед",
         hunger_level: "4",
@@ -265,7 +265,7 @@ export const driverStackFixtures = [
           bullets: ["Зураг харах үед ичих, нуух хүсэл нэмэгддэг", "Ичсэн үедээ маргааш илүү чанга барина гэж боддог"]
         })
       },
-      diaryEntries: []
+      removedEntries: []
     },
     expected: {
       primary: "body_change_uncertainty",
@@ -295,7 +295,7 @@ export const driverStackFixtures = [
           bullets: ["PCOS болон дааврын өөрчлөлтөөс болж бие өөрчлөгдөхөд эргэлзээ төрдөг", "Control буцааж авахын тулд чанга дүрэм хэрэгтэй мэт санагддаг"]
         })
       },
-      diaryEntries: []
+      removedEntries: []
     },
     expected: {
       primary: "body_change_uncertainty",
@@ -312,12 +312,12 @@ export const driverStackFixtures = [
     name: "medication_body_concern_professional_check",
     description: "Medication/body concern should suppress ordinary experiment and route professional-first.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-B03": "Тийм",
         "S1-B02": "Тийм, санаа зовоосон"
       },
-      diaryEntries: repeat(2, day => entry(day, {
+      removedEntries: repeat(2, day => entry(day, {
         meal_rhythm: "Тогтуун, хоол алгасаагүй",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Өдөр",
@@ -346,13 +346,13 @@ export const futureDriverStackFixtures = [
     name: "sleep_disruption_circadian_reward",
     description: "Future helper fixture retained outside the approved WP3B result set.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-N01": "4-6 цаг",
         "S1-N02": "Маш тод",
         "S1-R01": "Бараг өдөр бүр"
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Тогтуун, хоол алгасаагүй",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Орой",
@@ -368,12 +368,12 @@ export const futureDriverStackFixtures = [
     name: "stage_reward_diary_meal_gap_contradiction",
     description: "Future helper fixture retained outside the approved WP3B result set.",
     state: {
-      packageType: "seven-day",
+      packageType: "removed-feature",
       stageAnswers: {
         "S1-R01": "Өдөрт олон удаа",
         "S1-R02": ["Амт, үнэр, мэдрэмж татах үед"]
       },
-      diaryEntries: repeat(5, day => entry(day, {
+      removedEntries: repeat(5, day => entry(day, {
         meal_rhythm: "Хоол хоорондын зай хэтэрсэн",
         unplanned_eating_count: "Тийм, нэг удаа",
         main_moment_time: "Орой",

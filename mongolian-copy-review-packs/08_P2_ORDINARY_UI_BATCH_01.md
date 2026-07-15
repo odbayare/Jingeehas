@@ -21,7 +21,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2421
+- Source line: 2160
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -79,7 +79,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2422
+- Source line: 2161
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -138,7 +138,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2424
+- Source line: 2163
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -197,7 +197,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2425
+- Source line: 2164
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -256,7 +256,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2428
+- Source line: 2167
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -315,7 +315,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2436
+- Source line: 2175
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -374,7 +374,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2437
+- Source line: 2176
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -433,7 +433,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2440
+- Source line: 2179
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -492,7 +492,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2441
+- Source line: 2180
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -610,7 +610,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2445
+- Source line: 2184
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -728,7 +728,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2446
+- Source line: 2185
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -786,7 +786,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2458
+- Source line: 2197
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -844,7 +844,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 33
+- Source line: 30
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -903,7 +903,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 35
+- Source line: 32
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -962,7 +962,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 36
+- Source line: 33
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1021,7 +1021,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 37
+- Source line: 34
 - Source function/object: module/object scope
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1080,7 +1080,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2464
+- Source line: 2203
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1139,7 +1139,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2465
+- Source line: 2204
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1198,7 +1198,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2473
+- Source line: 2212
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1257,7 +1257,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2474
+- Source line: 2213
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1316,7 +1316,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2476
+- Source line: 2215
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1375,7 +1375,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2477
+- Source line: 2216
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1434,7 +1434,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2478
+- Source line: 2217
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1493,7 +1493,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2479
+- Source line: 2218
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1552,7 +1552,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2480
+- Source line: 2219
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1729,23 +1729,23 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 2224
+- Source function/object: renderLanding
+- Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <div class="mini-stat"><strong>10-15 мин</strong><span class="muted">Нэг удаагийн гүн зураглал</span></div>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <div class="mini-stat"><strong>Орой бүр 3–5 минут</strong><span class="muted">7 хоногийн богино тэмдэглэл</span></div>
 
 **Source context after**
 
-> None
+> </div>
 
 **Rendered context**
 
