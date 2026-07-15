@@ -76,7 +76,7 @@ const scenarioIds = new Set(artifact.scenarios.map(s => s.id));
   "diary-scale", "diary-text", "diary-confirmation", "insufficient-report", "limited-report",
   "usable-limited-report", "full-seven-day-report", "upgrade-offer", "upgrade-paywall", "lead-capture",
   "lead-thank-you", "general-safety", "professional-safety", "urgent-mode-4", "advisor-login",
-  "advisor-dashboard", "admin-portal", "payment-contact", "qpay-invoice", "qpay-pending", "qpay-paid",
+  "advisor-dashboard", "admin-portal", "internal-tester-feedback", "payment-contact", "qpay-invoice", "qpay-pending", "qpay-paid",
   "payment-error", "sample-report", "question-bank", "answer-options", "accessibility"
 ].forEach(id => assert(scenarioIds.has(id), `required scenario missing: ${id}`));
 

@@ -1,5 +1,5 @@
 {
-  "generated_from_commit": "ade4e4a90422b7bdfbb428765cd0dedee4403630",
+  "generated_from_commit": "f4347348030ab7d340c9ce377858fc70a04e80d5",
   "scenarios": [
     {
       "id": "coming-soon",
@@ -270,6 +270,15 @@
       "coverage": "YES",
       "notes": "",
       "extracted_entry_count": 41
+    },
+    {
+      "id": "internal-tester-feedback",
+      "surface": "OTHER_PROVEN_RENDERED",
+      "role": "INTERNAL_TESTER",
+      "render_source": "renderInternalTesterFeedbackSurvey",
+      "coverage": "PARTIAL",
+      "notes": "Renderer is gated by browser-only internal-test mode and returns no content in the Node extraction runtime.",
+      "extracted_entry_count": 0
     },
     {
       "id": "payment-contact",

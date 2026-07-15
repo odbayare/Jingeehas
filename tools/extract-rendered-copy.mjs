@@ -56,6 +56,7 @@ scenario("urgent-mode-4", "URGENT_SAFETY", "PUBLIC_USER", "renderReport", { ...b
 scenario("advisor-login", "ADVISOR_PORTAL", "ADVISOR", "renderCoachLogin", baseState, () => I.renderCoachLogin());
 scenario("advisor-dashboard", "ADVISOR_PORTAL", "ADVISOR", "renderCoachDashboard", baseState, () => I.renderCoachDashboard(), "PARTIAL", "Dashboard state is available; populated remote clients are not created.");
 scenario("admin-portal", "ADMIN_PORTAL", "ADMIN", "renderAdminCoach", baseState, () => I.renderAdminCoach());
+scenario("internal-tester-feedback", "OTHER_PROVEN_RENDERED", "INTERNAL_TESTER", "renderInternalTesterFeedbackSurvey", { ...baseState, oneTimePaid: true, stageAnswers: normalAnswers }, () => I.renderInternalTesterFeedbackSurvey(), "PARTIAL", "Renderer is gated by browser-only internal-test mode and returns no content in the Node extraction runtime.");
 scenario("payment-contact", "PAYMENT", "PUBLIC_USER", "renderContactCaptureForm", baseState, () => I.renderContactCaptureForm());
 scenario("qpay-invoice", "QPAY", "PUBLIC_USER", "renderOneTimeStart", baseState, () => I.renderOneTimeStart(), "PARTIAL", "No production invoice call; pre-invoice payment surface only.");
 scenario("qpay-pending", "QPAY", "PUBLIC_USER", "renderOneTimeStart", { ...baseState, paymentStatus: "pending" }, () => I.renderOneTimeStart(), "PARTIAL", "Mock state does not expose a standalone pending renderer.");

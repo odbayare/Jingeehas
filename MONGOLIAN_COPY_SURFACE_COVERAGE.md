@@ -34,6 +34,7 @@ Any PARTIAL or NO status means total render coverage is not complete.
 | ADVISOR_PORTAL | renderCoachLogin | advisor-login | 7 | YES |  |
 | ADVISOR_PORTAL | renderCoachDashboard | advisor-dashboard | 7 | PARTIAL | Dashboard state is available; populated remote clients are not created. |
 | ADMIN_PORTAL | renderAdminCoach | admin-portal | 41 | YES |  |
+| OTHER_PROVEN_RENDERED | renderInternalTesterFeedbackSurvey | internal-tester-feedback | 0 | PARTIAL | Renderer is gated by browser-only internal-test mode and returns no content in the Node extraction runtime. |
 | PAYMENT | renderContactCaptureForm | payment-contact | 9 | YES |  |
 | QPAY | renderOneTimeStart | qpay-invoice | 28 | PARTIAL | No production invoice call; pre-invoice payment surface only. |
 | QPAY | renderOneTimeStart | qpay-pending | 28 | PARTIAL | Mock state does not expose a standalone pending renderer. |
