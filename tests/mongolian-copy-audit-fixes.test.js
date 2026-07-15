@@ -1,12 +1,18 @@
 const assert = require("assert");
 const app = require("../app.js");
 const normalizer = require("../mongolian-copy-normalizer.js");
+const domainNormalizer = require("../mongolian-copy-domain-normalizer.js");
 
 const { _internal } = app;
 const { CANONICAL_COPY, normalizeMongolianCopyText, auditForbiddenTerms } = normalizer;
+const { normalizeMongolianDomainCopyText, remainingLatinWords } = domainNormalizer;
+
+function normalizeCopy(value) {
+  return normalizeMongolianDomainCopyText(normalizeMongolianCopyText(value));
+}
 
 function normalizeHtml(html) {
-  return normalizeMongolianCopyText(
+  return normalizeCopy(
     String(html || "")
       .replace(/<[^>]+>/g, " ")
       .replace(/\s+/g, " ")
@@ -15,9 +21,10 @@ function normalizeHtml(html) {
 }
 
 function assertClean(input, expected) {
-  const output = normalizeMongolianCopyText(input);
+  const output = normalizeCopy(input);
   assert.strictEqual(output, expected);
   assert.deepStrictEqual(auditForbiddenTerms(output), [], `mixed-language term remained in: ${output}`);
+  assert.deepStrictEqual(remainingLatinWords(output), [], `Latin term remained in: ${output}`);
 }
 
 function run() {
@@ -62,23 +69,35 @@ function run() {
     "Хүсээгүй амар сонголтыг нэг алхам холдуулж, хүссэн сонголтыг нэг алхам ойртуулаарай."
   );
 
-  assert.strictEqual(normalizeMongolianCopyText("Нэг удаагийн гүн анализ"), "Нэг удаагийн гүн зураглал");
-  assert.strictEqual(normalizeMongolianCopyText("7 хоногийн гүн анализ"), "7 хоногийн гүн зураглал");
-  assert.strictEqual(normalizeMongolianCopyText("Coach-ийн нэр"), "Зөвлөхийн нэр");
-  assert.strictEqual(normalizeMongolianCopyText("coach-ийн урилга"), "зөвлөхийн урилга");
-  assert.strictEqual(normalizeMongolianCopyText("QPay нэхэмжлэл үүсэх нь төлбөр биш."), "QPay нэхэмжлэл үүссэнээр төлбөр төлөгдсөнд тооцохгүй.");
+  assert.strictEqual(normalizeCopy("Нэг удаагийн гүн анализ"), "Нэг удаагийн гүн зураглал");
+  assert.strictEqual(normalizeCopy("7 хоногийн гүн анализ"), "7 хоногийн гүн зураглал");
+  assert.strictEqual(normalizeCopy("Coach-ийн нэр"), "Зөвлөхийн нэр");
+  assert.strictEqual(normalizeCopy("coach-ийн урилга"), "зөвлөхийн урилга");
+  assert.strictEqual(normalizeCopy("QPay нэхэмжлэл үүсэх нь төлбөр биш."), "QPay нэхэмжлэл үүссэнээр төлбөр төлөгдсөнд тооцохгүй.");
 
-  const polite = normalizeMongolianCopyText("Энд тав. Нэгийг сонго. Өдөр бүр тэмдэглэ.");
+  const researchCopy = normalizeCopy([
+    "BCT — зан үйлийн өөрчлөлтийн аргачлал",
+    "CBT — танин мэдэхүй-зан үйлийн хандлага",
+    "Emotional Eating — стресс ба сэтгэл хөдлөлийн идэлт",
+    "Habit Loop — дадал, өдөөгч, хариу үйлдлийн давталт",
+    "Environmental Cue Analysis — орчны өдөөгч хүчин зүйлс",
+    "Self-Monitoring — өөрийгөө ажиглах, хэв маягаа тэмдэглэх арга",
+    "Sleep / Rhythm / Recovery — унтах хэмнэл, энерги, сэргэлтийн ажиглалт",
+    "Safety-First Screening — мэргэжлийн зөвлөгөө шаардлагатай байж болох дохиог ялгах шалгуур"
+  ].join("\n"));
+  assert.deepStrictEqual(remainingLatinWords(researchCopy), []);
+
+  const polite = normalizeCopy("Энд тав. Нэгийг сонго. Өдөр бүр тэмдэглэ.");
   assert.strictEqual(polite, "Энд тавиарай. Нэгийг сонгоорой. Өдөр бүр тэмдэглээрэй.");
 
-  const punctuation = normalizeMongolianCopyText(
+  const punctuation = normalizeCopy(
     "хугацаа амлахад хангалтгүй байна. өдөр тутмын мэдээлэл бага байна Үүн дээр Хоол харагдах нөхцөл давтагдаж байна;дараа нь тэмдэглэнэ."
   );
   assert(punctuation.includes("байна. Өдөр тутмын"));
   assert(punctuation.includes("байна. Үүн дээр"));
   assert(punctuation.includes("байна; дараа"));
 
-  const safety = normalizeMongolianCopyText(
+  const safety = normalizeCopy(
     "Хоолоо хүчээр хасах, удаан өлсөх, өөрийгөө буруутгах хэлбэрээр энэ тайланг ашиглахгүй. Бие тавгүйрхвэл туршилтаа зогсоож тусламж авна."
   );
   assert.strictEqual(safety, CANONICAL_COPY.safetyBody);
@@ -117,6 +136,11 @@ function run() {
     auditForbiddenTerms(visibleSamples),
     [],
     "normalized rendered surfaces must not retain audited English or mixed terminology"
+  );
+  assert.deepStrictEqual(
+    remainingLatinWords(visibleSamples),
+    [],
+    "normalized rendered surfaces must not retain Latin words except the QPay and PDF brand/format names"
   );
 }
 
