@@ -177,8 +177,8 @@ assert.strictEqual(_internal.ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION, true, "
 assert(appSource.includes("const ENABLE_VISIBLE_SURFACE_PROTOTYPE = false;"), "source prototype guard must remain false");
 assert(appSource.includes("const ENABLE_RUNTIME_VISIBLE_SURFACE_INTEGRATION = true;"), "source runtime visible integration guard must remain true");
 
-assert(appSource.includes('create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint string must remain unchanged");
-assert(appSource.includes('check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"'), "QPay check endpoint string must remain unchanged");
+assert(appSource.includes('create: "/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint string must remain unchanged");
+assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "QPay check endpoint string must remain unchanged");
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time pricing label must remain unchanged");
 assert(appSource.includes('oneTimeAnchor: "9,900₮"'), "one-time anchor pricing label must remain unchanged");
 assert(appSource.includes('coachOneTime: "9,900₮"'), "coach one-time pricing label must remain unchanged");

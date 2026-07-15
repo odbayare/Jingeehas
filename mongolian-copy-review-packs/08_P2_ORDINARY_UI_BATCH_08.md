@@ -2,6 +2,64 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
+## COPY-0501 — P2
+
+**Exact current text**
+
+> Сонголт руу буцах
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: LEAD_THANK_YOU
+- Role: PUBLIC_USER
+- Scenario: lead-thank-you
+- Render source: renderLeadThankYou
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> 9,900₮
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
 ## COPY-0606 — P2
 
 **Exact current text**
@@ -1695,65 +1753,6 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 > Байгалийн монгол хэлтэй
 > Зарим хэсэг хиймэл
 > Хэт албархуу
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0638 — P2
-
-**Exact current text**
-
-> Хэт албархуу
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: OTHER_PROVEN_RENDERED
-- Role: INTERNAL_TESTER
-- Scenario: internal-feedback-survey
-- Render source: renderInternalTesterFeedbackSurvey with internalTest state
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 7132
-- Source function/object: renderInternalTesterFeedbackSurvey
-- Source mapping: RESOLVED
-- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
-
-**Source item**
-
-> ${feedbackChoiceField("languageTone", "Тайлангийн хэл найруулга ямар санагдсан бэ?", ["Байгалийн монгол хэлтэй", "Зарим хэсэг хиймэл", "Хэт албархуу", "Хэт зөөлөн/бөөрөнхий"], "languageToneSuggestion", "Засах санал:")}
-
-**Source context after**
-
-> ${feedbackChoiceField("valueAt9900", "Энэ тайланг 9,900 төгрөгөөр авахад үнэ цэнтэй санагдах уу?", ["Тийм", "Магадгүй", "Үгүй"], "valueReason", "Яагаад?")}
-
-**Rendered context**
-
-> Зарим хэсэг хиймэл
-> Хэт албархуу
-> Хэт зөөлөн/бөөрөнхий
 
 **Dynamic values**
 

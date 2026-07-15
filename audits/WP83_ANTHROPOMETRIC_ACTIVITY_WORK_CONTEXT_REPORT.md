@@ -137,7 +137,7 @@ Confirmed:
 - No DNS, Namecheap, Netlify settings, domains, or `.netlify/state.json` were changed.
 - `audits/sprint-36-paid-depth-prototype/` was not modified.
 - WP64/WP67 PDF packs were not modified.
-- TIAS/lifepattern-tias was not touched.
+- TIAS/[CROSS_PROJECT_NAME_REMOVED]-tias was not touched.
 
 ## 13. QA draft recommendation
 

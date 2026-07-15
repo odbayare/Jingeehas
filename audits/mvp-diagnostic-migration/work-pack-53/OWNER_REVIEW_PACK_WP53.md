@@ -51,7 +51,7 @@ This supports credibility while preserving the existing product and payment flow
 - Paid-first gate
 - Scoring/report logic
 - Backend/payment/entitlement files
-- LifePattern/TIAS repo
+- [CROSS_PROJECT_NAME_REMOVED]/TIAS repo
 - DNS
 - PDF generation
 - `audits/sprint-36-paid-depth-prototype/`

@@ -113,7 +113,7 @@ Not touched:
 - `.netlify/state.json`
 - production deploy
 - QPay/payment source logic
-- TIAS/lifepattern-tias
+- TIAS/[CROSS_PROJECT_NAME_REMOVED]-tias
 - WP64/WP67 PDF packs
 - `audits/sprint-36-paid-depth-prototype/`
 

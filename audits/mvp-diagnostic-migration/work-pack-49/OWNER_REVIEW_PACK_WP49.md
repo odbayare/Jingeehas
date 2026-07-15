@@ -37,7 +37,7 @@ The Weight Loss Test now blocks unpaid users before questions, diary, and report
 - `npm test`: pass
 - `git diff --check`: pass
 - Production HTTP check: `https://weight-loss-deep-pattern-9900.netlify.app` returned HTTP 200
-- Production JS check: paid-first helper, payment-gate copy, `9,900₮`/`9900`, `WEIGHT_TEST_ONE_TIME`, and LifePattern QPay endpoints present
+- Production JS check: paid-first helper, payment-gate copy, `9,900₮`/`9900`, `WEIGHT_TEST_ONE_TIME`, and [CROSS_PROJECT_NAME_REMOVED] QPay endpoints present
 
 ## Deploy Proof
 
@@ -51,7 +51,7 @@ The Weight Loss Test now blocks unpaid users before questions, diary, and report
 - No price change.
 - No QPay endpoint change.
 - No QPay backend change.
-- No LifePattern/TIAS repo change.
+- No [CROSS_PROJECT_NAME_REMOVED]/TIAS repo change.
 - No DNS change.
 - No real payment completed.
 - No PDF generated.

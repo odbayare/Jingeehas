@@ -236,8 +236,8 @@ function setOneTime(overrides = {}) {
     "sevenDayAnchor: \"69,000₮\"",
     "const WEIGHT_TEST_PRODUCT_CODE = \"WEIGHT_TEST_ONE_TIME\";",
     "const WEIGHT_TEST_AMOUNT_MNT = 9900;",
-    "create: \"https://www.lifepattern.live/.netlify/functions/qpay-create-invoice\"",
-    "check: \"https://www.lifepattern.live/.netlify/functions/qpay-check-payment\""
+    "create: \"/.netlify/functions/qpay-create-invoice\"",
+    "check: \"/.netlify/functions/qpay-check-payment\""
   ].forEach(expected => assert(source.includes(expected), `missing unchanged contract: ${expected}`));
 
   console.log("visible-surface-prototype tests passed");

@@ -3,10 +3,10 @@
 ## Generated provenance
 
 - Generator version: `2.0.0`
-- Extraction source commit: `685a25bc2339d34227214bf65f0f80ae5938e04c`
+- Extraction source commit: `37364d62617b973160f445043df118631faf4c0e`
 - Final PR head and final-head workflow IDs: maintained in PR #1 metadata after the implementation push to avoid a self-referential validation-only commit cycle
-- Approved replacement count: 0
-- Production copy changed: NO
+- Approved replacement count: 1
+- Production copy changed: YES — exact owner-authorized navigation and same-origin endpoint corrections only
 - External network attempts during extraction: 0
 
 ## Generated metrics
@@ -25,7 +25,7 @@
 - Admin entries: 8
 - Advisor entries: 36
 - Internal tester entries: 48
-- Structural mixed-language signals: 45
+- Structural mixed-language signals: 44
 
 ## Extraction architecture
 
@@ -58,17 +58,17 @@ Only existing functions were added to CommonJS `_internal`; no function body or 
 ## Owner review pack generation
 
 - Generator version: `1.0.0`
-- Generated from commit: `685a25bc2339d34227214bf65f0f80ae5938e04c`
+- Generated from commit: `37364d62617b973160f445043df118631faf4c0e`
 - Catalog entries assigned: 1238
-- P0 unique items: 232
+- P0 unique items: 231
 - P1 unique items: 264
-- P2 unique items: 742
+- P2 unique items: 743
 - Batch/pack files: 45
 - Unassigned items: 0
 - No-review-signal items: 20
 - Cross-group items: 284
 - Unresolved source mappings: 433
 - Blank owner-decision blocks: 830
-- Approved replacement count: 0
+- Approved replacement count: 1
 - Review-pack integrity test: PASS
-- No production copy or behavior change
+- Authorized production correction limited to the home label, home path, and same-origin function endpoints

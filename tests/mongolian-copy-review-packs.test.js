@@ -57,8 +57,8 @@ for (const question of [...app.stageOneQuestions, ...app.dailyCore, ...app.daily
 }
 assert(/^## COPY-\d+/m.test(contents["08_P2_ACCESSIBILITY.md"]), "accessibility pack must contain attribute-only copy");
 
-assert.strictEqual(manifest.approval_status, "EMPTY_NOT_APPROVED");
-assert.deepStrictEqual(manifest.replacements, []);
+assert.strictEqual(manifest.approval_status, "APPROVED");
+assert.strictEqual(manifest.replacements.length, 1);
 assert(!fs.existsSync(path.join(root, "mongolian-copy-normalizer.js")));
 assert(!fs.existsSync(path.join(root, "mongolian-copy-domain-normalizer.js")));
 
@@ -72,7 +72,7 @@ authorizedExports.forEach(name => {
   assert(appWithoutAuthorizedExports.includes(`      ${name},`), `${name} must remain an internal test export`);
   appWithoutAuthorizedExports = appWithoutAuthorizedExports.replace(new RegExp(`^[ \\t]*${name},\\n`, "m"), "");
 });
-assert.strictEqual(sha256(appWithoutAuthorizedExports), "d29b7a44755dda1b253a67e26ba4ec18caa4940d11c2caf9fb4e2054680d1d04", "app.js production content must match main after removing authorized exports");
+assert.strictEqual(sha256(appWithoutAuthorizedExports), "8324b39888100cdccf15b50bd75afb38f59018549bd5c104e1b8094f1e123f1b", "app.js production content must match the exact authorized contamination correction after removing authorized exports");
 assert.strictEqual(sha256(fs.readFileSync(path.join(root, "mockBackend.js"))), "e3c9a1afe3eae0770d5eb89bbc357d4b55a20f50c7415667664114757af2d0ba", "mockBackend.js must match main");
 assert.strictEqual(sha256(fs.readFileSync(path.join(root, "index.html"))), "dadb9c89e66748bc137391cc278268a0fc5d464c4d194fabe9d8481c9905121c", "index.html must match main");
 

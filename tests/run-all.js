@@ -87,6 +87,7 @@ const commands = [
   ["node", ["tests/virtual-audit-public-copy.test.js"]],
   ["node", ["tests/mongolian-copy-audit-fixes.test.js"]],
   ["node", ["tests/mongolian-copy-review-packs.test.js"]],
+  ["node", ["tests/cross-project-contamination-regression.test.js"]],
   ["node", ["tests/sprint32-export-separation.test.js"]]
 ];
 

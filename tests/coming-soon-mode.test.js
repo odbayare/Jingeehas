@@ -14,8 +14,8 @@ const startText = ["Тест", "эхлэх"].join(" ");
 assert(appSource.includes("const WEIGHT_TEST_COMING_SOON_MODE = true;"), "coming soon flag must be enabled");
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time price label must remain 9,900₮");
 assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";'), "product code must remain unchanged");
-assert(appSource.includes('create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
-assert(appSource.includes('check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
+assert(appSource.includes('create: "/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
+assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
 
 _internal.setTestState({
   internalTest: false,

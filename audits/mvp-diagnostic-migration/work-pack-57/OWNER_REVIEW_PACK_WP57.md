@@ -68,7 +68,7 @@ Passed in this work pack:
   - `STANDARD_WEIGHT_PRICE_MNT = 9900`
   - `WEIGHT_TEST_ONE_TIME`
   - QPay create/check endpoints unchanged
-- Custom domain `https://weight.lifepattern.live` remains DNS-blocked: `NXDOMAIN`.
+- Custom domain `https://weight.[CROSS_PROJECT_NAME_REMOVED]` remains DNS-blocked: `NXDOMAIN`.
 
 ## Unchanged Areas
 

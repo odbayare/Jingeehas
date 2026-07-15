@@ -45,5 +45,5 @@ LIVE PAYMENT DEFERRED BY OWNER
 - No product code change.
 - No QPay endpoint change.
 - No backend/payment/entitlement behavior change.
-- No LifePattern/TIAS repo change.
+- No [CROSS_PROJECT_NAME_REMOVED]/TIAS repo change.
 - Protected folder `audits/sprint-36-paid-depth-prototype/` untouched.

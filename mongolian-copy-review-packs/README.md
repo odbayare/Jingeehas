@@ -1,17 +1,17 @@
 # Mongolian Copy Owner Review Packs
 
-These files contain current rendered copy only. No replacement text has been approved or proposed. Issue categories are structural review signals, not linguistic verdicts. Product-owner approval is required before implementation, and every approval field must remain blank until the owner supplies exact text.
+These files contain current rendered copy only. One exact owner-approved navigation correction is recorded in the locked manifest and has been implemented; no additional replacement text is proposed. Issue categories are structural review signals, not linguistic verdicts. Product-owner approval is required before any further implementation, and every pending approval field must remain blank until the owner supplies exact text.
 
 ## Metrics
 
 - Total catalog entries: 1238
-- P0: 232
+- P0: 231
 - P1: 264
-- P2: 742
+- P2: 743
 - Unresolved source mappings: 433
 - Cross-group items: 284
 - No-review-signal items: 20
-- Approved replacements: 0
+- Approved replacements: 1
 
 ## Recommended review order
 

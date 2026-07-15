@@ -4,15 +4,15 @@ Raw literals excluded because role-facing render visibility was not proven.
 
 ## API and URLs
 
-- Count: 5
+- Count: 2
 - Reason excluded: Classified as API_OR_URL.
-- Representative examples: `https://www.lifepattern.live/.netlify/functions/qpay-create-invoice`, `https://www.lifepattern.live/.netlify/functions/qpay-check-payment`, `https://www.lifepattern.live/.netlify/functions/track-funnel-event`, `http://`, `https://`
+- Representative examples: `http://`, `https://`
 
 ## analytics events
 
-- Count: 1
+- Count: 2
 - Reason excluded: Classified as ANALYTICS_OR_EVENT.
-- Representative examples: `${eventName}:${dedupeKey}`
+- Representative examples: `/.netlify/functions/track-funnel-event`, `${eventName}:${dedupeKey}`
 
 ## internal keys
 
@@ -46,6 +46,6 @@ Raw literals excluded because role-facing render visibility was not proven.
 
 ## untraced internal candidates
 
-- Count: 3327
+- Count: 3329
 - Reason excluded: No render path was proven.
-- Representative examples: `weightLossDeepPatternMvp`, `one-time`, `seven-day`, `7 хоногоор нарийвчлах эрх`, `Өөртөө нэг таатай зүйл өгөх үе`, `Сэтгэл санаагаа баярлуулахыг хүсэх үе`, `Стресс үед хоолоор амсхийх үе`, `Стрессийн дараа хоолоор тайвшрах хандлага`
+- Representative examples: `weightLossDeepPatternMvp`, `/.netlify/functions/qpay-create-invoice`, `/.netlify/functions/qpay-check-payment`, `one-time`, `seven-day`, `7 хоногоор нарийвчлах эрх`, `Өөртөө нэг таатай зүйл өгөх үе`, `Сэтгэл санаагаа баярлуулахыг хүсэх үе`

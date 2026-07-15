@@ -54,7 +54,7 @@ Improve the Weight Loss Test QPay payment screen UX by device:
 - Paid-first gating
 - Scoring or report logic
 - Deploy config
-- TIAS or LifePattern repo
+- TIAS or [CROSS_PROJECT_NAME_REMOVED] repo
 - DNS
 - PDF generation
 - `audits/sprint-36-paid-depth-prototype/`

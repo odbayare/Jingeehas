@@ -22,8 +22,8 @@ to:
 - `STANDARD_WEIGHT_PRICE_MNT` remains `9900`.
 - Product code remains `WEIGHT_TEST_ONE_TIME`.
 - QPay endpoints remain:
-  - `https://www.lifepattern.live/.netlify/functions/qpay-create-invoice`
-  - `https://www.lifepattern.live/.netlify/functions/qpay-check-payment`
+  - `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-create-invoice`
+  - `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-check-payment`
 - Paid-first gate unchanged.
 - Protected folder untouched.
 

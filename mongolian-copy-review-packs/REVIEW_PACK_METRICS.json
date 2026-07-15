@@ -1,6 +1,6 @@
 {
   "generator_version": "1.0.0",
-  "generated_from_commit": "685a25bc2339d34227214bf65f0f80ae5938e04c",
+  "generated_from_commit": "37364d62617b973160f445043df118631faf4c0e",
   "catalog_entry_count": 1238,
   "unique_items_assigned": 1238,
   "unassigned_items": 0,
@@ -9,13 +9,13 @@
   "unresolved_source_mappings": 433,
   "blank_owner_decision_fields": 830,
   "priority_counts": {
-    "P0": 232,
+    "P0": 231,
     "P1": 264,
-    "P2": 742
+    "P2": 743
   },
   "group_counts": {
     "01_P0_MIXED_LANGUAGE_BATCH_01.md": 30,
-    "01_P0_MIXED_LANGUAGE_BATCH_02.md": 15,
+    "01_P0_MIXED_LANGUAGE_BATCH_02.md": 14,
     "02_P0_SAFETY_CRITICAL_BATCH_01.md": 25,
     "02_P0_SAFETY_CRITICAL_BATCH_02.md": 25,
     "02_P0_SAFETY_CRITICAL_BATCH_03.md": 25,
@@ -54,7 +54,7 @@
     "08_P2_ORDINARY_UI_BATCH_06.md": 30,
     "08_P2_ORDINARY_UI_BATCH_07.md": 30,
     "08_P2_ORDINARY_UI_BATCH_08.md": 30,
-    "08_P2_ORDINARY_UI_BATCH_09.md": 14,
+    "08_P2_ORDINARY_UI_BATCH_09.md": 15,
     "08_P2_ACCESSIBILITY.md": 1,
     "08_P2_ADVISOR_ADMIN_UI.md": 44,
     "04_P1_TERMINOLOGY_FAMILIES.md": 203,
@@ -107,7 +107,7 @@
     "08_P2_ORDINARY_UI_BATCH_09.md",
     "99_NO_REVIEW_SIGNAL.md"
   ],
-  "approved_replacement_count": 0,
+  "approved_replacement_count": 1,
   "assigned_ids": {
     "COPY-0001": [
       "04_P1_TERMINOLOGY_FAMILIES.md",
@@ -125,7 +125,7 @@
       "08_P2_ORDINARY_UI_BATCH_01.md"
     ],
     "COPY-0005": [
-      "01_P0_MIXED_LANGUAGE_BATCH_01.md"
+      "08_P2_ORDINARY_UI_BATCH_01.md"
     ],
     "COPY-0006": [
       "08_P2_ORDINARY_UI_BATCH_01.md"
@@ -213,7 +213,7 @@
     ],
     "COPY-0032": [
       "04_P1_TERMINOLOGY_FAMILIES.md",
-      "08_P2_ORDINARY_UI_BATCH_01.md"
+      "08_P2_ORDINARY_UI_BATCH_02.md"
     ],
     "COPY-0033": [
       "08_P2_ORDINARY_UI_BATCH_02.md"
@@ -344,7 +344,7 @@
     ],
     "COPY-0070": [
       "04_P1_TERMINOLOGY_FAMILIES.md",
-      "08_P2_ORDINARY_UI_BATCH_02.md"
+      "08_P2_ORDINARY_UI_BATCH_03.md"
     ],
     "COPY-0071": [
       "08_P2_ORDINARY_UI_BATCH_03.md"
@@ -443,7 +443,7 @@
     ],
     "COPY-0100": [
       "04_P1_TERMINOLOGY_FAMILIES.md",
-      "08_P2_ORDINARY_UI_BATCH_03.md"
+      "08_P2_ORDINARY_UI_BATCH_04.md"
     ],
     "COPY-0101": [
       "08_P2_ORDINARY_UI_BATCH_04.md"
@@ -546,7 +546,7 @@
       "08_P2_ORDINARY_UI_BATCH_04.md"
     ],
     "COPY-0130": [
-      "08_P2_ORDINARY_UI_BATCH_04.md"
+      "08_P2_ORDINARY_UI_BATCH_05.md"
     ],
     "COPY-0131": [
       "08_P2_ORDINARY_UI_BATCH_05.md"
@@ -1059,7 +1059,7 @@
       "08_P2_ORDINARY_UI_BATCH_05.md"
     ],
     "COPY-0285": [
-      "08_P2_ORDINARY_UI_BATCH_05.md"
+      "08_P2_ORDINARY_UI_BATCH_06.md"
     ],
     "COPY-0286": [
       "08_P2_ORDINARY_UI_BATCH_06.md"
@@ -1286,7 +1286,7 @@
       "08_P2_ORDINARY_UI_BATCH_06.md"
     ],
     "COPY-0357": [
-      "08_P2_ORDINARY_UI_BATCH_06.md"
+      "08_P2_ORDINARY_UI_BATCH_07.md"
     ],
     "COPY-0358": [
       "08_P2_ORDINARY_UI_BATCH_07.md"
@@ -1760,7 +1760,7 @@
       "08_P2_ORDINARY_UI_BATCH_07.md"
     ],
     "COPY-0501": [
-      "08_P2_ORDINARY_UI_BATCH_07.md"
+      "08_P2_ORDINARY_UI_BATCH_08.md"
     ],
     "COPY-0502": [
       "02_P0_SAFETY_CRITICAL_BATCH_01.md"
@@ -2210,7 +2210,7 @@
       "08_P2_ORDINARY_UI_BATCH_08.md"
     ],
     "COPY-0633": [
-      "01_P0_MIXED_LANGUAGE_BATCH_02.md",
+      "01_P0_MIXED_LANGUAGE_BATCH_01.md",
       "04_P1_TERMINOLOGY_FAMILIES.md"
     ],
     "COPY-0634": [
@@ -2227,7 +2227,7 @@
       "08_P2_ORDINARY_UI_BATCH_08.md"
     ],
     "COPY-0638": [
-      "08_P2_ORDINARY_UI_BATCH_08.md"
+      "08_P2_ORDINARY_UI_BATCH_09.md"
     ],
     "COPY-0639": [
       "08_P2_ORDINARY_UI_BATCH_09.md"

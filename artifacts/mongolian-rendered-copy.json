@@ -1,6 +1,6 @@
 {
   "generator_version": "2.0.0",
-  "generated_from_commit": "685a25bc2339d34227214bf65f0f80ae5938e04c",
+  "generated_from_commit": "37364d62617b973160f445043df118631faf4c0e",
   "network_attempts": 0,
   "scenarios": [
     {
@@ -686,7 +686,7 @@
       "occurrences": 1
     },
     {
-      "text": "LifePattern нүүр хуудас руу буцах",
+      "text": "Нүүр хуудас руу буцах",
       "surface": "COMING_SOON",
       "role": "PUBLIC_USER",
       "scenario": "coming-soon",

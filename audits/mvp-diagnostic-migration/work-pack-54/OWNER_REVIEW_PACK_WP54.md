@@ -17,9 +17,9 @@ HOLD - BRANDED DOMAIN DNS REQUIRED
 ## Result
 
 - Weight Loss active public CTA changed to `Тест эхлэх`.
-- Branded domain migration checklist created for `https://weight.lifepattern.live`.
+- Branded domain migration checklist created for `https://weight.[CROSS_PROJECT_NAME_REMOVED]`.
 - DNS was not changed.
-- LifePattern link should not be changed to the branded domain yet because the subdomain is not configured.
+- [CROSS_PROJECT_NAME_REMOVED] link should not be changed to the branded domain yet because the subdomain is not configured.
 
 ## Validation
 
@@ -30,7 +30,7 @@ HOLD - BRANDED DOMAIN DNS REQUIRED
 - `node tests/paid-first-gate-emergency.test.js` passed.
 - `npm test` passed.
 - CTA grep confirmed `Тест эхлэх` is present and `Тест үнэлгээг эхлүүлэх` is absent from `app.js` and `tests`.
-- DNS check confirmed `weight.lifepattern.live` is not ready: `NXDOMAIN`.
+- DNS check confirmed `weight.[CROSS_PROJECT_NAME_REMOVED]` is not ready: `NXDOMAIN`.
 
 ## Deploy
 
@@ -53,7 +53,7 @@ HOLD - BRANDED DOMAIN DNS REQUIRED
 - Paid-first gate
 - Scoring/report logic
 - Backend/payment/entitlement
-- LifePattern/TIAS runtime behavior
+- [CROSS_PROJECT_NAME_REMOVED]/TIAS runtime behavior
 - DNS
 - PDF generation
 - `audits/sprint-36-paid-depth-prototype/`

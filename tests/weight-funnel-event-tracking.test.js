@@ -22,12 +22,12 @@ const requiredEvents = [
 
 assert(runAllSource.includes('["node", ["tests/weight-funnel-event-tracking.test.js"]]'), "WP59 funnel tracking test must be registered");
 
-assert(appSource.includes('const WEIGHT_TEST_FUNNEL_ENDPOINT = "https://www.lifepattern.live/.netlify/functions/track-funnel-event";'), "Weight funnel endpoint must point to LifePattern tracking function");
+assert(appSource.includes('const WEIGHT_TEST_FUNNEL_ENDPOINT = "/.netlify/functions/track-funnel-event";'), "Weight funnel endpoint must point to [CROSS_PROJECT_NAME_REMOVED] tracking function");
 assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";'), "Weight product code must remain unchanged");
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time price label must remain 9,900₮");
 assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price must remain 9900");
-assert(appSource.includes('create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
-assert(appSource.includes('check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
+assert(appSource.includes('create: "/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
+assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
 
 for (const eventName of requiredEvents) {
   assert(appSource.includes(`"${eventName}"`), `Weight app must emit ${eventName}`);

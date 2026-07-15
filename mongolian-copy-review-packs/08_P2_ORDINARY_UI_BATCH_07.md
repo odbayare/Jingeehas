@@ -2,6 +2,64 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
+## COPY-0357 — P2
+
+**Exact current text**
+
+> Баталгаажуулах
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: DIARY_CONFIRMATION
+- Role: SEVEN_DAY_USER
+- Scenario: diary-confirmation-edit, diary-confirmation-add
+- Render source: renderDailySummaryConfirmation(D-SUM01)
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderDailySummaryConfirmation(D-SUM01) via diary-confirmation-edit, diary-confirmation-add [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Зассан ойлголтоо мөр мөрөөр бичнэ үү
+> Баталгаажуулах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
 ## COPY-0358 — P2
 
 **Exact current text**
@@ -1688,64 +1746,6 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 **Rendered context**
 
 > Нэг удаагийн гүн анализ
-> 9,900₮
-> Сонголт руу буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0501 — P2
-
-**Exact current text**
-
-> Сонголт руу буцах
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: LEAD_THANK_YOU
-- Role: PUBLIC_USER
-- Scenario: lead-thank-you
-- Render source: renderLeadThankYou
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderLeadThankYou via lead-thank-you [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
 > 9,900₮
 > Сонголт руу буцах
 

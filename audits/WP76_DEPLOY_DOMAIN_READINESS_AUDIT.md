@@ -13,7 +13,7 @@ Key findings:
 - Netlify appears CLI-only, not GitHub-linked: site `build_settings` is `{}`, deploys have `deploy_source: "cli"`, `commit_ref: null`, and `netlify sites:list` shows no repo for this site.
 - Current published/latest deploy is `6a4a57aa2421329b1a842072`, published on 2026-07-05, source `cli`.
 - `jingeehas.fit` and `www.jingeehas.fit` are already listed as Netlify aliases, but DNS still points to Namecheap parking.
-- `weight.lifepattern.live` is still the primary/custom domain and still points to this Netlify site.
+- `weight.[CROSS_PROJECT_NAME_REMOVED]` is still the primary/custom domain and still points to this Netlify site.
 
 Recommendation: do not launch yet. Next safe step is a controlled staging or draft/preview deploy from a clean worktree, followed by smoke QA. DNS should only be changed after owner approval and after the intended production deploy is verified.
 
@@ -58,8 +58,8 @@ Confirmed in `app.js`:
 - `oneTimeAnchor: "9,900₮"`
 - `coachOneTime: "9,900₮"`
 - `const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";`
-- QPay create endpoint: `https://www.lifepattern.live/.netlify/functions/qpay-create-invoice`
-- QPay check endpoint: `https://www.lifepattern.live/.netlify/functions/qpay-check-payment`
+- QPay create endpoint: `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-create-invoice`
+- QPay check endpoint: `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-check-payment`
 
 Coming-soon mode remains active and must remain active until explicit launch approval.
 
@@ -78,9 +78,9 @@ Site:
 - Site name: `weight-loss-deep-pattern-9900`
 - Site id: `fb4def02-8e5d-4f00-8996-8cae09ed836f`
 - Default Netlify URL: `weight-loss-deep-pattern-9900.netlify.app`
-- Current project URL: `https://weight.lifepattern.live`
+- Current project URL: `https://weight.[CROSS_PROJECT_NAME_REMOVED]`
 - Admin URL: `https://app.netlify.com/projects/weight-loss-deep-pattern-9900`
-- Current custom domain: `weight.lifepattern.live`
+- Current custom domain: `weight.[CROSS_PROJECT_NAME_REMOVED]`
 - Current aliases:
   - `jingeehas.fit`
   - `www.jingeehas.fit`
@@ -95,8 +95,8 @@ Site:
 Separation check:
 
 - `netlify sites:list` shows `weight-loss-deep-pattern-9900` without a repo line.
-- `tias-beta` separately shows repo `https://github.com/odbayare/lifepattern-tias`.
-- No evidence found that this Weight Loss Test site is linked to `lifepattern-tias`.
+- `tias-beta` separately shows repo `https://github.com/odbayare/[CROSS_PROJECT_NAME_REMOVED]-tias`.
+- No evidence found that this Weight Loss Test site is linked to `[CROSS_PROJECT_NAME_REMOVED]-tias`.
 
 ## 6. Current deploy model: CLI-only or Git-linked
 
@@ -124,7 +124,7 @@ Current published/latest deploy:
 - Commit URL: `null`
 - Deploy URL: `http://6a4a57aa2421329b1a842072--weight-loss-deep-pattern-9900.netlify.app`
 - Deploy SSL URL: `https://6a4a57aa2421329b1a842072--weight-loss-deep-pattern-9900.netlify.app`
-- Alias URL: `https://weight.lifepattern.live`
+- Alias URL: `https://weight.[CROSS_PROJECT_NAME_REMOVED]`
 - Published at: `2026-07-05T13:10:10.440Z`
 
 The latest deploy listed by `listSiteDeploys` is the same deploy id.
@@ -133,7 +133,7 @@ The latest deploy listed by `listSiteDeploys` is the same deploy id.
 
 Netlify metadata:
 
-- Primary/custom domain: `weight.lifepattern.live`
+- Primary/custom domain: `weight.[CROSS_PROJECT_NAME_REMOVED]`
 - Aliases:
   - `jingeehas.fit`
   - `www.jingeehas.fit`
@@ -153,22 +153,22 @@ Commands run:
 - `dig jingeehas.fit A +short`
 - `dig www.jingeehas.fit CNAME +short`
 - `dig www.jingeehas.fit A +short`
-- `dig weight.lifepattern.live CNAME +short`
-- `dig weight.lifepattern.live A +short`
+- `dig weight.[CROSS_PROJECT_NAME_REMOVED] CNAME +short`
+- `dig weight.[CROSS_PROJECT_NAME_REMOVED] A +short`
 
 Results:
 
 - `jingeehas.fit A`: `162.255.119.211`
 - `www.jingeehas.fit CNAME`: `parkingpage.namecheap.com.`
 - `www.jingeehas.fit A`: `parkingpage.namecheap.com.`, `72.251.11.125`, `72.251.11.93`
-- `weight.lifepattern.live CNAME`: `weight-loss-deep-pattern-9900.netlify.app.`
-- `weight.lifepattern.live A`: resolves through Netlify to `13.215.239.219`, `52.74.6.109`
+- `weight.[CROSS_PROJECT_NAME_REMOVED] CNAME`: `weight-loss-deep-pattern-9900.netlify.app.`
+- `weight.[CROSS_PROJECT_NAME_REMOVED] A`: resolves through Netlify to `13.215.239.219`, `52.74.6.109`
 
 Conclusion:
 
 - `jingeehas.fit` still points to Namecheap parking.
 - `www.jingeehas.fit` still points to Namecheap parking.
-- `weight.lifepattern.live` still points to the existing Netlify site.
+- `weight.[CROSS_PROJECT_NAME_REMOVED]` still points to the existing Netlify site.
 
 ## 10. Required DNS records later
 
@@ -237,7 +237,7 @@ Manual deploy model:
    - `dig www.jingeehas.fit CNAME`
    - HTTPS loads for both domains
    - Netlify certificate covers both names
-8. Only after the new domain is stable, plan a separate cleanup for `weight.lifepattern.live`:
+8. Only after the new domain is stable, plan a separate cleanup for `weight.[CROSS_PROJECT_NAME_REMOVED]`:
    - either keep temporarily as a fallback
    - or redirect/remove later in a separate approved WP
 
@@ -250,7 +250,7 @@ Launch blockers:
 - `jingeehas.fit` and `www.jingeehas.fit` still resolve to Namecheap parking.
 - Netlify aliases exist, but DNS and certificate coverage for the new public domain still need post-DNS verification.
 - Current Netlify deployment model appears CLI-only; decide whether to keep manual deploys or configure GitHub-linked deploys later.
-- `weight.lifepattern.live` remains the primary/custom domain and should not be repointed/removed without a separate approved migration plan.
+- `weight.[CROSS_PROJECT_NAME_REMOVED]` remains the primary/custom domain and should not be repointed/removed without a separate approved migration plan.
 
 ## 14. Non-blocking cleanup
 
@@ -258,8 +258,8 @@ Launch blockers:
 - Consider choosing a final deployment model:
   - manual CLI deploy from clean worktree, or
   - GitHub-linked Netlify deploy from `odbayare/Jingeehas`.
-- Consider moving primary domain from `weight.lifepattern.live` to `jingeehas.fit` only after DNS/SSL validation and owner approval.
-- Consider a post-launch redirect strategy for `weight.lifepattern.live`.
+- Consider moving primary domain from `weight.[CROSS_PROJECT_NAME_REMOVED]` to `jingeehas.fit` only after DNS/SSL validation and owner approval.
+- Consider a post-launch redirect strategy for `weight.[CROSS_PROJECT_NAME_REMOVED]`.
 
 ## 15. Recommendation
 
@@ -293,7 +293,7 @@ Confirmed:
 - QPay was not touched.
 - Coming-soon mode was not changed.
 - Price/product guards were not changed.
-- TIAS/lifepattern-tias was not touched.
+- TIAS/[CROSS_PROJECT_NAME_REMOVED]-tias was not touched.
 - WP64/WP67 PDF packs were not touched.
 - `audits/sprint-36-paid-depth-prototype/` was not touched.
 - Editor handoff artifacts were not touched.

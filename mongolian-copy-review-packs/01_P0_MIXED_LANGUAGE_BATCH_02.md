@@ -2,65 +2,6 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0633 — P0
-
-**Exact current text**
-
-> Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
-- Surface: OTHER_PROVEN_RENDERED
-- Role: INTERNAL_TESTER
-- Scenario: internal-feedback-survey
-- Render source: renderInternalTesterFeedbackSurvey with internalTest state
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 7131
-- Source function/object: renderInternalTesterFeedbackSurvey
-- Source mapping: RESOLVED
-- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
-
-**Source item**
-
-> ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
-
-**Source context after**
-
-> ${feedbackChoiceField("languageTone", "Тайлангийн хэл найруулга ямар санагдсан бэ?", ["Байгалийн монгол хэлтэй", "Зарим хэсэг хиймэл", "Хэт албархуу", "Хэт зөөлөн/бөөрөнхий"], "languageToneSuggestion", "Засах санал:")}
-
-**Rendered context**
-
-> Ямар хэсэг?
-> Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?
-> Аль хэсэг?
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
 ## COPY-0651 — P0
 
 **Exact current text**

@@ -2,7 +2,7 @@
 
 ## Manual Retest Steps
 
-1. Open `https://weight.lifepattern.live`.
+1. Open `https://weight.[CROSS_PROJECT_NAME_REMOVED]`.
 2. Choose male.
 3. Verify no menstrual/cycle questions appear.
 4. Complete the contact step.

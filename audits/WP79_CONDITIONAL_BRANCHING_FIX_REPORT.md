@@ -157,7 +157,7 @@ Not changed:
 - QPay endpoint strings
 - production coming-soon guard
 - price/product guards
-- TIAS/lifepattern-tias
+- TIAS/[CROSS_PROJECT_NAME_REMOVED]-tias
 - WP64/WP67 PDF packs
 - `audits/sprint-36-paid-depth-prototype/`
 

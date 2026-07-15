@@ -257,8 +257,8 @@ Do not change:
 - `WEIGHT_TEST_COMING_SOON_MODE = true`
 - `9,900₮`
 - `WEIGHT_TEST_ONE_TIME`
-- `https://www.lifepattern.live/.netlify/functions/qpay-create-invoice`
-- `https://www.lifepattern.live/.netlify/functions/qpay-check-payment`
+- `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-create-invoice`
+- `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-check-payment`
 - Netlify site `weight-loss-deep-pattern-9900`
 - Netlify site id `fb4def02-8e5d-4f00-8996-8cae09ed836f`
 - DNS or Namecheap settings

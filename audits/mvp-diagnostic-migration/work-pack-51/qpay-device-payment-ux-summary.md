@@ -33,7 +33,7 @@ Desktop and laptop payment surfaces are QR-first. Mobile browser, mobile webapp,
 - `STANDARD_WEIGHT_PRICE_MNT` remains `9900`.
 - QPay amount remains `9900`.
 - Product code remains `WEIGHT_TEST_ONE_TIME`.
-- QPay endpoints remain on `https://www.lifepattern.live/.netlify/functions/...`.
+- QPay endpoints remain on `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/...`.
 - Pending QPay payment does not unlock the test.
 - Paid-first gating and entitlement logic were not changed.
 

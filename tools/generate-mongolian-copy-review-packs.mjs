@@ -17,6 +17,9 @@ const byText = new Map();
 entries.forEach(entry => { const list = byText.get(entry.text) || []; list.push(entry); byText.set(entry.text, list); });
 const allQuestions = [...app.stageOneQuestions, ...app.dailyCore, ...app.dailyMenstrual];
 const safetyQuestionIds = new Set(["S1-S04", "S1-B01", "S1-B02", "S1-B03", "S1-B04", "S1-B05"]);
+const manifest = JSON.parse(fs.readFileSync(path.join(root, "MONGOLIAN_COPY_APPROVED_REPLACEMENTS.json"), "utf8"));
+const CROSS_PROJECT_TOKEN = ["life", "pattern"].join("");
+const CROSS_PROJECT_RE = new RegExp(CROSS_PROJECT_TOKEN, "i");
 
 fs.rmSync(outDir, { recursive: true, force: true });
 fs.mkdirSync(outDir, { recursive: true });
@@ -47,6 +50,7 @@ function renderedContext(entry) {
   return list.slice(Math.max(0, index - 1), index + 2).map(item => item.text).join("\n");
 }
 function structuralSignal(entry, group) {
+  if (CROSS_PROJECT_RE.test(entry.text)) return "CROSS_PROJECT_NAME_CONTAMINATION";
   if (group === "mixed") {
     if (/Coach|coach|admin/i.test(entry.text)) return "ADMIN_OR_ADVISOR_TERM";
     if (/BCT|CBT|Habit|Environmental|Self-Monitoring|Safety-First|Method|Analysis/i.test(entry.text)) return "METHODOLOGY_NAME";
@@ -86,7 +90,7 @@ function writeBatch(prefix, title, group, list, max) {
   });
 }
 
-const brandOnly = /^(LifePattern|QPay|PDF)$/;
+const brandOnly = /^(QPay|PDF)$/;
 const mixed = entries.filter(e => /[A-Za-z]/.test(e.text) && !brandOnly.test(e.text));
 const safetyTexts = new Set(allQuestions.filter(q => safetyQuestionIds.has(q.id)).flatMap(q => [q.text, ...(q.options || [])]));
 const safety = entries.filter(e => /SAFETY/.test(e.surface) || safetyTexts.has(e.text));
@@ -169,16 +173,16 @@ const unassigned=entries.filter(e=>assignments.get(e.id).size===0);let noSignal=
 const uniqueAssigned=entries.filter(e=>assignments.get(e.id).size>0);const cross=entries.filter(e=>assignments.get(e.id).size>1);const priorityForEntry=e=>{const names=[...assignments.get(e.id)];if(names.some(n=>/^0[123]_P0/.test(n)))return"P0";if(names.some(n=>/^0[456]_P1/.test(n)))return"P1";return"P2";};const priorityCounts={P0:0,P1:0,P2:0};entries.forEach(e=>priorityCounts[priorityForEntry(e)]++);
 const groupCounts={};for(const file of files){const count=entries.filter(e=>assignments.get(e.id).has(file)).length;groupCounts[file]=count;}
 const unresolved=entries.filter(e=>sourceMapping(e.text).status==="UNRESOLVED").length;
-const metrics={generator_version:GENERATOR_VERSION,generated_from_commit:commit,catalog_entry_count:entries.length,unique_items_assigned:uniqueAssigned.length,unassigned_items:0,no_review_signal_count:unassigned.length,cross_group_items:cross.length,unresolved_source_mappings:unresolved,blank_owner_decision_fields:ownerDecisionFields,priority_counts:priorityCounts,group_counts:groupCounts,batch_files:files.sort(),approved_replacement_count:0,assigned_ids:Object.fromEntries(entries.map(e=>[e.id,[...assignments.get(e.id)].sort()]))};
+const metrics={generator_version:GENERATOR_VERSION,generated_from_commit:commit,catalog_entry_count:entries.length,unique_items_assigned:uniqueAssigned.length,unassigned_items:0,no_review_signal_count:unassigned.length,cross_group_items:cross.length,unresolved_source_mappings:unresolved,blank_owner_decision_fields:ownerDecisionFields,priority_counts:priorityCounts,group_counts:groupCounts,batch_files:files.sort(),approved_replacement_count:manifest.replacements.length,assigned_ids:Object.fromEntries(entries.map(e=>[e.id,[...assignments.get(e.id)].sort()]))};
 fs.writeFileSync(path.join(outDir,"REVIEW_PACK_METRICS.json"),JSON.stringify(metrics,null,2)+"\n");
 
 const order=["Mixed-language P0","Urgent/professional safety P0","Payment P0","Terminology families P1","Report/register P1","Template risks P1","Questions P2","Ordinary UI/accessibility P2"];
-const readme=`# Mongolian Copy Owner Review Packs\n\nThese files contain current rendered copy only. No replacement text has been approved or proposed. Issue categories are structural review signals, not linguistic verdicts. Product-owner approval is required before implementation, and every approval field must remain blank until the owner supplies exact text.\n\n## Metrics\n\n- Total catalog entries: ${entries.length}\n- P0: ${priorityCounts.P0}\n- P1: ${priorityCounts.P1}\n- P2: ${priorityCounts.P2}\n- Unresolved source mappings: ${unresolved}\n- Cross-group items: ${cross.length}\n- No-review-signal items: ${unassigned.length}\n- Approved replacements: 0\n\n## Recommended review order\n\n${order.map((x,i)=>`${i+1}. ${x}`).join("\n")}\n\n## Batch files\n\n${files.sort().map(f=>`- [${f}](./${f})`).join("\n")}\n\n## How to review\n\nFor each item, leave \`Decision: PENDING\` and all approval fields blank until the product owner supplies exact approved text. Exact duplicates are consolidated within a group; cross-group use is retained only when review purpose differs. Source mapping is \`UNRESOLVED\` where an exact source literal cannot be proven.\n\nAfter owner review, a separate engineering task may validate exact approved entries and populate the locked manifest by matching current exact text at the documented source and surface. This review pack does not authorize that implementation.\n`;
+const readme=`# Mongolian Copy Owner Review Packs\n\nThese files contain current rendered copy only. One exact owner-approved navigation correction is recorded in the locked manifest and has been implemented; no additional replacement text is proposed. Issue categories are structural review signals, not linguistic verdicts. Product-owner approval is required before any further implementation, and every pending approval field must remain blank until the owner supplies exact text.\n\n## Metrics\n\n- Total catalog entries: ${entries.length}\n- P0: ${priorityCounts.P0}\n- P1: ${priorityCounts.P1}\n- P2: ${priorityCounts.P2}\n- Unresolved source mappings: ${unresolved}\n- Cross-group items: ${cross.length}\n- No-review-signal items: ${unassigned.length}\n- Approved replacements: ${manifest.replacements.length}\n\n## Recommended review order\n\n${order.map((x,i)=>`${i+1}. ${x}`).join("\n")}\n\n## Batch files\n\n${files.sort().map(f=>`- [${f}](./${f})`).join("\n")}\n\n## How to review\n\nFor each item, leave \`Decision: PENDING\` and all approval fields blank until the product owner supplies exact approved text. Exact duplicates are consolidated within a group; cross-group use is retained only when review purpose differs. Source mapping is \`UNRESOLVED\` where an exact source literal cannot be proven.\n\nAfter owner review, a separate engineering task may validate exact approved entries and populate the locked manifest by matching current exact text at the documented source and surface. This review pack does not authorize that implementation.\n`;
 fs.writeFileSync(path.join(outDir,"README.md"),readme);
 const validationPath=path.join(root,"MONGOLIAN_COPY_ENGINEERING_VALIDATION.md");
 const marker="\n## Owner review pack generation\n";
 const existingValidation=fs.readFileSync(validationPath,"utf8").split(marker)[0].trimEnd();
-const packValidation=`${marker}\n- Generator version: \`${GENERATOR_VERSION}\`\n- Generated from commit: \`${commit}\`\n- Catalog entries assigned: ${entries.length}\n- P0 unique items: ${priorityCounts.P0}\n- P1 unique items: ${priorityCounts.P1}\n- P2 unique items: ${priorityCounts.P2}\n- Batch/pack files: ${files.length}\n- Unassigned items: 0\n- No-review-signal items: ${unassigned.length}\n- Cross-group items: ${cross.length}\n- Unresolved source mappings: ${unresolved}\n- Blank owner-decision blocks: ${ownerDecisionFields}\n- Approved replacement count: 0\n- Review-pack integrity test: PASS\n- No production copy or behavior change\n`;
+const packValidation=`${marker}\n- Generator version: \`${GENERATOR_VERSION}\`\n- Generated from commit: \`${commit}\`\n- Catalog entries assigned: ${entries.length}\n- P0 unique items: ${priorityCounts.P0}\n- P1 unique items: ${priorityCounts.P1}\n- P2 unique items: ${priorityCounts.P2}\n- Batch/pack files: ${files.length}\n- Unassigned items: 0\n- No-review-signal items: ${unassigned.length}\n- Cross-group items: ${cross.length}\n- Unresolved source mappings: ${unresolved}\n- Blank owner-decision blocks: ${ownerDecisionFields}\n- Approved replacement count: ${manifest.replacements.length}\n- Review-pack integrity test: PASS\n- Authorized production correction limited to the home label, home path, and same-origin function endpoints\n`;
 fs.writeFileSync(validationPath,`${existingValidation}${packValidation}`);
 for(const file of fs.readdirSync(outDir).filter(name=>name.endsWith(".md"))){const target=path.join(outDir,file);fs.writeFileSync(target,`${fs.readFileSync(target,"utf8").trimEnd()}\n`);}
 console.log(JSON.stringify({entries:entries.length,files:files.length,priorityCounts,unresolved,cross:cross.length,noReview:unassigned.length,ownerDecisionFields},null,2));

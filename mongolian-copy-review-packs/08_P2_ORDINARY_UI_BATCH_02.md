@@ -2,6 +2,65 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
+## COPY-0032 — P2
+
+**Exact current text**
+
+> 7 хоногийн богино тэмдэглэл
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: LANDING
+- Role: PUBLIC_USER
+- Scenario: landing
+- Render source: renderLanding
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderLanding via landing [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Орой бүр 3–5 минут
+> 7 хоногийн богино тэмдэглэл
+> Аргачлал
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
 ## COPY-0033 — P2
 
 **Exact current text**
@@ -1694,65 +1753,6 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 > Жишээ үр дүн
 > Тайлан ямар харагдах вэ?
 > Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0070 — P2
-
-**Exact current text**
-
-> Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ABOUT
-- Role: PUBLIC_USER
-- Scenario: about
-- Render source: renderAbout
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2516
-- Source function/object: renderSampleResultPreview
-- Source mapping: RESOLVED
-- Render proof: renderAbout via about [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h2>Тайлан ямар харагдах вэ?</h2>
-
-**Source item**
-
-> <p class="muted">Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.</p>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Тайлан ямар харагдах вэ?
-> Доорх нь бүрэн тайлан биш. Зөвхөн тайлан ямар өнгө аястай гардагийг харуулах богино жишээ.
-> Хамгийн тод харагдаж буй зүйл
 
 **Dynamic values**
 

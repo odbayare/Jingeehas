@@ -147,4 +147,4 @@ WP82 did not intentionally change:
 - coming-soon source guard;
 - WP64/WP67 PDF packs;
 - `audits/sprint-36-paid-depth-prototype/`;
-- TIAS or `lifepattern-tias`.
+- TIAS or `[CROSS_PROJECT_NAME_REMOVED]-tias`.

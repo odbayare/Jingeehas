@@ -38,8 +38,8 @@ assert(runAllSource.includes('["node", ["tests/no-account-contact-delivery.test.
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time price label must remain 9,900₮");
 assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price must remain 9900");
 assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";'), "product code must remain unchanged");
-assert(appSource.includes('create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
-assert(appSource.includes('check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
+assert(appSource.includes('create: "/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
+assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
 assert(appSource.includes("if (!hasSavedContactInfo())"), "QPay invoice creation must be guarded by saved contact info");
 assert(appSource.includes("copyCurrentReport"), "report copy control must exist");
 assert(appSource.includes("printCurrentReport"), "report print control must exist");

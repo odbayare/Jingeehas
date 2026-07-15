@@ -22,7 +22,7 @@ WP59 adds real client-side Weight Loss event tracking for events that happen in 
 
 Events are sent to:
 
-`https://www.lifepattern.live/.netlify/functions/track-funnel-event`
+`https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/track-funnel-event`
 
 Each event includes product-scoped metadata:
 

@@ -2,6 +2,65 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
+## COPY-0100 — P2
+
+**Exact current text**
+
+> 9,900₮ төлөөд тайлангаа нээх
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: CHOICE
+- Role: PUBLIC_USER
+- Scenario: choice
+- Render source: renderChoice
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderChoice via choice [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Энэ нь тухайн мөчийн хариултад суурилсан эхний зураглал. Бодит өдөр тутмын давтамжийг 7 хоногийн үнэлгээ илүү нарийвчилна.
+> 9,900₮ төлөөд тайлангаа нээх
+> Илүү нарийвчилсан
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
 ## COPY-0101 — P2
 
 **Exact current text**
@@ -1694,65 +1753,6 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 > Нэг удаагийн гүн зураглал
 > Энэ тест таныг шүүхгүй
 > Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0130 — P2
-
-**Exact current text**
-
-> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ONE_TIME_START
-- Role: PUBLIC_USER
-- Scenario: one-time-start
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2660
-- Source function/object: renderOneTimeStart
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h2>Энэ тест таныг шүүхгүй</h2>
-
-**Source item**
-
-> <p>Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.</p>
-
-**Source context after**
-
-> <div class="card stack">
-
-**Rendered context**
-
-> Энэ тест таныг шүүхгүй
-> Жин хасах гэж хичээх үед яг ямар өдөр, ямар мэдрэмж, ямар ядаргаа, ямар орчин давхцахад хоолны сонголт өөрчлөгддөгийг хамт харна.
-> Зөв, буруу хариулт байхгүй.
 
 **Dynamic values**
 

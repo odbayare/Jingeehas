@@ -23,10 +23,10 @@ const COACH_COMMISSION_MNT = 4000;
 const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";
 const WEIGHT_TEST_AMOUNT_MNT = 9900;
 const WEIGHT_TEST_QPAY_ENDPOINTS = {
-  create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice",
-  check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"
+  create: "/.netlify/functions/qpay-create-invoice",
+  check: "/.netlify/functions/qpay-check-payment"
 };
-const WEIGHT_TEST_FUNNEL_ENDPOINT = "https://www.lifepattern.live/.netlify/functions/track-funnel-event";
+const WEIGHT_TEST_FUNNEL_ENDPOINT = "/.netlify/functions/track-funnel-event";
 const WEIGHT_TEST_VISITOR_ID_STORAGE_KEY = "weight_test_visitor_id_v1";
 const WEIGHT_TEST_SESSION_ID_STORAGE_KEY = "weight_test_session_id_v1";
 const WEIGHT_TEST_EVENT_DEDUPE_STORAGE_KEY = "weight_test_funnel_events_v1";
@@ -2425,7 +2425,7 @@ function renderComingSoon() {
             <p>Шинэчилсэн хувилбар бэлэн болтол төлбөр авахгүй, тест эхлүүлэхгүй.</p>
           </div>
           <div class="hero-actions">
-            <a class="button secondary" href="https://www.lifepattern.live">LifePattern нүүр хуудас руу буцах</a>
+            <a class="button secondary" href="/">Нүүр хуудас руу буцах</a>
           </div>
         </div>
       </div>

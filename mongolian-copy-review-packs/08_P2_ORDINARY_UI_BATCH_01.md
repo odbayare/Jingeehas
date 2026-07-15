@@ -219,7 +219,66 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 > Бид энэ тестийн асуулт, тайлангийн чанар, аюулгүй байдлын чиглүүлгийг сайжруулж байна.
 > Шинэчилсэн хувилбар бэлэн болтол төлбөр авахгүй, тест эхлүүлэхгүй.
-> LifePattern нүүр хуудас руу буцах
+> Нүүр хуудас руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0005 — P2
+
+**Exact current text**
+
+> Нүүр хуудас руу буцах
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: COMING_SOON
+- Role: PUBLIC_USER
+- Scenario: coming-soon
+- Render source: renderComingSoon
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2428
+- Source function/object: renderComingSoon
+- Source mapping: RESOLVED
+- Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="hero-actions">
+
+**Source item**
+
+> <a class="button secondary" href="/">Нүүр хуудас руу буцах</a>
+
+**Source context after**
+
+> </div>
+
+**Rendered context**
+
+> Шинэчилсэн хувилбар бэлэн болтол төлбөр авахгүй, тест эхлүүлэхгүй.
+> Нүүр хуудас руу буцах
+> Түр хаасан төлөв
 
 **Dynamic values**
 
@@ -276,7 +335,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> LifePattern нүүр хуудас руу буцах
+> Нүүр хуудас руу буцах
 > Түр хаасан төлөв
 > Дотоод чанарын шалгалтаар тайлангийн чанар, асуултын ойлгомж, зарим нөхцөлд таарах байдал дээр засах зүйлс илэрсэн тул олон нийтэд төлбөртэй хувилбарыг түр хаалаа.
 
@@ -1693,65 +1752,6 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 > Нэг удаагийн гүн зураглал
 > Орой бүр 3–5 минут
 > 7 хоногийн богино тэмдэглэл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0032 — P2
-
-**Exact current text**
-
-> 7 хоногийн богино тэмдэглэл
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: LANDING
-- Role: PUBLIC_USER
-- Scenario: landing
-- Render source: renderLanding
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderLanding via landing [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Орой бүр 3–5 минут
-> 7 хоногийн богино тэмдэглэл
-> Аргачлал
 
 **Dynamic values**
 

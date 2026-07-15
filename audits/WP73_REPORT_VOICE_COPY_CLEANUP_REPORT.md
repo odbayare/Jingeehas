@@ -99,7 +99,7 @@ Generated audit output churn from `npm test` was restored after validation:
 - Keep `9,900₮`.
 - Keep `WEIGHT_TEST_ONE_TIME`.
 - Keep QPay create/check endpoint strings unchanged.
-- Do not touch TIAS/lifepattern-tias.
+- Do not touch TIAS/[CROSS_PROJECT_NAME_REMOVED]-tias.
 - Do not touch WP64/WP67 PDF packs.
 - Do not touch `audits/sprint-36-paid-depth-prototype/`.
 

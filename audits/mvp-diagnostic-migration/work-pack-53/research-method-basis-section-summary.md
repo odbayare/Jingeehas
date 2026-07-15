@@ -32,7 +32,7 @@ The section explains that the test does not reduce excess weight to discipline a
 - Paid-first gate unchanged.
 - No scoring/report logic changes.
 - No backend/payment/entitlement changes.
-- No LifePattern/TIAS repo changes.
+- No [CROSS_PROJECT_NAME_REMOVED]/TIAS repo changes.
 - No PDF generated.
 - Protected folder untouched.
 

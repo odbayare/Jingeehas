@@ -96,7 +96,7 @@ Netlify site:
 
 - Site id: `fb4def02-8e5d-4f00-8996-8cae09ed836f`
 - Site name: `weight-loss-deep-pattern-9900`
-- Current custom domain: `weight.lifepattern.live`
+- Current custom domain: `weight.[CROSS_PROJECT_NAME_REMOVED]`
 - Existing domain aliases: `jingeehas.fit`, `www.jingeehas.fit`
 - Build settings visible through CLI API: `{}`
 
@@ -107,7 +107,7 @@ Deploy command:
 Deploy result:
 
 - Deploy id: `6a4cebbd67df666f8ad53cbd`
-- Production URL: `https://weight.lifepattern.live`
+- Production URL: `https://weight.[CROSS_PROJECT_NAME_REMOVED]`
 - Unique deploy URL: `https://6a4cebbd67df666f8ad53cbd--weight-loss-deep-pattern-9900.netlify.app`
 - Default Netlify URL checked: `https://weight-loss-deep-pattern-9900.netlify.app`
 - Published deploy state: `ready`
@@ -120,10 +120,10 @@ No Netlify site settings, domain settings, link settings, or aliases were change
 
 HTTP checks:
 
-- `https://weight.lifepattern.live`: `200`
+- `https://weight.[CROSS_PROJECT_NAME_REMOVED]`: `200`
 - `https://weight-loss-deep-pattern-9900.netlify.app`: `200`
 - `https://6a4cebbd67df666f8ad53cbd--weight-loss-deep-pattern-9900.netlify.app`: `200`
-- `https://weight.lifepattern.live/app.js`: `200`
+- `https://weight.[CROSS_PROJECT_NAME_REMOVED]/app.js`: `200`
 - `https://6a4cebbd67df666f8ad53cbd--weight-loss-deep-pattern-9900.netlify.app/app.js`: `200`
 
 Runtime copy and guard checks on live `app.js`:
@@ -152,9 +152,9 @@ Initial live HTML check:
 
 These public URLs returned `404`:
 
-- `https://weight.lifepattern.live/audits/WP76_DEPLOY_DOMAIN_READINESS_AUDIT.md`
-- `https://weight.lifepattern.live/audits/WP70_EDITOR_HANDOFF.zip`
-- `https://weight.lifepattern.live/tests/wp75-safety-copy-polish.test.js`
+- `https://weight.[CROSS_PROJECT_NAME_REMOVED]/audits/WP76_DEPLOY_DOMAIN_READINESS_AUDIT.md`
+- `https://weight.[CROSS_PROJECT_NAME_REMOVED]/audits/WP70_EDITOR_HANDOFF.zip`
+- `https://weight.[CROSS_PROJECT_NAME_REMOVED]/tests/wp75-safety-copy-polish.test.js`
 
 Conclusion: audit reports, handoff zips, and tests were not deployed in the sanitized production package.
 
@@ -165,10 +165,10 @@ Read-only DNS checks:
 - `dig jingeehas.fit A +short`: `162.255.119.211`
 - `dig www.jingeehas.fit CNAME +short`: `parkingpage.namecheap.com.`
 - `dig www.jingeehas.fit A +short`: `parkingpage.namecheap.com.`, `72.251.11.93`, `72.251.11.125`
-- `dig weight.lifepattern.live CNAME +short`: `weight-loss-deep-pattern-9900.netlify.app.`
-- `dig weight.lifepattern.live A +short`: `weight-loss-deep-pattern-9900.netlify.app.`, `13.215.239.219`, `52.74.6.109`
+- `dig weight.[CROSS_PROJECT_NAME_REMOVED] CNAME +short`: `weight-loss-deep-pattern-9900.netlify.app.`
+- `dig weight.[CROSS_PROJECT_NAME_REMOVED] A +short`: `weight-loss-deep-pattern-9900.netlify.app.`, `13.215.239.219`, `52.74.6.109`
 
-Conclusion: `jingeehas.fit` and `www.jingeehas.fit` still point to Namecheap parking. `weight.lifepattern.live` still points to Netlify.
+Conclusion: `jingeehas.fit` and `www.jingeehas.fit` still point to Namecheap parking. `weight.[CROSS_PROJECT_NAME_REMOVED]` still points to Netlify.
 
 No DNS or Namecheap changes were made.
 
@@ -180,7 +180,7 @@ Expected action category:
 
 - Replace the apex `jingeehas.fit` parking A record with the Netlify-required apex record shown in Netlify Domain settings.
 - Replace the `www.jingeehas.fit` parking CNAME with the Netlify-required `www` record shown in Netlify Domain settings, likely pointing to the Netlify site hostname.
-- Do not remove or alter `weight.lifepattern.live` unless separately approved.
+- Do not remove or alter `weight.[CROSS_PROJECT_NAME_REMOVED]` unless separately approved.
 - Do not make `jingeehas.fit` primary unless separately approved.
 
 This report does not apply DNS changes.
@@ -208,7 +208,7 @@ Not changed:
 - Netlify domain settings
 - DNS/Namecheap
 - `.netlify/state.json`
-- TIAS/lifepattern-tias
+- TIAS/[CROSS_PROJECT_NAME_REMOVED]-tias
 - WP64/WP67 PDF packs
 - `audits/sprint-36-paid-depth-prototype/`
 

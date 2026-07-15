@@ -44,8 +44,8 @@ assert(!urgent.includes("QPay"), "urgent mode must suppress payment controls");
 assert(!urgent.includes("29,000₮"), "urgent mode must suppress upsell controls");
 
 const manifest = JSON.parse(read("MONGOLIAN_COPY_APPROVED_REPLACEMENTS.json"));
-assert.strictEqual(manifest.approval_status, "EMPTY_NOT_APPROVED");
-assert.deepStrictEqual(manifest.replacements, []);
+assert.strictEqual(manifest.approval_status, "APPROVED");
+assert.strictEqual(manifest.replacements.length, 1);
 const requiredFiles = [
   "MONGOLIAN_COPY_RAW_LITERAL_INVENTORY.md", "MONGOLIAN_COPY_REVIEW_CATALOG.md",
   "MONGOLIAN_COPY_DUPLICATE_INDEX.md", "MONGOLIAN_COPY_EXCLUDED_INTERNAL_STRINGS.md",

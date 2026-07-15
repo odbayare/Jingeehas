@@ -35,9 +35,9 @@ Additional risk existed from restored local state: saved `stage1`, `preliminary`
 - One-time price remains `9,900₮`.
 - Amount remains `9900`.
 - Product code remains `WEIGHT_TEST_ONE_TIME`.
-- QPay create endpoint remains `https://www.lifepattern.live/.netlify/functions/qpay-create-invoice`.
-- QPay check endpoint remains `https://www.lifepattern.live/.netlify/functions/qpay-check-payment`.
-- No LifePattern/TIAS repo changes.
+- QPay create endpoint remains `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-create-invoice`.
+- QPay check endpoint remains `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-check-payment`.
+- No [CROSS_PROJECT_NAME_REMOVED]/TIAS repo changes.
 - No QPay backend changes.
 - No real payment completed.
 - No PDF generated.

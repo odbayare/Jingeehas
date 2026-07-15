@@ -38,8 +38,8 @@ function assertForbiddenCopyAbsent(value, label) {
 assert(appSource.includes('oneTime: "9,900₮"'), "one-time display price must remain 9,900₮");
 assert(appSource.includes("const STANDARD_WEIGHT_PRICE_MNT = 9900;"), "standard price constant must remain 9900");
 assert(appSource.includes('const WEIGHT_TEST_PRODUCT_CODE = "WEIGHT_TEST_ONE_TIME";'), "product code must remain unchanged");
-assert(appSource.includes('create: "https://www.lifepattern.live/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
-assert(appSource.includes('check: "https://www.lifepattern.live/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
+assert(appSource.includes('create: "/.netlify/functions/qpay-create-invoice"'), "QPay create endpoint must remain unchanged");
+assert(appSource.includes('check: "/.netlify/functions/qpay-check-payment"'), "QPay check endpoint must remain unchanged");
 assert(appSource.includes("function canStartPaidAssessment"), "paid-first gate helper must remain present");
 assert(appSource.includes('state.qpayPayment?.status === "paid"'), "pending QPay payment must not grant access");
 

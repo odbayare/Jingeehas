@@ -2,7 +2,7 @@
 
 ## Recommendation
 
-HOLD - DNS REQUIRED BEFORE LIFEPATTERN LINK SWITCH
+HOLD - DNS REQUIRED BEFORE [CROSS_PROJECT_NAME_REMOVED] LINK SWITCH
 
 ## Changed Files
 
@@ -14,26 +14,26 @@ HOLD - DNS REQUIRED BEFORE LIFEPATTERN LINK SWITCH
 
 Netlify-side custom domain mapping has been configured for the Weight Loss site:
 
-`weight.lifepattern.live`
+`weight.[CROSS_PROJECT_NAME_REMOVED]`
 
-However, DNS is not configured yet, so the branded domain is not live and the LifePattern card link must not be switched.
+However, DNS is not configured yet, so the branded domain is not live and the [CROSS_PROJECT_NAME_REMOVED] card link must not be switched.
 
 ## Evidence
 
-- `custom_domain`: `weight.lifepattern.live`
+- `custom_domain`: `weight.[CROSS_PROJECT_NAME_REMOVED]`
 - `domain_aliases`: `[]`
-- `nslookup weight.lifepattern.live`: `NXDOMAIN`
-- `curl -I https://weight.lifepattern.live`: could not resolve host
+- `nslookup weight.[CROSS_PROJECT_NAME_REMOVED]`: `NXDOMAIN`
+- `curl -I https://weight.[CROSS_PROJECT_NAME_REMOVED]`: could not resolve host
 - `showSiteTLSCertificate`: `null`
 - Fallback production URL remains HTTP 200: `https://weight-loss-deep-pattern-9900.netlify.app`
 
-## LifePattern Link Decision
+## [CROSS_PROJECT_NAME_REMOVED] Link Decision
 
-Do not update LifePattern card link yet.
+Do not update [CROSS_PROJECT_NAME_REMOVED] card link yet.
 
 Required condition:
 
-`https://weight.lifepattern.live` must return HTTP 200 first.
+`https://weight.[CROSS_PROJECT_NAME_REMOVED]` must return HTTP 200 first.
 
 ## No Changes To
 
@@ -44,7 +44,7 @@ Required condition:
 - Paid-first gate
 - Scoring/report logic
 - Backend/payment/entitlement
-- LifePattern runtime card link
+- [CROSS_PROJECT_NAME_REMOVED] runtime card link
 - DNS records
 - PDF generation
 - `audits/sprint-36-paid-depth-prototype/`

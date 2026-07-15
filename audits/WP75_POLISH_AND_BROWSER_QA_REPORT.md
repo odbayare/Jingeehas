@@ -99,4 +99,4 @@ Confirmed unchanged in source checks:
 - `WEIGHT_TEST_ONE_TIME`
 - QPay create/check endpoint strings
 
-No deploy command was run. No DNS or Netlify setting was changed. Payment flow, QPay behavior, coming-soon mode, price/product guards, TIAS/lifepattern-tias, WP64/WP67 PDF packs, and `audits/sprint-36-paid-depth-prototype/` were not touched.
+No deploy command was run. No DNS or Netlify setting was changed. Payment flow, QPay behavior, coming-soon mode, price/product guards, TIAS/[CROSS_PROJECT_NAME_REMOVED]-tias, WP64/WP67 PDF packs, and `audits/sprint-36-paid-depth-prototype/` were not touched.

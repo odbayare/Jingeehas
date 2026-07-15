@@ -4,7 +4,7 @@
 
 WP74 completed a local-only full user journey QA pass after the WP71/WP73 Mongolian copy improvements. The core app flows, report generation, safety routes, payment gates, coming-soon guard, and QPay/payment guard tests pass locally.
 
-Launch should not proceed yet. The main blocker is domain readiness: `jingeehas.fit` currently resolves to Namecheap parking IPs, `www.jingeehas.fit` resolves to Namecheap parking, and Netlify CLI still reports the linked project URL as `https://weight.lifepattern.live`, not `jingeehas.fit`. A few user-facing copy issues also remain for WP75 before public launch.
+Launch should not proceed yet. The main blocker is domain readiness: `jingeehas.fit` currently resolves to Namecheap parking IPs, `www.jingeehas.fit` resolves to Namecheap parking, and Netlify CLI still reports the linked project URL as `https://weight.[CROSS_PROJECT_NAME_REMOVED]`, not `jingeehas.fit`. A few user-facing copy issues also remain for WP75 before public launch.
 
 ## 2. Validation results
 
@@ -120,8 +120,8 @@ PASS.
 - `9,900₮` remains present for one-time/anchor/coach pricing.
 - `WEIGHT_TEST_ONE_TIME` remains present.
 - QPay create/check endpoint strings remain:
-  - `https://www.lifepattern.live/.netlify/functions/qpay-create-invoice`
-  - `https://www.lifepattern.live/.netlify/functions/qpay-check-payment`
+  - `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-create-invoice`
+  - `https://[CROSS_PROJECT_NAME_REMOVED]/.netlify/functions/qpay-check-payment`
 - Coming-soon, paid-first gate, QPay device UX, live payment QA, commercial flow, mock backend entitlement, and no-account contact delivery tests pass.
 - Local unpaid report sample shows gated preview, 9,900₮ copy, and no raw QPay endpoint exposure in the UI snippet.
 
@@ -169,7 +169,7 @@ Recommended WP75 copy fixes:
 - Domain readiness is not launch-ready:
   - `dig +short jingeehas.fit` returned `162.255.119.211`.
   - `dig +short www.jingeehas.fit` returned `parkingpage.namecheap.com.` plus Namecheap parking IPs.
-  - `netlify status` reports current project `weight-loss-deep-pattern-9900`, project URL `https://weight.lifepattern.live`, project id `fb4def02-8e5d-4f00-8996-8cae09ed836f`.
+  - `netlify status` reports current project `weight-loss-deep-pattern-9900`, project URL `https://weight.[CROSS_PROJECT_NAME_REMOVED]`, project id `fb4def02-8e5d-4f00-8996-8cae09ed836f`.
 
 ## 13. Launch readiness assessment
 
