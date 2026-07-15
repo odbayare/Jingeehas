@@ -3,7 +3,7 @@
 ## Generated provenance
 
 - Generator version: `2.0.0`
-- Extraction source commit: `977aa2be4a92fe2fa3a9a31075ee397917d9a295`
+- Extraction source commit: `685a25bc2339d34227214bf65f0f80ae5938e04c`
 - Final PR head and final-head workflow IDs: maintained in PR #1 metadata after the implementation push to avoid a self-referential validation-only commit cycle
 - Approved replacement count: 0
 - Production copy changed: NO
@@ -55,3 +55,20 @@ Only existing functions were added to CommonJS `_internal`; no function body or 
 - Pricing and safety behavior: unchanged; focused tests PASS
 - Deploy: NOT PERFORMED
 - Merge: NOT PERFORMED
+## Owner review pack generation
+
+- Generator version: `1.0.0`
+- Generated from commit: `685a25bc2339d34227214bf65f0f80ae5938e04c`
+- Catalog entries assigned: 1238
+- P0 unique items: 232
+- P1 unique items: 264
+- P2 unique items: 742
+- Batch/pack files: 45
+- Unassigned items: 0
+- No-review-signal items: 20
+- Cross-group items: 284
+- Unresolved source mappings: 433
+- Blank owner-decision blocks: 830
+- Approved replacement count: 0
+- Review-pack integrity test: PASS
+- No production copy or behavior change
