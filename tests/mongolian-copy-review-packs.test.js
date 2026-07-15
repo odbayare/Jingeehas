@@ -1,7 +1,7 @@
 const assert = require("assert");
 const fs = require("fs");
 const path = require("path");
-const { execFileSync } = require("child_process");
+const crypto = require("crypto");
 const app = require("../app.js");
 
 const root = path.resolve(__dirname, "..");
@@ -62,13 +62,18 @@ assert.deepStrictEqual(manifest.replacements, []);
 assert(!fs.existsSync(path.join(root, "mongolian-copy-normalizer.js")));
 assert(!fs.existsSync(path.join(root, "mongolian-copy-domain-normalizer.js")));
 
-const productionDiff = execFileSync("git", ["diff", "main...HEAD", "--", "app.js", "mockBackend.js", "index.html"], { cwd: root, encoding: "utf8" });
-assert(!productionDiff.includes("mockBackend.js"));
-assert(!productionDiff.includes("index.html"));
-assert(!/^[+-].*[А-Яа-яӨөҮү]/m.test(productionDiff), "app diff must not add or remove user-visible Mongolian copy");
-[
+const authorizedExports = [
   "renderDiaryHome", "renderDiaryInput", "renderDailySummaryConfirmation", "renderSampleResultPreview",
   "renderUpgradeOffer", "renderWeightQpayPaymentBox", "qpayStatusMessage"
-].forEach(name => assert(productionDiff.includes(`+      ${name},`), `${name} must be test-export-only diff`));
+];
+const sha256 = value => crypto.createHash("sha256").update(value).digest("hex");
+let appWithoutAuthorizedExports = fs.readFileSync(path.join(root, "app.js"), "utf8");
+authorizedExports.forEach(name => {
+  assert(appWithoutAuthorizedExports.includes(`      ${name},`), `${name} must remain an internal test export`);
+  appWithoutAuthorizedExports = appWithoutAuthorizedExports.replace(new RegExp(`^[ \\t]*${name},\\n`, "m"), "");
+});
+assert.strictEqual(sha256(appWithoutAuthorizedExports), "d29b7a44755dda1b253a67e26ba4ec18caa4940d11c2caf9fb4e2054680d1d04", "app.js production content must match main after removing authorized exports");
+assert.strictEqual(sha256(fs.readFileSync(path.join(root, "mockBackend.js"))), "e3c9a1afe3eae0770d5eb89bbc357d4b55a20f50c7415667664114757af2d0ba", "mockBackend.js must match main");
+assert.strictEqual(sha256(fs.readFileSync(path.join(root, "index.html"))), "dadb9c89e66748bc137391cc278268a0fc5d464c4d194fabe9d8481c9905121c", "index.html must match main");
 
 console.log("mongolian-copy-review-packs integrity tests passed");
