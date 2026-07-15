@@ -128,7 +128,7 @@ withLocalStorageMutationSpy(() => {
 
   assert(html.includes("WT-9900-TEST"), "invoice number should remain visible");
   assert(text.includes("Төлөх үнэ 9,900₮"), "price should remain visible near payment screen");
-  assert(text.includes("Дахин шалгах"), "retry/check button should remain visible");
+  assert(text.includes("Төлбөр шалгах"), "first payment check button should remain visible");
   assert(text.includes("Буцах"), "back button should remain visible");
 
   assert(desktop.indexOf("qpay-qr qpay-qr-large") >= 0, "desktop should render large QR");

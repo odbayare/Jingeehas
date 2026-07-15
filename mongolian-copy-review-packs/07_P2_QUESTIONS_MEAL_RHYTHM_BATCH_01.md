@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0464 — P2
+## COPY-0460 — P2
 
 **Exact current text**
 
@@ -70,7 +70,7 @@ Question wording requiring owner review.
 - Хоолны цаг өдөр бүр өөр
 - Тодорхой хэмнэл байхгүй
 
-## COPY-0465 — P2
+## COPY-0461 — P2
 
 **Exact current text**
 
@@ -137,7 +137,7 @@ Question wording requiring owner review.
 - Бараг өдөр бүр
 - Мэдэхгүй
 
-## COPY-0466 — P2
+## COPY-0462 — P2
 
 **Exact current text**
 

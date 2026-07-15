@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0506 — P2
+## COPY-0502 — P2
 
 **Exact current text**
 
@@ -67,7 +67,7 @@ Question wording requiring owner review.
 - Үгүй, хамаарахгүй
 - Хариулахгүй
 
-## COPY-0507 — P2
+## COPY-0503 — P2
 
 **Exact current text**
 
@@ -130,7 +130,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0508 — P2
+## COPY-0504 — P2
 
 **Exact current text**
 
@@ -198,7 +198,7 @@ Question wording requiring owner review.
 - Мэдэхгүй
 - Хариулахгүй
 
-## COPY-0509 — P2
+## COPY-0505 — P2
 
 **Exact current text**
 
@@ -267,7 +267,7 @@ Question wording requiring owner review.
 - Сайн мэдэхгүй
 - Хариулахгүй
 
-## COPY-0510 — P2
+## COPY-0506 — P2
 
 **Exact current text**
 
@@ -336,7 +336,7 @@ Question wording requiring owner review.
 - Тодорхой биш
 - Хариулахгүй
 
-## COPY-0511 — P2
+## COPY-0507 — P2
 
 **Exact current text**
 
@@ -406,7 +406,7 @@ Question wording requiring owner review.
 - Онц ялгаа анзаардаггүй
 - Хариулахгүй
 
-## COPY-0512 — P2
+## COPY-0508 — P2
 
 **Exact current text**
 
@@ -475,7 +475,7 @@ Question wording requiring owner review.
 - Тодорхой хэлж мэдэхгүй
 - Хариулахгүй
 
-## COPY-0513 — P2
+## COPY-0509 — P2
 
 **Exact current text**
 
@@ -543,7 +543,7 @@ Question wording requiring owner review.
 - Аль нь ч биш
 - Хариулахгүй
 
-## COPY-0514 — P2
+## COPY-0510 — P2
 
 **Exact current text**
 

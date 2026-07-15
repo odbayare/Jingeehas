@@ -2,11 +2,11 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0116 — P0
+## COPY-0114 — P0
 
 **Exact current text**
 
-> Тайлангийн эхний хэсэг
+> Эхний зураглал
 
 **Classification**
 
@@ -21,28 +21,146 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3378
-- Source function/object: renderOneTimePaywall
-- Source mapping: RESOLVED
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> return `
+> None
 
 **Source item**
 
-> ${topbar(100, "Тайлангийн эхний хэсэг")}
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <section class="screen">
+> None
 
 **Rendered context**
 
-> Тайлангийн эхний хэсэг
-> Эхний дохио
+> Эхний зураглал
+> Төлбөргүй хэсэг
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0115 — P0
+
+**Exact current text**
+
+> Төлбөргүй хэсэг
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Эхний зураглал
+> Төлбөргүй хэсэг
+> Таны эхний зураглал бэлэн боллоо
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0116 — P0
+
+**Exact current text**
+
+> Таны эхний зураглал бэлэн боллоо
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Төлбөргүй хэсэг
+> Таны эхний зураглал бэлэн боллоо
+> Энэ эхний зураглалыг төлбөргүй үзэх боломжтой. Энд таны хариултаас хамгийн түрүүнд ажиглагдсан нэг хэв маягийг харуулна.
 
 **Dynamic values**
 
@@ -64,7 +182,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Эхний дохио
+> Энэ эхний зураглалыг төлбөргүй үзэх боломжтой. Энд таны хариултаас хамгийн түрүүнд ажиглагдсан нэг хэв маягийг харуулна.
 
 **Classification**
 
@@ -79,29 +197,29 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 3413
+- Source function/object: renderOneTimePaywall
+- Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <h2>Таны эхний зураглал бэлэн боллоо</h2>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <p class="muted">Энэ эхний зураглалыг төлбөргүй үзэх боломжтой. Энд таны хариултаас хамгийн түрүүнд ажиглагдсан нэг хэв маягийг харуулна.</p>
 
 **Source context after**
 
-> None
+> <div class="card">
 
 **Rendered context**
 
-> Тайлангийн эхний хэсэг
-> Эхний дохио
 > Таны эхний зураглал бэлэн боллоо
+> Энэ эхний зураглалыг төлбөргүй үзэх боломжтой. Энд таны хариултаас хамгийн түрүүнд ажиглагдсан нэг хэв маягийг харуулна.
+> Хамгийн түрүүнд ажиглагдсан хэв маяг
 
 **Dynamic values**
 
@@ -123,7 +241,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Таны эхний зураглал бэлэн боллоо
+> Хамгийн түрүүнд ажиглагдсан хэв маяг
 
 **Classification**
 
@@ -138,125 +256,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Эхний дохио
-> Таны эхний зураглал бэлэн боллоо
-> Энэ хэсэг төлбөргүй хэвээр харагдана. Бүрэн тайлан нээхээс өмнө таны хариултаас хамгийн түрүүнд тодорч буй дохиог харуулж байна.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0119 — P0
-
-**Exact current text**
-
-> Энэ хэсэг төлбөргүй хэвээр харагдана. Бүрэн тайлан нээхээс өмнө таны хариултаас хамгийн түрүүнд тодорч буй дохиог харуулж байна.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3384
-- Source function/object: renderOneTimePaywall
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h2>Таны эхний зураглал бэлэн боллоо</h2>
-
-**Source item**
-
-> <p class="muted">Энэ хэсэг төлбөргүй хэвээр харагдана. Бүрэн тайлан нээхээс өмнө таны хариултаас хамгийн түрүүнд тодорч буй дохиог харуулж байна.</p>
-
-**Source context after**
-
-> <div class="card">
-
-**Rendered context**
-
-> Таны эхний зураглал бэлэн боллоо
-> Энэ хэсэг төлбөргүй хэвээр харагдана. Бүрэн тайлан нээхээс өмнө таны хариултаас хамгийн түрүүнд тодорч буй дохиог харуулж байна.
-> Хамгийн түрүүнд харагдаж буй зүйл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0120 — P0
-
-**Exact current text**
-
-> Хамгийн түрүүнд харагдаж буй зүйл
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3386
+- Source line: 3415
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -268,7 +268,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source item**
 
-> <h3>Хамгийн түрүүнд харагдаж буй зүйл</h3>
+> <h3>Хамгийн түрүүнд ажиглагдсан хэв маяг</h3>
 
 **Source context after**
 
@@ -276,8 +276,8 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Энэ хэсэг төлбөргүй хэвээр харагдана. Бүрэн тайлан нээхээс өмнө таны хариултаас хамгийн түрүүнд тодорч буй дохиог харуулж байна.
-> Хамгийн түрүүнд харагдаж буй зүйл
+> Энэ эхний зураглалыг төлбөргүй үзэх боломжтой. Энд таны хариултаас хамгийн түрүүнд ажиглагдсан нэг хэв маягийг харуулна.
+> Хамгийн түрүүнд ажиглагдсан хэв маяг
 > Орой хоол шийдэх тэнхээ дуусах үе
 
 **Dynamic values**
@@ -296,7 +296,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0121 — P0
+## COPY-0119 — P0
 
 **Exact current text**
 
@@ -335,7 +335,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Хамгийн түрүүнд харагдаж буй зүйл
+> Хамгийн түрүүнд ажиглагдсан хэв маяг
 > Орой хоол шийдэх тэнхээ дуусах үе
 > Та юу хийхээ мэдэхгүйдээ биш. Харин өдөржин олон шийдвэр гаргасны дараа орой дахин хоол бодож, сонгож, бэлдэх тэнхээ үлдэхгүй байна. Тэр үед хамгийн амар сонголт л ялж байна.
 
@@ -355,7 +355,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0122 — P0
+## COPY-0120 — P0
 
 **Exact current text**
 
@@ -374,7 +374,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3520
+- Source line: 3549
 - Source function/object: livedExplanationFor
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -396,7 +396,125 @@ Payment, price, entitlement, invoice, or recovery text.
 
 > Орой хоол шийдэх тэнхээ дуусах үе
 > Та юу хийхээ мэдэхгүйдээ биш. Харин өдөржин олон шийдвэр гаргасны дараа орой дахин хоол бодож, сонгож, бэлдэх тэнхээ үлдэхгүй байна. Тэр үед хамгийн амар сонголт л ялж байна.
-> Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ?
+> Бүрэн тайланд юу багтах вэ?
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0121 — P0
+
+**Exact current text**
+
+> Бүрэн тайланд юу багтах вэ?
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3422
+- Source function/object: renderOneTimePaywall
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="report-section">
+
+**Source item**
+
+> <h3>Бүрэн тайланд юу багтах вэ?</h3>
+
+**Source context after**
+
+> <p>Төлбөргүй хэсэгт эхний ажиглалт болон түүний товч тайлбар харагдана. Бүрэн тайланд энэ хэв маяг ямар нөхцөлд давтагддаг, өөр ямар хүчин зүйлс нөлөөлж болох, эхлээд ямар алхам туршиж болохыг дэлгэрэнгүй тайлбарлана.</p>
+
+**Rendered context**
+
+> Та юу хийхээ мэдэхгүйдээ биш. Харин өдөржин олон шийдвэр гаргасны дараа орой дахин хоол бодож, сонгож, бэлдэх тэнхээ үлдэхгүй байна. Тэр үед хамгийн амар сонголт л ялж байна.
+> Бүрэн тайланд юу багтах вэ?
+> Төлбөргүй хэсэгт эхний ажиглалт болон түүний товч тайлбар харагдана. Бүрэн тайланд энэ хэв маяг ямар нөхцөлд давтагддаг, өөр ямар хүчин зүйлс нөлөөлж болох, эхлээд ямар алхам туршиж болохыг дэлгэрэнгүй тайлбарлана.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0122 — P0
+
+**Exact current text**
+
+> Төлбөргүй хэсэгт эхний ажиглалт болон түүний товч тайлбар харагдана. Бүрэн тайланд энэ хэв маяг ямар нөхцөлд давтагддаг, өөр ямар хүчин зүйлс нөлөөлж болох, эхлээд ямар алхам туршиж болохыг дэлгэрэнгүй тайлбарлана.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3423
+- Source function/object: renderOneTimePaywall
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <h3>Бүрэн тайланд юу багтах вэ?</h3>
+
+**Source item**
+
+> <p>Төлбөргүй хэсэгт эхний ажиглалт болон түүний товч тайлбар харагдана. Бүрэн тайланд энэ хэв маяг ямар нөхцөлд давтагддаг, өөр ямар хүчин зүйлс нөлөөлж болох, эхлээд ямар алхам туршиж болохыг дэлгэрэнгүй тайлбарлана.</p>
+
+**Source context after**
+
+> <div class="paywall-detail-grid">
+
+**Rendered context**
+
+> Бүрэн тайланд юу багтах вэ?
+> Төлбөргүй хэсэгт эхний ажиглалт болон түүний товч тайлбар харагдана. Бүрэн тайланд энэ хэв маяг ямар нөхцөлд давтагддаг, өөр ямар хүчин зүйлс нөлөөлж болох, эхлээд ямар алхам туршиж болохыг дэлгэрэнгүй тайлбарлана.
+> Төлбөргүйгээр харагдах зүйлс
 
 **Dynamic values**
 
@@ -418,7 +536,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ?
+> Төлбөргүйгээр харагдах зүйлс
 
 **Classification**
 
@@ -433,7 +551,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3393
+- Source line: 3426
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -441,21 +559,21 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
-> <div class="report-section">
+> <div>
 
 **Source item**
 
-> <h3>Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ?</h3>
+> <p class="choice-kicker">Төлбөргүйгээр харагдах зүйлс</p>
 
 **Source context after**
 
-> <p>Төлбөргүй хэсэг эхний дохиог үлдээнэ. Бүрэн тайлан нь тэр дохиог өдөр тутмын нөхцөл, давхар нөлөө, эхний зөөлөн алхамтай холбож илүү ойлгомжтой болгоно.</p>
+> <ul>
 
 **Rendered context**
 
-> Та юу хийхээ мэдэхгүйдээ биш. Харин өдөржин олон шийдвэр гаргасны дараа орой дахин хоол бодож, сонгож, бэлдэх тэнхээ үлдэхгүй байна. Тэр үед хамгийн амар сонголт л ялж байна.
-> Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ?
-> Төлбөргүй хэсэг эхний дохиог үлдээнэ. Бүрэн тайлан нь тэр дохиог өдөр тутмын нөхцөл, давхар нөлөө, эхний зөөлөн алхамтай холбож илүү ойлгомжтой болгоно.
+> Төлбөргүй хэсэгт эхний ажиглалт болон түүний товч тайлбар харагдана. Бүрэн тайланд энэ хэв маяг ямар нөхцөлд давтагддаг, өөр ямар хүчин зүйлс нөлөөлж болох, эхлээд ямар алхам туршиж болохыг дэлгэрэнгүй тайлбарлана.
+> Төлбөргүйгээр харагдах зүйлс
+> Хамгийн түрүүнд ажиглагдсан нэг хэв маяг
 
 **Dynamic values**
 
@@ -477,7 +595,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Төлбөргүй хэсэг эхний дохиог үлдээнэ. Бүрэн тайлан нь тэр дохиог өдөр тутмын нөхцөл, давхар нөлөө, эхний зөөлөн алхамтай холбож илүү ойлгомжтой болгоно.
+> Хамгийн түрүүнд ажиглагдсан нэг хэв маяг
 
 **Classification**
 
@@ -492,7 +610,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3394
+- Source line: 3428
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -500,21 +618,21 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
-> <h3>Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ?</h3>
+> <ul>
 
 **Source item**
 
-> <p>Төлбөргүй хэсэг эхний дохиог үлдээнэ. Бүрэн тайлан нь тэр дохиог өдөр тутмын нөхцөл, давхар нөлөө, эхний зөөлөн алхамтай холбож илүү ойлгомжтой болгоно.</p>
+> <li>Хамгийн түрүүнд ажиглагдсан нэг хэв маяг</li>
 
 **Source context after**
 
-> <div class="paywall-detail-grid">
+> <li>Тухайн хэв маягийн товч тайлбар</li>
 
 **Rendered context**
 
-> Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ?
-> Төлбөргүй хэсэг эхний дохиог үлдээнэ. Бүрэн тайлан нь тэр дохиог өдөр тутмын нөхцөл, давхар нөлөө, эхний зөөлөн алхамтай холбож илүү ойлгомжтой болгоно.
-> Одоо харагдаж байна
+> Төлбөргүйгээр харагдах зүйлс
+> Хамгийн түрүүнд ажиглагдсан нэг хэв маяг
+> Тухайн хэв маягийн товч тайлбар
 
 **Dynamic values**
 
@@ -536,7 +654,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Одоо харагдаж байна
+> Тухайн хэв маягийн товч тайлбар
 
 **Classification**
 
@@ -551,7 +669,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3397
+- Source line: 3429
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -559,21 +677,21 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
-> <div>
+> <li>Хамгийн түрүүнд ажиглагдсан нэг хэв маяг</li>
 
 **Source item**
 
-> <p class="choice-kicker">Одоо харагдаж байна</p>
+> <li>Тухайн хэв маягийн товч тайлбар</li>
 
 **Source context after**
 
-> <ul>
+> <li>Аюулгүй ашиглах сануулга</li>
 
 **Rendered context**
 
-> Төлбөргүй хэсэг эхний дохиог үлдээнэ. Бүрэн тайлан нь тэр дохиог өдөр тутмын нөхцөл, давхар нөлөө, эхний зөөлөн алхамтай холбож илүү ойлгомжтой болгоно.
-> Одоо харагдаж байна
-> Хамгийн түрүүнд тодорсон нэг дохио
+> Хамгийн түрүүнд ажиглагдсан нэг хэв маяг
+> Тухайн хэв маягийн товч тайлбар
+> Аюулгүй ашиглах сануулга
 
 **Dynamic values**
 
@@ -595,7 +713,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Хамгийн түрүүнд тодорсон нэг дохио
+> Аюулгүй ашиглах сануулга
 
 **Classification**
 
@@ -607,32 +725,32 @@ Payment, price, entitlement, invoice, or recovery text.
 - Scenario: one-time-unpaid
 - Render source: renderReport
 - Extraction type: FULL_SURFACE
-- Occurrence count: 1
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3399
-- Source function/object: renderOneTimePaywall
-- Source mapping: RESOLVED
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <ul>
+> None
 
 **Source item**
 
-> <li>Хамгийн түрүүнд тодорсон нэг дохио</li>
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <li>Тухайн дохионы богино тайлбар</li>
+> None
 
 **Rendered context**
 
-> Одоо харагдаж байна
-> Хамгийн түрүүнд тодорсон нэг дохио
-> Тухайн дохионы богино тайлбар
+> Тухайн хэв маягийн товч тайлбар
+> Аюулгүй ашиглах сануулга
+> Бүрэн тайланд багтах зүйлс
 
 **Dynamic values**
 
@@ -654,7 +772,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Тухайн дохионы богино тайлбар
+> Бүрэн тайланд багтах зүйлс
 
 **Classification**
 
@@ -669,7 +787,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3400
+- Source line: 3434
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -677,21 +795,21 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
-> <li>Хамгийн түрүүнд тодорсон нэг дохио</li>
+> <div>
 
 **Source item**
 
-> <li>Тухайн дохионы богино тайлбар</li>
+> <p class="choice-kicker">Бүрэн тайланд багтах зүйлс</p>
 
 **Source context after**
 
-> <li>Аюулгүй ашиглах сануулга</li>
+> <ul>
 
 **Rendered context**
 
-> Хамгийн түрүүнд тодорсон нэг дохио
-> Тухайн дохионы богино тайлбар
 > Аюулгүй ашиглах сануулга
+> Бүрэн тайланд багтах зүйлс
+> Хамгийн олон давтагдсан нөхцөл
 
 **Dynamic values**
 
@@ -713,7 +831,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Аюулгүй ашиглах сануулга
+> Хамгийн олон давтагдсан нөхцөл
 
 **Classification**
 
@@ -725,32 +843,32 @@ Payment, price, entitlement, invoice, or recovery text.
 - Scenario: one-time-unpaid
 - Render source: renderReport
 - Extraction type: FULL_SURFACE
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 3436
+- Source function/object: renderOneTimePaywall
+- Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <ul>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <li>Хамгийн олон давтагдсан нөхцөл</li>
 
 **Source context after**
 
-> None
+> <li>Давхар нөлөөлж болох 1–2 хүчин зүйл</li>
 
 **Rendered context**
 
-> Тухайн дохионы богино тайлбар
-> Аюулгүй ашиглах сануулга
-> Бүрэн тайланд нэмэгдэнэ
+> Бүрэн тайланд багтах зүйлс
+> Хамгийн олон давтагдсан нөхцөл
+> Давхар нөлөөлж болох 1–2 хүчин зүйл
 
 **Dynamic values**
 
@@ -772,7 +890,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Бүрэн тайланд нэмэгдэнэ
+> Давхар нөлөөлж болох 1–2 хүчин зүйл
 
 **Classification**
 
@@ -787,7 +905,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3405
+- Source line: 3437
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -795,21 +913,21 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
-> <div>
+> <li>Хамгийн олон давтагдсан нөхцөл</li>
 
 **Source item**
 
-> <p class="choice-kicker">Бүрэн тайланд нэмэгдэнэ</p>
+> <li>Давхар нөлөөлж болох 1–2 хүчин зүйл</li>
 
 **Source context after**
 
-> <ul>
+> <li>Одоогоор яарах шаардлагагүй зүйлс</li>
 
 **Rendered context**
 
-> Аюулгүй ашиглах сануулга
-> Бүрэн тайланд нэмэгдэнэ
-> Хамгийн тод давтагддаг нөхцөл
+> Хамгийн олон давтагдсан нөхцөл
+> Давхар нөлөөлж болох 1–2 хүчин зүйл
+> Одоогоор яарах шаардлагагүй зүйлс
 
 **Dynamic values**
 
@@ -831,7 +949,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Хамгийн тод давтагддаг нөхцөл
+> Одоогоор яарах шаардлагагүй зүйлс
 
 **Classification**
 
@@ -846,29 +964,29 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 3438
+- Source function/object: renderOneTimePaywall
+- Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <li>Давхар нөлөөлж болох 1–2 хүчин зүйл</li>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <li>Одоогоор яарах шаардлагагүй зүйлс</li>
 
 **Source context after**
 
-> None
+> <li>Эхэлж туршиж болох нэг алхам</li>
 
 **Rendered context**
 
-> Бүрэн тайланд нэмэгдэнэ
-> Хамгийн тод давтагддаг нөхцөл
-> Давхар нөлөөлж буй 1-2 зүйл
+> Давхар нөлөөлж болох 1–2 хүчин зүйл
+> Одоогоор яарах шаардлагагүй зүйлс
+> Эхэлж туршиж болох нэг алхам
 
 **Dynamic values**
 
@@ -890,7 +1008,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Давхар нөлөөлж буй 1-2 зүйл
+> Эхэлж туршиж болох нэг алхам
 
 **Classification**
 
@@ -905,7 +1023,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3408
+- Source line: 3439
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -913,21 +1031,21 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
-> <li>Хамгийн тод давтагддаг нөхцөл</li>
+> <li>Одоогоор яарах шаардлагагүй зүйлс</li>
 
 **Source item**
 
-> <li>Давхар нөлөөлж буй 1-2 зүйл</li>
+> <li>Эхэлж туршиж болох нэг алхам</li>
 
 **Source context after**
 
-> <li>Одоогоор хэт яарахгүй зүйлс</li>
+> <li>14 хоногийн турш хэрэгжүүлж үзэх нэг жижиг алхам</li>
 
 **Rendered context**
 
-> Хамгийн тод давтагддаг нөхцөл
-> Давхар нөлөөлж буй 1-2 зүйл
-> Одоогоор хэт яарахгүй зүйлс
+> Одоогоор яарах шаардлагагүй зүйлс
+> Эхэлж туршиж болох нэг алхам
+> 14 хоногийн турш хэрэгжүүлж үзэх нэг жижиг алхам
 
 **Dynamic values**
 
@@ -949,7 +1067,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Одоогоор хэт яарахгүй зүйлс
+> 14 хоногийн турш хэрэгжүүлж үзэх нэг жижиг алхам
 
 **Classification**
 
@@ -964,7 +1082,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3409
+- Source line: 3440
 - Source function/object: renderOneTimePaywall
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -972,21 +1090,21 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
-> <li>Давхар нөлөөлж буй 1-2 зүйл</li>
+> <li>Эхэлж туршиж болох нэг алхам</li>
 
 **Source item**
 
-> <li>Одоогоор хэт яарахгүй зүйлс</li>
+> <li>14 хоногийн турш хэрэгжүүлж үзэх нэг жижиг алхам</li>
 
 **Source context after**
 
-> <li>Эхний зөөлөн алхам</li>
+> </ul>
 
 **Rendered context**
 
-> Давхар нөлөөлж буй 1-2 зүйл
-> Одоогоор хэт яарахгүй зүйлс
-> Эхний зөөлөн алхам
+> Эхэлж туршиж болох нэг алхам
+> 14 хоногийн турш хэрэгжүүлж үзэх нэг жижиг алхам
+> Бүрэн тайлангаа нээх
 
 **Dynamic values**
 
@@ -1008,7 +1126,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Эхний зөөлөн алхам
+> Бүрэн тайлангаа нээх
 
 **Classification**
 
@@ -1023,29 +1141,29 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 3446
+- Source function/object: renderOneTimePaywall
+- Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <div class="report-section">
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <h3>Бүрэн тайлангаа нээх</h3>
 
 **Source context after**
 
-> None
+> <p class="muted">Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.</p>
 
 **Rendered context**
 
-> Одоогоор хэт яарахгүй зүйлс
-> Эхний зөөлөн алхам
-> 14 хоногийн эхний туршилт
+> 14 хоногийн турш хэрэгжүүлж үзэх нэг жижиг алхам
+> Бүрэн тайлангаа нээх
+> Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.
 
 **Dynamic values**
 
@@ -1067,7 +1185,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> 14 хоногийн эхний туршилт
+> Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.
 
 **Classification**
 
@@ -1079,7 +1197,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Scenario: one-time-unpaid
 - Render source: renderReport
 - Extraction type: FULL_SURFACE
-- Occurrence count: 1
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
@@ -1102,9 +1220,9 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Эхний зөөлөн алхам
-> 14 хоногийн эхний туршилт
-> Бүрэн тайлан нээх
+> Бүрэн тайлангаа нээх
+> Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.
+> Үндсэн үнэ
 
 **Dynamic values**
 
@@ -1126,124 +1244,6 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Бүрэн тайлан нээх
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 14 хоногийн эхний туршилт
-> Бүрэн тайлан нээх
-> Төлбөр баталгаажсаны дараа тайлан энэ дэлгэц дээр шууд нээгдэнэ. Эхний дохио болон аюулгүй байдлын сануулга төлбөргүй хэсэгт үлдэнэ.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0136 — P0
-
-**Exact current text**
-
-> Төлбөр баталгаажсаны дараа тайлан энэ дэлгэц дээр шууд нээгдэнэ. Эхний дохио болон аюулгүй байдлын сануулга төлбөргүй хэсэгт үлдэнэ.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3418
-- Source function/object: renderOneTimePaywall
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Бүрэн тайлан нээх</h3>
-
-**Source item**
-
-> <p class="muted">Төлбөр баталгаажсаны дараа тайлан энэ дэлгэц дээр шууд нээгдэнэ. Эхний дохио болон аюулгүй байдлын сануулга төлбөргүй хэсэгт үлдэнэ.</p>
-
-**Source context after**
-
-> <div class="price-stack">
-
-**Rendered context**
-
-> Бүрэн тайлан нээх
-> Төлбөр баталгаажсаны дараа тайлан энэ дэлгэц дээр шууд нээгдэнэ. Эхний дохио болон аюулгүй байдлын сануулга төлбөргүй хэсэгт үлдэнэ.
-> Үндсэн үнэ
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0137 — P0
-
-**Exact current text**
-
 > Үндсэн үнэ
 
 **Classification**
@@ -1279,7 +1279,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Төлбөр баталгаажсаны дараа тайлан энэ дэлгэц дээр шууд нээгдэнэ. Эхний дохио болон аюулгүй байдлын сануулга төлбөргүй хэсэгт үлдэнэ.
+> Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.
 > Үндсэн үнэ
 > 9,900₮
 
@@ -1299,7 +1299,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0138 — P0
+## COPY-0136 — P0
 
 **Exact current text**
 
@@ -1358,7 +1358,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0139 — P0
+## COPY-0137 — P0
 
 **Exact current text**
 
@@ -1399,7 +1399,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 > 9,900₮
 > Төлөх үнэ
-> Бүртгэл шаардлагагүй.
+> Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.
 
 **Dynamic values**
 
@@ -1417,11 +1417,11 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0140 — P0
+## COPY-0138 — P0
 
 **Exact current text**
 
-> Бүртгэл шаардлагагүй.
+> Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.
 
 **Classification**
 
@@ -1436,7 +1436,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2403
+- Source line: 2422
 - Source function/object: renderNoAccountPaymentIntro
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -1448,17 +1448,17 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source item**
 
-> <p><strong>Бүртгэл шаардлагагүй.</strong></p>
+> <p><strong>Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.</strong></p>
 
 **Source context after**
 
-> <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
+> <p>${detail}</p>
 
 **Rendered context**
 
 > Төлөх үнэ
-> Бүртгэл шаардлагагүй.
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
+> Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
 
 **Dynamic values**
 

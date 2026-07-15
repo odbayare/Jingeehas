@@ -3,7 +3,7 @@ import path from "node:path";
 import { createRequire } from "node:module";
 import { execFileSync } from "node:child_process";
 
-const GENERATOR_VERSION = "2.0.0";
+const GENERATOR_VERSION = "2.1.0";
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const app = require(path.join(root, "app.js"));
@@ -13,7 +13,7 @@ const appSource = fs.readFileSync(path.join(root, "app.js"), "utf8");
 const commit = execFileSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).trim();
 const VALID_ROLES = new Set(["PUBLIC_USER", "PAID_USER", "ADVISOR", "ADMIN", "INTERNAL_TESTER"]);
 const VALID_TYPES = new Set(["FULL_SURFACE", "ISOLATED_COMPONENT", "ATTRIBUTE_ONLY"]);
-const fixtureValues = new Set(["Test User", "Test Advisor", "Client One", "advisor@example.test", "client@example.test", "INV-TEST-001", "Test Bank"]);
+const fixtureValues = new Set(["Test User", "Test Advisor", "Client One", "advisor@example.test", "client@example.test", "INV-TEST-001", "Тест банк", "Т"]);
 let networkAttempts = 0;
 globalThis.fetch = async () => { networkAttempts += 1; throw new Error("EXTERNAL_NETWORK_BLOCKED_BY_EXTRACTION"); };
 
@@ -26,7 +26,7 @@ const base = () => ({
 const normalAnswers = { "S1-C02": "Эрэгтэй", "S1-L01": "Бараг өдөр бүр", "S1-L03": ["Цаг"], "S1-S04": "Үгүй" };
 const urgentAnswers = { "S1-C02": "Эмэгтэй", "S1-S04": "Одоо идэвхтэй бодогдож байна" };
 const professionalAnswers = { "S1-C02": "Эмэгтэй", "S1-B03": "Тийм", "S1-S04": "Үгүй" };
-const invoice = { invoiceId: "INV-TEST-001", senderInvoiceNo: "INV-TEST-001", qrImage: "abc123", urls: [{ name: "Test Bank", link: "qpay://test" }] };
+const invoice = { invoiceId: "INV-TEST-001", senderInvoiceNo: "INV-TEST-001", qrImage: "abc123", urls: [{ name: "Тест банк", link: "qpay://test" }] };
 
 function setState(next = {}) { I.setTestState({ ...base(), ...next }); }
 
@@ -60,7 +60,8 @@ add("qpay-pre-invoice", "QPAY", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeig
 add("qpay-invoice-created", "QPAY", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox", { ...base(), qpayPayment: { status: "creating", message: I.qpayStatusMessage("creating"), invoice } }, () => I.renderWeightQpayPaymentBox());
 add("qpay-pending", "QPAY", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox", { ...base(), qpayPayment: { status: "pending", message: I.qpayStatusMessage("pending"), invoice } }, () => I.renderWeightQpayPaymentBox());
 add("qpay-paid", "QPAY", "PAID_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox", { ...base(), oneTimePaid: true, qpayPayment: { status: "paid", message: I.qpayStatusMessage("paid"), invoice } }, () => I.renderWeightQpayPaymentBox());
-add("qpay-error", "VISIBLE_ERROR", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox with qpayStatusMessage(error)", { ...base(), qpayPayment: { status: "error", message: I.qpayStatusMessage("error"), invoice: null } }, () => I.renderWeightQpayPaymentBox());
+add("qpay-create-error", "VISIBLE_ERROR", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox with create error", { ...base(), qpayPayment: { status: "error", errorKind: "create", message: I.qpayStatusMessage("create_error"), invoice: null } }, () => I.renderWeightQpayPaymentBox());
+add("qpay-check-error", "VISIBLE_ERROR", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderWeightQpayPaymentBox with check error", { ...base(), qpayPayment: { status: "error", errorKind: "check", message: I.qpayStatusMessage("check_error"), invoice } }, () => I.renderWeightQpayPaymentBox());
 add("sample-report", "SAMPLE_REPORT", "PUBLIC_USER", "ISOLATED_COMPONENT", "renderSampleResultPreview", base(), () => I.renderSampleResultPreview());
 add("question-bank", "QUESTION_BANK", "PUBLIC_USER", "ISOLATED_COMPONENT", "stageOneQuestions consumed by renderStageOne", base(), () => app.stageOneQuestions.map(q=>`<h3>${escapeText(q.text)}</h3>`).join(""));
 add("answer-options", "ANSWER_OPTIONS", "PUBLIC_USER", "ISOLATED_COMPONENT", "stageOneQuestions consumed by renderInput", base(), () => app.stageOneQuestions.flatMap(q=>q.options||[]).map(x=>`<span>${escapeText(x)}</span>`).join(""));

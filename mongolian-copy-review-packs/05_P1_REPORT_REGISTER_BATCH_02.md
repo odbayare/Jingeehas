@@ -2,7 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0188 — P1
+## COPY-0185 — P1
 
 **Exact current text**
 
@@ -21,7 +21,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5487
+- Source line: 5516
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -61,7 +61,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0189 — P1
+## COPY-0186 — P1
 
 **Exact current text**
 
@@ -80,7 +80,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4706
+- Source line: 4735
 - Source function/object: wp78ReportInsights
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -120,7 +120,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0190 — P1
+## COPY-0187 — P1
 
 **Exact current text**
 
@@ -179,7 +179,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0191 — P1
+## COPY-0188 — P1
 
 **Exact current text**
 
@@ -198,7 +198,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5491
+- Source line: 5520
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -238,7 +238,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0192 — P1
+## COPY-0189 — P1
 
 **Exact current text**
 
@@ -297,7 +297,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0193 — P1
+## COPY-0190 — P1
 
 **Exact current text**
 
@@ -316,7 +316,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 3
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5492
+- Source line: 5521
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -356,7 +356,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0194 — P1
+## COPY-0191 — P1
 
 **Exact current text**
 
@@ -375,7 +375,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 3
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5492
+- Source line: 5521
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -415,7 +415,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0195 — P1
+## COPY-0192 — P1
 
 **Exact current text**
 
@@ -434,7 +434,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5436
+- Source line: 5465
 - Source function/object: caseExperimentRows
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -474,7 +474,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0196 — P1
+## COPY-0193 — P1
 
 **Exact current text**
 
@@ -493,7 +493,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 3
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5492
+- Source line: 5521
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -533,7 +533,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0197 — P1
+## COPY-0194 — P1
 
 **Exact current text**
 
@@ -552,7 +552,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5436
+- Source line: 5465
 - Source function/object: caseExperimentRows
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -592,7 +592,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0198 — P1
+## COPY-0195 — P1
 
 **Exact current text**
 
@@ -651,7 +651,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0199 — P1
+## COPY-0196 — P1
 
 **Exact current text**
 
@@ -670,7 +670,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5437
+- Source line: 5466
 - Source function/object: caseExperimentRows
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -710,7 +710,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0200 — P1
+## COPY-0197 — P1
 
 **Exact current text**
 
@@ -729,7 +729,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5437
+- Source line: 5466
 - Source function/object: caseExperimentRows
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -769,7 +769,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0201 — P1
+## COPY-0198 — P1
 
 **Exact current text**
 
@@ -788,7 +788,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5437
+- Source line: 5466
 - Source function/object: caseExperimentRows
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -828,7 +828,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0202 — P1
+## COPY-0199 — P1
 
 **Exact current text**
 
@@ -887,7 +887,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0203 — P1
+## COPY-0200 — P1
 
 **Exact current text**
 
@@ -906,7 +906,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5438
+- Source line: 5467
 - Source function/object: caseExperimentRows
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -946,7 +946,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0204 — P1
+## COPY-0201 — P1
 
 **Exact current text**
 
@@ -965,7 +965,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5438
+- Source line: 5467
 - Source function/object: caseExperimentRows
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1005,7 +1005,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0205 — P1
+## COPY-0202 — P1
 
 **Exact current text**
 
@@ -1024,7 +1024,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5438
+- Source line: 5467
 - Source function/object: caseExperimentRows
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1064,7 +1064,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0206 — P1
+## COPY-0203 — P1
 
 **Exact current text**
 
@@ -1083,7 +1083,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5495
+- Source line: 5524
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1123,7 +1123,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0207 — P1
+## COPY-0204 — P1
 
 **Exact current text**
 
@@ -1142,7 +1142,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5496
+- Source line: 5525
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1182,7 +1182,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0208 — P1
+## COPY-0205 — P1
 
 **Exact current text**
 
@@ -1201,7 +1201,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5496
+- Source line: 5525
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1241,7 +1241,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0209 — P1
+## COPY-0206 — P1
 
 **Exact current text**
 
@@ -1260,7 +1260,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5497
+- Source line: 5526
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1300,7 +1300,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0210 — P1
+## COPY-0207 — P1
 
 **Exact current text**
 
@@ -1319,7 +1319,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5500
+- Source line: 5529
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1359,7 +1359,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0211 — P1
+## COPY-0208 — P1
 
 **Exact current text**
 
@@ -1378,7 +1378,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 4912
+- Source line: 4941
 - Source function/object: wp81ProfessionalGuidance
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1418,7 +1418,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0212 — P1
+## COPY-0209 — P1
 
 **Exact current text**
 
@@ -1437,7 +1437,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5504
+- Source line: 5533
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1477,7 +1477,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0213 — P1
+## COPY-0210 — P1
 
 **Exact current text**
 
@@ -1536,7 +1536,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0214 — P1
+## COPY-0211 — P1
 
 **Exact current text**
 
@@ -1595,7 +1595,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0215 — P1
+## COPY-0212 — P1
 
 **Exact current text**
 
@@ -1614,7 +1614,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5507
+- Source line: 5536
 - Source function/object: renderClearOneTimePaidReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1654,7 +1654,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0216 — P1
+## COPY-0213 — P1
 
 **Exact current text**
 
@@ -1695,7 +1695,7 @@ Report interpretation or recommendation text.
 
 > Хэрвээ хазайлт гарвал түүнийг тайлангийн эсрэг нотолгоо гэж үзэхгүй. Харин яг аль холбоос дээр тойрог буцаж ажиллаж байгааг харуулах мэдээлэл гэж ашигла.
 > Тайлангаа хадгалах
-> Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
 
 **Dynamic values**
 
@@ -1713,17 +1713,17 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0217 — P1
+## COPY-0214 — P1
 
 **Exact current text**
 
-> Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
 
 **Classification**
 
 - Priority: P1
 - Review group: report
-- Structural signal: Report interpretation or recommendation text.
+- Structural signal: Report heading, summary, or instruction requiring owner review.
 - Surface: ONE_TIME_REPORT
 - Role: PAID_USER
 - Scenario: one-time-paid
@@ -1732,7 +1732,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3448
+- Source line: 3477
 - Source function/object: renderReportDeliveryActions
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -1744,7 +1744,7 @@ Report heading, summary, or instruction requiring owner review.
 
 **Source item**
 
-> <p class="muted">Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.</p>
+> <p class="muted">Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.</p>
 
 **Source context after**
 
@@ -1753,8 +1753,8 @@ Report heading, summary, or instruction requiring owner review.
 **Rendered context**
 
 > Тайлангаа хадгалах
-> Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.
-> Холбоо барих мэдээлэл хадгалагдаагүй байна.
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
 
 **Dynamic values**
 
@@ -1762,7 +1762,7 @@ Report heading, summary, or instruction requiring owner review.
 
 **Reason included**
 
-Report interpretation or recommendation text.
+Report heading, summary, or instruction requiring owner review.
 
 **Owner decision**
 

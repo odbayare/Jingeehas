@@ -21,7 +21,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2160
+- Source line: 2177
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -79,7 +79,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2161
+- Source line: 2178
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -138,7 +138,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2163
+- Source line: 2180
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -197,7 +197,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2164
+- Source line: 2181
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -256,7 +256,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2167
+- Source line: 2184
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -315,7 +315,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2175
+- Source line: 2192
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -374,7 +374,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2176
+- Source line: 2193
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -433,7 +433,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2179
+- Source line: 2196
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -492,7 +492,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2180
+- Source line: 2197
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -610,7 +610,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2184
+- Source line: 2201
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -728,7 +728,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2185
+- Source line: 2202
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -786,7 +786,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2197
+- Source line: 2214
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1080,7 +1080,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2203
+- Source line: 2220
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1139,7 +1139,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2204
+- Source line: 2221
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1198,7 +1198,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2212
+- Source line: 2229
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1257,7 +1257,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2213
+- Source line: 2230
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1316,7 +1316,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2215
+- Source line: 2232
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1375,7 +1375,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2216
+- Source line: 2233
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1434,7 +1434,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2217
+- Source line: 2234
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1493,7 +1493,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2218
+- Source line: 2235
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1552,7 +1552,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2219
+- Source line: 2236
 - Source function/object: renderLanding
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
@@ -1692,7 +1692,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 > 10-15 мин
 > Нэг удаагийн гүн зураглал
-> Орой бүр 3–5 минут
+> Аргачлал
 
 **Dynamic values**
 
@@ -1714,7 +1714,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Орой бүр 3–5 минут
+> Аргачлал
 
 **Classification**
 
@@ -1729,29 +1729,29 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2224
-- Source function/object: renderLanding
+- Source line: 2253
+- Source function/object: renderResearchMethodBasisSection
 - Source mapping: RESOLVED
 - Render proof: renderLanding via landing [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <div class="mini-stat"><strong>10-15 мин</strong><span class="muted">Нэг удаагийн гүн зураглал</span></div>
+> <div class="research-method-copy">
 
 **Source item**
 
-> <div class="mini-stat"><strong>Орой бүр 3–5 минут</strong><span class="muted">7 хоногийн богино тэмдэглэл</span></div>
+> <p class="eyebrow">Аргачлал</p>
 
 **Source context after**
 
-> </div>
+> <h2 id="research-method-title">Судалгаа, аргачлалын үндэс</h2>
 
 **Rendered context**
 
 > Нэг удаагийн гүн зураглал
-> Орой бүр 3–5 минут
-> 7 хоногийн богино тэмдэглэл
+> Аргачлал
+> Судалгаа, аргачлалын үндэс
 
 **Dynamic values**
 

@@ -88,7 +88,7 @@ function run() {
   });
   const inviteCopy = visibleText(_internal.renderOneTimeStart());
   assert(inviteCopy.includes("Үндсэн үнэ: 9,900₮"));
-  assert(inviteCopy.includes("Coach-ийн хөнгөлөлттэй үнэ: 9,900₮"));
+  assert(inviteCopy.includes("Зөвлөхийн хөнгөлөлттэй үнэ: 9,900₮"));
   assert(inviteCopy.includes("дүгнэлтийг QA Coach харах боломжтой"));
   assert(inviteCopy.includes("гарсан дүгнэлтээ QA Coach-д харагдахыг зөвшөөрч байна"));
   assert(inviteCopy.includes("зөвшөөрч байна"));
@@ -183,9 +183,9 @@ function run() {
   assert(dashboard.summary.pendingPayoutMnt >= 4000);
 
   _internal.setTestState({ internalTest: true, adminCoachForm: { email: "", name: "", phone: "", commissionMnt: "4000" } });
-  assert(visibleText(_internal.renderAdminCoach()).includes("Coach / Дэд админ"));
+  assert(visibleText(_internal.renderAdminCoach()).includes("Зөвлөхийн эрхийн удирдлага"));
   _internal.setTestState({ internalTest: false });
-  assert(!visibleText(_internal.renderAdminCoach()).includes("Coach / Дэд админ"));
+  assert(!visibleText(_internal.renderAdminCoach()).includes("Зөвлөхийн эрхийн удирдлага"));
 
   const root = path.join(__dirname, "..");
   const redirects = fs.readFileSync(path.join(root, "_redirects"), "utf8");

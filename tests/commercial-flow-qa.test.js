@@ -108,8 +108,8 @@ function run() {
   setOneTime();
   const unpaidOneTime = normalize(_internal.renderReport());
   assert(unpaidOneTime.includes("Таны эхний зураглал бэлэн боллоо"));
-  assert(unpaidOneTime.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"));
-  assert(unpaidOneTime.includes("Хамгийн түрүүнд харагдаж буй зүйл"));
+  assert(unpaidOneTime.includes("9,900₮-ийн QPay төлбөрийн QR код үүсгэх"));
+  assert(unpaidOneTime.includes("Хамгийн түрүүнд ажиглагдсан хэв маяг"));
   assert(!unpaidOneTime.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ?"));
   assert(!unpaidOneTime.includes("<h3>14 хоногийн эхний туршилт</h3>"));
   assertNoCommercialSmell(unpaidOneTime, "one-time unpaid");

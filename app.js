@@ -1009,7 +1009,9 @@ const initialState = {
   qpayPayment: {
     status: "idle",
     message: "",
-    invoice: null
+    invoice: null,
+    errorKind: "",
+    checkAttemptCount: 0
   },
   contactCapture: {
     name: "",
@@ -1306,7 +1308,7 @@ function saveContactCapture() {
     state.contactCapture = {
       ...contact,
       saved: false,
-      message: "Тайлангаа сэргээх, дэмжлэг авахад ашиглах утас эсвэл имэйл үлдээнэ үү."
+      message: "Төлбөрөө шалгах болон тайлангаа сэргээхэд ашиглах утасны дугаар эсвэл имэйл хаягаа оруулна уу."
     };
     saveState();
     render();
@@ -1318,7 +1320,7 @@ function saveContactCapture() {
     phone,
     email,
     saved: true,
-    message: "Мэдээлэл хадгалагдлаа. Одоо QPay төлбөрөө үргэлжлүүлж болно.",
+    message: "Холбоо барих мэдээлэл хадгалагдлаа. Одоо QPay төлбөрийн QR кодоо үүсгэнэ үү.",
     copyStatus: ""
   };
   saveState();
@@ -1471,13 +1473,14 @@ function submitLeadCapture() {
   render({ scrollToTop: true });
 }
 
-function qpayStatusMessage(status) {
+function qpayStatusMessage(status, context = "report") {
   return {
-    creating: "QPay QR үүсгэж байна.",
-    pending: "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
+    creating: "QPay төлбөрийн QR код үүсгэж байна.",
+    pending: "Төлбөр хараахан баталгаажаагүй байна. Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.",
     checking: "Төлбөрийн төлөвийг шалгаж байна.",
-    paid: "Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
-    error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно."
+    paid: context === "pre_test" ? "Төлбөр амжилттай баталгаажлаа. Тестээ эхлүүлэх боломжтой боллоо." : "Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
+    create_error: "QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.",
+    check_error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Энэ нь таны төлбөр цуцлагдсан гэсэн үг биш. Түр хүлээгээд дахин шалгана уу."
   }[status] || "";
 }
 
@@ -1508,7 +1511,9 @@ async function createWeightQpayInvoice() {
   state.qpayPayment = {
     status: "creating",
     message: qpayStatusMessage("creating"),
-    invoice: null
+    invoice: null,
+    errorKind: "",
+    checkAttemptCount: 0
   };
   saveState();
   trackWeightFunnelEvent("qpay_invoice_requested", {
@@ -1531,10 +1536,15 @@ async function createWeightQpayInvoice() {
     });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok || !payload.ok || !payload.invoice) throw new Error("CREATE_FAILED");
+    const usableQr = Boolean(normalizeQpayQrImage(payload.invoice.qrImage));
+    const usableLinks = normalizeQpayAppLinks(payload.invoice).length > 0;
+    if (!usableQr && !usableLinks) throw new Error("UNUSABLE_INVOICE");
     state.qpayPayment = {
       status: "pending",
       message: qpayStatusMessage("pending"),
-      invoice: payload.invoice
+      invoice: payload.invoice,
+      errorKind: "",
+      checkAttemptCount: 0
     };
     trackWeightFunnelEvent("qpay_invoice_created", {
       payment_session_id: state.paymentSessionId,
@@ -1545,8 +1555,10 @@ async function createWeightQpayInvoice() {
   } catch {
     state.qpayPayment = {
       status: "error",
-      message: qpayStatusMessage("error"),
-      invoice: null
+      message: qpayStatusMessage("create_error"),
+      invoice: null,
+      errorKind: "create",
+      checkAttemptCount: 0
     };
   }
   saveState();
@@ -1564,7 +1576,8 @@ async function checkWeightQpayPayment() {
   state.qpayPayment = {
     ...state.qpayPayment,
     status: "checking",
-    message: qpayStatusMessage("checking")
+    message: qpayStatusMessage("checking"),
+    errorKind: ""
   };
   saveState();
   render();
@@ -1585,7 +1598,8 @@ async function checkWeightQpayPayment() {
       state.qpayPayment = {
         ...state.qpayPayment,
         status: "paid",
-        message: qpayStatusMessage("paid")
+        message: qpayStatusMessage("paid", state.view === "oneTimeStart" ? "pre_test" : "report"),
+        checkAttemptCount: Number(state.qpayPayment.checkAttemptCount || 0) + 1
       };
       trackWeightFunnelOnce("payment_confirmed", {
         payment_session_id: state.paymentSessionId,
@@ -1596,14 +1610,17 @@ async function checkWeightQpayPayment() {
       state.qpayPayment = {
         ...state.qpayPayment,
         status: "pending",
-        message: qpayStatusMessage("pending")
+        message: qpayStatusMessage("pending"),
+        checkAttemptCount: Number(state.qpayPayment.checkAttemptCount || 0) + 1
       };
     }
   } catch {
     state.qpayPayment = {
       ...state.qpayPayment,
       status: "error",
-      message: qpayStatusMessage("error")
+      message: qpayStatusMessage("check_error"),
+      errorKind: "check",
+      checkAttemptCount: Number(state.qpayPayment.checkAttemptCount || 0) + 1
     };
   }
   saveState();
@@ -2221,7 +2238,6 @@ function renderLanding() {
         </div>
         <div class="aside">
           <div class="mini-stat"><strong>10-15 мин</strong><span class="muted">Нэг удаагийн гүн зураглал</span></div>
-          <div class="mini-stat"><strong>Орой бүр 3–5 минут</strong><span class="muted">7 хоногийн богино тэмдэглэл</span></div>
         </div>
       </div>
       ${renderResearchMethodBasisSection()}
@@ -2355,12 +2371,12 @@ function renderOneTimeStart() {
           <span class="pill">Зарим асуултыг алгасаж болно</span>
         </div>
         ${invite ? `<div class="card stack coach-discount-card">
-          <p class="choice-kicker">Coach-ийн урилга илэрлээ</p>
+          <p class="choice-kicker">Зөвлөхийн урилга ирсэн байна</p>
           <h3>${escapeHtml(coachName)} танд энэ үнэлгээг санал болгосон байна.</h3>
-          <p>Та coach-ийн урилгаар хөнгөлөлттэй үнээр үнэлгээ хийлгэх боломжтой.</p>
+          <p>Та зөвлөхийн урилгаар хөнгөлөлттэй үнээр үнэлгээ хийлгэх боломжтой.</p>
           <div class="price-stack">
             <p class="price-line"><span>Үндсэн үнэ:</span> ${PRICING.oneTime}</p>
-            <p class="price promo"><span>Coach-ийн хөнгөлөлттэй үнэ:</span> ${PRICING.coachOneTime}</p>
+            <p class="price promo"><span>Зөвлөхийн хөнгөлөлттэй үнэ:</span> ${PRICING.coachOneTime}</p>
           </div>
           <p class="muted">Хэрэв та энэ хөнгөлөлтөөр үнэлгээ хийлгэвэл таны дүгнэлтийг ${escapeHtml(coachName)} харах боломжтой.</p>
           <label class="checkbox-row">
@@ -2374,7 +2390,7 @@ function renderOneTimeStart() {
         </div>` : ""}
         ${hasPaidAccess ? `
           <div class="actions">
-            <button class="button" onclick="beginAssessment('one-time')">${state.coachDiscountConsent ? "Coach-ийн хөнгөлөлттэй үнээр тест эхлүүлэх" : "Тест эхлүүлэх"}</button>
+            <button class="button" onclick="beginAssessment('one-time')">${state.coachDiscountConsent ? "Зөвлөхийн хөнгөлөлттэй үнээр тест эхлүүлэх" : "Тест эхлүүлэх"}</button>
             <button class="button ghost" onclick="setView('choice')">Буцах</button>
           </div>
         ` : `
@@ -2385,10 +2401,10 @@ function renderOneTimeStart() {
               <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTimeAnchor}</p>
               <p class="price promo"><span>Төлөх үнэ</span> ${currentOneTimePriceLabel()}</p>
             </div>
-            ${renderNoAccountPaymentIntro()}
+            ${renderNoAccountPaymentIntro("pre_test")}
             ${hasSavedContactInfo() ? `
               ${renderSavedContactSummary()}
-              ${renderWeightQpayPaymentBox({ returnLabel: "Буцах" })}
+              ${renderWeightQpayPaymentBox({ returnLabel: "Буцах", context: "pre_test" })}
             ` : renderContactCaptureForm()}
           </div>
         `}
@@ -2397,11 +2413,14 @@ function renderOneTimeStart() {
   `;
 }
 
-function renderNoAccountPaymentIntro() {
+function renderNoAccountPaymentIntro(context) {
+  const detail = context === "pre_test"
+    ? "Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна."
+    : "Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.";
   return `
     <div class="no-account-note">
-      <p><strong>Бүртгэл шаардлагагүй.</strong></p>
-      <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
+      <p><strong>Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.</strong></p>
+      <p>${detail}</p>
     </div>
   `;
 }
@@ -2411,26 +2430,26 @@ function renderContactCaptureForm() {
   return `
     <div class="contact-capture-card stack" data-contact-capture>
       <div>
-        <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-        <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-        <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
+        <p class="choice-kicker">Төлбөр болон тайлангаа сэргээх мэдээлэл</p>
+        <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+        <p class="muted">Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.</p>
       </div>
       <label class="field">
-        <span>Нэр (сонголтоор)</span>
+        <span>Нэр — заавал биш</span>
         <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
       </label>
       <label class="field">
-        <span>Утас</span>
+        <span>Утасны дугаар</span>
         <input type="tel" value="${escapeAttr(contact.phone)}" oninput="updateContactCaptureField('phone', this.value)" autocomplete="tel">
       </label>
       <label class="field">
-        <span>Имэйл</span>
+        <span>Имэйл хаяг</span>
         <input type="email" value="${escapeAttr(contact.email)}" oninput="updateContactCaptureField('email', this.value)" autocomplete="email">
       </label>
-      <p class="muted">Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.</p>
+      <p class="muted">Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.</p>
       ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
       <div class="actions">
-        <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх</button>
+        <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих</button>
         <button class="button ghost" onclick="setView('choice')">Буцах</button>
       </div>
     </div>
@@ -2441,13 +2460,13 @@ function renderSavedContactSummary() {
   const contact = contactCaptureState();
   const rows = [
     contact.name ? ["Нэр", contact.name] : null,
-    contact.phone ? ["Утас", contact.phone] : null,
-    contact.email ? ["Имэйл", contact.email] : null
+    contact.phone ? ["Утасны дугаар", contact.phone] : null,
+    contact.email ? ["Имэйл хаяг", contact.email] : null
   ].filter(Boolean);
   return `
     <div class="contact-summary" data-contact-summary>
       <div>
-        <p class="choice-kicker">Холбоо барих мэдээлэл хадгалагдсан</p>
+        <p class="choice-kicker">Төлбөр, тайлан сэргээх мэдээлэл</p>
         <dl>${rows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl>
       </div>
       <button class="button ghost compact-button" onclick="editContactCapture()">Засах</button>
@@ -3301,15 +3320,16 @@ function normalizeQpayQrImage(value) {
 }
 
 function renderQpayDesktopPaymentSurface(invoice, qrImage) {
+  const links = normalizeQpayAppLinks(invoice);
   return `
     <div class="card qpay-surface qpay-desktop-primary" data-qpay-device-mode="desktop-qr-first">
       <div class="qpay-desktop-layout">
         <div class="qpay-qr-wrap">
-          ${qrImage ? `<img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr qpay-qr-large">` : `<p class="muted">QR үүслээ. Банкны апп-аар төлбөрөө үргэлжлүүлнэ үү.</p>`}
+          ${qrImage ? `<img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr qpay-qr-large">` : `<p class="muted">QPay нэхэмжлэл үүслээ. Доорх банкны аппын холбоосоор төлбөрөө үргэлжлүүлнэ үү.</p>`}
         </div>
         <div class="qpay-secondary-apps">
-          <p class="muted">Утаснаас төлөх бол банкны апп сонгож болно.</p>
-          ${renderQpayAppGrid(invoice, { emptyText: "Банкны аппын холбоос ирээгүй байна." })}
+          <p class="muted">Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.</p>
+          ${renderQpayAppGrid(invoice, { emptyText: qrImage ? "Банкны аппын холбоос ирсэнгүй. QR кодыг уншуулж төлбөрөө үргэлжлүүлнэ үү." : "" })}
         </div>
       </div>
     </div>
@@ -3320,7 +3340,7 @@ function renderQpayMobilePaymentSurface(invoice, qrImage) {
   return `
     <div class="card qpay-surface qpay-mobile-primary" data-qpay-device-mode="mobile-app-grid-first">
       <div class="stack">
-        <p class="muted">Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.</p>
+        <p class="muted">Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.</p>
         ${renderQpayAppGrid(invoice)}
         ${qrImage ? `
           <details class="qpay-mobile-qr-toggle">
@@ -3340,20 +3360,29 @@ function renderWeightQpayPaymentBox(options = {}) {
   const qrImage = normalizeQpayQrImage(invoice?.qrImage);
   const oneTimePrice = currentOneTimePriceLabel();
   const returnLabel = options.returnLabel || "Сонголт руу буцах";
+  const context = options.context === "pre_test" ? "pre_test" : "report";
+  const reference = invoice?.senderInvoiceNo || invoice?.invoiceId || "";
+  const paid = payment.status === "paid";
+  const createError = payment.status === "error" && payment.errorKind === "create";
+  const checkError = payment.status === "error" && payment.errorKind === "check";
+  const attemptedCheck = Number(payment.checkAttemptCount || 0) > 0;
   return `
     <div class="stack">
-      ${payment.message ? `<p class="${payment.status === "error" ? "danger-copy" : "muted"}">${escapeHtml(payment.message)}</p>` : ""}
-      ${invoice ? `
+      ${payment.message ? `<p class="${payment.status === "error" ? "danger-copy" : "muted"}">${escapeHtml(paid ? qpayStatusMessage("paid", context) : payment.message)}</p>` : ""}
+      ${invoice && !paid ? `
         <div class="qpay-payment-surfaces" data-qpay-payment-surfaces>
           ${renderQpayDesktopPaymentSurface(invoice, qrImage)}
           ${renderQpayMobilePaymentSurface(invoice, qrImage)}
-          <p class="muted qpay-reference">Лавлах дугаар: ${escapeHtml(invoice.senderInvoiceNo || invoice.invoiceId || "")}</p>
+          ${reference ? `<p class="muted qpay-reference">Төлбөрийн лавлах дугаар: ${escapeHtml(reference)}</p>` : ""}
         </div>
       ` : ""}
+      ${paid && reference ? `<p class="muted qpay-reference">Төлбөрийн лавлах дугаар: ${escapeHtml(reference)}</p>` : ""}
       <div class="actions">
-        ${invoice
-          ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Шалгаж байна..." : "Дахин шалгах"}</button>`
-          : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR үүсгэж байна..." : `${oneTimePrice} төлөөд бүрэн тайлангаа нээх`}</button>`}
+        ${paid
+          ? (context === "pre_test" ? `<button class="button" onclick="beginAssessment('one-time')">Тест эхлүүлэх</button>` : `<button class="button" onclick="render({ scrollToTop: true })">Бүрэн тайлангаа харах</button>`)
+          : invoice
+            ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Төлбөр шалгаж байна…" : checkError ? "Төлбөр дахин шалгах" : attemptedCheck ? "Дахин шалгах" : "Төлбөр шалгах"}</button>`
+            : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR код үүсгэж байна…" : createError ? "QR код дахин үүсгэх" : `${oneTimePrice}-ийн QPay төлбөрийн QR код үүсгэх`}</button>`}
         ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment('one-time')">Дотоод туршилтаар нээх</button>`)}
         <button class="button ghost" onclick="setView('choice')">${escapeHtml(returnLabel)}</button>
       </div>
@@ -3373,57 +3402,57 @@ function renderOneTimePaywall({ mode, primary, primaryMechanism, tags }) {
   const previewName = primary ? publicMechanismName(primary.key) : "Хамгийн түрүүнд нэг хэсэг тодорлоо";
   const previewInsight = primary ? livedExplanationFor(primary.key) : "Таны өгсөн мэдээлэлд нэг ойр нөхцөл тодорлоо.";
   const priceLabel = currentOneTimePriceLabel();
-  const priceCaption = state.coachDiscountConsent && state.coachInvite ? "Coach-ийн хөнгөлөлттэй үнэ" : "Төлөх үнэ";
+  const priceCaption = state.coachDiscountConsent && state.coachInvite ? "Зөвлөхийн хөнгөлөлттэй үнэ" : "Төлөх үнэ";
   return `
-    ${topbar(100, "Тайлангийн эхний хэсэг")}
+    ${topbar(100, "Эхний зураглал")}
     <section class="screen">
       <div class="panel stack paywall-panel">
         <div class="report-section">
-          <p class="choice-kicker">Эхний дохио</p>
+          <p class="choice-kicker">Төлбөргүй хэсэг</p>
           <h2>Таны эхний зураглал бэлэн боллоо</h2>
-          <p class="muted">Энэ хэсэг төлбөргүй хэвээр харагдана. Бүрэн тайлан нээхээс өмнө таны хариултаас хамгийн түрүүнд тодорч буй дохиог харуулж байна.</p>
+          <p class="muted">Энэ эхний зураглалыг төлбөргүй үзэх боломжтой. Энд таны хариултаас хамгийн түрүүнд ажиглагдсан нэг хэв маягийг харуулна.</p>
           <div class="card">
-            <h3>Хамгийн түрүүнд харагдаж буй зүйл</h3>
+            <h3>Хамгийн түрүүнд ажиглагдсан хэв маяг</h3>
             <p><strong>${escapeHtml(previewName)}</strong></p>
             <p>${escapeHtml(previewInsight)}</p>
           </div>
           ${mode.mode === "check" ? `<p class="danger-copy">Нэг зүйл анхаарал татаж байна. Биеийн талаа шалгуулахад илүүдэхгүй. Энэ нь онош гэсэн үг биш.</p>` : ""}
         </div>
         <div class="report-section">
-          <h3>Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ?</h3>
-          <p>Төлбөргүй хэсэг эхний дохиог үлдээнэ. Бүрэн тайлан нь тэр дохиог өдөр тутмын нөхцөл, давхар нөлөө, эхний зөөлөн алхамтай холбож илүү ойлгомжтой болгоно.</p>
+          <h3>Бүрэн тайланд юу багтах вэ?</h3>
+          <p>Төлбөргүй хэсэгт эхний ажиглалт болон түүний товч тайлбар харагдана. Бүрэн тайланд энэ хэв маяг ямар нөхцөлд давтагддаг, өөр ямар хүчин зүйлс нөлөөлж болох, эхлээд ямар алхам туршиж болохыг дэлгэрэнгүй тайлбарлана.</p>
           <div class="paywall-detail-grid">
             <div>
-              <p class="choice-kicker">Одоо харагдаж байна</p>
+              <p class="choice-kicker">Төлбөргүйгээр харагдах зүйлс</p>
               <ul>
-                <li>Хамгийн түрүүнд тодорсон нэг дохио</li>
-                <li>Тухайн дохионы богино тайлбар</li>
+                <li>Хамгийн түрүүнд ажиглагдсан нэг хэв маяг</li>
+                <li>Тухайн хэв маягийн товч тайлбар</li>
                 <li>Аюулгүй ашиглах сануулга</li>
               </ul>
             </div>
             <div>
-              <p class="choice-kicker">Бүрэн тайланд нэмэгдэнэ</p>
+              <p class="choice-kicker">Бүрэн тайланд багтах зүйлс</p>
               <ul>
-                <li>Хамгийн тод давтагддаг нөхцөл</li>
-                <li>Давхар нөлөөлж буй 1-2 зүйл</li>
-                <li>Одоогоор хэт яарахгүй зүйлс</li>
-                <li>Эхний зөөлөн алхам</li>
-                <li>14 хоногийн эхний туршилт</li>
+                <li>Хамгийн олон давтагдсан нөхцөл</li>
+                <li>Давхар нөлөөлж болох 1–2 хүчин зүйл</li>
+                <li>Одоогоор яарах шаардлагагүй зүйлс</li>
+                <li>Эхэлж туршиж болох нэг алхам</li>
+                <li>14 хоногийн турш хэрэгжүүлж үзэх нэг жижиг алхам</li>
               </ul>
             </div>
           </div>
         </div>
         <div class="report-section">
-          <h3>Бүрэн тайлан нээх</h3>
-          <p class="muted">Төлбөр баталгаажсаны дараа тайлан энэ дэлгэц дээр шууд нээгдэнэ. Эхний дохио болон аюулгүй байдлын сануулга төлбөргүй хэсэгт үлдэнэ.</p>
+          <h3>Бүрэн тайлангаа нээх</h3>
+          <p class="muted">Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.</p>
           <div class="price-stack">
             <p class="price-line"><span>Үндсэн үнэ</span> ${PRICING.oneTimeAnchor}</p>
             <p class="price promo"><span>${priceCaption}</span> ${priceLabel}</p>
           </div>
-          ${renderNoAccountPaymentIntro()}
+          ${renderNoAccountPaymentIntro("report")}
           ${hasSavedContactInfo() ? `
             ${renderSavedContactSummary()}
-            ${renderWeightQpayPaymentBox()}
+            ${renderWeightQpayPaymentBox({ context: "report" })}
           ` : renderContactCaptureForm()}
         </div>
       </div>
@@ -3438,26 +3467,26 @@ function renderReportDeliveryActions(options = {}) {
   const contactRows = savedContact
     ? [
         contact.name ? ["Нэр", contact.name] : null,
-        contact.phone ? ["Утас", contact.phone] : null,
-        contact.email ? ["Имэйл", contact.email] : null
+        contact.phone ? ["Утасны дугаар", contact.phone] : null,
+        contact.email ? ["Имэйл хаяг", contact.email] : null
       ].filter(Boolean)
     : [];
   return `
     <div class="report-section report-delivery-card" data-report-delivery>
       <h3>${escapeHtml(heading)}</h3>
-      <p class="muted">Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.</p>
+      <p class="muted">Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.</p>
       ${savedContact ? `
         <div class="contact-summary inline-summary">
           <div>
-            <p class="choice-kicker">Дэмжлэг авахад хадгалсан мэдээлэл</p>
+            <p class="choice-kicker">Төлбөр болон дэмжлэгт ашиглах мэдээлэл</p>
             <dl>${contactRows.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join("")}</dl>
           </div>
         </div>
-      ` : `<p class="muted">Холбоо барих мэдээлэл хадгалагдаагүй байна.</p>`}
+      ` : `<p class="muted">Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.</p>`}
       ${contact.copyStatus ? `<p class="muted">${escapeHtml(contact.copyStatus)}</p>` : ""}
       <div class="actions">
-        <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
-        <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
+        <button class="button secondary" onclick="copyCurrentReport()">Тайлангийн текстийг хуулах</button>
+        <button class="button ghost" onclick="printCurrentReport()">Хэвлэх эсвэл PDF-ээр хадгалах</button>
       </div>
     </div>
   `;
@@ -3483,7 +3512,7 @@ async function copyCurrentReport() {
     }
     state.contactCapture = {
       ...contactCaptureState(),
-      copyStatus: "Тайлан clipboard-д хуулагдлаа."
+      copyStatus: "Тайлангийн текст хуулагдлаа."
     };
     saveState();
     trackWeightFunnelEvent("report_copy_clicked", {
@@ -3495,7 +3524,7 @@ async function copyCurrentReport() {
   } catch {
     state.contactCapture = {
       ...contactCaptureState(),
-      copyStatus: "Хуулах боломжгүй байна. Browser-ийн print эсвэл гараар copy ашиглаж болно."
+      copyStatus: "Тайлангийн текстийг хуулж чадсангүй. Хэвлэх эсвэл PDF-ээр хадгалах товчийг ашиглана уу."
     };
     saveState();
     render();
@@ -5927,10 +5956,10 @@ function submitCoachLogin() {
 
 function renderCoachLogin() {
   return `
-    ${topbar(0, "Coach login")}
+    ${topbar(0, "Зөвлөхөөр нэвтрэх")}
     <section class="screen">
       <div class="panel stack">
-        <h2>Coach нэвтрэх</h2>
+        <h2>Зөвлөхөөр нэвтрэх</h2>
         <label class="field"><span class="muted">Имэйл</span><input type="email" value="${escapeAttr(state.coachLoginForm?.email || "")}" oninput="updateCoachLoginField('email', this.value)"></label>
         <label class="field"><span class="muted">Нууц үг</span><input type="password" value="${escapeAttr(state.coachLoginForm?.password || "")}" oninput="updateCoachLoginField('password', this.value)"></label>
         ${state.coachLoginError ? `<p class="danger-copy">${escapeHtml(state.coachLoginError)}</p>` : ""}
@@ -6000,11 +6029,11 @@ function renderCoachDashboard() {
   }
   const summary = dashboard.summary;
   return `
-    ${topbar(100, "Coach цэс")}
+    ${topbar(100, "Зөвлөхийн хяналтын самбар")}
     <section class="screen">
       <div class="panel stack">
         <p class="choice-kicker">Нээлтээс өмнөх туршилтын хувилбар</p>
-        <h2>Coach цэс</h2>
+        <h2>Зөвлөхийн хяналтын самбар</h2>
         <p class="muted">Энэ хувилбар дээр бодит төлбөр авахгүй. ${escapeHtml(dashboard.coach.display_name)} өөрийн нэмсэн үйлчлүүлэгчийн явцыг эндээс харна.</p>
         <div class="two-col">
           <div class="mini-stat"><strong>${summary.addedClientsCount}</strong><span>Нэмсэн үйлчлүүлэгч</span></div>
@@ -6055,7 +6084,7 @@ function createCoachFromAdmin() {
     });
     state.adminCoachForm = { email: "", name: "", phone: "", commissionMnt: String(COACH_COMMISSION_MNT) };
   } catch (error) {
-    state.adminCoachResult = { error: error.message || "Coach үүсгэхэд алдаа гарлаа." };
+    state.adminCoachResult = { error: error.message || "Зөвлөхийн бүртгэл үүсгэхэд алдаа гарлаа." };
   }
   saveState();
   render({ scrollToTop: true });
@@ -6065,23 +6094,23 @@ function renderAdminCoach() {
   if (!isInternalTestMode()) return renderLanding();
   const coaches = mockBackend.listCoachAccounts();
   return `
-    ${topbar(100, "Coach / Дэд админ")}
+    ${topbar(100, "Зөвлөхийн эрхийн удирдлага")}
     <section class="screen">
       <div class="panel stack">
-        <h2>Coach / Дэд админ</h2>
+        <h2>Зөвлөхийн эрхийн удирдлага</h2>
         <div class="card stack">
-          <h3>Coach нэмэх</h3>
-          <label class="field"><span class="muted">Coach-ийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
-          <label class="field"><span class="muted">Coach-ийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
+          <h3>Зөвлөх нэмэх</h3>
+          <label class="field"><span class="muted">Зөвлөхийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
+          <label class="field"><span class="muted">Зөвлөхийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
           <label class="field"><span class="muted">Утас</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
-          <label class="field"><span class="muted">Coach-ийн авах дүн</span><input type="number" value="${escapeAttr(state.adminCoachForm?.commissionMnt || String(COACH_COMMISSION_MNT))}" oninput="updateAdminCoachField('commissionMnt', this.value)"></label>
-          <button class="button" onclick="createCoachFromAdmin()">Coach нэмэх</button>
-          ${state.adminCoachResult?.temporaryPassword ? `<p class="danger-copy">Түр нууц үг: ${escapeHtml(state.adminCoachResult.temporaryPassword)}<br>Энэ нууц үгийг coach-д өгнө. Нэвтэрсний дараа солих боломжтой.</p>` : ""}
+          <label class="field"><span class="muted">Зөвлөхийн шимтгэл</span><input type="number" value="${escapeAttr(state.adminCoachForm?.commissionMnt || String(COACH_COMMISSION_MNT))}" oninput="updateAdminCoachField('commissionMnt', this.value)"></label>
+          <button class="button" onclick="createCoachFromAdmin()">Зөвлөх нэмэх</button>
+          ${state.adminCoachResult?.temporaryPassword ? `<p class="danger-copy">Түр нууц үг: ${escapeHtml(state.adminCoachResult.temporaryPassword)}<br>Энэ нууц үгийг зөвлөхөд өгнө. Нэвтэрсний дараа солих боломжтой.</p>` : ""}
           ${state.adminCoachResult?.error ? `<p class="danger-copy">${escapeHtml(state.adminCoachResult.error)}</p>` : ""}
         </div>
         <div class="card stack">
-          <h3>Coach list</h3>
-          ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Coach бүртгэл алга.</p>`}
+          <h3>Зөвлөхийн жагсаалт</h3>
+          ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Зөвлөх бүртгэгдээгүй байна.</p>`}
         </div>
       </div>
     </section>

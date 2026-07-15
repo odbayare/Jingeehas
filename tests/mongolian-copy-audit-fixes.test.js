@@ -44,8 +44,8 @@ assert(!urgent.includes("QPay"), "urgent mode must suppress payment controls");
 assert(!urgent.includes("[REMOVED_FEATURE_PRICE]"), "urgent mode must suppress upsell controls");
 
 const manifest = JSON.parse(read("MONGOLIAN_COPY_APPROVED_REPLACEMENTS.json"));
-assert.strictEqual(manifest.approval_status, "EMPTY_NOT_APPROVED");
-assert.deepStrictEqual(manifest.replacements, []);
+assert.strictEqual(manifest.approval_status, "APPROVED");
+assert(manifest.replacements.length > 0);
 const requiredFiles = [
   "MONGOLIAN_COPY_RAW_LITERAL_INVENTORY.md", "MONGOLIAN_COPY_REVIEW_CATALOG.md",
   "MONGOLIAN_COPY_DUPLICATE_INDEX.md", "MONGOLIAN_COPY_EXCLUDED_INTERNAL_STRINGS.md",
@@ -61,7 +61,7 @@ assert(!catalog.includes("./mockBackend.js"), "review catalog must exclude modul
 );
 
 const artifact = JSON.parse(read("artifacts/mongolian-rendered-copy.json"));
-assert.strictEqual(artifact.generator_version, "2.0.0");
+assert.strictEqual(artifact.generator_version, "2.1.0");
 assert.strictEqual(artifact.network_attempts, 0, "extraction must make no external request");
 const validRoles = new Set(["PUBLIC_USER", "PAID_USER", "ADVISOR", "ADMIN", "INTERNAL_TESTER"]);
 const validTypes = new Set(["FULL_SURFACE", "ISOLATED_COMPONENT", "ATTRIBUTE_ONLY"]);
@@ -79,7 +79,7 @@ const scenarioIds = new Set(artifact.scenarios.map(s => s.id));
   "lead-thank-you", "general-safety", "professional-safety", "urgent-mode-4", "advisor-login",
   "advisor-dashboard-empty", "advisor-dashboard-populated", "admin-portal", "internal-feedback-survey",
   "internal-feedback-thanks", "internal-feedback-export", "payment-contact", "qpay-pre-invoice", "qpay-invoice-created",
-  "qpay-pending", "qpay-paid", "qpay-error", "sample-report", "question-bank", "answer-options", "accessibility"
+  "qpay-pending", "qpay-paid", "qpay-create-error", "qpay-check-error", "sample-report", "question-bank", "answer-options", "accessibility"
 ].forEach(id => assert(scenarioIds.has(id), `required scenario missing: ${id}`));
 
 const byId = id => artifact.scenarios.find(s => s.id === id);
@@ -98,14 +98,16 @@ assert(sampleEntries.every(e => e.render_source === "renderSampleResultPreview")
 assert(!sampleEntries.some(e => e.scenario === "choice"), "choice screen must not contaminate sample report");
 assert(!artifact.entries.some(e => /SEVEN_DAY|DIARY|UPGRADE/.test(e.surface)), "removed product surfaces must not enter the catalog");
 
-const qpayScenarios = ["qpay-pre-invoice", "qpay-invoice-created", "qpay-pending", "qpay-paid", "qpay-error"];
+const qpayScenarios = ["qpay-pre-invoice", "qpay-invoice-created", "qpay-pending", "qpay-paid", "qpay-create-error", "qpay-check-error"];
 qpayScenarios.forEach(id => assert.strictEqual(byId(id).extraction_type, "ISOLATED_COMPONENT"));
 const qpayTexts = scenarioText;
 assert.notStrictEqual(qpayTexts("qpay-pre-invoice"), qpayTexts("qpay-invoice-created"));
 assert.notStrictEqual(qpayTexts("qpay-invoice-created"), qpayTexts("qpay-pending"));
 assert.notStrictEqual(qpayTexts("qpay-pending"), qpayTexts("qpay-paid"));
-assert(qpayTexts("qpay-error").trim(), "payment error fixture must be non-empty");
-assert.strictEqual(byId("qpay-error").render_source, "renderWeightQpayPaymentBox with qpayStatusMessage(error)");
+assert(qpayTexts("qpay-create-error").trim(), "create error fixture must be non-empty");
+assert(qpayTexts("qpay-check-error").trim(), "check error fixture must be non-empty");
+assert.strictEqual(byId("qpay-create-error").render_source, "renderWeightQpayPaymentBox with create error");
+assert.strictEqual(byId("qpay-check-error").render_source, "renderWeightQpayPaymentBox with check error");
 assert(!artifact.entries.filter(e => e.surface === "QPAY").some(e => /Гол зураглал|14 хоногийн/.test(e.text)), "report content must not contaminate QPay");
 
 assert(byId("advisor-dashboard-populated").extracted_entry_count > 0, "populated advisor fixture must render");

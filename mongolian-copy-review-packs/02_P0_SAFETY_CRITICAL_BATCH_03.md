@@ -2,7 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0295 — P0
+## COPY-0292 — P0
 
 **Exact current text**
 
@@ -61,7 +61,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0296 — P0
+## COPY-0293 — P0
 
 **Exact current text**
 
@@ -80,7 +80,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6352
+- Source line: 6381
 - Source function/object: buildRuntimeVisibleSurfacePayload
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -119,7 +119,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0297 — P0
+## COPY-0294 — P0
 
 **Exact current text**
 
@@ -138,7 +138,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2762
+- Source line: 2781
 - Source function/object: reportMode
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -177,7 +177,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0298 — P0
+## COPY-0295 — P0
 
 **Exact current text**
 
@@ -196,7 +196,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6558
+- Source line: 6587
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -236,7 +236,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0299 — P0
+## COPY-0296 — P0
 
 **Exact current text**
 
@@ -255,7 +255,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6559
+- Source line: 6588
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -295,7 +295,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0300 — P0
+## COPY-0297 — P0
 
 **Exact current text**
 
@@ -314,7 +314,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6560
+- Source line: 6589
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -354,7 +354,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0301 — P0
+## COPY-0298 — P0
 
 **Exact current text**
 
@@ -413,7 +413,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0302 — P0
+## COPY-0299 — P0
 
 **Exact current text**
 
@@ -472,7 +472,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0303 — P0
+## COPY-0300 — P0
 
 **Exact current text**
 
@@ -531,7 +531,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0304 — P0
+## COPY-0301 — P0
 
 **Exact current text**
 
@@ -550,7 +550,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6351
+- Source line: 6380
 - Source function/object: buildRuntimeVisibleSurfacePayload
 - Source mapping: RESOLVED
 - Render proof: renderReport via urgent-mode-4 [FULL_SURFACE]
@@ -589,7 +589,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0353 — P0
+## COPY-0348 — P0
 
 **Exact current text**
 
@@ -648,7 +648,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0355 — P0
+## COPY-0350 — P0
 
 **Exact current text**
 
@@ -707,7 +707,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0501 — P0
+## COPY-0497 — P0
 
 **Exact current text**
 
@@ -766,7 +766,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0502 — P0
+## COPY-0498 — P0
 
 **Exact current text**
 
@@ -825,7 +825,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0503 — P0
+## COPY-0499 — P0
 
 **Exact current text**
 
@@ -884,7 +884,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0504 — P0
+## COPY-0500 — P0
 
 **Exact current text**
 
@@ -943,7 +943,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0505 — P0
+## COPY-0501 — P0
 
 **Exact current text**
 
@@ -1002,7 +1002,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0518 — P0
+## COPY-0514 — P0
 
 **Exact current text**
 
@@ -1061,7 +1061,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0524 — P0
+## COPY-0520 — P0
 
 **Exact current text**
 
@@ -1120,7 +1120,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0632 — P0
+## COPY-0628 — P0
 
 **Exact current text**
 
@@ -1179,7 +1179,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0655 — P0
+## COPY-0651 — P0
 
 **Exact current text**
 
@@ -1238,7 +1238,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0815 — P0
+## COPY-0811 — P0
 
 **Exact current text**
 
@@ -1297,7 +1297,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0855 — P0
+## COPY-0851 — P0
 
 **Exact current text**
 
@@ -1356,7 +1356,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0856 — P0
+## COPY-0852 — P0
 
 **Exact current text**
 
@@ -1415,7 +1415,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0857 — P0
+## COPY-0853 — P0
 
 **Exact current text**
 

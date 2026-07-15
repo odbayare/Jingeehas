@@ -68,8 +68,8 @@ const professionalSafety = paidReport({
   "3. Ойрын 7 хоногт юуг ажиглах вэ?",
   "4. Одоогоор юунаас зайлсхийх вэ?",
   "Тайлангаа хадгалах",
-  "Тайлан хуулж авах",
-  "Хэвлэх / PDF хадгалах"
+  "Тайлангийн текстийг хуулах",
+  "Хэвлэх эсвэл PDF-ээр хадгалах"
 ].forEach(section => {
   assert(professionalSafety.includes(section), `professional safety route must include ${section}`);
 });

@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0437 — P2
+## COPY-0433 — P2
 
 **Exact current text**
 
@@ -64,7 +64,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0438 — P2
+## COPY-0434 — P2
 
 **Exact current text**
 
@@ -127,7 +127,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0439 — P2
+## COPY-0435 — P2
 
 **Exact current text**
 
@@ -193,7 +193,7 @@ Question wording requiring owner review.
 - Өөрөөр тодорхойлно
 - Хариулахгүй
 
-## COPY-0440 — P2
+## COPY-0436 — P2
 
 **Exact current text**
 
@@ -256,7 +256,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0441 — P2
+## COPY-0437 — P2
 
 **Exact current text**
 
@@ -319,7 +319,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0442 — P2
+## COPY-0438 — P2
 
 **Exact current text**
 
@@ -382,7 +382,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0450 — P2
+## COPY-0446 — P2
 
 **Exact current text**
 
@@ -461,7 +461,7 @@ Question wording requiring owner review.
 - Сайн мэдэхгүй
 - Хариулахгүй
 
-## COPY-0451 — P2
+## COPY-0447 — P2
 
 **Exact current text**
 
@@ -536,7 +536,7 @@ Question wording requiring owner review.
 - Сайн мэдэхгүй
 - Хариулахгүй
 
-## COPY-0452 — P2
+## COPY-0448 — P2
 
 **Exact current text**
 
@@ -610,7 +610,7 @@ Question wording requiring owner review.
 - Сайн мэдэхгүй
 - Хариулахгүй
 
-## COPY-0453 — P2
+## COPY-0449 — P2
 
 **Exact current text**
 
@@ -685,7 +685,7 @@ Question wording requiring owner review.
 - Сайн мэдэхгүй
 - Хариулахгүй
 
-## COPY-0454 — P2
+## COPY-0450 — P2
 
 **Exact current text**
 
@@ -759,7 +759,7 @@ Question wording requiring owner review.
 - Сайн мэдэхгүй
 - Хариулахгүй
 
-## COPY-0455 — P2
+## COPY-0451 — P2
 
 **Exact current text**
 
@@ -832,7 +832,7 @@ Question wording requiring owner review.
 - Сайн мэдэхгүй
 - Хариулахгүй
 
-## COPY-0456 — P2
+## COPY-0452 — P2
 
 **Exact current text**
 
@@ -895,7 +895,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0457 — P2
+## COPY-0453 — P2
 
 **Exact current text**
 
@@ -966,7 +966,7 @@ Question wording requiring owner review.
 - Төрсний дараа биеэ сэргээх
 - Өөр зүйл
 
-## COPY-0472 — P2
+## COPY-0468 — P2
 
 **Exact current text**
 
@@ -1029,7 +1029,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0479 — P2
+## COPY-0475 — P2
 
 **Exact current text**
 
@@ -1097,7 +1097,7 @@ Question wording requiring owner review.
 - 7 хоногт 3 ба түүнээс олон удаа хэрэглэдэг
 - Хариулахгүй
 
-## COPY-0480 — P2
+## COPY-0476 — P2
 
 **Exact current text**
 
@@ -1168,7 +1168,7 @@ Question wording requiring owner review.
 - Найз нөхдийн дунд татгалзах хэцүү болдог
 - Сайн мэдэхгүй
 
-## COPY-0481 — P2
+## COPY-0477 — P2
 
 **Exact current text**
 
@@ -1239,7 +1239,7 @@ Question wording requiring owner review.
 - Онц өөрчлөлтгүй
 - Сайн мэдэхгүй
 
-## COPY-0482 — P2
+## COPY-0478 — P2
 
 **Exact current text**
 
@@ -1306,7 +1306,7 @@ Question wording requiring owner review.
 - Өдөр бүр татдаг
 - Хариулахгүй
 
-## COPY-0483 — P2
+## COPY-0479 — P2
 
 **Exact current text**
 
@@ -1374,7 +1374,7 @@ Question wording requiring owner review.
 - Стресстэй үед тамхи, кофе, зууш хамт давхцдаг
 - Сайн мэдэхгүй
 
-## COPY-0492 — P2
+## COPY-0488 — P2
 
 **Exact current text**
 
@@ -1437,7 +1437,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0519 — P2
+## COPY-0515 — P2
 
 **Exact current text**
 
@@ -1500,7 +1500,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0520 — P2
+## COPY-0516 — P2
 
 **Exact current text**
 

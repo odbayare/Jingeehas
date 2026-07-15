@@ -45,7 +45,7 @@ function run() {
     removedEntries: []
   });
   const discountCopy = visibleText(_internal.renderOneTimeStart());
-  assert(discountCopy.includes("Coach-ийн хөнгөлөлттэй үнэ: 9,900₮"));
+  assert(discountCopy.includes("Зөвлөхийн хөнгөлөлттэй үнэ: 9,900₮"));
   assert(discountCopy.includes("гарсан дүгнэлтээ Language Coach-д харагдахыг зөвшөөрч байна"));
   assertNoTechnicalWords("client discount copy", discountCopy);
 
@@ -56,7 +56,7 @@ function run() {
   });
   const dashboardCopy = visibleText(_internal.renderCoachDashboard());
   [
-    "Coach цэс",
+    "Зөвлөхийн хяналтын самбар",
     "Үйлчлүүлэгч нэмэх",
     "Дүгнэлт",
     "Таны авах орлого",
@@ -72,11 +72,11 @@ function run() {
   });
   const adminCopy = visibleText(_internal.renderAdminCoach());
   [
-    "Coach / Дэд админ",
-    "Coach-ийн нэр",
-    "Coach-ийн имэйл",
+    "Зөвлөхийн эрхийн удирдлага",
+    "Зөвлөхийн нэр",
+    "Зөвлөхийн имэйл",
     "Утас",
-    "Coach-ийн авах дүн",
+    "Зөвлөхийн шимтгэл",
     "Түр нууц үг"
   ].forEach(phrase => assert(adminCopy.includes(phrase), `admin coach UI should include: ${phrase}`));
 

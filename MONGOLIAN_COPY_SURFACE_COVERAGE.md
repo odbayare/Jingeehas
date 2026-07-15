@@ -5,7 +5,7 @@ Every scenario declares an extraction type. FULL_SURFACE is a complete screen, I
 | Surface | Render function or source | Scenario implemented | Extraction type | Extracted entry count | Covered | Notes |
 | ------- | ------------------------- | -------------------- | --------------- | --------------------: | ------- | ----- |
 | COMING_SOON | renderComingSoon | coming-soon | FULL_SURFACE | 14 | YES |  |
-| LANDING | renderLanding | landing | FULL_SURFACE | 39 | YES |  |
+| LANDING | renderLanding | landing | FULL_SURFACE | 37 | YES |  |
 | ABOUT | renderAbout | about | FULL_SURFACE | 14 | YES |  |
 | CHOICE | renderChoice | choice | FULL_SURFACE | 24 | YES |  |
 | ONE_TIME_START | renderOneTimeStart | one-time-start | FULL_SURFACE | 27 | YES |  |
@@ -26,10 +26,11 @@ Every scenario declares an extraction type. FULL_SURFACE is a complete screen, I
 | OTHER_PROVEN_RENDERED | renderFeedbackExport with internalTest state | internal-feedback-export | FULL_SURFACE | 6 | YES |  |
 | PAYMENT | renderContactCaptureForm | payment-contact | ISOLATED_COMPONENT | 9 | YES |  |
 | QPAY | renderWeightQpayPaymentBox | qpay-pre-invoice | ISOLATED_COMPONENT | 2 | YES |  |
-| QPAY | renderWeightQpayPaymentBox | qpay-invoice-created | ISOLATED_COMPONENT | 9 | YES |  |
-| QPAY | renderWeightQpayPaymentBox | qpay-pending | ISOLATED_COMPONENT | 9 | YES |  |
-| QPAY | renderWeightQpayPaymentBox | qpay-paid | ISOLATED_COMPONENT | 9 | YES |  |
-| VISIBLE_ERROR | renderWeightQpayPaymentBox with qpayStatusMessage(error) | qpay-error | ISOLATED_COMPONENT | 3 | YES |  |
+| QPAY | renderWeightQpayPaymentBox | qpay-invoice-created | ISOLATED_COMPONENT | 7 | YES |  |
+| QPAY | renderWeightQpayPaymentBox | qpay-pending | ISOLATED_COMPONENT | 7 | YES |  |
+| QPAY | renderWeightQpayPaymentBox | qpay-paid | ISOLATED_COMPONENT | 4 | YES |  |
+| VISIBLE_ERROR | renderWeightQpayPaymentBox with create error | qpay-create-error | ISOLATED_COMPONENT | 3 | YES |  |
+| VISIBLE_ERROR | renderWeightQpayPaymentBox with check error | qpay-check-error | ISOLATED_COMPONENT | 7 | YES |  |
 | SAMPLE_REPORT | renderSampleResultPreview | sample-report | ISOLATED_COMPONENT | 9 | YES |  |
 | QUESTION_BANK | stageOneQuestions consumed by renderStageOne | question-bank | ISOLATED_COMPONENT | 84 | YES |  |
 | ANSWER_OPTIONS | stageOneQuestions consumed by renderInput | answer-options | ISOLATED_COMPONENT | 518 | YES |  |

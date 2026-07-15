@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0460 — P2
+## COPY-0456 — P2
 
 **Exact current text**
 
@@ -69,7 +69,7 @@ Question wording requiring owner review.
 - Бараг бүх оролдлогоос хойш
 - Санахгүй
 
-## COPY-0461 — P2
+## COPY-0457 — P2
 
 **Exact current text**
 
@@ -153,7 +153,7 @@ Question wording requiring owner review.
 - Оролдож байгаагүй
 - Өөр арга
 
-## COPY-0462 — P2
+## COPY-0458 — P2
 
 **Exact current text**
 
@@ -216,7 +216,7 @@ Question wording requiring owner review.
 
 - None
 
-## COPY-0463 — P2
+## COPY-0459 — P2
 
 **Exact current text**
 
@@ -285,7 +285,7 @@ Question wording requiring owner review.
 - Тодорхой бодол төрдөггүй
 - Надад хоолны дэглэм гэж тодорхой зүйл байдаггүй
 
-## COPY-0489 — P2
+## COPY-0485 — P2
 
 **Exact current text**
 
@@ -353,7 +353,7 @@ Question wording requiring owner review.
 - Бие сулрах вий гэж айдаг
 - Хэсэг сайн яваад дараа нь үргэлжлүүлэхэд хэцүү болдог
 
-## COPY-0490 — P2
+## COPY-0486 — P2
 
 **Exact current text**
 
@@ -420,7 +420,7 @@ Question wording requiring owner review.
 - Ихэвчлэн
 - Бараг үргэлж
 
-## COPY-0491 — P2
+## COPY-0487 — P2
 
 **Exact current text**
 

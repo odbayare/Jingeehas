@@ -191,15 +191,15 @@ function run() {
     removedEntries: []
   });
   let start = normalize(_internal.renderOneTimeStart());
-  assert(start.includes("Coach-ийн урилга илэрлээ"));
-  assert(start.includes("Coach-ийн хөнгөлөлттэй үнэ: 9,900₮"));
+  assert(start.includes("Зөвлөхийн урилга ирсэн байна"));
+  assert(start.includes("Зөвлөхийн хөнгөлөлттэй үнэ: 9,900₮"));
   assert(start.includes("зөвшөөрч байна"));
 
   _internal.acceptCoachDiscount();
   assert.strictEqual(_internal.getTestState().coachDiscountConsent, true);
   let paywall = normalize(_internal.renderReport());
-  assert(paywall.includes("Coach-ийн хөнгөлөлттэй үнэ 9,900₮"));
-  assert(paywall.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"));
+  assert(paywall.includes("Зөвлөхийн хөнгөлөлттэй үнэ 9,900₮"));
+  assert(paywall.includes("9,900₮-ийн QPay төлбөрийн QR код үүсгэх"));
 
   _internal.setTestState({
     packageType: "one-time",
@@ -222,13 +222,13 @@ function run() {
   });
   paywall = normalize(_internal.renderReport());
   assert(paywall.includes("Төлөх үнэ 9,900₮"));
-  assert(paywall.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"));
-  assert(!paywall.includes("Coach-ийн хөнгөлөлттэй үнэ 9,900₮"));
+  assert(paywall.includes("9,900₮-ийн QPay төлбөрийн QR код үүсгэх"));
+  assert(!paywall.includes("Зөвлөхийн хөнгөлөлттэй үнэ 9,900₮"));
 
   _internal.setTestState({ internalTest: true, adminCoachForm: { email: "", name: "", phone: "", commissionMnt: "4000" } });
-  assert(normalize(_internal.renderAdminCoach()).includes("Coach / Дэд админ"));
+  assert(normalize(_internal.renderAdminCoach()).includes("Зөвлөхийн эрхийн удирдлага"));
   _internal.setTestState({ internalTest: false });
-  assert(!normalize(_internal.renderAdminCoach()).includes("Coach / Дэд админ"), "admin coach panel should not be public by default");
+  assert(!normalize(_internal.renderAdminCoach()).includes("Зөвлөхийн эрхийн удирдлага"), "admin coach panel should not be public by default");
 
   _internal.setTestState({ coachSessionToken: uiLogin.session.token, coachClientForm: { email: "", name: "", note: "" } });
   assert(normalize(_internal.renderCoachDashboard()).includes("Үйлчлүүлэгч нэмэх"));

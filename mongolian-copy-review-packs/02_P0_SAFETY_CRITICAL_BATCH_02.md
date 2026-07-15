@@ -2,7 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0270 — P0
+## COPY-0267 — P0
 
 **Exact current text**
 
@@ -41,7 +41,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 
 **Rendered context**
 
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
 > Буцах
 
 **Dynamic values**
@@ -60,7 +60,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0271 — P0
+## COPY-0268 — P0
 
 **Exact current text**
 
@@ -118,7 +118,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0272 — P0
+## COPY-0269 — P0
 
 **Exact current text**
 
@@ -137,7 +137,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6574
+- Source line: 6603
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -177,7 +177,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0273 — P0
+## COPY-0270 — P0
 
 **Exact current text**
 
@@ -196,7 +196,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6575
+- Source line: 6604
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -236,7 +236,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0274 — P0
+## COPY-0271 — P0
 
 **Exact current text**
 
@@ -255,7 +255,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6576
+- Source line: 6605
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -295,7 +295,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0275 — P0
+## COPY-0272 — P0
 
 **Exact current text**
 
@@ -314,7 +314,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6579
+- Source line: 6608
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -354,7 +354,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0276 — P0
+## COPY-0273 — P0
 
 **Exact current text**
 
@@ -373,7 +373,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6580
+- Source line: 6609
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -413,7 +413,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0277 — P0
+## COPY-0274 — P0
 
 **Exact current text**
 
@@ -432,7 +432,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6583
+- Source line: 6612
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -472,7 +472,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0278 — P0
+## COPY-0275 — P0
 
 **Exact current text**
 
@@ -491,7 +491,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6585
+- Source line: 6614
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -531,7 +531,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0279 — P0
+## COPY-0276 — P0
 
 **Exact current text**
 
@@ -550,7 +550,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6586
+- Source line: 6615
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -590,7 +590,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0280 — P0
+## COPY-0277 — P0
 
 **Exact current text**
 
@@ -609,7 +609,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6587
+- Source line: 6616
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -649,7 +649,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0281 — P0
+## COPY-0278 — P0
 
 **Exact current text**
 
@@ -668,7 +668,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6591
+- Source line: 6620
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -708,7 +708,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0282 — P0
+## COPY-0279 — P0
 
 **Exact current text**
 
@@ -727,7 +727,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6593
+- Source line: 6622
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -767,7 +767,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0283 — P0
+## COPY-0280 — P0
 
 **Exact current text**
 
@@ -786,7 +786,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6594
+- Source line: 6623
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -826,7 +826,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0284 — P0
+## COPY-0281 — P0
 
 **Exact current text**
 
@@ -845,7 +845,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6595
+- Source line: 6624
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -885,7 +885,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0285 — P0
+## COPY-0282 — P0
 
 **Exact current text**
 
@@ -904,7 +904,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6599
+- Source line: 6628
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -944,7 +944,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0286 — P0
+## COPY-0283 — P0
 
 **Exact current text**
 
@@ -963,7 +963,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6600
+- Source line: 6629
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -1003,7 +1003,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0287 — P0
+## COPY-0284 — P0
 
 **Exact current text**
 
@@ -1044,7 +1044,184 @@ Safety-critical routing or interpretation text.
 
 > Мацаг, хоол алгасах, огцом хязгаарлалт, өөрийгөө шийтгэх дасгал, эсвэл “буцаад эхнээс нь чанга барина” гэсэн ганцхан шийдлээс түр зайлсхий.
 > Тайлангаа хадгалах
-> Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0285 — P0
+
+**Exact current text**
+
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: PROFESSIONAL_SAFETY
+- Role: PAID_USER
+- Scenario: professional-safety
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3477
+- Source function/object: renderReportDeliveryActions
+- Source mapping: RESOLVED
+- Render proof: renderReport via professional-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <h3>${escapeHtml(heading)}</h3>
+
+**Source item**
+
+> <p class="muted">Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.</p>
+
+**Source context after**
+
+> ${savedContact ? `
+
+**Rendered context**
+
+> Тайлангаа хадгалах
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0286 — P0
+
+**Exact current text**
+
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: PROFESSIONAL_SAFETY
+- Role: PAID_USER
+- Scenario: professional-safety
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3485
+- Source function/object: renderReportDeliveryActions
+- Source mapping: RESOLVED
+- Render proof: renderReport via professional-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> </div>
+
+**Source item**
+
+> ` : `<p class="muted">Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.</p>`}
+
+**Source context after**
+
+> ${contact.copyStatus ? `<p class="muted">${escapeHtml(contact.copyStatus)}</p>` : ""}
+
+**Rendered context**
+
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
+> Тайлангийн текстийг хуулах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0287 — P0
+
+**Exact current text**
+
+> Тайлангийн текстийг хуулах
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: PROFESSIONAL_SAFETY
+- Role: PAID_USER
+- Scenario: professional-safety
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3488
+- Source function/object: renderReportDeliveryActions
+- Source mapping: RESOLVED
+- Render proof: renderReport via professional-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="actions">
+
+**Source item**
+
+> <button class="button secondary" onclick="copyCurrentReport()">Тайлангийн текстийг хуулах</button>
+
+**Source context after**
+
+> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх эсвэл PDF-ээр хадгалах</button>
+
+**Rendered context**
+
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
+> Тайлангийн текстийг хуулах
+> Хэвлэх эсвэл PDF-ээр хадгалах
 
 **Dynamic values**
 
@@ -1066,7 +1243,7 @@ Safety-critical routing or interpretation text.
 
 **Exact current text**
 
-> Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.
+> Хэвлэх эсвэл PDF-ээр хадгалах
 
 **Classification**
 
@@ -1081,29 +1258,29 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3448
-- Source function/object: renderReportDeliveryActions
-- Source mapping: RESOLVED
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <h3>${escapeHtml(heading)}</h3>
+> None
 
 **Source item**
 
-> <p class="muted">Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.</p>
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> ${savedContact ? `
+> None
 
 **Rendered context**
 
-> Тайлангаа хадгалах
-> Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.
-> Холбоо барих мэдээлэл хадгалагдаагүй байна.
+> Тайлангийн текстийг хуулах
+> Хэвлэх эсвэл PDF-ээр хадгалах
+> Эхний хариу руу буцах
 
 **Dynamic values**
 
@@ -1125,183 +1302,6 @@ Safety-critical routing or interpretation text.
 
 **Exact current text**
 
-> Холбоо барих мэдээлэл хадгалагдаагүй байна.
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: PROFESSIONAL_SAFETY
-- Role: PAID_USER
-- Scenario: professional-safety
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3456
-- Source function/object: renderReportDeliveryActions
-- Source mapping: RESOLVED
-- Render proof: renderReport via professional-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> </div>
-
-**Source item**
-
-> ` : `<p class="muted">Холбоо барих мэдээлэл хадгалагдаагүй байна.</p>`}
-
-**Source context after**
-
-> ${contact.copyStatus ? `<p class="muted">${escapeHtml(contact.copyStatus)}</p>` : ""}
-
-**Rendered context**
-
-> Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.
-> Холбоо барих мэдээлэл хадгалагдаагүй байна.
-> Тайлан хуулж авах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0290 — P0
-
-**Exact current text**
-
-> Тайлан хуулж авах
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: PROFESSIONAL_SAFETY
-- Role: PAID_USER
-- Scenario: professional-safety
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3459
-- Source function/object: renderReportDeliveryActions
-- Source mapping: RESOLVED
-- Render proof: renderReport via professional-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="actions">
-
-**Source item**
-
-> <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
-
-**Source context after**
-
-> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
-
-**Rendered context**
-
-> Холбоо барих мэдээлэл хадгалагдаагүй байна.
-> Тайлан хуулж авах
-> Хэвлэх / PDF хадгалах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0291 — P0
-
-**Exact current text**
-
-> Хэвлэх / PDF хадгалах
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: PROFESSIONAL_SAFETY
-- Role: PAID_USER
-- Scenario: professional-safety
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3460
-- Source function/object: renderReportDeliveryActions
-- Source mapping: RESOLVED
-- Render proof: renderReport via professional-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
-
-**Source item**
-
-> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Тайлан хуулж авах
-> Хэвлэх / PDF хадгалах
-> Эхний хариу руу буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0292 — P0
-
-**Exact current text**
-
 > Эхний хариу руу буцах
 
 **Classification**
@@ -1317,7 +1317,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6606
+- Source line: 6635
 - Source function/object: renderReport
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -1337,7 +1337,7 @@ Safety-critical routing or interpretation text.
 
 **Rendered context**
 
-> Хэвлэх / PDF хадгалах
+> Хэвлэх эсвэл PDF-ээр хадгалах
 > Эхний хариу руу буцах
 > Шинээр эхлэх
 
@@ -1357,7 +1357,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0293 — P0
+## COPY-0290 — P0
 
 **Exact current text**
 
@@ -1416,7 +1416,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0294 — P0
+## COPY-0291 — P0
 
 **Exact current text**
 

@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0496 — P2
+## COPY-0492 — P2
 
 **Exact current text**
 
@@ -69,7 +69,7 @@ Question wording requiring owner review.
 - Харагдвал бараг автоматаар иддэг
 - Зууш ил байлгадаггүй
 
-## COPY-0497 — P2
+## COPY-0493 — P2
 
 **Exact current text**
 

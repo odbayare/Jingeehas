@@ -2,125 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0374 — P2
-
-**Exact current text**
-
-> Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: OTHER_PROVEN_RENDERED
-- Role: INTERNAL_TESTER
-- Scenario: internal-feedback-survey
-- Render source: renderInternalTesterFeedbackSurvey with internalTest state
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6109
-- Source function/object: renderInternalTesterFeedbackSurvey
-- Source mapping: RESOLVED
-- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
-
-**Source item**
-
-> ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
-
-**Source context after**
-
-> ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
-
-**Rendered context**
-
-> Яагаад?
-> Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?
-> Ямар хэсэг?
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0375 — P2
-
-**Exact current text**
-
-> Ямар хэсэг?
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: OTHER_PROVEN_RENDERED
-- Role: INTERNAL_TESTER
-- Scenario: internal-feedback-survey
-- Render source: renderInternalTesterFeedbackSurvey with internalTest state
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6109
-- Source function/object: renderInternalTesterFeedbackSurvey
-- Source mapping: RESOLVED
-- Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> ${feedbackChoiceField("feltUnderstood", "Тайлан уншихад “намайг ойлгож байна” гэсэн мэдрэмж төрсөн үү?", ["Тийм", "Зарим хэсэг дээр", "Үгүй"], "feltUnderstoodReason", "Яагаад?")}
-
-**Source item**
-
-> ${feedbackChoiceField("newInsight", "Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?", ["Тийм", "Бага зэрэг", "Үгүй"], "newInsightDetail", "Ямар хэсэг?")}
-
-**Source context after**
-
-> ${feedbackChoiceField("aiGenericFeeling", "Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?", ["Үгүй", "Тийм"], "aiGenericDetail", "Аль хэсэг?")}
-
-**Rendered context**
-
-> Тайлангаас танд хэрэгтэй шинэ өнцөг, шинэ ойлголт гарсан уу?
-> Ямар хэсэг?
-> Тайлан хэт ерөнхий, AI шиг, эсвэл худлаа санагдсан хэсэг байсан уу?
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0377 — P2
+## COPY-0372 — P2
 
 **Exact current text**
 
@@ -139,7 +21,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6110
+- Source line: 6139
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -179,7 +61,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0378 — P2
+## COPY-0373 — P2
 
 **Exact current text**
 
@@ -198,7 +80,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6111
+- Source line: 6140
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -238,7 +120,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0379 — P2
+## COPY-0374 — P2
 
 **Exact current text**
 
@@ -297,7 +179,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0380 — P2
+## COPY-0375 — P2
 
 **Exact current text**
 
@@ -316,7 +198,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6111
+- Source line: 6140
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -356,7 +238,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0381 — P2
+## COPY-0376 — P2
 
 **Exact current text**
 
@@ -375,7 +257,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6111
+- Source line: 6140
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -415,7 +297,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0382 — P2
+## COPY-0377 — P2
 
 **Exact current text**
 
@@ -434,7 +316,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6111
+- Source line: 6140
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -474,7 +356,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0383 — P2
+## COPY-0378 — P2
 
 **Exact current text**
 
@@ -493,7 +375,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6111
+- Source line: 6140
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -533,7 +415,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0384 — P2
+## COPY-0379 — P2
 
 **Exact current text**
 
@@ -552,7 +434,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6112
+- Source line: 6141
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -592,7 +474,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0385 — P2
+## COPY-0380 — P2
 
 **Exact current text**
 
@@ -651,7 +533,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0386 — P2
+## COPY-0381 — P2
 
 **Exact current text**
 
@@ -670,7 +552,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6113
+- Source line: 6142
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -710,7 +592,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0387 — P2
+## COPY-0382 — P2
 
 **Exact current text**
 
@@ -729,7 +611,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6114
+- Source line: 6143
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -769,7 +651,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0388 — P2
+## COPY-0383 — P2
 
 **Exact current text**
 
@@ -788,7 +670,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6116
+- Source line: 6145
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -828,7 +710,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0389 — P2
+## COPY-0384 — P2
 
 **Exact current text**
 
@@ -886,7 +768,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0390 — P2
+## COPY-0385 — P2
 
 **Exact current text**
 
@@ -905,7 +787,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6163
+- Source line: 6192
 - Source function/object: renderFeedbackThanks
 - Source mapping: RESOLVED
 - Render proof: renderFeedbackThanks with internalTest state via internal-feedback-thanks [FULL_SURFACE]
@@ -945,7 +827,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0391 — P2
+## COPY-0386 — P2
 
 **Exact current text**
 
@@ -964,7 +846,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6166
+- Source line: 6195
 - Source function/object: renderFeedbackThanks
 - Source mapping: RESOLVED
 - Render proof: renderFeedbackThanks with internalTest state via internal-feedback-thanks [FULL_SURFACE]
@@ -1004,7 +886,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0392 — P2
+## COPY-0387 — P2
 
 **Exact current text**
 
@@ -1023,7 +905,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6167
+- Source line: 6196
 - Source function/object: renderFeedbackThanks
 - Source mapping: RESOLVED
 - Render proof: renderFeedbackThanks with internalTest state via internal-feedback-thanks [FULL_SURFACE]
@@ -1063,7 +945,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0393 — P2
+## COPY-0388 — P2
 
 **Exact current text**
 
@@ -1121,7 +1003,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0395 — P2
+## COPY-0390 — P2
 
 **Exact current text**
 
@@ -1180,7 +1062,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0396 — P2
+## COPY-0391 — P2
 
 **Exact current text**
 
@@ -1199,7 +1081,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6185
+- Source line: 6214
 - Source function/object: renderFeedbackExport
 - Source mapping: RESOLVED
 - Render proof: renderFeedbackExport with internalTest state via internal-feedback-export [FULL_SURFACE]

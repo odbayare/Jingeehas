@@ -21,7 +21,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2178
+- Source line: 2195
 - Source function/object: renderComingSoon
 - Source mapping: RESOLVED
 - Render proof: renderComingSoon via coming-soon [FULL_SURFACE]
@@ -61,7 +61,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0037 — P0
+## COPY-0035 — P0
 
 **Exact current text**
 
@@ -120,7 +120,7 @@ METHODOLOGY_NAME
 - Approval date:
 - Notes:
 
-## COPY-0038 — P0
+## COPY-0036 — P0
 
 **Exact current text**
 
@@ -179,7 +179,7 @@ METHODOLOGY_NAME
 - Approval date:
 - Notes:
 
-## COPY-0039 — P0
+## COPY-0037 — P0
 
 **Exact current text**
 
@@ -238,7 +238,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0040 — P0
+## COPY-0038 — P0
 
 **Exact current text**
 
@@ -297,7 +297,7 @@ METHODOLOGY_NAME
 - Approval date:
 - Notes:
 
-## COPY-0041 — P0
+## COPY-0039 — P0
 
 **Exact current text**
 
@@ -356,7 +356,7 @@ METHODOLOGY_NAME
 - Approval date:
 - Notes:
 
-## COPY-0042 — P0
+## COPY-0040 — P0
 
 **Exact current text**
 
@@ -415,7 +415,7 @@ METHODOLOGY_NAME
 - Approval date:
 - Notes:
 
-## COPY-0043 — P0
+## COPY-0041 — P0
 
 **Exact current text**
 
@@ -474,7 +474,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0044 — P0
+## COPY-0042 — P0
 
 **Exact current text**
 
@@ -533,7 +533,7 @@ METHODOLOGY_NAME
 - Approval date:
 - Notes:
 
-## COPY-0101 — P0
+## COPY-0099 — P0
 
 **Exact current text**
 
@@ -552,7 +552,7 @@ METHODOLOGY_NAME
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2383
+- Source line: 2399
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
@@ -592,11 +592,11 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0220 — P0
+## COPY-0214 — P0
 
 **Exact current text**
 
-> Хэвлэх / PDF хадгалах
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
 
 **Classification**
 
@@ -611,7 +611,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3460
+- Source line: 3477
 - Source function/object: renderReportDeliveryActions
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -619,20 +619,79 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 
 **Source context before**
 
-> <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
+> <h3>${escapeHtml(heading)}</h3>
 
 **Source item**
 
-> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
+> <p class="muted">Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.</p>
 
 **Source context after**
 
-> </div>
+> ${savedContact ? `
 
 **Rendered context**
 
-> Тайлан хуулж авах
-> Хэвлэх / PDF хадгалах
+> Тайлангаа хадгалах
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+TECHNICAL_INSTRUCTION
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0217 — P0
+
+**Exact current text**
+
+> Хэвлэх эсвэл PDF-ээр хадгалах
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: TECHNICAL_INSTRUCTION
+- Surface: ONE_TIME_REPORT
+- Role: PAID_USER
+- Scenario: one-time-paid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderReport via one-time-paid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Тайлангийн текстийг хуулах
+> Хэвлэх эсвэл PDF-ээр хадгалах
 > Сонголт руу буцах
 
 **Dynamic values**
@@ -651,7 +710,7 @@ TECHNICAL_INSTRUCTION
 - Approval date:
 - Notes:
 
-## COPY-0256 — P0
+## COPY-0253 — P0
 
 **Exact current text**
 
@@ -670,7 +729,7 @@ TECHNICAL_INSTRUCTION
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2383
+- Source line: 2399
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -710,11 +769,11 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0291 — P0
+## COPY-0285 — P0
 
 **Exact current text**
 
-> Хэвлэх / PDF хадгалах
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
 
 **Classification**
 
@@ -729,7 +788,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3460
+- Source line: 3477
 - Source function/object: renderReportDeliveryActions
 - Source mapping: RESOLVED
 - Render proof: renderReport via professional-safety [FULL_SURFACE]
@@ -737,20 +796,79 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 
 **Source context before**
 
-> <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
+> <h3>${escapeHtml(heading)}</h3>
 
 **Source item**
 
-> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
+> <p class="muted">Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.</p>
 
 **Source context after**
 
-> </div>
+> ${savedContact ? `
 
 **Rendered context**
 
-> Тайлан хуулж авах
-> Хэвлэх / PDF хадгалах
+> Тайлангаа хадгалах
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+TECHNICAL_INSTRUCTION
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0288 — P0
+
+**Exact current text**
+
+> Хэвлэх эсвэл PDF-ээр хадгалах
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: TECHNICAL_INSTRUCTION
+- Surface: PROFESSIONAL_SAFETY
+- Role: PAID_USER
+- Scenario: professional-safety
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderReport via professional-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Тайлангийн текстийг хуулах
+> Хэвлэх эсвэл PDF-ээр хадгалах
 > Эхний хариу руу буцах
 
 **Dynamic values**
@@ -769,299 +887,7 @@ TECHNICAL_INSTRUCTION
 - Approval date:
 - Notes:
 
-## COPY-0305 — P0
-
-**Exact current text**
-
-> Coach login
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADVISOR_PORTAL
-- Role: ADVISOR
-- Scenario: advisor-login
-- Render source: renderCoachLogin
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 5930
-- Source function/object: renderCoachLogin
-- Source mapping: RESOLVED
-- Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> return `
-
-**Source item**
-
-> ${topbar(0, "Coach login")}
-
-**Source context after**
-
-> <section class="screen">
-
-**Rendered context**
-
-> Coach login
-> Coach нэвтрэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0306 — P0
-
-**Exact current text**
-
-> Coach нэвтрэх
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADVISOR_PORTAL
-- Role: ADVISOR
-- Scenario: advisor-login
-- Render source: renderCoachLogin
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 5933
-- Source function/object: renderCoachLogin
-- Source mapping: RESOLVED
-- Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="panel stack">
-
-**Source item**
-
-> <h2>Coach нэвтрэх</h2>
-
-**Source context after**
-
-> <label class="field"><span class="muted">Имэйл</span><input type="email" value="${escapeAttr(state.coachLoginForm?.email || "")}" oninput="updateCoachLoginField('email', this.value)"></label>
-
-**Rendered context**
-
-> Coach login
-> Coach нэвтрэх
-> Имэйл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0311 — P0
-
-**Exact current text**
-
-> Coach login
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: VISIBLE_ERROR
-- Role: ADVISOR
-- Scenario: advisor-login-error
-- Render source: renderCoachLogin with existing coachLoginError
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 5930
-- Source function/object: renderCoachLogin
-- Source mapping: RESOLVED
-- Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> return `
-
-**Source item**
-
-> ${topbar(0, "Coach login")}
-
-**Source context after**
-
-> <section class="screen">
-
-**Rendered context**
-
-> Coach login
-> Coach нэвтрэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0312 — P0
-
-**Exact current text**
-
-> Coach нэвтрэх
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: VISIBLE_ERROR
-- Role: ADVISOR
-- Scenario: advisor-login-error
-- Render source: renderCoachLogin with existing coachLoginError
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 5933
-- Source function/object: renderCoachLogin
-- Source mapping: RESOLVED
-- Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="panel stack">
-
-**Source item**
-
-> <h2>Coach нэвтрэх</h2>
-
-**Source context after**
-
-> <label class="field"><span class="muted">Имэйл</span><input type="email" value="${escapeAttr(state.coachLoginForm?.email || "")}" oninput="updateCoachLoginField('email', this.value)"></label>
-
-**Rendered context**
-
-> Coach login
-> Coach нэвтрэх
-> Имэйл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0318 — P0
-
-**Exact current text**
-
-> Coach цэс
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADVISOR_PORTAL
-- Role: ADVISOR
-- Scenario: advisor-dashboard-empty, advisor-dashboard-populated
-- Render source: renderCoachDashboard with mock empty advisor
-- Extraction type: FULL_SURFACE
-- Occurrence count: 4
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Coach цэс
-> Нээлтээс өмнөх туршилтын хувилбар
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0320 — P0
+## COPY-0315 — P0
 
 **Exact current text**
 
@@ -1120,7 +946,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0339 — P0
+## COPY-0334 — P0
 
 **Exact current text**
 
@@ -1179,418 +1005,7 @@ UNRESOLVED_LATIN_TERM
 - Approval date:
 - Notes:
 
-## COPY-0341 — P0
-
-**Exact current text**
-
-> Coach / Дэд админ
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 2
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Coach / Дэд админ
-> Coach нэмэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0342 — P0
-
-**Exact current text**
-
-> Coach нэмэх
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 2
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Coach / Дэд админ
-> Coach нэмэх
-> Coach-ийн имэйл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0343 — P0
-
-**Exact current text**
-
-> Coach-ийн имэйл
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6074
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Coach нэмэх</h3>
-
-**Source item**
-
-> <label class="field"><span class="muted">Coach-ийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
-
-**Source context after**
-
-> <label class="field"><span class="muted">Coach-ийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
-
-**Rendered context**
-
-> Coach нэмэх
-> Coach-ийн имэйл
-> Coach-ийн нэр
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0344 — P0
-
-**Exact current text**
-
-> Coach-ийн нэр
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6075
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <label class="field"><span class="muted">Coach-ийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
-
-**Source item**
-
-> <label class="field"><span class="muted">Coach-ийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
-
-**Source context after**
-
-> <label class="field"><span class="muted">Утас</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
-
-**Rendered context**
-
-> Coach-ийн имэйл
-> Coach-ийн нэр
-> Утас
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0346 — P0
-
-**Exact current text**
-
-> Coach-ийн авах дүн
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6077
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <label class="field"><span class="muted">Утас</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
-
-**Source item**
-
-> <label class="field"><span class="muted">Coach-ийн авах дүн</span><input type="number" value="${escapeAttr(state.adminCoachForm?.commissionMnt || String(COACH_COMMISSION_MNT))}" oninput="updateAdminCoachField('commissionMnt', this.value)"></label>
-
-**Source context after**
-
-> <button class="button" onclick="createCoachFromAdmin()">Coach нэмэх</button>
-
-**Rendered context**
-
-> Утас
-> Coach-ийн авах дүн
-> Coach list
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0347 — P0
-
-**Exact current text**
-
-> Coach list
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6083
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="card stack">
-
-**Source item**
-
-> <h3>Coach list</h3>
-
-**Source context after**
-
-> ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Coach бүртгэл алга.</p>`}
-
-**Rendered context**
-
-> Coach-ийн авах дүн
-> Coach list
-> Coach бүртгэл алга.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0348 — P0
-
-**Exact current text**
-
-> Coach бүртгэл алга.
-
-**Classification**
-
-- Priority: P0
-- Review group: mixed
-- Structural signal: ADMIN_OR_ADVISOR_TERM
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6084
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Coach list</h3>
-
-**Source item**
-
-> ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Coach бүртгэл алга.</p>`}
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Coach list
-> Coach бүртгэл алга.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-ADMIN_OR_ADVISOR_TERM
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0376 — P0
+## COPY-0371 — P0
 
 **Exact current text**
 
@@ -1609,7 +1024,7 @@ ADMIN_OR_ADVISOR_TERM
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6110
+- Source line: 6139
 - Source function/object: renderInternalTesterFeedbackSurvey
 - Source mapping: RESOLVED
 - Render proof: renderInternalTesterFeedbackSurvey with internalTest state via internal-feedback-survey [ISOLATED_COMPONENT]
@@ -1649,7 +1064,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0394 — P0
+## COPY-0389 — P0
 
 **Exact current text**
 
@@ -1668,7 +1083,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6183
+- Source line: 6212
 - Source function/object: renderFeedbackExport
 - Source mapping: RESOLVED
 - Render proof: renderFeedbackExport with internalTest state via internal-feedback-export [FULL_SURFACE]
@@ -1708,11 +1123,69 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Approval date:
 - Notes:
 
-## COPY-0408 — P0
+## COPY-0401 — P0
 
 **Exact current text**
 
-> QPay QR үүсгэж байна.
+> 9,900₮-ийн QPay төлбөрийн QR код үүсгэх
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-pre-invoice
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-pre-invoice [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> 9,900₮-ийн QPay төлбөрийн QR код үүсгэх
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0403 — P0
+
+**Exact current text**
+
+> QPay төлбөрийн QR код үүсгэж байна.
 
 **Classification**
 
@@ -1727,7 +1200,7 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 1476
+- Source line: 1478
 - Source function/object: qpayStatusMessage
 - Source mapping: RESOLVED
 - Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]
@@ -1739,17 +1212,547 @@ ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
 
 **Source item**
 
-> creating: "QPay QR үүсгэж байна.",
+> creating: "QPay төлбөрийн QR код үүсгэж байна.",
 
 **Source context after**
 
-> pending: "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
+> pending: "Төлбөр хараахан баталгаажаагүй байна. Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.",
 
 **Rendered context**
 
 > Сонголт руу буцах
-> QPay QR үүсгэж байна.
-> Утаснаас төлөх бол банкны апп сонгож болно.
+> QPay төлбөрийн QR код үүсгэж байна.
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0406 — P0
+
+**Exact current text**
+
+> QR кодоор төлөх
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3347
+- Source function/object: renderQpayMobilePaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <details class="qpay-mobile-qr-toggle">
+
+**Source item**
+
+> <summary>QR кодоор төлөх</summary>
+
+**Source context after**
+
+> <img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr">
+
+**Rendered context**
+
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
+> QR кодоор төлөх
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0407 — P0
+
+**Exact current text**
+
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> QR кодоор төлөх
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Төлбөр шалгаж байна…
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0412 — P0
+
+**Exact current text**
+
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: QPAY
+- Role: PAID_USER
+- Scenario: qpay-paid
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Бүрэн тайлангаа харах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0415 — P0
+
+**Exact current text**
+
+> QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-create-error
+- Render source: renderWeightQpayPaymentBox with create error
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 1482
+- Source function/object: qpayStatusMessage
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox with create error via qpay-create-error [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> paid: context === "pre_test" ? "Төлбөр амжилттай баталгаажлаа. Тестээ эхлүүлэх боломжтой боллоо." : "Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
+
+**Source item**
+
+> create_error: "QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.",
+
+**Source context after**
+
+> check_error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Энэ нь таны төлбөр цуцлагдсан гэсэн үг биш. Түр хүлээгээд дахин шалгана уу."
+
+**Rendered context**
+
+> QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.
+> QR код дахин үүсгэх
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0416 — P0
+
+**Exact current text**
+
+> QR код дахин үүсгэх
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-create-error
+- Render source: renderWeightQpayPaymentBox with create error
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3385
+- Source function/object: renderWeightQpayPaymentBox
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox with create error via qpay-create-error [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Төлбөр шалгаж байна…" : checkError ? "Төлбөр дахин шалгах" : attemptedCheck ? "Дахин шалгах" : "Төлбөр шалгах"}</button>`
+
+**Source item**
+
+> : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR код үүсгэж байна…" : createError ? "QR код дахин үүсгэх" : `${oneTimePrice}-ийн QPay төлбөрийн QR код үүсгэх`}</button>`}
+
+**Source context after**
+
+> ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment('one-time')">Дотоод туршилтаар нээх</button>`)}
+
+**Rendered context**
+
+> QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.
+> QR код дахин үүсгэх
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0421 — P0
+
+**Exact current text**
+
+> QR кодоор төлөх
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-check-error
+- Render source: renderWeightQpayPaymentBox with check error
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3347
+- Source function/object: renderQpayMobilePaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox with check error via qpay-check-error [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <details class="qpay-mobile-qr-toggle">
+
+**Source item**
+
+> <summary>QR кодоор төлөх</summary>
+
+**Source context after**
+
+> <img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr">
+
+**Rendered context**
+
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
+> QR кодоор төлөх
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0422 — P0
+
+**Exact current text**
+
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-check-error
+- Render source: renderWeightQpayPaymentBox with check error
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox with check error via qpay-check-error [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> QR кодоор төлөх
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Төлбөр дахин шалгах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0679 — P0
+
+**Exact current text**
+
+> Бүлгийн challenge / сургалт
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: ANSWER_OPTIONS
+- Role: PUBLIC_USER
+- Scenario: answer-options
+- Render source: stageOneQuestions consumed by renderInput
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 320
+- Source function/object: module/object scope
+- Source mapping: RESOLVED
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> { id: "S1-W03", module: "Past attempts", type: "single", text: "Та өмнө нь жингээ хасаж чадсан ч буцаад нэмсэн тохиолдол бий юу?", options: ["Үгүй", "Нэг удаа", "Хэд хэдэн удаа", "Бараг бүх оролдлогоос хойш", "Санахгүй"], scores: { "Хэд хэдэн удаа": ["collapse"], "Бараг бүх оролдлогоос хойш": ["collapse", "hungerSafety"] } },
+
+**Source item**
+
+> { id: "S1-W04", module: "Past attempts", type: "multi", text: "Жингээ бууруулах эсвэл жингээ барихын тулд өмнө нь ямар аргууд туршиж байсан бэ?", options: ["Хоолны хэмжээг багасгах", "Калори тоолох", "Нүүрс ус багасгах", "Орой хоол идэхгүй байх", "Завсарлагатай мацаг / мацаг барих", "Алхалт нэмэх", "Фитнес / хүчний дасгал", "Кардио дасгал", "Иог / сунгалтын дасгал", "Усанд сэлэх", "Дугуй / спиннинг", "Бүжиг / хөдөлгөөнтэй хичээл", "Гэрийн дасгал", "Багийн спорт", "Дасгалжуулагчтай хөтөлбөр", "Бүлгийн challenge / сургалт", "Хоол орлуулах бүтээгдэхүүн", "Эм, тариа, нэмэлт бүтээгдэхүүн", "Детокс / “цэвэрлэгээ” гэж нэрлэдэг арга", "Нойр, стрессээ засах гэж оролдсон", "Оролдож байгаагүй", "Өөр арга"], scores: { "Хоолны хэмжээг багасгах": ["hungerSafety"], "Калори тоолох": ["collapse"], "Нүүрс ус багасгах": ["hungerSafety"], "Орой хоол идэхгүй байх": ["hungerSafety"], "Завсарлагатай мацаг / мацаг барих": ["hungerSafety", "glucose"], "Хоол орлуулах бүтээгдэхүүн": ["hungerSafety"], "Эм, тариа, нэмэлт бүтээгдэхүүн": ["medical"], "Детокс / “цэвэрлэгээ” гэж нэрлэдэг арга": ["collapse", "hungerSafety"], "Нойр, стрессээ засах гэж оролдсон": ["circadian", "regulation"] } },
+
+**Source context after**
+
+> { id: "S1-W05", module: "Past attempts", type: "text", text: "Туршиж үзсэн аргуудаас аль нь хоёр долоо хоногоос дээш үргэлжлүүлэхэд хамгийн хэцүү байсан бэ? Юу нь хамгийн их саад болсон бэ?", voice: true },
+
+**Rendered context**
+
+> Дасгалжуулагчтай хөтөлбөр
+> Бүлгийн challenge / сургалт
+> Хоол орлуулах бүтээгдэхүүн
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0902 — P0
+
+**Exact current text**
+
+> PCOS оноштой эсвэл сэжигтэй
+
+**Classification**
+
+- Priority: P0
+- Review group: mixed
+- Structural signal: ENGLISH_TERM_INSIDE_MONGOLIAN_SENTENCE
+- Surface: ANSWER_OPTIONS
+- Role: PUBLIC_USER
+- Scenario: answer-options
+- Render source: stageOneQuestions consumed by renderInput
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: stageOneQuestions consumed by renderInput via answer-options [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Дааврын жирэмслэлтээс хамгаалах хэрэгсэл хэрэглэдэг
+> PCOS оноштой эсвэл сэжигтэй
+> Төрсний дараах эсвэл хөхүүл үе
 
 **Dynamic values**
 

@@ -192,11 +192,11 @@ withLocalStorageMutationSpy(() => {
   const unpaidHtml = _internal.renderReport();
   const unpaid = normalize(unpaidHtml);
   assertSafeOutput(unpaidHtml, "unpaid locked output");
-  assert(unpaid.includes("Энэ хэсэг төлбөргүй хэвээр харагдана"), "unpaid output must explain the free preview");
-  assert(unpaid.includes("Эхний товч зураглал"), "unpaid output must include the visible surface preview");
-  assert(unpaid.includes("Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ"), "unpaid output must clearly explain paid report value");
-  assert(unpaid.includes("Бүрэн тайлан нээх"), "unpaid output must include a clear paid section heading");
-  assert(unpaid.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"), "unpaid output must include clear paid CTA");
+  assert(unpaid.includes("Энэ эхний зураглалыг төлбөргүй үзэх боломжтой"), "unpaid output must explain the free preview");
+  assert(unpaid.includes("Эхний зураглал"), "unpaid output must include the visible surface preview");
+  assert(unpaid.includes("Бүрэн тайланд юу багтах вэ?"), "unpaid output must clearly explain paid report value");
+  assert(unpaid.includes("Бүрэн тайлангаа нээх"), "unpaid output must include a clear paid section heading");
+  assert(unpaid.includes("9,900₮-ийн QPay төлбөрийн QR код үүсгэх"), "unpaid output must include clear paid CTA");
   assert(!unpaid.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "unpaid output must not include paid-only depth section");
   assert(!unpaid.includes("Давтагддаг тойрог"), "unpaid output must not include paid-only cycle depth");
 
@@ -207,7 +207,7 @@ withLocalStorageMutationSpy(() => {
   assert(paid.includes("3. Таны хамгийн магадлалтай гол хэв маяг"), "paid output must include paid report explanation");
   assert(paid.includes("7. 7–14 хоногийн нэг хувьсагчийн туршилт"), "paid output must include paid experiment depth");
   assert(!paid.includes("Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ"), "paid output must not show the locked paywall explanation");
-  assert(!paid.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"), "paid output must not show the locked paywall CTA");
+  assert(!paid.includes("9,900₮-ийн QPay төлбөрийн QR код үүсгэх"), "paid output must not show the locked paywall CTA");
 
   setOneTime({
     qpayPayment: {

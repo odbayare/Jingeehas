@@ -2,483 +2,11 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0141 — P0
+## COPY-0139 — P0
 
 **Exact current text**
 
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2404
-- Source function/object: renderNoAccountPaymentIntro
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <p><strong>Бүртгэл шаардлагагүй.</strong></p>
-
-**Source item**
-
-> <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Бүртгэл шаардлагагүй.
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
-> Тайлан сэргээх холбоо барих мэдээлэл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0142 — P0
-
-**Exact current text**
-
-> Тайлан сэргээх холбоо барих мэдээлэл
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2414
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div>
-
-**Source item**
-
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-
-**Source context after**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Rendered context**
-
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0143 — P0
-
-**Exact current text**
-
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2415
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-
-**Source item**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Source context after**
-
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
-
-**Rendered context**
-
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0144 — P0
-
-**Exact current text**
-
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2416
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Source item**
-
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-> Нэр (сонголтоор)
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0145 — P0
-
-**Exact current text**
-
-> Нэр (сонголтоор)
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2419
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <label class="field">
-
-**Source item**
-
-> <span>Нэр (сонголтоор)</span>
-
-**Source context after**
-
-> <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
-
-**Rendered context**
-
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-> Нэр (сонголтоор)
-> Утас
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0146 — P0
-
-**Exact current text**
-
-> Утас
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Нэр (сонголтоор)
-> Утас
-> Имэйл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0147 — P0
-
-**Exact current text**
-
-> Имэйл
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Утас
-> Имэйл
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0148 — P0
-
-**Exact current text**
-
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: ONE_TIME_PAYWALL
-- Role: PUBLIC_USER
-- Scenario: one-time-unpaid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2430
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> </label>
-
-**Source item**
-
-> <p class="muted">Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.</p>
-
-**Source context after**
-
-> ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
-
-**Rendered context**
-
-> Имэйл
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0149 — P0
-
-**Exact current text**
-
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
 
 **Classification**
 
@@ -501,11 +29,424 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
+> <div>
+
+**Source item**
+
+> <p class="choice-kicker">Төлбөр болон тайлангаа сэргээх мэдээлэл</p>
+
+**Source context after**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Rendered context**
+
+> Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
+> Холбоо барих мэдээллээ оруулна уу
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0140 — P0
+
+**Exact current text**
+
+> Холбоо барих мэдээллээ оруулна уу
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2434
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <p class="choice-kicker">Төлбөр болон тайлангаа сэргээх мэдээлэл</p>
+
+**Source item**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Source context after**
+
+> <p class="muted">Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.</p>
+
+**Rendered context**
+
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
+> Холбоо барих мэдээллээ оруулна уу
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0141 — P0
+
+**Exact current text**
+
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2435
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Source item**
+
+> <p class="muted">Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.</p>
+
+**Source context after**
+
+> </div>
+
+**Rendered context**
+
+> Холбоо барих мэдээллээ оруулна уу
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+> Нэр — заавал биш
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0142 — P0
+
+**Exact current text**
+
+> Нэр — заавал биш
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2438
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <label class="field">
+
+**Source item**
+
+> <span>Нэр — заавал биш</span>
+
+**Source context after**
+
+> <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
+
+**Rendered context**
+
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+> Нэр — заавал биш
+> Утасны дугаар
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0143 — P0
+
+**Exact current text**
+
+> Утасны дугаар
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Нэр — заавал биш
+> Утасны дугаар
+> Имэйл хаяг
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0144 — P0
+
+**Exact current text**
+
+> Имэйл хаяг
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Утасны дугаар
+> Имэйл хаяг
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0145 — P0
+
+**Exact current text**
+
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2449
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> </label>
+
+**Source item**
+
+> <p class="muted">Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.</p>
+
+**Source context after**
+
+> ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
+
+**Rendered context**
+
+> Имэйл хаяг
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0146 — P0
+
+**Exact current text**
+
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: ONE_TIME_PAYWALL
+- Role: PUBLIC_USER
+- Scenario: one-time-unpaid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2452
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
 > <div class="actions">
 
 **Source item**
 
-> <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх</button>
+> <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих</button>
 
 **Source context after**
 
@@ -513,8 +454,8 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
 > Буцах
 
 **Dynamic values**
@@ -533,7 +474,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0150 — P0
+## COPY-0147 — P0
 
 **Exact current text**
 
@@ -572,7 +513,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
 > Буцах
 > Эхний товч зураглал
 
@@ -592,7 +533,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0151 — P0
+## COPY-0148 — P0
 
 **Exact current text**
 
@@ -611,7 +552,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6425
+- Source line: 6454
 - Source function/object: renderVisibleSurfacePrototype
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -651,7 +592,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0152 — P0
+## COPY-0149 — P0
 
 **Exact current text**
 
@@ -670,7 +611,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6329
+- Source line: 6358
 - Source function/object: buildRuntimeVisibleSurfacePayload
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -710,7 +651,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0153 — P0
+## COPY-0150 — P0
 
 **Exact current text**
 
@@ -769,7 +710,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0154 — P0
+## COPY-0151 — P0
 
 **Exact current text**
 
@@ -788,7 +729,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6333
+- Source line: 6362
 - Source function/object: buildRuntimeVisibleSurfacePayload
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -828,7 +769,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0155 — P0
+## COPY-0152 — P0
 
 **Exact current text**
 
@@ -887,7 +828,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0156 — P0
+## COPY-0153 — P0
 
 **Exact current text**
 
@@ -946,7 +887,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0157 — P0
+## COPY-0154 — P0
 
 **Exact current text**
 
@@ -965,7 +906,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6352
+- Source line: 6381
 - Source function/object: buildRuntimeVisibleSurfacePayload
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-unpaid [FULL_SURFACE]
@@ -1004,423 +945,11 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0397 — P0
+## COPY-0392 — P0
 
 **Exact current text**
 
-> Тайлан сэргээх холбоо барих мэдээлэл
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
-- Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2414
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> <div>
-
-**Source item**
-
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-
-**Source context after**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Rendered context**
-
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0398 — P0
-
-**Exact current text**
-
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
-- Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2415
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-
-**Source item**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Source context after**
-
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
-
-**Rendered context**
-
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0399 — P0
-
-**Exact current text**
-
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
-- Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2416
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Source item**
-
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-> Нэр (сонголтоор)
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0400 — P0
-
-**Exact current text**
-
-> Нэр (сонголтоор)
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
-- Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2419
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> <label class="field">
-
-**Source item**
-
-> <span>Нэр (сонголтоор)</span>
-
-**Source context after**
-
-> <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
-
-**Rendered context**
-
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-> Нэр (сонголтоор)
-> Утас
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0401 — P0
-
-**Exact current text**
-
-> Утас
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
-- Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Нэр (сонголтоор)
-> Утас
-> Имэйл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0402 — P0
-
-**Exact current text**
-
-> Имэйл
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
-- Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Утас
-> Имэйл
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0403 — P0
-
-**Exact current text**
-
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
-- Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2430
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> </label>
-
-**Source item**
-
-> <p class="muted">Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.</p>
-
-**Source context after**
-
-> ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
-
-**Rendered context**
-
-> Имэйл
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0404 — P0
-
-**Exact current text**
-
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
 
 **Classification**
 
@@ -1443,11 +972,423 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source context before**
 
+> <div>
+
+**Source item**
+
+> <p class="choice-kicker">Төлбөр болон тайлангаа сэргээх мэдээлэл</p>
+
+**Source context after**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Rendered context**
+
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
+> Холбоо барих мэдээллээ оруулна уу
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0393 — P0
+
+**Exact current text**
+
+> Холбоо барих мэдээллээ оруулна уу
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: PAYMENT
+- Role: PUBLIC_USER
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2434
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <p class="choice-kicker">Төлбөр болон тайлангаа сэргээх мэдээлэл</p>
+
+**Source item**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Source context after**
+
+> <p class="muted">Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.</p>
+
+**Rendered context**
+
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
+> Холбоо барих мэдээллээ оруулна уу
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0394 — P0
+
+**Exact current text**
+
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: PAYMENT
+- Role: PUBLIC_USER
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2435
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Source item**
+
+> <p class="muted">Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.</p>
+
+**Source context after**
+
+> </div>
+
+**Rendered context**
+
+> Холбоо барих мэдээллээ оруулна уу
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+> Нэр — заавал биш
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0395 — P0
+
+**Exact current text**
+
+> Нэр — заавал биш
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: PAYMENT
+- Role: PUBLIC_USER
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2438
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <label class="field">
+
+**Source item**
+
+> <span>Нэр — заавал биш</span>
+
+**Source context after**
+
+> <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
+
+**Rendered context**
+
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+> Нэр — заавал биш
+> Утасны дугаар
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0396 — P0
+
+**Exact current text**
+
+> Утасны дугаар
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: PAYMENT
+- Role: PUBLIC_USER
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Нэр — заавал биш
+> Утасны дугаар
+> Имэйл хаяг
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0397 — P0
+
+**Exact current text**
+
+> Имэйл хаяг
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: PAYMENT
+- Role: PUBLIC_USER
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Утасны дугаар
+> Имэйл хаяг
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0398 — P0
+
+**Exact current text**
+
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: PAYMENT
+- Role: PUBLIC_USER
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2449
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> </label>
+
+**Source item**
+
+> <p class="muted">Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.</p>
+
+**Source context after**
+
+> ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
+
+**Rendered context**
+
+> Имэйл хаяг
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0399 — P0
+
+**Exact current text**
+
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: PAYMENT
+- Role: PUBLIC_USER
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2452
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
 > <div class="actions">
 
 **Source item**
 
-> <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх</button>
+> <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих</button>
 
 **Source context after**
 
@@ -1455,8 +1396,66 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
+> Буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0400 — P0
+
+**Exact current text**
+
+> Буцах
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: PAYMENT
+- Role: PUBLIC_USER
+- Scenario: payment-contact
+- Render source: renderContactCaptureForm
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
 > Буцах
 
 **Dynamic values**

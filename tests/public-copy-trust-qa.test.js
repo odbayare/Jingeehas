@@ -190,8 +190,8 @@ withLocalStorageMutationSpy(() => {
   const unpaidHtml = _internal.renderReport();
   const unpaid = normalize(unpaidHtml);
   assertTrustedOutput(unpaidHtml, "unpaid output");
-  assert(unpaid.includes("Энэ хэсэг төлбөргүй хэвээр харагдана"), "unpaid output must explain free preview");
-  assert(unpaid.includes("Эхний товч зураглал"), "unpaid output must include visible preview surface");
+  assert(unpaid.includes("Энэ эхний зураглалыг төлбөргүй үзэх боломжтой"), "unpaid output must explain free preview");
+  assert(unpaid.includes("Эхний зураглал"), "unpaid output must include visible preview surface");
   assert(!unpaid.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "unpaid output must not show paid depth");
   assert(!unpaid.includes("Давтагддаг тойрог"), "unpaid output must not show paid cycle depth");
 

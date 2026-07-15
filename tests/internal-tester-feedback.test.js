@@ -49,7 +49,7 @@ function run() {
 
   baseAssessmentState();
   const publicReport = normalize(_internal.renderReport());
-  assert(publicReport.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"), "public one-time report should still require payment");
+  assert(publicReport.includes("9,900₮-ийн QPay төлбөрийн QR код үүсгэх"), "public one-time report should still require payment");
   assert(!publicReport.includes("Туршилтын санал асуулга"), "feedback survey should not appear before internal report access");
 
   baseAssessmentState({ internalTest: true });

@@ -48,13 +48,13 @@ resetOneTime();
 const unpaidHtml = _internal.renderOneTimeStart();
 const unpaidText = normalize(unpaidHtml);
 
-assert(unpaidText.includes("Бүртгэл шаардлагагүй."), "no-account copy must appear before payment");
+assert(unpaidText.includes("Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй."), "no-account copy must appear before payment");
 assert(
-  unpaidText.includes("Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна."),
+  unpaidText.includes("Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна."),
   "report-on-screen delivery copy must appear before payment"
 );
 assert(unpaidHtml.includes("data-contact-capture"), "contact capture must render before payment");
-assert(unpaidText.includes("Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай."), "minimal contact requirement must be clear");
+assert(unpaidText.includes("Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу."), "minimal contact requirement must be clear");
 assert(!unpaidHtml.includes("createWeightQpayInvoice()"), "QPay invoice action must not render before contact is saved");
 assert.strictEqual(_internal.hasSavedContactInfo(), false, "empty contact must not count as saved");
 assert.strictEqual(_internal.canStartPaidAssessment("one-time"), false, "contact capture must not unlock paid test");
@@ -74,10 +74,10 @@ const contactSavedText = normalize(contactSavedHtml);
 
 assert.strictEqual(_internal.hasSavedContactInfo(), true, "saved phone/email contact must be recognized");
 assert(contactSavedHtml.includes("data-contact-summary"), "saved contact summary must render");
-assert(contactSavedText.includes("Холбоо барих мэдээлэл хадгалагдсан"), "saved contact must be visible");
+assert(contactSavedText.includes("Төлбөр, тайлан сэргээх мэдээлэл"), "saved contact must be visible");
 assert(contactSavedText.includes("99119911"), "saved phone must be visible for recovery/support");
 assert(contactSavedHtml.includes("createWeightQpayInvoice()"), "QPay invoice action may render only after contact is saved");
-assert(contactSavedText.includes("9,900₮ төлөөд бүрэн тайлангаа нээх"), "QPay CTA must keep the 9,900₮ price");
+assert(contactSavedText.includes("9,900₮-ийн QPay төлбөрийн QR код үүсгэх"), "QPay CTA must keep the 9,900₮ price");
 assert.strictEqual(_internal.canStartPaidAssessment("one-time"), false, "saved contact alone must not unlock paid test");
 
 resetOneTime({
@@ -97,10 +97,10 @@ const reportText = normalize(reportHtml);
 
 assert(reportHtml.includes("data-report-output"), "paid report should expose a copy source");
 assert(reportHtml.includes("data-report-delivery"), "paid report should include report delivery actions");
-assert(reportText.includes("Таны тайлан энэ дэлгэц дээр гарлаа"), "report delivery should say the report is on screen");
-assert(reportText.includes("Тайлан хуулж авах"), "copy report button must render");
-assert(reportText.includes("Хэвлэх / PDF хадгалах"), "print/save button must render");
-assert(reportText.includes("Дэмжлэг авахад хадгалсан мэдээлэл"), "saved contact should appear in report delivery UI");
+assert(reportText.includes("Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой."), "report delivery actions must be clear");
+assert(reportText.includes("Тайлангийн текстийг хуулах"), "copy report button must render");
+assert(reportText.includes("Хэвлэх эсвэл PDF-ээр хадгалах"), "print/save button must render");
+assert(reportText.includes("Төлбөр болон дэмжлэгт ашиглах мэдээлэл"), "saved contact should appear in report delivery UI");
 assert(reportText.includes("test@example.com"), "saved email should appear for recovery/support");
 
 [

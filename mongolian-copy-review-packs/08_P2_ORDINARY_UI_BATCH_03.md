@@ -6,7 +6,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 
 **Exact current text**
 
-> Хурдан эхлэх
+> 9,900₮
 
 **Classification**
 
@@ -21,29 +21,29 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2324
-- Source function/object: renderChoice
-- Source mapping: RESOLVED
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> <div class="card stack choice-card">
+> None
 
 **Source item**
 
-> <p class="choice-kicker">Хурдан эхлэх</p><h3>Нэг удаагийн гүн анализ</h3>
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <p class="price promo"><span>Үндсэн үнэ</span> ${PRICING.oneTime}</p>
+> None
 
 **Rendered context**
 
-> Нэг удаагийн гүн анализ
-> Хурдан эхлэх
 > Үндсэн үнэ
+> 9,900₮
+> Нэг удаагийн зураглал нь эхний тайлан өгнө.
 
 **Dynamic values**
 
@@ -65,124 +65,6 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Үндсэн үнэ
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Хурдан эхлэх
-> Үндсэн үнэ
-> 9,900₮
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0072 — P2
-
-**Exact current text**
-
-> 9,900₮
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: CHOICE
-- Role: PUBLIC_USER
-- Scenario: choice
-- Render source: renderChoice
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderChoice via choice [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Үндсэн үнэ
-> 9,900₮
-> Нэг удаагийн зураглал нь эхний тайлан өгнө.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0073 — P2
-
-**Exact current text**
-
 > Нэг удаагийн зураглал нь эхний тайлан өгнө.
 
 **Classification**
@@ -198,7 +80,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2326
+- Source line: 2342
 - Source function/object: renderChoice
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -238,7 +120,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0074 — P2
+## COPY-0072 — P2
 
 **Exact current text**
 
@@ -257,7 +139,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2327
+- Source line: 2343
 - Source function/object: renderChoice
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -297,7 +179,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0075 — P2
+## COPY-0073 — P2
 
 **Exact current text**
 
@@ -316,23 +198,23 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 2344
+- Source function/object: renderChoice
+- Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <ul><li>Хамгийн тод давтагддаг нөхцөл</li><li>Давхар нөлөөлж буй 1–2 зүйл</li><li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li><li>Одоогоор зайлсхийх зүйлс</li><li>Эхний зөөлөн алхам</li><li>14 хоногийн эхний туршилт</li></ul>
 
 **Source context after**
 
-> None
+> <button class="button choice-button" onclick="choosePackage(&#39;one-time&#39;)">${PRICING.oneTime} төлөөд тайлангаа нээх</button>
 
 **Rendered context**
 
@@ -356,7 +238,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0076 — P2
+## COPY-0074 — P2
 
 **Exact current text**
 
@@ -375,7 +257,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2328
+- Source line: 2344
 - Source function/object: renderChoice
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -415,7 +297,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0077 — P2
+## COPY-0075 — P2
 
 **Exact current text**
 
@@ -434,7 +316,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2328
+- Source line: 2344
 - Source function/object: renderChoice
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -474,7 +356,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0078 — P2
+## COPY-0076 — P2
 
 **Exact current text**
 
@@ -533,7 +415,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0079 — P2
+## COPY-0077 — P2
 
 **Exact current text**
 
@@ -592,7 +474,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0080 — P2
+## COPY-0078 — P2
 
 **Exact current text**
 
@@ -611,23 +493,23 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 2344
+- Source function/object: renderChoice
+- Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <p class="muted">10–15 минутанд жин бууруулах оролдлого яг ямар үед гацаад байгааг эхлээд харна.</p>
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <ul><li>Хамгийн тод давтагддаг нөхцөл</li><li>Давхар нөлөөлж буй 1–2 зүйл</li><li>Тэр идэлт тухайн үед юуг намдааж эсвэл нөхөж байж болох</li><li>Одоогоор зайлсхийх зүйлс</li><li>Эхний зөөлөн алхам</li><li>14 хоногийн эхний туршилт</li></ul>
 
 **Source context after**
 
-> None
+> <button class="button choice-button" onclick="choosePackage(&#39;one-time&#39;)">${PRICING.oneTime} төлөөд тайлангаа нээх</button>
 
 **Rendered context**
 
@@ -651,7 +533,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0081 — P2
+## COPY-0079 — P2
 
 **Exact current text**
 
@@ -710,7 +592,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0082 — P2
+## COPY-0080 — P2
 
 **Exact current text**
 
@@ -729,7 +611,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2253
+- Source line: 2269
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -769,7 +651,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0083 — P2
+## COPY-0081 — P2
 
 **Exact current text**
 
@@ -788,7 +670,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2254
+- Source line: 2270
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -828,7 +710,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0084 — P2
+## COPY-0082 — P2
 
 **Exact current text**
 
@@ -847,7 +729,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2255
+- Source line: 2271
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -887,7 +769,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0085 — P2
+## COPY-0083 — P2
 
 **Exact current text**
 
@@ -906,7 +788,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2259
+- Source line: 2275
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -946,7 +828,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0086 — P2
+## COPY-0084 — P2
 
 **Exact current text**
 
@@ -965,7 +847,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2260
+- Source line: 2276
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -1005,7 +887,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0087 — P2
+## COPY-0085 — P2
 
 **Exact current text**
 
@@ -1064,7 +946,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0088 — P2
+## COPY-0086 — P2
 
 **Exact current text**
 
@@ -1083,7 +965,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2264
+- Source line: 2280
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -1123,7 +1005,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0089 — P2
+## COPY-0087 — P2
 
 **Exact current text**
 
@@ -1142,7 +1024,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2268
+- Source line: 2284
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderChoice via choice [FULL_SURFACE]
@@ -1181,7 +1063,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0090 — P2
+## COPY-0088 — P2
 
 **Exact current text**
 
@@ -1239,7 +1121,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0091 — P2
+## COPY-0089 — P2
 
 **Exact current text**
 
@@ -1258,7 +1140,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2344
+- Source line: 2360
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
@@ -1298,7 +1180,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0092 — P2
+## COPY-0090 — P2
 
 **Exact current text**
 
@@ -1317,7 +1199,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2345
+- Source line: 2361
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
@@ -1357,7 +1239,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0093 — P2
+## COPY-0091 — P2
 
 **Exact current text**
 
@@ -1416,7 +1298,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0094 — P2
+## COPY-0092 — P2
 
 **Exact current text**
 
@@ -1475,7 +1357,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0095 — P2
+## COPY-0093 — P2
 
 **Exact current text**
 
@@ -1534,7 +1416,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0096 — P2
+## COPY-0094 — P2
 
 **Exact current text**
 
@@ -1553,7 +1435,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2352
+- Source line: 2368
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
@@ -1593,7 +1475,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0097 — P2
+## COPY-0095 — P2
 
 **Exact current text**
 
@@ -1612,7 +1494,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2353
+- Source line: 2369
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
@@ -1652,7 +1534,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0098 — P2
+## COPY-0096 — P2
 
 **Exact current text**
 
@@ -1671,7 +1553,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2354
+- Source line: 2370
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
@@ -1711,7 +1593,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0099 — P2
+## COPY-0097 — P2
 
 **Exact current text**
 
@@ -1730,7 +1612,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2355
+- Source line: 2371
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
@@ -1753,6 +1635,124 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 > Зөв/буруу хариулт байхгүй
 > Зарим асуултыг алгасаж болно
 > Төлбөр баталгаажсаны дараа тест эхэлнэ
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0098 — P2
+
+**Exact current text**
+
+> Төлбөр баталгаажсаны дараа тест эхэлнэ
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: ONE_TIME_START
+- Role: PUBLIC_USER
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2398
+- Source function/object: renderOneTimeStart
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="card stack paywall-panel">
+
+**Source item**
+
+> <h3>Төлбөр баталгаажсаны дараа тест эхэлнэ</h3>
+
+**Source context after**
+
+> <p class="muted">QPay нэхэмжлэл үүсэх нь төлбөр биш. Зөвхөн төлбөр баталгаажсаны дараа асуултууд нээгдэнэ.</p>
+
+**Rendered context**
+
+> Зарим асуултыг алгасаж болно
+> Төлбөр баталгаажсаны дараа тест эхэлнэ
+> QPay нэхэмжлэл үүсэх нь төлбөр биш. Зөвхөн төлбөр баталгаажсаны дараа асуултууд нээгдэнэ.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0100 — P2
+
+**Exact current text**
+
+> Үндсэн үнэ
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: ONE_TIME_START
+- Role: PUBLIC_USER
+- Scenario: one-time-start
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderOneTimeStart via one-time-start [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> QPay нэхэмжлэл үүсэх нь төлбөр биш. Зөвхөн төлбөр баталгаажсаны дараа асуултууд нээгдэнэ.
+> Үндсэн үнэ
+> 9,900₮
 
 **Dynamic values**
 

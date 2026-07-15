@@ -2,7 +2,7 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0245 — P0
+## COPY-0242 — P0
 
 **Exact current text**
 
@@ -60,7 +60,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0246 — P0
+## COPY-0243 — P0
 
 **Exact current text**
 
@@ -79,7 +79,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2344
+- Source line: 2360
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -119,7 +119,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0247 — P0
+## COPY-0244 — P0
 
 **Exact current text**
 
@@ -138,7 +138,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2345
+- Source line: 2361
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -178,7 +178,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0248 — P0
+## COPY-0245 — P0
 
 **Exact current text**
 
@@ -237,7 +237,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0249 — P0
+## COPY-0246 — P0
 
 **Exact current text**
 
@@ -296,7 +296,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0250 — P0
+## COPY-0247 — P0
 
 **Exact current text**
 
@@ -355,7 +355,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0251 — P0
+## COPY-0248 — P0
 
 **Exact current text**
 
@@ -374,7 +374,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2352
+- Source line: 2368
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -414,7 +414,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0252 — P0
+## COPY-0249 — P0
 
 **Exact current text**
 
@@ -433,7 +433,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2353
+- Source line: 2369
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -473,7 +473,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0253 — P0
+## COPY-0250 — P0
 
 **Exact current text**
 
@@ -492,7 +492,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2354
+- Source line: 2370
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -532,7 +532,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0254 — P0
+## COPY-0251 — P0
 
 **Exact current text**
 
@@ -551,7 +551,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2355
+- Source line: 2371
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -591,7 +591,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0255 — P0
+## COPY-0252 — P0
 
 **Exact current text**
 
@@ -610,7 +610,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2382
+- Source line: 2398
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -650,7 +650,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0256 — P0
+## COPY-0253 — P0
 
 **Exact current text**
 
@@ -669,7 +669,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2383
+- Source line: 2399
 - Source function/object: renderOneTimeStart
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -709,7 +709,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0257 — P0
+## COPY-0254 — P0
 
 **Exact current text**
 
@@ -768,7 +768,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0258 — P0
+## COPY-0255 — P0
 
 **Exact current text**
 
@@ -827,7 +827,7 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0259 — P0
+## COPY-0256 — P0
 
 **Exact current text**
 
@@ -868,7 +868,7 @@ Safety-critical routing or interpretation text.
 
 > 9,900₮
 > Төлөх үнэ
-> Бүртгэл шаардлагагүй.
+> Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.
 
 **Dynamic values**
 
@@ -886,11 +886,11 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0260 — P0
+## COPY-0257 — P0
 
 **Exact current text**
 
-> Бүртгэл шаардлагагүй.
+> Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.
 
 **Classification**
 
@@ -905,7 +905,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2403
+- Source line: 2422
 - Source function/object: renderNoAccountPaymentIntro
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -917,17 +917,17 @@ Safety-critical routing or interpretation text.
 
 **Source item**
 
-> <p><strong>Бүртгэл шаардлагагүй.</strong></p>
+> <p><strong>Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.</strong></p>
 
 **Source context after**
 
-> <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
+> <p>${detail}</p>
 
 **Rendered context**
 
 > Төлөх үнэ
-> Бүртгэл шаардлагагүй.
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
+> Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.
+> Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна.
 
 **Dynamic values**
 
@@ -945,11 +945,11 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0261 — P0
+## COPY-0258 — P0
 
 **Exact current text**
 
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
+> Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна.
 
 **Classification**
 
@@ -964,7 +964,7 @@ Safety-critical routing or interpretation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2404
+- Source line: 2418
 - Source function/object: renderNoAccountPaymentIntro
 - Source mapping: RESOLVED
 - Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
@@ -972,21 +972,21 @@ Safety-critical routing or interpretation text.
 
 **Source context before**
 
-> <p><strong>Бүртгэл шаардлагагүй.</strong></p>
+> const detail = context === "pre_test"
 
 **Source item**
 
-> <p>Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.</p>
+> ? "Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна."
 
 **Source context after**
 
-> </div>
+> : "Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.";
 
 **Rendered context**
 
-> Бүртгэл шаардлагагүй.
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
-> Тайлан сэргээх холбоо барих мэдээлэл
+> Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.
+> Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна.
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
 
 **Dynamic values**
 
@@ -1004,424 +1004,11 @@ Safety-critical routing or interpretation text.
 - Approval date:
 - Notes:
 
-## COPY-0262 — P0
+## COPY-0259 — P0
 
 **Exact current text**
 
-> Тайлан сэргээх холбоо барих мэдээлэл
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: GENERAL_SAFETY
-- Role: PUBLIC_USER
-- Scenario: general-safety
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2414
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div>
-
-**Source item**
-
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-
-**Source context after**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Rendered context**
-
-> Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0263 — P0
-
-**Exact current text**
-
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: GENERAL_SAFETY
-- Role: PUBLIC_USER
-- Scenario: general-safety
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2415
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <p class="choice-kicker">Тайлан сэргээх холбоо барих мэдээлэл</p>
-
-**Source item**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Source context after**
-
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
-
-**Rendered context**
-
-> Тайлан сэргээх холбоо барих мэдээлэл
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0264 — P0
-
-**Exact current text**
-
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: GENERAL_SAFETY
-- Role: PUBLIC_USER
-- Scenario: general-safety
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2416
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Төлбөрөөс өмнө мэдээллээ үлдээнэ үү</h3>
-
-**Source item**
-
-> <p class="muted">Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.</p>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Төлбөрөөс өмнө мэдээллээ үлдээнэ үү
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-> Нэр (сонголтоор)
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0265 — P0
-
-**Exact current text**
-
-> Нэр (сонголтоор)
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: GENERAL_SAFETY
-- Role: PUBLIC_USER
-- Scenario: general-safety
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2419
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <label class="field">
-
-**Source item**
-
-> <span>Нэр (сонголтоор)</span>
-
-**Source context after**
-
-> <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
-
-**Rendered context**
-
-> Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.
-> Нэр (сонголтоор)
-> Утас
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0266 — P0
-
-**Exact current text**
-
-> Утас
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: GENERAL_SAFETY
-- Role: PUBLIC_USER
-- Scenario: general-safety
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Нэр (сонголтоор)
-> Утас
-> Имэйл
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0267 — P0
-
-**Exact current text**
-
-> Имэйл
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: GENERAL_SAFETY
-- Role: PUBLIC_USER
-- Scenario: general-safety
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Утас
-> Имэйл
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0268 — P0
-
-**Exact current text**
-
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-
-**Classification**
-
-- Priority: P0
-- Review group: safety
-- Structural signal: Safety-critical routing or interpretation text.
-- Surface: GENERAL_SAFETY
-- Role: PUBLIC_USER
-- Scenario: general-safety
-- Render source: renderOneTimeStart
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 2430
-- Source function/object: renderContactCaptureForm
-- Source mapping: RESOLVED
-- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> </label>
-
-**Source item**
-
-> <p class="muted">Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.</p>
-
-**Source context after**
-
-> ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
-
-**Rendered context**
-
-> Имэйл
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Safety-critical routing or interpretation text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0269 — P0
-
-**Exact current text**
-
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
 
 **Classification**
 
@@ -1444,11 +1031,424 @@ Safety-critical routing or interpretation text.
 
 **Source context before**
 
+> <div>
+
+**Source item**
+
+> <p class="choice-kicker">Төлбөр болон тайлангаа сэргээх мэдээлэл</p>
+
+**Source context after**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Rendered context**
+
+> Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна.
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
+> Холбоо барих мэдээллээ оруулна уу
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0260 — P0
+
+**Exact current text**
+
+> Холбоо барих мэдээллээ оруулна уу
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: GENERAL_SAFETY
+- Role: PUBLIC_USER
+- Scenario: general-safety
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2434
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <p class="choice-kicker">Төлбөр болон тайлангаа сэргээх мэдээлэл</p>
+
+**Source item**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Source context after**
+
+> <p class="muted">Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.</p>
+
+**Rendered context**
+
+> Төлбөр болон тайлангаа сэргээх мэдээлэл
+> Холбоо барих мэдээллээ оруулна уу
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0261 — P0
+
+**Exact current text**
+
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: GENERAL_SAFETY
+- Role: PUBLIC_USER
+- Scenario: general-safety
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2435
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <h3>Холбоо барих мэдээллээ оруулна уу</h3>
+
+**Source item**
+
+> <p class="muted">Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.</p>
+
+**Source context after**
+
+> </div>
+
+**Rendered context**
+
+> Холбоо барих мэдээллээ оруулна уу
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+> Нэр — заавал биш
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0262 — P0
+
+**Exact current text**
+
+> Нэр — заавал биш
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: GENERAL_SAFETY
+- Role: PUBLIC_USER
+- Scenario: general-safety
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2438
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <label class="field">
+
+**Source item**
+
+> <span>Нэр — заавал биш</span>
+
+**Source context after**
+
+> <input type="text" value="${escapeAttr(contact.name)}" oninput="updateContactCaptureField('name', this.value)" autocomplete="name">
+
+**Rendered context**
+
+> Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.
+> Нэр — заавал биш
+> Утасны дугаар
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0263 — P0
+
+**Exact current text**
+
+> Утасны дугаар
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: GENERAL_SAFETY
+- Role: PUBLIC_USER
+- Scenario: general-safety
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Нэр — заавал биш
+> Утасны дугаар
+> Имэйл хаяг
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0264 — P0
+
+**Exact current text**
+
+> Имэйл хаяг
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: GENERAL_SAFETY
+- Role: PUBLIC_USER
+- Scenario: general-safety
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Утасны дугаар
+> Имэйл хаяг
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0265 — P0
+
+**Exact current text**
+
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: GENERAL_SAFETY
+- Role: PUBLIC_USER
+- Scenario: general-safety
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2449
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> </label>
+
+**Source item**
+
+> <p class="muted">Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.</p>
+
+**Source context after**
+
+> ${contact.message ? `<p class="danger-copy">${escapeHtml(contact.message)}</p>` : ""}
+
+**Rendered context**
+
+> Имэйл хаяг
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Safety-critical routing or interpretation text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0266 — P0
+
+**Exact current text**
+
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
+
+**Classification**
+
+- Priority: P0
+- Review group: safety
+- Structural signal: Safety-critical routing or interpretation text.
+- Surface: GENERAL_SAFETY
+- Role: PUBLIC_USER
+- Scenario: general-safety
+- Render source: renderOneTimeStart
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 2452
+- Source function/object: renderContactCaptureForm
+- Source mapping: RESOLVED
+- Render proof: renderOneTimeStart via general-safety [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
 > <div class="actions">
 
 **Source item**
 
-> <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх</button>
+> <button class="button secondary" onclick="saveContactCapture()">Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих</button>
 
 **Source context after**
 
@@ -1456,8 +1456,8 @@ Safety-critical routing or interpretation text.
 
 **Rendered context**
 
-> Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
+> Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.
+> Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих
 > Буцах
 
 **Dynamic values**

@@ -51,8 +51,8 @@ assert(
   assert(reportText.includes(section), `paid report must include section: ${section}`);
 });
 
-assert(reportText.includes("Тайлан хуулж авах"), "paid report must include copy button label");
-assert(reportText.includes("Хэвлэх / PDF хадгалах"), "paid report must include print/PDF button label");
+assert(reportText.includes("Тайлангийн текстийг хуулах"), "paid report must include copy button label");
+assert(reportText.includes("Хэвлэх эсвэл PDF-ээр хадгалах"), "paid report must include print/PDF button label");
 assert.strictEqual((reportText.match(/Тайлангаа хадгалах/g) || []).length, 1, "save section must appear once");
 
 [

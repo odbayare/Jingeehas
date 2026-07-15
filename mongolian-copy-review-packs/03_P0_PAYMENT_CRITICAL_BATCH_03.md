@@ -2,69 +2,11 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0405 — P0
+## COPY-0401 — P0
 
 **Exact current text**
 
-> Буцах
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: PAYMENT
-- Role: PUBLIC_USER
-- Scenario: payment-contact
-- Render source: renderContactCaptureForm
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderContactCaptureForm via payment-contact [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх
-> Буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0406 — P0
-
-**Exact current text**
-
-> 9,900₮ төлөөд бүрэн тайлангаа нээх
+> 9,900₮-ийн QPay төлбөрийн QR код үүсгэх
 
 **Classification**
 
@@ -99,7 +41,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> 9,900₮ төлөөд бүрэн тайлангаа нээх
+> 9,900₮-ийн QPay төлбөрийн QR код үүсгэх
 > Сонголт руу буцах
 
 **Dynamic values**
@@ -118,7 +60,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Approval date:
 - Notes:
 
-## COPY-0407 — P0
+## COPY-0402 — P0
 
 **Exact current text**
 
@@ -157,8 +99,303 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> 9,900₮ төлөөд бүрэн тайлангаа нээх
+> 9,900₮-ийн QPay төлбөрийн QR код үүсгэх
 > Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0403 — P0
+
+**Exact current text**
+
+> QPay төлбөрийн QR код үүсгэж байна.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 1478
+- Source function/object: qpayStatusMessage
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> return {
+
+**Source item**
+
+> creating: "QPay төлбөрийн QR код үүсгэж байна.",
+
+**Source context after**
+
+> pending: "Төлбөр хараахан баталгаажаагүй байна. Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.",
+
+**Rendered context**
+
+> Сонголт руу буцах
+> QPay төлбөрийн QR код үүсгэж байна.
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0404 — P0
+
+**Exact current text**
+
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3331
+- Source function/object: renderQpayDesktopPaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="qpay-secondary-apps">
+
+**Source item**
+
+> <p class="muted">Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.</p>
+
+**Source context after**
+
+> ${renderQpayAppGrid(invoice, { emptyText: qrImage ? "Банкны аппын холбоос ирсэнгүй. QR кодыг уншуулж төлбөрөө үргэлжлүүлнэ үү." : "" })}
+
+**Rendered context**
+
+> QPay төлбөрийн QR код үүсгэж байна.
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0405 — P0
+
+**Exact current text**
+
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3343
+- Source function/object: renderQpayMobilePaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="stack">
+
+**Source item**
+
+> <p class="muted">Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.</p>
+
+**Source context after**
+
+> ${renderQpayAppGrid(invoice)}
+
+**Rendered context**
+
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
+> QR кодоор төлөх
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0406 — P0
+
+**Exact current text**
+
+> QR кодоор төлөх
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3347
+- Source function/object: renderQpayMobilePaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> <details class="qpay-mobile-qr-toggle">
+
+**Source item**
+
+> <summary>QR кодоор төлөх</summary>
+
+**Source context after**
+
+> <img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr">
+
+**Rendered context**
+
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
+> QR кодоор төлөх
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Payment, price, entitlement, invoice, or recovery text.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0407 — P0
+
+**Exact current text**
+
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+
+**Classification**
+
+- Priority: P0
+- Review group: payment
+- Structural signal: Payment, price, entitlement, invoice, or recovery text.
+- Surface: QPAY
+- Role: PUBLIC_USER
+- Scenario: qpay-invoice-created, qpay-pending
+- Render source: renderWeightQpayPaymentBox
+- Extraction type: ISOLATED_COMPONENT
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> QR кодоор төлөх
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Төлбөр шалгаж байна…
 
 **Dynamic values**
 
@@ -180,7 +417,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> QPay QR үүсгэж байна.
+> Төлбөр шалгаж байна…
 
 **Classification**
 
@@ -195,29 +432,28 @@ Payment, price, entitlement, invoice, or recovery text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 1476
-- Source function/object: qpayStatusMessage
+- Source line: 3384
+- Source function/object: renderWeightQpayPaymentBox
 - Source mapping: RESOLVED
 - Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> return {
+> : invoice
 
 **Source item**
 
-> creating: "QPay QR үүсгэж байна.",
+> ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Төлбөр шалгаж байна…" : checkError ? "Төлбөр дахин шалгах" : attemptedCheck ? "Дахин шалгах" : "Төлбөр шалгах"}</button>`
 
 **Source context after**
 
-> pending: "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
+> : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR код үүсгэж байна…" : createError ? "QR код дахин үүсгэх" : `${oneTimePrice}-ийн QPay төлбөрийн QR код үүсгэх`}</button>`}
 
 **Rendered context**
 
-> Сонголт руу буцах
-> QPay QR үүсгэж байна.
-> Утаснаас төлөх бол банкны апп сонгож болно.
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Төлбөр шалгаж байна…
 
 **Dynamic values**
 
@@ -239,7 +475,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Утаснаас төлөх бол банкны апп сонгож болно.
+> Төлбөр хараахан баталгаажаагүй байна. Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.
 
 **Classification**
 
@@ -248,35 +484,35 @@ Payment, price, entitlement, invoice, or recovery text.
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
 - Surface: QPAY
 - Role: PUBLIC_USER
-- Scenario: qpay-invoice-created, qpay-pending
+- Scenario: qpay-pending
 - Render source: renderWeightQpayPaymentBox
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3311
-- Source function/object: renderQpayDesktopPaymentSurface
+- Source line: 1479
+- Source function/object: qpayStatusMessage
 - Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox via qpay-pending [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <div class="qpay-secondary-apps">
+> creating: "QPay төлбөрийн QR код үүсгэж байна.",
 
 **Source item**
 
-> <p class="muted">Утаснаас төлөх бол банкны апп сонгож болно.</p>
+> pending: "Төлбөр хараахан баталгаажаагүй байна. Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.",
 
 **Source context after**
 
-> ${renderQpayAppGrid(invoice, { emptyText: "Банкны аппын холбоос ирээгүй байна." })}
+> checking: "Төлбөрийн төлөвийг шалгаж байна.",
 
 **Rendered context**
 
-> QPay QR үүсгэж байна.
-> Утаснаас төлөх бол банкны апп сонгож болно.
-> T
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Төлбөр хараахан баталгаажаагүй байна. Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.
+> Төлбөр шалгах
 
 **Dynamic values**
 
@@ -298,7 +534,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> T
+> Төлбөр шалгах
 
 **Classification**
 
@@ -307,16 +543,16 @@ Payment, price, entitlement, invoice, or recovery text.
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
 - Surface: QPAY
 - Role: PUBLIC_USER
-- Scenario: qpay-invoice-created, qpay-pending
+- Scenario: qpay-pending
 - Render source: renderWeightQpayPaymentBox
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 4
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox via qpay-pending [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -333,9 +569,8 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Утаснаас төлөх бол банкны апп сонгож болно.
-> T
-> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> Төлбөр хараахан баталгаажаагүй байна. Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.
+> Төлбөр шалгах
 
 **Dynamic values**
 
@@ -357,7 +592,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
 
 **Classification**
 
@@ -365,36 +600,35 @@ Payment, price, entitlement, invoice, or recovery text.
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
 - Surface: QPAY
-- Role: PUBLIC_USER
-- Scenario: qpay-invoice-created, qpay-pending
+- Role: PAID_USER
+- Scenario: qpay-paid
 - Render source: renderWeightQpayPaymentBox
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3323
-- Source function/object: renderQpayMobilePaymentSurface
+- Source line: 1481
+- Source function/object: qpayStatusMessage
 - Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <div class="stack">
+> checking: "Төлбөрийн төлөвийг шалгаж байна.",
 
 **Source item**
 
-> <p class="muted">Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.</p>
+> paid: context === "pre_test" ? "Төлбөр амжилттай баталгаажлаа. Тестээ эхлүүлэх боломжтой боллоо." : "Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
 
 **Source context after**
 
-> ${renderQpayAppGrid(invoice)}
+> create_error: "QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.",
 
 **Rendered context**
 
-> T
-> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
-> QR кодоор төлөх
+> Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
+> Төлбөрийн лавлах дугаар: INV-TEST-001
 
 **Dynamic values**
 
@@ -416,7 +650,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> QR кодоор төлөх
+> Төлбөрийн лавлах дугаар: INV-TEST-001
 
 **Classification**
 
@@ -424,36 +658,36 @@ Payment, price, entitlement, invoice, or recovery text.
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
 - Surface: QPAY
-- Role: PUBLIC_USER
-- Scenario: qpay-invoice-created, qpay-pending
+- Role: PAID_USER
+- Scenario: qpay-paid
 - Render source: renderWeightQpayPaymentBox
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3327
-- Source function/object: renderQpayMobilePaymentSurface
-- Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <details class="qpay-mobile-qr-toggle">
+> None
 
 **Source item**
 
-> <summary>QR кодоор төлөх</summary>
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <img src="${escapeAttr(qrImage)}" alt="QPay QR код" class="qpay-qr">
+> None
 
 **Rendered context**
 
-> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
-> QR кодоор төлөх
-> Лавлах дугаар: INV-TEST-001
+> Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Бүрэн тайлангаа харах
 
 **Dynamic values**
 
@@ -475,7 +709,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Лавлах дугаар: INV-TEST-001
+> Бүрэн тайлангаа харах
 
 **Classification**
 
@@ -483,36 +717,36 @@ Payment, price, entitlement, invoice, or recovery text.
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
 - Surface: QPAY
-- Role: PUBLIC_USER
-- Scenario: qpay-invoice-created, qpay-pending
+- Role: PAID_USER
+- Scenario: qpay-paid
 - Render source: renderWeightQpayPaymentBox
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created, qpay-pending [ISOLATED_COMPONENT]
+- Source line: 3382
+- Source function/object: renderWeightQpayPaymentBox
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> ${paid
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> ? (context === "pre_test" ? `<button class="button" onclick="beginAssessment('one-time')">Тест эхлүүлэх</button>` : `<button class="button" onclick="render({ scrollToTop: true })">Бүрэн тайлангаа харах</button>`)
 
 **Source context after**
 
-> None
+> : invoice
 
 **Rendered context**
 
-> QR кодоор төлөх
-> Лавлах дугаар: INV-TEST-001
-> Шалгаж байна...
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Бүрэн тайлангаа харах
+> Сонголт руу буцах
 
 **Dynamic values**
 
@@ -534,7 +768,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Шалгаж байна...
+> Сонголт руу буцах
 
 **Classification**
 
@@ -542,35 +776,35 @@ Payment, price, entitlement, invoice, or recovery text.
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
 - Surface: QPAY
-- Role: PUBLIC_USER
-- Scenario: qpay-invoice-created
+- Role: PAID_USER
+- Scenario: qpay-paid
 - Render source: renderWeightQpayPaymentBox
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3355
-- Source function/object: renderWeightQpayPaymentBox
-- Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-invoice-created [ISOLATED_COMPONENT]
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> ${invoice
+> None
 
 **Source item**
 
-> ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Шалгаж байна..." : "Дахин шалгах"}</button>`
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR үүсгэж байна..." : `${oneTimePrice} төлөөд бүрэн тайлангаа нээх`}</button>`}
+> None
 
 **Rendered context**
 
-> Лавлах дугаар: INV-TEST-001
-> Шалгаж байна...
+> Бүрэн тайлангаа харах
+> Сонголт руу буцах
 
 **Dynamic values**
 
@@ -592,44 +826,43 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.
+> QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
+- Surface: VISIBLE_ERROR
 - Role: PUBLIC_USER
-- Scenario: qpay-pending
-- Render source: renderWeightQpayPaymentBox
+- Scenario: qpay-create-error
+- Render source: renderWeightQpayPaymentBox with create error
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 1477
+- Source line: 1482
 - Source function/object: qpayStatusMessage
 - Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-pending [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox with create error via qpay-create-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> creating: "QPay QR үүсгэж байна.",
+> paid: context === "pre_test" ? "Төлбөр амжилттай баталгаажлаа. Тестээ эхлүүлэх боломжтой боллоо." : "Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
 
 **Source item**
 
-> pending: "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
+> create_error: "QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.",
 
 **Source context after**
 
-> checking: "Төлбөрийн төлөвийг шалгаж байна.",
+> check_error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Энэ нь таны төлбөр цуцлагдсан гэсэн үг биш. Түр хүлээгээд дахин шалгана уу."
 
 **Rendered context**
 
-> Лавлах дугаар: INV-TEST-001
-> Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.
-> Дахин шалгах
+> QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.
+> QR код дахин үүсгэх
 
 **Dynamic values**
 
@@ -651,43 +884,44 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Дахин шалгах
+> QR код дахин үүсгэх
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
+- Surface: VISIBLE_ERROR
 - Role: PUBLIC_USER
-- Scenario: qpay-pending
-- Render source: renderWeightQpayPaymentBox
+- Scenario: qpay-create-error
+- Render source: renderWeightQpayPaymentBox with create error
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-pending [ISOLATED_COMPONENT]
+- Source line: 3385
+- Source function/object: renderWeightQpayPaymentBox
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox with create error via qpay-create-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Төлбөр шалгаж байна…" : checkError ? "Төлбөр дахин шалгах" : attemptedCheck ? "Дахин шалгах" : "Төлбөр шалгах"}</button>`
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR код үүсгэж байна…" : createError ? "QR код дахин үүсгэх" : `${oneTimePrice}-ийн QPay төлбөрийн QR код үүсгэх`}</button>`}
 
 **Source context after**
 
-> None
+> ${demoOnlyHtml(`<button class="button ghost" onclick="demoCompletePayment('one-time')">Дотоод туршилтаар нээх</button>`)}
 
 **Rendered context**
 
-> Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.
-> Дахин шалгах
+> QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.
+> QR код дахин үүсгэх
+> Сонголт руу буцах
 
 **Dynamic values**
 
@@ -709,43 +943,43 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
+> Сонголт руу буцах
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
-- Role: PAID_USER
-- Scenario: qpay-paid
-- Render source: renderWeightQpayPaymentBox
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-create-error, qpay-check-error
+- Render source: renderWeightQpayPaymentBox with create error
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 1479
-- Source function/object: qpayStatusMessage
-- Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderWeightQpayPaymentBox with create error via qpay-create-error, qpay-check-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> checking: "Төлбөрийн төлөвийг шалгаж байна.",
+> None
 
 **Source item**
 
-> paid: "Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно."
+> None
 
 **Rendered context**
 
-> Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
-> Утаснаас төлөх бол банкны апп сонгож болно.
+> QR код дахин үүсгэх
+> Сонголт руу буцах
 
 **Dynamic values**
 
@@ -767,44 +1001,44 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Утаснаас төлөх бол банкны апп сонгож болно.
+> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Энэ нь таны төлбөр цуцлагдсан гэсэн үг биш. Түр хүлээгээд дахин шалгана уу.
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
-- Role: PAID_USER
-- Scenario: qpay-paid
-- Render source: renderWeightQpayPaymentBox
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-check-error
+- Render source: renderWeightQpayPaymentBox with check error
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3311
-- Source function/object: renderQpayDesktopPaymentSurface
+- Source line: 1483
+- Source function/object: qpayStatusMessage
 - Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox with check error via qpay-check-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> <div class="qpay-secondary-apps">
+> create_error: "QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.",
 
 **Source item**
 
-> <p class="muted">Утаснаас төлөх бол банкны апп сонгож болно.</p>
+> check_error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Энэ нь таны төлбөр цуцлагдсан гэсэн үг биш. Түр хүлээгээд дахин шалгана уу."
 
 **Source context after**
 
-> ${renderQpayAppGrid(invoice, { emptyText: "Банкны аппын холбоос ирээгүй байна." })}
+> }[status] || "";
 
 **Rendered context**
 
-> Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.
-> Утаснаас төлөх бол банкны апп сонгож болно.
-> T
+> Сонголт руу буцах
+> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Энэ нь таны төлбөр цуцлагдсан гэсэн үг биш. Түр хүлээгээд дахин шалгана уу.
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
 
 **Dynamic values**
 
@@ -826,44 +1060,44 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> T
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
-- Role: PAID_USER
-- Scenario: qpay-paid
-- Render source: renderWeightQpayPaymentBox
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-check-error
+- Render source: renderWeightQpayPaymentBox with check error
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Source line: 3331
+- Source function/object: renderQpayDesktopPaymentSurface
+- Source mapping: RESOLVED
+- Render proof: renderWeightQpayPaymentBox with check error via qpay-check-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <div class="qpay-secondary-apps">
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <p class="muted">Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.</p>
 
 **Source context after**
 
-> None
+> ${renderQpayAppGrid(invoice, { emptyText: qrImage ? "Банкны аппын холбоос ирсэнгүй. QR кодыг уншуулж төлбөрөө үргэлжлүүлнэ үү." : "" })}
 
 **Rendered context**
 
-> Утаснаас төлөх бол банкны апп сонгож болно.
-> T
-> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Энэ нь таны төлбөр цуцлагдсан гэсэн үг биш. Түр хүлээгээд дахин шалгана уу.
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
 
 **Dynamic values**
 
@@ -885,25 +1119,25 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
-- Role: PAID_USER
-- Scenario: qpay-paid
-- Render source: renderWeightQpayPaymentBox
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-check-error
+- Render source: renderWeightQpayPaymentBox with check error
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3323
+- Source line: 3343
 - Source function/object: renderQpayMobilePaymentSurface
 - Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox with check error via qpay-check-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -912,7 +1146,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Source item**
 
-> <p class="muted">Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.</p>
+> <p class="muted">Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.</p>
 
 **Source context after**
 
@@ -920,8 +1154,8 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> T
-> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
 > QR кодоор төлөх
 
 **Dynamic values**
@@ -951,18 +1185,18 @@ Payment, price, entitlement, invoice, or recovery text.
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
-- Role: PAID_USER
-- Scenario: qpay-paid
-- Render source: renderWeightQpayPaymentBox
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-check-error
+- Render source: renderWeightQpayPaymentBox with check error
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3327
+- Source line: 3347
 - Source function/object: renderQpayMobilePaymentSurface
 - Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox with check error via qpay-check-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -979,9 +1213,9 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Rendered context**
 
-> Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.
+> Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.
 > QR кодоор төлөх
-> Лавлах дугаар: INV-TEST-001
+> Төлбөрийн лавлах дугаар: INV-TEST-001
 
 **Dynamic values**
 
@@ -1003,17 +1237,17 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Лавлах дугаар: INV-TEST-001
+> Төлбөрийн лавлах дугаар: INV-TEST-001
 
 **Classification**
 
 - Priority: P0
 - Review group: payment
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
-- Role: PAID_USER
-- Scenario: qpay-paid
-- Render source: renderWeightQpayPaymentBox
+- Surface: VISIBLE_ERROR
+- Role: PUBLIC_USER
+- Scenario: qpay-check-error
+- Render source: renderWeightQpayPaymentBox with check error
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
@@ -1021,7 +1255,7 @@ Payment, price, entitlement, invoice, or recovery text.
 - Source line: UNRESOLVED
 - Source function/object: UNRESOLVED
 - Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox with check error via qpay-check-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
@@ -1039,8 +1273,8 @@ Payment, price, entitlement, invoice, or recovery text.
 **Rendered context**
 
 > QR кодоор төлөх
-> Лавлах дугаар: INV-TEST-001
-> Дахин шалгах
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Төлбөр дахин шалгах
 
 **Dynamic values**
 
@@ -1062,124 +1296,7 @@ Payment, price, entitlement, invoice, or recovery text.
 
 **Exact current text**
 
-> Дахин шалгах
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
-- Role: PAID_USER
-- Scenario: qpay-paid
-- Render source: renderWeightQpayPaymentBox
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Лавлах дугаар: INV-TEST-001
-> Дахин шалгах
-> Сонголт руу буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0424 — P0
-
-**Exact current text**
-
-> Сонголт руу буцах
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: QPAY
-- Role: PAID_USER
-- Scenario: qpay-paid
-- Render source: renderWeightQpayPaymentBox
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox via qpay-paid [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Дахин шалгах
-> Сонголт руу буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0425 — P0
-
-**Exact current text**
-
-> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно.
+> Төлбөр дахин шалгах
 
 **Classification**
 
@@ -1188,151 +1305,34 @@ Payment, price, entitlement, invoice, or recovery text.
 - Structural signal: Payment, price, entitlement, invoice, or recovery text.
 - Surface: VISIBLE_ERROR
 - Role: PUBLIC_USER
-- Scenario: qpay-error
-- Render source: renderWeightQpayPaymentBox with qpayStatusMessage(error)
+- Scenario: qpay-check-error
+- Render source: renderWeightQpayPaymentBox with check error
 - Extraction type: ISOLATED_COMPONENT
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 1480
-- Source function/object: qpayStatusMessage
+- Source line: 3384
+- Source function/object: renderWeightQpayPaymentBox
 - Source mapping: RESOLVED
-- Render proof: renderWeightQpayPaymentBox with qpayStatusMessage(error) via qpay-error [ISOLATED_COMPONENT]
+- Render proof: renderWeightQpayPaymentBox with check error via qpay-check-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> paid: "Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
+> : invoice
 
 **Source item**
 
-> error: "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно."
+> ? `<button class="button secondary" onclick="checkWeightQpayPayment()" ${busy ? "disabled" : ""}>${busy ? "Төлбөр шалгаж байна…" : checkError ? "Төлбөр дахин шалгах" : attemptedCheck ? "Дахин шалгах" : "Төлбөр шалгах"}</button>`
 
 **Source context after**
 
-> }[status] || "";
+> : `<button class="button secondary" onclick="createWeightQpayInvoice()" ${busy ? "disabled" : ""}>${busy ? "QR код үүсгэж байна…" : createError ? "QR код дахин үүсгэх" : `${oneTimePrice}-ийн QPay төлбөрийн QR код үүсгэх`}</button>`}
 
 **Rendered context**
 
-> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно.
-> 9,900₮ төлөөд бүрэн тайлангаа нээх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0426 — P0
-
-**Exact current text**
-
-> 9,900₮ төлөөд бүрэн тайлангаа нээх
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: VISIBLE_ERROR
-- Role: PUBLIC_USER
-- Scenario: qpay-error
-- Render source: renderWeightQpayPaymentBox with qpayStatusMessage(error)
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox with qpayStatusMessage(error) via qpay-error [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно.
-> 9,900₮ төлөөд бүрэн тайлангаа нээх
-> Сонголт руу буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Payment, price, entitlement, invoice, or recovery text.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0427 — P0
-
-**Exact current text**
-
-> Сонголт руу буцах
-
-**Classification**
-
-- Priority: P0
-- Review group: payment
-- Structural signal: Payment, price, entitlement, invoice, or recovery text.
-- Surface: VISIBLE_ERROR
-- Role: PUBLIC_USER
-- Scenario: qpay-error
-- Render source: renderWeightQpayPaymentBox with qpayStatusMessage(error)
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderWeightQpayPaymentBox with qpayStatusMessage(error) via qpay-error [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> 9,900₮ төлөөд бүрэн тайлангаа нээх
-> Сонголт руу буцах
+> Төлбөрийн лавлах дугаар: INV-TEST-001
+> Төлбөр дахин шалгах
 
 **Dynamic values**
 

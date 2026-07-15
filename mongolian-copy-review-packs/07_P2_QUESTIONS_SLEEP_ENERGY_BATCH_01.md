@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0498 — P2
+## COPY-0494 — P2
 
 **Exact current text**
 
@@ -70,7 +70,7 @@ Question wording requiring owner review.
 - Чанар муу
 - Тогтворгүй
 
-## COPY-0499 — P2
+## COPY-0495 — P2
 
 **Exact current text**
 
@@ -137,7 +137,7 @@ Question wording requiring owner review.
 - Ихэвчлэн
 - Маш тод
 
-## COPY-0500 — P2
+## COPY-0496 — P2
 
 **Exact current text**
 

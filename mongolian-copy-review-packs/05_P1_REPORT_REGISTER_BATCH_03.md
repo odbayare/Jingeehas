@@ -2,11 +2,11 @@
 
 Evidence only. Current copy is quoted verbatim; no replacement wording is proposed or approved.
 
-## COPY-0218 — P1
+## COPY-0215 — P1
 
 **Exact current text**
 
-> Холбоо барих мэдээлэл хадгалагдаагүй байна.
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
 
 **Classification**
 
@@ -21,7 +21,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 3456
+- Source line: 3485
 - Source function/object: renderReportDeliveryActions
 - Source mapping: RESOLVED
 - Render proof: renderReport via one-time-paid [FULL_SURFACE]
@@ -33,7 +33,7 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 
 **Source item**
 
-> ` : `<p class="muted">Холбоо барих мэдээлэл хадгалагдаагүй байна.</p>`}
+> ` : `<p class="muted">Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.</p>`}
 
 **Source context after**
 
@@ -41,9 +41,186 @@ Evidence only. Current copy is quoted verbatim; no replacement wording is propos
 
 **Rendered context**
 
-> Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.
-> Холбоо барих мэдээлэл хадгалагдаагүй байна.
-> Тайлан хуулж авах
+> Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
+> Тайлангийн текстийг хуулах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Report heading, summary, or instruction requiring owner review.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0216 — P1
+
+**Exact current text**
+
+> Тайлангийн текстийг хуулах
+
+**Classification**
+
+- Priority: P1
+- Review group: report
+- Structural signal: Report heading, summary, or instruction requiring owner review.
+- Surface: ONE_TIME_REPORT
+- Role: PAID_USER
+- Scenario: one-time-paid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 3488
+- Source function/object: renderReportDeliveryActions
+- Source mapping: RESOLVED
+- Render proof: renderReport via one-time-paid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <div class="actions">
+
+**Source item**
+
+> <button class="button secondary" onclick="copyCurrentReport()">Тайлангийн текстийг хуулах</button>
+
+**Source context after**
+
+> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх эсвэл PDF-ээр хадгалах</button>
+
+**Rendered context**
+
+> Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.
+> Тайлангийн текстийг хуулах
+> Хэвлэх эсвэл PDF-ээр хадгалах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Report heading, summary, or instruction requiring owner review.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0217 — P1
+
+**Exact current text**
+
+> Хэвлэх эсвэл PDF-ээр хадгалах
+
+**Classification**
+
+- Priority: P1
+- Review group: report
+- Structural signal: Report heading, summary, or instruction requiring owner review.
+- Surface: ONE_TIME_REPORT
+- Role: PAID_USER
+- Scenario: one-time-paid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderReport via one-time-paid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Тайлангийн текстийг хуулах
+> Хэвлэх эсвэл PDF-ээр хадгалах
+> Сонголт руу буцах
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Report heading, summary, or instruction requiring owner review.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0218 — P1
+
+**Exact current text**
+
+> Сонголт руу буцах
+
+**Classification**
+
+- Priority: P1
+- Review group: report
+- Structural signal: Report heading, summary, or instruction requiring owner review.
+- Surface: ONE_TIME_REPORT
+- Role: PAID_USER
+- Scenario: one-time-paid
+- Render source: renderReport
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderReport via one-time-paid [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Хэвлэх эсвэл PDF-ээр хадгалах
+> Сонголт руу буцах
+> Шинээр эхлэх
 
 **Dynamic values**
 
@@ -65,183 +242,6 @@ Report heading, summary, or instruction requiring owner review.
 
 **Exact current text**
 
-> Тайлан хуулж авах
-
-**Classification**
-
-- Priority: P1
-- Review group: report
-- Structural signal: Report heading, summary, or instruction requiring owner review.
-- Surface: ONE_TIME_REPORT
-- Role: PAID_USER
-- Scenario: one-time-paid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3459
-- Source function/object: renderReportDeliveryActions
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-paid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="actions">
-
-**Source item**
-
-> <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
-
-**Source context after**
-
-> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
-
-**Rendered context**
-
-> Холбоо барих мэдээлэл хадгалагдаагүй байна.
-> Тайлан хуулж авах
-> Хэвлэх / PDF хадгалах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Report heading, summary, or instruction requiring owner review.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0220 — P1
-
-**Exact current text**
-
-> Хэвлэх / PDF хадгалах
-
-**Classification**
-
-- Priority: P1
-- Review group: report
-- Structural signal: Report heading, summary, or instruction requiring owner review.
-- Surface: ONE_TIME_REPORT
-- Role: PAID_USER
-- Scenario: one-time-paid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 3460
-- Source function/object: renderReportDeliveryActions
-- Source mapping: RESOLVED
-- Render proof: renderReport via one-time-paid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <button class="button secondary" onclick="copyCurrentReport()">Тайлан хуулж авах</button>
-
-**Source item**
-
-> <button class="button ghost" onclick="printCurrentReport()">Хэвлэх / PDF хадгалах</button>
-
-**Source context after**
-
-> </div>
-
-**Rendered context**
-
-> Тайлан хуулж авах
-> Хэвлэх / PDF хадгалах
-> Сонголт руу буцах
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Report heading, summary, or instruction requiring owner review.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0221 — P1
-
-**Exact current text**
-
-> Сонголт руу буцах
-
-**Classification**
-
-- Priority: P1
-- Review group: report
-- Structural signal: Report heading, summary, or instruction requiring owner review.
-- Surface: ONE_TIME_REPORT
-- Role: PAID_USER
-- Scenario: one-time-paid
-- Render source: renderReport
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderReport via one-time-paid [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Хэвлэх / PDF хадгалах
-> Сонголт руу буцах
-> Шинээр эхлэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Report heading, summary, or instruction requiring owner review.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0222 — P1
-
-**Exact current text**
-
 > Шинээр эхлэх
 
 **Classification**
@@ -296,7 +296,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0428 — P1
+## COPY-0424 — P1
 
 **Exact current text**
 
@@ -315,7 +315,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2253
+- Source line: 2269
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderSampleResultPreview via sample-report [ISOLATED_COMPONENT]
@@ -354,7 +354,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0429 — P1
+## COPY-0425 — P1
 
 **Exact current text**
 
@@ -373,7 +373,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2254
+- Source line: 2270
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderSampleResultPreview via sample-report [ISOLATED_COMPONENT]
@@ -413,7 +413,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0430 — P1
+## COPY-0426 — P1
 
 **Exact current text**
 
@@ -432,7 +432,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2255
+- Source line: 2271
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderSampleResultPreview via sample-report [ISOLATED_COMPONENT]
@@ -472,7 +472,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0431 — P1
+## COPY-0427 — P1
 
 **Exact current text**
 
@@ -491,7 +491,7 @@ Report interpretation or recommendation text.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2259
+- Source line: 2275
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderSampleResultPreview via sample-report [ISOLATED_COMPONENT]
@@ -531,7 +531,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0432 — P1
+## COPY-0428 — P1
 
 **Exact current text**
 
@@ -550,7 +550,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2260
+- Source line: 2276
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderSampleResultPreview via sample-report [ISOLATED_COMPONENT]
@@ -590,7 +590,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0433 — P1
+## COPY-0429 — P1
 
 **Exact current text**
 
@@ -649,7 +649,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0434 — P1
+## COPY-0430 — P1
 
 **Exact current text**
 
@@ -668,7 +668,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2264
+- Source line: 2280
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderSampleResultPreview via sample-report [ISOLATED_COMPONENT]
@@ -708,7 +708,7 @@ Report interpretation or recommendation text.
 - Approval date:
 - Notes:
 
-## COPY-0435 — P1
+## COPY-0431 — P1
 
 **Exact current text**
 
@@ -767,7 +767,7 @@ Report heading, summary, or instruction requiring owner review.
 - Approval date:
 - Notes:
 
-## COPY-0436 — P1
+## COPY-0432 — P1
 
 **Exact current text**
 
@@ -786,7 +786,7 @@ Report heading, summary, or instruction requiring owner review.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 2268
+- Source line: 2284
 - Source function/object: renderSampleResultPreview
 - Source mapping: RESOLVED
 - Render proof: renderSampleResultPreview via sample-report [ISOLATED_COMPONENT]

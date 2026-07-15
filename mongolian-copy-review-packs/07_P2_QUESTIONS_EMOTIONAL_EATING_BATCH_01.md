@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0470 — P2
+## COPY-0466 — P2
 
 **Exact current text**
 
@@ -78,7 +78,7 @@ Question wording requiring owner review.
 - Сарын тэмдгийн мөчлөгтэй холбоотой мэт санагдсан
 - Сайн мэдэхгүй
 
-## COPY-0471 — P2
+## COPY-0467 — P2
 
 **Exact current text**
 
@@ -149,7 +149,7 @@ Question wording requiring owner review.
 - Өөрчлөлтгүй
 - Мэдэхгүй
 
-## COPY-0473 — P2
+## COPY-0469 — P2
 
 **Exact current text**
 
@@ -216,7 +216,7 @@ Question wording requiring owner review.
 - Бараг өдөр бүр
 - Өдөрт олон удаа
 
-## COPY-0474 — P2
+## COPY-0470 — P2
 
 **Exact current text**
 
@@ -287,7 +287,7 @@ Question wording requiring owner review.
 - Сарын тэмдэг ирэхийн өмнөх өдрүүдэд
 - Мэдэхгүй
 
-## COPY-0475 — P2
+## COPY-0471 — P2
 
 **Exact current text**
 
@@ -354,7 +354,7 @@ Question wording requiring owner review.
 - Ихэвчлэн
 - Бараг үргэлж
 
-## COPY-0476 — P2
+## COPY-0472 — P2
 
 **Exact current text**
 
@@ -421,7 +421,7 @@ Question wording requiring owner review.
 - Ихэвчлэн тэгдэг
 - Заримдаа идэж чаддаггүй
 
-## COPY-0477 — P2
+## COPY-0473 — P2
 
 **Exact current text**
 
@@ -492,7 +492,7 @@ Question wording requiring owner review.
 - Баяртай эсвэл өөрийгөө шагнамаар үе
 - Мэдэхгүй
 
-## COPY-0478 — P2
+## COPY-0474 — P2
 
 **Exact current text**
 

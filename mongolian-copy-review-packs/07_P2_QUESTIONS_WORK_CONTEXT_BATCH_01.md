@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0443 — P2
+## COPY-0439 — P2
 
 **Exact current text**
 
@@ -74,7 +74,7 @@ Question wording requiring owner review.
 - Одоогоор ажил хийдэггүй
 - Хариулахгүй
 
-## COPY-0444 — P2
+## COPY-0440 — P2
 
 **Exact current text**
 
@@ -144,7 +144,7 @@ Question wording requiring owner review.
 - Тогтмол газар очдоггүй
 - Хариулахгүй
 
-## COPY-0445 — P2
+## COPY-0441 — P2
 
 **Exact current text**
 
@@ -212,7 +212,7 @@ Question wording requiring owner review.
 - Маш хөдөлгөөнтэй — өдөржин хөдөлгөөнтэй байдаг
 - Сайн мэдэхгүй
 
-## COPY-0446 — P2
+## COPY-0442 — P2
 
 **Exact current text**
 
@@ -283,7 +283,7 @@ Question wording requiring owner review.
 - Одоогоор хамаарахгүй
 - Хариулахгүй
 
-## COPY-0447 — P2
+## COPY-0443 — P2
 
 **Exact current text**
 
@@ -353,7 +353,7 @@ Question wording requiring owner review.
 - Хоол идэх цаг, орчин тогтмол биш
 - Хариулахгүй
 
-## COPY-0448 — P2
+## COPY-0444 — P2
 
 **Exact current text**
 
@@ -423,7 +423,7 @@ Question wording requiring owner review.
 - Хоол захиалах, бэлэн юм идэх нь хамгийн амар санагддаг
 - Сайн мэдэхгүй
 
-## COPY-0449 — P2
+## COPY-0445 — P2
 
 **Exact current text**
 
@@ -496,7 +496,7 @@ Question wording requiring owner review.
 - Эдгээрээс хамаарахгүй
 - Хариулахгүй
 
-## COPY-0493 — P2
+## COPY-0489 — P2
 
 **Exact current text**
 
@@ -563,7 +563,7 @@ Question wording requiring owner review.
 - Бараг өдөр бүр
 - Маш их
 
-## COPY-0494 — P2
+## COPY-0490 — P2
 
 **Exact current text**
 
@@ -632,7 +632,7 @@ Question wording requiring owner review.
 - Чихэртэй ундаа/кофе
 - Мэдэхгүй
 
-## COPY-0495 — P2
+## COPY-0491 — P2
 
 **Exact current text**
 

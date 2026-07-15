@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0484 — P2
+## COPY-0480 — P2
 
 **Exact current text**
 
@@ -74,7 +74,7 @@ Question wording requiring owner review.
 - Одоогоор хөдөлгөөн эхлүүлэхэд хэцүү байна
 - Сайн мэдэхгүй
 
-## COPY-0485 — P2
+## COPY-0481 — P2
 
 **Exact current text**
 
@@ -145,7 +145,7 @@ Question wording requiring owner review.
 - Өмнө эхлээд тасалдсан болохоор итгэлгүй байгаа
 - Одоогоор хөдөлгөөнөөс илүү хоол/нойроо эхэлж цэгцлэх хэрэгтэй санагдаж байна
 
-## COPY-0501 — P2
+## COPY-0497 — P2
 
 **Exact current text**
 
@@ -215,7 +215,7 @@ Question wording requiring owner review.
 - Будилах/ухаан балартах
 - Аль нь ч үгүй
 
-## COPY-0502 — P2
+## COPY-0498 — P2
 
 **Exact current text**
 
@@ -282,7 +282,7 @@ Question wording requiring owner review.
 - Тийм, өндөр даралт гарч байсан
 - Тийм, санаа зовоосон
 
-## COPY-0503 — P2
+## COPY-0499 — P2
 
 **Exact current text**
 
@@ -347,7 +347,7 @@ Question wording requiring owner review.
 - Тийм
 - Мэдэхгүй
 
-## COPY-0504 — P2
+## COPY-0500 — P2
 
 **Exact current text**
 
@@ -414,7 +414,7 @@ Question wording requiring owner review.
 - Маш их ядардаг
 - Аль нь ч үгүй
 
-## COPY-0505 — P2
+## COPY-0501 — P2
 
 **Exact current text**
 

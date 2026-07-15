@@ -4,14 +4,14 @@ These files contain current rendered copy only. One exact owner-approved navigat
 
 ## Metrics
 
-- Total catalog entries: 916
-- P0: 198
-- P1: 116
-- P2: 602
-- Unresolved source mappings: 276
-- Cross-group items: 181
+- Total catalog entries: 912
+- P0: 187
+- P1: 125
+- P2: 600
+- Unresolved source mappings: 273
+- Cross-group items: 174
 - No-review-signal items: 0
-- Pending approved replacements: 0
+- Pending approved replacements: 18
 - Applied owner corrections: 1
 
 ## Recommended review order

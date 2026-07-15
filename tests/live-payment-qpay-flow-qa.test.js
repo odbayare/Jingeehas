@@ -185,8 +185,8 @@ withLocalStorageMutationSpy(() => {
   const unpaidHtml = _internal.renderReport();
   const unpaid = normalize(unpaidHtml);
   assertSafePaymentOutput(unpaidHtml, "unpaid output");
-  assert(unpaid.includes("Бүрэн тайлан нээх"), "unpaid output must show payment CTA");
-  assert(unpaid.includes("Энэ хэсэг төлбөргүй хэвээр харагдана"), "unpaid output must show free preview explanation");
+  assert(unpaid.includes("Бүрэн тайлангаа нээх"), "unpaid output must show payment CTA");
+  assert(unpaid.includes("Энэ эхний зураглалыг төлбөргүй үзэх боломжтой"), "unpaid output must show free preview explanation");
   assert(!unpaid.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "unpaid output must keep paid depth locked");
   assert(!unpaid.includes("Давтагддаг тойрог"), "unpaid output must keep paid cycle depth locked");
 

@@ -1,5 +1,9 @@
 # Seven-Day Feature Removal Audit
 
+## 2026-07-16 regression repair
+
+An active landing mini-stat still promoted `Орой бүр 3–5 минут` and `7 хоногийн богино тэмдэглэл` after the earlier PASS. That residual promotion was removed. The earlier guard did not cover this phrase; it now explicitly catches `7 хоногийн` and `7 өдрийн` short-diary variants and an evening-effort label paired with a diary or removed seven-day product concept.
+
 ## Decision
 
 The seven-day assessment product, its upgrade path, tracking flow, reports, entitlements, analytics scenarios, and rendered-copy coverage were removed. The one-time assessment and its 9,900₮ QPay flow remain. A narrow legacy-state migration discards obsolete local fields and redirects obsolete views safely.

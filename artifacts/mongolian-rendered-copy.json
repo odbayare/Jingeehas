@@ -1,6 +1,6 @@
 {
-  "generator_version": "2.0.0",
-  "generated_from_commit": "c047136ac56b8db941c0ebd30deacd1dc8b01df1",
+  "generator_version": "2.1.0",
+  "generated_from_commit": "42916f11d7750769e76d6e295a0e56629e5b0175",
   "network_attempts": 0,
   "scenarios": [
     {
@@ -24,7 +24,7 @@
       "coverage": "YES",
       "expected_visible": true,
       "notes": "",
-      "extracted_entry_count": 39,
+      "extracted_entry_count": 37,
       "network_attempts": 0
     },
     {
@@ -276,7 +276,7 @@
       "coverage": "YES",
       "expected_visible": true,
       "notes": "",
-      "extracted_entry_count": 9,
+      "extracted_entry_count": 7,
       "network_attempts": 0
     },
     {
@@ -288,7 +288,7 @@
       "coverage": "YES",
       "expected_visible": true,
       "notes": "",
-      "extracted_entry_count": 9,
+      "extracted_entry_count": 7,
       "network_attempts": 0
     },
     {
@@ -300,19 +300,31 @@
       "coverage": "YES",
       "expected_visible": true,
       "notes": "",
-      "extracted_entry_count": 9,
+      "extracted_entry_count": 4,
       "network_attempts": 0
     },
     {
-      "id": "qpay-error",
+      "id": "qpay-create-error",
       "surface": "VISIBLE_ERROR",
       "role": "PUBLIC_USER",
       "extraction_type": "ISOLATED_COMPONENT",
-      "render_source": "renderWeightQpayPaymentBox with qpayStatusMessage(error)",
+      "render_source": "renderWeightQpayPaymentBox with create error",
       "coverage": "YES",
       "expected_visible": true,
       "notes": "",
       "extracted_entry_count": 3,
+      "network_attempts": 0
+    },
+    {
+      "id": "qpay-check-error",
+      "surface": "VISIBLE_ERROR",
+      "role": "PUBLIC_USER",
+      "extraction_type": "ISOLATED_COMPONENT",
+      "render_source": "renderWeightQpayPaymentBox with check error",
+      "coverage": "YES",
+      "expected_visible": true,
+      "notes": "",
+      "extracted_entry_count": 7,
       "network_attempts": 0
     },
     {
@@ -860,40 +872,6 @@
     },
     {
       "text": "Нэг удаагийн гүн зураглал",
-      "surface": "LANDING",
-      "role": "PUBLIC_USER",
-      "scenario": "landing",
-      "render_source": "renderLanding",
-      "extraction_type": "FULL_SURFACE",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "landing"
-      ],
-      "occurrences": 1
-    },
-    {
-      "text": "Орой бүр 3–5 минут",
-      "surface": "LANDING",
-      "role": "PUBLIC_USER",
-      "scenario": "landing",
-      "render_source": "renderLanding",
-      "extraction_type": "FULL_SURFACE",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "landing"
-      ],
-      "occurrences": 1
-    },
-    {
-      "text": "7 хоногийн богино тэмдэглэл",
       "surface": "LANDING",
       "role": "PUBLIC_USER",
       "scenario": "landing",
@@ -2134,7 +2112,7 @@
       "occurrences": 1
     },
     {
-      "text": "Бүртгэл шаардлагагүй.",
+      "text": "Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2151,7 +2129,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.",
+      "text": "Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна.",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2168,7 +2146,7 @@
       "occurrences": 1
     },
     {
-      "text": "Тайлан сэргээх холбоо барих мэдээлэл",
+      "text": "Төлбөр болон тайлангаа сэргээх мэдээлэл",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2185,7 +2163,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөрөөс өмнө мэдээллээ үлдээнэ үү",
+      "text": "Холбоо барих мэдээллээ оруулна уу",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2202,7 +2180,7 @@
       "occurrences": 1
     },
     {
-      "text": "Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.",
+      "text": "Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2219,7 +2197,7 @@
       "occurrences": 1
     },
     {
-      "text": "Нэр (сонголтоор)",
+      "text": "Нэр — заавал биш",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2236,7 +2214,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утас",
+      "text": "Утасны дугаар",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2253,7 +2231,7 @@
       "occurrences": 1
     },
     {
-      "text": "Имэйл",
+      "text": "Имэйл хаяг",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2270,7 +2248,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.",
+      "text": "Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2287,7 +2265,7 @@
       "occurrences": 1
     },
     {
-      "text": "Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх",
+      "text": "Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих",
       "surface": "ONE_TIME_START",
       "role": "PUBLIC_USER",
       "scenario": "one-time-start",
@@ -2321,7 +2299,7 @@
       "occurrences": 1
     },
     {
-      "text": "Тайлангийн эхний хэсэг",
+      "text": "Эхний зураглал",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2338,7 +2316,7 @@
       "occurrences": 1
     },
     {
-      "text": "Эхний дохио",
+      "text": "Төлбөргүй хэсэг",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2372,7 +2350,7 @@
       "occurrences": 1
     },
     {
-      "text": "Энэ хэсэг төлбөргүй хэвээр харагдана. Бүрэн тайлан нээхээс өмнө таны хариултаас хамгийн түрүүнд тодорч буй дохиог харуулж байна.",
+      "text": "Энэ эхний зураглалыг төлбөргүй үзэх боломжтой. Энд таны хариултаас хамгийн түрүүнд ажиглагдсан нэг хэв маягийг харуулна.",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2389,7 +2367,7 @@
       "occurrences": 1
     },
     {
-      "text": "Хамгийн түрүүнд харагдаж буй зүйл",
+      "text": "Хамгийн түрүүнд ажиглагдсан хэв маяг",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2440,7 +2418,7 @@
       "occurrences": 1
     },
     {
-      "text": "Бүрэн тайлангаа нээвэл юу нэмэгдэх вэ?",
+      "text": "Бүрэн тайланд юу багтах вэ?",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2457,7 +2435,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөргүй хэсэг эхний дохиог үлдээнэ. Бүрэн тайлан нь тэр дохиог өдөр тутмын нөхцөл, давхар нөлөө, эхний зөөлөн алхамтай холбож илүү ойлгомжтой болгоно.",
+      "text": "Төлбөргүй хэсэгт эхний ажиглалт болон түүний товч тайлбар харагдана. Бүрэн тайланд энэ хэв маяг ямар нөхцөлд давтагддаг, өөр ямар хүчин зүйлс нөлөөлж болох, эхлээд ямар алхам туршиж болохыг дэлгэрэнгүй тайлбарлана.",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2474,7 +2452,7 @@
       "occurrences": 1
     },
     {
-      "text": "Одоо харагдаж байна",
+      "text": "Төлбөргүйгээр харагдах зүйлс",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2491,7 +2469,7 @@
       "occurrences": 1
     },
     {
-      "text": "Хамгийн түрүүнд тодорсон нэг дохио",
+      "text": "Хамгийн түрүүнд ажиглагдсан нэг хэв маяг",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2508,7 +2486,7 @@
       "occurrences": 1
     },
     {
-      "text": "Тухайн дохионы богино тайлбар",
+      "text": "Тухайн хэв маягийн товч тайлбар",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2542,7 +2520,7 @@
       "occurrences": 2
     },
     {
-      "text": "Бүрэн тайланд нэмэгдэнэ",
+      "text": "Бүрэн тайланд багтах зүйлс",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2559,7 +2537,7 @@
       "occurrences": 1
     },
     {
-      "text": "Хамгийн тод давтагддаг нөхцөл",
+      "text": "Хамгийн олон давтагдсан нөхцөл",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2576,7 +2554,7 @@
       "occurrences": 1
     },
     {
-      "text": "Давхар нөлөөлж буй 1-2 зүйл",
+      "text": "Давхар нөлөөлж болох 1–2 хүчин зүйл",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2593,7 +2571,7 @@
       "occurrences": 1
     },
     {
-      "text": "Одоогоор хэт яарахгүй зүйлс",
+      "text": "Одоогоор яарах шаардлагагүй зүйлс",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2610,7 +2588,7 @@
       "occurrences": 1
     },
     {
-      "text": "Эхний зөөлөн алхам",
+      "text": "Эхэлж туршиж болох нэг алхам",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2627,7 +2605,7 @@
       "occurrences": 1
     },
     {
-      "text": "14 хоногийн эхний туршилт",
+      "text": "14 хоногийн турш хэрэгжүүлж үзэх нэг жижиг алхам",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2644,7 +2622,7 @@
       "occurrences": 1
     },
     {
-      "text": "Бүрэн тайлан нээх",
+      "text": "Бүрэн тайлангаа нээх",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2661,7 +2639,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөр баталгаажсаны дараа тайлан энэ дэлгэц дээр шууд нээгдэнэ. Эхний дохио болон аюулгүй байдлын сануулга төлбөргүй хэсэгт үлдэнэ.",
+      "text": "Төлбөр баталгаажмагц бүрэн тайлан энэ дэлгэц дээр нээгдэнэ. Тестийг дахин бөглөх шаардлагагүй.",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2675,7 +2653,7 @@
       "scenarios": [
         "one-time-unpaid"
       ],
-      "occurrences": 1
+      "occurrences": 2
     },
     {
       "text": "Үндсэн үнэ",
@@ -2729,7 +2707,7 @@
       "occurrences": 1
     },
     {
-      "text": "Бүртгэл шаардлагагүй.",
+      "text": "Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2746,7 +2724,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.",
+      "text": "Төлбөр болон тайлангаа сэргээх мэдээлэл",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2763,7 +2741,7 @@
       "occurrences": 1
     },
     {
-      "text": "Тайлан сэргээх холбоо барих мэдээлэл",
+      "text": "Холбоо барих мэдээллээ оруулна уу",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2780,7 +2758,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөрөөс өмнө мэдээллээ үлдээнэ үү",
+      "text": "Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2797,7 +2775,7 @@
       "occurrences": 1
     },
     {
-      "text": "Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.",
+      "text": "Нэр — заавал биш",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2814,7 +2792,7 @@
       "occurrences": 1
     },
     {
-      "text": "Нэр (сонголтоор)",
+      "text": "Утасны дугаар",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2831,7 +2809,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утас",
+      "text": "Имэйл хаяг",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2848,7 +2826,7 @@
       "occurrences": 1
     },
     {
-      "text": "Имэйл",
+      "text": "Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -2865,24 +2843,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.",
-      "surface": "ONE_TIME_PAYWALL",
-      "role": "PUBLIC_USER",
-      "scenario": "one-time-unpaid",
-      "render_source": "renderReport",
-      "extraction_type": "FULL_SURFACE",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "one-time-unpaid"
-      ],
-      "occurrences": 1
-    },
-    {
-      "text": "Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх",
+      "text": "Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих",
       "surface": "ONE_TIME_PAYWALL",
       "role": "PUBLIC_USER",
       "scenario": "one-time-unpaid",
@@ -4038,7 +3999,7 @@
       "occurrences": 1
     },
     {
-      "text": "Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.",
+      "text": "Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.",
       "surface": "ONE_TIME_REPORT",
       "role": "PAID_USER",
       "scenario": "one-time-paid",
@@ -4055,7 +4016,7 @@
       "occurrences": 1
     },
     {
-      "text": "Холбоо барих мэдээлэл хадгалагдаагүй байна.",
+      "text": "Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.",
       "surface": "ONE_TIME_REPORT",
       "role": "PAID_USER",
       "scenario": "one-time-paid",
@@ -4072,7 +4033,7 @@
       "occurrences": 1
     },
     {
-      "text": "Тайлан хуулж авах",
+      "text": "Тайлангийн текстийг хуулах",
       "surface": "ONE_TIME_REPORT",
       "role": "PAID_USER",
       "scenario": "one-time-paid",
@@ -4089,7 +4050,7 @@
       "occurrences": 1
     },
     {
-      "text": "Хэвлэх / PDF хадгалах",
+      "text": "Хэвлэх эсвэл PDF-ээр хадгалах",
       "surface": "ONE_TIME_REPORT",
       "role": "PAID_USER",
       "scenario": "one-time-paid",
@@ -4769,7 +4730,7 @@
       "occurrences": 1
     },
     {
-      "text": "Бүртгэл шаардлагагүй.",
+      "text": "Хэрэглэгчийн бүртгэл үүсгэх шаардлагагүй.",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4786,7 +4747,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөр баталгаажсаны дараа тест нээгдэнэ. Тест бөглөсний дараа таны тайлан шууд дэлгэц дээр гарна.",
+      "text": "Төлбөр баталгаажмагц тест нээгдэнэ. Тестээ бөглөж дуусмагц тайлан энэ дэлгэц дээр гарна.",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4803,7 +4764,7 @@
       "occurrences": 1
     },
     {
-      "text": "Тайлан сэргээх холбоо барих мэдээлэл",
+      "text": "Төлбөр болон тайлангаа сэргээх мэдээлэл",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4820,7 +4781,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөрөөс өмнө мэдээллээ үлдээнэ үү",
+      "text": "Холбоо барих мэдээллээ оруулна уу",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4837,7 +4798,7 @@
       "occurrences": 1
     },
     {
-      "text": "Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.",
+      "text": "Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4854,7 +4815,7 @@
       "occurrences": 1
     },
     {
-      "text": "Нэр (сонголтоор)",
+      "text": "Нэр — заавал биш",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4871,7 +4832,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утас",
+      "text": "Утасны дугаар",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4888,7 +4849,7 @@
       "occurrences": 1
     },
     {
-      "text": "Имэйл",
+      "text": "Имэйл хаяг",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4905,7 +4866,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.",
+      "text": "Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -4922,7 +4883,7 @@
       "occurrences": 1
     },
     {
-      "text": "Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх",
+      "text": "Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих",
       "surface": "GENERAL_SAFETY",
       "role": "PUBLIC_USER",
       "scenario": "general-safety",
@@ -5245,7 +5206,7 @@
       "occurrences": 1
     },
     {
-      "text": "Таны тайлан энэ дэлгэц дээр гарлаа. Одоогоор байнгын тайлангийн холбоос эсвэл имэйл илгээсэн гэж харуулахгүй.",
+      "text": "Тайлангаа хуулж авах, хэвлэх эсвэл PDF хэлбэрээр хадгалах боломжтой.",
       "surface": "PROFESSIONAL_SAFETY",
       "role": "PAID_USER",
       "scenario": "professional-safety",
@@ -5262,7 +5223,7 @@
       "occurrences": 1
     },
     {
-      "text": "Холбоо барих мэдээлэл хадгалагдаагүй байна.",
+      "text": "Төлбөр, дэмжлэгт ашиглах холбоо барих мэдээлэл хадгалагдаагүй байна.",
       "surface": "PROFESSIONAL_SAFETY",
       "role": "PAID_USER",
       "scenario": "professional-safety",
@@ -5279,7 +5240,7 @@
       "occurrences": 1
     },
     {
-      "text": "Тайлан хуулж авах",
+      "text": "Тайлангийн текстийг хуулах",
       "surface": "PROFESSIONAL_SAFETY",
       "role": "PAID_USER",
       "scenario": "professional-safety",
@@ -5296,7 +5257,7 @@
       "occurrences": 1
     },
     {
-      "text": "Хэвлэх / PDF хадгалах",
+      "text": "Хэвлэх эсвэл PDF-ээр хадгалах",
       "surface": "PROFESSIONAL_SAFETY",
       "role": "PAID_USER",
       "scenario": "professional-safety",
@@ -5534,7 +5495,7 @@
       "occurrences": 1
     },
     {
-      "text": "Coach login",
+      "text": "Зөвлөхөөр нэвтрэх",
       "surface": "ADVISOR_PORTAL",
       "role": "ADVISOR",
       "scenario": "advisor-login",
@@ -5548,24 +5509,7 @@
       "scenarios": [
         "advisor-login"
       ],
-      "occurrences": 1
-    },
-    {
-      "text": "Coach нэвтрэх",
-      "surface": "ADVISOR_PORTAL",
-      "role": "ADVISOR",
-      "scenario": "advisor-login",
-      "render_source": "renderCoachLogin",
-      "extraction_type": "FULL_SURFACE",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "advisor-login"
-      ],
-      "occurrences": 1
+      "occurrences": 2
     },
     {
       "text": "Имэйл",
@@ -5636,7 +5580,7 @@
       "occurrences": 1
     },
     {
-      "text": "Coach login",
+      "text": "Зөвлөхөөр нэвтрэх",
       "surface": "VISIBLE_ERROR",
       "role": "ADVISOR",
       "scenario": "advisor-login-error",
@@ -5650,24 +5594,7 @@
       "scenarios": [
         "advisor-login-error"
       ],
-      "occurrences": 1
-    },
-    {
-      "text": "Coach нэвтрэх",
-      "surface": "VISIBLE_ERROR",
-      "role": "ADVISOR",
-      "scenario": "advisor-login-error",
-      "render_source": "renderCoachLogin with existing coachLoginError",
-      "extraction_type": "ISOLATED_COMPONENT",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "advisor-login-error"
-      ],
-      "occurrences": 1
+      "occurrences": 2
     },
     {
       "text": "Имэйл",
@@ -5755,7 +5682,7 @@
       "occurrences": 1
     },
     {
-      "text": "Coach цэс",
+      "text": "Зөвлөхийн хяналтын самбар",
       "surface": "ADVISOR_PORTAL",
       "role": "ADVISOR",
       "scenario": "advisor-dashboard-empty",
@@ -6161,7 +6088,7 @@
       "occurrences": 1
     },
     {
-      "text": "Coach / Дэд админ",
+      "text": "Зөвлөхийн эрхийн удирдлага",
       "surface": "ADMIN_PORTAL",
       "role": "ADMIN",
       "scenario": "admin-portal",
@@ -6178,7 +6105,7 @@
       "occurrences": 2
     },
     {
-      "text": "Coach нэмэх",
+      "text": "Зөвлөх нэмэх",
       "surface": "ADMIN_PORTAL",
       "role": "ADMIN",
       "scenario": "admin-portal",
@@ -6195,7 +6122,7 @@
       "occurrences": 2
     },
     {
-      "text": "Coach-ийн имэйл",
+      "text": "Зөвлөхийн имэйл",
       "surface": "ADMIN_PORTAL",
       "role": "ADMIN",
       "scenario": "admin-portal",
@@ -6212,7 +6139,7 @@
       "occurrences": 1
     },
     {
-      "text": "Coach-ийн нэр",
+      "text": "Зөвлөхийн нэр",
       "surface": "ADMIN_PORTAL",
       "role": "ADMIN",
       "scenario": "admin-portal",
@@ -6246,7 +6173,7 @@
       "occurrences": 1
     },
     {
-      "text": "Coach-ийн авах дүн",
+      "text": "Зөвлөхийн шимтгэл",
       "surface": "ADMIN_PORTAL",
       "role": "ADMIN",
       "scenario": "admin-portal",
@@ -6263,7 +6190,7 @@
       "occurrences": 1
     },
     {
-      "text": "Coach list",
+      "text": "Зөвлөхийн жагсаалт",
       "surface": "ADMIN_PORTAL",
       "role": "ADMIN",
       "scenario": "admin-portal",
@@ -6280,7 +6207,7 @@
       "occurrences": 1
     },
     {
-      "text": "Coach бүртгэл алга.",
+      "text": "Зөвлөх бүртгэгдээгүй байна.",
       "surface": "ADMIN_PORTAL",
       "role": "ADMIN",
       "scenario": "admin-portal",
@@ -7116,7 +7043,7 @@
       "occurrences": 1
     },
     {
-      "text": "Тайлан сэргээх холбоо барих мэдээлэл",
+      "text": "Төлбөр болон тайлангаа сэргээх мэдээлэл",
       "surface": "PAYMENT",
       "role": "PUBLIC_USER",
       "scenario": "payment-contact",
@@ -7133,7 +7060,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөрөөс өмнө мэдээллээ үлдээнэ үү",
+      "text": "Холбоо барих мэдээллээ оруулна уу",
       "surface": "PAYMENT",
       "role": "PUBLIC_USER",
       "scenario": "payment-contact",
@@ -7150,7 +7077,7 @@
       "occurrences": 1
     },
     {
-      "text": "Энэ нь бүртгэл биш. Тайлангаа дэлгэц дээр үзсэний дараа дэмжлэг авах, төлбөрийн лавлагаа шалгуулахад ашиглана.",
+      "text": "Энэ мэдээллээр хэрэглэгчийн бүртгэл үүсгэхгүй. Таны төлбөрийг шалгах, тайлангаа сэргээх болон шаардлагатай үед дэмжлэг үзүүлэхэд ашиглана.",
       "surface": "PAYMENT",
       "role": "PUBLIC_USER",
       "scenario": "payment-contact",
@@ -7167,7 +7094,7 @@
       "occurrences": 1
     },
     {
-      "text": "Нэр (сонголтоор)",
+      "text": "Нэр — заавал биш",
       "surface": "PAYMENT",
       "role": "PUBLIC_USER",
       "scenario": "payment-contact",
@@ -7184,7 +7111,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утас",
+      "text": "Утасны дугаар",
       "surface": "PAYMENT",
       "role": "PUBLIC_USER",
       "scenario": "payment-contact",
@@ -7201,7 +7128,7 @@
       "occurrences": 1
     },
     {
-      "text": "Имэйл",
+      "text": "Имэйл хаяг",
       "surface": "PAYMENT",
       "role": "PUBLIC_USER",
       "scenario": "payment-contact",
@@ -7218,7 +7145,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утас эсвэл имэйлийн аль нэгийг бөглөхөд хангалттай.",
+      "text": "Утасны дугаар эсвэл имэйл хаягийн аль нэгийг оруулна уу.",
       "surface": "PAYMENT",
       "role": "PUBLIC_USER",
       "scenario": "payment-contact",
@@ -7235,7 +7162,7 @@
       "occurrences": 1
     },
     {
-      "text": "Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх",
+      "text": "Мэдээллээ хадгалаад төлбөрийн хэсэг рүү шилжих",
       "surface": "PAYMENT",
       "role": "PUBLIC_USER",
       "scenario": "payment-contact",
@@ -7269,7 +7196,7 @@
       "occurrences": 1
     },
     {
-      "text": "9,900₮ төлөөд бүрэн тайлангаа нээх",
+      "text": "9,900₮-ийн QPay төлбөрийн QR код үүсгэх",
       "surface": "QPAY",
       "role": "PUBLIC_USER",
       "scenario": "qpay-pre-invoice",
@@ -7305,7 +7232,7 @@
       "occurrences": 3
     },
     {
-      "text": "QPay QR үүсгэж байна.",
+      "text": "QPay төлбөрийн QR код үүсгэж байна.",
       "surface": "QPAY",
       "role": "PUBLIC_USER",
       "scenario": "qpay-invoice-created",
@@ -7322,7 +7249,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утаснаас төлөх бол банкны апп сонгож болно.",
+      "text": "Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.",
       "surface": "QPAY",
       "role": "PUBLIC_USER",
       "scenario": "qpay-invoice-created",
@@ -7340,25 +7267,7 @@
       "occurrences": 2
     },
     {
-      "text": "T",
-      "surface": "QPAY",
-      "role": "PUBLIC_USER",
-      "scenario": "qpay-invoice-created",
-      "render_source": "renderWeightQpayPaymentBox",
-      "extraction_type": "ISOLATED_COMPONENT",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "qpay-invoice-created",
-        "qpay-pending"
-      ],
-      "occurrences": 4
-    },
-    {
-      "text": "Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.",
+      "text": "Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.",
       "surface": "QPAY",
       "role": "PUBLIC_USER",
       "scenario": "qpay-invoice-created",
@@ -7394,7 +7303,7 @@
       "occurrences": 2
     },
     {
-      "text": "Лавлах дугаар: INV-TEST-001",
+      "text": "Төлбөрийн лавлах дугаар: INV-TEST-001",
       "surface": "QPAY",
       "role": "PUBLIC_USER",
       "scenario": "qpay-invoice-created",
@@ -7412,7 +7321,7 @@
       "occurrences": 2
     },
     {
-      "text": "Шалгаж байна...",
+      "text": "Төлбөр шалгаж байна…",
       "surface": "QPAY",
       "role": "PUBLIC_USER",
       "scenario": "qpay-invoice-created",
@@ -7429,7 +7338,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөр хүлээгдэж байна. Төлбөрөө хийсний дараа “Дахин шалгах” товчийг дарж болно.",
+      "text": "Төлбөр хараахан баталгаажаагүй байна. Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.",
       "surface": "QPAY",
       "role": "PUBLIC_USER",
       "scenario": "qpay-pending",
@@ -7446,7 +7355,7 @@
       "occurrences": 1
     },
     {
-      "text": "Дахин шалгах",
+      "text": "Төлбөр шалгах",
       "surface": "QPAY",
       "role": "PUBLIC_USER",
       "scenario": "qpay-pending",
@@ -7463,7 +7372,7 @@
       "occurrences": 1
     },
     {
-      "text": "Төлбөр баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
+      "text": "Төлбөр амжилттай баталгаажлаа. Таны бүрэн тайлан нээгдлээ.",
       "surface": "QPAY",
       "role": "PAID_USER",
       "scenario": "qpay-paid",
@@ -7480,7 +7389,7 @@
       "occurrences": 1
     },
     {
-      "text": "Утаснаас төлөх бол банкны апп сонгож болно.",
+      "text": "Төлбөрийн лавлах дугаар: INV-TEST-001",
       "surface": "QPAY",
       "role": "PAID_USER",
       "scenario": "qpay-paid",
@@ -7497,7 +7406,7 @@
       "occurrences": 1
     },
     {
-      "text": "T",
+      "text": "Бүрэн тайлангаа харах",
       "surface": "QPAY",
       "role": "PAID_USER",
       "scenario": "qpay-paid",
@@ -7510,15 +7419,84 @@
       "dynamic": false,
       "scenarios": [
         "qpay-paid"
+      ],
+      "occurrences": 1
+    },
+    {
+      "text": "Сонголт руу буцах",
+      "surface": "QPAY",
+      "role": "PAID_USER",
+      "scenario": "qpay-paid",
+      "render_source": "renderWeightQpayPaymentBox",
+      "extraction_type": "ISOLATED_COMPONENT",
+      "attribute_name": null,
+      "element_type": null,
+      "source_locations": [],
+      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
+      "dynamic": false,
+      "scenarios": [
+        "qpay-paid"
+      ],
+      "occurrences": 1
+    },
+    {
+      "text": "QPay төлбөрийн QR код үүсгэж чадсангүй. Түр хүлээгээд дахин оролдоно уу.",
+      "surface": "VISIBLE_ERROR",
+      "role": "PUBLIC_USER",
+      "scenario": "qpay-create-error",
+      "render_source": "renderWeightQpayPaymentBox with create error",
+      "extraction_type": "ISOLATED_COMPONENT",
+      "attribute_name": null,
+      "element_type": null,
+      "source_locations": [],
+      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
+      "dynamic": false,
+      "scenarios": [
+        "qpay-create-error"
+      ],
+      "occurrences": 1
+    },
+    {
+      "text": "QR код дахин үүсгэх",
+      "surface": "VISIBLE_ERROR",
+      "role": "PUBLIC_USER",
+      "scenario": "qpay-create-error",
+      "render_source": "renderWeightQpayPaymentBox with create error",
+      "extraction_type": "ISOLATED_COMPONENT",
+      "attribute_name": null,
+      "element_type": null,
+      "source_locations": [],
+      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
+      "dynamic": false,
+      "scenarios": [
+        "qpay-create-error"
+      ],
+      "occurrences": 1
+    },
+    {
+      "text": "Сонголт руу буцах",
+      "surface": "VISIBLE_ERROR",
+      "role": "PUBLIC_USER",
+      "scenario": "qpay-create-error",
+      "render_source": "renderWeightQpayPaymentBox with create error",
+      "extraction_type": "ISOLATED_COMPONENT",
+      "attribute_name": null,
+      "element_type": null,
+      "source_locations": [],
+      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
+      "dynamic": false,
+      "scenarios": [
+        "qpay-create-error",
+        "qpay-check-error"
       ],
       "occurrences": 2
     },
     {
-      "text": "Банк эсвэл wallet апп сонгоод утсаараа төлбөрөө үргэлжлүүлнэ үү.",
-      "surface": "QPAY",
-      "role": "PAID_USER",
-      "scenario": "qpay-paid",
-      "render_source": "renderWeightQpayPaymentBox",
+      "text": "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Энэ нь таны төлбөр цуцлагдсан гэсэн үг биш. Түр хүлээгээд дахин шалгана уу.",
+      "surface": "VISIBLE_ERROR",
+      "role": "PUBLIC_USER",
+      "scenario": "qpay-check-error",
+      "render_source": "renderWeightQpayPaymentBox with check error",
       "extraction_type": "ISOLATED_COMPONENT",
       "attribute_name": null,
       "element_type": null,
@@ -7526,84 +7504,50 @@
       "source_mapping_status": "NOT_MAPPED_NO_GUESS",
       "dynamic": false,
       "scenarios": [
-        "qpay-paid"
+        "qpay-check-error"
+      ],
+      "occurrences": 1
+    },
+    {
+      "text": "Утсаараа төлөх бол доорх банкны аппын холбоосыг сонгоно уу.",
+      "surface": "VISIBLE_ERROR",
+      "role": "PUBLIC_USER",
+      "scenario": "qpay-check-error",
+      "render_source": "renderWeightQpayPaymentBox with check error",
+      "extraction_type": "ISOLATED_COMPONENT",
+      "attribute_name": null,
+      "element_type": null,
+      "source_locations": [],
+      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
+      "dynamic": false,
+      "scenarios": [
+        "qpay-check-error"
+      ],
+      "occurrences": 1
+    },
+    {
+      "text": "Банкны эсвэл цахим хэтэвчийн аппыг сонгоод төлбөрөө үргэлжлүүлнэ үү.",
+      "surface": "VISIBLE_ERROR",
+      "role": "PUBLIC_USER",
+      "scenario": "qpay-check-error",
+      "render_source": "renderWeightQpayPaymentBox with check error",
+      "extraction_type": "ISOLATED_COMPONENT",
+      "attribute_name": null,
+      "element_type": null,
+      "source_locations": [],
+      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
+      "dynamic": false,
+      "scenarios": [
+        "qpay-check-error"
       ],
       "occurrences": 1
     },
     {
       "text": "QR кодоор төлөх",
-      "surface": "QPAY",
-      "role": "PAID_USER",
-      "scenario": "qpay-paid",
-      "render_source": "renderWeightQpayPaymentBox",
-      "extraction_type": "ISOLATED_COMPONENT",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "qpay-paid"
-      ],
-      "occurrences": 1
-    },
-    {
-      "text": "Лавлах дугаар: INV-TEST-001",
-      "surface": "QPAY",
-      "role": "PAID_USER",
-      "scenario": "qpay-paid",
-      "render_source": "renderWeightQpayPaymentBox",
-      "extraction_type": "ISOLATED_COMPONENT",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "qpay-paid"
-      ],
-      "occurrences": 1
-    },
-    {
-      "text": "Дахин шалгах",
-      "surface": "QPAY",
-      "role": "PAID_USER",
-      "scenario": "qpay-paid",
-      "render_source": "renderWeightQpayPaymentBox",
-      "extraction_type": "ISOLATED_COMPONENT",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "qpay-paid"
-      ],
-      "occurrences": 1
-    },
-    {
-      "text": "Сонголт руу буцах",
-      "surface": "QPAY",
-      "role": "PAID_USER",
-      "scenario": "qpay-paid",
-      "render_source": "renderWeightQpayPaymentBox",
-      "extraction_type": "ISOLATED_COMPONENT",
-      "attribute_name": null,
-      "element_type": null,
-      "source_locations": [],
-      "source_mapping_status": "NOT_MAPPED_NO_GUESS",
-      "dynamic": false,
-      "scenarios": [
-        "qpay-paid"
-      ],
-      "occurrences": 1
-    },
-    {
-      "text": "Төлбөрийн төлөвийг одоогоор шалгаж чадсангүй. Таны эхний дохио хэвээр харагдана. Түр хүлээгээд QR-аа дахин үүсгэж эсвэл дахин шалгаж болно.",
       "surface": "VISIBLE_ERROR",
       "role": "PUBLIC_USER",
-      "scenario": "qpay-error",
-      "render_source": "renderWeightQpayPaymentBox with qpayStatusMessage(error)",
+      "scenario": "qpay-check-error",
+      "render_source": "renderWeightQpayPaymentBox with check error",
       "extraction_type": "ISOLATED_COMPONENT",
       "attribute_name": null,
       "element_type": null,
@@ -7611,16 +7555,16 @@
       "source_mapping_status": "NOT_MAPPED_NO_GUESS",
       "dynamic": false,
       "scenarios": [
-        "qpay-error"
+        "qpay-check-error"
       ],
       "occurrences": 1
     },
     {
-      "text": "9,900₮ төлөөд бүрэн тайлангаа нээх",
+      "text": "Төлбөрийн лавлах дугаар: INV-TEST-001",
       "surface": "VISIBLE_ERROR",
       "role": "PUBLIC_USER",
-      "scenario": "qpay-error",
-      "render_source": "renderWeightQpayPaymentBox with qpayStatusMessage(error)",
+      "scenario": "qpay-check-error",
+      "render_source": "renderWeightQpayPaymentBox with check error",
       "extraction_type": "ISOLATED_COMPONENT",
       "attribute_name": null,
       "element_type": null,
@@ -7628,16 +7572,16 @@
       "source_mapping_status": "NOT_MAPPED_NO_GUESS",
       "dynamic": false,
       "scenarios": [
-        "qpay-error"
+        "qpay-check-error"
       ],
       "occurrences": 1
     },
     {
-      "text": "Сонголт руу буцах",
+      "text": "Төлбөр дахин шалгах",
       "surface": "VISIBLE_ERROR",
       "role": "PUBLIC_USER",
-      "scenario": "qpay-error",
-      "render_source": "renderWeightQpayPaymentBox with qpayStatusMessage(error)",
+      "scenario": "qpay-check-error",
+      "render_source": "renderWeightQpayPaymentBox with check error",
       "extraction_type": "ISOLATED_COMPONENT",
       "attribute_name": null,
       "element_type": null,
@@ -7645,7 +7589,7 @@
       "source_mapping_status": "NOT_MAPPED_NO_GUESS",
       "dynamic": false,
       "scenarios": [
-        "qpay-error"
+        "qpay-check-error"
       ],
       "occurrences": 1
     },

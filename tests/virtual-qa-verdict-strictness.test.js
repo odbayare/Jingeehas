@@ -22,7 +22,7 @@ function strictQaVerdict({ expectedFocus, reportText, mcMappingIssues = [], prof
   }
   if (mcMappingIssues.length) issues.push("MC answer mapping issue");
   if (/7\. 7–14 хоногийн туршилт[\s\S]*7\. Тайлангаа хадгалах/.test(reportText)) issues.push("report numbering jump");
-  if (professionalRoute && (!reportText.includes("Тайлан хуулж авах") || !reportText.includes("Хэвлэх / PDF хадгалах"))) {
+  if (professionalRoute && (!reportText.includes("Тайлангийн текстийг хуулах") || !reportText.includes("Хэвлэх эсвэл PDF-ээр хадгалах"))) {
     issues.push("professional safety report missing copy/print");
   }
   if (reportText.includes(forbiddenRoboticIntro) || reportText.includes(forbiddenPaidIntro)) {
@@ -65,7 +65,7 @@ assert.notStrictEqual(
 assert.strictEqual(
   strictQaVerdict({
     expectedFocus: "cue/snacking",
-    reportText: "Орчны өдөөгч, зууш нүдэнд ойр, гарын дор байгаа сонголт нөлөөлж байна. Тайлан хуулж авах. Хэвлэх / PDF хадгалах."
+    reportText: "Орчны өдөөгч, зууш нүдэнд ойр, гарын дор байгаа сонголт нөлөөлж байна. Тайлангийн текстийг хуулах. Хэвлэх эсвэл PDF-ээр хадгалах."
   }),
   "PASS",
   "matching focus with required actions can receive PASS"

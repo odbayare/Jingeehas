@@ -2,11 +2,11 @@
 
 Role-facing evidence only.
 
-## COPY-0305 — P2
+## COPY-0302 — P2
 
 **Exact current text**
 
-> Coach login
+> Зөвлөхөөр нэвтрэх
 
 **Classification**
 
@@ -18,89 +18,30 @@ Role-facing evidence only.
 - Scenario: advisor-login
 - Render source: renderCoachLogin
 - Extraction type: FULL_SURFACE
-- Occurrence count: 1
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5930
-- Source function/object: renderCoachLogin
-- Source mapping: RESOLVED
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> return `
+> None
 
 **Source item**
 
-> ${topbar(0, "Coach login")}
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <section class="screen">
+> None
 
 **Rendered context**
 
-> Coach login
-> Coach нэвтрэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0306 — P2
-
-**Exact current text**
-
-> Coach нэвтрэх
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ADVISOR_PORTAL
-- Role: ADVISOR
-- Scenario: advisor-login
-- Render source: renderCoachLogin
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 5933
-- Source function/object: renderCoachLogin
-- Source mapping: RESOLVED
-- Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="panel stack">
-
-**Source item**
-
-> <h2>Coach нэвтрэх</h2>
-
-**Source context after**
-
-> <label class="field"><span class="muted">Имэйл</span><input type="email" value="${escapeAttr(state.coachLoginForm?.email || "")}" oninput="updateCoachLoginField('email', this.value)"></label>
-
-**Rendered context**
-
-> Coach login
-> Coach нэвтрэх
+> Зөвлөхөөр нэвтрэх
 > Имэйл
 
 **Dynamic values**
@@ -119,7 +60,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0307 — P2
+## COPY-0303 — P2
 
 **Exact current text**
 
@@ -158,7 +99,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Coach нэвтрэх
+> Зөвлөхөөр нэвтрэх
 > Имэйл
 > Нууц үг
 
@@ -178,7 +119,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0308 — P2
+## COPY-0304 — P2
 
 **Exact current text**
 
@@ -197,7 +138,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5935
+- Source line: 5964
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -237,7 +178,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0309 — P2
+## COPY-0305 — P2
 
 **Exact current text**
 
@@ -256,7 +197,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5938
+- Source line: 5967
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -296,7 +237,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0310 — P2
+## COPY-0306 — P2
 
 **Exact current text**
 
@@ -315,7 +256,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5939
+- Source line: 5968
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin via advisor-login [FULL_SURFACE]
@@ -354,11 +295,11 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0311 — P2
+## COPY-0307 — P2
 
 **Exact current text**
 
-> Coach login
+> Зөвлөхөөр нэвтрэх
 
 **Classification**
 
@@ -370,89 +311,30 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Scenario: advisor-login-error
 - Render source: renderCoachLogin with existing coachLoginError
 - Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
+- Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5930
-- Source function/object: renderCoachLogin
-- Source mapping: RESOLVED
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
 - Cross-group references: None
 
 **Source context before**
 
-> return `
+> None
 
 **Source item**
 
-> ${topbar(0, "Coach login")}
+> Source mapping: UNRESOLVED
 
 **Source context after**
 
-> <section class="screen">
+> None
 
 **Rendered context**
 
-> Coach login
-> Coach нэвтрэх
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0312 — P2
-
-**Exact current text**
-
-> Coach нэвтрэх
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: VISIBLE_ERROR
-- Role: ADVISOR
-- Scenario: advisor-login-error
-- Render source: renderCoachLogin with existing coachLoginError
-- Extraction type: ISOLATED_COMPONENT
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 5933
-- Source function/object: renderCoachLogin
-- Source mapping: RESOLVED
-- Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="panel stack">
-
-**Source item**
-
-> <h2>Coach нэвтрэх</h2>
-
-**Source context after**
-
-> <label class="field"><span class="muted">Имэйл</span><input type="email" value="${escapeAttr(state.coachLoginForm?.email || "")}" oninput="updateCoachLoginField('email', this.value)"></label>
-
-**Rendered context**
-
-> Coach login
-> Coach нэвтрэх
+> Зөвлөхөөр нэвтрэх
 > Имэйл
 
 **Dynamic values**
@@ -471,7 +353,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0313 — P2
+## COPY-0308 — P2
 
 **Exact current text**
 
@@ -510,7 +392,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Coach нэвтрэх
+> Зөвлөхөөр нэвтрэх
 > Имэйл
 > Нууц үг
 
@@ -530,7 +412,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0314 — P2
+## COPY-0309 — P2
 
 **Exact current text**
 
@@ -549,7 +431,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5935
+- Source line: 5964
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -589,7 +471,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0315 — P2
+## COPY-0310 — P2
 
 **Exact current text**
 
@@ -608,7 +490,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5922
+- Source line: 5951
 - Source function/object: submitCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -648,7 +530,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0316 — P2
+## COPY-0311 — P2
 
 **Exact current text**
 
@@ -667,7 +549,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5938
+- Source line: 5967
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -707,7 +589,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0317 — P2
+## COPY-0312 — P2
 
 **Exact current text**
 
@@ -726,7 +608,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 5939
+- Source line: 5968
 - Source function/object: renderCoachLogin
 - Source mapping: RESOLVED
 - Render proof: renderCoachLogin with existing coachLoginError via advisor-login-error [ISOLATED_COMPONENT]
@@ -765,11 +647,11 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0318 — P2
+## COPY-0313 — P2
 
 **Exact current text**
 
-> Coach цэс
+> Зөвлөхийн хяналтын самбар
 
 **Classification**
 
@@ -804,7 +686,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Coach цэс
+> Зөвлөхийн хяналтын самбар
 > Нээлтээс өмнөх туршилтын хувилбар
 
 **Dynamic values**
@@ -823,7 +705,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0319 — P2
+## COPY-0314 — P2
 
 **Exact current text**
 
@@ -842,7 +724,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6006
+- Source line: 6035
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -858,11 +740,11 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Source context after**
 
-> <h2>Coach цэс</h2>
+> <h2>Зөвлөхийн хяналтын самбар</h2>
 
 **Rendered context**
 
-> Coach цэс
+> Зөвлөхийн хяналтын самбар
 > Нээлтээс өмнөх туршилтын хувилбар
 > Энэ хувилбар дээр бодит төлбөр авахгүй. Test Advisor өөрийн нэмсэн үйлчлүүлэгчийн явцыг эндээс харна.
 
@@ -882,7 +764,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0320 — P2
+## COPY-0315 — P2
 
 **Exact current text**
 
@@ -941,7 +823,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0321 — P2
+## COPY-0316 — P2
 
 **Exact current text**
 
@@ -1000,7 +882,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0322 — P2
+## COPY-0317 — P2
 
 **Exact current text**
 
@@ -1019,7 +901,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6010
+- Source line: 6039
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1059,7 +941,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0323 — P2
+## COPY-0318 — P2
 
 **Exact current text**
 
@@ -1078,7 +960,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6011
+- Source line: 6040
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1118,7 +1000,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0324 — P2
+## COPY-0319 — P2
 
 **Exact current text**
 
@@ -1137,7 +1019,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6012
+- Source line: 6041
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1177,7 +1059,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0325 — P2
+## COPY-0320 — P2
 
 **Exact current text**
 
@@ -1236,7 +1118,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0326 — P2
+## COPY-0321 — P2
 
 **Exact current text**
 
@@ -1255,7 +1137,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6013
+- Source line: 6042
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1295,7 +1177,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0327 — P2
+## COPY-0322 — P2
 
 **Exact current text**
 
@@ -1314,7 +1196,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6014
+- Source line: 6043
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1354,7 +1236,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0328 — P2
+## COPY-0323 — P2
 
 **Exact current text**
 
@@ -1373,7 +1255,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6015
+- Source line: 6044
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1413,7 +1295,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0329 — P2
+## COPY-0324 — P2
 
 **Exact current text**
 
@@ -1432,7 +1314,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6018
+- Source line: 6047
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1472,7 +1354,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0330 — P2
+## COPY-0325 — P2
 
 **Exact current text**
 
@@ -1491,7 +1373,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6019
+- Source line: 6048
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1531,7 +1413,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0331 — P2
+## COPY-0326 — P2
 
 **Exact current text**
 
@@ -1550,7 +1432,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6020
+- Source line: 6049
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1590,7 +1472,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0332 — P2
+## COPY-0327 — P2
 
 **Exact current text**
 
@@ -1609,7 +1491,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6021
+- Source line: 6050
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1649,7 +1531,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0333 — P2
+## COPY-0328 — P2
 
 **Exact current text**
 
@@ -1708,7 +1590,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0334 — P2
+## COPY-0329 — P2
 
 **Exact current text**
 
@@ -1727,7 +1609,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 2
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6026
+- Source line: 6055
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty, advisor-dashboard-populated [FULL_SURFACE]
@@ -1767,7 +1649,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0335 — P2
+## COPY-0330 — P2
 
 **Exact current text**
 
@@ -1786,7 +1668,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6034
+- Source line: 6063
 - Source function/object: renderCoachDashboard
 - Source mapping: RESOLVED
 - Render proof: renderCoachDashboard with mock empty advisor via advisor-dashboard-empty [FULL_SURFACE]
@@ -1825,7 +1707,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0336 — P2
+## COPY-0331 — P2
 
 **Exact current text**
 
@@ -1884,7 +1766,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0337 — P2
+## COPY-0332 — P2
 
 **Exact current text**
 
@@ -1943,7 +1825,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0338 — P2
+## COPY-0333 — P2
 
 **Exact current text**
 
@@ -2002,7 +1884,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0339 — P2
+## COPY-0334 — P2
 
 **Exact current text**
 
@@ -2061,7 +1943,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0340 — P2
+## COPY-0335 — P2
 
 **Exact current text**
 
@@ -2119,11 +2001,11 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Approval date:
 - Notes:
 
-## COPY-0341 — P2
+## COPY-0336 — P2
 
 **Exact current text**
 
-> Coach / Дэд админ
+> Зөвлөхийн эрхийн удирдлага
 
 **Classification**
 
@@ -2158,8 +2040,303 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Coach / Дэд админ
-> Coach нэмэх
+> Зөвлөхийн эрхийн удирдлага
+> Зөвлөх нэмэх
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0337 — P2
+
+**Exact current text**
+
+> Зөвлөх нэмэх
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: ADMIN_PORTAL
+- Role: ADMIN
+- Scenario: admin-portal
+- Render source: renderAdminCoach with internalTest state
+- Extraction type: FULL_SURFACE
+- Occurrence count: 2
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Зөвлөхийн эрхийн удирдлага
+> Зөвлөх нэмэх
+> Зөвлөхийн имэйл
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0338 — P2
+
+**Exact current text**
+
+> Зөвлөхийн имэйл
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: ADMIN_PORTAL
+- Role: ADMIN
+- Scenario: admin-portal
+- Render source: renderAdminCoach with internalTest state
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6103
+- Source function/object: renderAdminCoach
+- Source mapping: RESOLVED
+- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <h3>Зөвлөх нэмэх</h3>
+
+**Source item**
+
+> <label class="field"><span class="muted">Зөвлөхийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
+
+**Source context after**
+
+> <label class="field"><span class="muted">Зөвлөхийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
+
+**Rendered context**
+
+> Зөвлөх нэмэх
+> Зөвлөхийн имэйл
+> Зөвлөхийн нэр
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0339 — P2
+
+**Exact current text**
+
+> Зөвлөхийн нэр
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: ADMIN_PORTAL
+- Role: ADMIN
+- Scenario: admin-portal
+- Render source: renderAdminCoach with internalTest state
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6104
+- Source function/object: renderAdminCoach
+- Source mapping: RESOLVED
+- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <label class="field"><span class="muted">Зөвлөхийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
+
+**Source item**
+
+> <label class="field"><span class="muted">Зөвлөхийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
+
+**Source context after**
+
+> <label class="field"><span class="muted">Утас</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
+
+**Rendered context**
+
+> Зөвлөхийн имэйл
+> Зөвлөхийн нэр
+> Утас
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0340 — P2
+
+**Exact current text**
+
+> Утас
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: ADMIN_PORTAL
+- Role: ADMIN
+- Scenario: admin-portal
+- Render source: renderAdminCoach with internalTest state
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: UNRESOLVED
+- Source function/object: UNRESOLVED
+- Source mapping: UNRESOLVED
+- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> None
+
+**Source item**
+
+> Source mapping: UNRESOLVED
+
+**Source context after**
+
+> None
+
+**Rendered context**
+
+> Зөвлөхийн нэр
+> Утас
+> Зөвлөхийн шимтгэл
+
+**Dynamic values**
+
+- None
+
+**Reason included**
+
+Ordinary role-facing UI, status, navigation, or accessibility copy.
+
+**Owner decision**
+
+- Decision: `PENDING`
+- Approved exact text:
+- Approved by:
+- Approval date:
+- Notes:
+
+## COPY-0341 — P2
+
+**Exact current text**
+
+> Зөвлөхийн шимтгэл
+
+**Classification**
+
+- Priority: P2
+- Review group: ordinary
+- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
+- Surface: ADMIN_PORTAL
+- Role: ADMIN
+- Scenario: admin-portal
+- Render source: renderAdminCoach with internalTest state
+- Extraction type: FULL_SURFACE
+- Occurrence count: 1
+- Duplicate group: None
+- Source file: app.js
+- Source line: 6106
+- Source function/object: renderAdminCoach
+- Source mapping: RESOLVED
+- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
+- Cross-group references: None
+
+**Source context before**
+
+> <label class="field"><span class="muted">Утас</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
+
+**Source item**
+
+> <label class="field"><span class="muted">Зөвлөхийн шимтгэл</span><input type="number" value="${escapeAttr(state.adminCoachForm?.commissionMnt || String(COACH_COMMISSION_MNT))}" oninput="updateAdminCoachField('commissionMnt', this.value)"></label>
+
+**Source context after**
+
+> <button class="button" onclick="createCoachFromAdmin()">Зөвлөх нэмэх</button>
+
+**Rendered context**
+
+> Утас
+> Зөвлөхийн шимтгэл
+> Зөвлөхийн жагсаалт
 
 **Dynamic values**
 
@@ -2181,7 +2358,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Coach нэмэх
+> Зөвлөхийн жагсаалт
 
 **Classification**
 
@@ -2193,32 +2370,32 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Scenario: admin-portal
 - Render source: renderAdminCoach with internalTest state
 - Extraction type: FULL_SURFACE
-- Occurrence count: 2
+- Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
+- Source line: 6112
+- Source function/object: renderAdminCoach
+- Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
 - Cross-group references: None
 
 **Source context before**
 
-> None
+> <div class="card stack">
 
 **Source item**
 
-> Source mapping: UNRESOLVED
+> <h3>Зөвлөхийн жагсаалт</h3>
 
 **Source context after**
 
-> None
+> ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Зөвлөх бүртгэгдээгүй байна.</p>`}
 
 **Rendered context**
 
-> Coach / Дэд админ
-> Coach нэмэх
-> Coach-ийн имэйл
+> Зөвлөхийн шимтгэл
+> Зөвлөхийн жагсаалт
+> Зөвлөх бүртгэгдээгүй байна.
 
 **Dynamic values**
 
@@ -2240,7 +2417,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Exact current text**
 
-> Coach-ийн имэйл
+> Зөвлөх бүртгэгдээгүй байна.
 
 **Classification**
 
@@ -2255,7 +2432,7 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 - Occurrence count: 1
 - Duplicate group: None
 - Source file: app.js
-- Source line: 6074
+- Source line: 6113
 - Source function/object: renderAdminCoach
 - Source mapping: RESOLVED
 - Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
@@ -2263,306 +2440,11 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Source context before**
 
-> <h3>Coach нэмэх</h3>
+> <h3>Зөвлөхийн жагсаалт</h3>
 
 **Source item**
 
-> <label class="field"><span class="muted">Coach-ийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
-
-**Source context after**
-
-> <label class="field"><span class="muted">Coach-ийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
-
-**Rendered context**
-
-> Coach нэмэх
-> Coach-ийн имэйл
-> Coach-ийн нэр
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0344 — P2
-
-**Exact current text**
-
-> Coach-ийн нэр
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6075
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <label class="field"><span class="muted">Coach-ийн имэйл</span><input type="email" value="${escapeAttr(state.adminCoachForm?.email || "")}" oninput="updateAdminCoachField('email', this.value)"></label>
-
-**Source item**
-
-> <label class="field"><span class="muted">Coach-ийн нэр</span><input value="${escapeAttr(state.adminCoachForm?.name || "")}" oninput="updateAdminCoachField('name', this.value)"></label>
-
-**Source context after**
-
-> <label class="field"><span class="muted">Утас</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
-
-**Rendered context**
-
-> Coach-ийн имэйл
-> Coach-ийн нэр
-> Утас
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0345 — P2
-
-**Exact current text**
-
-> Утас
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: UNRESOLVED
-- Source function/object: UNRESOLVED
-- Source mapping: UNRESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> None
-
-**Source item**
-
-> Source mapping: UNRESOLVED
-
-**Source context after**
-
-> None
-
-**Rendered context**
-
-> Coach-ийн нэр
-> Утас
-> Coach-ийн авах дүн
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0346 — P2
-
-**Exact current text**
-
-> Coach-ийн авах дүн
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6077
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <label class="field"><span class="muted">Утас</span><input value="${escapeAttr(state.adminCoachForm?.phone || "")}" oninput="updateAdminCoachField('phone', this.value)"></label>
-
-**Source item**
-
-> <label class="field"><span class="muted">Coach-ийн авах дүн</span><input type="number" value="${escapeAttr(state.adminCoachForm?.commissionMnt || String(COACH_COMMISSION_MNT))}" oninput="updateAdminCoachField('commissionMnt', this.value)"></label>
-
-**Source context after**
-
-> <button class="button" onclick="createCoachFromAdmin()">Coach нэмэх</button>
-
-**Rendered context**
-
-> Утас
-> Coach-ийн авах дүн
-> Coach list
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0347 — P2
-
-**Exact current text**
-
-> Coach list
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6083
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <div class="card stack">
-
-**Source item**
-
-> <h3>Coach list</h3>
-
-**Source context after**
-
-> ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Coach бүртгэл алга.</p>`}
-
-**Rendered context**
-
-> Coach-ийн авах дүн
-> Coach list
-> Coach бүртгэл алга.
-
-**Dynamic values**
-
-- None
-
-**Reason included**
-
-Ordinary role-facing UI, status, navigation, or accessibility copy.
-
-**Owner decision**
-
-- Decision: `PENDING`
-- Approved exact text:
-- Approved by:
-- Approval date:
-- Notes:
-
-## COPY-0348 — P2
-
-**Exact current text**
-
-> Coach бүртгэл алга.
-
-**Classification**
-
-- Priority: P2
-- Review group: ordinary
-- Structural signal: Ordinary role-facing UI, status, navigation, or accessibility copy.
-- Surface: ADMIN_PORTAL
-- Role: ADMIN
-- Scenario: admin-portal
-- Render source: renderAdminCoach with internalTest state
-- Extraction type: FULL_SURFACE
-- Occurrence count: 1
-- Duplicate group: None
-- Source file: app.js
-- Source line: 6084
-- Source function/object: renderAdminCoach
-- Source mapping: RESOLVED
-- Render proof: renderAdminCoach with internalTest state via admin-portal [FULL_SURFACE]
-- Cross-group references: None
-
-**Source context before**
-
-> <h3>Coach list</h3>
-
-**Source item**
-
-> ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Coach бүртгэл алга.</p>`}
+> ${coaches.map(coach => `<div class="table-row"><span>${escapeHtml(coach.display_name)}</span><span>${escapeHtml(coach.email_normalized)}</span><span>${escapeHtml(coach.status)}</span><span>${coach.commission_mnt}₮</span></div>`).join("") || `<p class="muted">Зөвлөх бүртгэгдээгүй байна.</p>`}
 
 **Source context after**
 
@@ -2570,8 +2452,8 @@ Ordinary role-facing UI, status, navigation, or accessibility copy.
 
 **Rendered context**
 
-> Coach list
-> Coach бүртгэл алга.
+> Зөвлөхийн жагсаалт
+> Зөвлөх бүртгэгдээгүй байна.
 
 **Dynamic values**
 

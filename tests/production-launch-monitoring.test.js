@@ -134,8 +134,8 @@ setOneTime();
 const unpaidHtml = _internal.renderReport();
 const unpaid = normalize(unpaidHtml);
 assertMonitoredOutput(unpaidHtml, "unpaid output");
-assert(unpaid.includes("Эхний товч зураглал"), "unpaid output must keep preview visible");
-assert(unpaid.includes("Энэ хэсэг төлбөргүй хэвээр харагдана"), "unpaid output must keep free preview explanation visible");
+assert(unpaid.includes("Эхний зураглал"), "unpaid output must keep preview visible");
+assert(unpaid.includes("Энэ эхний зураглалыг төлбөргүй үзэх боломжтой"), "unpaid output must keep free preview explanation visible");
 assert(!unpaid.includes("Тэр мөчид хоол ямар мэдрэмж өгч байна вэ"), "unpaid output must not show paid depth");
 assert(!unpaid.includes("14 хоногийн туршилт"), "unpaid output must not show paid experiment");
 

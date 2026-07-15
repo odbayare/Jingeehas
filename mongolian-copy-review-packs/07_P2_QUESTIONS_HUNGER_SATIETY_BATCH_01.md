@@ -2,7 +2,7 @@
 
 Questions and their owning options are kept together verbatim. No wording is proposed.
 
-## COPY-0467 — P2
+## COPY-0463 — P2
 
 **Exact current text**
 
@@ -69,7 +69,7 @@ Question wording requiring owner review.
 - Цадсан ч үргэлжлүүлдэг
 - Хэт өлстлөө хүлээгээд хэтрүүлдэг
 
-## COPY-0468 — P2
+## COPY-0464 — P2
 
 **Exact current text**
 
@@ -136,7 +136,7 @@ Question wording requiring owner review.
 - Ялгаж мэддэггүй
 - Нөхцлөөс шалтгаална
 
-## COPY-0469 — P2
+## COPY-0465 — P2
 
 **Exact current text**
 
@@ -203,7 +203,7 @@ Question wording requiring owner review.
 - Бүгд л 'юм идмээр' гэж мэдрэгддэг
 - Анзаарч байгаагүй
 
-## COPY-0486 — P2
+## COPY-0482 — P2
 
 **Exact current text**
 
@@ -270,7 +270,7 @@ Question wording requiring owner review.
 - Ихэвчлэн
 - Маш хүчтэй
 
-## COPY-0487 — P2
+## COPY-0483 — P2
 
 **Exact current text**
 
@@ -337,7 +337,7 @@ Question wording requiring owner review.
 - Тийм
 - Маш тод
 
-## COPY-0488 — P2
+## COPY-0484 — P2
 
 **Exact current text**
 

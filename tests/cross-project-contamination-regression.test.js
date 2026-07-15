@@ -12,8 +12,8 @@ execFileSync("node", ["tools/assert-no-cross-project-contamination.mjs"], {
 });
 
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "MONGOLIAN_COPY_APPROVED_REPLACEMENTS.json"), "utf8"));
-assert.strictEqual(manifest.approval_status, "EMPTY_NOT_APPROVED");
-assert.deepStrictEqual(manifest.replacements, []);
+assert.strictEqual(manifest.approval_status, "APPROVED");
+assert(manifest.replacements.length > 0);
 
 const registry = JSON.parse(fs.readFileSync(path.join(root, "APPLIED_OWNER_CORRECTIONS.json"), "utf8"));
 assert.strictEqual(registry.schema_version, 1);
