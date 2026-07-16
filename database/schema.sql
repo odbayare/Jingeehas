@@ -17,3 +17,4 @@ create table advisor_report_access_logs (id text primary key, coach_id text not 
 create table admin_accounts (id text primary key, email text not null unique, password_hash text not null, status text not null, created_at timestamptz not null);
 create table admin_sessions (id text primary key, admin_id text not null references admin_accounts(id), token_hash text not null, expires_at timestamptz not null, revoked_at timestamptz, created_at timestamptz not null);
 create table admin_audit_logs (id text primary key, admin_id text not null, action text not null, target_type text not null, target_id text not null, details jsonb not null, created_at timestamptz not null);
+create table data_deletion_requests (id text primary key, session_id text not null references sessions(id), assessment_id text not null references assessments(id), status text not null, created_at timestamptz not null, completed_at timestamptz);

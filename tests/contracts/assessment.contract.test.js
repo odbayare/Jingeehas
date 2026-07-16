@@ -10,6 +10,8 @@ const create = require("../../netlify/functions/weight-assessment-create.js").ha
 const save = require("../../netlify/functions/weight-assessment-save.js").handler;
 const complete = require("../../netlify/functions/weight-assessment-complete.js").handler;
 const report = require("../../netlify/functions/weight-assessment-report.js").handler;
+const sessionState = require("../../netlify/functions/weight-session-state.js").handler;
+const deletion = require("../../netlify/functions/weight-data-deletion-request.js").handler;
 
 function event(httpMethod, body, cookie = "", query = {}) {
   return { httpMethod, body: body ? JSON.stringify(body) : null, headers: { cookie }, queryStringParameters: query };
@@ -50,6 +52,13 @@ function event(httpMethod, body, cookie = "", query = {}) {
   const reportBody = JSON.parse(reportResult.body);
   assert.equal(reportBody.entitled, false);
   assert.equal(reportBody.fullReport, null);
+  const restored = JSON.parse((await sessionState(event("GET", null, cookie))).body);
+  assert.equal(restored.assessment.assessmentId, assessmentId);
+  assert.equal(restored.report.reportMode, "sufficient");
+  const deletionResult = await deletion(event("POST", { assessmentId }, cookie));
+  assert.equal(deletionResult.statusCode, 202);
+  const duplicateDeletion = await deletion(event("POST", { assessmentId }, cookie));
+  assert.equal(JSON.parse(duplicateDeletion.body).requestId, JSON.parse(deletionResult.body).requestId);
 
   const other = await start(event("POST"));
   const otherCookie = other.headers["set-cookie"].split(";")[0];
