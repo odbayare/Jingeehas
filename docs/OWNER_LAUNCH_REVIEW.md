@@ -62,8 +62,8 @@ Payment UI states: `QPay нэхэмжлэл үүсгэж байна…`; `Төл
 **Data/process dependency:** QPay check, payment state machine, idempotent entitlement.
 **Owner decision:** branded support channel and refund principle supplied and implemented.
 **Legal review status:** OWNER DEFAULTS IMPLEMENTED; EXTERNAL COUNSEL REVIEW NOT CLAIMED.
-**Required change:** prove `support@jingeehas.fit` reaches a monitored inbox before launch.
-**Final approval status:** PENDING.
+**Required change:** the 2026-07-17 live retry was rejected. Sign in to Namecheap, repair or create the alias without changing the site or Resend DNS records, then prove delivery to the monitored inbox.
+**Final approval status:** OWNER BLOCKED.
 
 ## Report recovery
 

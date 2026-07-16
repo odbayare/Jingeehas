@@ -96,6 +96,7 @@ npm run verify:staging-package
 - QPay configuration: **PASS / LIVE MERCHANT** — reusable TIAS merchant configuration is installed server-side and a live no-provider-request probe passes. The provider configuration is production-only, so no invoice or payment was created.
 - QPay sandbox: **OWNER BLOCKED** — the verified merchant configuration is production-only and no isolated sandbox/test endpoint exists. A controlled owner-approved real-payment smoke test remains required before launch.
 - Admin bootstrap: **OWNER ACTION REQUIRED** — tooling passes, but the existing TIAS password does not meet the Jingeehas password policy; no real administrator or audit row was created.
+- Support inbox: **OWNER BLOCKED** — the live delivery retry was rejected and the available Namecheap session requires owner sign-in before the alias can be repaired and retested.
 - Owner/legal: **PENDING** — see `docs/OWNER_LAUNCH_REVIEW.md`.
 - Domain/live site: **PASS** — HTTPS, canonical, apex/www routing, public routes, security headers, and coming-soon enforcement pass.
 - Pre-launch deployment: **PASS** — production deploy `6a593860da8604112e80ab38` is live with coming-soon mode enabled.
