@@ -5,7 +5,7 @@ const DIMENSIONS = Object.freeze({
   "Q-MEAL-RHYTHM": "хооллох хэмнэл", "Q-HUNGER": "өлсөх ба цадах дохио", "Q-SATIETY": "өлсөх ба цадах дохио",
   "Q-EMOTION": "сэтгэл хөдлөл", "Q-CUE": "орчны дохио", "Q-SLEEP-DURATION": "унтах хугацаа",
   "Q-SLEEP-QUALITY": "унтах чанар", "Q-MOVEMENT": "өдөр тутмын хөдөлгөөн", "Q-TRAVEL": "зорчих хэлбэр",
-  "Q-PORTION": "идэх хэмжээ", "Q-FOOD-FEELING": "хоолны дараах мэдрэмж", "Q-PAST": "өмнөх оролдлого"
+  "Q-PORTION": "идэх хэмжээ", "Q-FOOD-FEELING": "хоолны дараах мэдрэмж", "OPEN-PAST": "өмнөх оролдлого"
 });
 
 function dimensionFor(questionId) {

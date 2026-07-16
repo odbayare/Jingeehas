@@ -29,7 +29,7 @@ function handler(method, action) {
     try { return await action(event, parseJson(event)); }
     catch (error) {
       const statusCode = Number(error.statusCode) || 500;
-      return response(statusCode, { error: error.code || "server_error", ...(error.safety ? { safety: error.safety } : {}) });
+      return response(statusCode, { error: error.code || "server_error", ...(error.safety ? { safety: error.safety } : {}), ...(error.questionId ? { questionId: error.questionId } : {}) });
     }
   };
 }

@@ -3,6 +3,7 @@
 const { randomId } = require("./crypto.js");
 const { calculateAssessmentSafety, ROUTE_COPY } = require("./safety.js");
 const { buildEvidence, buildFullReport } = require("./report.js");
+const { questionById, visibleQuestions, validateAnswer } = require("../../../questions.js");
 
 async function ownedAssessment(database, sessionId, assessmentId) {
   const assessment = await database.get("assessments", assessmentId);
@@ -36,11 +37,23 @@ async function saveAssessment(database, sessionId, input = {}, now = new Date())
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
   if (assessment.status !== "draft") throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
   const answers = input.answers && typeof input.answers === "object" ? input.answers : {};
+  const existingRows = await database.find("assessment_answers", { assessmentId: assessment.id });
+  const nextAnswerMap = { ...Object.fromEntries(existingRows.map(row => [row.questionId, row.value])), ...answers };
   for (const [questionId, value] of Object.entries(answers)) {
     if (!/^[A-Z0-9-]{2,40}$/.test(questionId)) throw Object.assign(new Error("Invalid question"), { statusCode: 400, code: "invalid_question" });
+    const question = questionById(questionId);
+    const isConfirmation = questionId.startsWith("SAFETY-CONFIRM-OPEN-");
+    if (!question && !isConfirmation) throw Object.assign(new Error("Invalid question"), { statusCode: 400, code: "invalid_question" });
+    const validationError = question ? validateAnswer(question, value) : "";
+    if (validationError) throw Object.assign(new Error(validationError), { statusCode: 400, code: "invalid_answer" });
     await database.upsert("assessment_answers", `${assessment.id}:${questionId}`, {
       assessmentId: assessment.id, questionId, value, updatedAt: now.toISOString()
     });
+  }
+  const applicableIds = new Set(visibleQuestions(nextAnswerMap).map(question => question.id));
+  const persistedRows = await database.find("assessment_answers", { assessmentId: assessment.id });
+  for (const row of persistedRows) {
+    if (questionById(row.questionId) && !applicableIds.has(row.questionId)) await database.delete("assessment_answers", row.id);
   }
   const summaries = input.confirmedSummaries && typeof input.confirmedSummaries === "object" ? input.confirmedSummaries : {};
   for (const [checkpointId, summary] of Object.entries(summaries)) {
@@ -71,6 +84,10 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
       reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
       initialView: { guidance: ROUTE_COPY[safety.route] }, fullReport: null, createdAt: now.toISOString() });
     return completedSafety;
+  }
+  for (const question of visibleQuestions(answerMap)) {
+    const validationError = validateAnswer(question, answerMap[question.id]);
+    if (validationError) throw Object.assign(new Error(validationError), { statusCode: 400, code: "assessment_incomplete", questionId: question.id });
   }
   const summaries = await database.find("assessment_summaries", { assessmentId: assessment.id });
   const evidence = buildEvidence(answers, summaries);

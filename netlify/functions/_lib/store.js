@@ -39,6 +39,7 @@ class MemoryDatabaseAdapter {
     this.table(table).set(id, next);
     return copy(next);
   }
+  async delete(table, id) { const existed = this.table(table).delete(id); return { deleted: existed }; }
 }
 
 class RestDatabaseAdapter {
@@ -58,6 +59,7 @@ class RestDatabaseAdapter {
   insert(table, row) { return this.request({ action: "insert", table, row }); }
   update(table, id, patch) { return this.request({ action: "update", table, id, patch }); }
   upsert(table, id, row) { return this.request({ action: "upsert", table, id, row }); }
+  delete(table, id) { return this.request({ action: "delete", table, id }); }
 }
 
 let testDatabase = null;
