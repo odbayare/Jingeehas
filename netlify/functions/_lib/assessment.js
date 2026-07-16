@@ -22,9 +22,17 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
   const assessment = await database.insert("assessments", {
     id, sessionId, status: "draft", reportMode: null, safetyRoute: null,
     safetyCheckId: safetyCheck.id,
-    advisorClientId: input.advisorClientId || null, consentStatus: input.consentStatus || null,
+    coachClientId: input.coachClientId || null, consentStatus: null,
     createdAt: now.toISOString(), updatedAt: now.toISOString(), completedAt: null
   });
+  if (input.coachClientId) {
+    const client = await database.get("advisor_clients", input.coachClientId);
+    if (!client || client.resolvedSessionId !== sessionId || client.consentStatus !== "consent_accepted") {
+      throw Object.assign(new Error("Advisor invitation is not authorized"), { statusCode: 403, code: "advisor_invite_unauthorized" });
+    }
+    await database.update("advisor_clients", client.id, { assessmentId: id, status: "assessment_created", updatedAt: now.toISOString() });
+    await database.update("assessments", id, { consentStatus: client.consentStatus });
+  }
   if (input.recoveryContactGroupId) {
     const contacts = await database.find("recovery_contacts", { sessionId, contactGroupId: input.recoveryContactGroupId });
     if (!contacts.length) throw Object.assign(new Error("Recovery contact not found"), { statusCode: 400, code: "recovery_contact_required" });

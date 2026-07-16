@@ -16,7 +16,9 @@ const BRANCH_PREFIXES = Object.freeze({ "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"]
 
 function createState() {
   return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", payment: { status: "idle" },
-    answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" }, busy: false };
+    answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
+    inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
+    admin: { authenticated: false, created: null, error: "" }, busy: false };
 }
 let state = createState();
 let testComingSoonOverride = null;
@@ -27,6 +29,7 @@ function escapeAttribute(value) { return escapeHtml(value).replace(/`/g, "&#96;"
 const ROUTES = Object.freeze({
   "/": "landing", "/about": "about", "/assessment/start": "assessmentStart", "/assessment/payment": "payment",
   "/assessment/questions": "questions", "/report": "report", "/recovery": "recovery"
+  , "/advisor/login": "advisorLogin", "/advisor/dashboard": "advisorDashboard", "/admin": "admin"
 });
 function routeName(pathname) { return ROUTES[String(pathname || "/").replace(/\/+$/, "") || "/"] || "notFound"; }
 function navigation() { return `<nav class="site-nav" aria-label="Үндсэн цэс"><a href="/" data-route>Нүүр</a><a href="/about" data-route>Тестийн тухай</a><a href="/recovery" data-route>Тайлан сэргээх</a></nav>`; }
@@ -78,7 +81,7 @@ function renderPayment() {
   const payment = state.payment || { status: "idle" };
   const statusCopy = payment.status === "creating" ? PAYMENT_COPY.creating : payment.status === "checking" ? PAYMENT_COPY.checking : payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : payment.status === "pending" ? PAYMENT_COPY.pending : "";
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөр ба тайлан сэргээх мэдээлэл</h1>
-    ${!state.assessmentId ? `<form id="contact-form" novalidate><p>Утас эсвэл имэйлийн аль нэгийг оруулна уу. Төлбөртэй бүрэн тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана.</p>
+    ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд энэ тест үнэлгээг санал болгосон байна.</p><form id="consent-form"><fieldset><legend>Тайлан хуваалцах зөвшөөрөл</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Би тест үнэлгээний бүрэн тайланг ${escapeHtml(state.invitation.advisorName || "Зөвлөх")} зөвлөх харахыг зөвшөөрч байна.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Миний асуулт бүрд өгсөн түүхий хариултыг тусад нь харуулахгүй.</p><button class="button" type="submit">Сонголтоо баталгаажуулах</button></form></section>` : !state.assessmentId ? `<form id="contact-form" novalidate><p>Утас эсвэл имэйлийн аль нэгийг оруулна уу. Төлбөртэй бүрэн тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана.</p>
       <label class="field" for="contact-phone"><span>Утас</span><input id="contact-phone" name="phone" type="tel" autocomplete="tel"></label>
       <label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email"></label>
       <p id="contact-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх</button></form>` : `
@@ -125,6 +128,22 @@ function renderRecovery() {
     ${!recovery.recoveryId ? `<form id="recovery-request-form" novalidate><p>Төлбөр хийхдээ ашигласан утас эсвэл имэйлээ оруулна уу.</p><label class="field"><span>Утас</span><input name="phone" type="tel" autocomplete="tel"></label><label class="field"><span>Имэйл</span><input name="email" type="email" autocomplete="email"></label><button class="button" type="submit">Баталгаажуулах код авах</button></form>` : `<form id="recovery-confirm-form"><p>${escapeHtml(recovery.message)}</p><label class="field"><span>Баталгаажуулах код</span><input name="code" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required></label><button class="button" type="submit">Тайлан сэргээх</button></form>`}
     <p class="error" role="alert" aria-live="assertive">${escapeHtml(recovery.error)}</p></main>${footer()}</div>`;
 }
+function money(value) { return `${Number(value || 0).toLocaleString("en-US")}₮`; }
+function renderAdvisorLogin() {
+  if (state.advisor.temporaryPasswordChange) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Нууц үгээ солино уу</h1><form id="advisor-password-form"><label class="field"><span>Одоогийн нууц үг</span><input name="currentPassword" type="password" autocomplete="current-password" required></label><label class="field"><span>Шинэ нууц үг</span><input name="newPassword" type="password" autocomplete="new-password" minlength="12" required></label><button class="button" type="submit">Нууц үг солих</button></form><p class="error">${escapeHtml(state.advisor.error)}</p></main></div>`;
+  return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөх нэвтрэх</h1><form id="advisor-login-form"><label class="field"><span>Имэйл</span><input name="email" type="email" autocomplete="username" required></label><label class="field"><span>Нууц үг</span><input name="password" type="password" autocomplete="current-password" required></label><button class="button" type="submit">Нэвтрэх</button></form><p class="error">${escapeHtml(state.advisor.error)}</p></main></div>`;
+}
+function renderAdvisorDashboard() {
+  const dashboard = state.advisor.dashboard;
+  if (!dashboard) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөхийн самбар</h1><p>Мэдээллийг ачаалахын тулд нэвтэрнэ үү.</p><a class="button" href="/advisor/login" data-route>Нэвтрэх</a></main></div>`;
+  return `<div class="page"><main class="content-card dashboard"><h1 id="page-title" tabindex="-1">Зөвлөхийн самбар</h1><div class="metric-grid"><article><h2>Үйлчлүүлэгчдийн нийт төлбөр</h2><p>${money(dashboard.totals.clientPayments)}</p></article><article><h2>Таны нийт шимтгэл</h2><p>${money(dashboard.totals.commissionTotal)}</p></article><article><h2>Олгохоор хүлээгдэж буй шимтгэл</h2><p>${money(dashboard.totals.commissionPending)}</p></article><article><h2>Олгосон шимтгэл</h2><p>${money(dashboard.totals.commissionPaid)}</p></article></div>
+    <form id="advisor-invite-form"><h2>Үйлчлүүлэгч урих</h2><label class="field"><span>Үйлчлүүлэгчийн имэйл</span><input name="email" type="email" required></label><label class="field"><span>Нэр</span><input name="name"></label><button class="button" type="submit">Урилга үүсгэх</button></form>${dashboard.inviteToken ? `<p class="notice">Нэг удаагийн урилгын холбоос: <code>/assessment/start?invite=${escapeHtml(dashboard.inviteToken)}</code></p>` : ""}
+    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Нэр</th><th>Төлөв</th><th>Тайлан</th></tr></thead><tbody>${dashboard.clients.map(client => `<tr><td>${escapeHtml(client.name || "Нэргүй")}</td><td>${escapeHtml(client.status)}</td><td>${client.assessmentId ? `<button class="button compact" type="button" data-advisor-report="${escapeAttribute(client.assessmentId)}">Бүрэн тайлан харах</button>` : "—"}</td></tr>`).join("")}</tbody></table></div><button class="button secondary" type="button" data-action="advisor-logout">Гарах</button></main></div>`;
+}
+function renderAdmin() {
+  if (!state.admin.authenticated) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Удирдлагын нэвтрэх хэсэг</h1><form id="admin-login-form"><label class="field"><span>Имэйл</span><input name="email" type="email" autocomplete="username" required></label><label class="field"><span>Нууц үг</span><input name="password" type="password" autocomplete="current-password" required></label><button class="button" type="submit">Нэвтрэх</button></form><p class="error">${escapeHtml(state.admin.error)}</p></main></div>`;
+  return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөхийн удирдлага</h1><form id="admin-advisor-form"><label class="field"><span>Зөвлөхийн нэр</span><input name="name" required></label><label class="field"><span>Зөвлөхийн имэйл</span><input name="email" type="email" required></label><label class="field"><span>Нэг төлбөрөөс зөвлөхөд олгох шимтгэл (₮)</span><input name="commissionAmount" type="number" min="0" max="9900" value="4000" required></label><button class="button" type="submit">Зөвлөх нэмэх</button></form>${state.admin.created ? `<div class="notice" role="status"><p>Түр нууц үгийг зөвхөн одоо хуулж авна уу.</p><code>${escapeHtml(state.admin.created.temporaryPassword)}</code></div>` : ""}<p class="error">${escapeHtml(state.admin.error)}</p></main></div>`;
+}
 function renderForPath(pathname) {
   const route = routeName(pathname);
   if (route === "landing") return renderLanding();
@@ -135,6 +154,9 @@ function renderForPath(pathname) {
   if (route === "questions") return renderQuestions();
   if (route === "report") return renderReport();
   if (route === "recovery") return renderRecovery();
+  if (route === "advisorLogin") return renderAdvisorLogin();
+  if (route === "advisorDashboard") return renderAdvisorDashboard();
+  if (route === "admin") return renderAdmin();
   return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Хуудас олдсонгүй</h1><a class="button" href="/" data-route>Нүүр рүү буцах</a></main>${footer()}</div>`;
 }
 
@@ -170,8 +192,18 @@ async function submitContact(form) {
   state.busy = true; render();
   const contact = await api("/.netlify/functions/weight-recovery-contact-save", { method: "POST", body: JSON.stringify(input) });
   state.contactGroupId = contact.contactGroupId;
+  if (state.inviteToken) {
+    state.invitation = await api("/.netlify/functions/advisor-invite-resolve", { method: "POST", body: JSON.stringify({ inviteToken: state.inviteToken }) });
+    state.inviteToken = ""; state.busy = false; render(); return;
+  }
   const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId }) });
   state.assessmentId = assessment.assessmentId; state.busy = false; render();
+}
+async function submitConsent(form) {
+  const accepted = formObject(form).consent === "yes";
+  const result = await api("/.netlify/functions/advisor-consent", { method: "POST", body: JSON.stringify({ coachClientId: state.invitation.coachClientId, consent: accepted }) });
+  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId, ...(accepted ? { coachClientId: result.coachClientId } : {}) }) });
+  state.assessmentId = assessment.assessmentId; state.invitation = null; render();
 }
 async function createInvoice() {
   setPaymentStatus("creating"); render();
@@ -226,19 +258,32 @@ async function confirmRecovery(form) {
   const result = await api("/.netlify/functions/weight-recovery-confirm", { method: "POST", body: JSON.stringify({ recoveryId: state.recovery.recoveryId, code: input.code }) });
   state.assessmentId = result.assessmentId; state.report = await loadReport(); navigate("/report");
 }
+async function advisorLoginSubmit(form) { const result = await api("/.netlify/functions/advisor-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.profile = result; state.advisor.temporaryPasswordChange = result.forcePasswordChange; if (result.forcePasswordChange) render(); else { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); } }
+async function advisorPasswordSubmit(form) { await api("/.netlify/functions/advisor-password-change", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.temporaryPasswordChange = false; state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); }
+async function advisorInviteSubmit(form) { const result = await api("/.netlify/functions/advisor-client-invite", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.dashboard = { ...state.advisor.dashboard, inviteToken: result.inviteToken }; render(); }
+async function adminLoginSubmit(form) { await api("/.netlify/functions/admin-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.admin.authenticated = true; state.admin.error = ""; render(); }
+async function adminAdvisorSubmit(form) { const input = formObject(form); input.commissionAmount = Number(input.commissionAmount); state.admin.created = await api("/.netlify/functions/admin-advisor-create", { method: "POST", body: JSON.stringify(input) }); render(); }
 
 function bind(root) {
   root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); navigate(link.getAttribute("href")); }));
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(input.type === "text" || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
   root.querySelector("#safety-form")?.addEventListener("submit", event => { event.preventDefault(); submitSafety(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("safety-error"); if (node) node.textContent = error.message; }); });
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
+  root.querySelector("#consent-form")?.addEventListener("submit", event => { event.preventDefault(); submitConsent(event.currentTarget).catch(() => { state.validationError = "Сонголтыг хадгалж чадсангүй."; render(); }); });
   root.querySelector("#question-form")?.addEventListener("submit", event => { event.preventDefault(); nextQuestion().catch(() => { state.validationError = "Хариултыг хадгалж чадсангүй. Дахин оролдоно уу."; render(); }); });
   root.querySelector("#recovery-request-form")?.addEventListener("submit", event => { event.preventDefault(); requestRecovery(event.currentTarget).catch(error => { state.recovery.error = error.message; render(); }); });
   root.querySelector("#recovery-confirm-form")?.addEventListener("submit", event => { event.preventDefault(); confirmRecovery(event.currentTarget).catch(() => { state.recovery.error = "Баталгаажуулах код буруу эсвэл хугацаа дууссан байна."; render(); }); });
+  root.querySelector("#advisor-login-form")?.addEventListener("submit", event => { event.preventDefault(); advisorLoginSubmit(event.currentTarget).catch(() => { state.advisor.error = "Имэйл эсвэл нууц үг буруу байна."; render(); }); });
+  root.querySelector("#advisor-password-form")?.addEventListener("submit", event => { event.preventDefault(); advisorPasswordSubmit(event.currentTarget).catch(() => { state.advisor.error = "Нууц үгийг сольж чадсангүй."; render(); }); });
+  root.querySelector("#advisor-invite-form")?.addEventListener("submit", event => { event.preventDefault(); advisorInviteSubmit(event.currentTarget).catch(() => { state.advisor.error = "Урилга үүсгэж чадсангүй."; render(); }); });
+  root.querySelector("#admin-login-form")?.addEventListener("submit", event => { event.preventDefault(); adminLoginSubmit(event.currentTarget).catch(() => { state.admin.error = "Нэвтрэх мэдээлэл буруу байна."; render(); }); });
+  root.querySelector("#admin-advisor-form")?.addEventListener("submit", event => { event.preventDefault(); adminAdvisorSubmit(event.currentTarget).catch(() => { state.admin.error = "Зөвлөх үүсгэж чадсангүй."; render(); }); });
   root.querySelector('[data-action="create-invoice"]')?.addEventListener("click", createInvoice);
   root.querySelector('[data-action="check-payment"]')?.addEventListener("click", checkPayment);
   root.querySelector('[data-action="previous-question"]')?.addEventListener("click", () => { state.questionIndex = Math.max(0, state.questionIndex - 1); state.validationError = ""; render(); });
   root.querySelector('[data-action="print-report"]')?.addEventListener("click", () => window.print());
+  root.querySelector('[data-action="advisor-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/advisor-logout", { method: "POST", body: "{}" }); state.advisor = createState().advisor; navigate("/advisor/login"); });
+  root.querySelectorAll("[data-advisor-report]").forEach(button => button.addEventListener("click", async () => { const result = await api(`/.netlify/functions/advisor-report?assessmentId=${encodeURIComponent(button.dataset.advisorReport)}`, { method: "GET" }); state.report = { assessmentId: result.assessmentId, fullReport: result.fullReport, entitled: true }; navigate("/report"); }));
 }
 function render(options = {}) {
   if (typeof document === "undefined") return "";
@@ -248,6 +293,7 @@ function render(options = {}) {
   return root.innerHTML;
 }
 function navigate(pathname, options = {}) { if (typeof window === "undefined") return; window.history[options.replace ? "replaceState" : "pushState"]({}, "", pathname); render(); }
-if (typeof window !== "undefined") { window.addEventListener("popstate", () => render()); window.addEventListener("DOMContentLoaded", () => render({ focus: false })); }
+function captureInviteToken() { if (typeof window === "undefined") return; const url = new URL(window.location.href); const token = url.searchParams.get("invite"); if (!token) return; state.inviteToken = token; url.searchParams.delete("invite"); window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`); }
+if (typeof window !== "undefined") { window.addEventListener("popstate", () => render()); window.addEventListener("DOMContentLoaded", () => { captureInviteToken(); render({ focus: false }); }); }
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; } } };

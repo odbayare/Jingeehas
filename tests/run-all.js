@@ -9,6 +9,7 @@ const tests = [
   "tests/contracts/assessment.contract.test.js",
   "tests/contracts/payment.contract.test.js",
   "tests/contracts/recovery.contract.test.js"
+  ,"tests/contracts/advisor-auth.contract.test.js"
 ];
 for (const file of tests) {
   const result = spawnSync(process.execPath, [file], { stdio: "inherit" });

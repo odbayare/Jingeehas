@@ -77,10 +77,9 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
       paymentId: payment.id, entitlementId, updatedAt: now.toISOString()
     });
     const assessment = await database.get("assessments", payment.assessmentId);
-    if (assessment?.advisorClientId) {
-      const clients = await database.find("advisor_clients", { id: assessment.advisorClientId });
-      const client = clients[0];
-      if (client?.advisorId) await database.upsert("advisor_commissions", payment.id, { advisorId: client.advisorId,
+    if (assessment?.coachClientId) {
+      const client = await database.get("advisor_clients", assessment.coachClientId);
+      if (client?.coachId) await database.upsert("advisor_commissions", payment.id, { coachId: client.coachId,
         paymentId: payment.id, amount: Number(client.commissionAmount || 4000), status: "pending", createdAt: now.toISOString() });
     }
     return publicPayment({ ...paid, entitlement: true });

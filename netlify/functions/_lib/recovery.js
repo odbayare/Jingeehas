@@ -112,5 +112,5 @@ async function confirmRecovery(database, input, now = new Date()) {
   return { assessmentId: entitlement.assessmentId, session: created.session, cookie: created.cookie };
 }
 
-module.exports = { PHONE_ERROR, EMAIL_ERROR, normalizePhone, normalizeEmail, validateContacts, encryptContact,
+module.exports = { PHONE_ERROR, EMAIL_ERROR, normalizePhone, normalizeEmail, validateContacts, encryptContact, contactHash,
   saveRecoveryContacts, RecoveryDeliveryClient, setRecoveryDeliveryForTests, getRecoveryDelivery, requestRecovery, confirmRecovery };
