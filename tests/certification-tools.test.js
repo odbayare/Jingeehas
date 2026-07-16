@@ -95,6 +95,14 @@ const fs = require("node:fs");
   assert.match(reportKeyMigration, /where t\.%I = \$1/);
   assert(!/grant execute/i.test(reportKeyMigration), "the report key repair must not broaden RPC privileges");
 
+  const adminLiveCertification = fs.readFileSync("scripts/certify-admin-live.mjs", "utf8");
+  assert.match(adminLiveCertification, /Password command-line arguments are forbidden/);
+  assert.match(adminLiveCertification, /--password-stdin is required/);
+  assert.match(adminLiveCertification, /expired\.status !== 401/);
+  assert.match(adminLiveCertification, /disabled\.status !== 401/);
+  assert.match(adminLiveCertification, /afterLogout\.status !== 401/);
+  assert(!/console\.(?:log|error)\([^\n]*password/i.test(adminLiveCertification));
+
   const { verifyRecoveryConfig } = await import("../tools/verify-recovery-config.mjs");
   const { verifyQPayConfig } = await import("../tools/verify-qpay-config.mjs");
   const callsBeforeConfigChecks = calls;
