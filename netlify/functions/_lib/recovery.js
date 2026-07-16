@@ -83,14 +83,21 @@ class RecoveryDeliveryClient {
   }
   async send(payload) {
     const expires = Number(payload.expiresInMinutes) || 10;
-    const text = `Таны баталгаажуулах код: ${payload.code}\n\nКод ${expires} минутын дараа хүчингүй болно. Та энэ хүсэлтийг гаргаагүй бол имэйлийг үл тоомсорлоно уу. Кодоо хэнд ч бүү хэлээрэй. Энэ имэйлд тест үнэлгээний эмзэг мэдээлэл агуулаагүй.`;
-    const html = `<p>Таны баталгаажуулах код:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${payload.code}</p><p>Код ${expires} минутын дараа хүчингүй болно.</p><p>Та энэ хүсэлтийг гаргаагүй бол имэйлийг үл тоомсорлоно уу. Кодоо хэнд ч бүү хэлээрэй.</p><p>Энэ имэйлд тест үнэлгээний эмзэг мэдээлэл агуулаагүй.</p>`;
-    const response = await fetch(this.url, { method: "POST", headers: { authorization: `Bearer ${this.key}`, "content-type": "application/json" },
-      body: JSON.stringify({ from: `${this.senderName} <${this.senderEmail}>`, to: [payload.destination], subject: RECOVERY_SUBJECT, text, html }),
-      signal: AbortSignal.timeout(8000) });
+    const text = `Таны баталгаажуулах код: ${payload.code}\n\nКод ${expires} минутын дараа хүчингүй болно. Та энэ хүсэлтийг гаргаагүй бол имэйлийг үл тоомсорлоно уу. Кодоо хэнд ч бүү хэлээрэй.\n\nJingeehas хэрэглэгчийн дэмжлэг`;
+    const html = `<p>Таны баталгаажуулах код:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${payload.code}</p><p>Код ${expires} минутын дараа хүчингүй болно.</p><p>Та энэ хүсэлтийг гаргаагүй бол имэйлийг үл тоомсорлоно уу. Кодоо хэнд ч бүү хэлээрэй.</p><p>Jingeehas хэрэглэгчийн дэмжлэг</p>`;
+    let response;
+    try {
+      response = await fetch(this.url, { method: "POST", headers: { authorization: `Bearer ${this.key}`, "content-type": "application/json" },
+        body: JSON.stringify({ from: `${this.senderName} <${this.senderEmail}>`, to: [payload.destination], subject: RECOVERY_SUBJECT, text, html }),
+        signal: AbortSignal.timeout(8000) });
+    } catch { throw Object.assign(new Error("Recovery delivery failed"), { statusCode: 503, code: "recovery_unavailable" }); }
     if (!response.ok) throw Object.assign(new Error("Recovery delivery failed"), { statusCode: 503, code: "recovery_unavailable" });
-    const data = await response.json().catch(() => ({}));
-    return { providerId: String(data.id || data.messageId || data.message_id || "").slice(0, 200) };
+    let data;
+    try { data = await response.json(); }
+    catch { throw Object.assign(new Error("Recovery delivery failed"), { statusCode: 503, code: "recovery_unavailable" }); }
+    const providerId = String(data?.id || data?.messageId || data?.message_id || "").trim().slice(0, 200);
+    if (!providerId) throw Object.assign(new Error("Recovery delivery failed"), { statusCode: 503, code: "recovery_unavailable" });
+    return { providerId };
   }
 }
 function getRecoveryDelivery() { return new RecoveryDeliveryClient(); }

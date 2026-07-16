@@ -1,10 +1,10 @@
 # Staging recovery certification
 
-Current status: **BLOCKED** — provider credentials, database-backed rate-limit configuration, staging deployment approval, and an owner-designated test contact are absent.
+Current status: **IMPLEMENTATION PASS / LIVE DELIVERY WAITING** — database-backed rate limiting, encryption/hash configuration, sender settings, and provider-mock tests pass. Resend domain verification, `RECOVERY_DELIVERY_API_KEY`, a current database gateway credential, staging deployment approval, and an owner-designated test email remain external gates.
 
 ## Configuration and privacy boundary
 
-- Channels: normalized Mongolian phone numbers (`+976` plus eight digits) and normalized email addresses.
+- Channel: normalized email addresses only. Phone recovery is explicitly unavailable.
 - `RECOVERY_ENCRYPTION_KEY`: base64-encoded 32-byte AES-256-GCM key.
 - `RECOVERY_HASH_PEPPER`: at least 32 characters, distinct from the encryption key.
 - `RECOVERY_DELIVERY_API_URL=https://api.resend.com/emails` and `RECOVERY_DELIVERY_API_KEY`: Resend HTTPS email delivery.
@@ -15,13 +15,11 @@ The database stores a keyed lookup hash and AES-GCM ciphertext, not plaintext co
 
 ## Delivery contract
 
-The server posts `{ channel, destination, code, expiresInMinutes }` to the delivery adapter. The adapter may return an opaque `id`, `messageId`, or `message_id`. Challenge evidence records `pending`, `sent`, `failed`, `suppressed`, or `superseded`, plus an attempted timestamp and opaque provider identifier.
+The recovery service gives `{ channel, destination, code, expiresInMinutes }` to the adapter. The adapter posts Resend's `from`, `to`, `subject`, `text`, and `html` fields to `https://api.resend.com/emails` with a bearer API key. It requires an opaque provider message ID in the successful response. Challenge evidence records `pending`, `sent`, `failed`, `suppressed`, or `superseded`, plus an attempted timestamp and opaque provider identifier.
 
-Sender identity and approved templates must be supplied by the owner/provider:
+Configured sender: `Jingeehas <no-reply@mail.jingeehas.fit>`. Resend domain status remains **PENDING**. The subject is `Jingeehas тайлан сэргээх баталгаажуулах код`; the body contains only the six-digit code, expiry, ignore-if-not-requested notice, no-share warning, and Jingeehas support identity.
 
-- Email sender: **PENDING**
-- SMS sender: **PENDING**
-- Template: `Jingeehas тайлан сэргээх код: {{code}}. Код {{expiresInMinutes}} минут хүчинтэй. Та хүсээгүй бол үл тооно уу.`
+Provider-mock coverage passes for success, 4xx, 5xx, timeout, invalid JSON, missing provider ID, secret-log suppression, and absence of assessment/report/payment content.
 
 The provider timeout is eight seconds. The application does not automatically retry a timed-out send because duplicate delivery can confuse recipients. A user-initiated resend creates a new code, supersedes older active challenges, and counts toward the hourly abuse limit. Database uniqueness enforces a one-minute cooldown independently for contact, IP, and session; rolling limits are five per contact, twenty per IP, and five per session per hour. Code consumption and wrong-attempt increments are row-locked in PostgreSQL.
 
@@ -29,7 +27,7 @@ The provider timeout is eight seconds. The application does not automatically re
 
 - Six cryptographically random digits; only the hash is stored.
 - Ten-minute expiry; maximum five confirmation attempts.
-- Maximum five requests per contact-hash/client-key pair per hour in shared database storage.
+- Maximum five requests per contact, five per session, and twenty per IP per rolling hour in shared database storage, with one-minute cooldown uniqueness for each dimension.
 - New request invalidates older unconsumed challenges for that rate key.
 - Unknown contacts receive the same public response and a `suppressed` record; no message is sent.
 - Successful use marks the challenge used, verifies the contact, creates a new HTTP-only session, and links only the entitled assessment.

@@ -86,11 +86,12 @@ const { saveSafetyCheck } = require("../../netlify/functions/_lib/safety.js");
   assert.equal(confirmations.filter(result => result.status === "rejected" && result.reason.code === "invalid_recovery_code").length, 1);
 
   const originalFetch = globalThis.fetch;
+  const deliveryEnv = { RECOVERY_DELIVERY_API_URL: "https://api.resend.com/emails", RECOVERY_DELIVERY_API_KEY: "test-key",
+    RECOVERY_SENDER_EMAIL: "no-reply@mail.jingeehas.fit", RECOVERY_SENDER_NAME: "Jingeehas", RECOVERY_CHANNEL: "email" };
   let resendRequest = null;
   globalThis.fetch = async (url, init) => { resendRequest = { url, init }; return { ok: true, json: async () => ({ id: "email-1" }) }; };
   try {
-    const client = new RecoveryDeliveryClient({ RECOVERY_DELIVERY_API_URL: "https://api.resend.com/emails", RECOVERY_DELIVERY_API_KEY: "test-key",
-      RECOVERY_SENDER_EMAIL: "no-reply@mail.jingeehas.fit", RECOVERY_SENDER_NAME: "Jingeehas", RECOVERY_CHANNEL: "email" });
+    const client = new RecoveryDeliveryClient(deliveryEnv);
     const delivered = await client.send({ destination: "owner@example.com", code: "123456", expiresInMinutes: 10 });
     assert.equal(delivered.providerId, "email-1");
     const resendBody = JSON.parse(resendRequest.init.body);
@@ -101,7 +102,34 @@ const { saveSafetyCheck } = require("../../netlify/functions/_lib/safety.js");
     assert.match(resendBody.text, /123456/);
     assert.match(resendBody.text, /10 минут/);
     assert.match(resendBody.text, /хэнд ч бүү хэл/);
-    assert(!/report|health|assessment/i.test(resendBody.text));
+    assert.match(resendBody.text, /Jingeehas хэрэглэгчийн дэмжлэг/);
+    const serialized = `${resendBody.subject}\n${resendBody.text}`;
+    for (const forbidden of ["assessment answers", "report content", "weight", "safety results", "payment details", "encryptedContact", "entitlementId"]) {
+      assert(!serialized.toLowerCase().includes(forbidden.toLowerCase()));
+    }
+
+    for (const status of [400, 429, 500, 503]) {
+      globalThis.fetch = async () => ({ ok: false, status, json: async () => ({ error: "provider detail" }) });
+      await assert.rejects(() => new RecoveryDeliveryClient(deliveryEnv).send({ destination: "owner@example.com", code: "123456", expiresInMinutes: 10 }),
+        error => error.code === "recovery_unavailable" && error.statusCode === 503 && !error.message.includes("provider detail"));
+    }
+
+    globalThis.fetch = async () => { throw Object.assign(new Error("provider timeout with secret test-key"), { name: "TimeoutError" }); };
+    const logged = [];
+    const originalConsoleError = console.error;
+    console.error = (...parts) => logged.push(parts.join(" "));
+    try {
+      await assert.rejects(() => new RecoveryDeliveryClient(deliveryEnv).send({ destination: "owner@example.com", code: "123456", expiresInMinutes: 10 }),
+        error => error.code === "recovery_unavailable" && !error.message.includes("test-key"));
+    } finally { console.error = originalConsoleError; }
+    assert.equal(logged.length, 0);
+
+    globalThis.fetch = async () => ({ ok: true, status: 200, json: async () => { throw new SyntaxError("invalid json"); } });
+    await assert.rejects(() => new RecoveryDeliveryClient(deliveryEnv).send({ destination: "owner@example.com", code: "123456", expiresInMinutes: 10 }),
+      error => error.code === "recovery_unavailable");
+    globalThis.fetch = async () => ({ ok: true, status: 200, json: async () => ({ unexpected: true }) });
+    await assert.rejects(() => new RecoveryDeliveryClient(deliveryEnv).send({ destination: "owner@example.com", code: "123456", expiresInMinutes: 10 }),
+      error => error.code === "recovery_unavailable");
   } finally { globalThis.fetch = originalFetch; }
   console.log("recovery API contract tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

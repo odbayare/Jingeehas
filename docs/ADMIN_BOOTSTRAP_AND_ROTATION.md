@@ -33,6 +33,12 @@ CREATE FIRST JINGEEHAS ADMIN
 
 The script atomically creates the active administrator and an `initial_admin_created` audit entry. It refuses if any active administrator already exists.
 
+From the linked repository, the owner can perform the production bootstrap with one interactive shell line after replacing the email. The password is read silently, passed only on stdin, and unset immediately:
+
+```bash
+read -r -s ADMIN_PASSWORD; printf '%s' "$ADMIN_PASSWORD" | netlify dev:exec --context production -- env ADMIN_BOOTSTRAP_SAFETY_CONFIRMATION='CREATE FIRST JINGEEHAS ADMIN' node scripts/bootstrap-admin.mjs --email owner@example.com --password-stdin --apply; unset ADMIN_PASSWORD
+```
+
 ## Immediate rotation
 
 Generate a new unique password, repeat the secure stdin procedure with the same email, `--rotate --apply`, and the safety confirmation. Rotation is allowed only for the matching existing active administrator. It atomically changes the scrypt hash and creates an `admin_password_rotated` audit entry. Verify login with the new credential, revoke existing admin sessions, and remove the old credential from the secret manager.

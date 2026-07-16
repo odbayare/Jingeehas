@@ -4,7 +4,7 @@ process.env.RECOVERY_ENCRYPTION_KEY = Buffer.alloc(32, 4).toString("base64");
 process.env.RECOVERY_HASH_PEPPER = "advisor-test-pepper-value-at-least-32-characters";
 const assert = require("node:assert/strict");
 const { MemoryDatabaseAdapter } = require("../support/memory-database.js");
-const { hashPassword } = require("../../netlify/functions/_lib/auth.js");
+const { hashPassword, authenticateRole, ADMIN_SESSION } = require("../../netlify/functions/_lib/auth.js");
 const { adminLogin, advisorLogin, createInvitation, resolveInvitation, recordConsent, accessAdvisorReport } = require("../../netlify/functions/_lib/advisor.js");
 const { createAdvisor, updateAdvisor } = require("../../netlify/functions/_lib/admin.js");
 const { createSession } = require("../../netlify/functions/_lib/session.js");
@@ -18,7 +18,12 @@ function cookieEvent(cookie) { return { headers: { cookie: cookie.split(";")[0] 
 (async () => {
   const database = new MemoryDatabaseAdapter();
   await database.insert("admin_accounts", { id: "admin-1", email: "admin@example.com", passwordHash: hashPassword("admin-password-strong"), status: "active", createdAt: new Date().toISOString() });
+  await database.insert("admin_accounts", { id: "admin-disabled", email: "disabled@example.com", passwordHash: hashPassword("disabled-password-strong"), status: "disabled", createdAt: new Date().toISOString() });
+  await assert.rejects(() => adminLogin(database, "disabled@example.com", "disabled-password-strong"), error => error.code === "invalid_login");
   const admin = await adminLogin(database, "admin@example.com", "admin-password-strong");
+  const expiredAdmin = await adminLogin(database, "admin@example.com", "admin-password-strong");
+  await database.update("admin_sessions", expiredAdmin.id, { expiresAt: new Date(0).toISOString() });
+  await assert.rejects(() => authenticateRole(database, cookieEvent(expiredAdmin.cookie), ADMIN_SESSION), error => error.code === "unauthorized");
   const created = await createAdvisor(database, cookieEvent(admin.cookie), { email: "advisor@example.com", name: "Нараа", commissionAmount: 4000 });
   assert.match(created.temporaryPassword, /^.{20}$/);
   const firstLogin = await advisorLogin(database, "advisor@example.com", created.temporaryPassword);
