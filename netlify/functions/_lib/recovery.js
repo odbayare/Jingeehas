@@ -72,6 +72,8 @@ class RecoveryDeliveryClient {
     const response = await fetch(this.url, { method: "POST", headers: { authorization: `Bearer ${this.key}`, "content-type": "application/json" },
       body: JSON.stringify(payload), signal: AbortSignal.timeout(8000) });
     if (!response.ok) throw Object.assign(new Error("Recovery delivery failed"), { statusCode: 503, code: "recovery_unavailable" });
+    const data = await response.json().catch(() => ({}));
+    return { providerId: String(data.id || data.messageId || data.message_id || "").slice(0, 200) };
   }
 }
 let testDelivery = null;
@@ -90,12 +92,24 @@ async function requestRecovery(database, delivery, input, clientKey, now = new D
   if (recent.length >= 5) throw Object.assign(new Error("Too many requests"), { statusCode: 429, code: "rate_limited" });
   const matching = await database.find("recovery_contacts", { type, contactHash: hash });
   const eligible = matching.find(contact => contact.entitlementId);
+  for (const challenge of recent.filter(row => !row.usedAt && new Date(row.expiresAt) > now)) {
+    await database.update("recovery_challenges", challenge.id, { usedAt: now.toISOString(), deliveryStatus: "superseded" });
+  }
   const recoveryId = randomId("rr_");
   const code = randomDigits(6);
   await database.insert("recovery_challenges", { id: recoveryId, rateKey: hashToken(`${clientKey}:${hash}`),
     contactId: eligible?.id || null, codeHash: hashToken(`${recoveryId}:${code}`), attempts: 0,
+    deliveryStatus: eligible ? "pending" : "suppressed", deliveryProviderId: null, deliveryAttemptedAt: null,
     expiresAt: new Date(now.getTime() + 10 * 60 * 1000).toISOString(), usedAt: null, createdAt: now.toISOString() });
-  if (eligible) await delivery.send({ channel: type, destination: decryptContact(eligible.encryptedContact), code, expiresInMinutes: 10 });
+  if (eligible) {
+    try {
+      const sent = await delivery.send({ channel: type, destination: decryptContact(eligible.encryptedContact), code, expiresInMinutes: 10 });
+      await database.update("recovery_challenges", recoveryId, { deliveryStatus: "sent", deliveryProviderId: sent?.providerId || null, deliveryAttemptedAt: now.toISOString() });
+    } catch (error) {
+      await database.update("recovery_challenges", recoveryId, { deliveryStatus: "failed", deliveryAttemptedAt: now.toISOString() });
+      throw error;
+    }
+  }
   return { recoveryId, message: "Хэрэв тохирох бүрэн тайлан байгаа бол баталгаажуулах код илгээгдлээ." };
 }
 
@@ -104,7 +118,7 @@ async function confirmRecovery(database, input, now = new Date()) {
   const valid = challenge && !challenge.usedAt && challenge.contactId && challenge.attempts < 5 && new Date(challenge.expiresAt) > now &&
     safeEqual(challenge.codeHash, hashToken(`${challenge.id}:${String(input.code || "")}`));
   if (!valid) {
-    if (challenge) await database.update("recovery_challenges", challenge.id, { attempts: Number(challenge.attempts || 0) + 1 });
+    if (challenge) await database.update("recovery_challenges", challenge.id, { attempts: Math.min(5, Number(challenge.attempts || 0) + 1) });
     throw Object.assign(new Error("Invalid recovery code"), { statusCode: 400, code: "invalid_recovery_code" });
   }
   const contact = await database.get("recovery_contacts", challenge.contactId);

@@ -31,5 +31,24 @@ const assert = require("node:assert/strict");
   assert.equal(passed.status, "PASS");
   assert.equal(passed.rollback, "verified");
   assert(calls > 0);
+
+  const { verifyRecoveryConfig } = await import("../tools/verify-recovery-config.mjs");
+  const { verifyQPayConfig } = await import("../tools/verify-qpay-config.mjs");
+  const callsBeforeConfigChecks = calls;
+  assert.equal(verifyRecoveryConfig({}).status, "BLOCKED");
+  assert.equal(verifyRecoveryConfig({
+    RECOVERY_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString("base64"), RECOVERY_HASH_PEPPER: "pepper-value-with-more-than-32-characters",
+    RECOVERY_DELIVERY_API_URL: "https://delivery.staging.invalid/messages", RECOVERY_DELIVERY_API_KEY: "secret", RECOVERY_RATE_LIMIT_STORE: "database"
+  }).status, "PASS");
+  assert.equal(verifyRecoveryConfig({
+    RECOVERY_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString("base64"), RECOVERY_HASH_PEPPER: "pepper-value-with-more-than-32-characters",
+    RECOVERY_DELIVERY_API_URL: "https://delivery.staging.invalid/messages", RECOVERY_DELIVERY_API_KEY: "secret", RECOVERY_RATE_LIMIT_STORE: "memory"
+  }).status, "FAIL");
+  assert.equal(verifyQPayConfig({}).status, "BLOCKED");
+  assert.equal(verifyQPayConfig({ QPAY_API_BASE_URL: "https://sandbox.qpay.invalid", QPAY_CLIENT_ID: "id", QPAY_CLIENT_SECRET: "secret", QPAY_INVOICE_CODE: "code",
+    QPAY_CALLBACK_ORIGIN: "https://staging.jingeehas.invalid", QPAY_ALLOWED_APP_SCHEMES: "bankapp", QPAY_ALLOWED_HTTPS_HOSTS: "bank.example" }).status, "PASS");
+  assert.equal(verifyQPayConfig({ QPAY_API_BASE_URL: "https://sandbox.qpay.invalid", QPAY_CLIENT_ID: "id", QPAY_CLIENT_SECRET: "secret", QPAY_INVOICE_CODE: "code",
+    QPAY_CALLBACK_ORIGIN: "https://staging.jingeehas.invalid", QPAY_ALLOWED_APP_SCHEMES: "javascript", QPAY_ALLOWED_HTTPS_HOSTS: "bank.example" }).status, "FAIL");
+  assert.equal(calls, callsBeforeConfigChecks, "configuration-only verification must not contact external systems");
   console.log("certification tooling tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

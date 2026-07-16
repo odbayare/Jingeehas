@@ -9,6 +9,8 @@
     "build:production": "node tools/build-production.mjs",
     "generate:artifacts": "node tools/generate-production-manifest.mjs",
     "verify:database-config": "node tools/verify-database-config.mjs",
+    "verify:recovery-config": "node tools/verify-recovery-config.mjs",
+    "verify:qpay-config": "node tools/verify-qpay-config.mjs",
     "verify:production-package": "node tools/verify-production-package.mjs"
   },
   "devDependencies": {
