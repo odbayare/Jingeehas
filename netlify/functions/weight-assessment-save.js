@@ -1,0 +1,12 @@
+"use strict";
+const { getDatabase } = require("./_lib/store.js");
+const { handler, response } = require("./_lib/http.js");
+const { authenticateSession } = require("./_lib/session.js");
+const { saveAssessment } = require("./_lib/assessment.js");
+
+exports.handler = handler("PATCH", async (event, body) => {
+  const database = getDatabase();
+  const session = await authenticateSession(database, event);
+  const assessment = await saveAssessment(database, session.id, body);
+  return response(200, { assessmentId: assessment.id, status: assessment.status, savedAt: assessment.updatedAt });
+});
