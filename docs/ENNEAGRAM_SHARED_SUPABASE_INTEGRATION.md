@@ -77,13 +77,14 @@ Both the Edge Function and SQL RPC enforce a fixed Jingeehas table allowlist. Ne
 - SQL RPC operation contract: PASS
 - rollback transaction: PASS, zero persisted probe rows
 - Edge Function deployment: ACTIVE
+- unauthorized Edge Function access: PASS (missing bearer `401`, invalid bearer `401`, GET `401`; read-only probes, no record created)
 - active function validates the bearer value against its server-side `SUPABASE_SERVICE_ROLE_KEY` and calls the service-role-only RPC bridge
 - the active function source is managed in Supabase and is not duplicated as deployable source in this repository
 
 ## Remaining certification work
 
 - inject the two database environment variables into an authorized Netlify staging/preview context;
-- run an authenticated HTTPS roundtrip through the Edge Function;
+- run `npm run certify:database-external` in an authorized, secret-injected environment to prove the authenticated HTTPS lifecycle;
 - run a backup and restoration exercise;
 - confirm application CRUD and rollback behavior from the staged Netlify Functions;
 - retain `WEIGHT_TEST_COMING_SOON_MODE = true` until all external launch gates pass.

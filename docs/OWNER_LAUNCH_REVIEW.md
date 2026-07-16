@@ -2,6 +2,10 @@
 
 Status: **PENDING**. This is a review pack, not approval or launch evidence. The canonical repository value is `https://jingeehas.mn/`, but ownership, DNS, legal wording, provider identities, and public-launch approval remain unverified. The three approved hero sentences are unchanged.
 
+## Database infrastructure status
+
+Provider: **Supabase**. Hosting project: **Enneagram test**. Isolation: private `jingeehas` PostgreSQL schema with RLS default-deny, no `anon`/`authenticated` table privileges, private operation functions, service-role-only RPC bridge, and active service-role-only `jingeehas-database-gateway` Edge Function. Database schema and database-side transaction/rollback are **PASS**. Credential-free unauthorized gateway probes are **PASS**. Authenticated external lifecycle and application environment injection are **NOT RUN / PENDING**. Backup/restore is **PREPARED / NOT RUN**. This shared hosting project does not imply shared tables.
+
 ## Privacy policy
 
 **Current text**

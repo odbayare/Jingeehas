@@ -1,84 +1,133 @@
 # Staging database certification
 
-Current status: **BLOCKED** — no staging database provider or credentials have been supplied. This document prepares certification without selecting a provider.
+Current database gate: **BLOCKED**. Database schema and database-side operations pass, and the Supabase Edge Function gateway is active. Authenticated external gateway lifecycle, application environment injection, and backup/restore remain not run.
 
-## Required configuration
+## Verified infrastructure
 
-- `JINGEEHAS_DATABASE_API_URL`: HTTPS origin implementing `GET /health` and `POST /transaction`.
-- `JINGEEHAS_DATABASE_API_KEY`: bearer credential supplied only through the privileged staging environment.
-- External execution additionally requires the explicit CLI flag `--external-certification`.
+- Provider: **Supabase**
+- Hosting project: **Enneagram test** (`nemgfbanmwqudjfzddrn`)
+- Project API origin: `https://nemgfbanmwqudjfzddrn.supabase.co`
+- Isolation model: private PostgreSQL schema `jingeehas`
+- Gateway: Supabase Edge Function `jingeehas-database-gateway`
+- Gateway base URL: `https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway`
+- Final adapter URL: `https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway/transaction`
+- Gateway status: **ACTIVE**
+- Database-side insert/get/delete/transaction/rollback/cleanup: **PASS**
+- Unauthorized gateway test: **PASS** (missing bearer `401`, invalid bearer `401`, GET `401`)
+- Authenticated Edge gateway lifecycle: **NOT RUN**
+- Application environment injection: **PENDING**
+- Backup/restore: **PREPARED / NOT RUN**
 
-Never place either value in the repository, command output, screenshots, or PR text.
+Using the existing Enneagram project does not share application tables. Isolation is enforced by the separate `jingeehas` schema, removal of `anon` and `authenticated` table privileges, RLS default-deny, private operation functions, a service-role-only public RPC bridge, and a service-role-only Edge Function gateway. Enneagram continues to use its existing `public` schema.
 
-## Schema deployment and migration
+## Server configuration and stable adapter contract
 
-1. Provision an owner-approved PostgreSQL database and HTTPS adapter service.
-2. Take a provider snapshot before changing an existing database.
-3. In a privileged SQL session, run `psql --set ON_ERROR_STOP=1 --file database/schema.sql "$DATABASE_URL"` for a new empty database.
-4. Confirm `schema_migrations.version = 2026071601_initial_certifiable_schema`.
-5. For an existing database, generate and owner-review an additive migration from the canonical schema; do not rerun the initial schema blindly.
-6. Run `npm run verify:database-config -- --external-certification` from a secret-injected staging environment.
-7. Record only the evidence fields below, then remove shell/environment credentials.
+Configure only in an owner-authorized Netlify staging/preview environment:
 
-Every future schema change requires an immutable migration version, pre-change backup, forward procedure, and rollback procedure. Never edit an already-applied migration record.
+```text
+JINGEEHAS_DATABASE_API_URL=https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway
+JINGEEHAS_DATABASE_API_KEY=<Supabase service-role secret; server-side only>
+```
 
-## HTTPS adapter contract and field mapping
+The blank committed template is `config/staging.env.example`. Never place the key in a repository file, browser variable, PR, issue, chat, log, screenshot, or artifact. Rotate it immediately if exposed.
 
-`GET /health` returns `{ "status": "ok" }`. `POST /transaction` accepts `get`, `find`, `insert`, `update`, `upsert`, `delete`, `schema`, and atomic `transaction` actions. A rollback certification request uses `{ action: "transaction", rollback: true, operations: [...] }` and must return `{ rolledBack: true }` without persisting its operations.
+`netlify/functions/_lib/store.js` contains the stable adapter; there is no separate `_lib/database.js`. It treats the URL as a base, appends exactly `/transaction`, sends `Authorization: Bearer <JINGEEHAS_DATABASE_API_KEY>` and `Content-Type: application/json`, and uses an eight-second timeout. Neither database variable appears in browser code. Production has no memory fallback; the in-memory adapter is under `tests/support` only.
 
-Application JSON uses camelCase; the adapter maps it to PostgreSQL snake_case and reverses the mapping on responses. Examples: `sessionId ↔ session_id`, `assessmentId ↔ assessment_id`, `tokenHash ↔ token_hash`, `contactHash ↔ contact_hash`, `senderInvoiceNo ↔ sender_invoice_no`, `providerPaymentId ↔ provider_payment_id`, `createdAt ↔ created_at`, `updatedAt ↔ updated_at`, `expiresAt ↔ expires_at`, `paidAt ↔ paid_at`, `grantedAt ↔ granted_at`, `coachId ↔ coach_id`, and `adminId ↔ admin_id`. JSONB values remain JSON values. Unknown table names, fields, filters, and actions must be rejected.
+## Field mapping and operation contract
 
-## Table checklist
+Application JSON uses camelCase; the gateway maps it to PostgreSQL snake_case and reverses the mapping. Examples include `sessionId ↔ session_id`, `assessmentId ↔ assessment_id`, `tokenHash ↔ token_hash`, `contactHash ↔ contact_hash`, `senderInvoiceNo ↔ sender_invoice_no`, `providerPaymentId ↔ provider_payment_id`, `createdAt ↔ created_at`, `updatedAt ↔ updated_at`, `expiresAt ↔ expires_at`, `paidAt ↔ paid_at`, `grantedAt ↔ granted_at`, `coachId ↔ coach_id`, and `adminId ↔ admin_id`.
 
-| Table | Key/uniqueness | Required lookup or relationship |
-| --- | --- | --- |
-| `sessions` | PK `id`; unique `token_hash` | active expiry index |
-| `safety_checks` | PK `id`; FK session | session/time index |
-| `assessments` | PK `id`; FK session/safety/advisor client | session dashboard index |
-| `assessment_sessions` | PK; unique assessment/session | recovered-session lookup |
-| `assessment_answers` | PK; unique assessment/question | assessment cascade |
-| `assessment_summaries` | PK; unique assessment/checkpoint | assessment cascade |
-| `report_snapshots` | PK/FK assessment | session ownership |
-| `payments` | PK; unique invoice and sender invoice | session/assessment/product and status/expiry indexes |
-| `entitlements` | PK; unique assessment/product and payment/product | payment and assessment FKs |
-| `recovery_contacts` | PK; unique group/type | type/hash and assessment indexes |
-| `recovery_challenges` | PK | distributed rate-key/contact/time indexes, expiry and attempt checks |
-| `advisor_accounts` | PK; unique email | normalized identity |
-| `advisor_sessions` | PK; unique token hash | active token/expiry lookup |
-| `advisor_clients` | PK; unique invite hash | advisor/status/time dashboard and contact hash indexes |
-| `advisor_commissions` | PK; unique payment | advisor/status/time dashboard; idempotent payment commission |
-| `advisor_report_access_logs` | PK | advisor/time audit index |
-| `admin_accounts` | PK; unique email | active administrator identity |
-| `admin_sessions` | PK; unique token hash | active token/expiry lookup |
-| `admin_audit_logs` | PK; FK administrator | administrator/time audit index |
-| `data_deletion_requests` | PK; one pending request per assessment | ownership FKs and partial unique index |
+The service-role-only RPC accepts allowlisted `get`, `find`, `insert`, `update`, `upsert`, `delete`, and atomic `transaction` operations. Rollback certification sends `{ action: "transaction", rollback: true, operations: [...] }`. Unknown actions, tables, fields, and nested transactions must fail closed.
 
-`schema_migrations` versions migrations. `certification_records` exists only for disposable, non-user staging certification writes.
+## Table and integrity checklist
 
-## Transaction and deletion boundaries
+The private schema contains 22 tables, all with RLS enabled and no browser-facing policy: `sessions`, `safety_checks`, `assessments`, `assessment_sessions`, `assessment_answers`, `assessment_summaries`, `report_snapshots`, `payments`, `entitlements`, `recovery_contacts`, `recovery_challenges`, `advisor_accounts`, `advisor_sessions`, `advisor_clients`, `advisor_commissions`, `advisor_report_access_logs`, `admin_accounts`, `admin_sessions`, `admin_audit_logs`, `data_deletion_requests`, `certification_records`, and `schema_migrations`.
 
-Payment confirmation, entitlement upsert, recovery-contact linkage, and advisor-commission upsert form one logical transaction in the adapter. Unique payment/product constraints provide idempotency if a retry follows a process interruption. Certification must prove rollback before launch.
+Database-side verification records 32 foreign keys, 69 indexes, unique session/invoice/invite/payment constraints, recovery hash/rate indexes, advisor dashboard indexes, entitlement/commission idempotency, timestamp/expiry checks, and migration versions `2026071601_initial_certifiable_schema`, `2026071602_transaction_rpc`, and `2026071603_edge_gateway_contract`.
 
-Assessment answers, summaries, snapshots, and recovered session links cascade with assessment deletion. Financial, entitlement, consent, audit, and deletion-request relationships restrict deletion and require an owner/legal-approved retention or anonymization operation. No direct cascading deletion of payment evidence is permitted.
+Financial, entitlement, consent, and audit relations restrict deletion and require a retention/anonymization procedure. Assessment answers, summaries, snapshots, and recovered session links follow the schema’s controlled deletion rules. Payment confirmation, entitlement, contact linking, and commission creation remain one logical idempotent transaction boundary.
 
-## Backup, restore, failure, and rollback
+## Configuration-only and authenticated checks
 
-Create an encrypted provider snapshot and record its opaque identifier and timestamp. Restore it into an isolated database, run the schema verifier against that restored endpoint, compare migration versions and row counts, then destroy the isolated restore. A backup is not certified until restoration succeeds.
+`npm run verify:database-config` validates the exact HTTPS host/path and logical final URL without network access. With no secret it reports `BLOCKED`. It rejects HTTP, the wrong project/function, an already-appended `/transaction`, publishable keys, anon JWTs, and secrets supplied to the ordinary verifier.
 
-On failure: stop certification, keep coming-soon enabled, revoke temporary API credentials, remove disposable records if safe, restore the pre-change snapshot when schema/data changed, verify the restored health/schema, and record the failure without secrets.
+`npm run verify:database-gateway-auth` is credential-free and uses read-only `get` probes. It treats any 2xx as critical failure and rejects sensitive response details.
 
-## Evidence record
+The authenticated lifecycle is separate:
 
-- Provider/project identifier (non-secret):
-- Adapter deployment identifier:
-- Commit SHA:
-- Migration version:
-- Health-check timestamp/result:
-- Required tables/columns result:
-- Disposable write/read/delete result:
-- Transaction rollback result:
-- Backup opaque identifier/timestamp:
-- Restore target and verification result:
-- Cleanup result:
-- Operator and owner approval:
-- Final status: **BLOCKED**
+```bash
+JINGEEHAS_EXTERNAL_DATABASE_CERTIFICATION=approved npm run certify:database-external
+```
+
+Run only in an authorized environment where both database variables are injected securely. The command prints operation names and PASS/FAIL only. It uses unique records in `certification_records` and proves insert, get, update, find, delete, absence, rollback, and cleanup. It never touches user, payment, entitlement, recovery, report, advisor, or admin tables.
+
+## Supabase backup and restore runbook
+
+Status: **PREPARED / NOT RUN**. No authorized disposable target project exists, so do not execute these commands yet. Follow the current [Supabase CLI backup/restore guide](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore) and [database connection guidance](https://supabase.com/docs/guides/database/connecting-to-postgres).
+
+### 1. Confirm tools and flags
+
+Run before assuming locally installed CLI behavior:
+
+```bash
+supabase --version
+supabase db dump --help
+psql --version
+```
+
+Use a direct connection when IPv6/direct connectivity is available; otherwise use the Supavisor **session** connection. Do not use the serverless transaction pooler for migrations, dumps, or restores. Obtain source and disposable-target connection strings through the Supabase dashboard and inject them securely; never commit or print database passwords.
+
+### 2. Role backup
+
+```bash
+supabase db dump --db-url "$SOURCE_DB_URL" -f roles.sql --role-only
+```
+
+The roles dump is project-wide sensitive material. Encrypt it, restrict access, and review managed-role implications before restoring it to another Supabase project.
+
+### 3. Jingeehas schema backup
+
+```bash
+supabase db dump --db-url "$SOURCE_DB_URL" -f jingeehas-schema.sql --schema jingeehas
+```
+
+Verify that the dump contains only the private `jingeehas` schema and its functions, grants, RLS, constraints, indexes, and migration table.
+
+### 4. Jingeehas data backup
+
+```bash
+supabase db dump --db-url "$SOURCE_DB_URL" -f jingeehas-data.sql --use-copy --data-only --schema jingeehas
+```
+
+Store roles, schema, and data files encrypted and record hashes, timestamps, CLI/Postgres versions, source project ref, and operator without recording credentials or private row contents.
+
+### 5. Restore into an authorized disposable target
+
+Create or designate a disposable target only with separate owner authorization. Enable required extensions/settings first, then use its direct/session connection:
+
+```bash
+psql \
+  --single-transaction \
+  --variable ON_ERROR_STOP=1 \
+  --file roles.sql \
+  --file jingeehas-schema.sql \
+  --command 'SET session_replication_role = replica' \
+  --file jingeehas-data.sql \
+  --dbname "$TARGET_DB_URL"
+```
+
+If managed roles already exist, review the role restore instead of ignoring errors. Do not restore into the source project.
+
+### 6. Jingeehas-only verification
+
+Verify exactly 22 `jingeehas` tables, expected migration versions, RLS enabled on every table, no `anon`/`authenticated` privileges or policies, service-role bridge restrictions, row counts and hashes appropriate to the backup, constraints/indexes, and disposable CRUD/rollback cleanup. Confirm the target’s unrelated `public`, `auth`, and `storage` schemas were not modified by the Jingeehas restore.
+
+### 7. Target cleanup
+
+Record verification evidence, revoke temporary credentials, securely destroy local plaintext dumps, and delete the disposable target only with its explicit owner approval. A backup is not certified until restore verification and cleanup both pass.
+
+## Failure and evidence record
+
+On failure, stop, retain coming-soon mode, revoke temporary credentials, attempt certification-record cleanup, and do not report PASS. Record project/gateway identifier, commit SHA, migration versions, operation PASS/FAIL, HTTP statuses without bodies, disposable IDs, backup file hashes, restore target, cleanup result, timestamps, and operator. Never record service-role/database credentials or private data.
+
+Final status: **BLOCKED** pending authenticated Edge gateway lifecycle, staging/preview environment injection, and backup/restore certification.

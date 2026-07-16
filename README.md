@@ -16,7 +16,7 @@
 
 Статик клиент нь Netlify Functions-тэй зөвхөн ижил домэйноор харилцана. Сервер HTTP-only cookie session үүсгэж, assessment, payment, entitlement, recovery, advisor/admin authorization-ыг сервер талд шийднэ. Browser storage-д эрүүл мэндийн хариулт, тайлан, төлбөрийн эрх, нууц үг, session эсвэл урилгын token хадгалахгүй.
 
-Production database нь `netlify/functions/_lib/store.js` дахь adapter boundary-аар HTTPS database API-тай ажиллана. `database/schema.sql` нь шаардлагатай PostgreSQL entity болон хамаарлын contract. Environment байхгүй үед production endpoint `503` буцааж, memory/localStorage fallback хийхгүй. Memory adapter зөвхөн `NODE_ENV=test` үед explicit injection-оор ажиллана.
+Production database нь `netlify/functions/_lib/store.js` дахь adapter boundary-аар Enneagram test Supabase төслийн private `jingeehas` schema-д зориулсан service-role-only Edge Function gateway-тай ажиллана. Gateway base URL нь `https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway`; adapter `/transaction` нэмнэ. Environment байхгүй үед production endpoint `503` буцааж, memory/localStorage fallback хийхгүй. Memory adapter зөвхөн `tests/support` дотор байна.
 
 QPay integration нь [албан ёсны Merchant V2 урсгал](https://developer.qpay.mn/mn/docs/merchant?version=2.0.0)-ын `POST /v2/auth/token`, `POST /v2/invoice`, `POST /v2/payment/check` contract-ыг ашиглана. Автомат тест provider HTTP-г mock хийдэг бөгөөд бодит нэхэмжлэл үүсгэдэггүй.
 
@@ -51,6 +51,7 @@ npx playwright install chromium
 npm run test:e2e
 npm run verify:production-package
 npm run verify:database-config
+npm run verify:database-gateway-auth
 npm run verify:recovery-config
 npm run verify:qpay-config
 npm run verify:domain-config
@@ -83,7 +84,10 @@ npm run verify:staging-package
 
 ## External launch certification status
 
-- Database: **BLOCKED** — provider/credentials, schema deployment, backup and restore certification remain.
+- Database schema: **PASS** — private Supabase schema, constraints, RLS and database-side transaction/rollback are verified.
+- Supabase gateway: **ACTIVE** — unauthorized access test passes; authenticated external lifecycle is **NOT RUN**.
+- Database application injection: **PENDING** — service-role secret is not configured in Netlify staging/preview.
+- Database backup/restore: **PREPARED / NOT RUN**.
 - Recovery: **BLOCKED** — delivery provider, shared rate-limit configuration, deployment and owner test contact remain.
 - QPay sandbox: **NOT RUN** — owner approval phrase and staging deployment approval are absent.
 - Admin bootstrap: **PREPARED** — dry-run/apply/rotation tooling is tested; no real administrator exists from this work.
