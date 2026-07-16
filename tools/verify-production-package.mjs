@@ -19,7 +19,7 @@ for (const required of ["Content-Security-Policy", "Referrer-Policy", "X-Content
 if (headers.includes("unsafe-inline")) failures.push("CSP allows inline execution");
 const app = fs.readFileSync(path.join(root, "dist", "app.js"), "utf8");
 for (const invariant of ["WEIGHT_TEST_COMING_SOON_MODE = true", "WEIGHT_TEST_ONE_TIME", "amount: 9900", "displayPrice: \"9,900₮\""]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
-const allowedHosts = new Set(["jingeehas.mn", "merchant.qpay.mn", "www.w3.org"]);
+const allowedHosts = new Set(["jingeehas.fit", "merchant.qpay.mn", "www.w3.org"]);
 for (const match of publicText.matchAll(/https?:\/\/([^/\s"')]+)/g)) if (!allowedHosts.has(match[1].toLowerCase())) failures.push(`unapproved public domain: ${match[1]}`);
 const forbiddenName = String(process.env.CROSS_PROJECT_FORBIDDEN_TOKEN || "").trim();
 if (forbiddenName && publicText.toLowerCase().includes(forbiddenName.toLowerCase())) failures.push("cross-project name found in production package");

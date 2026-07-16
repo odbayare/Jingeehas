@@ -75,7 +75,7 @@ npm run verify:staging-package
 - [ ] QPay callback origin, app scheme, HTTPS host allowlist-ийг owner/provider-оор баталгаажуулах
 - [ ] Admin account-ыг secure bootstrap хийх
 - [ ] Privacy/terms/support copy-г owner/legal review хийх
-- [ ] Canonical domain болон social preview URL-г owner баталгаажуулах
+- [x] Canonical domain болон social preview URL-г `https://jingeehas.fit/` гэж owner баталгаажуулсан
 - [ ] Staging дээр owner-assisted sandbox payment хийх
 - [ ] CI бүх алхам ногоон болох
 - [ ] Дээрх blocker-ууд хаагдсаны дараа л coming-soon mode-г тусдаа owner-approved өөрчлөлтөөр нээх

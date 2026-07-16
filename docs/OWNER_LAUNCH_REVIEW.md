@@ -1,6 +1,6 @@
 # Owner launch review
 
-Status: **PENDING**. This is a review pack, not approval or launch evidence. The canonical repository value is `https://jingeehas.mn/`, but ownership, DNS, legal wording, provider identities, and public-launch approval remain unverified. The three approved hero sentences are unchanged.
+Status: **PENDING**. This is a review pack, not approval or launch evidence. The canonical repository value is `https://jingeehas.fit/`. The owner has authorized connecting that domain to the existing Jingeehas Netlify site while coming-soon mode remains enabled; DNS, HTTPS, legal wording, provider identities, and public-launch approval remain separate gates. The three approved hero sentences are unchanged.
 
 ## Database infrastructure status
 
@@ -133,7 +133,7 @@ Users under 18 are routed to the final professional-guidance text; there is curr
 
 ## Domain and brand decision
 
-Canonical, `og:url`, `og:image`, and Twitter image consistently use `https://jingeehas.mn/`; recovery, privacy, terms and support links are same-origin relative paths. QPay callback origin is environment-configured. The local hero, favicon, and social preview contain no remote tracking asset.
+Canonical, `og:url`, `og:image`, and Twitter image consistently use `https://jingeehas.fit/`; recovery, privacy, terms and support links are same-origin relative paths. QPay callback origin is environment-configured. The local hero, favicon, and social preview contain no remote tracking asset.
 
 **Owner decision:** prove control of the domain, approve the social preview and sender/support identities.  
 **Legal review status:** PENDING.  

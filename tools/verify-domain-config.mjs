@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const EXPECTED_CANONICAL = "https://jingeehas.fit/";
 function attribute(source, tagPattern, name) { return source.match(new RegExp(`<${tagPattern}[^>]*${name}=["']([^"']+)["']`, "i"))?.[1] || ""; }
 
 export function verifyDomainConfig({ env = process.env, rootDirectory = root } = {}) {
@@ -17,6 +18,7 @@ export function verifyDomainConfig({ env = process.env, rootDirectory = root } =
   let canonicalUrl;
   try { canonicalUrl = new URL(canonical); } catch { failures.push("canonical URL is missing or invalid"); }
   if (canonicalUrl?.protocol !== "https:") failures.push("canonical URL must use HTTPS");
+  if (canonical !== EXPECTED_CANONICAL) failures.push(`canonical URL must equal ${EXPECTED_CANONICAL}`);
   if (ogUrl !== canonical) failures.push("og:url must equal canonical URL");
   for (const [name, value] of [["og:image", ogImage], ["twitter:image", twitterImage]]) {
     try { const parsed = new URL(value); if (parsed.protocol !== "https:" || parsed.origin !== canonicalUrl?.origin) failures.push(`${name} must use the canonical HTTPS origin`); }
