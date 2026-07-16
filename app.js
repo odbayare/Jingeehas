@@ -388,39 +388,6 @@ const stageOneQuestions = [
   { id: "S1-V04", module: "Voice checkpoint", type: "text", text: "Танд тогтвортой үргэлжлэхэд хамгийн их туслах нэг нөхцөл юу вэ?", voice: true }
 ];
 
-const probeBank = {
-  reward: [
-    { id: "D-P-R01", type: "single", text: "Өнөөдөр өлсөөгүй байсан ч ‘нэг гоё юм идмээр байна’ гэсэн хүсэл төрсөн үү?", field: "reward_seeking", options: ["Үгүй", "Бага зэрэг", "Тодорхой", "Маш хүчтэй"] },
-    { id: "D-P-R02", type: "single", text: "Өдөржин өөртөө нэг ч таатай зүйл өгөөгүй юм шиг санагдаад, орой хоолоор нөхмөөр үе байсан уу?", field: "reward_driver", options: ["Үгүй", "Бага зэрэг", "Тийм", "Маш тод"] }
-  ],
-  hungerSafety: [
-    { id: "D-P-HS01", type: "single", text: "Өнөөдөр дараа өлсөх вий гэж бодоод урьдчилж идсэн үе байсан уу?", field: "hunger_safety", options: ["Үгүй", "Бага зэрэг", "Тийм", "Маш хүчтэй"] },
-    { id: "D-P-HS02", type: "single", text: "Хоолны цаг тодорхойгүй болох үед та илүү их идсэн үү?", field: "uncertain_meal_more", options: ["Үгүй", "Заримдаа", "Тийм"] }
-  ],
-  regulation: [
-    { id: "D-P-FR01", type: "single", text: "Хоол идсэний дараа сэтгэл түр намдах шиг болсон уу?", field: "food_regulation", options: ["Үгүй", "Бага зэрэг", "Тийм", "Маш тод"] },
-    { id: "D-P-FR02", type: "single", text: "Идсэний дараа таны мэдрэмж яаж өөрчлөгдсөн бэ?", field: "after_emotion", options: ["Тайвширсан", "Түр тайвширсан", "Өөрчлөгдөөгүй", "Гэмшсэн"] }
-  ],
-  executive: [
-    { id: "D-P-EL01", type: "single", text: "Юу хийхээ мэдэж байсан ч, хийх эрч хүч хүрэлцэхгүй үе танд тохиолдож байсан уу?", field: "executive_load", options: ["Үгүй", "Бага зэрэг", "Тийм", "Маш их"] },
-    { id: "D-P-EL02", type: "single", text: "Тэр үед хамгийн амархан олдох сонголт л ялсан уу?", field: "tired_default", options: ["Урьдчилж бэлдсэн хоол", "Хоол захиалах", "Ойр байсан зууш", "Хоол алгассан", "Гэрт байсан амар сонголт"] }
-  ],
-  collapse: [
-    { id: "D-P-CC01", type: "single", text: "Бага зэрэг хазайсны дараа ‘өнөөдөр өнгөрлөө’ гэж бодогдсон уу?", field: "control_collapse", options: ["Үгүй", "Бага зэрэг", "Тийм", "Маш хүчтэй"] },
-    { id: "D-P-CC02", type: "single", text: "Дараа нь ‘маргааш илүү чанга барина’ гэж бодогдсон уу?", field: "tighten_tomorrow", options: ["Үгүй", "Тийм"] }
-  ],
-  glucose: [
-    { id: "D-P-GP01", type: "multi", text: "Өнөөдөр хоол холдоход биеийн хүчтэй шинж гарсан уу?", field: "glucose_signals", options: ["Үгүй", "Гар салгалах", "Зүрх дэлсэх", "Хөлрөх", "Толгой эргэх", "Будилах / ухаан балартах"] },
-    { id: "D-P-GP02", type: "single", text: "Өнөөдөр сахар эсвэл даралт хэмжсэн үү?", field: "measured_today", options: ["Үгүй", "Тийм, хэвийн", "Тийм, бага/өндөр гарсан", "Тийм, санаа зовоосон"] }
-  ],
-  circadian: [
-    { id: "D-P-CE01", type: "single", text: "Нойр дутуу эсвэл оройн тэнхээ багассан нь өнөөдрийн идэх хүсэлд нөлөөлсөн үү?", field: "circadian_pull", options: ["Үгүй", "Бага зэрэг", "Тийм", "Маш тод"] }
-  ],
-  cue: [
-    { id: "D-P-CU01", type: "single", text: "Хоол харагдах, үнэртэх, эсвэл захиалгын апп харах үед идэх хүсэл нэмэгдсэн үү?", field: "cue_pull", options: ["Үгүй", "Бага зэрэг", "Тийм", "Маш тод"] }
-  ]
-};
-
 const dimensionByModule = {
   "Warm start": [],
   "Basic context": ["D01"],
@@ -443,9 +410,7 @@ const dimensionByModule = {
   "Sleep / energy": ["D15"],
   "Body / medical": ["D08", "D09", "D22"],
   "Menstrual cycle": ["D04", "D05", "D06", "D08", "D09", "D15", "D22"],
-  "Safety": ["D09", "D12", "D16"],
-  "daily_core": ["D03", "D04", "D05", "D06", "D08", "D09", "D13", "D15", "D16", "D21"],
-  "daily_probe": ["D05", "D06", "D07", "D08", "D09", "D11", "D13", "D14", "D15", "D17"]
+  "Safety": ["D09", "D12", "D16"]
 };
 
 const mechanismNamesByKey = {
@@ -475,14 +440,13 @@ function answerTypeFor(type) {
   return { number: "numeric", info: "copy", single: "single", multi: "multi", scale: "scale", text: "text" }[type] || type;
 }
 
-function stageForQuestion(question, source) {
-  if (source === "daily") return "daily_diary";
+function stageForQuestion(question) {
   if (question.id?.startsWith("S1-")) return "shared";
   return "shared";
 }
 
-function normalizedModule(question, source) {
-  return source === "daily" ? (question.id?.startsWith("D-P") ? "daily_probe" : "daily_core") : question.module;
+function normalizedModule(question) {
+  return question.module;
 }
 
 function optionSignals(label) {
@@ -597,14 +561,10 @@ function enrichQuestion(question, source) {
 }
 
 function allQuestionObjects() {
-  return [
-    ...stageOneQuestions,
-    ...Object.values(probeBank).flat()
-  ];
+  return [...stageOneQuestions];
 }
 
 stageOneQuestions.forEach(question => enrichQuestion(question, "stage"));
-Object.values(probeBank).flat().forEach(question => enrichQuestion(question, "daily"));
 
 function getQuestionMetadata(questionId) {
   return allQuestionObjects().find(question => question.id === questionId)?.metadata || null;
@@ -1131,7 +1091,7 @@ function loadState() {
   try {
     if (!hasBrowserRuntime) return { ...initialState };
     const params = new URLSearchParams(window.location.search || "");
-    const stored = migrateLegacySevenDayState(JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"));
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
     const pathView = initialViewFromPath(window.location.pathname || "");
     return {
       ...initialState,
@@ -1143,16 +1103,6 @@ function loadState() {
   } catch {
     return { ...initialState };
   }
-}
-
-function migrateLegacySevenDayState(input = {}) {
-  const stored = input && typeof input === "object" ? { ...input } : {};
-  const obsoleteViews = new Set(["sevenDayStart", "unlock", "diaryHome", "diary", "reportReady", "upgradePaywall"]);
-  const obsoleteFields = ["sevenDayPaid", "upgradePaid", "diaryEntries", "diaryDraft", "diaryDay", "diaryQuestionIndex", "diarySummaryUi"];
-  obsoleteFields.forEach(field => delete stored[field]);
-  if (stored.packageType !== "one-time") stored.packageType = "one-time";
-  if (obsoleteViews.has(stored.view)) stored.view = stored.oneTimePaid ? "report" : "choice";
-  return stored;
 }
 
 function initialViewFromPath(pathname = "") {
@@ -6799,7 +6749,6 @@ if (typeof module !== "undefined") {
     initialState,
     mechanisms,
     stageOneQuestions,
-    probeBank,
     generateStageSummaryBullets,
     extractTagsFromEvidence,
     mapTagsToDimensions,
@@ -6854,7 +6803,7 @@ if (typeof module !== "undefined") {
       foodResponseFirstExperiment,
       sanitizeVisibleSurfacePrototypeText,
       setTestState(nextState) {
-        state = { ...initialState, oneTimePaid: true, ...migrateLegacySevenDayState(nextState) };
+        state = { ...initialState, oneTimePaid: true, ...nextState };
       },
       getTestState() {
         return state;
