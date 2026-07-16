@@ -1,5 +1,7 @@
 "use strict";
 process.env.NODE_ENV = "test";
+process.env.RECOVERY_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString("base64");
+process.env.RECOVERY_HASH_PEPPER = "test-pepper-value-with-at-least-32-characters";
 const assert = require("node:assert/strict");
 const { MemoryDatabaseAdapter } = require("../../netlify/functions/_lib/store.js");
 const { createSession } = require("../../netlify/functions/_lib/session.js");
@@ -7,11 +9,13 @@ const { createAssessment } = require("../../netlify/functions/_lib/assessment.js
 const { createInvoice, checkPayment } = require("../../netlify/functions/_lib/payment.js");
 const { safeAppLinks } = require("../../netlify/functions/_lib/qpay.js");
 const { PRODUCT } = require("../../netlify/functions/_lib/config.js");
+const { saveRecoveryContacts } = require("../../netlify/functions/_lib/recovery.js");
 
 (async () => {
   const database = new MemoryDatabaseAdapter();
   const { session } = await createSession(database);
-  const assessment = await createAssessment(database, session.id);
+  const contact = await saveRecoveryContacts(database, session.id, { phone: "99112233" });
+  const assessment = await createAssessment(database, session.id, { recoveryContactGroupId: contact.contactGroupId });
   let createCount = 0;
   let checkCount = 0;
   const provider = {

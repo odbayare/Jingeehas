@@ -10,6 +10,11 @@ function randomId(prefix = "") {
   return `${prefix}${nodeCrypto.randomUUID()}`;
 }
 
+function randomDigits(length = 6) {
+  const maximum = 10 ** length;
+  return String(nodeCrypto.randomInt(0, maximum)).padStart(length, "0");
+}
+
 function hashToken(value) {
   return nodeCrypto.createHash("sha256").update(String(value)).digest("hex");
 }
@@ -20,4 +25,4 @@ function safeEqual(left, right) {
   return a.length === b.length && nodeCrypto.timingSafeEqual(a, b);
 }
 
-module.exports = { randomToken, randomId, hashToken, safeEqual };
+module.exports = { randomToken, randomId, randomDigits, hashToken, safeEqual };

@@ -4,7 +4,8 @@ const { randomId } = require("./crypto.js");
 
 async function ownedAssessment(database, sessionId, assessmentId) {
   const assessment = await database.get("assessments", assessmentId);
-  if (!assessment || assessment.sessionId !== sessionId) {
+  const recoveredAccess = assessment ? await database.get("assessment_sessions", `${assessmentId}:${sessionId}`) : null;
+  if (!assessment || (assessment.sessionId !== sessionId && !recoveredAccess)) {
     throw Object.assign(new Error("Assessment not found"), { statusCode: 404, code: "assessment_not_found" });
   }
   return assessment;
@@ -12,11 +13,17 @@ async function ownedAssessment(database, sessionId, assessmentId) {
 
 async function createAssessment(database, sessionId, input = {}, now = new Date()) {
   const id = randomId("wa_");
-  return database.insert("assessments", {
+  const assessment = await database.insert("assessments", {
     id, sessionId, status: "draft", reportMode: null, safetyRoute: null,
     advisorClientId: input.advisorClientId || null, consentStatus: input.consentStatus || null,
     createdAt: now.toISOString(), updatedAt: now.toISOString(), completedAt: null
   });
+  if (input.recoveryContactGroupId) {
+    const contacts = await database.find("recovery_contacts", { sessionId, contactGroupId: input.recoveryContactGroupId });
+    if (!contacts.length) throw Object.assign(new Error("Recovery contact not found"), { statusCode: 400, code: "recovery_contact_required" });
+    for (const contact of contacts) await database.update("recovery_contacts", contact.id, { assessmentId: id });
+  }
+  return assessment;
 }
 
 async function saveAssessment(database, sessionId, input = {}, now = new Date()) {
@@ -58,7 +65,7 @@ async function reportForSession(database, sessionId, assessmentId) {
   await ownedAssessment(database, sessionId, assessmentId);
   const snapshot = await database.get("report_snapshots", assessmentId);
   if (!snapshot) throw Object.assign(new Error("Report not found"), { statusCode: 404, code: "report_not_found" });
-  const entitlements = await database.find("entitlements", { sessionId, assessmentId, status: "active" });
+  const entitlements = await database.find("entitlements", { assessmentId, status: "active" });
   return { assessmentId, reportMode: snapshot.reportMode, safetyRoute: snapshot.safetyRoute,
     initialView: snapshot.initialView, fullReport: entitlements.length ? snapshot.fullReport : null,
     entitled: entitlements.length > 0 };

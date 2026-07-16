@@ -16,6 +16,8 @@ function publicPayment(payment) {
 
 async function createInvoice(database, provider, sessionId, input = {}, now = new Date()) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
+  const recoveryContacts = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });
+  if (!recoveryContacts.length) throw Object.assign(new Error("Recovery contact required"), { statusCode: 400, code: "recovery_contact_required" });
   if (input.productCode && input.productCode !== PRODUCT.code) throw Object.assign(new Error("Invalid product"), { statusCode: 400, code: "invalid_product" });
   if (input.amount != null && Number(input.amount) !== PRODUCT.amount) throw Object.assign(new Error("Invalid amount"), { statusCode: 400, code: "invalid_amount" });
   const payments = await database.find("payments", { sessionId, assessmentId: assessment.id, productCode: PRODUCT.code });
@@ -68,6 +70,10 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
     const entitlementId = `${payment.assessmentId}:${PRODUCT.code}`;
     await database.upsert("entitlements", entitlementId, { sessionId, assessmentId: payment.assessmentId,
       paymentId: payment.id, productCode: PRODUCT.code, status: "active", grantedAt: now.toISOString() });
+    const contacts = await database.find("recovery_contacts", { sessionId, assessmentId: payment.assessmentId });
+    for (const contact of contacts) await database.update("recovery_contacts", contact.id, {
+      paymentId: payment.id, entitlementId, updatedAt: now.toISOString()
+    });
     const assessment = await database.get("assessments", payment.assessmentId);
     if (assessment?.advisorClientId) {
       const clients = await database.find("advisor_clients", { id: assessment.advisorClientId });

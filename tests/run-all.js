@@ -3,7 +3,8 @@ const { spawnSync } = require("node:child_process");
 const tests = [
   "tests/removal-guard.test.js",
   "tests/contracts/assessment.contract.test.js",
-  "tests/contracts/payment.contract.test.js"
+  "tests/contracts/payment.contract.test.js",
+  "tests/contracts/recovery.contract.test.js"
 ];
 for (const file of tests) {
   const result = spawnSync(process.execPath, [file], { stdio: "inherit" });

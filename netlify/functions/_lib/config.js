@@ -2,10 +2,10 @@
 
 const PRODUCT = Object.freeze({ code: "WEIGHT_TEST_ONE_TIME", amount: 9900 });
 const TABLES = Object.freeze([
-  "sessions", "assessments", "assessment_answers", "assessment_summaries",
+  "sessions", "assessment_sessions", "assessments", "assessment_answers", "assessment_summaries",
   "report_snapshots", "payments", "entitlements", "recovery_contacts",
   "advisor_accounts", "advisor_sessions", "advisor_clients", "advisor_commissions",
-  "advisor_report_access_logs", "admin_audit_logs"
+  "advisor_report_access_logs", "admin_audit_logs", "recovery_challenges"
 ]);
 
 function databaseConfig(env = process.env) {
