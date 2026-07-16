@@ -2,6 +2,7 @@
 
 const { randomId } = require("./crypto.js");
 const { calculateAssessmentSafety, ROUTE_COPY } = require("./safety.js");
+const { buildEvidence, buildFullReport } = require("./report.js");
 
 async function ownedAssessment(database, sessionId, assessmentId) {
   const assessment = await database.get("assessments", assessmentId);
@@ -43,8 +44,10 @@ async function saveAssessment(database, sessionId, input = {}, now = new Date())
   }
   const summaries = input.confirmedSummaries && typeof input.confirmedSummaries === "object" ? input.confirmedSummaries : {};
   for (const [checkpointId, summary] of Object.entries(summaries)) {
+    const normalized = summary && typeof summary === "object" ? summary : { text: summary, sourceQuestionIds: [] };
     await database.upsert("assessment_summaries", `${assessment.id}:${checkpointId}`, {
-      assessmentId: assessment.id, checkpointId, text: String(summary || "").slice(0, 2000), confirmedAt: now.toISOString()
+      assessmentId: assessment.id, checkpointId, text: String(normalized.text || "").slice(0, 2000),
+      sourceQuestionIds: Array.isArray(normalized.sourceQuestionIds) ? normalized.sourceQuestionIds.slice(0, 10) : [], confirmedAt: now.toISOString()
     });
   }
   return database.update("assessments", assessment.id, { updatedAt: now.toISOString() });
@@ -69,13 +72,16 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
       initialView: { guidance: ROUTE_COPY[safety.route] }, fullReport: null, createdAt: now.toISOString() });
     return completedSafety;
   }
-  const reportMode = answers.length >= 8 ? "sufficient" : answers.length >= 4 ? "limited" : "insufficient";
+  const summaries = await database.find("assessment_summaries", { assessmentId: assessment.id });
+  const evidence = buildEvidence(answers, summaries);
+  const fullReport = buildFullReport(evidence, now);
+  const reportMode = fullReport.mode;
   const completed = await database.update("assessments", assessment.id, {
     status: "complete", reportMode, safetyRoute: null, completedAt: now.toISOString(), updatedAt: now.toISOString()
   });
   await database.upsert("report_snapshots", assessment.id, {
     assessmentId: assessment.id, sessionId, reportMode, safetyRoute: null,
-    initialView: { mode: reportMode, evidenceCount: answers.length }, fullReport: null,
+    initialView: { mode: reportMode, evidenceCount: fullReport.evidence.length, coverage: fullReport.coverage }, fullReport,
     createdAt: now.toISOString()
   });
   return completed;

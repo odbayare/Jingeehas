@@ -32,7 +32,8 @@ function event(httpMethod, body, cookie = "", query = {}) {
   assert.equal(created.statusCode, 201);
   const assessmentId = JSON.parse(created.body).assessmentId;
 
-  const answers = Object.fromEntries(Array.from({ length: 8 }, (_, index) => [`Q-${index + 1}`, `A-${index + 1}`]));
+  const questionIds = ["Q-MEAL-RHYTHM", "Q-HUNGER", "Q-SATIETY", "Q-EMOTION", "Q-CUE", "Q-SLEEP-DURATION", "Q-SLEEP-QUALITY", "Q-MOVEMENT"];
+  const answers = Object.fromEntries(questionIds.map((questionId, index) => [questionId, `A-${index + 1}`]));
   const saved = await save(event("PATCH", { assessmentId, answers, confirmedSummaries: { "C-1": "Баталгаажсан" } }, cookie));
   assert.equal(saved.statusCode, 200);
   assert.equal((await database.find("assessment_answers", { assessmentId })).length, 8);
