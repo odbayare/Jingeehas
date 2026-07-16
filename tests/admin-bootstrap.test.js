@@ -1,0 +1,29 @@
+"use strict";
+process.env.NODE_ENV = "test";
+process.env.RECOVERY_HASH_PEPPER = "admin-bootstrap-test-pepper-at-least-32-characters";
+const assert = require("node:assert/strict");
+const { MemoryDatabaseAdapter } = require("../netlify/functions/_lib/store.js");
+const { verifyPassword } = require("../netlify/functions/_lib/auth.js");
+
+(async () => {
+  const { bootstrapAdmin, validateStrongPassword } = await import("../scripts/bootstrap-admin.mjs");
+  const database = new MemoryDatabaseAdapter();
+  assert.throws(() => validateStrongPassword("short", "owner@example.com"));
+  const dryRun = await bootstrapAdmin({ database, email: "OWNER@example.com", password: "Safe-Initial-Password-42!" });
+  assert.deepEqual({ status: dryRun.status, dryRun: dryRun.dryRun, writes: dryRun.writes }, { status: "PREPARED", dryRun: true, writes: 0 });
+  assert.equal((await database.find("admin_accounts", {})).length, 0);
+  await assert.rejects(() => bootstrapAdmin({ database, email: "owner@example.com", password: "Safe-Initial-Password-42!", apply: true }), /confirmation/);
+  const created = await bootstrapAdmin({ database, email: "owner@example.com", password: "Safe-Initial-Password-42!", apply: true, confirmation: "CREATE FIRST JINGEEHAS ADMIN" });
+  assert.equal(created.status, "PASS");
+  const account = (await database.find("admin_accounts", { status: "active" }))[0];
+  assert(verifyPassword("Safe-Initial-Password-42!", account.passwordHash));
+  assert.equal((await database.find("admin_audit_logs", { adminId: account.id })).length, 1);
+  await assert.rejects(() => bootstrapAdmin({ database, email: "other@example.com", password: "Safe-Different-Password-42!" }), /already exists/);
+  const rotateDryRun = await bootstrapAdmin({ database, email: "owner@example.com", password: "Safe-Rotated-Password-84!", rotate: true });
+  assert.equal(rotateDryRun.action, "admin_password_rotated");
+  assert(verifyPassword("Safe-Initial-Password-42!", (await database.get("admin_accounts", account.id)).passwordHash));
+  await bootstrapAdmin({ database, email: "owner@example.com", password: "Safe-Rotated-Password-84!", rotate: true, apply: true, confirmation: "CREATE FIRST JINGEEHAS ADMIN" });
+  assert(verifyPassword("Safe-Rotated-Password-84!", (await database.get("admin_accounts", account.id)).passwordHash));
+  assert.equal((await database.find("admin_audit_logs", { adminId: account.id })).length, 2);
+  console.log("admin bootstrap tests passed");
+})().catch(error => { console.error(error); process.exit(1); });
