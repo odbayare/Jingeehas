@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 1,
+  "product": {
+    "code": "WEIGHT_TEST_ONE_TIME",
+    "amount": 9900,
+    "displayPrice": "9,900₮",
+    "comingSoon": true
+  },
+  "staticFiles": [
+    {
+      "file": "_headers",
+      "sha256": "c174d1500c48b608a6f77817dda418514825c27297abfbdfc487415d98a22950"
+    },
+    {
+      "file": "_redirects",
+      "sha256": "6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef"
+    },
+    {
+      "file": "app.js",
+      "sha256": "e06f55dc1c9a45097969071801ecfaf1be03b75efc4e865756e5aaa134f3ba4d"
+    },
+    {
+      "file": "assets/favicon.svg",
+      "sha256": "95bea179e8bb51b4acc6374a1c43f284039dd60e4f3fbada62caf2be3b39e5dc"
+    },
+    {
+      "file": "assets/hero.svg",
+      "sha256": "c8feb02e4b698f6979eed05d1623b0f77e081e834fdf54160a39b945bf528e84"
+    },
+    {
+      "file": "assets/social-preview.png",
+      "sha256": "a5a78006bb6f0577a295c180a03779d1277c59b91529c2499ab01be6a7709694"
+    },
+    {
+      "file": "index.html",
+      "sha256": "bc93b7617d7a0c0e2ec9adf62a3153e8e241b8c057d416b9d2cd4e2ba6c0bd18"
+    },
+    {
+      "file": "questions.js",
+      "sha256": "453bfce52a9ae93636183de986112c858dda875db6f050f6cb0b56462d6f7e0f"
+    },
+    {
+      "file": "styles.css",
+      "sha256": "3b2f9828b6e94e536052a6654770c3f23b3aa9a3f3d45cbab3ed8d3f30694625"
+    }
+  ],
+  "serverFunctions": [
+    "admin-advisor-create",
+    "admin-advisor-update",
+    "admin-login",
+    "admin-logout",
+    "advisor-client-invite",
+    "advisor-consent",
+    "advisor-dashboard",
+    "advisor-invite-resolve",
+    "advisor-login",
+    "advisor-logout",
+    "advisor-password-change",
+    "advisor-report",
+    "qpay-check-payment",
+    "qpay-create-invoice",
+    "weight-assessment-complete",
+    "weight-assessment-create",
+    "weight-assessment-report",
+    "weight-assessment-save",
+    "weight-data-deletion-request",
+    "weight-entitlements",
+    "weight-recovery-confirm",
+    "weight-recovery-contact-save",
+    "weight-recovery-request",
+    "weight-safety-gate",
+    "weight-session-start",
+    "weight-session-state"
+  ]
+}

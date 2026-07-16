@@ -4,6 +4,7 @@ import path from "node:path";
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 execFileSync(process.execPath, ["tools/build-production.mjs"], { cwd: root, stdio: "inherit" });
 execFileSync(process.execPath, ["tools/verify-removed-product.mjs"], { cwd: root, stdio: "inherit" });
+execFileSync(process.execPath, ["tools/generate-production-manifest.mjs", "--check"], { cwd: root, stdio: "inherit" });
 
 const requiredFunctions = ["weight-session-start", "weight-safety-gate", "weight-recovery-contact-save", "weight-assessment-create", "weight-assessment-save", "weight-assessment-complete", "weight-assessment-report", "weight-session-state", "weight-entitlements", "weight-recovery-request", "weight-recovery-confirm", "qpay-create-invoice", "qpay-check-payment", "advisor-login", "advisor-dashboard", "advisor-report", "admin-login"];
 const failures = [];
