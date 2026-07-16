@@ -2,34 +2,48 @@
 const assert = require("node:assert/strict");
 
 (async () => {
-  const { expectedSchema, verifyDatabaseConfig } = await import("../tools/verify-database-config.mjs");
+  const { DATABASE_GATEWAY, databaseConfiguration, verifyDatabaseConfig } = await import("../tools/verify-database-config.mjs");
+  const { certifyDatabaseExternal } = await import("../tools/certify-database-external.mjs");
   let calls = 0;
   const noNetwork = async () => { calls += 1; throw new Error("network must not be called"); };
-  const blocked = await verifyDatabaseConfig({ env: {}, fetchImpl: noNetwork });
+  const blocked = verifyDatabaseConfig({ env: {} });
   assert.equal(blocked.status, "BLOCKED");
   assert.deepEqual(blocked.missing.sort(), ["JINGEEHAS_DATABASE_API_KEY", "JINGEEHAS_DATABASE_API_URL"]);
-  const configured = { JINGEEHAS_DATABASE_API_URL: "https://database.staging.invalid", JINGEEHAS_DATABASE_API_KEY: "secret-not-logged" };
-  const notEnabled = await verifyDatabaseConfig({ env: configured, fetchImpl: noNetwork });
-  assert.equal(notEnabled.status, "BLOCKED");
+  assert.equal(verifyDatabaseConfig({ env: { JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl } }).status, "BLOCKED");
+  assert.equal(verifyDatabaseConfig({ env: { JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl.replace("https:", "http:") } }).status, "FAIL");
+  assert.equal(verifyDatabaseConfig({ env: { JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl.replace("nemgfbanmwqudjfzddrn", "wrongproject") } }).status, "FAIL");
+  assert.equal(verifyDatabaseConfig({ env: { JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl.replace("jingeehas-database-gateway", "wrong-function") } }).status, "FAIL");
+  assert.equal(verifyDatabaseConfig({ env: { JINGEEHAS_DATABASE_API_URL: `${DATABASE_GATEWAY.baseUrl}/transaction` } }).status, "FAIL");
+  assert.equal(databaseConfiguration({ JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: "sb_publishable_not_allowed" }, { externalCertification: true }).status, "FAIL");
+  const anonPayload = Buffer.from(JSON.stringify({ role: "anon" })).toString("base64url");
+  assert.equal(databaseConfiguration({ JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: `eyJhbGciOiJIUzI1NiJ9.${anonPayload}.signature` }, { externalCertification: true }).status, "FAIL");
+  const configured = { NODE_ENV: "test", JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: "test_service_role_secret_not_real" };
+  const ready = databaseConfiguration(configured, { externalCertification: true });
+  assert.equal(ready.status, "READY");
+  assert.equal(ready.finalRequestUrl, `${DATABASE_GATEWAY.baseUrl}/transaction`);
+  assert.equal(verifyDatabaseConfig({ env: configured }).status, "FAIL", "ordinary config verification must refuse an injected secret");
   assert.equal(calls, 0);
 
   const records = new Map();
-  const tables = Object.fromEntries(Object.entries(expectedSchema()).map(([name, columns]) => [name, { columns }]));
   const fakeFetch = async (url, init) => {
     calls += 1;
-    if (url.endsWith("/health")) return { ok: true, json: async () => ({ status: "ok" }) };
+    assert.equal(url, `${DATABASE_GATEWAY.baseUrl}/transaction`);
     const body = JSON.parse(init.body);
     let result;
-    if (body.action === "schema") result = { tables };
-    else if (body.action === "insert") { records.set(body.row.id, body.row); result = body.row; }
+    if (body.action === "insert") { records.set(body.row.id, body.row); result = body.row; }
     else if (body.action === "get") result = records.get(body.id) || null;
+    else if (body.action === "update") { result = { ...records.get(body.id), ...body.patch }; records.set(body.id, result); }
+    else if (body.action === "find") result = [...records.values()].filter(row => Object.entries(body.filters || {}).every(([key, value]) => row[key] === value));
     else if (body.action === "delete") { records.delete(body.id); result = { deleted: true }; }
     else if (body.action === "transaction" && body.rollback) result = { rolledBack: true };
     return { ok: true, json: async () => result };
   };
-  const passed = await verifyDatabaseConfig({ env: configured, externalCertification: true, fetchImpl: fakeFetch });
+  await assert.rejects(() => certifyDatabaseExternal({ env: configured, fetchImpl: noNetwork }), /not approved/);
+  const logs = [];
+  const passed = await certifyDatabaseExternal({ env: { ...configured, JINGEEHAS_EXTERNAL_DATABASE_CERTIFICATION: "approved" }, fetchImpl: fakeFetch, log: value => logs.push(value) });
   assert.equal(passed.status, "PASS");
-  assert.equal(passed.rollback, "verified");
+  assert.equal(passed.residualRecords, 0);
+  assert(logs.every(line => !line.includes(configured.JINGEEHAS_DATABASE_API_KEY)));
   assert(calls > 0);
 
   const { verifyRecoveryConfig } = await import("../tools/verify-recovery-config.mjs");
