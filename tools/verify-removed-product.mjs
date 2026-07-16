@@ -23,6 +23,7 @@ const failures = [];
 for (const relative of files) {
   if (relative === isolatedMigrationFixture) continue;
   const absolute = path.join(root, relative);
+  if (!fs.existsSync(absolute)) continue;
   if (!fs.statSync(absolute).isFile()) continue;
   const source = fs.readFileSync(absolute);
   if (source.includes(0)) continue;

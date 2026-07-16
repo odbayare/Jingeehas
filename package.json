@@ -5,7 +5,9 @@
   "scripts": {
     "test": "node tests/run-all.js",
     "test:contracts": "node tests/contracts/run.js",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "build:production": "node tools/build-production.mjs",
+    "verify:production-package": "node tools/verify-production-package.mjs"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"
