@@ -40,6 +40,23 @@ class MemoryDatabaseAdapter {
     return copy(next);
   }
   async delete(table, id) { const existed = this.table(table).delete(id); return { deleted: existed }; }
+  async transaction(operations, options = {}) {
+    const snapshot = Object.fromEntries(Object.entries(this.tables).map(([name, rows]) => [name, new Map([...rows.entries()].map(([id, row]) => [id, copy(row)]))]));
+    try {
+      const results = [];
+      for (const operation of operations) {
+        if (operation.action === "get") results.push(await this.get(operation.table, operation.id));
+        else if (operation.action === "find") results.push(await this.find(operation.table, operation.filters));
+        else if (operation.action === "insert") results.push(await this.insert(operation.table, operation.row));
+        else if (operation.action === "update") results.push(await this.update(operation.table, operation.id, operation.patch));
+        else if (operation.action === "upsert") results.push(await this.upsert(operation.table, operation.id, operation.row));
+        else if (operation.action === "delete") results.push(await this.delete(operation.table, operation.id));
+        else throw new Error(`Unknown transaction action: ${operation.action}`);
+      }
+      if (options.rollback) { this.tables = snapshot; return { rolledBack: true, results }; }
+      return { rolledBack: false, results };
+    } catch (error) { this.tables = snapshot; throw error; }
+  }
 }
 
 class RestDatabaseAdapter {
@@ -60,6 +77,7 @@ class RestDatabaseAdapter {
   update(table, id, patch) { return this.request({ action: "update", table, id, patch }); }
   upsert(table, id, row) { return this.request({ action: "upsert", table, id, row }); }
   delete(table, id) { return this.request({ action: "delete", table, id }); }
+  transaction(operations, options = {}) { return this.request({ action: "transaction", operations, rollback: options.rollback === true }); }
 }
 
 let testDatabase = null;
