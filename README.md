@@ -92,13 +92,13 @@ npm run verify:staging-package
 - Supabase gateway: **PASS / ACTIVE** — dedicated-secret authentication and insert/get/update/find/delete/rollback/cleanup pass with no residual certification rows.
 - Database application injection: **PASS** — `JINGEEHAS_DATABASE_API_KEY` contains only the dedicated gateway secret; the shared Supabase service-role credential is absent from Netlify.
 - Database backup/restore: **PASS** — access-controlled logical artifacts were restored into a disposable PostgreSQL 17 instance with 22 tables and zero `public` tables.
-- Recovery engineering: **PASS** — email-only Resend adapter, database cooldown keys, rolling limits, atomic one-time use, and concurrency tests pass. Live provider delivery remains **BLOCKED** because the TIAS deployment contains no reusable Resend key, the Jingeehas production verifier reports `RECOVERY_DELIVERY_API_KEY` missing, and the sender domain remains pending.
+- Recovery delivery: **PASS** — the verified Resend sender delivered to the monitored owner inbox; live expiry, one-minute cooldown, five-attempt lockout, one-time use, anti-enumeration, clean-context report recovery, and cleanup all pass. No test address, API key, or code is recorded.
 - QPay configuration: **PASS / LIVE MERCHANT** — reusable TIAS merchant configuration is installed server-side and a live no-provider-request probe passes. The provider configuration is production-only, so no invoice or payment was created.
-- QPay sandbox: **PROVIDER UNAVAILABLE** — no isolated sandbox/test endpoint exists in the verified TIAS configuration. A controlled owner-assisted real-payment smoke test remains required before launch.
+- QPay sandbox: **OWNER BLOCKED** — the verified merchant configuration is production-only and no isolated sandbox/test endpoint exists. A controlled owner-approved real-payment smoke test remains required before launch.
 - Admin bootstrap: **OWNER ACTION REQUIRED** — tooling passes, but the existing TIAS password does not meet the Jingeehas password policy; no real administrator or audit row was created.
 - Owner/legal: **PENDING** — see `docs/OWNER_LAUNCH_REVIEW.md`.
 - Domain/live site: **PASS** — HTTPS, canonical, apex/www routing, public routes, security headers, and coming-soon enforcement pass.
-- Pre-launch deployment: **PASS** — production deploy `6a5930d0f4f6ac13a14d18e2` is live with `WEIGHT_TEST_COMING_SOON_MODE=true`.
+- Pre-launch deployment: **PASS** — production deploy `6a593860da8604112e80ab38` is live with coming-soon mode enabled.
 
 Engineering preparation and the staging package can pass while external certification and public launch remain blocked. Configuration verifiers report missing dependencies as `BLOCKED`; this is not a launch PASS.
 

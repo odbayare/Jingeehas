@@ -90,6 +90,11 @@ const fs = require("node:fs");
   assert(!/console\.(?:log|error|warn)/.test(gatewaySource));
   assert.match(gatewayConfig, /\[functions\.jingeehas-database-gateway\][\s\S]*verify_jwt\s*=\s*false/);
 
+  const reportKeyMigration = fs.readFileSync("supabase/migrations/20260717201500_fix_report_snapshot_gateway_key.sql", "utf8");
+  assert.match(reportKeyMigration, /target_table = 'report_snapshots' then 'assessment_id'/);
+  assert.match(reportKeyMigration, /where t\.%I = \$1/);
+  assert(!/grant execute/i.test(reportKeyMigration), "the report key repair must not broaden RPC privileges");
+
   const { verifyRecoveryConfig } = await import("../tools/verify-recovery-config.mjs");
   const { verifyQPayConfig } = await import("../tools/verify-qpay-config.mjs");
   const callsBeforeConfigChecks = calls;

@@ -1,6 +1,6 @@
 # Staging recovery certification
 
-Current status: **IMPLEMENTATION PASS / LIVE DELIVERY BLOCKED** — database-backed rate limiting, encryption/hash configuration, sender settings, provider-mock tests, database gateway, and coming-soon pre-launch deployment pass. The authenticated TIAS deployment contains no reusable Resend credential, the Jingeehas production verifier reports `RECOVERY_DELIVERY_API_KEY` missing, and public DNS still lacks the sender-domain MX/SPF records. DKIM is present. Resend/Namecheap reauthentication and owner mailbox certification remain external gates.
+Current status: **LIVE DELIVERY PASS** — on 2026-07-17 the verified sender delivered three certification messages to the authenticated monitored owner inbox. Production configuration, database-backed abuse controls, expiry, five-attempt lockout, one-time use, anti-enumeration, clean-context report recovery, and cleanup all passed. The address, API key, codes, hashes, session token, and provider identifiers are intentionally omitted.
 
 ## Configuration and privacy boundary
 
@@ -17,7 +17,7 @@ The database stores a keyed lookup hash and AES-GCM ciphertext, not plaintext co
 
 The recovery service gives `{ channel, destination, code, expiresInMinutes }` to the adapter. The adapter posts Resend's `from`, `to`, `subject`, `text`, and `html` fields to `https://api.resend.com/emails` with a bearer API key. It requires an opaque provider message ID in the successful response. Challenge evidence records `pending`, `sent`, `failed`, `suppressed`, or `superseded`, plus an attempted timestamp and opaque provider identifier.
 
-Configured sender: `Jingeehas <no-reply@mail.jingeehas.fit>`. Resend domain status remains **PENDING**. The subject is `Jingeehas тайлан сэргээх баталгаажуулах код`; the body contains only the six-digit code, expiry, ignore-if-not-requested notice, no-share warning, and Jingeehas support identity.
+Configured sender: `Jingeehas <no-reply@mail.jingeehas.fit>`. Resend domain status is **VERIFIED**. The subject is `Jingeehas тайлан сэргээх баталгаажуулах код`; the body contains only the six-digit code, expiry, ignore-if-not-requested notice, no-share warning, and Jingeehas support identity.
 
 Provider-mock coverage passes for success, 4xx, 5xx, timeout, invalid JSON, missing provider ID, secret-log suppression, and absence of assessment/report/payment content.
 
@@ -33,9 +33,22 @@ The provider timeout is eight seconds. The application does not automatically re
 - Successful use marks the challenge used, verifies the contact, creates a new HTTP-only session, and links only the entitled assessment.
 - A used, expired, superseded, or five-attempt challenge cannot restore access.
 
-## Owner-assisted staging script
+## Live certification result
 
-Do not run until the exact phrase `STAGING DEPLOY APPROVED` has been supplied and the owner has designated a staging-only test contact.
+- Delivery: **PASS** — Resend accepted the requests and the monitored inbox received each message.
+- Code expiry: **PASS** — an expired genuine challenge returned the generic invalid-code response.
+- Resend cooldown: **PASS** — an immediate duplicate request returned HTTP 429 and created no second challenge.
+- Wrong-code limit: **PASS** — five wrong submissions were rejected, the counter reached five, and the genuine code was then rejected.
+- One-time use: **PASS** — successful consumption returned a new secure session; replay returned HTTP 400.
+- Anti-enumeration: **PASS** — an unknown address received the same HTTP 202 generic response, created only a suppressed challenge, and triggered no provider delivery.
+- Cross-browser recovery: **PASS** — a clean request/confirmation context received a new cookie and a separate report request returned the entitled full report.
+- Cleanup: **PASS** — recovery messages were removed and all fixture sessions, safety checks, assessment, snapshot, payment, entitlement, contact, challenges, and recovered links were deleted; the final residual query returned zero in every category.
+
+The production refresh used deploy `6a593860da8604112e80ab38` with coming-soon still enabled. Certification also found and repaired the `report_snapshots.assessment_id` gateway key path without changing schema tables, RLS, or RPC grants.
+
+## Repeatable owner-assisted staging script
+
+For a future staging rerun, do not run until the exact phrase `STAGING DEPLOY APPROVED` has been supplied and the owner has designated a staging-only test contact.
 
 1. Record staging deployment ID and commit SHA.
 2. Create and pay one approved QPay sandbox assessment as described in `QPAY_SANDBOX_CERTIFICATION.md`.
