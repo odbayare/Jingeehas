@@ -50,6 +50,12 @@ npm run test:contracts
 npx playwright install chromium
 npm run test:e2e
 npm run verify:production-package
+npm run verify:database-config
+npm run verify:recovery-config
+npm run verify:qpay-config
+npm run verify:domain-config
+npm run build:staging
+npm run verify:staging-package
 ```
 
 `npm run build:production` зөвхөн `index.html`, client JS/CSS, security files, local assets-ыг `dist/` рүү хуулна. Tests, fixtures, E2E mock server, source documentation publish package-д орохгүй.
@@ -74,3 +80,23 @@ npm run verify:production-package
 - [ ] Дээрх blocker-ууд хаагдсаны дараа л coming-soon mode-г тусдаа owner-approved өөрчлөлтөөр нээх
 
 Энэ repository-ийн CI deploy хийдэггүй. Энэ ажлын хүрээнд deploy, merge, бодит нэхэмжлэл эсвэл бодит төлбөр хийх ёсгүй.
+
+## External launch certification status
+
+- Database: **BLOCKED** — provider/credentials, schema deployment, backup and restore certification remain.
+- Recovery: **BLOCKED** — delivery provider, shared rate-limit configuration, deployment and owner test contact remain.
+- QPay sandbox: **NOT RUN** — owner approval phrase and staging deployment approval are absent.
+- Admin bootstrap: **PREPARED** — dry-run/apply/rotation tooling is tested; no real administrator exists from this work.
+- Owner/legal: **PENDING** — see `docs/OWNER_LAUNCH_REVIEW.md`.
+- Domain: **PENDING** — repository consistency passes; ownership and DNS are not verified or changed.
+- Staging deployment: **NOT AUTHORIZED** — the deterministic package exists but has not been deployed.
+
+Engineering preparation and the staging package can pass while external certification and public launch remain blocked. Configuration verifiers report missing dependencies as `BLOCKED`; this is not a launch PASS.
+
+Certification procedures:
+
+- `docs/STAGING_DATABASE_CERTIFICATION.md`
+- `docs/STAGING_RECOVERY_CERTIFICATION.md`
+- `docs/QPAY_SANDBOX_CERTIFICATION.md`
+- `docs/ADMIN_BOOTSTRAP_AND_ROTATION.md`
+- `docs/OWNER_LAUNCH_REVIEW.md`

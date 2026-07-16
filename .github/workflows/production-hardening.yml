@@ -33,5 +33,15 @@ jobs:
       - run: npm run verify:production-package
         env:
           CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
+      - run: npm run verify:database-config
+      - run: npm run verify:recovery-config
+      - run: npm run verify:qpay-config
+      - run: npm run verify:domain-config
+        env:
+          CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
+      - run: npm run build:staging
+      - run: npm run verify:staging-package
+        env:
+          CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
       - run: git diff --exit-code
       - run: test -z "$(git status --porcelain)"
