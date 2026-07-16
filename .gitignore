@@ -6,4 +6,6 @@ dist/
 build/
 .netlify/
 coverage/
+test-results/
+playwright-report/
 *.log

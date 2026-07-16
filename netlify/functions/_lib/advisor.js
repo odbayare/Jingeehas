@@ -3,6 +3,7 @@
 const { randomId, randomToken, hashToken } = require("./crypto.js");
 const { hashPassword, verifyPassword, createRoleSession, authenticateRole, ADVISOR_SESSION, ADMIN_SESSION } = require("./auth.js");
 const { contactHash, normalizeEmail } = require("./recovery.js");
+function advisorStatusLabel(status) { return ({ invited: "Урилга илгээсэн", consent_accepted: "Зөвшөөрсөн", consent_declined: "Зөвшөөрөөгүй", assessment_created: "Тест эхэлсэн" })[status] || "Хүлээгдэж байна"; }
 
 async function advisorLogin(database, email, password) {
   const normalized = normalizeEmail(email); const rows = normalized ? await database.find("advisor_accounts", { email: normalized }) : [];
@@ -65,10 +66,10 @@ async function advisorDashboard(database, event) {
   const commissions = await database.find("advisor_commissions", { coachId: session.coachId });
   const paid = commissions.reduce((sum, row) => sum + Number(row.amount || 0), 0);
   return { coachId: session.coachId, clients: clients.map(client => ({ coachClientId: client.id, name: client.name,
-    status: ({ invited: "Урилга илгээсэн", consent_accepted: "Зөвшөөрсөн", consent_declined: "Зөвшөөрөөгүй", assessment_created: "Тест эхэлсэн" })[client.status] || "Хүлээгдэж байна",
+    status: advisorStatusLabel(client.status),
     assessmentId: client.assessmentId })), totals: { clientPayments: clients.filter(client => client.assessmentId).length * 9900,
     commissionTotal: paid, commissionPending: commissions.filter(row => row.status === "pending").reduce((sum, row) => sum + Number(row.amount), 0),
     commissionPaid: commissions.filter(row => row.status === "paid").reduce((sum, row) => sum + Number(row.amount), 0) } };
 }
 
-module.exports = { advisorLogin, adminLogin, createInvitation, resolveInvitation, recordConsent, accessAdvisorReport, advisorDashboard };
+module.exports = { advisorStatusLabel, advisorLogin, adminLogin, createInvitation, resolveInvitation, recordConsent, accessAdvisorReport, advisorDashboard };

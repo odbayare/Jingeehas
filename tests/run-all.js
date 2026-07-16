@@ -8,6 +8,7 @@ const tests = [
   "tests/question-bank.test.js",
   "tests/accessibility-print.test.js",
   "tests/security-routing-metadata.test.js",
+  "tests/security.test.js",
   "tests/contracts/assessment.contract.test.js",
   "tests/contracts/payment.contract.test.js",
   "tests/contracts/recovery.contract.test.js"

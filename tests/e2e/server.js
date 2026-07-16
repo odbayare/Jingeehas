@@ -1,0 +1,41 @@
+"use strict";
+const http = require("node:http");
+const fs = require("node:fs");
+const path = require("node:path");
+const { evaluateSafetyGate, ROUTE_COPY } = require("../../netlify/functions/_lib/safety.js");
+const root = path.resolve(__dirname, "../..");
+const stats = { qpayCreate: 0, qpayCheck: 0 };
+const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
+function json(response, status, body, headers = {}) { response.writeHead(status, { "content-type": "application/json", ...headers }); response.end(JSON.stringify(body)); }
+function readBody(request) { return new Promise(resolve => { let raw = ""; request.on("data", chunk => { raw += chunk; }); request.on("end", () => { try { resolve(JSON.parse(raw || "{}")); } catch { resolve({}); } }); }); }
+const endpoints = {
+  "weight-session-start": async (_body, response) => json(response, 201, { sessionId: "ws-e2e", resumed: false }, { "set-cookie": "jingeehas_session=e2e; Path=/; HttpOnly; SameSite=Lax" }),
+  "weight-safety-gate": async (body, response) => { const result = evaluateSafetyGate(body); json(response, 200, { safetyCheckId: "sc-e2e", ...result, guidance: result.route === "eligible" ? null : ROUTE_COPY[result.route] }); },
+  "weight-recovery-contact-save": async (_body, response) => json(response, 201, { contactGroupId: "rcg-e2e" }),
+  "weight-assessment-create": async (_body, response) => json(response, 201, { assessmentId: "wa-e2e", status: "draft" }),
+  "qpay-create-invoice": async (_body, response) => { stats.qpayCreate += 1; json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "pending", expiresAt: "2026-07-16T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [] }); },
+  "qpay-check-payment": async (_body, response) => { stats.qpayCheck += 1; json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "paid", entitlement: true }); },
+  "weight-assessment-save": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", status: "draft" }),
+  "weight-assessment-complete": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", status: "complete", reportMode: "sufficient", safetyRoute: null }),
+  "weight-assessment-report": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport, entitled: true }),
+  "weight-session-state": async (_body, response) => json(response, 200, { assessment: { assessmentId: "wa-e2e", status: "complete", safetyRoute: null }, payment: { status: "paid", paymentId: "wp-e2e" }, answers: {}, report: { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport, entitled: true } }),
+  "weight-recovery-request": async (_body, response) => json(response, 202, { recoveryId: "rr-e2e", message: "Хэрэв тохирох бүрэн тайлан байгаа бол баталгаажуулах код илгээгдлээ." }),
+  "weight-recovery-confirm": async (body, response) => body.code === "123456" ? json(response, 200, { assessmentId: "wa-e2e", recovered: true }, { "set-cookie": "jingeehas_session=recovered; Path=/; HttpOnly" }) : json(response, 400, { error: "invalid_recovery_code" }),
+  "advisor-invite-resolve": async (_body, response) => json(response, 200, { coachClientId: "ac-e2e", coachId: "adv-e2e", advisorName: "Нараа", consentStatus: "pending" }),
+  "advisor-consent": async (body, response) => json(response, 200, { coachClientId: body.coachClientId, consentStatus: body.consent ? "consent_accepted" : "consent_declined" }),
+  "advisor-login": async (_body, response) => json(response, 200, { coachId: "adv-e2e", name: "Нараа", forcePasswordChange: false }, { "set-cookie": "jingeehas_advisor=e2e; Path=/; HttpOnly" }),
+  "advisor-dashboard": async (_body, response) => json(response, 200, { coachId: "adv-e2e", clients: [{ coachClientId: "ac-e2e", name: "Үйлчлүүлэгч", status: "Зөвшөөрсөн", assessmentId: "wa-e2e" }], totals: { clientPayments: 9900, commissionTotal: 4000, commissionPending: 4000, commissionPaid: 0 } }),
+  "advisor-client-invite": async (_body, response) => json(response, 201, { coachClientId: "ac-2", inviteToken: "invite-e2e", advisorName: "Нараа" }),
+  "advisor-report": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", fullReport }),
+  "advisor-logout": async (_body, response) => json(response, 200, { loggedOut: true })
+};
+const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; charset=utf-8", ".css": "text/css", ".svg": "image/svg+xml", ".png": "image/png" };
+http.createServer(async (request, response) => {
+  const url = new URL(request.url, "http://127.0.0.1:4178");
+  if (url.pathname === "/__test/stats") return json(response, 200, stats);
+  if (url.pathname.startsWith("/.netlify/functions/")) { const action = endpoints[url.pathname.split("/").pop()]; if (!action) return json(response, 404, { error: "not_found" }); return action(await readBody(request), response); }
+  if (url.pathname === "/app-test.js" || url.pathname === "/app-production.js") { let source = fs.readFileSync(path.join(root, "app.js"), "utf8"); if (url.pathname === "/app-test.js") source = source.replace("const WEIGHT_TEST_COMING_SOON_MODE = true;", "const WEIGHT_TEST_COMING_SOON_MODE = false;"); response.writeHead(200, { "content-type": types[".js"] }); return response.end(source); }
+  const relative = url.pathname === "/" ? "index.html" : url.pathname.slice(1); const absolute = path.join(root, relative);
+  if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) { response.writeHead(200, { "content-type": types[path.extname(absolute)] || "application/octet-stream" }); return response.end(fs.readFileSync(absolute)); }
+  let html = fs.readFileSync(path.join(root, "index.html"), "utf8"); html = html.replace("app.js", url.searchParams.get("e2e") === "1" ? "app-test.js" : "app-production.js"); response.writeHead(200, { "content-type": types[".html"] }); response.end(html);
+}).listen(4178, "127.0.0.1");
