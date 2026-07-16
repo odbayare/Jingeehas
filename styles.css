@@ -85,6 +85,10 @@ th, td { padding: 0.75rem; border-bottom: 1px solid var(--border); text-align: l
 .methodology-pillars p { margin-bottom: 0; }
 .methodology-disclosure { max-width: 900px; }
 .methodology-limitation { color: var(--muted); }
+.methodology-page section { margin-top: 2rem; padding-top: 0.25rem; border-top: 1px solid var(--border); }
+.methodology-page p, .methodology-page li { max-width: 68ch; }
+.methodology-page li + li { margin-top: 0.45rem; }
+.methodology-version { margin-top: 2rem; border-top: 2px solid var(--primary); color: var(--muted); }
 code { overflow-wrap: anywhere; }
 
 @media (max-width: 760px) {

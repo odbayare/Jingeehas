@@ -27,14 +27,14 @@ function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, char
 function escapeAttribute(value) { return escapeHtml(value).replace(/`/g, "&#96;"); }
 
 const ROUTES = Object.freeze({
-  "/": "landing", "/about": "about", "/assessment/start": "assessmentStart", "/assessment/payment": "payment",
+  "/": "landing", "/about": "about", "/methodology": "methodology", "/assessment/start": "assessmentStart", "/assessment/payment": "payment",
   "/assessment/questions": "questions", "/report": "report", "/recovery": "recovery"
   , "/advisor/login": "advisorLogin", "/advisor/dashboard": "advisorDashboard", "/admin": "admin",
   "/privacy": "privacy", "/terms": "terms", "/support": "support", "/data-deletion": "dataDeletion"
 });
 function routeName(pathname) { return ROUTES[String(pathname || "/").replace(/\/+$/, "") || "/"] || "notFound"; }
 function navigation() { return `<nav class="site-nav" aria-label="Үндсэн цэс"><a href="/" data-route>Нүүр</a><a href="/about" data-route>Тестийн тухай</a><a href="/recovery" data-route>Тайлан сэргээх</a></nav>`; }
-function footer() { return `<footer class="site-footer"><p>${PRODUCT.name}</p><nav aria-label="Хууль, тусламжийн холбоос"><a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/support" data-route>Төлбөрийн тусламж</a> · <a href="/data-deletion" data-route>Өгөгдөл устгах хүсэлт</a></nav></footer>`; }
+function footer() { return `<footer class="site-footer"><p>${PRODUCT.name}</p><nav aria-label="Арга зүй, хууль, тусламжийн холбоос"><a href="/methodology" data-route>Арга зүй</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/support" data-route>Төлбөрийн тусламж</a> · <a href="/data-deletion" data-route>Өгөгдөл устгах хүсэлт</a></nav></footer>`; }
 
 function renderLanding() {
   return `<div class="page landing-page">${navigation()}<main><section class="hero" aria-labelledby="page-title"><div class="hero-copy">
@@ -64,6 +64,40 @@ function renderAbout() {
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тест үнэлгээний тухай</h1>
     <p>Таны шууд өгсөн хариултаас давтагдсан хэв маяг болон ажиглалтыг ялгаж, эхний зураглал гаргана. Төлбөр баталгаажсаны дараа тест бөглөж, бүрэн тайлангаа авна.</p>
     <p>Энэ нь эмнэлгийн онош, эмчилгээний зөвлөгөө биш.</p><a class="button" href="/assessment/start" data-route>Тест бөглөх</a></main>${footer()}</div>`;
+}
+function renderMethodology() {
+  return `<div class="page">${navigation()}<main class="content-card methodology-page"><header><p class="eyebrow">Үнэлгээний ил тод тайлбар</p><h1 id="page-title" tabindex="-1">Арга зүй ба судалгааны үндэслэл</h1>
+    <p>Энэхүү үнэлгээ нь жин хасахад хүндрэл учруулж болзошгүй сэтгэлзүй, зан үйл, нойр, хөдөлгөөн болон өдөр тутмын орчны хүчин зүйлсийг хамтатган авч үзнэ.</p>
+    <p>Биеийн жинг зөвхөн хүсэл зориг, хоолны дэглэм эсвэл дасгал хөдөлгөөний нэг хүчин зүйлээр тайлбарлахгүй. Хүний нөхцөл, туршлага, эрүүл мэнд болон орчны нөлөө харилцан холбоотой байж болзошгүйг харгалзана.</p></header>
+    <section aria-labelledby="eating-tools"><h2 id="eating-tools">Хооллолтын зан үйлийн судалгаа</h2>
+      <p><strong>TFEQ / TFEQ-R18</strong> хэрэгслийн хязгаарлалт, хяналт алдах болон сэтгэл хөдлөлтэй холбоотой хооллолтыг ялган авч үздэг зарчмыг судалсан.</p>
+      <p><strong>DEBQ</strong> хэрэгслийн сэтгэл хөдлөл, гаднын өдөөгч болон хязгаарласан хооллолтын хэв маягийг ялгах хандлагыг харьцуулсан.</p>
+      <p><strong>AEBQ</strong> хэрэгслийн хоолонд хандах болон хоолноос зайлсхийх шинж, өлсөлт ба цадалтын мэдрэмжийг авч үздэг хүрээг судалсан.</p>
+      <p><strong>EEQ</strong> хэрэгслийн сэтгэл хөдлөлөөс шалтгаалсан хооллолтын нөхцөлийг ажиглах хандлагыг харьцуулсан. Эдгээр хэрэгслийн асуултыг хуулбарлаагүй бөгөөд үйлдвэрлэлийн тест эдгээр хэмжүүрийг давтаж байна гэж үзэхгүй.</p>
+    </section>
+    <section aria-labelledby="safety-tools"><h2 id="safety-tools">Аюулгүй байдлын шалгалтын судалгаа</h2>
+      <p><strong>BEDS-7</strong>, <strong>SCOFF</strong>, <strong>PHQ-9</strong>, <strong>STOP-Bang</strong> хэрэгслүүдийг хяналт алдах хооллолт, хооллолтын эмгэгийн анхаарах шинж, сэтгэл зүйн өндөр ачаалал болон нойрны эрсдэлийн дохиог хэрхэн ялгадаг талаас нь авч үзсэн.</p>
+      <p>Энэ судалгаа нь эрсдэлийн дохио илэрвэл төлбөрөөс өмнө анхааруулах, шаардлагатай үед мэргэжлийн тусламж руу чиглүүлэх зарчимд мэдээлэл өгсөн. Тест нь эдгээр эмгэг, нөхцөлийг оношлохгүй.</p>
+    </section>
+    <section aria-labelledby="regulation-tools"><h2 id="regulation-tools">Өөрийгөө зохицуулах итгэл, хөдөлгөөн ба амьдралын ачаалал</h2>
+      <p><strong>WEL / WEL-SF</strong> хэрэгслүүдийг өөр өөр нөхцөлд хооллолтоо зохицуулж чадна гэсэн итгэлийг ойлгох, <strong>IPAQ</strong>-ийг биеийн идэвхийн хэв маягийг авч үзэх, <strong>IWQOL-Lite</strong>-ийг жинтэй холбоотой өдөр тутмын үйл ажиллагаа болон амьдралын чанарт үзүүлэх нөлөөг ойлгох чиглэлээр судалсан.</p>
+    </section>
+    <section aria-labelledby="clinical-frameworks"><h2 id="clinical-frameworks">Жингийн менежментийн клиникийн хүрээнүүд</h2>
+      <p><strong>Obesity Canada 5As</strong>, <strong>Obesity Canada 4Ms</strong>, <strong>AACE</strong>, <strong>NICE</strong>-ийн хүрээнүүдийг харьцуулан авч үзсэн.</p>
+      <ul><li>Жингийн талаар ярилцахын өмнө зөвшөөрөл авах;</li><li>сэтгэл зүй, бие махбод, бодисын солилцоо болон нийгэм, орчны нөхцөлийг хамтад нь авч үзэх;</li><li>хүнд тохирсон бодит зорилго тодорхойлох;</li><li>шаардлагатай үед мэргэжлийн тусламж руу чиглүүлэх;</li><li>цахим хэрэгслийг онош биш, дэмжлэг болгон ашиглах.</li></ul>
+    </section>
+    <section aria-labelledby="report-principles"><h2 id="report-principles">Тайлан гаргах зарчим</h2>
+      <p>Тайлан нь нэг хариулт эсвэл нэг нийт оноогоор дүгнэхгүй. Хариултын давтамж, хоорондын уялдаа, давтагдсан нөхцөл, баталгаажуулсан ажиглалт болон аюулгүй байдлын дохиог хамтад нь авч үзнэ. Нотолгоо хүрэлцэхгүй үед хатуу дүгнэлт хийхгүй бөгөөд ажиглалтыг болзошгүй хэв маяг гэж тайлбарлана.</p>
+    </section>
+    <section aria-labelledby="commercial-benchmark"><h2 id="commercial-benchmark">Үйлчилгээний туршлагын харьцуулалт</h2>
+      <p><strong>Noom</strong>, <strong>WeightWatchers</strong>, <strong>Calibrate</strong>, <strong>Wegovy consumer quiz</strong>-ийг хэрэглэгчийг эхлүүлэх дараалал, аюулгүй байдлын шалгалт, мэргэжилтэн рүү чиглүүлэх болон хувь хүнд тохирсон төлөвлөгөө танилцуулах ерөнхий хэв маягийн түвшинд харьцуулсан.</p>
+      <p>Энэ нь дээрх үйлчилгээтэй хамтран ажилладаг, тэдний зөвшөөрөл эсвэл дэмжлэгийг авсан гэсэн утга агуулахгүй.</p>
+    </section>
+    <section aria-labelledby="methodology-limitations"><h2 id="methodology-limitations">Арга зүйн хязгаарлалт</h2>
+      <ul><li>Өөрийн мэдээлсэн хариултад дурсамжийн алдаа байж болно.</li><li>Нийгэмд таалагдах байдлаар хариулах хандлага нөлөөлж болно.</li><li>Монгол хэрэглэгчдийн орон нутгийн жишиг үзүүлэлт хараахан тогтоогдоогүй.</li><li>Энэхүү тест үнэлгээ нь онош тавихгүй.</li><li>Эмч, сэтгэлзүйч, хоолзүйчийн үнэлгээг орлохгүй.</li><li>Ирээдүйд яг хэдэн килограмм жин хасахыг таамаглах боломжгүй.</li></ul>
+    </section>
+    <footer class="methodology-version"><p><strong>Арга зүйн хувилбар:</strong> 1.0<br><strong>Сүүлийн шинэчлэл:</strong> 2026 оны 7 дугаар сар</p></footer>
+  </main>${footer()}</div>`;
 }
 function renderComingSoon() {
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тун удахгүй</h1>
@@ -172,6 +206,7 @@ function renderForPath(pathname) {
   const route = routeName(pathname);
   if (route === "landing") return renderLanding();
   if (route === "about") return renderAbout();
+  if (route === "methodology") return renderMethodology();
   if (isComingSoon() && ["assessmentStart", "payment", "questions", "report"].includes(route)) return renderComingSoon();
   if (route === "assessmentStart") return renderSafetyGate();
   if (route === "payment") return renderPayment();
