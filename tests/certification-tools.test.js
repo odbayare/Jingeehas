@@ -65,11 +65,13 @@ const assert = require("node:assert/strict");
   assert.equal(verifyRecoveryConfig({}).status, "BLOCKED");
   assert.equal(verifyRecoveryConfig({
     RECOVERY_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString("base64"), RECOVERY_HASH_PEPPER: "pepper-value-with-more-than-32-characters",
-    RECOVERY_DELIVERY_API_URL: "https://delivery.staging.invalid/messages", RECOVERY_DELIVERY_API_KEY: "secret", RECOVERY_RATE_LIMIT_STORE: "database"
+    RECOVERY_DELIVERY_API_URL: "https://api.resend.com/emails", RECOVERY_DELIVERY_API_KEY: "secret", RECOVERY_SENDER_EMAIL: "no-reply@mail.jingeehas.fit",
+    RECOVERY_SENDER_NAME: "Jingeehas", RECOVERY_CHANNEL: "email", RECOVERY_RATE_LIMIT_STORE: "database"
   }).status, "PASS");
   assert.equal(verifyRecoveryConfig({
     RECOVERY_ENCRYPTION_KEY: Buffer.alloc(32, 1).toString("base64"), RECOVERY_HASH_PEPPER: "pepper-value-with-more-than-32-characters",
-    RECOVERY_DELIVERY_API_URL: "https://delivery.staging.invalid/messages", RECOVERY_DELIVERY_API_KEY: "secret", RECOVERY_RATE_LIMIT_STORE: "memory"
+    RECOVERY_DELIVERY_API_URL: "https://api.resend.com/emails", RECOVERY_DELIVERY_API_KEY: "secret", RECOVERY_SENDER_EMAIL: "no-reply@mail.jingeehas.fit",
+    RECOVERY_SENDER_NAME: "Jingeehas", RECOVERY_CHANNEL: "email", RECOVERY_RATE_LIMIT_STORE: "memory"
   }).status, "FAIL");
   assert.equal(verifyQPayConfig({}).status, "BLOCKED");
   assert.equal(verifyQPayConfig({ QPAY_API_BASE_URL: "https://sandbox.qpay.invalid", QPAY_CLIENT_ID: "id", QPAY_CLIENT_SECRET: "secret", QPAY_INVOICE_CODE: "code",

@@ -4,7 +4,7 @@ Status: **PENDING**. This is a review pack, not approval or launch evidence. The
 
 ## Database infrastructure status
 
-Provider: **Supabase**. Hosting project: **Enneagram test**. Isolation: private `jingeehas` PostgreSQL schema with RLS default-deny, no `anon`/`authenticated` table privileges, private operation functions, service-role-only RPC bridge, and active service-role-only `jingeehas-database-gateway` Edge Function. Database schema and database-side transaction/rollback are **PASS**. Credential-free unauthorized gateway probes are **PASS**. Authenticated external lifecycle and application environment injection are **NOT RUN / PENDING**. Backup/restore is **PREPARED / NOT RUN**. This shared hosting project does not imply shared tables.
+Provider: **Supabase**. Hosting project: **Enneagram test**. Isolation: private `jingeehas` PostgreSQL schema with RLS default-deny, no `anon`/`authenticated` table privileges, private operation functions, service-role-only RPC bridge, and active service-role-only `jingeehas-database-gateway` Edge Function. Database schema and database-side transaction/rollback are **PASS**. Credential-free unauthorized gateway probes are **PASS**. Authenticated external lifecycle and preview application secret injection remain **PENDING**. Logical backup and disposable PostgreSQL 17 restore are **PASS**. This shared hosting project does not imply shared tables.
 
 ## Privacy policy
 
@@ -59,7 +59,7 @@ Payment UI states: `QPay нэхэмжлэл үүсгэж байна…`; `Төл
 
 **Current text**
 
-> Төлбөр хийхдээ ашигласан утас эсвэл имэйлээ оруулна уу.
+> Төлбөр хийхдээ ашигласан имэйл хаягаа оруулна уу. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.
 >
 > Баталгаажуулах код авах
 >
@@ -69,7 +69,7 @@ Payment UI states: `QPay нэхэмжлэл үүсгэж байна…`; `Төл
 
 **Why it exists:** restores entitled reports without revealing account existence.  
 **Data/process dependency:** encrypted contacts, delivery provider, shared rate limits, recovery challenges.  
-**Owner decision:** approved sender identity, channels, template and abuse policy.  
+**Owner decision:** approve `Jingeehas <no-reply@mail.jingeehas.fit>`, the email-only channel, template, and abuse policy.
 **Legal review status:** PENDING.  
 **Required change:** complete provider certification.  
 **Final approval status:** PENDING.

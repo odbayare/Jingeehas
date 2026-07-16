@@ -37,6 +37,10 @@ Production launch-аас өмнө:
 - `RECOVERY_HASH_PEPPER` — 32+ character secret
 - `RECOVERY_DELIVERY_API_URL`
 - `RECOVERY_DELIVERY_API_KEY`
+- `RECOVERY_SENDER_EMAIL`
+- `RECOVERY_SENDER_NAME`
+- `RECOVERY_CHANNEL=email`
+- `RECOVERY_RATE_LIMIT_STORE=database`
 - `CROSS_PROJECT_FORBIDDEN_TOKEN` — CI contamination guard secret
 
 Admin account-ыг `admin_accounts` хүснэгтэд scrypt password hash-тайгаар аюулгүй bootstrap хийнэ. Нууц үгийг repository эсвэл browser storage-д оруулахгүй.
@@ -70,7 +74,7 @@ npm run verify:staging-package
 
 ## Launch checklist
 
-- [ ] Database API-г schema contract-аар provision хийж, backup/restore турших
+- [x] Database API-г schema contract-аар provision хийж, backup/restore турших
 - [ ] Recovery delivery provider болон rate limit-ийг staging-д баталгаажуулах
 - [ ] QPay callback origin, app scheme, HTTPS host allowlist-ийг owner/provider-оор баталгаажуулах
 - [ ] Admin account-ыг secure bootstrap хийх
@@ -87,8 +91,8 @@ npm run verify:staging-package
 - Database schema: **PASS** — private Supabase schema, constraints, RLS and database-side transaction/rollback are verified.
 - Supabase gateway: **ACTIVE** — unauthorized access test passes; authenticated external lifecycle is **NOT RUN**.
 - Database application injection: **PENDING** — service-role secret is not configured in Netlify staging/preview.
-- Database backup/restore: **PREPARED / NOT RUN**.
-- Recovery: **BLOCKED** — delivery provider, shared rate-limit configuration, deployment and owner test contact remain.
+- Database backup/restore: **PASS** — access-controlled logical artifacts were restored into a disposable PostgreSQL 17 instance with 22 tables and zero `public` tables.
+- Recovery engineering: **PASS** — email-only Resend adapter, database cooldown keys, rolling limits, atomic one-time use, and concurrency tests pass. Live provider delivery remains **BLOCKED** pending authenticated Resend/DNS configuration and an owner-controlled test inbox.
 - QPay sandbox: **NOT RUN** — owner approval phrase and staging deployment approval are absent.
 - Admin bootstrap: **PREPARED** — dry-run/apply/rotation tooling is tested; no real administrator exists from this work.
 - Owner/legal: **PENDING** — see `docs/OWNER_LAUNCH_REVIEW.md`.

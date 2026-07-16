@@ -7,7 +7,8 @@ Current status: **BLOCKED** — provider credentials, database-backed rate-limit
 - Channels: normalized Mongolian phone numbers (`+976` plus eight digits) and normalized email addresses.
 - `RECOVERY_ENCRYPTION_KEY`: base64-encoded 32-byte AES-256-GCM key.
 - `RECOVERY_HASH_PEPPER`: at least 32 characters, distinct from the encryption key.
-- `RECOVERY_DELIVERY_API_URL` and `RECOVERY_DELIVERY_API_KEY`: owner-approved HTTPS delivery adapter.
+- `RECOVERY_DELIVERY_API_URL=https://api.resend.com/emails` and `RECOVERY_DELIVERY_API_KEY`: Resend HTTPS email delivery.
+- `RECOVERY_SENDER_EMAIL=no-reply@mail.jingeehas.fit`, `RECOVERY_SENDER_NAME=Jingeehas`, and `RECOVERY_CHANNEL=email`.
 - `RECOVERY_RATE_LIMIT_STORE=database`: confirms that challenge/rate records use the shared database, not process memory.
 
 The database stores a keyed lookup hash and AES-GCM ciphertext, not plaintext contact data. Plaintext exists only in server memory while calling the delivery adapter. Codes, secrets, full contacts, ciphertext, and provider credentials must not be logged. Evidence may contain only a masked destination and opaque provider-message ID.
@@ -22,7 +23,7 @@ Sender identity and approved templates must be supplied by the owner/provider:
 - SMS sender: **PENDING**
 - Template: `Jingeehas тайлан сэргээх код: {{code}}. Код {{expiresInMinutes}} минут хүчинтэй. Та хүсээгүй бол үл тооно уу.`
 
-The provider timeout is eight seconds. The application does not automatically retry a timed-out send because duplicate delivery can confuse recipients. A user-initiated resend creates a new code, supersedes older active challenges, and counts toward the hourly abuse limit.
+The provider timeout is eight seconds. The application does not automatically retry a timed-out send because duplicate delivery can confuse recipients. A user-initiated resend creates a new code, supersedes older active challenges, and counts toward the hourly abuse limit. Database uniqueness enforces a one-minute cooldown independently for contact, IP, and session; rolling limits are five per contact, twenty per IP, and five per session per hour. Code consumption and wrong-attempt increments are row-locked in PostgreSQL.
 
 ## Abuse and lifecycle controls
 

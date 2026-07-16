@@ -63,10 +63,10 @@ test("urgent self-harm guidance is free and does not create an invoice", async (
 test("contact, payment states, required answer, history and focus work", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await completeEligibleGate(page);
-  await page.locator("#contact-phone").fill("1");
+  await page.locator("#contact-email").fill("invalid");
   await page.getByRole("button", { name: "Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх" }).click();
-  await expect(page.getByText("Утасны дугаараа зөв оруулна уу.")).toBeVisible();
-  await page.locator("#contact-phone").fill("99112233");
+  await expect(page.getByText("Имэйл хаягаа зөв оруулна уу.")).toBeVisible();
+  await page.locator("#contact-email").fill("paid@example.com");
   await page.getByRole("button", { name: "Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх" }).click();
   await page.getByRole("button", { name: "9,900₮-ийн QPay нэхэмжлэл үүсгэх" }).click();
   await expect(page.getByText("Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.")).toBeVisible();

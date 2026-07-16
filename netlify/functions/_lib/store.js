@@ -11,7 +11,10 @@ class RestDatabaseAdapter {
       body: JSON.stringify(operation),
       signal: AbortSignal.timeout(8000)
     });
-    if (!response.ok) throw Object.assign(new Error("Database request failed"), { statusCode: 503, code: "database_error" });
+    if (!response.ok) throw Object.assign(new Error("Database request failed"), {
+      statusCode: response.status === 409 ? 409 : 503,
+      code: response.status === 409 ? "conflict" : "database_error"
+    });
     return response.json();
   }
   get(table, id) { return this.request({ action: "get", table, id }); }
@@ -21,6 +24,9 @@ class RestDatabaseAdapter {
   upsert(table, id, row) { return this.request({ action: "upsert", table, id, row }); }
   delete(table, id) { return this.request({ action: "delete", table, id }); }
   transaction(operations, options = {}) { return this.request({ action: "transaction", operations, rollback: options.rollback === true }); }
+  consumeRecoveryChallenge(id, codeHash, now) {
+    return this.request({ action: "consume_recovery_challenge", id, codeHash, now });
+  }
 }
 
 let testDatabase = null;

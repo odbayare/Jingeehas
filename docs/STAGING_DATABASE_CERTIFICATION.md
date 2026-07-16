@@ -130,4 +130,4 @@ Record verification evidence, revoke temporary credentials, securely destroy loc
 
 On failure, stop, retain coming-soon mode, revoke temporary credentials, attempt certification-record cleanup, and do not report PASS. Record project/gateway identifier, commit SHA, migration versions, operation PASS/FAIL, HTTP statuses without bodies, disposable IDs, backup file hashes, restore target, cleanup result, timestamps, and operator. Never record service-role/database credentials or private data.
 
-Final status: **BLOCKED** pending authenticated Edge gateway lifecycle, staging/preview environment injection, and backup/restore certification.
+Current status: schema, migration inventory, access-controlled logical backup, and disposable PostgreSQL 17 restore are **PASS**. Authenticated Edge gateway lifecycle and staging/preview service credential injection remain **BLOCKED** pending access to the unmasked server credential.

@@ -2,7 +2,8 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 export function verifyRecoveryConfig(env = process.env) {
-  const missing = ["RECOVERY_ENCRYPTION_KEY", "RECOVERY_HASH_PEPPER", "RECOVERY_DELIVERY_API_URL", "RECOVERY_DELIVERY_API_KEY", "RECOVERY_RATE_LIMIT_STORE"].filter(name => !String(env[name] || ""));
+  const missing = ["RECOVERY_ENCRYPTION_KEY", "RECOVERY_HASH_PEPPER", "RECOVERY_DELIVERY_API_URL", "RECOVERY_DELIVERY_API_KEY",
+    "RECOVERY_SENDER_EMAIL", "RECOVERY_SENDER_NAME", "RECOVERY_CHANNEL", "RECOVERY_RATE_LIMIT_STORE"].filter(name => !String(env[name] || ""));
   if (missing.length) return { status: "BLOCKED", reason: "Recovery configuration is missing", missing };
   let key;
   try { key = Buffer.from(String(env.RECOVERY_ENCRYPTION_KEY), "base64"); } catch { key = Buffer.alloc(0); }
@@ -11,8 +12,11 @@ export function verifyRecoveryConfig(env = process.env) {
   let delivery;
   try { delivery = new URL(String(env.RECOVERY_DELIVERY_API_URL)); } catch { return { status: "FAIL", reason: "RECOVERY_DELIVERY_API_URL is invalid" }; }
   if (delivery.protocol !== "https:") return { status: "FAIL", reason: "RECOVERY_DELIVERY_API_URL must use HTTPS" };
+  if (delivery.hostname !== "api.resend.com" || delivery.pathname.replace(/\/+$/, "") !== "/emails") return { status: "FAIL", reason: "Recovery delivery must use the Resend email endpoint" };
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(env.RECOVERY_SENDER_EMAIL))) return { status: "FAIL", reason: "RECOVERY_SENDER_EMAIL is invalid" };
+  if (String(env.RECOVERY_CHANNEL).toLowerCase() !== "email") return { status: "FAIL", reason: "RECOVERY_CHANNEL must be email" };
   if (env.RECOVERY_RATE_LIMIT_STORE !== "database") return { status: "FAIL", reason: "RECOVERY_RATE_LIMIT_STORE must be database; in-process limits are not production-ready" };
-  return { status: "PASS", mode: "configuration-only", channels: ["email", "phone"], deliveryOrigin: delivery.origin, distributedRateLimit: "database", externalMessageSent: false };
+  return { status: "PASS", mode: "configuration-only", channels: ["email"], deliveryOrigin: delivery.origin, distributedRateLimit: "database", externalMessageSent: false };
 }
 
 function main() {

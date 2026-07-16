@@ -6,6 +6,11 @@ const { createSession } = require("./session.js");
 
 const PHONE_ERROR = "Утасны дугаараа зөв оруулна уу.";
 const EMAIL_ERROR = "Имэйл хаягаа зөв оруулна уу.";
+const EMAIL_ONLY_ERROR = "Тайлан сэргээхэд имэйл хаяг ашиглана уу. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй байна.";
+const RECOVERY_SUBJECT = "Jingeehas тайлан сэргээх баталгаажуулах код";
+const GENERIC_RECOVERY_MESSAGE = "Хэрэв тохирох бүрэн тайлан байгаа бол баталгаажуулах код илгээгдлээ.";
+const WINDOW_MS = 60 * 60 * 1000;
+const COOLDOWN_MS = 60 * 1000;
 
 function normalizePhone(value) {
   const compact = String(value || "").replace(/[\s()-]/g, "");
@@ -66,11 +71,23 @@ class RecoveryDeliveryClient {
   constructor(env = process.env) {
     this.url = String(env.RECOVERY_DELIVERY_API_URL || "");
     this.key = String(env.RECOVERY_DELIVERY_API_KEY || "");
-    if (!this.url.startsWith("https://") || !this.key) throw Object.assign(new Error("Recovery delivery is unavailable"), { statusCode: 503, code: "recovery_unavailable" });
+    this.senderEmail = String(env.RECOVERY_SENDER_EMAIL || "").trim();
+    this.senderName = String(env.RECOVERY_SENDER_NAME || "Jingeehas").trim();
+    this.channel = String(env.RECOVERY_CHANNEL || "").trim().toLowerCase();
+    let endpoint;
+    try { endpoint = new URL(this.url); } catch { endpoint = null; }
+    if (!endpoint || endpoint.protocol !== "https:" || endpoint.hostname !== "api.resend.com" || endpoint.pathname.replace(/\/+$/, "") !== "/emails" ||
+      !this.key || this.channel !== "email" || !normalizeEmail(this.senderEmail)) {
+      throw Object.assign(new Error("Recovery delivery is unavailable"), { statusCode: 503, code: "recovery_unavailable" });
+    }
   }
   async send(payload) {
+    const expires = Number(payload.expiresInMinutes) || 10;
+    const text = `Таны баталгаажуулах код: ${payload.code}\n\nКод ${expires} минутын дараа хүчингүй болно. Та энэ хүсэлтийг гаргаагүй бол имэйлийг үл тоомсорлоно уу. Кодоо хэнд ч бүү хэлээрэй. Энэ имэйлд тест үнэлгээний эмзэг мэдээлэл агуулаагүй.`;
+    const html = `<p>Таны баталгаажуулах код:</p><p style="font-size:28px;font-weight:700;letter-spacing:4px">${payload.code}</p><p>Код ${expires} минутын дараа хүчингүй болно.</p><p>Та энэ хүсэлтийг гаргаагүй бол имэйлийг үл тоомсорлоно уу. Кодоо хэнд ч бүү хэлээрэй.</p><p>Энэ имэйлд тест үнэлгээний эмзэг мэдээлэл агуулаагүй.</p>`;
     const response = await fetch(this.url, { method: "POST", headers: { authorization: `Bearer ${this.key}`, "content-type": "application/json" },
-      body: JSON.stringify(payload), signal: AbortSignal.timeout(8000) });
+      body: JSON.stringify({ from: `${this.senderName} <${this.senderEmail}>`, to: [payload.destination], subject: RECOVERY_SUBJECT, text, html }),
+      signal: AbortSignal.timeout(8000) });
     if (!response.ok) throw Object.assign(new Error("Recovery delivery failed"), { statusCode: 503, code: "recovery_unavailable" });
     const data = await response.json().catch(() => ({}));
     return { providerId: String(data.id || data.messageId || data.message_id || "").slice(0, 200) };
@@ -78,44 +95,74 @@ class RecoveryDeliveryClient {
 }
 function getRecoveryDelivery() { return new RecoveryDeliveryClient(); }
 
-async function requestRecovery(database, delivery, input, clientKey, now = new Date()) {
-  const contacts = validateContacts(input);
-  const [type, value] = contacts.phone ? ["phone", contacts.phone] : ["email", contacts.email];
+function recoveryEmail(input = {}) {
+  const email = normalizeEmail(input.email);
+  if (!email) throw Object.assign(new Error(input.phone ? EMAIL_ONLY_ERROR : EMAIL_ERROR), {
+    statusCode: 400, code: input.phone ? "email_recovery_required" : "invalid_email", publicMessage: input.phone ? EMAIL_ONLY_ERROR : EMAIL_ERROR
+  });
+  return email;
+}
+
+async function recentFor(database, field, value, now) {
+  return (await database.find("recovery_challenges", { [field]: value }))
+    .filter(row => new Date(row.createdAt) > new Date(now.getTime() - WINDOW_MS));
+}
+
+async function requestRecovery(database, delivery, input, clientContext, now = new Date()) {
+  const type = "email";
+  const value = recoveryEmail(input);
   const hash = contactHash(type, value);
-  const recent = (await database.find("recovery_challenges", { rateKey: hashToken(`${clientKey}:${hash}`) }))
-    .filter(row => new Date(row.createdAt) > new Date(now.getTime() - 60 * 60 * 1000));
-  if (recent.length >= 5) throw Object.assign(new Error("Too many requests"), { statusCode: 429, code: "rate_limited" });
+  const ip = String(clientContext?.ip || "unknown");
+  const session = String(clientContext?.session || `anonymous:${ip}`);
+  const contactRateKey = hashToken(`contact:${hash}`);
+  const ipRateKey = hashToken(`ip:${ip}`);
+  const sessionRateKey = hashToken(`session:${session}`);
+  const [contactRecent, ipRecent, sessionRecent] = await Promise.all([
+    recentFor(database, "contactRateKey", contactRateKey, now),
+    recentFor(database, "ipRateKey", ipRateKey, now),
+    recentFor(database, "sessionRateKey", sessionRateKey, now)
+  ]);
+  if (contactRecent.length >= 5 || ipRecent.length >= 20 || sessionRecent.length >= 5) {
+    throw Object.assign(new Error("Too many requests"), { statusCode: 429, code: "rate_limited" });
+  }
   const matching = await database.find("recovery_contacts", { type, contactHash: hash });
   const eligible = matching.find(contact => contact.entitlementId);
-  for (const challenge of recent.filter(row => !row.usedAt && new Date(row.expiresAt) > now)) {
-    await database.update("recovery_challenges", challenge.id, { usedAt: now.toISOString(), deliveryStatus: "superseded" });
-  }
   const recoveryId = randomId("rr_");
   const code = randomDigits(6);
-  await database.insert("recovery_challenges", { id: recoveryId, rateKey: hashToken(`${clientKey}:${hash}`),
+  const bucket = Math.floor(now.getTime() / COOLDOWN_MS);
+  try {
+    await database.insert("recovery_challenges", { id: recoveryId, rateKey: contactRateKey, contactRateKey, ipRateKey, sessionRateKey,
+    contactCooldownKey: hashToken(`${contactRateKey}:${bucket}`), ipCooldownKey: hashToken(`${ipRateKey}:${bucket}`),
+    sessionCooldownKey: hashToken(`${sessionRateKey}:${bucket}`),
     contactId: eligible?.id || null, codeHash: hashToken(`${recoveryId}:${code}`), attempts: 0,
     deliveryStatus: eligible ? "pending" : "suppressed", deliveryProviderId: null, deliveryAttemptedAt: null,
     expiresAt: new Date(now.getTime() + 10 * 60 * 1000).toISOString(), usedAt: null, createdAt: now.toISOString() });
+  } catch (error) {
+    if (error?.code === "conflict") throw Object.assign(new Error("Too many requests"), { statusCode: 429, code: "rate_limited" });
+    throw error;
+  }
+  for (const challenge of contactRecent.filter(row => !row.usedAt && new Date(row.expiresAt) > now)) {
+    await database.update("recovery_challenges", challenge.id, { usedAt: now.toISOString(), deliveryStatus: "superseded" });
+  }
   if (eligible) {
     try {
-      const sent = await delivery.send({ channel: type, destination: decryptContact(eligible.encryptedContact), code, expiresInMinutes: 10 });
+      const sent = await delivery.send({ channel: "email", destination: decryptContact(eligible.encryptedContact), code, expiresInMinutes: 10 });
       await database.update("recovery_challenges", recoveryId, { deliveryStatus: "sent", deliveryProviderId: sent?.providerId || null, deliveryAttemptedAt: now.toISOString() });
     } catch (error) {
       await database.update("recovery_challenges", recoveryId, { deliveryStatus: "failed", deliveryAttemptedAt: now.toISOString() });
       throw error;
     }
   }
-  return { recoveryId, message: "Хэрэв тохирох бүрэн тайлан байгаа бол баталгаажуулах код илгээгдлээ." };
+  return { recoveryId, message: GENERIC_RECOVERY_MESSAGE };
 }
 
 async function confirmRecovery(database, input, now = new Date()) {
-  const challenge = await database.get("recovery_challenges", input.recoveryId);
-  const valid = challenge && !challenge.usedAt && challenge.contactId && challenge.attempts < 5 && new Date(challenge.expiresAt) > now &&
-    safeEqual(challenge.codeHash, hashToken(`${challenge.id}:${String(input.code || "")}`));
-  if (!valid) {
-    if (challenge) await database.update("recovery_challenges", challenge.id, { attempts: Math.min(5, Number(challenge.attempts || 0) + 1) });
-    throw Object.assign(new Error("Invalid recovery code"), { statusCode: 400, code: "invalid_recovery_code" });
-  }
+  const recoveryId = String(input.recoveryId || "");
+  const submittedHash = hashToken(`${recoveryId}:${String(input.code || "")}`);
+  const challenge = typeof database.consumeRecoveryChallenge === "function"
+    ? await database.consumeRecoveryChallenge(recoveryId, submittedHash, now.toISOString())
+    : null;
+  if (!challenge) throw Object.assign(new Error("Invalid recovery code"), { statusCode: 400, code: "invalid_recovery_code" });
   const contact = await database.get("recovery_contacts", challenge.contactId);
   const entitlement = contact ? await database.get("entitlements", contact.entitlementId) : null;
   if (!contact || !entitlement || entitlement.status !== "active") throw Object.assign(new Error("Invalid recovery code"), { statusCode: 400, code: "invalid_recovery_code" });
@@ -123,10 +170,10 @@ async function confirmRecovery(database, input, now = new Date()) {
   await database.upsert("assessment_sessions", `${entitlement.assessmentId}:${created.session.id}`, {
     assessmentId: entitlement.assessmentId, sessionId: created.session.id, source: "recovery", createdAt: now.toISOString()
   });
-  await database.update("recovery_challenges", challenge.id, { usedAt: now.toISOString() });
   await database.update("recovery_contacts", contact.id, { verifiedAt: now.toISOString() });
   return { assessmentId: entitlement.assessmentId, session: created.session, cookie: created.cookie };
 }
 
-module.exports = { PHONE_ERROR, EMAIL_ERROR, normalizePhone, normalizeEmail, validateContacts, encryptContact, decryptContact, contactHash,
-  saveRecoveryContacts, RecoveryDeliveryClient, getRecoveryDelivery, requestRecovery, confirmRecovery };
+module.exports = { PHONE_ERROR, EMAIL_ERROR, EMAIL_ONLY_ERROR, RECOVERY_SUBJECT, GENERIC_RECOVERY_MESSAGE, normalizePhone, normalizeEmail,
+  validateContacts, encryptContact, decryptContact, contactHash, saveRecoveryContacts, RecoveryDeliveryClient, getRecoveryDelivery,
+  recoveryEmail, requestRecovery, confirmRecovery };

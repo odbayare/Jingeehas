@@ -128,6 +128,12 @@ create table recovery_contacts (
 create table recovery_challenges (
   id text primary key,
   rate_key text not null,
+  contact_rate_key text not null,
+  ip_rate_key text not null,
+  session_rate_key text not null,
+  contact_cooldown_key text not null,
+  ip_cooldown_key text not null,
+  session_cooldown_key text not null,
   contact_id text references recovery_contacts(id) on delete cascade,
   code_hash text not null,
   attempts integer not null default 0 check (attempts between 0 and 5),
@@ -260,6 +266,12 @@ create index payments_status_expiry_idx on payments (status, expires_at);
 create index recovery_contacts_hash_idx on recovery_contacts (type, contact_hash);
 create index recovery_contacts_assessment_idx on recovery_contacts (assessment_id);
 create index recovery_challenges_rate_idx on recovery_challenges (rate_key, created_at desc);
+create index recovery_challenges_contact_rate_idx on recovery_challenges (contact_rate_key, created_at desc);
+create index recovery_challenges_ip_rate_idx on recovery_challenges (ip_rate_key, created_at desc);
+create index recovery_challenges_session_rate_idx on recovery_challenges (session_rate_key, created_at desc);
+create unique index recovery_challenges_contact_cooldown_uidx on recovery_challenges (contact_cooldown_key);
+create unique index recovery_challenges_ip_cooldown_uidx on recovery_challenges (ip_cooldown_key);
+create unique index recovery_challenges_session_cooldown_uidx on recovery_challenges (session_cooldown_key);
 create index recovery_challenges_contact_idx on recovery_challenges (contact_id, created_at desc);
 create index advisor_sessions_token_idx on advisor_sessions (token_hash) where revoked_at is null;
 create index advisor_clients_dashboard_idx on advisor_clients (coach_id, status, created_at desc);

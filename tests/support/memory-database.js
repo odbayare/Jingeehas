@@ -7,10 +7,30 @@ class MemoryDatabaseAdapter {
   table(name) { if (!this.tables[name]) throw new Error(`Unknown table: ${name}`); return this.tables[name]; }
   async get(table, id) { return copy(this.table(table).get(id) || null); }
   async find(table, filters = {}) { return copy([...this.table(table).values()].filter(row => Object.entries(filters).every(([key, value]) => row[key] === value))); }
-  async insert(table, row) { if (!row.id || this.table(table).has(row.id)) throw Object.assign(new Error("Record conflict"), { statusCode: 409, code: "conflict" }); this.table(table).set(row.id, copy(row)); return copy(row); }
+  async insert(table, row) {
+    const rows = this.table(table);
+    const cooldownFields = ["contactCooldownKey", "ipCooldownKey", "sessionCooldownKey"];
+    const cooldownConflict = table === "recovery_challenges" && [...rows.values()].some(existing =>
+      cooldownFields.some(field => row[field] && existing[field] === row[field]));
+    if (!row.id || rows.has(row.id) || cooldownConflict) throw Object.assign(new Error("Record conflict"), { statusCode: 409, code: "conflict" });
+    rows.set(row.id, copy(row)); return copy(row);
+  }
   async update(table, id, patch) { const current = await this.get(table, id); if (!current) throw Object.assign(new Error("Record not found"), { statusCode: 404, code: "not_found" }); const next = { ...current, ...copy(patch), id }; this.table(table).set(id, next); return copy(next); }
   async upsert(table, id, row) { const next = { ...(await this.get(table, id) || {}), ...copy(row), id }; this.table(table).set(id, next); return copy(next); }
   async delete(table, id) { return { deleted: this.table(table).delete(id) }; }
+  async consumeRecoveryChallenge(id, codeHash, now) {
+    const rows = this.table("recovery_challenges");
+    const challenge = copy(rows.get(id) || null);
+    const current = new Date(now);
+    if (!challenge || challenge.usedAt || !challenge.contactId || challenge.attempts >= 5 || new Date(challenge.expiresAt) <= current) return null;
+    if (challenge.codeHash !== codeHash) {
+      rows.set(id, { ...challenge, attempts: Math.min(5, Number(challenge.attempts || 0) + 1) });
+      return null;
+    }
+    const consumed = { ...challenge, usedAt: current.toISOString() };
+    rows.set(id, consumed);
+    return copy(consumed);
+  }
   async transaction(operations, options = {}) {
     const snapshot = Object.fromEntries(Object.entries(this.tables).map(([name, rows]) => [name, new Map([...rows.entries()].map(([id, row]) => [id, copy(row)]))]));
     try {
