@@ -21,6 +21,25 @@ for (const width of [375, 390, 430, 1280]) {
   });
 }
 
+test("methodology trust content stacks without mobile overflow", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 800 });
+  await page.goto("/");
+  await expect(page.getByRole("heading", { name: "Арга зүй ба судалгааны үндэслэл" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Аюулгүй байдлын дохио" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Сэтгэлзүй ба зан үйлийн хэв маяг" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Өдөр тутмын саад ба орчны нөлөө" })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});
+
+test("detailed methodology route returns its conservative evidence disclosure", async ({ page, request }) => {
+  const response = await request.get("/methodology");
+  expect(response.status()).toBe(200);
+  await page.goto("/methodology");
+  await expect(page.getByRole("heading", { name: "Арга зүй ба судалгааны үндэслэл" })).toBeVisible();
+  for (const name of ["TFEQ / TFEQ-R18", "DEBQ", "AEBQ", "EEQ", "BEDS-7", "SCOFF", "PHQ-9", "STOP-Bang", "WEL / WEL-SF", "IPAQ", "IWQOL-Lite", "Obesity Canada 5As", "Obesity Canada 4Ms", "AACE", "NICE", "Noom", "WeightWatchers", "Calibrate", "Wegovy consumer quiz"]) await expect(page.getByText(name, { exact: false }).first()).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});
+
 test("coming-soon cannot be bypassed by a public query", async ({ page }) => {
   await page.goto("/assessment/start?internalTest=1");
   await expect(page.getByRole("heading", { name: "Тун удахгүй" })).toBeVisible();
