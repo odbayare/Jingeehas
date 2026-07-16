@@ -1,6 +1,7 @@
 "use strict";
 
 const { randomId } = require("./crypto.js");
+const { calculateAssessmentSafety, ROUTE_COPY } = require("./safety.js");
 
 async function ownedAssessment(database, sessionId, assessmentId) {
   const assessment = await database.get("assessments", assessmentId);
@@ -53,6 +54,21 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
   if (assessment.status === "complete") return assessment;
   const answers = await database.find("assessment_answers", { assessmentId: assessment.id });
+  const answerMap = Object.fromEntries(answers.map(row => [row.questionId, row.value]));
+  const safety = calculateAssessmentSafety(answerMap);
+  if (safety.route === "confirmation_required") throw Object.assign(new Error("Safety confirmation required"), {
+    statusCode: 409, code: "safety_confirmation_required", safety
+  });
+  if (safety.route !== "eligible") {
+    const completedSafety = await database.update("assessments", assessment.id, {
+      status: "complete", reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
+      completedAt: now.toISOString(), updatedAt: now.toISOString()
+    });
+    await database.upsert("report_snapshots", assessment.id, { assessmentId: assessment.id, sessionId,
+      reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
+      initialView: { guidance: ROUTE_COPY[safety.route] }, fullReport: null, createdAt: now.toISOString() });
+    return completedSafety;
+  }
   const reportMode = answers.length >= 8 ? "sufficient" : answers.length >= 4 ? "limited" : "insufficient";
   const completed = await database.update("assessments", assessment.id, {
     status: "complete", reportMode, safetyRoute: null, completedAt: now.toISOString(), updatedAt: now.toISOString()

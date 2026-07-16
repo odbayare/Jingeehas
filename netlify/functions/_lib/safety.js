@@ -51,6 +51,39 @@ function evaluateSafetyGate(input = {}) {
   return { mode: "eligible", category: "eligible", triggerQuestionIds: [], triggerValues: [], severity: "none", route: "eligible" };
 }
 
+function possibleOpenTextSafety(value) {
+  const text = String(value || "").trim().toLowerCase();
+  if (!text) return null;
+  const negated = /төрөөгүй|байгаагүй|тохиолдоогүй|үгүй|биш|огт.*гүй/.test(text);
+  const aboutOther = /найз|дүү|ах|эгч|танил|өөр хүн|хүний тухай/.test(text);
+  const pastOnly = /өмнө нь|өнгөрсөнд|багадаа|олон жилийн өмнө/.test(text) && !/одоо|өнөөдөр|яг одоо/.test(text);
+  if (negated || aboutOther || pastOnly) return null;
+  if (/өөртөө хор|амиа хор|амьдрахыг хүсэхгүй/.test(text)) return "self_harm";
+  if (/ухаан балар|будилах|ухаан алд|гэнэт мууд/.test(text)) return "acute_medical";
+  return null;
+}
+
+function calculateAssessmentSafety(answers = {}) {
+  const selfHarm = answers["S1-S04"];
+  if (selfHarm === "Одоо идэвхтэй бодогдож байна") return provenance("self_harm", "S1-S04", selfHarm, "urgent", "urgent_self_harm");
+  if (selfHarm === "Одоо хааяа бодогддог") return provenance("self_harm", "S1-S04", selfHarm, "professional", "mental_health_support");
+  const acute = (Array.isArray(answers["S1-B01"]) ? answers["S1-B01"] : []).filter(value => /будилах|ухаан балар|ухаан алд|огцом мууд/.test(value.toLowerCase()));
+  if (acute.length) return provenance("acute_medical", "S1-B01", acute, "urgent", "urgent_medical_symptom");
+  const compensatory = answers["S1-S03"];
+  if (["Одоо хааяа", "Одоо давтагддаг"].includes(compensatory)) return provenance("compensatory_eating", "S1-S03", compensatory, "professional", "eating_behavior_professional");
+  for (const [questionId, value] of Object.entries(answers)) {
+    if (typeof value !== "string" || !questionId.startsWith("OPEN-")) continue;
+    const category = possibleOpenTextSafety(value);
+    if (!category) continue;
+    const confirmation = answers[`SAFETY-CONFIRM-${questionId}`];
+    if (!confirmation) return { mode: "confirmation_required", category, triggerQuestionIds: [questionId], triggerValues: [value], severity: "unknown", route: "confirmation_required" };
+    if (confirmation === "Одоо идэвхтэй бодогдож байна") return provenance("self_harm", `SAFETY-CONFIRM-${questionId}`, confirmation, "urgent", "urgent_self_harm");
+    if (confirmation === "Одоо хааяа бодогддог") return provenance("self_harm", `SAFETY-CONFIRM-${questionId}`, confirmation, "professional", "mental_health_support");
+    if (confirmation === "Одоо илэрч байна") return provenance("acute_medical", `SAFETY-CONFIRM-${questionId}`, confirmation, "urgent", "urgent_medical_symptom");
+  }
+  return { mode: "eligible", category: "eligible", triggerQuestionIds: [], triggerValues: [], severity: "none", route: "eligible" };
+}
+
 async function saveSafetyCheck(database, sessionId, input, now = new Date()) {
   const result = evaluateSafetyGate(input);
   const id = randomId("sc_");
@@ -58,4 +91,4 @@ async function saveSafetyCheck(database, sessionId, input, now = new Date()) {
   return { safetyCheckId: id, ...result, guidance: result.route === "eligible" ? null : ROUTE_COPY[result.route] };
 }
 
-module.exports = { ROUTE_COPY, evaluateSafetyGate, saveSafetyCheck };
+module.exports = { ROUTE_COPY, evaluateSafetyGate, possibleOpenTextSafety, calculateAssessmentSafety, saveSafetyCheck };

@@ -49,5 +49,14 @@ function event(httpMethod, body, cookie = "", query = {}) {
   const otherCookie = other.headers["set-cookie"].split(";")[0];
   const denied = await report(event("GET", null, otherCookie, { assessmentId }));
   assert.equal(denied.statusCode, 404);
+
+  const safetyCreated = await create(event("POST", { safetyCheckId }, cookie));
+  const safetyAssessmentId = JSON.parse(safetyCreated.body).assessmentId;
+  await save(event("PATCH", { assessmentId: safetyAssessmentId, answers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } }, cookie));
+  const safetyCompleted = await complete(event("POST", { assessmentId: safetyAssessmentId }, cookie));
+  assert.equal(JSON.parse(safetyCompleted.body).safetyRoute, "urgent_self_harm");
+  const safetyReport = JSON.parse((await report(event("GET", null, cookie, { assessmentId: safetyAssessmentId }))).body);
+  assert.equal(safetyReport.safetyRoute, "urgent_self_harm");
+  assert.match(safetyReport.initialView.guidance.title, /Яаралтай/);
   console.log("assessment API contract tests passed");
 })().catch(error => { console.error(error); process.exit(1); });
