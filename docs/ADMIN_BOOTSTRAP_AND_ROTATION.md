@@ -4,6 +4,8 @@ Status: **OWNER ACTION REQUIRED**. The TIAS owner identity was identified secure
 
 The bootstrap runs only against the configured HTTPS database adapter. It has no default account, password, hash, or local fallback. The default is a read-only dry run; `--apply` is mandatory for writes. Passwords passed as command-line arguments are rejected.
 
+For the initial owner bootstrap and complete live session-security certification, run `./scripts/bootstrap-and-certify-admin.sh`. It prompts locally for the owner email and hides the password, creates exactly one account through the existing bootstrap, then verifies login, logout, expired-session rejection, disabled-account rejection, unauthenticated-route rejection, audit creation, uniqueness, and session cleanup. Neither value is embedded in the shell command.
+
 ## Prerequisites
 
 1. Complete staging database health/schema/transaction certification.

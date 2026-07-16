@@ -103,6 +103,12 @@ const fs = require("node:fs");
   assert.match(adminLiveCertification, /afterLogout\.status !== 401/);
   assert(!/console\.(?:log|error)\([^\n]*password/i.test(adminLiveCertification));
 
+  const adminOwnerWorkflow = fs.readFileSync("scripts/bootstrap-and-certify-admin.sh", "utf8");
+  assert.match(adminOwnerWorkflow, /read -r -s -p/);
+  assert.match(adminOwnerWorkflow, /set \+x/);
+  assert.match(adminOwnerWorkflow, /unset ADMIN_EMAIL ADMIN_PASSWORD/);
+  assert(!/--password(?:=|\s)/.test(adminOwnerWorkflow));
+
   const { verifyRecoveryConfig } = await import("../tools/verify-recovery-config.mjs");
   const { verifyQPayConfig } = await import("../tools/verify-qpay-config.mjs");
   const callsBeforeConfigChecks = calls;
