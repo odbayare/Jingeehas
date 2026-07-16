@@ -1,6 +1,6 @@
 # Staging database certification
 
-Current database gate: **BLOCKED**. Database schema and database-side operations pass, and the Supabase Edge Function gateway is active. Authenticated external gateway lifecycle, application environment injection, and backup/restore remain not run.
+Current database gate: **PASS**. The private schema, dedicated-secret Edge Function authentication, authenticated external lifecycle, production server-side environment injection, logical backup, and disposable local restore are certified. This does not authorize a website deployment or public launch.
 
 ## Verified infrastructure
 
@@ -11,14 +11,14 @@ Current database gate: **BLOCKED**. Database schema and database-side operations
 - Gateway: Supabase Edge Function `jingeehas-database-gateway`
 - Gateway base URL: `https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway`
 - Final adapter URL: `https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway/transaction`
-- Gateway status: **ACTIVE**
+- Gateway status: **ACTIVE**, version 5, platform JWT verification disabled
 - Database-side insert/get/delete/transaction/rollback/cleanup: **PASS**
-- Unauthorized gateway test: **PASS** (missing bearer `401`, invalid bearer `401`, GET `401`)
-- Authenticated Edge gateway lifecycle: **NOT RUN**
-- Application environment injection: **PENDING**
-- Backup/restore: **PREPARED / NOT RUN**
+- Unauthorized gateway test: **PASS** (missing bearer `401`, invalid bearer `401`, GET `405`)
+- Authenticated Edge gateway lifecycle: **PASS** (insert/get/update/find/delete/rollback/cleanup)
+- Application environment injection: **PASS** (server-side production context; credential value never displayed)
+- Backup/restore: **PASS** (access-controlled logical backup and disposable PostgreSQL 17 local restore)
 
-Using the existing Enneagram project does not share application tables. Isolation is enforced by the separate `jingeehas` schema, removal of `anon` and `authenticated` table privileges, RLS default-deny, private operation functions, a service-role-only public RPC bridge, and a service-role-only Edge Function gateway. Enneagram continues to use its existing `public` schema.
+Using the existing Enneagram project does not share application tables. Isolation is enforced by the separate `jingeehas` schema, removal of `anon` and `authenticated` table privileges, RLS default-deny, private operation functions, a service-role-only public RPC bridge, and a dedicated-secret Edge Function gateway. Enneagram continues to use its existing `public` schema.
 
 ## Server configuration and stable adapter contract
 
@@ -26,10 +26,10 @@ Configure only in an owner-authorized Netlify staging/preview environment:
 
 ```text
 JINGEEHAS_DATABASE_API_URL=https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway
-JINGEEHAS_DATABASE_API_KEY=<Supabase service-role secret; server-side only>
+JINGEEHAS_DATABASE_API_KEY=<dedicated high-entropy gateway secret; server-side only>
 ```
 
-The blank committed template is `config/staging.env.example`. Never place the key in a repository file, browser variable, PR, issue, chat, log, screenshot, or artifact. Rotate it immediately if exposed.
+The blank committed template is `config/staging.env.example`. Store the same generated value only as Supabase Edge Function secret `JINGEEHAS_GATEWAY_SECRET` and Netlify server-side `JINGEEHAS_DATABASE_API_KEY`. It must not be a Supabase publishable/secret key, anon/service-role JWT, or user JWT. Never place it in a repository file, browser variable, PR, issue, chat, log, screenshot, or artifact. Rotate this dedicated value independently if exposed; do not rotate the shared Supabase JWT secret.
 
 `netlify/functions/_lib/store.js` contains the stable adapter; there is no separate `_lib/database.js`. It treats the URL as a base, appends exactly `/transaction`, sends `Authorization: Bearer <JINGEEHAS_DATABASE_API_KEY>` and `Content-Type: application/json`, and uses an eight-second timeout. Neither database variable appears in browser code. Production has no memory fallback; the in-memory adapter is under `tests/support` only.
 
@@ -49,9 +49,9 @@ Financial, entitlement, consent, and audit relations restrict deletion and requi
 
 ## Configuration-only and authenticated checks
 
-`npm run verify:database-config` validates the exact HTTPS host/path and logical final URL without network access. With no secret it reports `BLOCKED`. It rejects HTTP, the wrong project/function, an already-appended `/transaction`, publishable keys, anon JWTs, and secrets supplied to the ordinary verifier.
+`npm run verify:database-config` validates the exact HTTPS host/path and logical final URL without network access. With no secret it reports `BLOCKED`. It rejects HTTP, the wrong project/function, an already-appended `/transaction`, short/whitespace credentials, Supabase publishable/secret formats, anon/service-role/user JWTs, and secrets supplied to the ordinary verifier. It never prints the credential length or prefix.
 
-`npm run verify:database-gateway-auth` is credential-free and uses read-only `get` probes. It treats any 2xx as critical failure and rejects sensitive response details.
+`npm run verify:database-gateway-auth` always runs missing, invalid, and GET probes. When the dedicated secret is securely injected, it also performs one authenticated read-only `get` probe and requires HTTP 200 with no record. It rejects sensitive response details and never prints the credential.
 
 The authenticated lifecycle is separate:
 
@@ -63,7 +63,7 @@ Run only in an authorized environment where both database variables are injected
 
 ## Supabase backup and restore runbook
 
-Status: **PREPARED / NOT RUN**. No authorized disposable target project exists, so do not execute these commands yet. Follow the current [Supabase CLI backup/restore guide](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore) and [database connection guidance](https://supabase.com/docs/guides/database/connecting-to-postgres).
+Status: **PASS**. An access-controlled logical backup was restored into a disposable local PostgreSQL 17 instance and verified without modifying the source project or Enneagram's `public` schema. The following remains the repeatable runbook for future owner-authorized restore exercises. Follow the current [Supabase CLI backup/restore guide](https://supabase.com/docs/guides/platform/migrating-within-supabase/backup-restore) and [database connection guidance](https://supabase.com/docs/guides/database/connecting-to-postgres).
 
 ### 1. Confirm tools and flags
 
@@ -130,4 +130,4 @@ Record verification evidence, revoke temporary credentials, securely destroy loc
 
 On failure, stop, retain coming-soon mode, revoke temporary credentials, attempt certification-record cleanup, and do not report PASS. Record project/gateway identifier, commit SHA, migration versions, operation PASS/FAIL, HTTP statuses without bodies, disposable IDs, backup file hashes, restore target, cleanup result, timestamps, and operator. Never record service-role/database credentials or private data.
 
-Current status: schema, migration inventory, access-controlled logical backup, and disposable PostgreSQL 17 restore are **PASS**. Authenticated Edge gateway lifecycle and staging/preview service credential injection remain **BLOCKED** pending access to the unmasked server credential.
+Current status: schema, migration inventory, dedicated gateway authentication, authenticated lifecycle, server-side production credential injection, access-controlled logical backup, and disposable PostgreSQL 17 restore are **PASS**. Certification left no residual rows. The shared Supabase service-role credential is absent from Netlify and remains internal to the Edge Function runtime.

@@ -16,7 +16,7 @@
 
 Статик клиент нь Netlify Functions-тэй зөвхөн ижил домэйноор харилцана. Сервер HTTP-only cookie session үүсгэж, assessment, payment, entitlement, recovery, advisor/admin authorization-ыг сервер талд шийднэ. Browser storage-д эрүүл мэндийн хариулт, тайлан, төлбөрийн эрх, нууц үг, session эсвэл урилгын token хадгалахгүй.
 
-Production database нь `netlify/functions/_lib/store.js` дахь adapter boundary-аар Enneagram test Supabase төслийн private `jingeehas` schema-д зориулсан service-role-only Edge Function gateway-тай ажиллана. Gateway base URL нь `https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway`; adapter `/transaction` нэмнэ. Environment байхгүй үед production endpoint `503` буцааж, memory/localStorage fallback хийхгүй. Memory adapter зөвхөн `tests/support` дотор байна.
+Production database нь `netlify/functions/_lib/store.js` дахь adapter boundary-аар Enneagram test Supabase төслийн private `jingeehas` schema-д зориулсан dedicated-secret Edge Function gateway-тай ажиллана. Gateway нь Netlify-гээс ирэх хүсэлтийг `JINGEEHAS_GATEWAY_SECRET`-ээр шалгаад, Supabase-ийн service-role түлхүүрийг зөвхөн Edge Function дотроос RPC руу ашиглана. Gateway base URL нь `https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway`; adapter `/transaction` нэмнэ. Environment байхгүй үед production endpoint `503` буцааж, memory/localStorage fallback хийхгүй. Memory adapter зөвхөн `tests/support` дотор байна.
 
 QPay integration нь [албан ёсны Merchant V2 урсгал](https://developer.qpay.mn/mn/docs/merchant?version=2.0.0)-ын `POST /v2/auth/token`, `POST /v2/invoice`, `POST /v2/payment/check` contract-ыг ашиглана. Автомат тест provider HTTP-г mock хийдэг бөгөөд бодит нэхэмжлэл үүсгэдэггүй.
 
@@ -89,8 +89,8 @@ npm run verify:staging-package
 ## External launch certification status
 
 - Database schema: **PASS** — private Supabase schema, constraints, RLS and database-side transaction/rollback are verified.
-- Supabase gateway: **ACTIVE** — unauthorized access test passes; authenticated external lifecycle is **NOT RUN**.
-- Database application injection: **PENDING** — service-role secret is not configured in Netlify staging/preview.
+- Supabase gateway: **PASS / ACTIVE** — dedicated-secret authentication and insert/get/update/find/delete/rollback/cleanup pass with no residual certification rows.
+- Database application injection: **PASS** — `JINGEEHAS_DATABASE_API_KEY` contains only the dedicated gateway secret; the shared Supabase service-role credential is absent from Netlify.
 - Database backup/restore: **PASS** — access-controlled logical artifacts were restored into a disposable PostgreSQL 17 instance with 22 tables and zero `public` tables.
 - Recovery engineering: **PASS** — email-only Resend adapter, database cooldown keys, rolling limits, atomic one-time use, and concurrency tests pass. Live provider delivery remains **BLOCKED** pending authenticated Resend/DNS configuration and an owner-controlled test inbox.
 - QPay sandbox: **NOT RUN** — owner approval phrase and staging deployment approval are absent.

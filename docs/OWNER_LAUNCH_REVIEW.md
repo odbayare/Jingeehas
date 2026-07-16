@@ -4,7 +4,7 @@ Status: **PENDING FINAL LAUNCH APPROVAL**. Owner-provided operational legal defa
 
 ## Database infrastructure status
 
-Provider: **Supabase**. Hosting project: **Enneagram test**. Isolation: private `jingeehas` PostgreSQL schema with RLS default-deny, no `anon`/`authenticated` table privileges, private operation functions, service-role-only RPC bridge, and active service-role-only `jingeehas-database-gateway` Edge Function. Database schema and database-side transaction/rollback are **PASS**. Credential-free unauthorized gateway probes are **PASS**. The configured gateway credential returned HTTP 401 and was removed after an unsafe CLI JSON response exposed it; authenticated external lifecycle now requires a current replacement secret. Logical backup and disposable PostgreSQL 17 restore are **PASS**. This shared hosting project does not imply shared tables.
+Provider: **Supabase**. Hosting project: **Enneagram test**. Isolation: private `jingeehas` PostgreSQL schema with RLS default-deny, no `anon`/`authenticated` table privileges, private operation functions, service-role-only RPC bridge, and an active dedicated-secret `jingeehas-database-gateway` Edge Function. Platform JWT verification is disabled only for this function; its handler authenticates a separate high-entropy secret using constant-time comparison, while the service-role credential remains internal. Unauthorized probes and the authenticated insert/get/update/find/delete/rollback/cleanup lifecycle are **PASS**, with no residual certification rows. Logical backup and disposable PostgreSQL 17 restore are **PASS**. The shared service-role credential is absent from Netlify. This shared hosting project does not imply shared tables.
 
 ## Privacy policy
 

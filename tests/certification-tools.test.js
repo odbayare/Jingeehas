@@ -1,5 +1,6 @@
 "use strict";
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 
 (async () => {
   const { DATABASE_GATEWAY, databaseConfiguration, verifyDatabaseConfig } = await import("../tools/verify-database-config.mjs");
@@ -15,9 +16,16 @@ const assert = require("node:assert/strict");
   assert.equal(verifyDatabaseConfig({ env: { JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl.replace("jingeehas-database-gateway", "wrong-function") } }).status, "FAIL");
   assert.equal(verifyDatabaseConfig({ env: { JINGEEHAS_DATABASE_API_URL: `${DATABASE_GATEWAY.baseUrl}/transaction` } }).status, "FAIL");
   assert.equal(databaseConfiguration({ JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: "sb_publishable_not_allowed" }, { externalCertification: true }).status, "FAIL");
+  assert.equal(databaseConfiguration({ JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: "sb_secret_not_allowed" }, { externalCertification: true }).status, "FAIL");
   const anonPayload = Buffer.from(JSON.stringify({ role: "anon" })).toString("base64url");
   assert.equal(databaseConfiguration({ JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: `eyJhbGciOiJIUzI1NiJ9.${anonPayload}.signature` }, { externalCertification: true }).status, "FAIL");
-  const configured = { NODE_ENV: "test", JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: "test_service_role_secret_not_real" };
+  for (const role of ["service_role", "authenticated"]) {
+    const payload = Buffer.from(JSON.stringify({ role })).toString("base64url");
+    assert.equal(databaseConfiguration({ JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: `eyJhbGciOiJIUzI1NiJ9.${payload}.signature` }, { externalCertification: true }).status, "FAIL");
+  }
+  assert.equal(databaseConfiguration({ JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl, JINGEEHAS_DATABASE_API_KEY: "too-short" }, { externalCertification: true }).status, "FAIL");
+  const configured = { NODE_ENV: "test", JINGEEHAS_DATABASE_API_URL: DATABASE_GATEWAY.baseUrl,
+    JINGEEHAS_DATABASE_API_KEY: "test_dedicated_gateway_secret_for_certification_only_abcdefghijklmnopqrstuvwxyz" };
   const ready = databaseConfiguration(configured, { externalCertification: true });
   assert.equal(ready.status, "READY");
   assert.equal(ready.finalRequestUrl, `${DATABASE_GATEWAY.baseUrl}/transaction`);
@@ -58,6 +66,29 @@ const assert = require("node:assert/strict");
   assert.equal(authRequests.length, 3);
   assert(authRequests.filter(item => item.init.body).every(item => JSON.parse(item.init.body).action === "get"));
   assert(authRequests.every(item => !String(item.init.headers?.authorization || "").includes(configured.JINGEEHAS_DATABASE_API_KEY)));
+
+  const dedicatedRequests = [];
+  const dedicatedFetch = async (url, init) => {
+    dedicatedRequests.push({ url, init });
+    const valid = init.headers?.authorization === `Bearer ${configured.JINGEEHAS_DATABASE_API_KEY}`;
+    return { status: valid ? 200 : init.method === "GET" ? 405 : 401, text: async () => valid ? "null" : JSON.stringify({ error: "unauthorized" }) };
+  };
+  const dedicatedAuth = await verifyDatabaseGatewayAuth({ env: configured, fetchImpl: dedicatedFetch });
+  assert.equal(dedicatedAuth.status, "PASS");
+  assert.equal(dedicatedAuth.realCredentialUsed, true);
+  assert.equal(dedicatedRequests.length, 4);
+
+  const gatewaySource = fs.readFileSync("supabase/functions/jingeehas-database-gateway/index.ts", "utf8");
+  const gatewayConfig = fs.readFileSync("supabase/config.toml", "utf8");
+  assert.match(gatewaySource, /JINGEEHAS_GATEWAY_SECRET/);
+  assert.match(gatewaySource, /SUPABASE_SERVICE_ROLE_KEY/);
+  assert.match(gatewaySource, /constantTimeEqual\(bearer, gatewaySecret\)/);
+  assert.match(gatewaySource, /normalizeOperation/);
+  assert.match(gatewaySource, /normalizeResult/);
+  assert.match(gatewaySource, /body\.byteLength > 262_144/);
+  assert(!/constantTimeEqual\([^\n]*serviceRoleKey/.test(gatewaySource));
+  assert(!/console\.(?:log|error|warn)/.test(gatewaySource));
+  assert.match(gatewayConfig, /\[functions\.jingeehas-database-gateway\][\s\S]*verify_jwt\s*=\s*false/);
 
   const { verifyRecoveryConfig } = await import("../tools/verify-recovery-config.mjs");
   const { verifyQPayConfig } = await import("../tools/verify-qpay-config.mjs");

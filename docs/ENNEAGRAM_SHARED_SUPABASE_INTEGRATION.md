@@ -47,12 +47,12 @@ Expected Netlify environment configuration:
 
 ```text
 JINGEEHAS_DATABASE_API_URL=https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway
-JINGEEHAS_DATABASE_API_KEY=<blank in repository; Supabase service-role secret in server environment only>
+JINGEEHAS_DATABASE_API_KEY=<blank in repository; dedicated high-entropy gateway secret in Netlify only>
 ```
 
 The adapter appends `/transaction` to the base URL.
 
-The key must be stored only in Netlify server-side environment configuration. It must never be prefixed with a public-client environment name or exposed to browser JavaScript.
+The same generated value is stored only as Supabase Edge Function secret `JINGEEHAS_GATEWAY_SECRET` and Netlify server-side `JINGEEHAS_DATABASE_API_KEY`. It is not a Supabase API key or JWT and must never be prefixed with a public-client environment name or exposed to browser JavaScript. The function keeps `SUPABASE_SERVICE_ROLE_KEY` internal for its service-role-only RPC call.
 
 ## Supported operations
 
@@ -77,16 +77,16 @@ Both the Edge Function and SQL RPC enforce a fixed Jingeehas table allowlist. Ne
 - SQL RPC operation contract: PASS
 - rollback transaction: PASS, zero persisted probe rows
 - Edge Function deployment: ACTIVE
-- unauthorized Edge Function access: PASS (missing bearer `401`, invalid bearer `401`, GET `401`; read-only probes, no record created)
-- active function validates the bearer value against its server-side `SUPABASE_SERVICE_ROLE_KEY` and calls the service-role-only RPC bridge
-- the active function source is managed in Supabase and is not duplicated as deployable source in this repository
+- unauthorized Edge Function access: PASS (missing bearer `401`, invalid bearer `401`, GET `405`; read-only probes, no record created)
+- authenticated Edge Function lifecycle: PASS (insert/get/update/find/delete/rollback/cleanup, no residual certification rows)
+- access-controlled logical backup and disposable PostgreSQL 17 local restore: PASS
+- active function disables platform JWT verification, rejects Supabase API-key/JWT formats, and validates the bearer value against `JINGEEHAS_GATEWAY_SECRET` using constant-time comparison
+- `SUPABASE_SERVICE_ROLE_KEY` remains internal to the Edge Function and is used only for the service-role-only RPC bridge
+- deployable function source and `verify_jwt = false` configuration are versioned under `supabase/functions/jingeehas-database-gateway` and `supabase/config.toml`
 
-## Remaining certification work
+## Remaining launch work
 
-- inject the two database environment variables into an authorized Netlify staging/preview context;
-- run `npm run certify:database-external` in an authorized, secret-injected environment to prove the authenticated HTTPS lifecycle;
-- run a backup and restoration exercise;
-- confirm application CRUD and rollback behavior from the staged Netlify Functions;
-- retain `WEIGHT_TEST_COMING_SOON_MODE = true` until all external launch gates pass.
+- retain `WEIGHT_TEST_COMING_SOON_MODE = true` until recovery delivery, QPay sandbox, real administrator, support inbox, and final owner approval gates pass;
+- repeat database certification only after a gateway, RPC, schema, or credential change.
 
-No application staging deployment, QPay request, payment, DNS change, merge, or coming-soon change was performed during database provisioning.
+Only the updated Supabase Edge Function was deployed for this certification. No Jingeehas website deployment, QPay request, payment, DNS change, PR merge, or coming-soon change was performed.

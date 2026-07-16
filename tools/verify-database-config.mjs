@@ -8,9 +8,9 @@ export const DATABASE_GATEWAY = Object.freeze({
   transactionPath: "/functions/v1/jingeehas-database-gateway/transaction"
 });
 
-function jwtRole(value) {
-  try { return JSON.parse(Buffer.from(String(value).split(".")[1], "base64url").toString("utf8")).role || ""; }
-  catch { return ""; }
+function looksLikeSupabaseCredential(value) {
+  const candidate = String(value || "");
+  return /^sb_(?:publishable|secret)_/i.test(candidate) || /^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$/.test(candidate);
 }
 
 export function databaseConfiguration(env = process.env, { externalCertification = false } = {}) {
@@ -29,9 +29,10 @@ export function databaseConfiguration(env = process.env, { externalCertification
   if (normalizedPath.endsWith("/transaction")) return { status: "FAIL", reason: "JINGEEHAS_DATABASE_API_URL must be the base URL; the adapter appends /transaction" };
   if (normalizedPath !== DATABASE_GATEWAY.pathname) return { status: "FAIL", reason: "Database gateway Edge Function path does not match jingeehas-database-gateway" };
   const baseUrl = `${url.origin}${normalizedPath}`;
-  if (!apiKey) return { status: "BLOCKED", reason: "Supabase service-role secret is not injected", missing: ["JINGEEHAS_DATABASE_API_KEY"], baseUrl, finalRequestUrl: `${baseUrl}/transaction` };
+  if (!apiKey) return { status: "BLOCKED", reason: "Dedicated database gateway secret is not injected", missing: ["JINGEEHAS_DATABASE_API_KEY"], baseUrl, finalRequestUrl: `${baseUrl}/transaction` };
   if (!externalCertification) return { status: "FAIL", reason: "JINGEEHAS_DATABASE_API_KEY may be supplied only to the explicit external certification command" };
-  if (/^sb_publishable_/i.test(apiKey) || jwtRole(apiKey) === "anon") return { status: "FAIL", reason: "Publishable and anon keys are forbidden for the database gateway" };
+  if (looksLikeSupabaseCredential(apiKey)) return { status: "FAIL", reason: "Supabase API keys and JWTs are forbidden as database gateway credentials" };
+  if (apiKey.length < 48 || /\s/.test(apiKey)) return { status: "FAIL", reason: "Dedicated database gateway secret does not meet the security policy" };
   if (/placeholder|example|changeme/i.test(apiKey) || /^test_/i.test(apiKey)) {
     if (env.NODE_ENV !== "test") return { status: "FAIL", reason: "Placeholder database keys are accepted only in injected test environments" };
   }
