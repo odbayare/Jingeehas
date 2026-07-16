@@ -41,7 +41,7 @@ function buildEvidence(answerRows = [], summaryRows = []) {
 }
 
 function evidenceQuality(evidence = []) {
-  const direct = evidence.filter(item => item.direct);
+  const direct = evidence.filter(item => item.direct && item.dimension !== "суурь мэдээлэл" && item.dimension !== "аюулгүй байдлын дохио");
   const questions = new Set(direct.map(item => item.questionId));
   const dimensions = new Set(direct.map(item => item.dimension));
   const mode = questions.size >= 8 && dimensions.size >= 3 ? "sufficient" : questions.size >= 4 && dimensions.size >= 2 ? "limited" : "insufficient";

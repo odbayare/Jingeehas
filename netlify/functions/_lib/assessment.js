@@ -18,6 +18,18 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
   const safetyCheck = await database.get("safety_checks", input.safetyCheckId);
   if (!safetyCheck || safetyCheck.sessionId !== sessionId) throw Object.assign(new Error("Safety check required"), { statusCode: 400, code: "safety_check_required" });
   if (safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Commercial assessment is not suitable"), { statusCode: 409, code: "safety_route_required" });
+  let client = null;
+  let contacts = [];
+  if (input.coachClientId) {
+    client = await database.get("advisor_clients", input.coachClientId);
+    if (!client || client.resolvedSessionId !== sessionId || client.consentStatus !== "consent_accepted") {
+      throw Object.assign(new Error("Advisor invitation is not authorized"), { statusCode: 403, code: "advisor_invite_unauthorized" });
+    }
+  }
+  if (input.recoveryContactGroupId) {
+    contacts = await database.find("recovery_contacts", { sessionId, contactGroupId: input.recoveryContactGroupId });
+    if (!contacts.length) throw Object.assign(new Error("Recovery contact not found"), { statusCode: 400, code: "recovery_contact_required" });
+  }
   const id = randomId("wa_");
   const assessment = await database.insert("assessments", {
     id, sessionId, status: "draft", reportMode: null, safetyRoute: null,
@@ -25,17 +37,11 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
     coachClientId: input.coachClientId || null, consentStatus: null,
     createdAt: now.toISOString(), updatedAt: now.toISOString(), completedAt: null
   });
-  if (input.coachClientId) {
-    const client = await database.get("advisor_clients", input.coachClientId);
-    if (!client || client.resolvedSessionId !== sessionId || client.consentStatus !== "consent_accepted") {
-      throw Object.assign(new Error("Advisor invitation is not authorized"), { statusCode: 403, code: "advisor_invite_unauthorized" });
-    }
+  if (client) {
     await database.update("advisor_clients", client.id, { assessmentId: id, status: "assessment_created", updatedAt: now.toISOString() });
     await database.update("assessments", id, { consentStatus: client.consentStatus });
   }
-  if (input.recoveryContactGroupId) {
-    const contacts = await database.find("recovery_contacts", { sessionId, contactGroupId: input.recoveryContactGroupId });
-    if (!contacts.length) throw Object.assign(new Error("Recovery contact not found"), { statusCode: 400, code: "recovery_contact_required" });
+  if (contacts.length) {
     for (const contact of contacts) await database.update("recovery_contacts", contact.id, { assessmentId: id });
   }
   return assessment;

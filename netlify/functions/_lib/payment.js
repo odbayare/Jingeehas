@@ -50,11 +50,31 @@ function confirmedProviderPayment(result, expectedAmount) {
   return rows.find(row => String(row.payment_status || row.status || "").toUpperCase() === "PAID" && Number(row.payment_amount || row.amount) === expectedAmount) || null;
 }
 
+async function grantEntitlement(database, payment, sessionId, now) {
+  const entitlementId = `${payment.assessmentId}:${PRODUCT.code}`;
+  await database.upsert("entitlements", entitlementId, { sessionId, assessmentId: payment.assessmentId,
+    paymentId: payment.id, productCode: PRODUCT.code, status: "active", grantedAt: now.toISOString() });
+  const contacts = await database.find("recovery_contacts", { sessionId, assessmentId: payment.assessmentId });
+  for (const contact of contacts) await database.update("recovery_contacts", contact.id, {
+    paymentId: payment.id, entitlementId, updatedAt: now.toISOString()
+  });
+  const assessment = await database.get("assessments", payment.assessmentId);
+  if (assessment?.coachClientId) {
+    const client = await database.get("advisor_clients", assessment.coachClientId);
+    if (client?.coachId) await database.upsert("advisor_commissions", payment.id, { coachId: client.coachId,
+      paymentId: payment.id, amount: Number(client.commissionAmount || 4000), status: "pending", createdAt: now.toISOString() });
+  }
+  return database.update("payments", payment.id, { status: "paid", updatedAt: now.toISOString() });
+}
+
 async function checkPayment(database, provider, sessionId, input = {}, now = new Date()) {
   const payment = await database.get("payments", input.paymentId);
   if (!payment || payment.sessionId !== sessionId) throw Object.assign(new Error("Payment not found"), { statusCode: 404, code: "payment_not_found" });
   if (payment.productCode !== PRODUCT.code || payment.amount !== PRODUCT.amount) throw Object.assign(new Error("Payment mismatch"), { statusCode: 409, code: "payment_mismatch" });
-  if (payment.status === "paid") return publicPayment({ ...payment, entitlement: true });
+  if (payment.status === "paid" || payment.status === "paid_but_not_unlocked") {
+    try { return publicPayment({ ...(await grantEntitlement(database, payment, sessionId, now)), entitlement: true }); }
+    catch { return publicPayment(await database.update("payments", payment.id, { status: "paid_but_not_unlocked", updatedAt: now.toISOString() })); }
+  }
   if (payment.expiresAt && new Date(payment.expiresAt) <= now) {
     return publicPayment(await database.update("payments", payment.id, { status: "expired", updatedAt: now.toISOString() }));
   }
@@ -66,26 +86,13 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
   const paidRow = confirmedProviderPayment(providerResult, PRODUCT.amount);
   if (!paidRow) return publicPayment(await database.update("payments", payment.id, { status: "pending", updatedAt: now.toISOString() }));
 
-  const paid = await database.update("payments", payment.id, { status: "paid", paidAt: now.toISOString(), updatedAt: now.toISOString(),
+  const confirmed = await database.update("payments", payment.id, { status: "checking", paidAt: now.toISOString(), updatedAt: now.toISOString(),
     providerPaymentId: String(paidRow.payment_id || paidRow.id || "") });
   try {
-    const entitlementId = `${payment.assessmentId}:${PRODUCT.code}`;
-    await database.upsert("entitlements", entitlementId, { sessionId, assessmentId: payment.assessmentId,
-      paymentId: payment.id, productCode: PRODUCT.code, status: "active", grantedAt: now.toISOString() });
-    const contacts = await database.find("recovery_contacts", { sessionId, assessmentId: payment.assessmentId });
-    for (const contact of contacts) await database.update("recovery_contacts", contact.id, {
-      paymentId: payment.id, entitlementId, updatedAt: now.toISOString()
-    });
-    const assessment = await database.get("assessments", payment.assessmentId);
-    if (assessment?.coachClientId) {
-      const client = await database.get("advisor_clients", assessment.coachClientId);
-      if (client?.coachId) await database.upsert("advisor_commissions", payment.id, { coachId: client.coachId,
-        paymentId: payment.id, amount: Number(client.commissionAmount || 4000), status: "pending", createdAt: now.toISOString() });
-    }
-    return publicPayment({ ...paid, entitlement: true });
+    return publicPayment({ ...(await grantEntitlement(database, confirmed, sessionId, now)), entitlement: true });
   } catch {
     return publicPayment(await database.update("payments", payment.id, { status: "paid_but_not_unlocked", updatedAt: now.toISOString() }));
   }
 }
 
-module.exports = { ACTIVE, publicPayment, createInvoice, confirmedProviderPayment, checkPayment };
+module.exports = { ACTIVE, publicPayment, createInvoice, confirmedProviderPayment, grantEntitlement, checkPayment };

@@ -90,7 +90,7 @@ function renderPayment() {
         <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
         ${payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
         ${payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа: <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(new Date(payment.expiresAt).toLocaleString("mn-MN"))}</time></p>` : ""}
-        ${payment.status === "pending" || payment.status === "check_error" ? `<button class="button" type="button" data-action="check-payment">Төлбөр шалгах</button>` : payment.status === "paid" ? `<a class="button" href="/assessment/questions" data-route>Тестээ эхлүүлэх</a>` : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
+        ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">${payment.status === "paid_but_not_unlocked" ? "Тайлангийн эрхээ дахин нээх" : "Төлбөр шалгах"}</button>` : payment.status === "paid" ? `<a class="button" href="/assessment/questions" data-route>Тестээ эхлүүлэх</a>` : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
       </section>`}</main>${footer()}</div>`;
 }
 function renderQuestionInput(question, value) {

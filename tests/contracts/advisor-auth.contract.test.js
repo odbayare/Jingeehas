@@ -44,10 +44,11 @@ function cookieEvent(cookie) { return { headers: { cookie: cookie.split(";")[0] 
   await database.update("assessments", assessment.id, { status: "complete", reportMode: "sufficient" });
   await database.insert("payments", { id: "advisor-payment", sessionId: user.session.id, assessmentId: assessment.id, productCode: PRODUCT.code, amount: PRODUCT.amount, status: "paid" });
   await database.insert("entitlements", { id: `${assessment.id}:${PRODUCT.code}`, sessionId: user.session.id, assessmentId: assessment.id, paymentId: "advisor-payment", productCode: PRODUCT.code, status: "active", grantedAt: new Date().toISOString() });
-  await database.insert("report_snapshots", { id: assessment.id, assessmentId: assessment.id, sessionId: user.session.id, reportMode: "sufficient", safetyRoute: null, fullReport: { sections: [] }, initialView: {}, createdAt: new Date().toISOString() });
+  await database.insert("report_snapshots", { id: assessment.id, assessmentId: assessment.id, sessionId: user.session.id, reportMode: "sufficient", safetyRoute: null, fullReport: { sections: [], evidence: [{ questionId: "Q-HUNGER", text: "Түүхий хариулт" }] }, initialView: {}, createdAt: new Date().toISOString() });
 
   const report = await accessAdvisorReport(database, cookieEvent(advisor.cookie), assessment.id);
   assert.deepEqual(report.fullReport, { sections: [] });
+  assert(!Object.hasOwn(report.fullReport, "evidence"));
   assert(!Object.hasOwn(report, "answers"));
   await assert.rejects(() => accessAdvisorReport(database, { headers: { authorization: created.coachId } }, assessment.id), error => error.code === "unauthorized");
   await recordConsent(database, user.session.id, { coachClientId: resolved.coachClientId, consent: false });

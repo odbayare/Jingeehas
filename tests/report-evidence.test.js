@@ -29,10 +29,12 @@ assert(!JSON.stringify(report).includes("хамгийн магадлалтай �
 assert(!JSON.stringify(report).includes("7 хоногт 0.45–0.9 кг"));
 
 const limited = buildFullReport(buildEvidence([
+  { questionId: "Q-AGE", value: 30 }, { questionId: "Q-HEIGHT", value: 170 }, { questionId: "Q-WEIGHT", value: 80 },
   { questionId: "Q-HUNGER", value: "Орой" }, { questionId: "Q-EMOTION", value: "Стресс" },
   { questionId: "Q-CUE", value: "Харагдах" }, { questionId: "Q-MOVEMENT", value: "Суугаа" }
 ]));
 assert.equal(limited.mode, "limited");
+assert.equal(evidenceQuality(buildEvidence([{ questionId: "Q-AGE", value: 30 }, { questionId: "Q-WEIGHT", value: 80 }])).mode, "insufficient");
 assert.equal(limited.primaryPattern, null);
 assert.equal(limited.experiment, null);
 assert.match(limited.sections[0].body, /хүрэлцэхгүй/);

@@ -31,6 +31,8 @@ const { saveSafetyCheck } = require("../../netlify/functions/_lib/safety.js");
   let sent = null;
   const requested = await requestRecovery(database, { async send(payload) { sent = payload; } }, { email: "paid@example.com" }, "ip-1");
   assert(sent && /^\d{6}$/.test(sent.code));
+  assert.equal(sent.destination, "paid@example.com");
+  assert(!Object.hasOwn(sent, "encryptedContact"));
   const recovered = await confirmRecovery(database, { recoveryId: requested.recoveryId, code: sent.code });
   const cookie = recovered.cookie.split(";")[0];
   const session = await authenticateSession(database, { headers: { cookie } });

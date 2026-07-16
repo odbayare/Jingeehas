@@ -40,6 +40,13 @@ const { saveSafetyCheck } = require("../../netlify/functions/_lib/safety.js");
   const paidAgain = await checkPayment(database, provider, session.id, { paymentId: invoice.paymentId });
   assert.equal(paidAgain.status, "paid");
   assert.equal(checkCount, 1);
+  const entitlements = await database.find("entitlements", { assessmentId: assessment.id });
+  assert.equal(entitlements.length, 1);
+  await database.delete("entitlements", entitlements[0].id);
+  const repaired = await checkPayment(database, provider, session.id, { paymentId: invoice.paymentId });
+  assert.equal(repaired.status, "paid");
+  assert.equal(repaired.entitlement, true);
+  assert.equal(checkCount, 1, "a confirmed payment must repair entitlement without rechecking QPay");
   assert.equal((await database.find("entitlements", { assessmentId: assessment.id })).length, 1);
 
   const safe = safeAppLinks([

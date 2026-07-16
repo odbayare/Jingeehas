@@ -37,6 +37,13 @@ function encryptContact(value, key = encryptionKey()) {
   const ciphertext = Buffer.concat([cipher.update(value, "utf8"), cipher.final()]);
   return [iv, cipher.getAuthTag(), ciphertext].map(part => part.toString("base64url")).join(".");
 }
+function decryptContact(value, key = encryptionKey()) {
+  const [iv, tag, ciphertext] = String(value || "").split(".").map(part => Buffer.from(part, "base64url"));
+  if (!iv?.length || !tag?.length || !ciphertext?.length) throw Object.assign(new Error("Recovery contact is invalid"), { statusCode: 503, code: "recovery_unavailable" });
+  const decipher = nodeCrypto.createDecipheriv("aes-256-gcm", key, iv);
+  decipher.setAuthTag(tag);
+  return Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString("utf8");
+}
 function contactPepper(env = process.env) {
   const value = String(env.RECOVERY_HASH_PEPPER || "");
   if (value.length < 32) throw Object.assign(new Error("Recovery hashing is unavailable"), { statusCode: 503, code: "recovery_unavailable" });
@@ -88,7 +95,7 @@ async function requestRecovery(database, delivery, input, clientKey, now = new D
   await database.insert("recovery_challenges", { id: recoveryId, rateKey: hashToken(`${clientKey}:${hash}`),
     contactId: eligible?.id || null, codeHash: hashToken(`${recoveryId}:${code}`), attempts: 0,
     expiresAt: new Date(now.getTime() + 10 * 60 * 1000).toISOString(), usedAt: null, createdAt: now.toISOString() });
-  if (eligible) await delivery.send({ channel: type, encryptedContact: eligible.encryptedContact, code, expiresInMinutes: 10 });
+  if (eligible) await delivery.send({ channel: type, destination: decryptContact(eligible.encryptedContact), code, expiresInMinutes: 10 });
   return { recoveryId, message: "Хэрэв тохирох бүрэн тайлан байгаа бол баталгаажуулах код илгээгдлээ." };
 }
 
@@ -112,5 +119,5 @@ async function confirmRecovery(database, input, now = new Date()) {
   return { assessmentId: entitlement.assessmentId, session: created.session, cookie: created.cookie };
 }
 
-module.exports = { PHONE_ERROR, EMAIL_ERROR, normalizePhone, normalizeEmail, validateContacts, encryptContact, contactHash,
+module.exports = { PHONE_ERROR, EMAIL_ERROR, normalizePhone, normalizeEmail, validateContacts, encryptContact, decryptContact, contactHash,
   saveRecoveryContacts, RecoveryDeliveryClient, setRecoveryDeliveryForTests, getRecoveryDelivery, requestRecovery, confirmRecovery };
