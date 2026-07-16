@@ -50,5 +50,11 @@ const assert = require("node:assert/strict");
   assert.equal(verifyQPayConfig({ QPAY_API_BASE_URL: "https://sandbox.qpay.invalid", QPAY_CLIENT_ID: "id", QPAY_CLIENT_SECRET: "secret", QPAY_INVOICE_CODE: "code",
     QPAY_CALLBACK_ORIGIN: "https://staging.jingeehas.invalid", QPAY_ALLOWED_APP_SCHEMES: "javascript", QPAY_ALLOWED_HTTPS_HOSTS: "bank.example" }).status, "FAIL");
   assert.equal(calls, callsBeforeConfigChecks, "configuration-only verification must not contact external systems");
+  const { verifyDomainConfig } = await import("../tools/verify-domain-config.mjs");
+  const domain = verifyDomainConfig({ env: {} });
+  assert.equal(domain.status, "PASS");
+  assert.equal(domain.scope, "repository-consistency-only");
+  assert.equal(domain.ownerDomainVerification, "PENDING");
+  assert.equal(calls, callsBeforeConfigChecks, "domain consistency verification must not contact external systems");
   console.log("certification tooling tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

@@ -11,6 +11,7 @@
     "verify:database-config": "node tools/verify-database-config.mjs",
     "verify:recovery-config": "node tools/verify-recovery-config.mjs",
     "verify:qpay-config": "node tools/verify-qpay-config.mjs",
+    "verify:domain-config": "node tools/verify-domain-config.mjs",
     "verify:production-package": "node tools/verify-production-package.mjs"
   },
   "devDependencies": {
