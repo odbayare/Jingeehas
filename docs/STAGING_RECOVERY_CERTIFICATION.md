@@ -1,6 +1,6 @@
 # Staging recovery certification
 
-Current status: **IMPLEMENTATION PASS / LIVE DELIVERY WAITING** — database-backed rate limiting, encryption/hash configuration, sender settings, and provider-mock tests pass. Resend domain verification, `RECOVERY_DELIVERY_API_KEY`, a current database gateway credential, staging deployment approval, and an owner-designated test email remain external gates.
+Current status: **IMPLEMENTATION PASS / LIVE DELIVERY BLOCKED** — database-backed rate limiting, encryption/hash configuration, sender settings, provider-mock tests, database gateway, and coming-soon pre-launch deployment pass. The authenticated TIAS deployment contains no reusable Resend credential, the Jingeehas production verifier reports `RECOVERY_DELIVERY_API_KEY` missing, and public DNS still lacks the sender-domain MX/SPF records. DKIM is present. Resend/Namecheap reauthentication and owner mailbox certification remain external gates.
 
 ## Configuration and privacy boundary
 

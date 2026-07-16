@@ -1,6 +1,6 @@
 # Owner launch review
 
-Status: **PENDING FINAL LAUNCH APPROVAL**. Owner-provided operational legal defaults are implemented in the product copy; this is not a claim of external legal-counsel review. The canonical repository value is `https://jingeehas.fit/`. The coming-soon mode remains enabled while external recovery delivery, payment sandbox, real administrator, and support-inbox gates remain open. The three approved hero sentences are unchanged.
+Status: **PENDING FINAL LAUNCH APPROVAL**. Owner-provided operational legal defaults are implemented in the product copy; this is not a claim of external legal-counsel review. The canonical repository value is `https://jingeehas.fit/`. Coming-soon pre-launch deploy `6a5930d0f4f6ac13a14d18e2` passes live route, HTTPS, header, canonical, redirect, secret-leak, and TIAS-copy checks. Coming-soon remains enabled while Resend/Namecheap reauthentication, recovery/support delivery, a new strong owner-admin password, and the controlled production QPay smoke test remain open. The three approved hero sentences are unchanged.
 
 ## Database infrastructure status
 

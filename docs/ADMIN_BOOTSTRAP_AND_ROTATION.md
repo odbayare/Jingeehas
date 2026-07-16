@@ -1,6 +1,6 @@
 # Initial administrator bootstrap and rotation
 
-Status: **PREPARED**. No administrator was created by this work package.
+Status: **OWNER ACTION REQUIRED**. The TIAS owner identity was identified securely, but its existing password does not meet Jingeehas's 16-character mixed-class password policy. No administrator, session, password hash, or audit row was created. The owner must provide a new password through the documented hidden interactive input; it must not be sent through chat, email, a command argument, or a repository file.
 
 The bootstrap runs only against the configured HTTPS database adapter. It has no default account, password, hash, or local fallback. The default is a read-only dry run; `--apply` is mandatory for writes. Passwords passed as command-line arguments are rejected.
 

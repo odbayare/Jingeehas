@@ -1,10 +1,12 @@
 # QPay sandbox certification
 
-Current status: **NOT RUN** — `QPAY SANDBOX TEST APPROVED` has not been supplied. This procedure uses the official Merchant V2 server contract and must never be pointed at live merchant credentials during certification.
+Current status: **PROVIDER SANDBOX UNAVAILABLE / SAFE LIVE CONFIGURATION PASS**. The authenticated TIAS/LifePattern source uses the live `merchant.qpay.mn` Merchant V2 environment and exposes no isolated sandbox/test endpoint. Its reusable merchant configuration is installed in Jingeehas production with the Jingeehas callback origin and protected product/price invariants. Configuration verification and an authenticated pre-provider live probe pass without creating an invoice or calling QPay.
 
 ## Configuration-only readiness
 
 Required variables are `QPAY_API_BASE_URL`, `QPAY_CLIENT_ID`, `QPAY_CLIENT_SECRET`, `QPAY_INVOICE_CODE`, `QPAY_CALLBACK_ORIGIN`, `QPAY_ALLOWED_APP_SCHEMES`, and `QPAY_ALLOWED_HTTPS_HOSTS`. `npm run verify:qpay-config` validates their shape, HTTPS origins, and allowlists without making a network request.
+
+The live probe authenticates a disposable Jingeehas session and submits an intentionally nonexistent assessment ID. HTTP 404 proves the production function loaded QPay configuration before the request failed safely at assessment ownership; no provider request, invoice, payment, entitlement, or residual session remains.
 
 Protected invariants: product `WEIGHT_TEST_ONE_TIME`, amount `9900`, display price `9,900₮`, create endpoint `/.netlify/functions/qpay-create-invoice`, and check endpoint `/.netlify/functions/qpay-check-payment`.
 
@@ -53,6 +55,6 @@ Also exercise invoice reuse before expiry, replacement after expiry, wrong produ
 - Relevant audit-log opaque IDs:
 - Cleanup result:
 - Owner/operator:
-- Final status: **NOT RUN**
+- Final status: **PROVIDER SANDBOX UNAVAILABLE; CONTROLLED OWNER-ASSISTED LIVE PAYMENT REQUIRED**
 
 Never record credentials, tokens, full invoice identifiers, full contacts, QR payloads, or private assessment answers.
