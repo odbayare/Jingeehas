@@ -22,9 +22,12 @@ assert(app.renderForPath("/privacy").includes("Байнгын зочны мөр�
 assert(app.renderForPath("/terms").includes("9,900₮"));
 assert(app.renderForPath("/support").includes("Төлбөр шалгах"));
 assert(app.renderForPath("/data-deletion").includes("тайлангаа сэргээнэ үү"));
+for (const route of ["/privacy", "/terms", "/support", "/recovery", "/data-deletion"]) assert.match(app.renderForPath(route), /href="mailto:[^"]+">[^<]+<\/a>/, route);
 app._test.resetComingSoon();
 
 const publicSource = ["app.js", "index.html", "questions.js"].map(file => fs.readFileSync(path.join(root, file), "utf8")).join("\n");
 assert(!/\son(?:click|input|change)=/i.test(publicSource));
 assert(!publicSource.includes("localStorage"));
+assert(!publicSource.includes("support@jingeehas.fit"));
+assert.match(publicSource, /const SUPPORT_EMAIL = "[^"\s]+@[^"\s]+";/);
 console.log("security headers, routing, privacy, and metadata tests passed");

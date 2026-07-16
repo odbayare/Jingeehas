@@ -54,7 +54,7 @@ Provider: **Supabase**. Hosting project: **Enneagram test**. Isolation: private 
 >
 > Тайлангаа өөр төхөөрөмжөөс авах бол Тайлан сэргээх хэсэгт төлбөр хийхдээ ашигласан имэйл хаягаа оруулна уу. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.
 >
-> Дэмжлэгийн имэйл: support@jingeehas.fit.
+> Дэмжлэгийн имэйл: баталгаажсан, тогтмол хянагддаг эзэмшигчийн имэйл.
 
 Payment UI states: `QPay нэхэмжлэл үүсгэж байна…`; `Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.`; `Төлбөрийг шалгаж байна…`; `Төлбөр баталгаажлаа. Одоо тестээ эхлүүлнэ үү.`; `Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.` The recovery action for `paid_but_not_unlocked` is `Тайлангийн эрхээ дахин нээх`.
 
@@ -62,8 +62,8 @@ Payment UI states: `QPay нэхэмжлэл үүсгэж байна…`; `Төл
 **Data/process dependency:** QPay check, payment state machine, idempotent entitlement.
 **Owner decision:** branded support channel and refund principle supplied and implemented.
 **Legal review status:** OWNER DEFAULTS IMPLEMENTED; EXTERNAL COUNSEL REVIEW NOT CLAIMED.
-**Required change:** the 2026-07-17 live retry was rejected. Sign in to Namecheap, repair or create the alias without changing the site or Resend DNS records, then prove delivery to the monitored inbox.
-**Final approval status:** OWNER BLOCKED.
+**Required change:** `support@jingeehas.fit` нь одоогийн Custom MX тохиргоотой Namecheap forwarding хэлбэрээр зэрэгцэн ажиллахгүй тул mailbox provider тохируулга хүлээгдэж байна. Түр хугацаанд баталгаажсан, тогтмол хянагддаг эзэмшигчийн имэйлийг нийтэд ашиглана.
+**Final approval status:** DELIVERY CERTIFICATION PENDING.
 
 ## Report recovery
 
