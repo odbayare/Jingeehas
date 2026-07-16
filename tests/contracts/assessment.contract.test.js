@@ -1,7 +1,8 @@
 "use strict";
 process.env.NODE_ENV = "test";
 const assert = require("node:assert/strict");
-const { MemoryDatabaseAdapter, setDatabaseForTests } = require("../../netlify/functions/_lib/store.js");
+const { setDatabaseForTests } = require("../../netlify/functions/_lib/store.js");
+const { MemoryDatabaseAdapter } = require("../support/memory-database.js");
 
 const database = new MemoryDatabaseAdapter();
 setDatabaseForTests(database);

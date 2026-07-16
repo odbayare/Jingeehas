@@ -76,12 +76,7 @@ class RecoveryDeliveryClient {
     return { providerId: String(data.id || data.messageId || data.message_id || "").slice(0, 200) };
   }
 }
-let testDelivery = null;
-function setRecoveryDeliveryForTests(delivery) {
-  if (process.env.NODE_ENV !== "test") throw new Error("Test recovery injection is disabled");
-  testDelivery = delivery;
-}
-function getRecoveryDelivery() { return process.env.NODE_ENV === "test" && testDelivery ? testDelivery : new RecoveryDeliveryClient(); }
+function getRecoveryDelivery() { return new RecoveryDeliveryClient(); }
 
 async function requestRecovery(database, delivery, input, clientKey, now = new Date()) {
   const contacts = validateContacts(input);
@@ -134,4 +129,4 @@ async function confirmRecovery(database, input, now = new Date()) {
 }
 
 module.exports = { PHONE_ERROR, EMAIL_ERROR, normalizePhone, normalizeEmail, validateContacts, encryptContact, decryptContact, contactHash,
-  saveRecoveryContacts, RecoveryDeliveryClient, setRecoveryDeliveryForTests, getRecoveryDelivery, requestRecovery, confirmRecovery };
+  saveRecoveryContacts, RecoveryDeliveryClient, getRecoveryDelivery, requestRecovery, confirmRecovery };

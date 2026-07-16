@@ -65,11 +65,6 @@ class QPayClient {
   checkPayment(invoiceId) { return this.request("/v2/payment/check", { object_type: "INVOICE", object_id: invoiceId, offset: { page_number: 1, page_limit: 100 } }); }
 }
 
-let testProvider = null;
-function setQPayProviderForTests(provider) {
-  if (process.env.NODE_ENV !== "test") throw new Error("Test QPay injection is disabled");
-  testProvider = provider;
-}
-function getQPayProvider() { return process.env.NODE_ENV === "test" && testProvider ? testProvider : new QPayClient(); }
+function getQPayProvider() { return new QPayClient(); }
 
-module.exports = { qpayConfig, safeAppLinks, QPayClient, setQPayProviderForTests, getQPayProvider };
+module.exports = { qpayConfig, safeAppLinks, QPayClient, getQPayProvider };

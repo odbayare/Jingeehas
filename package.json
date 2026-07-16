@@ -7,11 +7,13 @@
     "test:contracts": "node tests/contracts/run.js",
     "test:e2e": "playwright test",
     "build:production": "node tools/build-production.mjs",
+    "build:staging": "node tools/build-staging.mjs",
     "generate:artifacts": "node tools/generate-production-manifest.mjs",
     "verify:database-config": "node tools/verify-database-config.mjs",
     "verify:recovery-config": "node tools/verify-recovery-config.mjs",
     "verify:qpay-config": "node tools/verify-qpay-config.mjs",
     "verify:domain-config": "node tools/verify-domain-config.mjs",
+    "verify:staging-package": "node tools/verify-staging-package.mjs",
     "verify:production-package": "node tools/verify-production-package.mjs"
   },
   "devDependencies": {

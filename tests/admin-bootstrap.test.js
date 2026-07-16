@@ -2,7 +2,7 @@
 process.env.NODE_ENV = "test";
 process.env.RECOVERY_HASH_PEPPER = "admin-bootstrap-test-pepper-at-least-32-characters";
 const assert = require("node:assert/strict");
-const { MemoryDatabaseAdapter } = require("../netlify/functions/_lib/store.js");
+const { MemoryDatabaseAdapter } = require("./support/memory-database.js");
 const { verifyPassword } = require("../netlify/functions/_lib/auth.js");
 
 (async () => {
