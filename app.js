@@ -93,18 +93,19 @@ function renderPayment() {
       </section>`}</main>${footer()}</div>`;
 }
 function renderQuestionInput(question, value) {
-  if (question.type === "number") return `<label class="field" for="answer-${question.id}"><span>${escapeHtml(question.text)} (${escapeHtml(question.unit)})</span><input id="answer-${question.id}" data-question="${question.id}" type="number" min="${question.min}" max="${question.max}" value="${escapeAttribute(value || "")}" ${question.required ? "required" : ""}></label>`;
-  if (question.type === "text") return `<label class="field" for="answer-${question.id}"><span>${escapeHtml(question.text)}</span><textarea id="answer-${question.id}" data-question="${question.id}" maxlength="${question.maxLength}">${escapeHtml(value || "")}</textarea></label>`;
+  const validity = `aria-invalid="${state.validationError ? "true" : "false"}" aria-describedby="question-error"`;
+  if (question.type === "number") return `<label class="field" for="answer-${question.id}"><span>${escapeHtml(question.text)} (${escapeHtml(question.unit)})</span><input id="answer-${question.id}" data-question="${question.id}" type="number" min="${question.min}" max="${question.max}" value="${escapeAttribute(value || "")}" ${validity} ${question.required ? "required" : ""}></label>`;
+  if (question.type === "text") return `<label class="field" for="answer-${question.id}"><span>${escapeHtml(question.text)}</span><textarea id="answer-${question.id}" data-question="${question.id}" maxlength="${question.maxLength}" ${validity}>${escapeHtml(value || "")}</textarea></label>`;
   const values = Array.isArray(value) ? value : [];
   const type = question.type === "multi" ? "checkbox" : "radio";
-  return `<fieldset><legend>${escapeHtml(question.text)}</legend>${question.options.map(option => `<label class="option-label"><input type="${type}" name="answer-${question.id}" data-question="${question.id}" value="${escapeAttribute(option)}" ${(type === "checkbox" ? values.includes(option) : value === option) ? "checked" : ""}><span>${escapeHtml(option)}</span></label>`).join("")}</fieldset>`;
+  return `<fieldset><legend>${escapeHtml(question.text)}</legend>${question.options.map(option => `<label class="option-label"><input type="${type}" name="answer-${question.id}" data-question="${question.id}" value="${escapeAttribute(option)}" ${validity} ${(type === "checkbox" ? values.includes(option) : value === option) ? "checked" : ""}><span>${escapeHtml(option)}</span></label>`).join("")}</fieldset>`;
 }
 function renderQuestions() {
   const questions = questionApi.visibleQuestions(state.answers);
   state.questionIndex = Math.min(state.questionIndex, Math.max(0, questions.length - 1));
   const question = questions[state.questionIndex];
   const percent = Math.round(((state.questionIndex + 1) / questions.length) * 100);
-  return `<div class="page assessment-page"><main class="content-card"><div class="progress" role="progressbar" aria-label="Тест бөглөх явц" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}"><span style="width:${percent}%"></span></div>
+  return `<div class="page assessment-page"><main class="content-card"><progress role="progressbar" aria-label="Тест бөглөх явц" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}" value="${percent}" max="100">${percent}%</progress>
     <p>${state.questionIndex + 1} / ${questions.length}</p><h1 id="page-title" tabindex="-1">${escapeHtml(question.section)}</h1>
     <p class="muted">Өөрт хамгийн ойр хариултаа сонгоорой. Таны хариултын зураглал тест дууссаны дараа гарна.</p>
     <form id="question-form" novalidate>${renderQuestionInput(question, state.answers[question.id])}<p id="question-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.validationError)}</p>

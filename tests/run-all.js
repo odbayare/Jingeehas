@@ -6,6 +6,7 @@ const tests = [
   "tests/safety-branching.test.js",
   "tests/report-evidence.test.js",
   "tests/question-bank.test.js",
+  "tests/accessibility-print.test.js",
   "tests/contracts/assessment.contract.test.js",
   "tests/contracts/payment.contract.test.js",
   "tests/contracts/recovery.contract.test.js"
