@@ -40,14 +40,14 @@ The `public` schema retained its six pre-existing application tables during prov
 Supabase Edge Function:
 
 ```text
-jingeehas-database-api
+jingeehas-database-gateway
 ```
 
 Expected Netlify environment configuration:
 
 ```text
-JINGEEHAS_DATABASE_API_URL=https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-api
-JINGEEHAS_DATABASE_API_KEY=<server-only privileged Supabase JWT>
+JINGEEHAS_DATABASE_API_URL=https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway
+JINGEEHAS_DATABASE_API_KEY=<blank in repository; Supabase service-role secret in server environment only>
 ```
 
 The adapter appends `/transaction` to the base URL.
@@ -76,12 +76,13 @@ Both the Edge Function and SQL RPC enforce a fixed Jingeehas table allowlist. Ne
 - role isolation: PASS
 - SQL RPC operation contract: PASS
 - rollback transaction: PASS, zero persisted probe rows
-- Edge Function deployment: ACTIVE, JWT verification enabled
-- deployed function source recorded under `supabase/functions/jingeehas-database-api/index.ts`
+- Edge Function deployment: ACTIVE
+- active function validates the bearer value against its server-side `SUPABASE_SERVICE_ROLE_KEY` and calls the service-role-only RPC bridge
+- the active function source is managed in Supabase and is not duplicated as deployable source in this repository
 
 ## Remaining certification work
 
-- inject the two database environment variables into an authorized Netlify staging context;
+- inject the two database environment variables into an authorized Netlify staging/preview context;
 - run an authenticated HTTPS roundtrip through the Edge Function;
 - run a backup and restoration exercise;
 - confirm application CRUD and rollback behavior from the staged Netlify Functions;
