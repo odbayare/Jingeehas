@@ -6,6 +6,8 @@ The bootstrap runs only against the configured HTTPS database adapter. It has no
 
 For the initial owner bootstrap and complete live session-security certification, run `./scripts/bootstrap-and-certify-admin.sh`. It prompts locally for the owner email and hides the password, creates exactly one account through the existing bootstrap, then verifies login, logout, expired-session rejection, disabled-account rejection, unauthenticated-route rejection, audit creation, uniqueness, and session cleanup. Neither value is embedded in the shell command.
 
+If the real owner admin already exists, do not rerun bootstrap. Run `./scripts/certify-existing-admin.sh` instead. It uses the same hidden interactive input and runs only the complete live session-security certification against the existing account.
+
 ## Prerequisites
 
 1. Complete staging database health/schema/transaction certification.
