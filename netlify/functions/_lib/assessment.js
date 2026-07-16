@@ -12,9 +12,13 @@ async function ownedAssessment(database, sessionId, assessmentId) {
 }
 
 async function createAssessment(database, sessionId, input = {}, now = new Date()) {
+  const safetyCheck = await database.get("safety_checks", input.safetyCheckId);
+  if (!safetyCheck || safetyCheck.sessionId !== sessionId) throw Object.assign(new Error("Safety check required"), { statusCode: 400, code: "safety_check_required" });
+  if (safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Commercial assessment is not suitable"), { statusCode: 409, code: "safety_route_required" });
   const id = randomId("wa_");
   const assessment = await database.insert("assessments", {
     id, sessionId, status: "draft", reportMode: null, safetyRoute: null,
+    safetyCheckId: safetyCheck.id,
     advisorClientId: input.advisorClientId || null, consentStatus: input.consentStatus || null,
     createdAt: now.toISOString(), updatedAt: now.toISOString(), completedAt: null
   });

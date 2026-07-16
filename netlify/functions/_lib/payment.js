@@ -16,6 +16,8 @@ function publicPayment(payment) {
 
 async function createInvoice(database, provider, sessionId, input = {}, now = new Date()) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
+  const safetyCheck = await database.get("safety_checks", assessment.safetyCheckId);
+  if (!safetyCheck || safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Payment blocked by safety route"), { statusCode: 409, code: "safety_route_required" });
   const recoveryContacts = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });
   if (!recoveryContacts.length) throw Object.assign(new Error("Recovery contact required"), { statusCode: 400, code: "recovery_contact_required" });
   if (input.productCode && input.productCode !== PRODUCT.code) throw Object.assign(new Error("Invalid product"), { statusCode: 400, code: "invalid_product" });

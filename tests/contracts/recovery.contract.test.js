@@ -8,6 +8,7 @@ const { createSession, authenticateSession } = require("../../netlify/functions/
 const { createAssessment, reportForSession } = require("../../netlify/functions/_lib/assessment.js");
 const { saveRecoveryContacts, requestRecovery, confirmRecovery, validateContacts, PHONE_ERROR, EMAIL_ERROR } = require("../../netlify/functions/_lib/recovery.js");
 const { PRODUCT } = require("../../netlify/functions/_lib/config.js");
+const { saveSafetyCheck } = require("../../netlify/functions/_lib/safety.js");
 
 (async () => {
   assert.throws(() => validateContacts({ phone: "1" }), error => error.message === PHONE_ERROR);
@@ -16,8 +17,9 @@ const { PRODUCT } = require("../../netlify/functions/_lib/config.js");
 
   const database = new MemoryDatabaseAdapter();
   const original = await createSession(database);
+  const safety = await saveSafetyCheck(database, original.session.id, { age: 31, selfHarm: "Үгүй", acuteMedical: ["Аль нь ч үгүй"], compensatoryBehavior: "Үгүй", medicalSuitability: "Үргэлжлүүлэхэд тохиромжтой" });
   const group = await saveRecoveryContacts(database, original.session.id, { email: "paid@example.com" });
-  const assessment = await createAssessment(database, original.session.id, { recoveryContactGroupId: group.contactGroupId });
+  const assessment = await createAssessment(database, original.session.id, { recoveryContactGroupId: group.contactGroupId, safetyCheckId: safety.safetyCheckId });
   const paymentId = "payment-recovery";
   const entitlementId = `${assessment.id}:${PRODUCT.code}`;
   await database.insert("payments", { id: paymentId, sessionId: original.session.id, assessmentId: assessment.id, productCode: PRODUCT.code, amount: PRODUCT.amount, status: "paid" });

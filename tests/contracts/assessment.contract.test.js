@@ -22,11 +22,13 @@ function event(httpMethod, body, cookie = "", query = {}) {
   assert.match(cookie, /^jingeehas_session=/);
   const sessionBody = JSON.parse(started.body);
   assert.match(sessionBody.sessionId, /^ws_/);
+  const safetyCheckId = "sc-contract";
+  await database.insert("safety_checks", { id: safetyCheckId, sessionId: sessionBody.sessionId, result: { route: "eligible" }, createdAt: new Date().toISOString() });
 
   const resumed = await start(event("POST", null, cookie));
   assert.equal(JSON.parse(resumed.body).resumed, true);
 
-  const created = await create(event("POST", {}, cookie));
+  const created = await create(event("POST", { safetyCheckId }, cookie));
   assert.equal(created.statusCode, 201);
   const assessmentId = JSON.parse(created.body).assessmentId;
 

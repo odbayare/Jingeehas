@@ -2,6 +2,7 @@ const { spawnSync } = require("node:child_process");
 
 const tests = [
   "tests/removal-guard.test.js",
+  "tests/safety-gate.test.js",
   "tests/contracts/assessment.contract.test.js",
   "tests/contracts/payment.contract.test.js",
   "tests/contracts/recovery.contract.test.js"

@@ -10,12 +10,14 @@ const { createInvoice, checkPayment } = require("../../netlify/functions/_lib/pa
 const { safeAppLinks } = require("../../netlify/functions/_lib/qpay.js");
 const { PRODUCT } = require("../../netlify/functions/_lib/config.js");
 const { saveRecoveryContacts } = require("../../netlify/functions/_lib/recovery.js");
+const { saveSafetyCheck } = require("../../netlify/functions/_lib/safety.js");
 
 (async () => {
   const database = new MemoryDatabaseAdapter();
   const { session } = await createSession(database);
+  const safety = await saveSafetyCheck(database, session.id, { age: 30, selfHarm: "Үгүй", acuteMedical: ["Аль нь ч үгүй"], compensatoryBehavior: "Үгүй", medicalSuitability: "Үргэлжлүүлэхэд тохиромжтой" });
   const contact = await saveRecoveryContacts(database, session.id, { phone: "99112233" });
-  const assessment = await createAssessment(database, session.id, { recoveryContactGroupId: contact.contactGroupId });
+  const assessment = await createAssessment(database, session.id, { recoveryContactGroupId: contact.contactGroupId, safetyCheckId: safety.safetyCheckId });
   let createCount = 0;
   let checkCount = 0;
   const provider = {
