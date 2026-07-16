@@ -46,6 +46,19 @@ const assert = require("node:assert/strict");
   assert(logs.every(line => !line.includes(configured.JINGEEHAS_DATABASE_API_KEY)));
   assert(calls > 0);
 
+  const { verifyDatabaseGatewayAuth } = await import("../tools/verify-database-gateway-auth.mjs");
+  const authRequests = [];
+  const authFetch = async (url, init) => {
+    authRequests.push({ url, init });
+    return { status: init.method === "GET" ? 405 : 401, text: async () => JSON.stringify({ error: "unauthorized" }) };
+  };
+  const authResult = await verifyDatabaseGatewayAuth({ fetchImpl: authFetch });
+  assert.equal(authResult.status, "PASS");
+  assert.equal(authResult.databaseRecordCreated, false);
+  assert.equal(authRequests.length, 3);
+  assert(authRequests.filter(item => item.init.body).every(item => JSON.parse(item.init.body).action === "get"));
+  assert(authRequests.every(item => !String(item.init.headers?.authorization || "").includes(configured.JINGEEHAS_DATABASE_API_KEY)));
+
   const { verifyRecoveryConfig } = await import("../tools/verify-recovery-config.mjs");
   const { verifyQPayConfig } = await import("../tools/verify-qpay-config.mjs");
   const callsBeforeConfigChecks = calls;

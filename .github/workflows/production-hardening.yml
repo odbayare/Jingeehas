@@ -34,6 +34,7 @@ jobs:
         env:
           CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
       - run: npm run verify:database-config
+      - run: npm run verify:database-gateway-auth
       - run: npm run verify:recovery-config
       - run: npm run verify:qpay-config
       - run: npm run verify:domain-config

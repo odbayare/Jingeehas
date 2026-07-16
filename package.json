@@ -10,6 +10,7 @@
     "build:staging": "node tools/build-staging.mjs",
     "generate:artifacts": "node tools/generate-production-manifest.mjs",
     "verify:database-config": "node tools/verify-database-config.mjs",
+    "verify:database-gateway-auth": "node tools/verify-database-gateway-auth.mjs",
     "certify:database-external": "node tools/certify-database-external.mjs",
     "verify:recovery-config": "node tools/verify-recovery-config.mjs",
     "verify:qpay-config": "node tools/verify-qpay-config.mjs",
