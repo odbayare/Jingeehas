@@ -16,7 +16,7 @@ async function adminLogin(database, email, password) {
   const rows = await database.find("admin_accounts", { email: normalizeEmail(email) }); const admin = rows[0];
   if (!admin || admin.status !== "active" || !verifyPassword(password, admin.passwordHash)) throw Object.assign(new Error("Invalid login"), { statusCode: 401, code: "invalid_login" });
   const session = await createRoleSession(database, { ...ADMIN_SESSION, ownerId: admin.id });
-  return { adminId: admin.id, ...session };
+  return { adminId: admin.id, owner: admin.isOwner === true, ...session };
 }
 async function createInvitation(database, event, input, now = new Date()) {
   const session = await authenticateRole(database, event, ADVISOR_SESSION); const advisor = await database.get("advisor_accounts", session.coachId);

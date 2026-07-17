@@ -10,7 +10,7 @@ const PAYMENT_COPY = Object.freeze({
   create_failed_confirmed: "Өмнөх оролдлогоор нэхэмжлэл үүсээгүй нь баталгаажсан. Шинэ оролдлогыг дэмжлэгээр зөвшөөрүүлнэ үү.",
   pending: "Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.",
   checking: "Төлбөрийг шалгаж байна…",
-  paidBeforeTest: "Төлбөр баталгаажлаа. Одоо тестээ эхлүүлнэ үү.",
+  paidBeforeTest: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.",
   paidAfterAssessment: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ."
 });
 const PAYMENT_STATES = new Set(["idle", "creating", "create_unknown", "reconciling", "pending", "checking", "paid", "create_error", "create_failed_confirmed", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
@@ -19,10 +19,10 @@ const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "
 const BRANCH_PREFIXES = Object.freeze({ "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"] });
 
 function createState() {
-  return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", payment: { status: "idle" },
+  return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", payment: { status: "idle" },
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
-    admin: { authenticated: false, created: null, error: "" }, busy: false };
+    admin: { authenticated: false, owner: false, created: null, error: "" }, ownerPreview: false, busy: false };
 }
 let state = createState();
 let testComingSoonOverride = null;
@@ -37,6 +37,7 @@ const ROUTES = Object.freeze({
   , "/advisor/login": "advisorLogin", "/advisor/dashboard": "advisorDashboard", "/admin": "admin",
   "/privacy": "privacy", "/terms": "terms", "/support": "support", "/data-deletion": "dataDeletion"
 });
+const OWNER_PREVIEW_ROUTES = new Set(["assessmentStart", "payment", "questions", "report", "recovery", "dataDeletion"]);
 function routeName(pathname) { return ROUTES[String(pathname || "/").replace(/\/+$/, "") || "/"] || "notFound"; }
 function navigation() { return `<nav class="site-nav" aria-label="Үндсэн цэс"><a href="/" data-route>Нүүр</a><a href="/about" data-route>Тестийн тухай</a><a href="/recovery" data-route>Тайлан сэргээх</a></nav>`; }
 function footer() { return `<footer class="site-footer"><p>${PRODUCT.name}</p><nav aria-label="Арга зүй, хууль, тусламжийн холбоос"><a href="/methodology" data-route>Арга зүй</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/support" data-route>Төлбөрийн тусламж</a> · <a href="/data-deletion" data-route>Өгөгдөл устгах хүсэлт</a></nav><p>Дэмжлэг: ${supportContactLink()}</p></footer>`; }
@@ -138,15 +139,17 @@ function renderPayment() {
   const payment = state.payment || { status: "idle" };
   const statusCopy = payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY[payment.status] || "";
   const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
+  const paymentReady = state.assessmentStatus === "complete";
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөр ба тайлан сэргээх мэдээлэл</h1>
     ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд энэ тест үнэлгээг санал болгосон байна.</p><form id="consent-form"><fieldset><legend>Тайлан хуваалцах зөвшөөрөл</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Би тест үнэлгээний бүрэн тайланг ${escapeHtml(state.invitation.advisorName || "Зөвлөх")} зөвлөх харахыг зөвшөөрч байна.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Миний асуулт бүрд өгсөн түүхий хариултыг тусад нь харуулахгүй.</p><button class="button" type="submit">Сонголтоо баталгаажуулах</button></form></section>` : !state.assessmentId ? `<form id="contact-form" novalidate><p>Имэйл хаягаа оруулна уу. Төлбөртэй бүрэн тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.</p>
       <label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email" required></label>
-      <p id="contact-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Мэдээллээ хадгалаад төлбөр рүү үргэлжлүүлэх</button></form>` : `
+      <p id="contact-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Мэдээллээ хадгалаад тест рүү үргэлжлүүлэх</button></form>` : `
       <section aria-labelledby="payment-title"><h2 id="payment-title">QPay нэхэмжлэл</h2><p class="price">Үнэ: ${PRODUCT.displayPrice}</p>
+        ${paymentReady ? "" : `<p class="notice">QPay төлбөрийн товч тест үнэлгээг бүрэн дуусгасны дараа нээгдэнэ.</p>`}
         <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
         ${payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
         ${payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа: <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(new Date(payment.expiresAt).toLocaleString("mn-MN"))}</time></p>` : ""}
-        ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">${payment.status === "paid_but_not_unlocked" ? "Тайлангийн эрхээ дахин нээх" : "Төлбөр шалгах"}</button>` : payment.status === "paid" ? `<a class="button" href="/assessment/questions" data-route>Тестээ эхлүүлэх</a>` : createBlocked ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
+        ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">${payment.status === "paid_but_not_unlocked" ? "Тайлангийн эрхээ дахин нээх" : "Төлбөр шалгах"}</button>` : payment.status === "paid" ? `<a class="button" href="/report" data-route>Бүрэн тайлан харах</a>` : !paymentReady || createBlocked ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
       </section>`}</main>${footer()}</div>`;
 }
 function renderQuestionInput(question, value) {
@@ -200,7 +203,7 @@ function renderAdvisorDashboard() {
 }
 function renderAdmin() {
   if (!state.admin.authenticated) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Удирдлагын нэвтрэх хэсэг</h1><form id="admin-login-form"><label class="field"><span>Имэйл</span><input name="email" type="email" autocomplete="username" required></label><label class="field"><span>Нууц үг</span><input name="password" type="password" autocomplete="current-password" required></label><button class="button" type="submit">Нэвтрэх</button></form><p class="error">${escapeHtml(state.admin.error)}</p></main></div>`;
-  return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөхийн удирдлага</h1><form id="admin-advisor-form"><label class="field"><span>Зөвлөхийн нэр</span><input name="name" required></label><label class="field"><span>Зөвлөхийн имэйл</span><input name="email" type="email" required></label><label class="field"><span>Нэг төлбөрөөс зөвлөхөд олгох шимтгэл (₮)</span><input name="commissionAmount" type="number" min="0" max="9900" value="4000" required></label><button class="button" type="submit">Зөвлөх нэмэх</button></form>${state.admin.created ? `<div class="notice" role="status"><p>Түр нууц үгийг зөвхөн одоо хуулж авна уу.</p><code>${escapeHtml(state.admin.created.temporaryPassword)}</code></div>` : ""}<p class="error">${escapeHtml(state.admin.error)}</p></main></div>`;
+  return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөхийн удирдлага</h1>${state.admin.owner ? `<section aria-labelledby="owner-preview-title"><h2 id="owner-preview-title">Эзэмшигчийн бодит туршилт</h2><p>Нийтийн “Тун удахгүй” хамгаалалтыг өөрчлөхгүйгээр 2 цагийн турш бодит тестийг шалгана.</p><button class="button" type="button" data-action="start-owner-preview">Бодит тестийг шалгах</button>${state.ownerPreview ? `<button class="button secondary" type="button" data-action="revoke-owner-preview">Туршилтын эрхийг цуцлах</button>` : ""}</section>` : ""}<form id="admin-advisor-form"><label class="field"><span>Зөвлөхийн нэр</span><input name="name" required></label><label class="field"><span>Зөвлөхийн имэйл</span><input name="email" type="email" required></label><label class="field"><span>Нэг төлбөрөөс зөвлөхөд олгох шимтгэл (₮)</span><input name="commissionAmount" type="number" min="0" max="9900" value="4000" required></label><button class="button" type="submit">Зөвлөх нэмэх</button></form>${state.admin.created ? `<div class="notice" role="status"><p>Түр нууц үгийг зөвхөн одоо хуулж авна уу.</p><code>${escapeHtml(state.admin.created.temporaryPassword)}</code></div>` : ""}<p class="error">${escapeHtml(state.admin.error)}</p><button class="button secondary" type="button" data-action="admin-logout">Гарах</button></main></div>`;
 }
 function legalPage(title, body) { return `<div class="page">${navigation()}<main class="content-card legal-page"><h1 id="page-title" tabindex="-1">${escapeHtml(title)}</h1>${body}</main>${footer()}</div>`; }
 function renderPrivacy() { return legalPage("Нууцлалын бодлого", `<p>Үйлчилгээ үзүүлэгч: Customer Business Development LLC-ийн ажиллуулдаг Jingeehas. Үйлчилгээ Монгол Улсын харьяалалд үйл ажиллагаа явуулна.</p><p>Тестийн хариулт, аюулгүй байдлын шинж, холбоо барих мэдээлэл нь тайлан гаргах, төлбөр баталгаажуулах, тайлан сэргээх зорилгоор серверт хадгалагдана. Холбоо барих мэдээллийг шифрлэж, хайлтын утгыг тусад нь хэшлэнэ.</p><p>Түүхий хариултыг QPay нэхэмжлэлийн тайлбар, төлбөрийн мэдээлэл эсвэл ерөнхий хэрэглээний хэмжилтэд дамжуулахгүй. Зөвлөх зөвхөн таны тодорхой зөвшөөрөлтэй бүрэн тайланг харж болох бөгөөд асуулт бүрийн түүхий хариултыг тусад нь харахгүй.</p><p>Хэрэглэгч зөвшөөрлөө цуцалж, хууль болон төлбөрийн бүртгэлээр заавал хадгалах мэдээллээс бусдыг устгуулах хүсэлт гаргаж болно. Баталгаажсан устгах хүсэлтийг 30 хоногийн дотор шийдвэрлэнэ.</p><p>Байнгын зочны мөрдөлт одоогоор эхлээгүй. Ирээдүйд ийм хэмжилт нэмэх бол хадгалалт эхлэхээс өмнө ил тод зөвшөөрөл авна.</p><p>Нууцлалын хүсэлт: ${supportContactLink()}.</p>`); }
@@ -212,7 +215,7 @@ function renderForPath(pathname) {
   if (route === "landing") return renderLanding();
   if (route === "about") return renderAbout();
   if (route === "methodology") return renderMethodology();
-  if (isComingSoon() && ["assessmentStart", "payment", "questions", "report"].includes(route)) return renderComingSoon();
+  if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route) && !state.ownerPreview) return renderComingSoon();
   if (route === "assessmentStart") return renderSafetyGate();
   if (route === "payment") return renderPayment();
   if (route === "questions") return renderQuestions();
@@ -262,25 +265,27 @@ async function submitContact(form) {
     state.inviteToken = ""; state.busy = false; render(); return;
   }
   const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId }) });
-  state.assessmentId = assessment.assessmentId; state.busy = false; render();
+  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.busy = false; navigate("/assessment/questions");
 }
 async function submitConsent(form) {
   const accepted = formObject(form).consent === "yes";
   const result = await api("/.netlify/functions/advisor-consent", { method: "POST", body: JSON.stringify({ coachClientId: state.invitation.coachClientId, consent: accepted }) });
   const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId, ...(accepted ? { coachClientId: result.coachClientId } : {}) }) });
-  state.assessmentId = assessment.assessmentId; state.invitation = null; render();
+  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.invitation = null; navigate("/assessment/questions");
 }
 async function createInvoice() {
+  if (state.busy || state.assessmentStatus !== "complete") return;
+  state.busy = true;
   setPaymentStatus("creating"); render();
   try { state.payment = await api("/.netlify/functions/qpay-create-invoice", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId, productCode: PRODUCT.code, amount: PRODUCT.amount }) }); }
   catch (error) {
     const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(error?.body?.error);
     setPaymentStatus(ambiguous ? "create_unknown" : "create_error");
-  } render();
+  } finally { state.busy = false; } render();
 }
 async function checkPayment() {
   setPaymentStatus("checking"); render();
-  try { state.payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: state.payment.paymentId }) }); }
+  try { state.payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: state.payment.paymentId }) }); if (state.payment.status === "paid") state.report = await loadReport(); }
   catch { setPaymentStatus("check_error"); } render();
 }
 function updateAnswer(input) {
@@ -312,8 +317,9 @@ async function nextQuestion() {
   await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: { [question.id]: state.answers[question.id] } }) });
   if (state.questionIndex < questions.length - 1) { state.questionIndex += 1; state.validationError = ""; render(); return; }
   const completed = await api("/.netlify/functions/weight-assessment-complete", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
+  state.assessmentStatus = completed.status;
   if (completed.safetyRoute) { state.report = await loadReport(); navigate("/report"); return; }
-  state.report = await loadReport(); navigate("/report");
+  navigate("/assessment/payment");
 }
 async function loadReport() { return api(`/.netlify/functions/weight-assessment-report?assessmentId=${encodeURIComponent(state.assessmentId)}`, { method: "GET" }); }
 async function requestRecovery(form) {
@@ -329,16 +335,25 @@ async function confirmRecovery(form) {
 async function advisorLoginSubmit(form) { const result = await api("/.netlify/functions/advisor-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.profile = result; state.advisor.temporaryPasswordChange = result.forcePasswordChange; if (result.forcePasswordChange) render(); else { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); } }
 async function advisorPasswordSubmit(form) { await api("/.netlify/functions/advisor-password-change", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.temporaryPasswordChange = false; state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); }
 async function advisorInviteSubmit(form) { const result = await api("/.netlify/functions/advisor-client-invite", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.dashboard = { ...state.advisor.dashboard, inviteToken: result.inviteToken }; render(); }
-async function adminLoginSubmit(form) { await api("/.netlify/functions/admin-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.admin.authenticated = true; state.admin.error = ""; render(); }
+async function adminLoginSubmit(form) { const result = await api("/.netlify/functions/admin-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.admin.authenticated = true; state.admin.owner = result.owner === true; state.admin.error = ""; render(); }
 async function adminAdvisorSubmit(form) { const input = formObject(form); input.commissionAmount = Number(input.commissionAmount); state.admin.created = await api("/.netlify/functions/admin-advisor-create", { method: "POST", body: JSON.stringify(input) }); render(); }
+async function startOwnerPreview() {
+  await api("/.netlify/functions/admin-preview-start", { method: "POST", body: "{}" });
+  const fresh = createState();
+  state = { ...fresh, admin: state.admin, ownerPreview: true };
+  navigate("/assessment/start");
+}
+async function revokeOwnerPreview() { await api("/.netlify/functions/admin-preview-revoke", { method: "POST", body: "{}" }); state.ownerPreview = false; render(); }
 async function restoreServerState() {
   const route = routeName(window.location.pathname);
+  if (route === "admin") { try { const admin = await api("/.netlify/functions/admin-session-state", { method: "GET" }); state.admin.authenticated = true; state.admin.owner = admin.owner === true; try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch {} } catch {} return; }
   if (route === "advisorDashboard") { try { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); } catch {} return; }
-  if (isComingSoon() || !["payment", "questions", "report", "dataDeletion"].includes(route)) return;
+  if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route)) { try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch { state.ownerPreview = false; return; } }
+  if (!["payment", "questions", "report", "dataDeletion"].includes(route)) return;
   try {
     const restored = await api("/.netlify/functions/weight-session-state", { method: "GET" });
     if (!restored.assessment) return;
-    state.assessmentId = restored.assessment.assessmentId; state.payment = restored.payment || state.payment;
+    state.assessmentId = restored.assessment.assessmentId; state.assessmentStatus = restored.assessment.status; state.payment = restored.payment || state.payment;
     state.answers = restored.answers || {}; state.report = restored.report || null;
   } catch {}
 }
@@ -357,11 +372,14 @@ function bind(root) {
   root.querySelector("#advisor-invite-form")?.addEventListener("submit", event => { event.preventDefault(); advisorInviteSubmit(event.currentTarget).catch(() => { state.advisor.error = "Урилга үүсгэж чадсангүй."; render(); }); });
   root.querySelector("#admin-login-form")?.addEventListener("submit", event => { event.preventDefault(); adminLoginSubmit(event.currentTarget).catch(() => { state.admin.error = "Нэвтрэх мэдээлэл буруу байна."; render(); }); });
   root.querySelector("#admin-advisor-form")?.addEventListener("submit", event => { event.preventDefault(); adminAdvisorSubmit(event.currentTarget).catch(() => { state.admin.error = "Зөвлөх үүсгэж чадсангүй."; render(); }); });
+  root.querySelector('[data-action="start-owner-preview"]')?.addEventListener("click", () => startOwnerPreview().catch(() => { state.admin.error = "Бодит тестийн эрх нээж чадсангүй."; render(); }));
+  root.querySelector('[data-action="revoke-owner-preview"]')?.addEventListener("click", () => revokeOwnerPreview().catch(() => { state.admin.error = "Туршилтын эрхийг цуцалж чадсангүй."; render(); }));
   root.querySelector('[data-action="create-invoice"]')?.addEventListener("click", createInvoice);
   root.querySelector('[data-action="check-payment"]')?.addEventListener("click", checkPayment);
   root.querySelector('[data-action="previous-question"]')?.addEventListener("click", () => { state.questionIndex = Math.max(0, state.questionIndex - 1); state.validationError = ""; render(); });
   root.querySelector('[data-action="print-report"]')?.addEventListener("click", () => window.print());
   root.querySelector('[data-action="advisor-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/advisor-logout", { method: "POST", body: "{}" }); state.advisor = createState().advisor; navigate("/advisor/login"); });
+  root.querySelector('[data-action="admin-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/admin-logout", { method: "POST", body: "{}" }); state.admin = createState().admin; state.ownerPreview = false; render(); });
   root.querySelectorAll("[data-advisor-report]").forEach(button => button.addEventListener("click", async () => { const result = await api(`/.netlify/functions/advisor-report?assessmentId=${encodeURIComponent(button.dataset.advisorReport)}`, { method: "GET" }); state.report = { assessmentId: result.assessmentId, fullReport: result.fullReport, entitled: true }; navigate("/report"); }));
   root.querySelector('[data-action="request-deletion"]')?.addEventListener("click", async () => { const result = await api("/.netlify/functions/weight-data-deletion-request", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) }); state.deletionMessage = result.status === "pending" ? "Таны хүсэлтийг хүлээн авлаа." : "Хүсэлтийн төлөв шинэчлэгдлээ."; render(); });
 }

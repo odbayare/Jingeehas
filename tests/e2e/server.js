@@ -9,6 +9,10 @@ const fullReport = { productName: "Илүүдэл жингээс салах те
 function json(response, status, body, headers = {}) { response.writeHead(status, { "content-type": "application/json", ...headers }); response.end(JSON.stringify(body)); }
 function readBody(request) { return new Promise(resolve => { let raw = ""; request.on("data", chunk => { raw += chunk; }); request.on("end", () => { try { resolve(JSON.parse(raw || "{}")); } catch { resolve({}); } }); }); }
 const endpoints = {
+  "admin-login": async (_body, response) => json(response, 200, { adminId: "owner-e2e", owner: true }, { "set-cookie": "jingeehas_admin=admin-e2e; Path=/; HttpOnly; Secure; SameSite=Strict" }),
+  "admin-session-state": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") ? json(response, 200, { authenticated: true, owner: true }) : json(response, 401, { error: "unauthorized" }),
+  "admin-preview-start": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") ? json(response, 201, { active: true, expiresAt: "2026-07-17T14:00:00.000Z" }, { "set-cookie": ["jingeehas_owner_preview=preview-e2e; Path=/; HttpOnly; Secure; SameSite=Strict", "jingeehas_session=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax"] }) : json(response, 401, { error: "unauthorized" }),
+  "admin-preview-status": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") && String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e") ? json(response, 200, { active: true, expiresAt: "2026-07-17T14:00:00.000Z" }) : json(response, 401, { error: "preview_required" }),
   "weight-session-start": async (_body, response) => json(response, 201, { sessionId: "ws-e2e", resumed: false }, { "set-cookie": "jingeehas_session=e2e; Path=/; HttpOnly; SameSite=Lax" }),
   "weight-safety-gate": async (body, response) => { const result = evaluateSafetyGate(body); json(response, 200, { safetyCheckId: "sc-e2e", ...result, guidance: result.route === "eligible" ? null : ROUTE_COPY[result.route] }); },
   "weight-recovery-contact-save": async (_body, response) => json(response, 201, { contactGroupId: "rcg-e2e" }),
@@ -33,7 +37,7 @@ const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
 http.createServer(async (request, response) => {
   const url = new URL(request.url, "http://127.0.0.1:4178");
   if (url.pathname === "/__test/stats") return json(response, 200, stats);
-  if (url.pathname.startsWith("/.netlify/functions/")) { const action = endpoints[url.pathname.split("/").pop()]; if (!action) return json(response, 404, { error: "not_found" }); return action(await readBody(request), response); }
+  if (url.pathname.startsWith("/.netlify/functions/")) { const action = endpoints[url.pathname.split("/").pop()]; if (!action) return json(response, 404, { error: "not_found" }); return action(await readBody(request), response, request); }
   if (url.pathname === "/app-test.js" || url.pathname === "/app-production.js") { let source = fs.readFileSync(path.join(root, "app.js"), "utf8"); if (url.pathname === "/app-test.js") source = source.replace("const WEIGHT_TEST_COMING_SOON_MODE = true;", "const WEIGHT_TEST_COMING_SOON_MODE = false;"); response.writeHead(200, { "content-type": types[".js"] }); return response.end(source); }
   const relative = url.pathname === "/" ? "index.html" : url.pathname.slice(1); const absolute = path.join(root, relative);
   if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) { response.writeHead(200, { "content-type": types[path.extname(absolute)] || "application/octet-stream" }); return response.end(fs.readFileSync(absolute)); }

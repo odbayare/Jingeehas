@@ -21,9 +21,16 @@ assert.equal(advisorStatusLabel("consent_accepted"), "Зөвшөөрсөн");
 assert.equal(advisorStatusLabel("pending"), "Хүлээгдэж байна");
 
 const functions = fs.readdirSync(path.join(root, "netlify", "functions")).filter(file => file.endsWith(".js"));
-for (const required of ["weight-session-start.js", "weight-assessment-create.js", "weight-assessment-save.js", "weight-assessment-complete.js", "weight-assessment-report.js", "weight-entitlements.js", "weight-recovery-request.js", "weight-recovery-confirm.js", "qpay-create-invoice.js", "qpay-check-payment.js"]) assert(functions.includes(required));
+const previewProtected = ["weight-session-start.js", "weight-safety-gate.js", "weight-recovery-contact-save.js", "weight-assessment-create.js", "weight-assessment-save.js", "weight-assessment-complete.js", "weight-assessment-report.js", "weight-session-state.js", "weight-entitlements.js", "weight-recovery-request.js", "weight-recovery-confirm.js", "weight-data-deletion-request.js", "qpay-create-invoice.js", "qpay-check-payment.js", "advisor-invite-resolve.js", "advisor-consent.js"];
+for (const required of previewProtected) {
+  assert(functions.includes(required));
+  assert(fs.readFileSync(path.join(root, "netlify", "functions", required), "utf8").includes("authenticateOwnerPreview"), `${required} must enforce server-side owner preview access`);
+}
+for (const required of ["admin-preview-start.js", "admin-preview-status.js", "admin-preview-revoke.js", "admin-session-state.js"]) assert(functions.includes(required));
 const authSource = fs.readFileSync(path.join(root, "netlify", "functions", "_lib", "auth.js"), "utf8");
 assert(authSource.includes("scrypt"));
 assert(authSource.includes("HttpOnly"));
 assert(authSource.includes("SameSite=Strict"));
+assert.equal(app.WEIGHT_TEST_COMING_SOON_MODE, true);
+assert(app.renderForPath("/assessment/start").includes("Тун удахгүй"));
 console.log("production security tests passed");

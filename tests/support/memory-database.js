@@ -12,7 +12,11 @@ class MemoryDatabaseAdapter {
     const cooldownFields = ["contactCooldownKey", "ipCooldownKey", "sessionCooldownKey"];
     const cooldownConflict = table === "recovery_challenges" && [...rows.values()].some(existing =>
       cooldownFields.some(field => row[field] && existing[field] === row[field]));
-    if (!row.id || rows.has(row.id) || cooldownConflict) throw Object.assign(new Error("Record conflict"), { statusCode: 409, code: "conflict" });
+    const activePaymentStatuses = new Set(["creating", "create_unknown", "reconciling", "pending", "checking", "check_error"]);
+    const activePaymentConflict = table === "payments" && activePaymentStatuses.has(row.status) && [...rows.values()].some(existing =>
+      activePaymentStatuses.has(existing.status) && existing.sessionId === row.sessionId &&
+      existing.assessmentId === row.assessmentId && existing.productCode === row.productCode);
+    if (!row.id || rows.has(row.id) || cooldownConflict || activePaymentConflict) throw Object.assign(new Error("Record conflict"), { statusCode: 409, code: "conflict" });
     rows.set(row.id, copy(row)); return copy(row);
   }
   async update(table, id, patch) { const current = await this.get(table, id); if (!current) throw Object.assign(new Error("Record not found"), { statusCode: 404, code: "not_found" }); const next = { ...current, ...copy(patch), id }; this.table(table).set(id, next); return copy(next); }

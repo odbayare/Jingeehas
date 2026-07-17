@@ -2,9 +2,11 @@
 const { getDatabase } = require("./_lib/store.js");
 const { handler, response } = require("./_lib/http.js");
 const { authenticateSession } = require("./_lib/session.js");
+const { authenticateOwnerPreview } = require("./_lib/preview.js");
 
 exports.handler = handler("GET", async event => {
   const database = getDatabase();
+  await authenticateOwnerPreview(database, event);
   const session = await authenticateSession(database, event);
   const direct = await database.find("entitlements", { sessionId: session.id, status: "active" });
   const recovered = await database.find("assessment_sessions", { sessionId: session.id });

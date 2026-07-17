@@ -18,14 +18,17 @@ function roleCookie(name, value, maxAge = 60 * 60 * 8) { return `${name}=${encod
 
 async function createRoleSession(database, { table, ownerField, ownerId, prefix, cookieName }, now = new Date()) {
   const id = randomId(prefix); const secret = randomToken(); const expiresAt = new Date(now.getTime() + 8 * 60 * 60 * 1000).toISOString();
-  await database.insert(table, { id, [ownerField]: ownerId, tokenHash: hashToken(secret), expiresAt, revokedAt: null, createdAt: now.toISOString() });
+  const row = { id, [ownerField]: ownerId, tokenHash: hashToken(secret), expiresAt, revokedAt: null, createdAt: now.toISOString() };
+  if (table === "admin_sessions") row.purpose = "admin";
+  await database.insert(table, row);
   return { id, expiresAt, cookie: roleCookie(cookieName, `${id}.${secret}`) };
 }
 async function authenticateRole(database, event, config) {
   const credential = cookies(event)[config.cookieName] || ""; const separator = credential.indexOf(".");
   const id = credential.slice(0, separator); const secret = credential.slice(separator + 1);
   const session = separator > 0 ? await database.get(config.table, id) : null;
-  if (!session || session.revokedAt || new Date(session.expiresAt) <= new Date() || !safeEqual(session.tokenHash, hashToken(secret))) {
+  const wrongPurpose = config.table === "admin_sessions" && session?.purpose && session.purpose !== "admin";
+  if (!session || wrongPurpose || session.revokedAt || new Date(session.expiresAt) <= new Date() || !safeEqual(session.tokenHash, hashToken(secret))) {
     throw Object.assign(new Error("Unauthorized"), { statusCode: 401, code: "unauthorized" });
   }
   return session;

@@ -4,9 +4,10 @@ const { handler, response } = require("./_lib/http.js");
 const { authenticateSession } = require("./_lib/session.js");
 const { reportForSession } = require("./_lib/assessment.js");
 const { publicPayment } = require("./_lib/payment.js");
+const { authenticateOwnerPreview } = require("./_lib/preview.js");
 
 exports.handler = handler("GET", async event => {
-  const database = getDatabase(); const session = await authenticateSession(database, event);
+  const database = getDatabase(); await authenticateOwnerPreview(database, event); const session = await authenticateSession(database, event);
   const direct = await database.find("assessments", { sessionId: session.id });
   const recovered = await database.find("assessment_sessions", { sessionId: session.id });
   for (const access of recovered) { const assessment = await database.get("assessments", access.assessmentId); if (assessment) direct.push(assessment); }

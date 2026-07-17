@@ -21,6 +21,7 @@ async function context() {
   const safety = await saveSafetyCheck(database, session.id, { age: 30, selfHarm: "Үгүй", acuteMedical: ["Аль нь ч үгүй"], compensatoryBehavior: "Үгүй", medicalSuitability: "Үргэлжлүүлэхэд тохиромжтой" });
   const contact = await saveRecoveryContacts(database, session.id, { phone: "99112233" });
   const assessment = await createAssessment(database, session.id, { recoveryContactGroupId: contact.contactGroupId, safetyCheckId: safety.safetyCheckId });
+  await database.update("assessments", assessment.id, { status: "complete", reportMode: "sufficient", completedAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
   return { database, session, assessment };
 }
 
@@ -64,6 +65,22 @@ async function expectUnknownCreate(provider) {
   const invoice = await createInvoice(baseline.database, provider, baseline.session.id, { assessmentId: baseline.assessment.id, productCode: PRODUCT.code, amount: PRODUCT.amount });
   assert.equal(invoice.status, "pending");
   assert.equal(createCount, 1);
+
+  // Concurrent create requests are serialized by the active-attempt uniqueness rule.
+  const concurrent = await context();
+  let concurrentCreates = 0;
+  let releaseProvider;
+  const providerBarrier = new Promise(resolve => { releaseProvider = resolve; });
+  const slowProvider = { async createInvoice() { concurrentCreates += 1; await providerBarrier; return { invoiceId: "concurrent-invoice", urls: [] }; } };
+  const firstConcurrent = createInvoice(concurrent.database, slowProvider, concurrent.session.id, { assessmentId: concurrent.assessment.id });
+  const secondConcurrent = createInvoice(concurrent.database, slowProvider, concurrent.session.id, { assessmentId: concurrent.assessment.id });
+  const concurrentPromise = Promise.allSettled([firstConcurrent, secondConcurrent]);
+  await new Promise(resolve => setImmediate(resolve));
+  releaseProvider();
+  const concurrentResults = await concurrentPromise;
+  assert.equal(concurrentCreates, 1);
+  assert.equal(concurrentResults.filter(result => result.status === "fulfilled").length, 1);
+  assert.equal((await concurrent.database.find("payments", { assessmentId: concurrent.assessment.id })).length, 1);
   const duplicate = await createInvoice(baseline.database, provider, baseline.session.id, { assessmentId: baseline.assessment.id });
   assert.equal(duplicate.paymentId, invoice.paymentId);
   assert.equal(duplicate.reused, true);
@@ -89,6 +106,17 @@ async function expectUnknownCreate(provider) {
   // 6. No blind retry: the preserved unknown attempt blocks another create.
   await assert.rejects(() => createInvoice(timeout.database, { async createInvoice() { timeoutCreates += 1; } }, timeout.session.id, { assessmentId: timeout.assessment.id }), error => error.code === "invoice_reconciliation_required");
   assert.equal(timeoutCreates, 1);
+
+  // A legacy ambiguous row for a different assessment is preserved and does not block a new lifecycle.
+  const separate = await context();
+  await separate.database.insert("payments", { id: "legacy-ambiguous", sessionId: separate.session.id, assessmentId: "old-assessment",
+    productCode: PRODUCT.code, amount: PRODUCT.amount, status: "create_error", senderInvoiceNo: "legacy-reference",
+    createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() });
+  let separateCreates = 0;
+  const separateInvoice = await createInvoice(separate.database, { async createInvoice() { separateCreates += 1; return { invoiceId: "new-assessment-invoice", urls: [] }; } }, separate.session.id, { assessmentId: separate.assessment.id });
+  assert.equal(separateInvoice.status, "pending");
+  assert.equal(separateCreates, 1);
+  assert.equal((await separate.database.get("payments", "legacy-ambiguous")).status, "create_error");
 
   // 2. A provider 500 after processing is also unknown, never confirmed absent.
   await expectUnknownCreate({ async createInvoice() { throw ambiguousError("provider_5xx", 500); } });

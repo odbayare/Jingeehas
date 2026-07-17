@@ -12,6 +12,7 @@ const tests = [
   "tests/security.test.js",
   "tests/certification-tools.test.js",
   "tests/admin-bootstrap.test.js",
+  "tests/contracts/owner-preview.contract.test.js",
   "tests/contracts/assessment.contract.test.js",
   "tests/contracts/payment.contract.test.js",
   "tests/contracts/recovery.contract.test.js"

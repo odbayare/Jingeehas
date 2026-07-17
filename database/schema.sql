@@ -219,6 +219,7 @@ create table admin_accounts (
   email text not null unique,
   password_hash text not null,
   status text not null check (status in ('active', 'disabled')),
+  is_owner boolean not null default false,
   created_at timestamptz not null,
   updated_at timestamptz
 );
@@ -227,10 +228,13 @@ create table admin_sessions (
   id text primary key,
   admin_id text not null references admin_accounts(id) on delete cascade,
   token_hash text not null unique,
+  purpose text not null default 'admin' check (purpose in ('admin', 'preview')),
+  parent_session_id text references admin_sessions(id) on delete cascade,
   expires_at timestamptz not null,
   revoked_at timestamptz,
   created_at timestamptz not null,
-  check (expires_at > created_at)
+  check (expires_at > created_at),
+  check ((purpose = 'admin' and parent_session_id is null) or (purpose = 'preview' and parent_session_id is not null))
 );
 
 create table admin_audit_logs (
@@ -284,6 +288,7 @@ create index advisor_clients_contact_idx on advisor_clients (expected_contact_ha
 create index advisor_commissions_dashboard_idx on advisor_commissions (coach_id, status, created_at desc);
 create index advisor_access_log_idx on advisor_report_access_logs (coach_id, created_at desc);
 create index admin_sessions_token_idx on admin_sessions (token_hash) where revoked_at is null;
+create unique index admin_owner_preview_active_uidx on admin_sessions (admin_id) where purpose = 'preview' and revoked_at is null;
 create index admin_audit_log_idx on admin_audit_logs (admin_id, created_at desc);
 create unique index deletion_request_pending_idx on data_deletion_requests (assessment_id) where status = 'pending';
 

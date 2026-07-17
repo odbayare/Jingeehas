@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "0f58740ab223989fe644fa326e5c3ae7182557fdc29b042b092a612f3bfd16de"
+      "sha256": "6751cc955f73043f478aa1fba30728da94940727314f9f0ca0b8b7e7707c6018"
     },
     {
       "file": "assets/favicon.svg",
@@ -49,6 +49,10 @@
     "admin-advisor-update",
     "admin-login",
     "admin-logout",
+    "admin-preview-revoke",
+    "admin-preview-start",
+    "admin-preview-status",
+    "admin-session-state",
     "advisor-client-invite",
     "advisor-consent",
     "advisor-dashboard",

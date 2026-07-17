@@ -45,6 +45,7 @@ function publicPayment(payment) {
 
 async function validateInvoiceRequest(database, sessionId, input) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
+  if (assessment.status !== "complete" || assessment.safetyRoute) throw Object.assign(new Error("Assessment must be completed and eligible before payment"), { statusCode: 409, code: "assessment_incomplete" });
   const safetyCheck = await database.get("safety_checks", assessment.safetyCheckId);
   if (!safetyCheck || safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Payment blocked by safety route"), { statusCode: 409, code: "safety_route_required" });
   const recoveryContacts = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });

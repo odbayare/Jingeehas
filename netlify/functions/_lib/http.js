@@ -7,12 +7,14 @@ function parseJson(event) {
   catch { throw Object.assign(new Error("Invalid JSON"), { statusCode: 400, code: "invalid_json" }); }
 }
 
-function response(statusCode, body, headers = {}) {
-  return {
+function response(statusCode, body, headers = {}, multiValueHeaders = {}) {
+  const result = {
     statusCode,
     headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store", ...headers },
     body: JSON.stringify(body)
   };
+  if (Object.keys(multiValueHeaders).length) result.multiValueHeaders = multiValueHeaders;
+  return result;
 }
 
 function cookies(event) {

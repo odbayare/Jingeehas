@@ -3,6 +3,9 @@ process.env.NODE_ENV = "test";
 const assert = require("node:assert/strict");
 const { setDatabaseForTests } = require("../../netlify/functions/_lib/store.js");
 const { MemoryDatabaseAdapter } = require("../support/memory-database.js");
+const { hashPassword } = require("../../netlify/functions/_lib/auth.js");
+const { adminLogin } = require("../../netlify/functions/_lib/advisor.js");
+const { createOwnerPreview } = require("../../netlify/functions/_lib/preview.js");
 
 const database = new MemoryDatabaseAdapter();
 setDatabaseForTests(database);
@@ -17,12 +20,18 @@ const deletion = require("../../netlify/functions/weight-data-deletion-request.j
 function event(httpMethod, body, cookie = "", query = {}) {
   return { httpMethod, body: body ? JSON.stringify(body) : null, headers: { cookie }, queryStringParameters: query };
 }
+function credential(value) { return String(value).split(";")[0]; }
 
 (async () => {
-  const started = await start(event("POST"));
+  assert.equal((await start(event("POST"))).statusCode, 401, "public assessment sessions must remain blocked");
+  await database.insert("admin_accounts", { id: "owner-contract", email: "owner@example.com", passwordHash: hashPassword("owner-password-strong"), status: "active", isOwner: true, createdAt: new Date().toISOString() });
+  const admin = await adminLogin(database, "owner@example.com", "owner-password-strong");
+  const preview = await createOwnerPreview(database, event("POST", null, credential(admin.cookie)));
+  const previewCredential = `${credential(admin.cookie)}; ${credential(preview.cookie)}`;
+  const started = await start(event("POST", null, previewCredential));
   assert.equal(started.statusCode, 201);
-  const cookie = started.headers["set-cookie"].split(";")[0];
-  assert.match(cookie, /^jingeehas_session=/);
+  const cookie = `${previewCredential}; ${credential(started.headers["set-cookie"])}`;
+  assert.match(cookie, /jingeehas_session=/);
   const sessionBody = JSON.parse(started.body);
   assert.match(sessionBody.sessionId, /^ws_/);
   const safetyCheckId = "sc-contract";
@@ -61,8 +70,8 @@ function event(httpMethod, body, cookie = "", query = {}) {
   const duplicateDeletion = await deletion(event("POST", { assessmentId }, cookie));
   assert.equal(JSON.parse(duplicateDeletion.body).requestId, JSON.parse(deletionResult.body).requestId);
 
-  const other = await start(event("POST"));
-  const otherCookie = other.headers["set-cookie"].split(";")[0];
+  const other = await start(event("POST", null, previewCredential));
+  const otherCookie = `${previewCredential}; ${credential(other.headers["set-cookie"])}`;
   const denied = await report(event("GET", null, otherCookie, { assessmentId }));
   assert.equal(denied.statusCode, 404);
 
