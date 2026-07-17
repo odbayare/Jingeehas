@@ -5,6 +5,7 @@ const { QUESTIONS } = require("../questions.js");
 const { mappingCoverage } = require("../netlify/functions/_lib/report-signals.js");
 const { buildEvidence, evidenceQuality, buildFullReport, publicReport } = require("../netlify/functions/_lib/report.js");
 const fixtures = require("./fixtures/report-gold-profiles.js");
+const forbiddenPublicTerms = ["шилжилтийн саад", "Зангуу", "Доод хувилбар", "доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "биеийн дурдсан нөхцөл"];
 
 const rows = answers => Object.entries(answers).map(([questionId, value]) => ({ questionId, value }));
 const reportFor = answers => buildFullReport(buildEvidence(rows(answers)), new Date("2026-07-17T00:00:00Z"));
@@ -47,6 +48,7 @@ for (const fixture of fixtures) {
   assert(!publicText.includes("өдөр тутмын хэв маяг"));
   assert(!/Итгэлцлийн түвшин|confidence|\d+%/.test(publicText));
   assert(!/\$\{label\}-(тэй|той)/.test(publicText));
+  for (const phrase of forbiddenPublicTerms) assert(!publicText.includes(phrase), `${fixture.name}: forbidden public label ${phrase}`);
   const profileSentences = substantiveSentences(publicReport(report));
   assert.equal(profileSentences.length, new Set(profileSentences).size, `${fixture.name}: repeated substantive sentence`);
   for (const phrase of fixture.prohibited) assert(!publicText.includes(phrase), `${fixture.name}: prohibited guidance ${phrase}`);
@@ -61,20 +63,28 @@ const transition = reportFor(fixtures.find(item => item.name === "sustained move
 assert(!transition.influencingPatterns.some(item => item.id === "low_movement"), "low movement must not be a psychological or behavioral pattern");
 assert(transition.contextualFactors.some(item => item.id === "low_movement"), "low movement must remain a contextual influencing factor");
 assert(transition.influencingPatterns.every(item => item.category !== "psychological"), "this profile does not support a psychological pattern");
-assert(transition.protectiveSynthesis.includes("гол саад болж харагдсангүй"));
-assert(transition.protectiveInterpretation.includes("давуу талыг харуулна"));
+assert.equal(transition.protectiveSectionSummary, "Та өлсөх, цадах мэдрэмжээ харьцангуй сайн анзаардаг бөгөөд стресс, нойр, орчны хоолны өдөөлт таны хооллолтыг тогтмол алдагдуулдаг шинж харагдсангүй. Мөн өмнөх аргаа нэг жилээс урт хугацаанд хэрэгжүүлж, эхний үр дүн гаргаж чадсан нь өөрчлөлтийг тууштай барих чадвартайг харуулна.");
+assert.equal(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").title, "Арга тасарсны дараа үр дүнгээ хадгалах хувилбаргүй үлдэх");
+assert.equal(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").evidenceSummary, "Та өмнөх хөдөлгөөнд суурилсан аргаа нэг жилээс урт хугацаанд хэрэгжүүлж, эхний үед жингээ бууруулж чаджээ. Харин арга зогссоны дараа жин буцсан бөгөөд дараагийн хувилбарыг тогтвортой үргэлжлүүлэхэд цагийн хуваарь болон зардал саад болсон байна.");
+assert.equal(transition.contextualFactors.find(item => item.id === "low_movement").evidenceSummary, "Та өдрийн ихэнх хугацааг суугаа өнгөрөөдөг бөгөөд зорчих хэлбэр тань өдөр тутмын хөдөлгөөнийг төдийлөн нэмэгдүүлдэггүй байна.");
 assert(transition.previousAttemptAnalysis.summary.includes("нэг жилээс урт"));
 assert(transition.previousAttemptAnalysis.summary.includes("гэмтэл"));
 assert(transition.previousAttemptAnalysis.interpretation.includes("тууштай байх чадвар"));
 assert(transition.professionalGuidance.includes("Хэрэв даралт сүүлийн үед давтан хэвийн бус"));
 assert(transition.urgentGuidance.includes("яаралтай тусламж"));
 assert.notEqual(transition.prioritizedStartingAction.recommendationId, "professional_check");
-assert.equal(transition.prioritizedStartingAction.plan.duration, "Эхний 7 хоногт туршина");
-assert(transition.prioritizedStartingAction.plan.costBoundary.includes("төлбөр"));
-assert(transition.prioritizedStartingAction.plan.injuryBoundary.includes("зовиур"));
+assert.equal(transition.prioritizedStartingAction.plan.duration, "14 хоног");
+assert(transition.prioritizedStartingAction.plan.additionalCost.includes("төлбөр"));
+assert(transition.prioritizedStartingAction.plan.injuryBoundary.includes("Өмнөх гэмтэлтэй холбоотой"));
 assert(transition.prioritizedStartingAction.plan.anchor.includes("тогтвортой давтагддаг"));
+assert(transition.prioritizedStartingAction.plan.frequency.includes("дор хаяж 4"));
 assert(transition.prioritizedStartingAction.plan.record.includes("минут"));
+assert(transition.prioritizedStartingAction.plan.success.includes("дор хаяж 6"));
+assert(transition.prioritizedStartingAction.plan.fallback.includes("5 минут"));
 assert(transition.prioritizedStartingAction.plan.maintenanceRule.includes("давхар нөхөхгүй"));
+const transitionPublicText = JSON.stringify(publicReport(transition));
+assert.equal(transitionPublicText.split("Та өлсөх, цадах мэдрэмжээ харьцангуй сайн анзаардаг").length - 1, 1, "protective synthesis must appear once");
+assert(!/Цагийн хуваарь саад болсон,|Зардал саад болсон,|Гэмтэл саад болсон,/.test(transitionPublicText), "evidence must be a narrative, not comma-separated fragments");
 const rejectedMeta = ["хангалттай дэмжигдсэн", "зэрэг дэмжигдээгүй", "Зохиомол харилцан холбоо", "дангаараа тусдаа хэв маяг", "дангаараа шинэ хэв маяг"];
 for (const phrase of rejectedMeta) assert(!JSON.stringify(publicReport(transition)).includes(phrase), `report leaked engine language: ${phrase}`);
 
@@ -90,6 +100,8 @@ const withInjuryText = JSON.stringify(publicReport(withInjury));
 assert(!/хуучин гэмт|гэмтэл|өвдөлт|Зовиур/.test(withoutInjuryText), "injury language requires injury evidence");
 assert(/гэмтэл|өвдөлт|Зовиур/.test(withInjuryText), "explicit injury evidence must change injury guidance");
 assert.notEqual(withoutInjuryText, withInjuryText, "injury evidence must materially change the report");
+assert(!withoutInjury.contextualFactors.some(item => item.id === "injury_or_pain_barrier"), "injury context requires injury evidence");
+assert(withInjury.contextualFactors.some(item => item.id === "injury_or_pain_barrier" && item.title === "Өмнөх гэмтэл хөдөлгөөнд нөлөөлсөн нь"), "injury context heading must use approved copy");
 
 const withoutCost = reportFor(genericTransitionAnswers);
 const withCost = reportFor({ ...genericTransitionAnswers, "Q-METHOD-BARRIERS": ["Үр дүн удаан харагдах", "Зардал"] });
@@ -98,6 +110,8 @@ const withCostText = JSON.stringify(publicReport(withCost));
 assert(!/зардал|төлбөр/i.test(withoutCostText), "cost wording requires explicit cost evidence");
 assert(/зардал|төлбөр/i.test(withCostText), "explicit cost evidence must change cost interpretation");
 assert.notEqual(withoutCostText, withCostText, "cost evidence must materially change the report");
+assert(!Object.hasOwn(withoutCost.prioritizedStartingAction.plan || {}, "additionalCost"), "cost plan field requires explicit cost evidence");
+assert(Object.hasOwn(withCost.prioritizedStartingAction.plan || {}, "additionalCost"), "cost evidence must add the cost plan field");
 
 const withoutSchedule = reportFor(genericTransitionAnswers);
 const withSchedule = reportFor({ ...genericTransitionAnswers, "Q-METHOD-BARRIERS": ["Үр дүн удаан харагдах", "Цагийн хуваарь"] });
@@ -106,6 +120,8 @@ const withScheduleText = JSON.stringify(publicReport(withSchedule));
 assert(!/цагийн хуваарь|Завгүй/.test(withoutScheduleText), "schedule wording requires explicit schedule evidence");
 assert(/цагийн хуваарь|Завгүй/.test(withScheduleText), "explicit schedule evidence must change schedule interpretation");
 assert.notEqual(withoutScheduleText, withScheduleText, "schedule evidence must materially change the report");
+assert(!withoutSchedule.prioritizedStartingAction.plan?.fallback.includes("Завгүй"), "busy-day wording requires schedule evidence");
+assert(withSchedule.prioritizedStartingAction.plan?.fallback.includes("Завгүй"), "schedule evidence must add busy-day wording");
 
 const withoutRegain = reportFor({ ...genericTransitionAnswers, "Q-METHOD-REGAIN": "Үгүй" });
 assert(!JSON.stringify(publicReport(withoutRegain)).includes("зогссоны дараа жин"), "regain wording requires positive regain evidence");

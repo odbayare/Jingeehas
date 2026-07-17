@@ -47,8 +47,8 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
     "Олон сэрдэг": [signal("poor_sleep_quality", 3)], "Өглөө ядарсан хэвээр байдаг": [signal("sleep_fatigue", 3)]
   } },
   "Q-TRAVEL": { dimension: "movement_context", options: {
-    "Алхдаг": [protective("sedentary_context", -2)], "Нийтийн тээврээр": [neutral], "Машинаар": [signal("sedentary_context", 2)],
-    "Гэрээсээ ажилладаг": [signal("sedentary_context", 1), signal("home_environment_exposure", 1)], "Өөр хэлбэрээр": [neutral]
+    "Алхдаг": [protective("sedentary_context", -2)], "Нийтийн тээврээр": [neutral], "Машинаар": [signal("car_travel_context", 2)],
+    "Гэрээсээ ажилладаг": [signal("home_work_context", 1), signal("home_environment_exposure", 1)], "Өөр хэлбэрээр": [neutral]
   } },
   "Q-MOVEMENT": { dimension: "movement", options: {
     "Маш бага": [signal("low_movement", 3)], "Бага": [signal("low_movement", 2)], "Дунд": [signal("low_movement", -1)], "Их": [protective("low_movement", -3)]

@@ -51,11 +51,24 @@ const multiFactorReport = publicReport(buildFullReport(buildEvidence([
 ])));
 app._test.setState({ ownerPreview: true, report: { fullReport: multiFactorReport } });
 const renderedReport = app.renderForPath("/report");
-assert(renderedReport.includes("Жин хасалтад нөлөөлж буй гол хэв маягууд"));
+assert(renderedReport.includes("Жин хасалтад нөлөөлж буй гол хэв маяг"));
+assert(!renderedReport.includes("Жин хасалтад нөлөөлж буй гол хэв маягууд"));
+assert(renderedReport.includes("Гол хэв маяг өдөр тутмын нөхцөлтэй хэрхэн холбогдож байна вэ?"));
 assert(renderedReport.includes("Сэтгэл хөдлөл ихсэх үед хоол руу татагдах хэв маяг"));
 assert(renderedReport.includes("Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл"));
 assert(renderedReport.includes("Хэв маяг бүрд тохирох өөрчлөлтийн чиглэл"));
 assert(!/Q-[A-Z]|S1-|MC-/.test(renderedReport));
+for (const phrase of ["шилжилтийн саад", "Зангуу", "Доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл"]) assert(!renderedReport.includes(phrase), `forbidden report copy: ${phrase}`);
+
+const pluralReport = publicReport(buildFullReport(buildEvidence([
+  { questionId: "Q-EMOTION", value: "Нэлээд нэмэгддэг" },
+  { questionId: "Q-METHOD-BARRIERS", value: ["Стресс ба сэтгэл хөдлөл", "Өлсөх эсвэл цадах мэдрэмж"] },
+  { questionId: "Q-MEAL-RHYTHM", value: "5 цагаас урт" },
+  { questionId: "Q-HUNGER", value: "Хэт өлссөний дараа анзаардаг" }
+])));
+app._test.setState({ ownerPreview: true, report: { fullReport: pluralReport } });
+const renderedPluralReport = app.renderForPath("/report");
+assert(renderedPluralReport.includes("Жин хасалтад нөлөөлж буй гол хэв маягууд"));
 assert.equal(app.routeName("/choice"), "notFound");
 app._test.resetComingSoon();
 

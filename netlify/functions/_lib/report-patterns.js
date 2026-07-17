@@ -33,7 +33,7 @@ const REPORT_PATTERNS = Object.freeze({
   },
   low_movement: {
     id: "low_movement", category: "contextual", title: "Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл",
-    signals: ["sedentary_context", "low_movement"],
+    signals: ["sedentary_context", "car_travel_context", "home_work_context", "low_movement"],
     minQuestionIds: 2, minDimensions: 2, threshold: 4,
     recommendationId: "one_movement_anchor"
   },
@@ -50,7 +50,7 @@ const REPORT_PATTERNS = Object.freeze({
     recommendationId: "minimum_viable_plan"
   },
   previous_attempt_sustainability: {
-    id: "previous_attempt_sustainability", category: "behavioral", title: "Арга зогссоны дараах үр дүнгээ хадгалах шилжилтийн саад",
+    id: "previous_attempt_sustainability", category: "behavioral", title: "Арга тасарсны дараа үр дүнгээ хадгалах хувилбаргүй үлдэх",
     signals: ["activity_based_method", "medium_duration_attempt", "sustained_attempt", "initial_attempt_success", "short_lived_attempt", "attempt_not_sustained", "weight_regain", "sustainability_barrier", "strict_rule_barrier", "schedule_barrier", "cost_barrier", "access_barrier", "support_barrier"],
     minQuestionIds: 3, minDimensions: 3, threshold: 6,
     recommendationId: "build_maintenance_bridge"

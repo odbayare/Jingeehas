@@ -55,7 +55,7 @@ const SIGNAL_LABELS = Object.freeze({
   meal_gap: "хоолны зай уртассан", irregular_meal_rhythm: "хоолны цаг тогтмол бус байсан", late_hunger_recognition: "өлсөлтийг хэт хүчтэй болсны дараа анзаарсан",
   hunger_recognition_difficulty: "өлсөх дохиог ялгахад хүндрэл байсан", satiety_difficulty: "цадсанаа анзаараад зогсоход хүндрэл байсан", portion_difficulty: "идэх хэмжээг тохируулахад хүндрэл байсан",
   short_sleep: "унтах хугацаа богино байсан", poor_sleep_quality: "нойр тасалдсан", sleep_fatigue: "өглөө ядарсан хэвээр байсан", fatigue_barrier: "ядаргаа эсвэл нойр саад болсон",
-  sedentary_context: "зорчих болон ажлын орчин суугаа байсан", low_movement: "өдрийн нийт хөдөлгөөн бага байсан",
+  sedentary_context: "өдөр тутам алхаж зорчдог", car_travel_context: "машинаар зорчдог", home_work_context: "гэрээсээ ажилладаг", low_movement: "өдрийн нийт хөдөлгөөн бага байсан",
   restrictive_method_current: "одоогийн арга хатуу хязгаарлалт агуулсан", restrictive_method_past: "өмнөх арга хатуу хязгаарлалт агуулсан",
   short_lived_attempt: "өмнөх оролдлого богино үргэлжилсэн", weight_regain: "аргаа зогсоосны дараа жин буцсан", strict_rule_barrier: "хэт хатуу дүрэм саад болсон",
   activity_based_method: "өмнөх арга хөдөлгөөнд тулгуурласан", medium_duration_attempt: "өмнөх арга 6–12 сар үргэлжилсэн", sustained_attempt: "өмнөх аргыг нэг жилээс урт үргэлжлүүлсэн", initial_attempt_success: "эхний үед жин буурсан",
@@ -71,8 +71,8 @@ const RECOMMENDATIONS = Object.freeze({
   fixed_wind_down: { action: "Унтахаас өмнөх арван минутыг нэг тогтмол тайвшрах үйлдэлд зориулна.", reason: "Оройн ачааллыг бага зэрэг бууруулах нь маргаашийн ядаргаа болон амархан сонголт руу орох эрсдэлийг хамтад нь багасгаж болно." },
   one_movement_anchor: { action: "Өдөрт хамгийн тогтвортой давтагддаг нэг үйл явдлын дараа алхалт, сууж хийх хөдөлгөөн эсвэл өөрт эвтэйхэн бага ачааллын хувилбараас нэгийг сонгож туршина.", reason: "Тогтсон нэг хөдөлгөөний зангуу нь дасгалын том төлөвлөгөөнөөс хэрэгжүүлэхэд хялбар." },
   remove_one_strict_rule: { action: "Одоогийн төлөвлөгөөн дэх хамгийн хатуу нэг дүрмийг сонгоод, бүрэн хоригийн оронд урьдчилж тогтоосон уян хувилбараар солино.", reason: "Нэг дүрмийг уян болгох нь бүх төлөвлөгөөг орхих эрсдэлийг бууруулж чадна." },
-  minimum_viable_plan: { action: "Үндсэн төлөвлөгөө багтахгүй нөхцөлд ч хийж чадах нэг хоол эсвэл хөдөлгөөний доод хувилбарыг урьдчилж бичнэ.", reason: "Амьдралын бодит нөхцөлд багтах доод хувилбар тогтвортой байдлыг хамгаална." },
-  build_maintenance_bridge: { action: "Өмнөх аргыг яг хуучнаар нь сэргээхээс илүү өдөр тутамд давтаж болох доод хувилбар болон тасарсан өдрийн буцах дүрмийг урьдчилж тогтооно.", reason: "Ингэснээр эхлэхээс илүү үр дүнгээ хадгалах, тасарсны дараа буцах хэсгийг төлөвлөгөөнд оруулна." }
+  minimum_viable_plan: { action: "Үндсэн төлөвлөгөө багтахгүй нөхцөлд ч хийж чадах нэг хоол эсвэл хөдөлгөөний хялбаршуулсан хувилбарыг урьдчилж бичнэ.", reason: "Амьдралын бодит нөхцөлд багтах хялбаршуулсан хувилбар тогтвортой байдлыг хамгаална." },
+  build_maintenance_bridge: { action: "Өмнөх аргыг яг хуучнаар нь сэргээхээс илүү өдөр тутамд давтаж болох хялбаршуулсан хувилбар болон тасарсан өдрийн буцах дүрмийг урьдчилж тогтооно.", reason: "Ингэснээр эхлэхээс илүү үр дүнгээ хадгалах, тасарсны дараа буцах хэсгийг төлөвлөгөөнд оруулна." }
 });
 
 const INTERACTION_COPY = Object.freeze({
@@ -127,10 +127,4 @@ function protectiveSynthesis(rows = []) {
   return `${sentence.charAt(0).toUpperCase()}${sentence.slice(1)}`;
 }
 
-function protectiveInterpretation(rows = []) {
-  const signals = new Set(rows.map(row => row.signal));
-  if (!["emotional_eating", "environmental_cue_reactivity", "hunger_recognition_difficulty", "satiety_difficulty", "portion_difficulty"].every(signal => signals.has(signal))) return null;
-  return "Эдгээр хариулт нь биеийн өлсөх, цадах дохиогоо ашиглаж, сэтгэл хөдлөл болон орчны өдөөлтөөс үл хамааран хооллолтоо зохицуулж чаддаг давуу талыг харуулна. Дараагийн алхам энэ давуу талыг хэвээр хадгалж, тайланд илүү тод харагдсан саад руу чиглэх нь тохиромжтой.";
-}
-
-module.exports = { PATTERN_COPY, SIGNAL_LABELS, RECOMMENDATIONS, INTERACTION_COPY, PROTECTIVE_COPY, evidenceSentence, protectiveSynthesis, protectiveInterpretation };
+module.exports = { PATTERN_COPY, SIGNAL_LABELS, RECOMMENDATIONS, INTERACTION_COPY, PROTECTIVE_COPY, evidenceSentence, protectiveSynthesis };
