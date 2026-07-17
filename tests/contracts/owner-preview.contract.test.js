@@ -6,6 +6,7 @@ const { setDatabaseForTests } = require("../../netlify/functions/_lib/store.js")
 const { hashPassword, authenticateRole, ADMIN_SESSION } = require("../../netlify/functions/_lib/auth.js");
 const { adminLogin } = require("../../netlify/functions/_lib/advisor.js");
 const { createOwnerPreview, authenticateOwnerPreview } = require("../../netlify/functions/_lib/preview.js");
+const { createSession } = require("../../netlify/functions/_lib/session.js");
 
 const database = new MemoryDatabaseAdapter();
 setDatabaseForTests(database);
@@ -28,6 +29,9 @@ function event(method, cookie = "", body = null) { return { httpMethod: method, 
   const nonOwner = await adminLogin(database, "other@example.com", "other-password-strong");
   const ownerCookie = credential(owner.cookie);
   const nonOwnerCookie = credential(nonOwner.cookie);
+  const existingUser = await createSession(database, now);
+  const existingUserCookie = credential(existingUser.cookie);
+  await database.insert("assessments", { id: "wa-resumable", sessionId: existingUser.session.id, safetyCheckId: "sc-resumable", status: "draft", reportMode: null, safetyRoute: null, createdAt: now.toISOString(), updatedAt: now.toISOString(), completedAt: null });
 
   // Public/incognito and non-owner sessions cannot establish preview access.
   assert.equal((await sessionStart(event("POST"))).statusCode, 401);
@@ -36,10 +40,11 @@ function event(method, cookie = "", body = null) { return { httpMethod: method, 
   assert.equal((await previewStart(event("POST", nonOwnerCookie, {}))).statusCode, 403);
 
   // The owner creates a server-stored, HttpOnly two-hour preview session.
-  const started = await previewStart(event("POST", ownerCookie, {}));
+  const started = await previewStart(event("POST", `${ownerCookie}; ${existingUserCookie}`, {}));
   assert.equal(started.statusCode, 201);
-  assert.equal(started.multiValueHeaders["set-cookie"].length, 2);
-  const previewSetCookie = started.multiValueHeaders["set-cookie"][0];
+  assert.equal(JSON.parse(started.body).resumeDraft, true);
+  assert.equal(started.headers["set-cookie"].includes("jingeehas_session="), false, "starting a preview must not clear the resumable assessment session");
+  const previewSetCookie = started.headers["set-cookie"];
   assert.match(previewSetCookie, /HttpOnly/);
   assert.match(previewSetCookie, /Secure/);
   assert.match(previewSetCookie, /SameSite=Strict/);
@@ -56,7 +61,7 @@ function event(method, cookie = "", body = null) { return { httpMethod: method, 
 
   // A second preview revokes the first; only one remains active.
   const second = await previewStart(event("POST", ownerCookie, {}));
-  const secondPreviewCookie = credential(second.multiValueHeaders["set-cookie"][0]);
+  const secondPreviewCookie = credential(second.headers["set-cookie"]);
   const secondAccess = `${ownerCookie}; ${secondPreviewCookie}`;
   assert.equal((await previewStatus(event("GET", previewAccess))).statusCode, 401);
   assert.equal((await previewStatus(event("GET", secondAccess))).statusCode, 200);
@@ -64,9 +69,9 @@ function event(method, cookie = "", body = null) { return { httpMethod: method, 
   assert.equal(previewRows.filter(row => !row.revokedAt).length, 1);
 
   // Preview is required before an ordinary assessment session can start.
-  const userStarted = await sessionStart(event("POST", secondAccess));
-  assert.equal(userStarted.statusCode, 201);
-  assert.match(userStarted.headers["set-cookie"], /^jingeehas_session=/);
+  const userStarted = await sessionStart(event("POST", `${secondAccess}; ${existingUserCookie}`));
+  assert.equal(userStarted.statusCode, 200);
+  assert.equal(JSON.parse(userStarted.body).resumed, true);
 
   // Expiry is checked server-side.
   const activePreview = previewRows.find(row => !row.revokedAt);
@@ -75,13 +80,13 @@ function event(method, cookie = "", body = null) { return { httpMethod: method, 
 
   // Explicit revocation blocks access.
   const third = await previewStart(event("POST", ownerCookie, {}));
-  const thirdPreviewCookie = credential(third.multiValueHeaders["set-cookie"][0]);
+  const thirdPreviewCookie = credential(third.headers["set-cookie"]);
   assert.equal((await previewRevoke(event("POST", ownerCookie, {}))).statusCode, 200);
   assert.equal((await previewStatus(event("GET", `${ownerCookie}; ${thirdPreviewCookie}`))).statusCode, 401);
 
   // Logout revokes the preview and its parent admin session.
   const fourth = await previewStart(event("POST", ownerCookie, {}));
-  const fourthPreviewCookie = credential(fourth.multiValueHeaders["set-cookie"][0]);
+  const fourthPreviewCookie = credential(fourth.headers["set-cookie"]);
   const logout = await adminLogout(event("POST", ownerCookie, {}));
   assert.equal(logout.statusCode, 200);
   assert.equal(logout.multiValueHeaders["set-cookie"].length, 2);

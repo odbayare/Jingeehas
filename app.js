@@ -362,10 +362,14 @@ async function advisorInviteSubmit(form) { const result = await api("/.netlify/f
 async function adminLoginSubmit(form) { const result = await api("/.netlify/functions/admin-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.admin.authenticated = true; state.admin.owner = result.owner === true; state.admin.error = ""; render(); }
 async function adminAdvisorSubmit(form) { const input = formObject(form); input.commissionAmount = Number(input.commissionAmount); state.admin.created = await api("/.netlify/functions/admin-advisor-create", { method: "POST", body: JSON.stringify(input) }); render(); }
 async function startOwnerPreview() {
-  await api("/.netlify/functions/admin-preview-start", { method: "POST", body: "{}" });
+  const preview = await api("/.netlify/functions/admin-preview-start", { method: "POST", body: "{}" });
   const fresh = createState();
   state = { ...fresh, admin: state.admin, ownerPreview: true };
-  navigate("/assessment/start");
+  if (preview.resumeDraft) {
+    window.history.pushState({}, "", "/assessment/questions");
+    await restoreServerState();
+    render();
+  } else navigate("/assessment/start");
 }
 async function revokeOwnerPreview() { await api("/.netlify/functions/admin-preview-revoke", { method: "POST", body: "{}" }); state.ownerPreview = false; render(); }
 async function restoreServerState() {
