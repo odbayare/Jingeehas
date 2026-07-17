@@ -63,7 +63,8 @@ Payment UI states: `QPay нэхэмжлэл үүсгэж байна…`; `Төл
 **Owner decision:** branded support channel and refund principle supplied and implemented.
 **Legal review status:** OWNER DEFAULTS IMPLEMENTED; EXTERNAL COUNSEL REVIEW NOT CLAIMED.
 **Required change:** `support@jingeehas.fit` нь одоогийн Custom MX тохиргоотой Namecheap forwarding хэлбэрээр зэрэгцэн ажиллахгүй тул mailbox provider тохируулга хүлээгдэж байна. Түр хугацаанд баталгаажсан, тогтмол хянагддаг эзэмшигчийн имэйлийг нийтэд ашиглана.
-**Final approval status:** DELIVERY CERTIFICATION PENDING.
+**Delivery certification:** a real Jingeehas message reached the authenticated monitored inbox on 2026-07-17 and the certification message was removed afterward. The destination address and delivery credential are excluded from this report.
+**Final approval status:** PASS.
 
 ## Report recovery
 
