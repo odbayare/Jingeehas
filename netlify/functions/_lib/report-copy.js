@@ -70,10 +70,6 @@ const SENTENCE_TEMPLATES = Object.freeze({
   overview_schedule: { requiredSignals: ["schedule_barrier"], text: "Дараагийн хувилбар цагийн хуваарьт бодитоор багтах шаардлагатай." },
   overview_cost: { requiredSignals: ["cost_barrier"], text: "Нэмэлт зардал шаардахгүй байх нь төлөвлөгөөг үргэлжлүүлэхэд чухал." },
   overview_injury: { requiredContexts: ["injury_or_pain_evidence"], text: "Өмнөх гэмтлийг сэдрээхгүй хүрээнд сонголт хийх шаардлагатай." },
-  overview_protective_emotion: { requiredProtectiveSignals: ["emotional_eating"], text: "Сэтгэл хөдлөлийн нөлөөгөөр идэх нь одоогийн гол саад болж харагдсангүй." },
-  overview_protective_body: { requiredProtectiveSignals: ["hunger_recognition_difficulty", "satiety_difficulty"], text: "Өлсөх, цадах мэдрэмжээ анзаарах чадвар тань харьцангуй сайн байна." },
-  overview_protective_cue: { requiredProtectiveSignals: ["environmental_cue_reactivity"], text: "Орчны хоолны өдөөлт таны сонголтыг тогтмол алдагдуулдаг шинж илрээгүй." },
-  overview_protective_sleep: { requiredProtectiveSignals: ["short_sleep", "poor_sleep_quality"], text: "Нойрны хүндрэл хооллолтын гол саад болж харагдсангүй." },
   overview_protective_core: { requiredProtectiveSignals: ["emotional_eating", "hunger_recognition_difficulty", "satiety_difficulty"], text: "Сэтгэл хөдлөлийн нөлөөгөөр идэх эсвэл өлсөх, цадах дохиогоо анзаарах хүндрэл нь гол саад болж харагдсангүй." },
   overview_strategy_direction: { requiredPatterns: ["previous_attempt_sustainability"], requiredProtectiveSignals: ["emotional_eating", "hunger_recognition_difficulty", "satiety_difficulty"], text: "Тиймээс хооллолтыг шинээр хязгаарлахаас илүү өдөр тутам үргэлжлүүлж болох төлөвлөгөөнд төвлөрөх нь таны хариултад илүү нийцнэ." },
 
@@ -110,7 +106,6 @@ const SENTENCE_TEMPLATES = Object.freeze({
 
   recommendation_schedule_fit: { requiredSignals: ["schedule_barrier"], text: "Шинэ төлөвлөгөө завгүй өдөр ч хэрэгжихээр цагийн хуваарьт багтах хэрэгтэй." },
   recommendation_cost_fit: { requiredSignals: ["cost_barrier"], text: "Тогтмол үргэлжлүүлэхийн тулд нэмэлт зардал шаардахгүй хувилбар сонгох нь тохиромжтой." },
-  recommendation_injury_fit: { requiredContexts: ["injury_or_pain_evidence"], text: "Хөдөлгөөний сонголтыг өмнөх гэмтлийг сэдрээхгүй хүрээнд хийнэ." },
 
   plan_option_injury: { requiredPatterns: ["previous_attempt_sustainability"], requiredContexts: ["injury_or_pain_evidence"], text: "Өмнөх гэмтлийг сэдрээхгүй хүрээнд бага ачааллын алхалт, сууж хийх хөдөлгөөн эсвэл өөрт эвтэйхэн ижил түвшний хөдөлгөөнөөс нэгийг сонгоно." },
   plan_option_general: { requiredPatterns: ["previous_attempt_sustainability"], forbiddenContexts: ["injury_or_pain_evidence"], text: "Бага ачааллын алхалт, сууж хийх хөдөлгөөн эсвэл өөрт эвтэйхэн ижил түвшний хөдөлгөөнөөс нэгийг сонгоно." },
@@ -127,21 +122,6 @@ const SENTENCE_TEMPLATES = Object.freeze({
   guidance_medication: { requiredContexts: ["unsupervised_medication"], text: "Эмчийн хяналтгүй эм хэрэглэсэн бол дахин хэрэглэхээсээ өмнө эмч эсвэл эм зүйчтэй зөвлөлдөнө үү." },
   guidance_reproductive: { requiredContexts: ["reproductive_followup"], text: "Нөхөн үржихүйн эсвэл мөчлөгийн нөхцөлтэй холбоотой өөрчлөлт байгаа бол жин бууруулах том төлөвлөгөөг мэргэжлийн хүнтэй тохируулна уу." },
   guidance_urgent_blood_pressure: { requiredContexts: ["blood_pressure_followup"], text: "Ухаан балартах, цээжээр хүчтэй өвдөх, амьсгал огцом давчдах зэрэг яаралтай шинж илэрвэл энэ төлөвлөгөөг үргэлжлүүлэхгүй, яаралтай тусламж авна уу." }
-});
-
-const SIGNAL_LABELS = Object.freeze({
-  emotional_eating: "стресстэй үед идэх хүсэл өөрчлөгдсөн", emotional_barrier: "сэтгэл хөдлөл тогтвортой байдалд саад болсон",
-  environmental_cue_reactivity: "өлсөөгүй үед орчны дохио нөлөөлсөн", environmental_barrier: "гэр бүл эсвэл орчны нөлөө саад болсон",
-  environmental_portion_trigger: "зарим хүнсний хэмжээг тохируулахад хэцүү байсан", home_environment_exposure: "гэрийн орчинд хоол ойр байсан",
-  meal_gap: "хоолны зай уртассан", irregular_meal_rhythm: "хоолны цаг тогтмол бус байсан", late_hunger_recognition: "өлсөлтийг хэт хүчтэй болсны дараа анзаарсан",
-  hunger_recognition_difficulty: "өлсөх дохиог ялгахад хүндрэл байсан", satiety_difficulty: "цадсанаа анзаараад зогсоход хүндрэл байсан", portion_difficulty: "идэх хэмжээг тохируулахад хүндрэл байсан",
-  short_sleep: "унтах хугацаа богино байсан", poor_sleep_quality: "нойр тасалдсан", sleep_fatigue: "өглөө ядарсан хэвээр байсан", fatigue_barrier: "ядаргаа эсвэл нойр саад болсон",
-  sedentary_context: "өдөр тутам алхаж зорчдог", car_travel_context: "машинаар зорчдог", home_work_context: "гэрээсээ ажилладаг", low_movement: "өдрийн нийт хөдөлгөөн бага байсан",
-  restrictive_method_current: "одоогийн арга хатуу хязгаарлалт агуулсан", restrictive_method_past: "өмнөх арга хатуу хязгаарлалт агуулсан",
-  short_lived_attempt: "өмнөх оролдлого богино үргэлжилсэн", weight_regain: "аргаа зогсоосны дараа жин буцсан", strict_rule_barrier: "хэт хатуу дүрэм саад болсон",
-  activity_based_method: "өмнөх арга хөдөлгөөнд тулгуурласан", medium_duration_attempt: "өмнөх арга 6–12 сар үргэлжилсэн", sustained_attempt: "өмнөх аргыг нэг жилээс урт үргэлжлүүлсэн", initial_attempt_success: "эхний үед жин буурсан",
-  schedule_barrier: "цагийн хуваарь саад болсон", cost_barrier: "зардал саад болсон", injury_or_pain_barrier: "өвдөлт эсвэл хөдөлгөөний хязгаарлалт байсан", access_barrier: "хүртээмж саад болсон", support_barrier: "шаардлагатай дэмжлэг хүрэлцээгүй",
-  attempt_not_sustained: "өмнөх оролдлогын үр дүн тогтоогүй", sustainability_barrier: "үр дүн удаан харагдах нь саад болсон"
 });
 
 const RECOMMENDATIONS = Object.freeze({
