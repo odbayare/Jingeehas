@@ -270,7 +270,7 @@ create index assessments_session_idx on assessments (session_id, updated_at desc
 create index assessment_sessions_session_idx on assessment_sessions (session_id, created_at desc);
 create index payments_session_assessment_idx on payments (session_id, assessment_id, product_code, created_at desc);
 create index payments_status_expiry_idx on payments (status, expires_at);
-create index payments_replacement_for_payment_idx on payments (replacement_for_payment_id) where replacement_for_payment_id is not null;
+create index payments_replacement_for_payment_idx on payments (replacement_for_payment_id);
 create unique index payments_one_active_invoice_attempt_uidx on payments (session_id, assessment_id, product_code)
   where status in ('creating', 'create_unknown', 'reconciling', 'pending', 'checking', 'check_error');
 create index recovery_contacts_hash_idx on recovery_contacts (type, contact_hash);
@@ -289,7 +289,7 @@ create index advisor_clients_contact_idx on advisor_clients (expected_contact_ha
 create index advisor_commissions_dashboard_idx on advisor_commissions (coach_id, status, created_at desc);
 create index advisor_access_log_idx on advisor_report_access_logs (coach_id, created_at desc);
 create index admin_sessions_token_idx on admin_sessions (token_hash) where revoked_at is null;
-create index admin_sessions_parent_session_idx on admin_sessions (parent_session_id) where parent_session_id is not null;
+create index admin_sessions_parent_session_idx on admin_sessions (parent_session_id);
 create unique index admin_owner_preview_active_uidx on admin_sessions (admin_id) where purpose = 'preview' and revoked_at is null;
 create index admin_audit_log_idx on admin_audit_logs (admin_id, created_at desc);
 create unique index deletion_request_pending_idx on data_deletion_requests (assessment_id) where status = 'pending';
