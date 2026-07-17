@@ -16,7 +16,7 @@ for (const metadata of ["canonical", "og:image", "twitter:image", "favicon.svg",
 assert(fs.statSync(path.join(root, "assets", "social-preview.png")).size > 10000);
 assert.equal(fs.readFileSync(path.join(root, "assets", "social-preview.png")).subarray(1, 4).toString(), "PNG");
 
-for (const route of ["/", "/methodology", "/assessment/start", "/assessment/questions", "/report", "/recovery", "/advisor/login", "/advisor/dashboard", "/admin", "/privacy", "/terms", "/support", "/data-deletion"]) assert.notEqual(app.routeName(route), "notFound", route);
+for (const route of ["/", "/methodology", "/assessment/start", "/assessment/contact", "/assessment/questions", "/assessment/completed", "/assessment/payment", "/report", "/recovery", "/advisor/login", "/advisor/dashboard", "/admin", "/privacy", "/terms", "/support", "/data-deletion"]) assert.notEqual(app.routeName(route), "notFound", route);
 app._test.setComingSoon(false);
 assert(app.renderForPath("/privacy").includes("Байнгын зочны мөрдөлт одоогоор эхлээгүй"));
 assert(app.renderForPath("/terms").includes("9,900₮"));

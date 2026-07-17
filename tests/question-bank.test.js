@@ -24,6 +24,24 @@ assert(landing.includes("Жин хасахад тань тохирох дөт х
 assert(!landing.includes("Үе 1"));
 assert(!app.renderForPath("/assessment/questions").includes("эхний хэв маяг"));
 assert(app.renderForPath("/assessment/questions").includes("Таны хариултын зураглал тест дууссаны дараа гарна."));
+app._test.setState({ ownerPreview: true, assessmentStatus: "complete", assessmentId: "test-assessment" });
+const completion = app.renderForPath("/assessment/completed");
+assert(completion.includes("Таны хариултуудыг цуглуулж дууслаа"));
+assert(completion.includes("Дэлгэрэнгүй тайлангаа авах"));
+assert(completion.includes("Бүрэн тайлангийн үнэ: 9,900₮"));
+assert(!completion.includes("QPay нэхэмжлэл үүсгэх"));
+assert(!completion.includes("Төлбөр ба тайлан сэргээх мэдээлэл"));
+assert(!completion.includes("test-assessment"));
+app._test.setState({ ownerPreview: true, assessmentStatus: "complete", assessmentId: "test-assessment", busy: true });
+const transitioningCompletion = app.renderForPath("/assessment/completed");
+assert(transitioningCompletion.includes("Үргэлжлүүлж байна..."));
+assert(transitioningCompletion.includes("disabled"));
+app._test.setState({ ownerPreview: true, assessmentStatus: "complete", assessmentId: "test-assessment" });
+const paymentPage = app.renderForPath("/assessment/payment");
+assert(paymentPage.includes("Бүрэн тайлангаа нээх"));
+assert(paymentPage.includes("Үнэ: 9,900₮"));
+assert(paymentPage.includes("9,900₮-ийн QPay нэхэмжлэл үүсгэх"));
+assert(!paymentPage.includes("тайлан сэргээх"));
 assert.equal(app.routeName("/choice"), "notFound");
 app._test.resetComingSoon();
 

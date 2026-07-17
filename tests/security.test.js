@@ -32,5 +32,7 @@ assert(authSource.includes("scrypt"));
 assert(authSource.includes("HttpOnly"));
 assert(authSource.includes("SameSite=Strict"));
 assert.equal(app.WEIGHT_TEST_COMING_SOON_MODE, true);
-assert(app.renderForPath("/assessment/start").includes("Тун удахгүй"));
+for (const protectedRoute of ["/assessment/start", "/assessment/contact", "/assessment/questions", "/assessment/completed", "/assessment/payment"]) {
+  assert(app.renderForPath(protectedRoute).includes("Тун удахгүй"), protectedRoute);
+}
 console.log("production security tests passed");

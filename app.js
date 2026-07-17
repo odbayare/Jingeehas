@@ -32,12 +32,12 @@ function escapeAttribute(value) { return escapeHtml(value).replace(/`/g, "&#96;"
 function supportContactLink() { return `<a href="mailto:${escapeAttribute(SUPPORT_EMAIL)}">${escapeHtml(SUPPORT_EMAIL)}</a>`; }
 
 const ROUTES = Object.freeze({
-  "/": "landing", "/about": "about", "/methodology": "methodology", "/assessment/start": "assessmentStart", "/assessment/payment": "payment",
-  "/assessment/questions": "questions", "/report": "report", "/recovery": "recovery"
+  "/": "landing", "/about": "about", "/methodology": "methodology", "/assessment/start": "assessmentStart", "/assessment/contact": "assessmentContact",
+  "/assessment/questions": "questions", "/assessment/completed": "assessmentCompleted", "/assessment/payment": "payment", "/report": "report", "/recovery": "recovery"
   , "/advisor/login": "advisorLogin", "/advisor/dashboard": "advisorDashboard", "/admin": "admin",
   "/privacy": "privacy", "/terms": "terms", "/support": "support", "/data-deletion": "dataDeletion"
 });
-const OWNER_PREVIEW_ROUTES = new Set(["assessmentStart", "payment", "questions", "report", "recovery", "dataDeletion"]);
+const OWNER_PREVIEW_ROUTES = new Set(["assessmentStart", "assessmentContact", "assessmentCompleted", "payment", "questions", "report", "recovery", "dataDeletion"]);
 function routeName(pathname) { return ROUTES[String(pathname || "/").replace(/\/+$/, "") || "/"] || "notFound"; }
 function navigation() { return `<nav class="site-nav" aria-label="Үндсэн цэс"><a href="/" data-route>Нүүр</a><a href="/about" data-route>Тестийн тухай</a><a href="/recovery" data-route>Тайлан сэргээх</a></nav>`; }
 function footer() { return `<footer class="site-footer"><p>${PRODUCT.name}</p><nav aria-label="Арга зүй, хууль, тусламжийн холбоос"><a href="/methodology" data-route>Арга зүй</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/support" data-route>Төлбөрийн тусламж</a> · <a href="/data-deletion" data-route>Өгөгдөл устгах хүсэлт</a></nav><p>Дэмжлэг: ${supportContactLink()}</p></footer>`; }
@@ -135,22 +135,35 @@ function radioGroup(name, legend, options, required = false) {
 function checkboxGroup(name, legend, options) {
   return `<fieldset><legend>${escapeHtml(legend)}</legend>${options.map(option => `<label class="option-label"><input type="checkbox" name="${escapeAttribute(name)}" value="${escapeAttribute(option)}"><span>${escapeHtml(option)}</span></label>`).join("")}</fieldset>`;
 }
+function renderAssessmentContact() {
+  return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тайлан авах мэдээллээ хадгалах</h1>
+    ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд энэ тест үнэлгээг санал болгосон байна.</p><form id="consent-form"><fieldset><legend>Тайлан хуваалцах зөвшөөрөл</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Би тест үнэлгээний бүрэн тайланг ${escapeHtml(state.invitation.advisorName || "Зөвлөх")} зөвлөх харахыг зөвшөөрч байна.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Миний асуулт бүрд өгсөн түүхий хариултыг тусад нь харуулахгүй.</p><button class="button" type="submit">Сонголтоо баталгаажуулах</button></form></section>` : `<form id="contact-form" novalidate><p>Имэйл хаягаа оруулна уу. Бүрэн тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.</p>
+      <label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email" required></label>
+      <p id="contact-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Мэдээллээ хадгалаад тест рүү үргэлжлүүлэх</button></form>`}</main>${footer()}</div>`;
+}
+function renderAssessmentCompleted() {
+  const completed = state.assessmentStatus === "complete";
+  return `<div class="page">${navigation()}<main class="content-card completion-card"><p class="completion-mark" aria-hidden="true">✓</p><h1 id="page-title" tabindex="-1">Таны хариултуудыг цуглуулж дууслаа</h1>
+    <p>Таны өгсөн хариултуудад үндэслэн жин хасахад тань нөлөөлж буй сэтгэлзүйн хэв маяг, далд зуршил болон тогтвортой өөрчлөлт хийхэд саад болж буй хүчин зүйлсийг нэгтгэн тайлан боловсруулна.</p>
+    <p>Дэлгэрэнгүй тайландаа та:</p><ul><li>жин хасалтад саад болж буй гол сэтгэлзүйн шалтгаанууд;</li><li>хооллолт, сэтгэл хөдлөл, зуршлын холбоо;</li><li>өмнөх оролдлогууд яагаад тогтвортой үргэлжлээгүй байж болох шалтгаан;</li><li>танд илүү тохирох өөрчлөлтийн чиглэл</li></ul><p>зэргийг харна.</p>
+    <p class="price">Бүрэн тайлангийн үнэ: ${PRODUCT.displayPrice}</p>
+    ${completed ? `<button class="button" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "Үргэлжлүүлж байна..." : "Дэлгэрэнгүй тайлангаа авах"}</button>` : `<p class="notice">Тест үнэлгээг бүрэн дуусгасны дараа тайлангийн төлбөр рүү үргэлжлүүлнэ.</p>`}
+    <p class="muted">Төлбөр төлсний дараа тайлан тань шууд нээгдэнэ.</p></main>${footer()}</div>`;
+}
 function renderPayment() {
   const payment = state.payment || { status: "idle" };
   const statusCopy = payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY[payment.status] || "";
   const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
   const paymentReady = state.assessmentStatus === "complete";
-  return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөр ба тайлан сэргээх мэдээлэл</h1>
-    ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд энэ тест үнэлгээг санал болгосон байна.</p><form id="consent-form"><fieldset><legend>Тайлан хуваалцах зөвшөөрөл</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Би тест үнэлгээний бүрэн тайланг ${escapeHtml(state.invitation.advisorName || "Зөвлөх")} зөвлөх харахыг зөвшөөрч байна.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Миний асуулт бүрд өгсөн түүхий хариултыг тусад нь харуулахгүй.</p><button class="button" type="submit">Сонголтоо баталгаажуулах</button></form></section>` : !state.assessmentId ? `<form id="contact-form" novalidate><p>Имэйл хаягаа оруулна уу. Төлбөртэй бүрэн тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.</p>
-      <label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email" required></label>
-      <p id="contact-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Мэдээллээ хадгалаад тест рүү үргэлжлүүлэх</button></form>` : `
+  return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Бүрэн тайлангаа нээх</h1>
+      <p>Жин хасалтад тань нөлөөлж буй сэтгэлзүйн шалтгаан, хэв маяг болон танд тохирох өөрчлөлтийн чиглэлийг агуулсан бүрэн тайлангаа нээнэ үү.</p>
       <section aria-labelledby="payment-title"><h2 id="payment-title">QPay нэхэмжлэл</h2><p class="price">Үнэ: ${PRODUCT.displayPrice}</p>
         ${paymentReady ? "" : `<p class="notice">QPay төлбөрийн товч тест үнэлгээг бүрэн дуусгасны дараа нээгдэнэ.</p>`}
         <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
         ${payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
         ${payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа: <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(new Date(payment.expiresAt).toLocaleString("mn-MN"))}</time></p>` : ""}
         ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">${payment.status === "paid_but_not_unlocked" ? "Тайлангийн эрхээ дахин нээх" : "Төлбөр шалгах"}</button>` : payment.status === "paid" ? `<a class="button" href="/report" data-route>Бүрэн тайлан харах</a>` : !paymentReady || createBlocked ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
-      </section>`}</main>${footer()}</div>`;
+      </section></main>${footer()}</div>`;
 }
 function renderQuestionInput(question, value) {
   const validity = `aria-invalid="${state.validationError ? "true" : "false"}" aria-describedby="question-error"`;
@@ -170,7 +183,7 @@ function renderQuestions() {
     <p class="muted">Өөрт хамгийн ойр хариултаа сонгоорой. Таны хариултын зураглал тест дууссаны дараа гарна.</p>
     <form id="question-form" novalidate aria-busy="${state.busy ? "true" : "false"}">${renderQuestionInput(question, state.answers[question.id])}<p id="question-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.validationError)}</p>
       <div class="save-status" role="status" aria-live="polite">${state.busy ? `<span class="spinner" aria-hidden="true"></span>${state.slowSave ? "Хариултыг хадгалж байна..." : "Хадгалж байна..."}` : ""}</div>
-      <div class="actions">${state.questionIndex > 0 ? `<button class="button secondary" type="button" data-action="previous-question" ${state.busy ? "disabled" : ""}>Буцах</button>` : ""}<button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Хадгалж байна..." : state.questionIndex === questions.length - 1 ? "Тайлан харах" : "Үргэлжлүүлэх"}</button></div>
+      <div class="actions">${state.questionIndex > 0 ? `<button class="button secondary" type="button" data-action="previous-question" ${state.busy ? "disabled" : ""}>Буцах</button>` : ""}<button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Хадгалж байна..." : state.questionIndex === questions.length - 1 ? "Тестийг дуусгах" : "Үргэлжлүүлэх"}</button></div>
     </form></main>${footer()}</div>`;
 }
 function renderReport() {
@@ -218,6 +231,8 @@ function renderForPath(pathname) {
   if (route === "methodology") return renderMethodology();
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route) && !state.ownerPreview) return renderComingSoon();
   if (route === "assessmentStart") return renderSafetyGate();
+  if (route === "assessmentContact") return renderAssessmentContact();
+  if (route === "assessmentCompleted") return renderAssessmentCompleted();
   if (route === "payment") return renderPayment();
   if (route === "questions") return renderQuestions();
   if (route === "report") return renderReport();
@@ -254,7 +269,7 @@ async function submitSafety(form) {
   await ensureSession();
   state.safetyResult = await api("/.netlify/functions/weight-safety-gate", { method: "POST", body: JSON.stringify(input) });
   state.safetyCheckId = state.safetyResult.safetyCheckId; state.busy = false;
-  if (state.safetyResult.route === "eligible") navigate("/assessment/payment"); else render();
+  if (state.safetyResult.route === "eligible") navigate("/assessment/contact"); else render();
 }
 async function submitContact(form) {
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
@@ -283,6 +298,11 @@ async function createInvoice() {
     const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(error?.body?.error);
     setPaymentStatus(ambiguous ? "create_unknown" : "create_error");
   } finally { state.busy = false; } render();
+}
+function continueToPayment() {
+  if (state.busy || state.assessmentStatus !== "complete") return;
+  state.busy = true; render({ focus: false });
+  window.requestAnimationFrame(() => { state.busy = false; navigate("/assessment/payment"); });
 }
 async function checkPayment() {
   setPaymentStatus("checking"); render();
@@ -329,7 +349,7 @@ async function nextQuestion() {
     const completed = await api("/.netlify/functions/weight-assessment-complete", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
     state.assessmentStatus = completed.status; state.busy = false; state.slowSave = false;
     if (completed.safetyRoute) { state.report = await loadReport(); navigate("/report"); return; }
-    navigate("/assessment/payment");
+    navigate("/assessment/completed");
   } catch (requestError) {
     const code = requestError?.body?.error;
     if (code === "assessment_incomplete" && requestError.body.questionId) {
@@ -377,7 +397,7 @@ async function restoreServerState() {
   if (route === "admin") { try { const admin = await api("/.netlify/functions/admin-session-state", { method: "GET" }); state.admin.authenticated = true; state.admin.owner = admin.owner === true; try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch {} } catch {} return; }
   if (route === "advisorDashboard") { try { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); } catch {} return; }
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route)) { try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch { state.ownerPreview = false; return; } }
-  if (!["payment", "questions", "report", "dataDeletion"].includes(route)) return;
+  if (!["assessmentCompleted", "payment", "questions", "report", "dataDeletion"].includes(route)) return;
   try {
     const restored = await api("/.netlify/functions/weight-session-state", { method: "GET" });
     if (!restored.assessment) return;
@@ -408,6 +428,7 @@ function bind(root) {
   root.querySelector('[data-action="start-owner-preview"]')?.addEventListener("click", () => startOwnerPreview().catch(() => { state.admin.error = "Бодит тестийн эрх нээж чадсангүй."; render(); }));
   root.querySelector('[data-action="revoke-owner-preview"]')?.addEventListener("click", () => revokeOwnerPreview().catch(() => { state.admin.error = "Туршилтын эрхийг цуцалж чадсангүй."; render(); }));
   root.querySelector('[data-action="create-invoice"]')?.addEventListener("click", createInvoice);
+  root.querySelector('[data-action="continue-to-payment"]')?.addEventListener("click", continueToPayment);
   root.querySelector('[data-action="check-payment"]')?.addEventListener("click", checkPayment);
   root.querySelector('[data-action="previous-question"]')?.addEventListener("click", () => { state.questionIndex = Math.max(0, state.questionIndex - 1); state.validationError = ""; render(); });
   root.querySelector('[data-action="print-report"]')?.addEventListener("click", () => window.print());

@@ -9,7 +9,7 @@ async function completeEligibleGate(page, suffix = "") {
   await page.locator('input[name="compensatoryBehavior"][value="Үгүй"]').check();
   await page.locator('input[name="medicalSuitability"][value="Үргэлжлүүлэхэд тохиромжтой"]').check();
   await page.getByRole("button", { name: "Тохирох эсэхийг шалгах" }).click();
-  await expect(page).toHaveURL(/\/assessment\/payment$/);
+  await expect(page).toHaveURL(/\/assessment\/contact$/);
 }
 
 async function completeQuestionnaire(page) {
@@ -41,13 +41,13 @@ async function completeQuestionnaire(page) {
       }
       return questionId;
     });
-    await page.getByRole("button", { name: /Үргэлжлүүлэх|Тайлан харах/ }).click();
+    await page.getByRole("button", { name: /Үргэлжлүүлэх|Тестийг дуусгах/ }).click();
     await page.waitForFunction(previous => {
       if (window.location.pathname !== "/assessment/questions") return true;
       return document.querySelector("[data-question]")?.dataset.question !== previous;
     }, questionId);
   }
-  await expect(page).toHaveURL(/\/assessment\/payment$/);
+  await expect(page).toHaveURL(/\/assessment\/completed(?:\?e2e=1)?$/);
 }
 
 for (const width of [375, 390, 430, 1280]) {
@@ -118,12 +118,36 @@ test("questionnaire completion unlocks one payment attempt and full report", asy
   await page.getByRole("button", { name: "Мэдээллээ хадгалаад тест рүү үргэлжлүүлэх" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
   await expect(page.getByRole("button", { name: "9,900₮-ийн QPay нэхэмжлэл үүсгэх" })).toHaveCount(0);
+  const beforeCompletion = await (await request.get("/__test/stats")).json();
   await completeQuestionnaire(page);
+  await expect(page.getByRole("heading", { name: "Таны хариултуудыг цуглуулж дууслаа" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "9,900₮-ийн QPay нэхэмжлэл үүсгэх" })).toHaveCount(0);
+  const afterCompletion = await (await request.get("/__test/stats")).json();
+  expect(afterCompletion.qpayCreate - beforeCompletion.qpayCreate).toBe(0);
+  expect(afterCompletion.paymentRows - beforeCompletion.paymentRows).toBe(0);
+  await page.goto("/assessment/completed?e2e=1");
+  await expect(page.getByRole("heading", { name: "Таны хариултуудыг цуглуулж дууслаа" })).toBeVisible();
+  const afterRefresh = await (await request.get("/__test/stats")).json();
+  expect(afterRefresh.qpayCreate - beforeCompletion.qpayCreate).toBe(0);
+  expect(afterRefresh.paymentRows - beforeCompletion.paymentRows).toBe(0);
+  await page.getByRole("button", { name: "Дэлгэрэнгүй тайлангаа авах" }).evaluate(button => { button.click(); button.click(); });
+  await expect(page).toHaveURL(/\/assessment\/payment$/);
   await expect(page.getByRole("heading", { name: "QPay нэхэмжлэл" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Бүрэн тайлангаа нээх" })).toBeVisible();
+  await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toBeVisible();
+  await page.goBack();
+  await expect(page).toHaveURL(/\/assessment\/completed(?:\?e2e=1)?$/);
+  await page.goForward();
+  await expect(page).toHaveURL(/\/assessment\/payment$/);
+  const afterHistory = await (await request.get("/__test/stats")).json();
+  expect(afterHistory.qpayCreate - beforeCompletion.qpayCreate).toBe(0);
+  expect(afterHistory.paymentRows - beforeCompletion.paymentRows).toBe(0);
   const createButton = page.getByRole("button", { name: "9,900₮-ийн QPay нэхэмжлэл үүсгэх" });
   await createButton.evaluate(button => { button.click(); button.click(); });
   await expect(page.getByText("Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.")).toBeVisible();
-  expect((await (await request.get("/__test/stats")).json()).qpayCreate).toBe(1);
+  const afterClick = await (await request.get("/__test/stats")).json();
+  expect(afterClick.qpayCreate - beforeCompletion.qpayCreate).toBe(1);
+  expect(afterClick.paymentRows - beforeCompletion.paymentRows).toBe(1);
   await expect(page.getByText(/Нэхэмжлэлийн хугацаа/)).toBeVisible();
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
   await expect(page.getByText("Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.")).toBeVisible();
