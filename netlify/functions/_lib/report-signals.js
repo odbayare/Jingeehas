@@ -78,18 +78,18 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   "S1-S04": { dimension: "safety", options: optionMap(["Үгүй", "Өнгөрсөнд байсан", "Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Үгүй" ? [protective("self_harm_context", -3)] : [signal("self_harm_context", 3, { guidanceOnly: true })]) },
   "S1-B01": { dimension: "safety", options: optionMap(["Будилах", "Ухаан балартах", "Бие огцом муудах", "Аль нь ч үгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Аль нь ч үгүй" ? [protective("urgent_body_signal", -3)] : [signal("urgent_body_signal", 3, { guidanceOnly: true })]) },
   "Q-METHOD-CURRENT": { dimension: "current_method", options: Object.freeze({ ...optionMap(METHOD_OPTIONS, option => restrictiveMethod(option) ? [signal("restrictive_method_current", 1)] : [neutral]), "Одоогоор ямар нэг арга хэрэглээгүй": [neutral] }) },
-  "Q-METHOD-PAST": { dimension: "previous_method", options: Object.freeze({ ...optionMap(METHOD_OPTIONS, option => restrictiveMethod(option) ? [signal("restrictive_method_past", 1)] : [neutral]), "Ямар нэг арга хэрэглэж үзээгүй": [neutral] }) },
+  "Q-METHOD-PAST": { dimension: "previous_method", options: Object.freeze({ ...optionMap(METHOD_OPTIONS, option => restrictiveMethod(option) ? [signal("restrictive_method_past", 1)] : ["Дасгал хөдөлгөөн", "Алхалт"].includes(option) ? [signal("activity_based_method", 2)] : [neutral]), "Ямар нэг арга хэрэглэж үзээгүй": [neutral] }) },
   "Q-METHOD-DURATION": { dimension: "attempt_duration", options: {
     "2 долоо хоногоос бага": [signal("short_lived_attempt", 3)], "2–8 долоо хоног": [signal("short_lived_attempt", 2)],
-    "2–6 сар": [signal("short_lived_attempt", 1)], "6–12 сар": [neutral], "1 жилээс урт": [protective("short_lived_attempt", -2)], "Тодорхой санахгүй": [neutral]
+    "2–6 сар": [signal("short_lived_attempt", 1)], "6–12 сар": [signal("sustained_attempt", 1, { protective: true })], "1 жилээс урт": [signal("sustained_attempt", 2, { protective: true })], "Тодорхой санахгүй": [neutral]
   } },
   "Q-METHOD-STOP": { dimension: "attempt_context", valueType: "text", classification: "neutral_context" },
   "Q-METHOD-RESULT": { dimension: "attempt_result", options: {
-    "Жин буурсан": [signal("initial_attempt_response", 1, { contextOnly: true })], "Жин тогтвортой байсан": [neutral],
+    "Жин буурсан": [signal("initial_attempt_success", 2, { protective: true })], "Жин тогтвортой байсан": [neutral],
     "Жин нэмэгдсэн": [signal("attempt_not_sustained", 2)], "Тодорхой өөрчлөлт ажиглагдаагүй": [signal("attempt_not_sustained", 1)], "Тодорхой санахгүй": [neutral]
   } },
   "Q-METHOD-REGAIN": { dimension: "attempt_result", options: {
-    "Үгүй": [protective("weight_regain", -3)], "Хэсэгчлэн нэмэгдсэн": [signal("weight_regain", 1)],
+    "Үгүй": [protective("weight_regain", -3)], "Хэсэгчлэн нэмэгдсэн": [signal("weight_regain", 2)],
     "Ихэнх нь эргэн нэмэгдсэн": [signal("weight_regain", 2)], "Өмнөхөөс илүү нэмэгдсэн": [signal("weight_regain", 3)], "Тодорхой санахгүй": [neutral]
   } },
   "Q-METHOD-SUPPORT": { dimension: "support_context", options: optionMap(["Эмч", "Хоолзүйч", "Сэтгэлзүйч", "Дасгал хөдөлгөөний мэргэжилтэн", "Бусад мэргэжилтэн", "Мэргэжлийн дэмжлэг аваагүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Мэргэжлийн дэмжлэг аваагүй" ? [neutral] : [protective("professional_support", -1)]) },
@@ -97,7 +97,7 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   "Q-METHOD-BARRIERS": { dimension: "sustainability_barrier", options: {
     "Цагийн хуваарь": [signal("schedule_mismatch", 3)], "Өлсөх эсвэл цадах мэдрэмж": [signal("hunger_satiety_barrier", 2)],
     "Стресс ба сэтгэл хөдлөл": [signal("emotional_barrier", 3)], "Гэр бүл эсвэл орчны нөлөө": [signal("environmental_barrier", 3)],
-    "Зардал": [signal("practical_barrier", 1, { contextOnly: true })], "Ядаргаа эсвэл нойр": [signal("fatigue_barrier", 3)],
+    "Зардал": [signal("practical_barrier", 1)], "Ядаргаа эсвэл нойр": [signal("fatigue_barrier", 3)],
     "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт": [signal("professional_guidance_context", 2, { guidanceOnly: true })],
     "Үр дүн удаан харагдах": [signal("sustainability_barrier", 2)], "Хэт хатуу дүрэм": [signal("strict_rule_barrier", 3)],
     "Тодорхой саад байгаагүй": [protective("sustainability_barrier", -2)], "Хариулахгүй": [excluded]

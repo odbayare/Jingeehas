@@ -11,6 +11,8 @@ This recovery map covers only the one-time Jingeehas report logic. It does not r
 | WP87 flexible-recovery handling | Treat contradicting answers as strengths rather than ignoring them | Keep concept; remap to current protective answers | Stable emotion, regular meals, hunger/satiety ease, sleep quality, movement, sustained attempt, professional support | Deleted `S1-W06` answer and old recovery-rule UI | Protective-factor fixtures |
 | WP86 relevance gates | Keep food, alcohol, tobacco, medication, cycle, and safety text out unless selected | Keep and strengthen | Current gated questions only | Always-on medical, menstrual, food, alcohol, tobacco, or medication copy | Prohibited-guidance and owner-report manual review |
 | WP87 one-variable experiment | Change one variable while observing the rest | Keep | Every supported pattern through one recommendation ID | Combined food-plus-movement experiment and deleted-product scheduling | Recommendation uniqueness and prioritized-action tests |
+| Cross-question previous-attempt cluster | Connect method, duration, result, stopping reason, regain, and barriers into one formulation | Add | Structured previous-method, duration, result, regain, barrier answers; open stop reason only corroborates context | Treating schedule, cost, injury, and regain as unrelated bullets; inferring a pattern from open text alone | Owner maintenance-transition fixture and evidence-trace assertions |
+| Movement classification boundary | Keep low movement as a daily-life/contextual factor, never a psychological cause | Add | `Q-TRAVEL`, `Q-MOVEMENT` | Labeling activity level as a psychological pattern | Context classification and owner-report assertions |
 | WP85 integrated food context | Food response is context unless connected to broader evidence | Adapt | `Q-FOOD-FEELING`, `Q-PORTION` | Food intolerance diagnosis, blood-type claims, isolated food as psychological cause | Food relevance and single-answer exclusion checks |
 | `tests/wp85-case-formulation-report.test.js` | Evidence clusters and anti-diagnosis checks | Adapt assertions | Current question bank | Old section names, confidence labels, deleted payment flags | `tests/report-evidence.test.js` |
 | `tests/wp86-humanized-case-formulation.test.js` | Natural Mongolian, de-duplication, relevance gates | Keep intent | Current question bank | Old English labels and legacy report surface | Copy-bank audit and duplicate-sentence checks |
@@ -21,7 +23,7 @@ This recovery map covers only the one-time Jingeehas report logic. It does not r
 ## Current replacement boundaries
 
 - `report-signals.js` is the only answer-option-to-signal contract.
-- `report-patterns.js` evaluates every pattern independently and does not force a fixed number of causes.
+- `report-patterns.js` evaluates every pattern independently, separates psychological, behavioral, and contextual categories, and does not force a fixed number of causes.
 - `report-copy.js` contains complete Mongolian sentences and never appends suffixes to labels.
 - `report.js` builds the multi-factor formulation, interactions, context, strengths, contradictions, actions, and internal trace.
 - `publicReport()` removes raw question IDs and the internal evidence map from user and advisor API responses.
