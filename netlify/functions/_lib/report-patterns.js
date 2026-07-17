@@ -38,20 +38,20 @@ const REPORT_PATTERNS = Object.freeze({
     recommendationId: "one_movement_anchor"
   },
   restrictive_rebound: {
-    id: "restrictive_rebound", category: "behavioral", title: "Хэт хатуу арга удаан үргэлжлэхгүй буцах хэв маяг",
+    id: "restrictive_rebound", category: "behavioral", title: "Хэт хатуу арга удаан үргэлжлэхгүй тасрах хэв маяг",
     signals: ["restrictive_method_current", "restrictive_method_past", "short_lived_attempt", "weight_regain", "strict_rule_barrier"],
     minQuestionIds: 2, minDimensions: 2, threshold: 4,
     recommendationId: "remove_one_strict_rule"
   },
   plan_daily_life_mismatch: {
     id: "plan_daily_life_mismatch", category: "behavioral", title: "Төлөвлөгөө өдөр тутмын амьдралтай нийцэхгүй байх саад",
-    signals: ["schedule_mismatch", "short_lived_attempt", "practical_barrier", "fatigue_barrier"],
+    signals: ["schedule_barrier", "short_lived_attempt", "cost_barrier", "access_barrier", "support_barrier", "fatigue_barrier"],
     minQuestionIds: 2, minDimensions: 2, threshold: 4,
     recommendationId: "minimum_viable_plan"
   },
   previous_attempt_sustainability: {
     id: "previous_attempt_sustainability", category: "behavioral", title: "Арга зогссоны дараах үр дүнгээ хадгалах шилжилтийн саад",
-    signals: ["activity_based_method", "sustained_attempt", "initial_attempt_success", "short_lived_attempt", "attempt_not_sustained", "weight_regain", "sustainability_barrier", "strict_rule_barrier", "schedule_mismatch", "practical_barrier"],
+    signals: ["activity_based_method", "medium_duration_attempt", "sustained_attempt", "initial_attempt_success", "short_lived_attempt", "attempt_not_sustained", "weight_regain", "sustainability_barrier", "strict_rule_barrier", "schedule_barrier", "cost_barrier", "access_barrier", "support_barrier"],
     minQuestionIds: 3, minDimensions: 3, threshold: 6,
     recommendationId: "build_maintenance_bridge"
   }

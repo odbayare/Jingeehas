@@ -4,7 +4,7 @@ const { ANSWER_SIGNAL_CONTRACT, directivesFor } = require("./report-signals.js")
 const { PATTERN_PRIORITY, evaluatePatterns } = require("./report-patterns.js");
 const { PATTERN_COPY, RECOMMENDATIONS, INTERACTION_COPY, PROTECTIVE_COPY, evidenceSentence, protectiveSynthesis, protectiveInterpretation } = require("./report-copy.js");
 
-const REPORT_VERSION = "jingeehas-case-formulation-v3-owner-review";
+const REPORT_VERSION = "jingeehas-case-formulation-v4-generic";
 const QUESTIONNAIRE_VERSION = "jingeehas-production-2026-07";
 
 function answerText(value) {
@@ -39,6 +39,39 @@ function buildEvidence(answerRows = [], summaryRows = []) {
   return evidence;
 }
 
+function positiveSignals(evidence) {
+  return new Set((evidence.signals || []).filter(row => row.effect > 0).map(row => row.signal));
+}
+
+function factGates(evidence) {
+  const signals = positiveSignals(evidence);
+  const stopContext = (evidence.neutral || []).find(row => row.questionId === "Q-METHOD-STOP" && String(row.contextValue || "").trim());
+  const stopText = String(stopContext?.contextValue || "");
+  const openInjury = /гэмт|бэрт/i.test(stopText);
+  const openPain = /өвдөлт|өвдө/i.test(stopText);
+  const openMovementLimit = /хөдөлгөөний хязгаар/i.test(stopText);
+  const structuredPhysicalConstraint = signals.has("injury_or_pain_barrier");
+  const physicalConstraint = structuredPhysicalConstraint ? "өвдөлт эсвэл хөдөлгөөний хязгаарлалт" : openInjury ? "гэмтэл" : openPain ? "өвдөлт" : openMovementLimit ? "хөдөлгөөний хязгаарлалт" : null;
+  const bloodPressure = (evidence.contexts || []).some(row => row.questionId === "Q-BLOOD-PRESSURE" && row.guidanceOnly && row.effect > 0);
+  return Object.freeze({
+    activityBasedMethod: signals.has("activity_based_method"),
+    mediumDuration: signals.has("medium_duration_attempt"),
+    sustainedAttempt: signals.has("sustained_attempt"),
+    initialSuccess: signals.has("initial_attempt_success"),
+    weightRegain: signals.has("weight_regain"),
+    schedule: signals.has("schedule_barrier"),
+    cost: signals.has("cost_barrier"),
+    access: signals.has("access_barrier"),
+    support: signals.has("support_barrier"),
+    injury: Boolean(physicalConstraint),
+    physicalConstraint,
+    structuredInjury: structuredPhysicalConstraint,
+    openInjuryCorroboration: openInjury || openPain || openMovementLimit,
+    lowMovement: signals.has("low_movement"),
+    bloodPressure
+  });
+}
+
 function evidenceQuality(evidence = {}) {
   const informative = (evidence.signals || []).filter(item => !item.contextOnly && !item.guidanceOnly && item.effect !== 0);
   const questions = new Set(informative.map(item => item.questionId));
@@ -60,9 +93,10 @@ function patternObject(candidate) {
 function strengthItems(evidence) {
   const seen = new Set();
   return (evidence.protective || []).flatMap(row => {
-    const text = PROTECTIVE_COPY[row.signal];
-    if (!text || seen.has(text)) return [];
-    seen.add(text); return [{ signal: row.signal, text }];
+    const copy = PROTECTIVE_COPY[row.signal];
+    if (!copy || seen.has(copy)) return [];
+    seen.add(copy);
+    return [{ signal: row.signal, text: copy }];
   });
 }
 
@@ -72,102 +106,131 @@ function contradictionItems(evidence, candidates) {
   return (evidence.contradictions || []).filter(row => !row.protective).flatMap(row => {
     if (!supportedSignals.has(row.signal) || seen.has(row.signal)) return [];
     seen.add(row.signal);
-    const text = PROTECTIVE_COPY[row.signal] || "Зарим хариулт энэ чиглэл тогтмол саад болдоггүйг харуулсан тул дүгнэлтийг болгоомжтой тайлбарлав.";
-    return [{ signal: row.signal, text }];
+    const copy = PROTECTIVE_COPY[row.signal] || "Зарим хариулт энэ чиглэл тогтмол саад болдоггүйг харуулсан тул дүгнэлтийг болгоомжтой тайлбарлав.";
+    return [{ signal: row.signal, text: copy }];
   });
 }
 
-function contextualFactors(evidence, contextualPatterns, supportedIds) {
+function contextualFactors(evidence, contextualPatterns, supportedIds, facts) {
   const items = contextualPatterns.map(candidate => ({
     id: candidate.id, title: candidate.title, explanation: PATTERN_COPY[candidate.id].explanation,
     evidenceSummary: evidenceSentence(candidate.id, candidate.supporting), effectOnWeightLoss: PATTERN_COPY[candidate.id].effectOnWeightLoss
   }));
   const contextSignals = new Set((evidence.contexts || []).map(row => row.signal));
-  const positiveSignals = new Set((evidence.signals || []).filter(row => row.effect > 0).map(row => row.signal));
   if (contextSignals.has("food_discomfort_context")) items.push({ id: "food_discomfort_context", title: "Хоолны дараах биеийн мэдрэмж", explanation: "Зарим хүнсний дараах тавгүй мэдрэмжийг хоол, хэмжээ, тухайн үеийн нөхцөлтэй нь хамт ажиглах нь хэрэгтэй." });
   if (contextSignals.has("alcohol_food_change")) items.push({ id: "alcohol_food_change", title: "Согтууруулах ундааны дараах хоолны сонголт", explanation: "Хэрэглэсэн үед идэх хэмжээ эсвэл сонголт өөрчлөгдсөн бол тэр нөхцөлийг тусад нь ажиглах хэрэгтэй." });
-  if (!supportedIds.has("previous_attempt_sustainability") && (positiveSignals.has("schedule_mismatch") || positiveSignals.has("practical_barrier"))) {
-    items.push({ id: "daily_life_constraints", title: "Өдөр тутмын хэрэгжүүлэх нөхцөл", explanation: "Цагийн хуваарь болон зардал нь сайн төлөвлөгөөг ч тогтмол хэрэгжүүлэх боломжийг хязгаарлаж болно." });
+  if (!supportedIds.has("previous_attempt_sustainability")) {
+    if (facts.schedule) items.push({ id: "schedule_barrier", title: "Цагийн хуваарийн саад", explanation: "Цагийн хуваарь тогтвортой үргэлжлүүлэхэд бодит саад болсон байна." });
+    if (facts.cost) items.push({ id: "cost_barrier", title: "Зардлын саад", explanation: "Зардал нь төлөвлөгөөг тогтмол хэрэгжүүлэх боломжийг хязгаарласан байна." });
   }
+  if (facts.injury && !contextualPatterns.some(item => item.id === "injury_or_pain_barrier")) items.push({ id: "injury_or_pain_barrier", title: "Хөдөлгөөний биеийн нөхцөл", explanation: `Өмнөх хөдөлгөөн зогсоход ${facts.physicalConstraint} нөлөөлсөн байна.` });
   return items;
 }
 
-function previousAttemptAnalysis(evidence) {
-  const tracked = new Set(["activity_based_method", "sustained_attempt", "initial_attempt_success", "short_lived_attempt", "attempt_not_sustained", "weight_regain", "sustainability_barrier", "strict_rule_barrier", "schedule_mismatch", "practical_barrier"]);
+function previousAttemptAnalysis(evidence, facts) {
+  const tracked = new Set(["activity_based_method", "medium_duration_attempt", "sustained_attempt", "initial_attempt_success", "short_lived_attempt", "attempt_not_sustained", "weight_regain", "sustainability_barrier", "strict_rule_barrier", "schedule_barrier", "cost_barrier"]);
   const rows = (evidence.signals || []).filter(row => tracked.has(row.signal));
-  const signals = new Set(rows.filter(row => row.effect > 0).map(row => row.signal));
-  const stopContext = (evidence.neutral || []).find(row => row.questionId === "Q-METHOD-STOP" && String(row.contextValue || "").trim());
-  if (new Set(rows.map(row => row.questionId)).size < 2 && !stopContext) return null;
-  const injury = /гэмт|өвд|бэрт/i.test(String(stopContext?.contextValue || ""));
-  if (signals.has("activity_based_method") && signals.has("sustained_attempt") && signals.has("initial_attempt_success") && signals.has("weight_regain")) {
-    const hasConstraints = signals.has("schedule_mismatch") || signals.has("practical_barrier") || injury;
-    return {
-      summary: `Өмнөх хөдөлгөөнд суурилсан арга эхэндээ жин бууруулж, нэг жилээс урт үргэлжилжээ.${injury ? " Гэмтлийн улмаас зогссоны" : " Арга зогссоны"} дараа ${hasConstraints ? "цагийн хуваарь, зардал, биеийн нөхцөлтэй нийцэх" : "өдөр тутамд багтах"} орлуулах хувилбар бэлэн байгаагүй бөгөөд жин хэсэгчлэн буцсан байна.`,
-      interpretation: "Энд гол саад нь эхлэх чадвар эсвэл тууштай байдал биш. Харин ажиллаж байсан нөхцөл тасрах үед үр дүнгээ хадгалах доод хувилбар, дахин орох дүрэм бэлэн байгаагүйд байж болох юм."
-    };
-  }
-  return {
-    summary: "Өмнөх оролдлогын эхний үр дүн, үргэлжилсэн хугацаа, зогссон шалтгаан, дараах өөрчлөлтийг хамтад нь харахад тухайн арга өдөр тутмын амьдралд хэр нийцэж байсныг дахин үнэлэх шаардлагатай байна.",
-    interpretation: "Дахин яг ижил арга эхлүүлэхээс өмнө өмнөх оролдлого тасарсан нөхцөлд ажиллах доод хувилбарыг бэлдэх нь илүү тогтвортой эхлэл өгнө."
-  };
+  if (new Set(rows.map(row => row.questionId)).size < 2) return null;
+  const sentences = [];
+  if (facts.activityBasedMethod && facts.initialSuccess) sentences.push("Өмнөх хөдөлгөөнд суурилсан арга эхэндээ жин бууруулсан байна.");
+  else if (facts.initialSuccess) sentences.push("Өмнөх арга эхэндээ жин бууруулсан байна.");
+  if (facts.sustainedAttempt) sentences.push("Тэр аргыг нэг жилээс урт үргэлжлүүлсэн нь тодорхой хугацаанд тогтвортой хэрэгжүүлж чадсаныг харуулна.");
+  else if (facts.mediumDuration) sentences.push("Тэр аргыг 6–12 сар үргэлжлүүлсэн нь тодорхой хугацаанд тогтвортой хэрэгжүүлж чадсаныг харуулна.");
+  if (facts.injury) sentences.push(`Өмнөх хөдөлгөөн зогсоход ${facts.physicalConstraint} нөлөөлсөн байна.`);
+  if (facts.weightRegain) sentences.push("Арга зогссоны дараа жин буцсан байна.");
+  if (facts.schedule) sentences.push("Цагийн хуваарь дараагийн аргыг тогтвортой хэрэгжүүлэхэд саад болсон байна.");
+  if (facts.cost) sentences.push("Зардал дараагийн аргыг тогтвортой хэрэгжүүлэхэд саад болсон байна.");
+  if (!sentences.length) sentences.push("Өмнөх оролдлогын хугацаа, үр дүн болон зогссон нөхцөлийг хамтад нь харах шаардлагатай байна.");
+  const interpretation = facts.initialSuccess && (facts.sustainedAttempt || facts.mediumDuration)
+    ? `Энэ нь эхлэх эсвэл тууштай байх чадвар дутсаныг бус, арга тасрах үед үр дүнгээ хадгалах хувилбар шаардлагатайг харуулж байна.${facts.schedule || facts.cost || facts.injury ? " Дараагийн хувилбар нь зөвхөн үр дүнтэй байхаас гадна сонгосон бодит саадуудад нийцэх хэрэгтэй." : ""}`
+    : facts.weightRegain
+      ? "Дараагийн төлөвлөгөөнд арга тасрах үеийн доод хувилбар болон буцах дүрмийг урьдчилж оруулах нь тохиромжтой."
+      : "Өмнөх аргыг яг давтахаас өмнө ажилласан хэсэг болон тасарсан нөхцөлийг салгаж харах нь тохиромжтой.";
+  return { summary: sentences.join(" "), interpretation };
 }
 
-function professionalGuidance(evidence) {
+function professionalGuidance(evidence, facts) {
   const rows = (evidence.contexts || []).filter(row => row.guidanceOnly && row.effect > 0);
   const items = [];
-  if (rows.some(row => row.questionId === "Q-BLOOD-PRESSURE")) items.push("Хэрэв даралт сүүлийн үед давтан хэвийн бус гарч байгаа, эсвэл дагалдах шинж илэрдэг бол хөдөлгөөний ачааллаа нэмэхээс өмнө эмчтэй зөвлөнө үү.");
+  if (facts.bloodPressure) items.push("Хэрэв даралт сүүлийн үед давтан хэвийн бус гарч байгаа, эсвэл дагалдах шинж илэрдэг бол хөдөлгөөний ачааллаа нэмэхээс өмнө эмчтэй зөвлөнө үү.");
   if (rows.some(row => row.questionId === "Q-GLUCOSE")) items.push("Хэрэв цусан дахь сахар сүүлийн үед давтан хэвийн бус гарч байгаа, эсвэл дагалдах шинж илэрдэг бол хоолны зайг огцом уртасгалгүй эмчтэй зөвлөнө үү.");
-  if (rows.some(row => row.questionId === "Q-METHOD-BARRIERS")) items.push("Өвдөлт эсвэл хөдөлгөөний хязгаарлалт үргэлжилж байгаа бол хөдөлгөөний шинэ төлөвлөгөөг мэргэжлийн хүнтэй тохируулна уу.");
+  if (facts.injury) items.push(`${facts.physicalConstraint.charAt(0).toUpperCase()}${facts.physicalConstraint.slice(1)} үргэлжилж байгаа бол хөдөлгөөний шинэ хувилбарыг мэргэжлийн хүнтэй тохируулна уу.`);
   if (rows.some(row => row.questionId === "Q-METHOD-MEDICATION")) items.push("Эмчийн хяналтгүй эм хэрэглэсэн бол дахин хэрэглэхээсээ өмнө эмч эсвэл эм зүйчтэй зөвлөлдөнө үү.");
   if (rows.some(row => ["MC-01", "PREG-GATE"].includes(row.questionId))) items.push("Нөхөн үржихүйн эсвэл мөчлөгийн нөхцөлтэй холбоотой өөрчлөлт байгаа бол жин бууруулах том төлөвлөгөөг мэргэжлийн хүнтэй тохируулна уу.");
   return items.length ? items.join(" ") : null;
 }
 
-function ownerLikeFormulation(evidence, supportedIds) {
-  const positive = new Set((evidence.signals || []).filter(row => row.effect > 0).map(row => row.signal));
-  const protective = new Set((evidence.protective || []).map(row => row.signal));
-  const protectiveCluster = ["emotional_eating", "environmental_cue_reactivity", "hunger_recognition_difficulty", "satiety_difficulty", "short_sleep", "poor_sleep_quality", "portion_difficulty"].filter(signal => protective.has(signal)).length >= 5;
-  return supportedIds.has("previous_attempt_sustainability") && supportedIds.has("low_movement") && positive.has("sustained_attempt") && positive.has("initial_attempt_success") && positive.has("weight_regain") && protectiveCluster;
+function recommendationFor(candidate, facts) {
+  if (candidate.id !== "previous_attempt_sustainability") return { recommendationId: candidate.recommendationId, ...RECOMMENDATIONS[candidate.recommendationId] };
+  const constraints = [];
+  if (facts.schedule) constraints.push("цагийн хуваарьт багтах");
+  if (facts.cost) constraints.push("нэмэлт зардал шаардахгүй");
+  if (facts.access) constraints.push("хүртээмжтэй");
+  if (facts.support) constraints.push("шаардлагатай дэмжлэгтэй");
+  if (facts.injury) constraints.push("биеийн дурдсан нөхцөлийг сэдрээхгүй");
+  const movementChoice = facts.activityBasedMethod || facts.lowMovement
+    ? `${facts.injury ? "өөрт эвтэйхэн бага ачааллын" : "алхалт, сууж хийх хөдөлгөөн эсвэл өөрт эвтэйхэн бага ачааллын"} хувилбараас сонгоно`
+    : "өдөр тутамд хэрэгжүүлж болох доод хувилбарыг сонгоно";
+  return {
+    recommendationId: "build_maintenance_bridge",
+    action: `Өмнөх аргыг яг хуучнаар нь сэргээхээс илүү ${constraints.length ? `${constraints.join(", ")} ` : ""}${movementChoice}; мөн тасарсан өдрийн буцах дүрмийг урьдчилж тогтооно.`,
+    reason: "Ингэснээр зөвхөн дахин эхлэх бус, нөхцөл өөрчлөгдөх үед үр дүнгээ хадгалах хэсгийг төлөвлөгөөнд оруулна."
+  };
 }
 
-function personalizedStartingAction(evidence, ownerLike, prioritized) {
-  if (ownerLike) return {
-    patternId: "previous_attempt_sustainability", recommendationId: "maintenance_movement_bridge",
-    action: "Дараагийн 14 хоногт долоо хоногийн 5 өдөр, өдрийн хамгийн тогтмол үндсэн хоолны дараа ойр орчимдоо төлбөргүй 12 минут тайван алхана.",
-    reason: "Энэ нь өмнөх хөдөлгөөнд суурилсан аргын хэрэгтэй хэсгийг цаг, зардал, биеийн нөхцөлд багтах доод хувилбараар сэргээж, үр дүнгээ хадгалах шилжилтийг туршина.",
-    priorityReason: "Хоолны хатуу дүрэм нэмэхээс илүү одоо харагдсан бодит саад болох хөдөлгөөний суурь түвшин, тасарсны дараах буцах хувилбарт шууд чиглэнэ.",
-    plan: {
-      duration: "14 хоног",
-      option: "Ойр орчимдоо тусгай хэрэгсэл, төлбөр шаардахгүй тайван алхалт",
-      injuryBoundary: "Хуучин гэмтсэн хэсэг өвдөх, хавдах, доголох эсвэл өвдөлт нэмэгдэхэд тухайн өдрийн алхалтыг зогсоож, үргэлжилбэл мэргэжлийн хүнтэй зөвлөнө.",
-      anchor: "Өдрийн хамгийн тогтмол үндсэн хоолны дараа",
-      frequency: "Долоо хоногт 5 өдөр, нэг удаа 12 минут",
-      record: "Өдөр, бүтэн эсвэл богино хувилбар, алхсан минут, өвдөлт байгаа эсэх, алхалтын өмнөх ба дараах тэнхээг тэмдэглэнэ.",
-      success: "14 хоногийн 10 төлөвлөсөн өдрөөс дор хаяж 8-д бүтэн эсвэл богино хувилбараа хийж, өвдөлт нэмэгдээгүй бол амжилт гэж үзнэ; энэ хугацаанд жингээр дүгнэхгүй.",
-      fallback: "Завгүй өдөр ижил зангууны дараа 5 минут тайван алхах богино хувилбарыг хийнэ.",
-      maintenanceRule: "Алгассан өдрийг маргааш давхар нөхөхгүй; дараагийн төлөвлөсөн өдөр хэвийн хувилбараасаа үргэлжлүүлнэ."
-    }
-  };
+function startingAction(prioritized, facts) {
   if (!prioritized) return null;
-  const recommendation = RECOMMENDATIONS[prioritized.recommendationId];
-  return {
-    patternId: prioritized.id, recommendationId: prioritized.recommendationId,
+  const recommendation = recommendationFor(prioritized, facts);
+  if (prioritized.id !== "previous_attempt_sustainability" || !(facts.activityBasedMethod || facts.lowMovement)) return {
+    patternId: prioritized.id, recommendationId: recommendation.recommendationId,
     action: `Эхний 7–14 хоногт дараах нэг алхмыг туршина: ${recommendation.action.charAt(0).toLowerCase()}${recommendation.action.slice(1)}`,
     reason: "Өөрчлөлтийг нэг зүйлээр эхлүүлснээр бодит амьдралд хэрэгжиж байгаа эсэхийг тодорхой ажиглаж, дараагийн алхмаа баримжаатай сонгоно.",
-    priorityReason: "Энэ алхам одоо харагдсан гол саадтай шууд холбоотой бөгөөд эхний 7–14 хоногт ажиглаж болохоор жижиг байна."
+    priorityReason: "Энэ алхам одоо харагдсан гол саадтай шууд холбоотой бөгөөд ажиглаж болохоор жижиг байна."
+  };
+  const plan = {
+    duration: "Эхний 7 хоногт туршина",
+    option: facts.injury ? "Биеийн дурдсан нөхцөлд тохирох, зовиур сэдрээхгүй бага ачааллын хөдөлгөөнөөс сонгоно" : "Алхалт, сууж хийх хөдөлгөөн эсвэл өөрт эвтэйхэн өөр бага ачааллын хөдөлгөөнөөс сонгоно",
+    anchor: "Өдөр бүр тогтвортой давтагддаг нэг үйл явдлын дараа",
+    frequency: "Өөрийн бодит боломжтой өдрүүдийг эхлэхээсээ өмнө сонгоно",
+    record: `Сонгосон хөдөлгөөн, хийсэн минут, хийхэд хэр эвтэйхэн байсныг тэмдэглэнэ${facts.injury ? ", мөн зовиур өөрчлөгдсөн эсэхийг тэмдэглэнэ" : ""}.`,
+    success: "Сонгосон хувилбар өдөр тутмын амьдралд дахин давтаж болохоор байвал амжилт гэж үзнэ; эхний долоо хоногт жингээр дүгнэхгүй.",
+    fallback: facts.schedule ? "Завгүй өдөр үндсэн хувилбарынхаа урьдчилж сонгосон богино хувилбарыг хийнэ." : "Үндсэн хувилбар тухайн өдөр багтахгүй бол урьдчилж сонгосон богино хувилбарыг хийнэ.",
+    maintenanceRule: "Алгассан өдрийг дараагийн өдөр давхар нөхөхгүй; дараагийн сонгосон өдрөөс хэвийн үргэлжлүүлнэ."
+  };
+  if (facts.injury) plan.injuryBoundary = "Дурдсан зовиур нэмэгдэх, хавдах, доголох эсвэл хөдөлгөөн хязгаарлагдвал тухайн өдрийн хөдөлгөөнийг зогсоож, үргэлжилбэл мэргэжлийн хүнтэй зөвлөнө.";
+  if (facts.cost) plan.costBoundary = "Нэмэлт төлбөр, тоног төхөөрөмж шаардахгүй хувилбарыг сонгоно.";
+  return {
+    patternId: prioritized.id, recommendationId: "maintenance_movement_bridge",
+    action: "Эхний 7 хоногт өөрт тохирох нэг бага ачааллын хөдөлгөөний хувилбар болон тасарсан өдрийн буцах дүрмийг туршина.",
+    reason: facts.activityBasedMethod ? "Энэ нь өмнөх хөдөлгөөнд суурилсан аргын хэрэгтэй хэсгийг яг хуучнаар давтахгүйгээр, одоогийн нөхцөлд давтаж болох хувилбараар шалгана." : "Энэ нь өдрийн хөдөлгөөний суурь түвшинд тохирох, одоогийн нөхцөлд давтаж болох хувилбарыг шалгана.",
+    priorityReason: "Эхний алхам нь тайланд харагдсан хөдөлгөөний нөхцөл болон үр дүнгээ хадгалах шилжилтийн саадтай шууд холбоотой.",
+    plan
   };
 }
 
-function overallPicture(evidence, influencingPatterns, supportedIds, ownerLike) {
-  if (ownerLike) return "Таны хариултаар стрессийн үед идэх, хоол харагдахад татагдах, цадсанаа мэдрэхэд хүндрэх эсвэл нойр муугаас хоолны сонголт алдагдах нь гол саад болж харагдсангүй. Харин өдрийн хөдөлгөөн бага байх, өмнөх арга цаг, зардал болон биеийн нөхцөлтэй урт хугацаанд нийцээгүй байх нь илүү бодит саад болжээ.\n\nӨмнөх оролдлого эхэндээ үр дүнтэй, нэг жилээс урт үргэлжилсэн нь та тогтвортой өөрчлөлт хийж чаддагийг харуулна. Гол асуудал нь эхлэх чадвар бус, арга тасарсан үед үр дүнгээ хадгалах өөр хувилбар байгаагүйд байж болох юм.";
-  if (influencingPatterns.length) return `${influencingPatterns.map(item => item.title).join(", ")} таны хариултад давтагдан харагдсан. Эдгээрийг тус тусад нь биш, өдөр тутмын нөхцөл болон өмнөх оролдлогын туршлагатай хамт авч үзэх нь илүү хэрэгтэй.`;
-  if (supportedIds.has("low_movement")) return "Хооллолтын нийтлэг сэтгэлзүйн саад хүчтэй харагдсангүй. Харин өдрийн хөдөлгөөний суурь түвшин бага байгаа нөхцөлд амьдралд багтах, тогтвортой хөдөлгөөний нэг хувилбарыг турших нь тохиромжтой.";
-  return "Таны одоогийн хариултаар хооллолтын нийтлэг сэтгэлзүйн саадууд хүчтэй харагдсангүй. Одоо байгаа давуу талуудаа хадгалж, бодит амьдралд хамгийн их саад болдог нөхцөлөө нэг нэгээр нь ажиглах нь тохиромжтой.";
+function overallPicture(influencingPatterns, contextualPatterns, protectiveText, previous, facts) {
+  const psychological = influencingPatterns.filter(item => item.category === "psychological");
+  const behavioral = influencingPatterns.filter(item => item.category === "behavioral");
+  const paragraphs = [];
+  if (psychological.length) paragraphs.push(`Сэтгэлзүйн талаас ${psychological.map(item => item.title).join(", ")} таны хариултад давтагдан харагдсан.`);
+  else if (protectiveText) paragraphs.push(protectiveText);
+  if (behavioral.length) paragraphs.push(`Өдөр тутмын зан үйл, өмнөх оролдлогын талаас ${behavioral.map(item => item.title.charAt(0).toLowerCase() + item.title.slice(1)).join(", ")} илүү тод харагдсан.`);
+  if (contextualPatterns.length) paragraphs.push(`Нөлөөлөгч нөхцөлд ${contextualPatterns.map(item => item.title.charAt(0).toLowerCase() + item.title.slice(1)).join(", ")} багтаж байна.`);
+  if (previous) {
+    const previousFacts = [];
+    if (facts.initialSuccess) previousFacts.push("эхэндээ үр дүн гарсан");
+    if (facts.sustainedAttempt) previousFacts.push("нэг жилээс урт үргэлжилсэн");
+    else if (facts.mediumDuration) previousFacts.push("6–12 сар үргэлжилсэн");
+    if (facts.weightRegain) previousFacts.push("зогссоны дараа жин буцсан");
+    if (previousFacts.length) paragraphs.push(`Өмнөх оролдлогоос ${previousFacts.join(", ")} баримтууд нь эхлэх чадвараас илүү үр дүнгээ хадгалах шилжилтийг анхаарах шаардлагатайг харуулж байна.`);
+  }
+  return paragraphs.length ? paragraphs.join("\n\n") : "Одоогийн хариултаар нэг чиглэлийг гол шалтгаан гэж түрүүлж нэрлэхээс илүү бодит амьдралд саад болдог нөхцөлөө нэг нэгээр нь ажиглах нь тохиромжтой.";
 }
 
 function buildFullReport(evidence = {}, now = new Date()) {
   const quality = evidenceQuality(evidence);
   const evaluated = quality.patternResult;
+  const facts = factGates(evidence);
   const influencingPatterns = evaluated.influencingPatterns.map(patternObject);
   const contextualPatternObjects = evaluated.contextualPatterns.map(patternObject);
   const allPatternObjects = [...influencingPatterns, ...contextualPatternObjects];
@@ -179,22 +242,24 @@ function buildFullReport(evidence = {}, now = new Date()) {
   }
   const prioritized = evaluated.influencingPatterns.slice().sort((left, right) => (PATTERN_PRIORITY[right.id] || 0) - (PATTERN_PRIORITY[left.id] || 0) || right.score - left.score)[0] || null;
   const supportedIds = new Set(evaluated.supported.map(item => item.id));
-  const ownerLike = ownerLikeFormulation(evidence, supportedIds);
-  const additionalPatternActions = evaluated.influencingPatterns.map(candidate => ({ patternId: candidate.id, patternTitle: candidate.title, recommendationId: candidate.recommendationId, ...RECOMMENDATIONS[candidate.recommendationId] }));
+  const previous = previousAttemptAnalysis(evidence, facts);
+  const protection = protectiveSynthesis(evidence.protective);
+  const contextual = contextualFactors(evidence, evaluated.contextualPatterns, supportedIds, facts);
+  const additionalPatternActions = evaluated.influencingPatterns.map(candidate => ({ patternId: candidate.id, patternTitle: candidate.title, ...recommendationFor(candidate, facts) }));
   return {
     version: REPORT_VERSION, questionnaireVersion: QUESTIONNAIRE_VERSION,
     productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: now.toISOString(), mode: quality.mode,
-    overallPicture: overallPicture(evidence, influencingPatterns, supportedIds, ownerLike), influencingPatterns,
-    contextualFactors: contextualFactors(evidence, evaluated.contextualPatterns, supportedIds),
-    protectiveSynthesis: protectiveSynthesis(evidence.protective), protectiveInterpretation: protectiveInterpretation(evidence.protective), protectiveFactors: strengthItems(evidence), contradictions: contradictionItems(evidence, evaluated.candidates),
-    previousAttemptAnalysis: previousAttemptAnalysis(evidence), interactionSummary: interactions,
-    prioritizedStartingAction: personalizedStartingAction(evidence, ownerLike, prioritized), additionalPatternActions,
-    avoidForNow: ownerLike ? "Хоол, порц, нойрыг зэрэг засах шинэ дүрэм нэмэхгүй. Хуучин гэмтлээ үл тоон хөдөлгөөнийг огцом нэмэхгүй, завгүй эсвэл алгассан өдрийн дараа ачааллаа давхар нөхөхгүй." : influencingPatterns.length ? "Олон дүрэм, хоолны хатуу хориг, хөдөлгөөний том төлөвлөгөөг зэрэг эхлүүлэхгүй. Эхний 7–14 хоногт зөвхөн эрэмбэлсэн нэг алхмаа туршина." : null,
-    professionalGuidance: professionalGuidance(evidence),
-    urgentGuidance: (evidence.contexts || []).some(row => row.questionId === "Q-BLOOD-PRESSURE" && row.guidanceOnly && row.effect > 0) ? "Ухаан балартах, цээжээр хүчтэй өвдөх, амьсгал огцом давчдах зэрэг яаралтай шинж илэрвэл энэ төлөвлөгөөг үргэлжлүүлэхгүй, яаралтай тусламж авна уу." : null,
+    overallPicture: overallPicture(influencingPatterns, contextualPatternObjects, protection, previous, facts), influencingPatterns,
+    contextualFactors: contextual,
+    protectiveSynthesis: protection, protectiveInterpretation: protectiveInterpretation(evidence.protective), protectiveFactors: strengthItems(evidence), contradictions: contradictionItems(evidence, evaluated.candidates),
+    previousAttemptAnalysis: previous, interactionSummary: interactions,
+    prioritizedStartingAction: startingAction(prioritized, facts), additionalPatternActions,
+    avoidForNow: influencingPatterns.length ? `Олон дүрэм, хоолны хатуу хориг, хөдөлгөөний том төлөвлөгөөг зэрэг эхлүүлэхгүй.${facts.injury ? " Биеийн дурдсан нөхцөлийг үл тоон ачааллаа нэмэхгүй." : ""} Эхний 7–14 хоногт зөвхөн эрэмбэлсэн нэг алхмаа туршина.` : null,
+    professionalGuidance: professionalGuidance(evidence, facts),
+    urgentGuidance: facts.bloodPressure ? "Ухаан балартах, цээжээр хүчтэй өвдөх, амьсгал огцом давчдах зэрэг яаралтай шинж илэрвэл энэ төлөвлөгөөг үргэлжлүүлэхгүй, яаралтай тусламж авна уу." : null,
     internalEvidenceMap: {
       mappedQuestionCount: new Set([...(evidence.signals || []), ...(evidence.neutral || []), ...(evidence.excluded || []), ...(evidence.routingOnly || [])].map(row => row.questionId)).size,
-      informativeQuestionCount: quality.questionCount, unmappedQuestions: evidence.unmappedQuestions || [],
+      informativeQuestionCount: quality.questionCount, unmappedQuestions: evidence.unmappedQuestions || [], factGates: facts,
       signals: (evidence.signals || []).map(row => ({ questionId: row.questionId, dimension: row.dimension, signal: row.signal, effect: row.effect, protective: row.protective === true, contextOnly: row.contextOnly === true, guidanceOnly: row.guidanceOnly === true })),
       patternEvidence: evaluated.candidates.map(candidate => ({ id: candidate.id, category: candidate.category, supported: supportedIds.has(candidate.id), score: candidate.score, threshold: candidate.threshold, questionIds: candidate.questionIds, dimensions: candidate.dimensions }))
     }

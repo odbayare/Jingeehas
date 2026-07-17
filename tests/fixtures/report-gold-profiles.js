@@ -57,11 +57,11 @@ module.exports = Object.freeze([
     "Q-MEAL-RHYTHM": "3–4 цаг", "Q-HUNGER": "Амар", "Q-SATIETY": "Амар", "Q-EMOTION": "Өөрчлөгддөггүй",
     "Q-CUE": ["Аль нь ч үгүй"], "Q-TRAVEL": "Машинаар", "Q-MOVEMENT": "Маш бага"
   }, [], { expectedContextualFactors: ["low_movement"], expectedProtectiveSignal: "emotional_eating" }),
-  profile("owner maintenance transition profile", {
+  profile("sustained movement attempt with explicit constraints", {
     "Q-MEAL-RHYTHM": "4–5 цаг", "Q-HUNGER": "Амар", "Q-SATIETY": "Амар", "Q-PORTION": ["Тодорхой хоол байхгүй"],
     "Q-EMOTION": "Өөрчлөгддөггүй", "Q-CUE": ["Аль нь ч үгүй"], "Q-SLEEP-DURATION": "6–8 цаг", "Q-SLEEP-QUALITY": "Сайн амардаг",
     "Q-TRAVEL": "Машинаар", "Q-MOVEMENT": "Бага", "Q-BLOOD-PRESSURE": "Хэвийн хэмжээнээс бага эсвэл их гарч байсан",
-    "Q-METHOD-PAST": ["Дасгал хөдөлгөөн"], "Q-METHOD-DURATION": "1 жилээс урт", "Q-METHOD-STOP": "Усанд сэлдэг байж байгаад гэмтлийн улмаас сэлэхээ зогсоосон. Буцааж эхлүүлж амжихгүй 6 жил болж байна",
+    "Q-METHOD-PAST": ["Дасгал хөдөлгөөн"], "Q-METHOD-DURATION": "1 жилээс урт", "Q-METHOD-STOP": "Өмнөх хөдөлгөөн гэмтлийн улмаас зогссон",
     "Q-METHOD-RESULT": "Жин буурсан", "Q-METHOD-REGAIN": "Хэсэгчлэн нэмэгдсэн", "Q-METHOD-BARRIERS": ["Цагийн хуваарь", "Зардал"]
   }, ["previous_attempt_sustainability"], { expectedContextualFactors: ["low_movement"], expectedFirstStep: "maintenance_movement_bridge", expectedProtectiveSignal: "emotional_eating", absentPatterns: ["emotional_regulation", "hunger_satiety", "environmental_cues"] }),
   profile("mixed weak evidence", {

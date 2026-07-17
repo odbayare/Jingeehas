@@ -81,7 +81,7 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   "Q-METHOD-PAST": { dimension: "previous_method", options: Object.freeze({ ...optionMap(METHOD_OPTIONS, option => restrictiveMethod(option) ? [signal("restrictive_method_past", 1)] : ["Дасгал хөдөлгөөн", "Алхалт"].includes(option) ? [signal("activity_based_method", 2)] : [neutral]), "Ямар нэг арга хэрэглэж үзээгүй": [neutral] }) },
   "Q-METHOD-DURATION": { dimension: "attempt_duration", options: {
     "2 долоо хоногоос бага": [signal("short_lived_attempt", 3)], "2–8 долоо хоног": [signal("short_lived_attempt", 2)],
-    "2–6 сар": [signal("short_lived_attempt", 1)], "6–12 сар": [signal("sustained_attempt", 1, { protective: true })], "1 жилээс урт": [signal("sustained_attempt", 2, { protective: true })], "Тодорхой санахгүй": [neutral]
+    "2–6 сар": [signal("short_lived_attempt", 1)], "6–12 сар": [signal("medium_duration_attempt", 1, { protective: true })], "1 жилээс урт": [signal("sustained_attempt", 2, { protective: true })], "Тодорхой санахгүй": [neutral]
   } },
   "Q-METHOD-STOP": { dimension: "attempt_context", valueType: "text", classification: "neutral_context" },
   "Q-METHOD-RESULT": { dimension: "attempt_result", options: {
@@ -95,10 +95,10 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   "Q-METHOD-SUPPORT": { dimension: "support_context", options: optionMap(["Эмч", "Хоолзүйч", "Сэтгэлзүйч", "Дасгал хөдөлгөөний мэргэжилтэн", "Бусад мэргэжилтэн", "Мэргэжлийн дэмжлэг аваагүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Мэргэжлийн дэмжлэг аваагүй" ? [neutral] : [protective("professional_support", -1)]) },
   "Q-METHOD-MEDICATION": { dimension: "medical_context", options: optionMap(["Үгүй", "Эмчийн хяналттай эм хэрэглэсэн", "Эмчийн хяналтгүй эм хэрэглэсэн", "Нэмэлт бүтээгдэхүүн хэрэглэсэн", "Тодорхойгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Эмчийн хяналтгүй эм хэрэглэсэн" ? [signal("professional_guidance_context", 2, { guidanceOnly: true })] : [neutral]) },
   "Q-METHOD-BARRIERS": { dimension: "sustainability_barrier", options: {
-    "Цагийн хуваарь": [signal("schedule_mismatch", 3)], "Өлсөх эсвэл цадах мэдрэмж": [signal("hunger_satiety_barrier", 2)],
+    "Цагийн хуваарь": [signal("schedule_barrier", 3)], "Өлсөх эсвэл цадах мэдрэмж": [signal("hunger_satiety_barrier", 2)],
     "Стресс ба сэтгэл хөдлөл": [signal("emotional_barrier", 3)], "Гэр бүл эсвэл орчны нөлөө": [signal("environmental_barrier", 3)],
-    "Зардал": [signal("practical_barrier", 1)], "Ядаргаа эсвэл нойр": [signal("fatigue_barrier", 3)],
-    "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт": [signal("professional_guidance_context", 2, { guidanceOnly: true })],
+    "Зардал": [signal("cost_barrier", 1)], "Ядаргаа эсвэл нойр": [signal("fatigue_barrier", 3)],
+    "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт": [signal("injury_or_pain_barrier", 2, { contextOnly: true, guidanceOnly: true })],
     "Үр дүн удаан харагдах": [signal("sustainability_barrier", 2)], "Хэт хатуу дүрэм": [signal("strict_rule_barrier", 3)],
     "Тодорхой саад байгаагүй": [protective("sustainability_barrier", -2)], "Хариулахгүй": [excluded]
   } },

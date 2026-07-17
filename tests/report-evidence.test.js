@@ -1,5 +1,6 @@
 "use strict";
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const { QUESTIONS } = require("../questions.js");
 const { mappingCoverage } = require("../netlify/functions/_lib/report-signals.js");
 const { buildEvidence, evidenceQuality, buildFullReport, publicReport } = require("../netlify/functions/_lib/report.js");
@@ -56,30 +57,66 @@ assert(multi.influencingPatterns.length >= 3);
 assert(multi.interactionSummary.length >= 2);
 assert(new Set(multi.additionalPatternActions.map(item => item.recommendationId)).size === multi.additionalPatternActions.length);
 
-const owner = reportFor(fixtures.find(item => item.name === "owner maintenance transition profile").answers);
-assert(!owner.influencingPatterns.some(item => item.id === "low_movement"), "low movement must not be a psychological or behavioral pattern");
-assert(owner.contextualFactors.some(item => item.id === "low_movement"), "low movement must remain a contextual influencing factor");
-assert(owner.influencingPatterns.every(item => item.category !== "psychological"), "owner answers do not support a psychological pattern");
-assert(owner.protectiveSynthesis.includes("гол саад болж харагдсангүй"));
-assert(owner.protectiveInterpretation.includes("давуу талыг харуулна"));
-assert(owner.protectiveInterpretation.includes("хөдөлгөөний хэмнэл"));
-assert(owner.previousAttemptAnalysis.summary.includes("нэг жилээс урт"));
-assert(owner.previousAttemptAnalysis.summary.includes("Гэмтлийн улмаас"));
-assert(owner.previousAttemptAnalysis.interpretation.includes("эхлэх чадвар"));
-assert(owner.professionalGuidance.includes("Хэрэв даралт сүүлийн үед давтан хэвийн бус"));
-assert(owner.urgentGuidance.includes("яаралтай тусламж"));
-assert.notEqual(owner.prioritizedStartingAction.recommendationId, "professional_check");
-assert.equal(owner.prioritizedStartingAction.plan.duration, "14 хоног");
-assert(owner.prioritizedStartingAction.plan.option.includes("төлбөр шаардахгүй"));
-assert(owner.prioritizedStartingAction.plan.injuryBoundary.includes("өвдөх"));
-assert(owner.prioritizedStartingAction.plan.anchor.includes("үндсэн хоолны дараа"));
-assert(owner.prioritizedStartingAction.plan.frequency.includes("5 өдөр"));
-assert(owner.prioritizedStartingAction.plan.record.includes("минут"));
-assert(owner.prioritizedStartingAction.plan.success.includes("дор хаяж 8"));
-assert(owner.prioritizedStartingAction.plan.fallback.includes("5 минут"));
-assert(owner.prioritizedStartingAction.plan.maintenanceRule.includes("давхар нөхөхгүй"));
+const transition = reportFor(fixtures.find(item => item.name === "sustained movement attempt with explicit constraints").answers);
+assert(!transition.influencingPatterns.some(item => item.id === "low_movement"), "low movement must not be a psychological or behavioral pattern");
+assert(transition.contextualFactors.some(item => item.id === "low_movement"), "low movement must remain a contextual influencing factor");
+assert(transition.influencingPatterns.every(item => item.category !== "psychological"), "this profile does not support a psychological pattern");
+assert(transition.protectiveSynthesis.includes("гол саад болж харагдсангүй"));
+assert(transition.protectiveInterpretation.includes("давуу талыг харуулна"));
+assert(transition.previousAttemptAnalysis.summary.includes("нэг жилээс урт"));
+assert(transition.previousAttemptAnalysis.summary.includes("гэмтэл"));
+assert(transition.previousAttemptAnalysis.interpretation.includes("тууштай байх чадвар"));
+assert(transition.professionalGuidance.includes("Хэрэв даралт сүүлийн үед давтан хэвийн бус"));
+assert(transition.urgentGuidance.includes("яаралтай тусламж"));
+assert.notEqual(transition.prioritizedStartingAction.recommendationId, "professional_check");
+assert.equal(transition.prioritizedStartingAction.plan.duration, "Эхний 7 хоногт туршина");
+assert(transition.prioritizedStartingAction.plan.costBoundary.includes("төлбөр"));
+assert(transition.prioritizedStartingAction.plan.injuryBoundary.includes("зовиур"));
+assert(transition.prioritizedStartingAction.plan.anchor.includes("тогтвортой давтагддаг"));
+assert(transition.prioritizedStartingAction.plan.record.includes("минут"));
+assert(transition.prioritizedStartingAction.plan.maintenanceRule.includes("давхар нөхөхгүй"));
 const rejectedMeta = ["хангалттай дэмжигдсэн", "зэрэг дэмжигдээгүй", "Зохиомол харилцан холбоо", "дангаараа тусдаа хэв маяг", "дангаараа шинэ хэв маяг"];
-for (const phrase of rejectedMeta) assert(!JSON.stringify(publicReport(owner)).includes(phrase), `owner report leaked engine language: ${phrase}`);
+for (const phrase of rejectedMeta) assert(!JSON.stringify(publicReport(transition)).includes(phrase), `report leaked engine language: ${phrase}`);
+
+const genericTransitionAnswers = {
+  "Q-METHOD-PAST": ["Дасгал хөдөлгөөн"], "Q-METHOD-DURATION": "1 жилээс урт",
+  "Q-METHOD-RESULT": "Жин буурсан", "Q-METHOD-REGAIN": "Хэсэгчлэн нэмэгдсэн",
+  "Q-METHOD-BARRIERS": ["Үр дүн удаан харагдах"], "Q-TRAVEL": "Машинаар", "Q-MOVEMENT": "Бага"
+};
+const withoutInjury = reportFor(genericTransitionAnswers);
+const withInjury = reportFor({ ...genericTransitionAnswers, "Q-METHOD-STOP": "Дасгал хийх үед гэмтэл гарсан тул зогсоосон" });
+const withoutInjuryText = JSON.stringify(publicReport(withoutInjury));
+const withInjuryText = JSON.stringify(publicReport(withInjury));
+assert(!/хуучин гэмт|гэмтэл|өвдөлт|Зовиур/.test(withoutInjuryText), "injury language requires injury evidence");
+assert(/гэмтэл|өвдөлт|Зовиур/.test(withInjuryText), "explicit injury evidence must change injury guidance");
+assert.notEqual(withoutInjuryText, withInjuryText, "injury evidence must materially change the report");
+
+const withoutCost = reportFor(genericTransitionAnswers);
+const withCost = reportFor({ ...genericTransitionAnswers, "Q-METHOD-BARRIERS": ["Үр дүн удаан харагдах", "Зардал"] });
+const withoutCostText = JSON.stringify(publicReport(withoutCost));
+const withCostText = JSON.stringify(publicReport(withCost));
+assert(!/зардал|төлбөр/i.test(withoutCostText), "cost wording requires explicit cost evidence");
+assert(/зардал|төлбөр/i.test(withCostText), "explicit cost evidence must change cost interpretation");
+assert.notEqual(withoutCostText, withCostText, "cost evidence must materially change the report");
+
+const withoutSchedule = reportFor(genericTransitionAnswers);
+const withSchedule = reportFor({ ...genericTransitionAnswers, "Q-METHOD-BARRIERS": ["Үр дүн удаан харагдах", "Цагийн хуваарь"] });
+const withoutScheduleText = JSON.stringify(publicReport(withoutSchedule));
+const withScheduleText = JSON.stringify(publicReport(withSchedule));
+assert(!/цагийн хуваарь|Завгүй/.test(withoutScheduleText), "schedule wording requires explicit schedule evidence");
+assert(/цагийн хуваарь|Завгүй/.test(withScheduleText), "explicit schedule evidence must change schedule interpretation");
+assert.notEqual(withoutScheduleText, withScheduleText, "schedule evidence must materially change the report");
+
+const withoutRegain = reportFor({ ...genericTransitionAnswers, "Q-METHOD-REGAIN": "Үгүй" });
+assert(!JSON.stringify(publicReport(withoutRegain)).includes("зогссоны дараа жин"), "regain wording requires positive regain evidence");
+const withoutInitialSuccess = reportFor({ ...genericTransitionAnswers, "Q-METHOD-RESULT": "Жин тогтвортой байсан" });
+assert(!JSON.stringify(publicReport(withoutInitialSuccess)).includes("эхэндээ жин бууруулсан"), "initial-success wording requires explicit success evidence");
+const withoutLongDuration = reportFor({ ...genericTransitionAnswers, "Q-METHOD-DURATION": "6–12 сар" });
+assert(!JSON.stringify(publicReport(withoutLongDuration)).includes("нэг жилээс урт"), "long-duration wording requires the exact duration gate");
+
+const reportSource = fs.readFileSync(require.resolve("../netlify/functions/_lib/report.js"), "utf8");
+for (const forbiddenName of ["ownerLike", "ownerProfile", "ownerReport", "ownerSpecialCase"]) assert(!reportSource.includes(forbiddenName), `user-specific production branch remains: ${forbiddenName}`);
+assert.equal((reportSource.match(/function buildFullReport/g) || []).length, 1, "all assessments must use one generic report builder");
 
 const openOnly = reportFor({ "OPEN-PAST": "Бүх зүйл нурсан мэт санагдсан" });
 assert.equal(openOnly.influencingPatterns.length, 0, "open text cannot independently create a pattern");
