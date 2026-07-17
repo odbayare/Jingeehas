@@ -1,10 +1,39 @@
 "use strict";
 
 const { PRODUCT } = require("./config.js");
-const { randomId } = require("./crypto.js");
+const { randomId, hashToken } = require("./crypto.js");
 const { ownedAssessment } = require("./assessment.js");
 
-const ACTIVE = new Set(["creating", "pending", "checking", "check_error"]);
+const ACTIVE = new Set(["creating", "create_unknown", "reconciling", "pending", "checking", "check_error"]);
+const AMBIGUOUS_CREATE = new Set(["create_error", "create_unknown", "reconciling"]);
+const SAFE_SENDER_INVOICE_MAX_LENGTH = 45;
+
+function senderInvoiceNumber() {
+  const value = randomId("jh_");
+  if (value.length > SAFE_SENDER_INVOICE_MAX_LENGTH) throw new Error("Sender invoice reference exceeds provider limit");
+  return value;
+}
+
+function requestFingerprint(sessionId, assessmentId) {
+  return hashToken([sessionId, assessmentId, PRODUCT.code, PRODUCT.amount].join("|"));
+}
+
+function maskedReference(value) {
+  const text = String(value || "");
+  return text ? `${text.slice(0, 3)}…${text.slice(-4)}` : "absent";
+}
+
+function providerFailureEvidence(error, senderInvoiceNo, timestamp) {
+  return {
+    event: "qpay_invoice_create_unknown",
+    failureClass: String(error?.failureClass || "missing_expected_fields"),
+    providerHttpStatus: Number.isInteger(error?.providerHttpStatus) ? error.providerHttpStatus : null,
+    providerResponseShape: error?.providerResponseShape || "unavailable",
+    requestReachedProvider: error?.requestReachedProvider ?? "unknown",
+    requestTimestamp: timestamp,
+    senderInvoiceReference: maskedReference(senderInvoiceNo)
+  };
+}
 function publicPayment(payment) {
   return {
     paymentId: payment.id, assessmentId: payment.assessmentId, productCode: payment.productCode,
@@ -14,7 +43,7 @@ function publicPayment(payment) {
   };
 }
 
-async function createInvoice(database, provider, sessionId, input = {}, now = new Date()) {
+async function validateInvoiceRequest(database, sessionId, input) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
   const safetyCheck = await database.get("safety_checks", assessment.safetyCheckId);
   if (!safetyCheck || safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Payment blocked by safety route"), { statusCode: 409, code: "safety_route_required" });
@@ -22,27 +51,92 @@ async function createInvoice(database, provider, sessionId, input = {}, now = ne
   if (!recoveryContacts.length) throw Object.assign(new Error("Recovery contact required"), { statusCode: 400, code: "recovery_contact_required" });
   if (input.productCode && input.productCode !== PRODUCT.code) throw Object.assign(new Error("Invalid product"), { statusCode: 400, code: "invalid_product" });
   if (input.amount != null && Number(input.amount) !== PRODUCT.amount) throw Object.assign(new Error("Invalid amount"), { statusCode: 400, code: "invalid_amount" });
+  return assessment;
+}
+
+async function createInvoiceAttempt(database, provider, sessionId, assessment, now, replacementForPaymentId = null) {
+  const id = randomId("wp_");
+  const senderInvoiceNo = senderInvoiceNumber();
+  const expiresAt = new Date(now.getTime() + 15 * 60 * 1000).toISOString();
+  const timestamp = now.toISOString();
+  await database.insert("payments", { id, sessionId, assessmentId: assessment.id, productCode: PRODUCT.code,
+    amount: PRODUCT.amount, status: "creating", senderInvoiceNo, invoiceId: null, expiresAt,
+    qrText: "", qrImage: "", urls: [], requestFingerprint: requestFingerprint(sessionId, assessment.id),
+    reconciliationStatus: "not_required", replacementForPaymentId,
+    createdAt: timestamp, updatedAt: timestamp, paidAt: null });
+  try {
+    const invoice = await provider.createInvoice({ senderInvoiceNo, amount: PRODUCT.amount });
+    if (!invoice?.invoiceId) throw Object.assign(new Error("Missing invoice ID"), {
+      failureClass: "missing_expected_fields", providerHttpStatus: 200,
+      providerResponseShape: invoice && typeof invoice === "object" ? Object.keys(invoice).sort() : typeof invoice,
+      requestReachedProvider: true, createOutcomeUnknown: true
+    });
+    const pending = await database.update("payments", id, { status: "pending", invoiceId: invoice.invoiceId,
+      qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), urls: invoice.urls || [],
+      reconciliationStatus: "not_required", updatedAt: timestamp });
+    return { ...publicPayment(pending), reused: false };
+  } catch (error) {
+    const evidence = providerFailureEvidence(error, senderInvoiceNo, timestamp);
+    console.error(JSON.stringify(evidence));
+    await database.update("payments", id, { status: "create_unknown", reconciliationStatus: "required", updatedAt: timestamp });
+    throw Object.assign(new Error("Invoice creation outcome requires reconciliation"), {
+      statusCode: 502, code: "invoice_create_unknown", failureEvidence: evidence, cause: error
+    });
+  }
+}
+
+async function createInvoice(database, provider, sessionId, input = {}, now = new Date()) {
+  const assessment = await validateInvoiceRequest(database, sessionId, input);
   const payments = await database.find("payments", { sessionId, assessmentId: assessment.id, productCode: PRODUCT.code });
+  const ambiguous = payments.find(payment => AMBIGUOUS_CREATE.has(payment.status) ||
+    payment.status === "creating" && (!payment.expiresAt || new Date(payment.expiresAt) <= now));
+  if (ambiguous) throw Object.assign(new Error("Existing invoice attempt requires reconciliation"), {
+    statusCode: 409, code: "invoice_reconciliation_required", paymentId: ambiguous.id
+  });
+  if (payments.some(payment => payment.status === "create_failed_confirmed")) {
+    throw Object.assign(new Error("A confirmed failed attempt requires an explicitly linked replacement"), {
+      statusCode: 409, code: "replacement_authorization_required"
+    });
+  }
   const active = payments.find(payment => ACTIVE.has(payment.status) && payment.expiresAt && new Date(payment.expiresAt) > now && (payment.status === "creating" || payment.invoiceId));
   if (active) return { ...publicPayment(active), reused: true };
   for (const stale of payments.filter(payment => ACTIVE.has(payment.status))) await database.update("payments", stale.id, { status: "expired", updatedAt: now.toISOString() });
+  return createInvoiceAttempt(database, provider, sessionId, assessment, now);
+}
 
-  const id = randomId("wp_");
-  const senderInvoiceNo = randomId("jingeehas_");
-  const expiresAt = new Date(now.getTime() + 15 * 60 * 1000).toISOString();
-  await database.insert("payments", { id, sessionId, assessmentId: assessment.id, productCode: PRODUCT.code,
-    amount: PRODUCT.amount, status: "creating", senderInvoiceNo, invoiceId: null, expiresAt,
-    qrText: "", qrImage: "", urls: [], createdAt: now.toISOString(), updatedAt: now.toISOString(), paidAt: null });
-  try {
-    const invoice = await provider.createInvoice({ senderInvoiceNo, amount: PRODUCT.amount });
-    if (!invoice.invoiceId) throw new Error("Missing invoice ID");
-    const pending = await database.update("payments", id, { status: "pending", invoiceId: invoice.invoiceId,
-      qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), urls: invoice.urls || [], updatedAt: now.toISOString() });
-    return { ...publicPayment(pending), reused: false };
-  } catch (error) {
-    await database.update("payments", id, { status: "create_error", updatedAt: now.toISOString() });
-    throw Object.assign(new Error("Invoice creation failed"), { statusCode: 502, code: "create_error", cause: error });
+async function reconcileInvoiceCreation(database, provider, sessionId, input = {}, now = new Date()) {
+  const payment = await database.get("payments", input.paymentId);
+  if (!payment || payment.sessionId !== sessionId) throw Object.assign(new Error("Payment not found"), { statusCode: 404, code: "payment_not_found" });
+  if (!AMBIGUOUS_CREATE.has(payment.status)) throw Object.assign(new Error("Payment is not reconcilable"), { statusCode: 409, code: "payment_not_reconcilable" });
+  await database.update("payments", payment.id, { status: "reconciling", reconciliationStatus: "in_progress", updatedAt: now.toISOString() });
+  let result;
+  try { result = await provider.reconcileInvoice({ senderInvoiceNo: payment.senderInvoiceNo, createdAt: payment.createdAt }); }
+  catch { result = { state: "unknown" }; }
+  if (result?.state === "exists" && result.invoice?.invoiceId) {
+    const invoice = result.invoice;
+    if (invoice.amount != null && Number(invoice.amount) !== payment.amount) throw Object.assign(new Error("Reconciled invoice amount mismatch"), { statusCode: 409, code: "invoice_mismatch" });
+    return publicPayment(await database.update("payments", payment.id, { status: "pending", invoiceId: invoice.invoiceId,
+      qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), urls: invoice.urls || [],
+      expiresAt: invoice.expiresAt || payment.expiresAt, reconciliationStatus: "existing_invoice_recovered", updatedAt: now.toISOString() }));
   }
+  if (result?.state === "absent") {
+    return publicPayment(await database.update("payments", payment.id, { status: "create_failed_confirmed",
+      reconciliationStatus: "absence_confirmed", updatedAt: now.toISOString() }));
+  }
+  await database.update("payments", payment.id, { status: "create_unknown", reconciliationStatus: "required", updatedAt: now.toISOString() });
+  throw Object.assign(new Error("Provider invoice state is still ambiguous"), { statusCode: 409, code: "invoice_reconciliation_blocked" });
+}
+
+async function createReplacementInvoice(database, provider, sessionId, input = {}, now = new Date()) {
+  const failed = await database.get("payments", input.paymentId);
+  if (!failed || failed.sessionId !== sessionId) throw Object.assign(new Error("Payment not found"), { statusCode: 404, code: "payment_not_found" });
+  if (failed.status !== "create_failed_confirmed" || failed.reconciliationStatus !== "absence_confirmed") {
+    throw Object.assign(new Error("Provider absence is not confirmed"), { statusCode: 409, code: "invoice_absence_not_confirmed" });
+  }
+  const assessment = await validateInvoiceRequest(database, sessionId, { assessmentId: failed.assessmentId, productCode: failed.productCode, amount: failed.amount });
+  const payments = await database.find("payments", { sessionId, assessmentId: assessment.id, productCode: PRODUCT.code });
+  if (payments.some(payment => ACTIVE.has(payment.status))) throw Object.assign(new Error("Active invoice exists"), { statusCode: 409, code: "active_invoice_exists" });
+  return createInvoiceAttempt(database, provider, sessionId, assessment, now, failed.id);
 }
 
 function confirmedProviderPayment(result, expectedAmount) {
@@ -95,4 +189,6 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
   }
 }
 
-module.exports = { ACTIVE, publicPayment, createInvoice, confirmedProviderPayment, grantEntitlement, checkPayment };
+module.exports = { ACTIVE, AMBIGUOUS_CREATE, SAFE_SENDER_INVOICE_MAX_LENGTH, senderInvoiceNumber, requestFingerprint,
+  providerFailureEvidence, publicPayment, createInvoice, reconcileInvoiceCreation, createReplacementInvoice,
+  confirmedProviderPayment, grantEntitlement, checkPayment };

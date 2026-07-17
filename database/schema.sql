@@ -82,15 +82,18 @@ create table payments (
   assessment_id text not null references assessments(id) on delete restrict,
   product_code text not null check (product_code = 'WEIGHT_TEST_ONE_TIME'),
   amount integer not null check (amount = 9900),
-  status text not null check (status in ('creating', 'pending', 'checking', 'paid', 'create_error', 'check_error', 'expired', 'failed', 'cancelled', 'paid_but_not_unlocked')),
+  status text not null check (status in ('creating', 'create_unknown', 'reconciling', 'pending', 'checking', 'paid', 'create_error', 'create_failed_confirmed', 'check_error', 'expired', 'failed', 'cancelled', 'paid_but_not_unlocked')),
   invoice_id text unique,
-  sender_invoice_no text not null unique,
+  sender_invoice_no text not null unique check (char_length(sender_invoice_no) <= 45),
   provider_payment_id text,
   expires_at timestamptz,
   paid_at timestamptz,
   qr_text text not null default '',
   qr_image text not null default '',
   urls jsonb not null default '[]'::jsonb,
+  request_fingerprint text,
+  reconciliation_status text,
+  replacement_for_payment_id text references payments(id) on delete restrict,
   created_at timestamptz not null,
   updated_at timestamptz not null,
   check (updated_at >= created_at),
@@ -263,6 +266,8 @@ create index assessments_session_idx on assessments (session_id, updated_at desc
 create index assessment_sessions_session_idx on assessment_sessions (session_id, created_at desc);
 create index payments_session_assessment_idx on payments (session_id, assessment_id, product_code, created_at desc);
 create index payments_status_expiry_idx on payments (status, expires_at);
+create unique index payments_one_active_invoice_attempt_uidx on payments (session_id, assessment_id, product_code)
+  where status in ('creating', 'create_unknown', 'reconciling', 'pending', 'checking', 'check_error');
 create index recovery_contacts_hash_idx on recovery_contacts (type, contact_hash);
 create index recovery_contacts_assessment_idx on recovery_contacts (assessment_id);
 create index recovery_challenges_rate_idx on recovery_challenges (rate_key, created_at desc);

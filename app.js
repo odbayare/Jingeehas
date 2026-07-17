@@ -5,12 +5,15 @@ const SUPPORT_EMAIL = "odbayar.enkh@gmail.com";
 const WEIGHT_TEST_COMING_SOON_MODE = true;
 const PAYMENT_COPY = Object.freeze({
   creating: "QPay нэхэмжлэл үүсгэж байна…",
+  create_unknown: "Нэхэмжлэл үүссэн эсэхийг баталгаажуулах шаардлагатай байна. Давтан нэхэмжлэл үүсгэхгүйгээр дэмжлэгтэй холбогдоно уу.",
+  reconciling: "Өмнөх нэхэмжлэлийн төлөвийг QPay талаас шалгаж байна…",
+  create_failed_confirmed: "Өмнөх оролдлогоор нэхэмжлэл үүсээгүй нь баталгаажсан. Шинэ оролдлогыг дэмжлэгээр зөвшөөрүүлнэ үү.",
   pending: "Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.",
   checking: "Төлбөрийг шалгаж байна…",
   paidBeforeTest: "Төлбөр баталгаажлаа. Одоо тестээ эхлүүлнэ үү.",
   paidAfterAssessment: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ."
 });
-const PAYMENT_STATES = new Set(["idle", "creating", "pending", "checking", "paid", "create_error", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
+const PAYMENT_STATES = new Set(["idle", "creating", "create_unknown", "reconciling", "pending", "checking", "paid", "create_error", "create_failed_confirmed", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
 const questionApi = typeof require === "function" ? require("./questions.js") : window.JingeehasQuestions;
 const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй"]);
 const BRANCH_PREFIXES = Object.freeze({ "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"] });
@@ -133,7 +136,8 @@ function checkboxGroup(name, legend, options) {
 }
 function renderPayment() {
   const payment = state.payment || { status: "idle" };
-  const statusCopy = payment.status === "creating" ? PAYMENT_COPY.creating : payment.status === "checking" ? PAYMENT_COPY.checking : payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : payment.status === "pending" ? PAYMENT_COPY.pending : "";
+  const statusCopy = payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY[payment.status] || "";
+  const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөр ба тайлан сэргээх мэдээлэл</h1>
     ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд энэ тест үнэлгээг санал болгосон байна.</p><form id="consent-form"><fieldset><legend>Тайлан хуваалцах зөвшөөрөл</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Би тест үнэлгээний бүрэн тайланг ${escapeHtml(state.invitation.advisorName || "Зөвлөх")} зөвлөх харахыг зөвшөөрч байна.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Миний асуулт бүрд өгсөн түүхий хариултыг тусад нь харуулахгүй.</p><button class="button" type="submit">Сонголтоо баталгаажуулах</button></form></section>` : !state.assessmentId ? `<form id="contact-form" novalidate><p>Имэйл хаягаа оруулна уу. Төлбөртэй бүрэн тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.</p>
       <label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email" required></label>
@@ -142,7 +146,7 @@ function renderPayment() {
         <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
         ${payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
         ${payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа: <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(new Date(payment.expiresAt).toLocaleString("mn-MN"))}</time></p>` : ""}
-        ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">${payment.status === "paid_but_not_unlocked" ? "Тайлангийн эрхээ дахин нээх" : "Төлбөр шалгах"}</button>` : payment.status === "paid" ? `<a class="button" href="/assessment/questions" data-route>Тестээ эхлүүлэх</a>` : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
+        ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">${payment.status === "paid_but_not_unlocked" ? "Тайлангийн эрхээ дахин нээх" : "Төлбөр шалгах"}</button>` : payment.status === "paid" ? `<a class="button" href="/assessment/questions" data-route>Тестээ эхлүүлэх</a>` : createBlocked ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
       </section>`}</main>${footer()}</div>`;
 }
 function renderQuestionInput(question, value) {
@@ -269,7 +273,10 @@ async function submitConsent(form) {
 async function createInvoice() {
   setPaymentStatus("creating"); render();
   try { state.payment = await api("/.netlify/functions/qpay-create-invoice", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId, productCode: PRODUCT.code, amount: PRODUCT.amount }) }); }
-  catch { setPaymentStatus("create_error"); } render();
+  catch (error) {
+    const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(error?.body?.error);
+    setPaymentStatus(ambiguous ? "create_unknown" : "create_error");
+  } render();
 }
 async function checkPayment() {
   setPaymentStatus("checking"); render();
