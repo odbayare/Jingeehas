@@ -26,10 +26,12 @@ Prompt text that proposes a value is not owner approval. No report containing th
 - Busy-day fallback: a clearly shorter low-intensity version.
 - Success: the main or short version is repeatable on most selected opportunities; if injury evidence exists, symptoms do not worsen.
 
+Candidate B is the recommended launch option for owner review. This recommendation is not a selection or approval.
+
 ## Owner decision
 
 - [ ] Approve candidate A.
 - [ ] Approve candidate B.
 - [ ] Request revised parameters.
 
-Until one option is explicitly selected, status remains `OWNER REVIEW REQUIRED` and deployment is prohibited.
+Until one option is explicitly selected, status remains `OWNER REVIEW REQUIRED` and deployment is prohibited. The canonical report stores `planDecisionPending` internally, exposes neither candidate publicly, and renders no section-8 experiment.

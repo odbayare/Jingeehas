@@ -22,14 +22,14 @@ The following neutral questions remain exact:
 
 | Baseline occurrence | Baseline context | Replacement | Evidence rule |
 | --- | --- | --- | --- |
-| `Арга тасарсны дараа үр дүнгээ хадгалах төлөвлөгөө дутсан нь` | Public sustainability title | `Өмнөх аргын үр дүнг хадгалж үлдэх төлөвлөгөө дутсан нь` | Supported sustainability pattern; neutral about why continuation ended. |
+| `Арга тасарсны дараа үр дүнгээ хадгалах төлөвлөгөө дутсан нь` | Public sustainability title | `Өмнөх аргын үр дүнг хадгалах төлөвлөгөө дутсан нь` | Supported sustainability pattern; neutral about why continuation ended. |
 | `арга тасарсны дараах төлөвлөгөө` | Pattern uncertainty | `өмнөх оролдлогын үр дүнг хадгалах төлөвлөгөө` | Supported sustainability pattern. |
 | `Хэт хатуу арга тасрахад...` | Restrictive overview | `Хэт хатуу дэглэмийг үргэлжлүүлэхэд хэцүү болоход...` | Supported restrictive pattern. |
 | `арга тасарсны дараа үр дүнгээ хадгалах...` | Overall picture | `гарсан үр дүнг өдөр тутам хадгалах...` | Supported sustainability pattern. |
 | `Хатуу хязгаарлалттай арга тасарсны дараа...` | Restrictive evidence | `Хэт хатуу дүрмийг удаан барихад хэцүү болж...` | Supported restrictive pattern; no forced-stop claim. |
 | `Завгүй өдөр үндсэн төлөвлөгөө тасрах...` | Schedule context | `Завгүй өдөр үндсэн төлөвлөгөөг хэрэгжүүлэх боломжгүй байж болох...` | Exact schedule-barrier signal. |
-| `арга тасрах үед үр дүнгээ хадгалах...` | Previous-attempt interpretation | `өмнөх оролдлого үргэлжлэхээ болих үед үр дүнгээ хадгалах...` | Supported sustainability pattern. |
-| `арга тасарсны дараах төлөвлөгөө` | Strength/strategy synthesis | `өмнөх оролдлого үргэлжлэхээ болих үед хэрэгжүүлэх хувилбар` | Sustainability pattern plus exact protective gates. |
+| `арга тасрах үед үр дүнгээ хадгалах...` | Previous-attempt interpretation | Injury, voluntary-stop, and neutral-discontinuation branches selected from explicit evidence | Supported sustainability pattern plus exact stop-context gate. |
+| `арга тасарсны дараах төлөвлөгөө` | Strength/strategy synthesis | Removed from strengths; section 6 now contains demonstrated strengths only | At least one exact protective gate. |
 | `Хөдөлгөөний хэмнэл тасарсан` | Interaction | `Хөдөлгөөний хэмнэл алдагдсан` | Movement-maintenance interaction gates. |
 | `Өмнөх оролдлого яагаад тасарсан байж болох вэ?` | Section heading | `Өмнөх оролдлого яагаад үргэлжлээгүй байж болох вэ?` | Heading is neutral when the exact stop reason varies. |
 | Baseline phrases retained in `REPORT_COPY_OWNER_REVIEW.md` | Superseded audit artifact | Not used in active copy; replacements are enumerated in this audit and the defect matrix. | The broken report remains preserved as required audit evidence. |

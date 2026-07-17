@@ -1,6 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict");
 const questions = require("../questions.js");
+const reportFixtures = require("./fixtures/report-gold-profiles.js");
 const { MemoryDatabaseAdapter } = require("./support/memory-database.js");
 const { saveAssessment, completeAssessment } = require("../netlify/functions/_lib/assessment.js");
 
@@ -87,6 +88,16 @@ async function seededAssessment(database, suffix) {
   const report = await database.get("report_snapshots", seeded.assessmentId);
   assert(!report.fullReport.internalEvidenceMap.signals.some(item => item.questionId === "Q-SEX"), "routing intake must not become an identity claim");
   assert(!JSON.stringify(report.fullReport.influencingPatterns).includes("Q-SEX"), "public formulation must not expose routing intake");
+
+  const neutralFixture = reportFixtures.find(item => item.name === "fully routed neutral protective");
+  const neutralSeeded = await seededAssessment(database, "neutral-full-route");
+  assert.equal(questions.visibleQuestions(neutralFixture.answers).length, questions.MAX_ROUTED_QUESTION_COUNT, "neutral acceptance fixture must use the complete route");
+  await saveAssessment(database, neutralSeeded.sessionId, { assessmentId: neutralSeeded.assessmentId, answers: neutralFixture.answers });
+  const neutralCompletion = await completeAssessment(database, neutralSeeded.sessionId, { assessmentId: neutralSeeded.assessmentId });
+  assert.equal(neutralCompletion.status, "complete", "fully routed neutral fixture must complete successfully");
+  const neutralSnapshot = await database.get("report_snapshots", neutralSeeded.assessmentId);
+  assert.equal(neutralSnapshot.fullReport.influencingPatterns.length, 0);
+  assert.equal(neutralSnapshot.fullReport.neutralResult.strengths.length, 12, "completed neutral report must surface every unique supported strength");
 
   const failingDatabase = new ReportFailureDatabase();
   const failing = await seededAssessment(failingDatabase, "report-failure");

@@ -70,5 +70,20 @@ module.exports = Object.freeze([
   profile("mostly neutral and prefer not to answer", {
     "Q-EMOTION": "Хариулахгүй", "Q-SATIETY": "Хариулахгүй", "Q-CUE": ["Хариулахгүй"], "Q-HUNGER": "Тодорхой биш",
     "Q-FOOD-FEELING": ["Тодорхой хоол анзаараагүй"], "Q-PORTION": ["Тодорхой хоол байхгүй"]
-  }, [], { absentPatterns: ["emotional_regulation", "environmental_cues", "hunger_satiety"] })
+  }, [], { absentPatterns: ["emotional_regulation", "environmental_cues", "hunger_satiety"] }),
+  profile("fully routed neutral protective", {
+    "Q-AGE": 35, "Q-SEX": "Эмэгтэй", "Q-HEIGHT": 165, "Q-WEIGHT": 70, "Q-TARGET": 65,
+    "Q-MEAL-RHYTHM": "3–4 цаг", "Q-HUNGER": "Амар", "Q-SATIETY": "Амар",
+    "Q-FOOD-FEELING": ["Тодорхой хоол анзаараагүй"], "Q-PORTION": ["Тодорхой хоол байхгүй"],
+    "Q-EMOTION": "Өөрчлөгддөггүй", "Q-CUE": ["Аль нь ч үгүй"],
+    "Q-SLEEP-DURATION": "6–8 цаг", "Q-SLEEP-QUALITY": "Сайн амардаг", "Q-TRAVEL": "Алхдаг", "Q-MOVEMENT": "Их",
+    "Q-GLUCOSE": "Хэвийн", "Q-BLOOD-PRESSURE": "Хэвийн", "MC-GATE": "Тийм, хамаарна", "MC-01": "Тогтмол",
+    "ALC-GATE": "Хааяа", "ALC-01": "Өөрчлөгддөггүй", "TOB-GATE": "Хааяа", "TOB-01": "Өөрчлөгддөггүй",
+    "PREG-GATE": "Үгүй", "MENO-GATE": "Үгүй, хамаарахгүй", "S1-S03": "Үгүй", "S1-S04": "Үгүй", "S1-B01": ["Аль нь ч үгүй"],
+    "Q-METHOD-CURRENT": ["Одоогоор ямар нэг арга хэрэглээгүй"], "Q-METHOD-PAST": ["Алхалт"],
+    "Q-METHOD-DURATION": "1 жилээс урт", "Q-METHOD-STOP": "Өөрийн хүсэлтээр зогсоохоор шийдсэн.",
+    "Q-METHOD-RESULT": "Жин тогтвортой байсан", "Q-METHOD-REGAIN": "Үгүй",
+    "Q-METHOD-SUPPORT": ["Мэргэжлийн дэмжлэг аваагүй"], "Q-METHOD-MEDICATION": "Үгүй",
+    "Q-METHOD-BARRIERS": ["Тодорхой саад байгаагүй"], "OPEN-PAST": "Тодорхой нэмэлт зүйлгүй."
+  }, [], { absentPatterns: ["emotional_regulation", "environmental_cues", "hunger_satiety", "sleep_fatigue"] })
 ]);

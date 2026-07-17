@@ -3,7 +3,7 @@
 const PATTERN_COPY = Object.freeze({
   emotional_regulation: {
     explanation: "Стресс нэмэгдэх үед хоол нь түр тайвшрах, амрах эсвэл анхаарлаа өөр тийш шилжүүлэх арга болж мэднэ.",
-    effectOnWeightLoss: "Түр тайвширсны дараа идэх хүсэл дахин төрөх эсвэл төлөвлөсөн дараагийн сонголтоо өөрчлөхөд хүрч болно.",
+    effectOnWeightLoss: "Хэрэв хоол тухайн мөчид түр амсхийх мэт мэдрэмж өгдөг бол стрессийн шалтгаан хэвээр үлдэхэд идэх хүсэл дахин төрж болно.",
     uncertainty: "Энэ нь онош биш бөгөөд сэтгэл хөдлөл бүр хооллолтыг өөрчилдөг гэсэн үг биш."
   },
   environmental_cues: {
@@ -17,7 +17,7 @@ const PATTERN_COPY = Object.freeze({
     uncertainty: "Өдөр бүр ижил биш тул яг аль цагт хүндрэл үүсдгийг ажиглах хэрэгтэй."
   },
   hunger_satiety: {
-    explanation: "Өлсөх эсвэл цадах дохиог цагт нь анзаарах хэцүү үед хоол эхлэх, зогсох мөч хоёулаа оройтдог.",
+    explanation: "Өлсөх эсвэл цадах дохиог цагт нь анзаарахад хэцүү үед хоол эхлэх, зогсох мөч хоёулаа оройтдог.",
     effectOnWeightLoss: "Идэх хэмжээ биеийн дохионоос илүү таваг, орчин эсвэл тухайн мөчийн яарлаар шийдэгдэх эрсдэлтэй.",
     uncertainty: "Нэг хоолны туршлагаар биш, давтагддаг мөчөөр нь дүгнэнэ."
   },
@@ -49,7 +49,7 @@ const PATTERN_COPY = Object.freeze({
 });
 
 const PATTERN_PUBLIC_TITLES = Object.freeze({
-  previous_attempt_sustainability: "Өмнөх аргын үр дүнг хадгалж үлдэх төлөвлөгөө дутсан нь"
+  previous_attempt_sustainability: "Өмнөх аргын үр дүнг хадгалах төлөвлөгөө дутсан нь"
 });
 
 const CONTEXT_PUBLIC_TITLES = Object.freeze({
@@ -83,12 +83,14 @@ const SENTENCE_TEMPLATES = Object.freeze({
   evidence_plan_mismatch: { requiredPatterns: ["plan_daily_life_mismatch"], text: "Төлөвлөгөөг өдөр тутам хэрэгжүүлэхэд бодит саад тулгарч, өмнөх оролдлого тогтвортой үргэлжлээгүй байна." },
   evidence_previous_attempt: { requiredPatterns: ["previous_attempt_sustainability"], text: "Өмнөх арга зогссоны дараа гарсан үр дүнг өдөр тутам хадгалах орлуулах төлөвлөгөө бэлэн байгаагүй." },
   evidence_previous_attempt_complete: { requiredPatterns: ["previous_attempt_sustainability"], requiredSignals: ["activity_based_method", "sustained_attempt", "initial_attempt_success", "weight_regain"], text: "Өмнөх хөдөлгөөнд суурилсан арга эхэндээ үр дүн өгч, нэг жилээс урт үргэлжилсэн ч зогссоны дараа үр дүнг хадгалах хялбар хувилбар бэлэн байгаагүй." },
-  evidence_previous_attempt_meaning: { requiredPatterns: ["previous_attempt_sustainability"], text: "Гол хүндрэл нь эхлэх чадвар бус, өмнөх оролдлого үргэлжлэхээ болих үед өдөр тутам хэрэгжүүлэх өөр хувилбар бэлэн байгаагүйд байна." },
+  evidence_previous_attempt_meaning_injury: { requiredPatterns: ["previous_attempt_sustainability"], requiredContexts: ["explicit_injury_stop_context"], text: "Гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болоход түүнийг өдөр тутам орлох хувилбар бэлэн байгаагүй байна." },
+  evidence_previous_attempt_meaning_voluntary: { requiredPatterns: ["previous_attempt_sustainability"], requiredContexts: ["explicit_voluntary_stop_context"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Өмнөх аргаа зогсоосны дараа үр дүнг өдөр тутам хадгалах өөр хувилбар бэлэн байгаагүй байна." },
+  evidence_previous_attempt_meaning_neutral: { requiredPatterns: ["previous_attempt_sustainability"], forbiddenContexts: ["explicit_injury_stop_context", "explicit_voluntary_stop_context"], text: "Өмнөх оролдлого үргэлжлээгүй үед үр дүнг өдөр тутам хадгалах өөр хувилбар бэлэн байгаагүй байна." },
 
   context_low_car: { requiredSignals: ["low_movement", "car_travel_context"], text: "Та өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн бөгөөд машинаар зорчдог тул өдөр тутмын хөдөлгөөн аяндаа нэмэгдэх боломж хязгаарлагдмал байна." },
   context_low_home: { requiredSignals: ["low_movement", "home_work_context"], text: "Та гэрээсээ ажилладаг бөгөөд өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн байна." },
   context_low_only: { requiredSignals: ["low_movement"], forbiddenSignals: ["car_travel_context", "home_work_context"], text: "Та өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн байна." },
-  context_injury_impossible: { requiredContexts: ["explicit_injury_stop_context"], text: "Өмнөх гэмтэл нь дараагийн хөдөлгөөний сонголтод харгалзах нөхцөл байна." },
+  context_injury_impossible: { requiredContexts: ["explicit_injury_stop_context"], text: "Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болжээ. Иймээс дараагийн хөдөлгөөнөө сонгохдоо гэмтэлтэй холбоотой зовиур нэмэгдэхгүй байхыг харгалзана." },
   context_injury_difficult: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Таны дурдсан өвдөлт эсвэл хөдөлгөөний хязгаарлалт хөдөлгөөнөө тогтмол үргэлжлүүлэхэд саад болсон байна." },
   context_schedule: { requiredSignals: ["schedule_barrier"], text: "Завгүй өдөр үндсэн төлөвлөгөөг хэрэгжүүлэх боломжгүй байж болох тул урьдчилан богиносгож болох хувилбар хэрэгтэй." },
   context_cost: { requiredSignals: ["cost_barrier"], text: "Зардал дахин саад болохоос сэргийлж нэмэлт төлбөргүйгээр үргэлжлүүлж болох хувилбар хэрэгтэй." },
@@ -99,21 +101,16 @@ const SENTENCE_TEMPLATES = Object.freeze({
   attempt_duration_long: { requiredSignals: ["sustained_attempt"], text: "Та уг аргыг нэг жилээс урт хугацаанд үргэлжлүүлсэн байна." },
   attempt_duration_medium: { requiredSignals: ["medium_duration_attempt"], forbiddenSignals: ["sustained_attempt"], text: "Та уг аргыг 6–12 сар үргэлжлүүлсэн байна." },
   attempt_initial_success: { requiredSignals: ["initial_attempt_success"], text: "Эхний үед жин буурсан нь тухайн арга тодорхой нөхцөлд үр дүн өгснийг харуулна." },
-  previous_method_stopped_due_to_injury: { requiredContexts: ["explicit_injury_stop_context"], text: "Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болсон байна." },
+  previous_method_stopped_due_to_injury: { requiredContexts: ["explicit_injury_stop_context"], text: "Өмнөх хөдөлгөөн гэмтлийн улмаас зогсжээ." },
   attempt_injury_stop_general: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Таны дурдсан өвдөлт эсвэл хөдөлгөөний хязгаарлалт өмнөх хөдөлгөөнийг үргэлжлүүлэхэд саад болжээ." },
   attempt_weight_regain: { requiredSignals: ["weight_regain"], text: "Үүний дараа жин буцжээ." },
-  attempt_schedule: { requiredSignals: ["schedule_barrier"], text: "Дараа нь сонгосон хувилбарыг цагийн хуваарьт багтаахад хүндрэл гарсан байна." },
-  attempt_cost: { requiredSignals: ["cost_barrier"], text: "Зардал ч тогтвортой үргэлжлүүлэх боломжийг хязгаарлажээ." },
-  attempt_interpretation: { requiredPatterns: ["previous_attempt_sustainability"], text: "Энэ түүх нь хүсэл зориг дутсаныг бус, өмнөх оролдлого үргэлжлэхээ болих үед үр дүнгээ хадгалах хялбар төлөвлөгөө дутсаныг илүү тод харуулж байна." },
+  attempt_schedule_cost: { requiredSignals: ["schedule_barrier", "cost_barrier"], text: "Цагийн хуваарь болон зардал нь дараагийн төлөвлөгөөг тогтвортой хэрэгжүүлэхэд нэмэлт саад болжээ." },
+  attempt_schedule_only: { requiredSignals: ["schedule_barrier"], forbiddenSignals: ["cost_barrier"], text: "Цагийн хуваарь нь дараагийн төлөвлөгөөг тогтвортой хэрэгжүүлэхэд нэмэлт саад болжээ." },
+  attempt_cost_only: { requiredSignals: ["cost_barrier"], forbiddenSignals: ["schedule_barrier"], text: "Зардал нь дараагийн төлөвлөгөөг тогтвортой хэрэгжүүлэхэд нэмэлт саад болжээ." },
 
   strength_body: { requiredProtectiveSignals: ["hunger_recognition_difficulty", "satiety_difficulty"], text: "Та өлсөх, цадах мэдрэмжээ харьцангуй сайн анзаардаг нь хооллолтоо биеийн дохиотой уялдуулах бодит давуу тал юм." },
   strength_common_barriers: { requiredProtectiveSignals: ["emotional_eating", "environmental_cue_reactivity", "short_sleep", "poor_sleep_quality"], text: "Стресс, орчны хоолны өдөөлт болон нойр таны хооллолтыг тогтмол алдагдуулдаг шинж харагдсангүй." },
   strength_adherence_success: { requiredSignals: ["sustained_attempt", "initial_attempt_success"], text: "Өмнөх аргаа нэг жилээс урт хугацаанд хэрэгжүүлж, эхний үр дүн гаргаж чадсан нь өөрчлөлтийг тууштай барих чадвартайг харуулна." },
-  strength_strategy: { requiredPatterns: ["previous_attempt_sustainability"], requiredProtectiveSignals: ["hunger_recognition_difficulty", "satiety_difficulty"], text: "Дараагийн стратеги энэ чадварыг хадгалж, өмнөх оролдлого үргэлжлэхээ болих үед хэрэгжүүлэх хувилбарыг илүү бодит болгоход чиглэх нь тохиромжтой." },
-  strength_observation_base_1: { requiredPatternCount: 1, text: "Та хүндрэл давтагддаг нөхцөлийг ялгаж хариулсан нь эхний туршилтаар яг юуг ажиглахаа тодорхойлох бодит суурь болж байна." },
-  strength_observation_base_2: { requiredPatternCount: 2, text: "Та хүндрэл давтагддаг нөхцөлүүдийг ялгаж хариулсан нь эхний туршилтаар яг юуг ажиглахаа тодорхойлох бодит суурь болж байна." },
-  strength_observation_base_3: { requiredPatternCount: 3, text: "Та хүндрэл давтагддаг нөхцөлүүдийг ялгаж хариулсан нь эхний туршилтаар яг юуг ажиглахаа тодорхойлох бодит суурь болж байна." },
-  strength_observation_base_4: { requiredPatternCount: 4, text: "Та хүндрэл давтагддаг нөхцөлүүдийг ялгаж хариулсан нь эхний туршилтаар яг юуг ажиглахаа тодорхойлох бодит суурь болж байна." },
 
   neutral_no_pattern: { requiredPatternCount: 0, text: "Одоогийн өгсөн хариултуудаар жин хасалтад саад болж буй нэг тод сэтгэлзүйн эсвэл зан үйлийн хэв маяг ялгараагүй байна." },
   neutral_meaning: { requiredPatternCount: 0, text: "Энэ нь хүндрэл огт байхгүй гэсэн үг биш; зөвхөн асуумжид хамрагдсан чиглэлүүдээс аль нэгийг гол шалтгаан гэж нэрлэх хангалттай мэдээлэл бүрдээгүйг илэрхийлнэ." },
@@ -195,7 +192,7 @@ const STRATEGY_COPY = Object.freeze({
 const INTERACTION_COPY = Object.freeze({
   meal_hunger_satiety: "Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулахад илүү хэцүү болж болно.",
   sleep_plan: "Нойр дутуу өдөр ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөний хамгийн бага бэлтгэл шаардсан хувилбарыг ч хийхэд хүнд болж болно.",
-  sleep_emotion: "Ядарсан үед сэтгэл хөдлөлөө зохицуулах нөөц багасаж, хоол түр амрах арга шиг санагдах нь нэмэгдэж болно.",
+  sleep_emotion: "Ядарсан үед төлөвлөсөн сонголтоо барихад хэцүү болж болно. Хэрэв хоол тухайн мөчид түр амсхийх мэт мэдрэмж өгдөг бол стрессийн шалтгаан хэвээр үлдэхэд идэх хүсэл дахин төрж болно.",
   emotion_restriction: "Стресстэй үед хоолоор түр тайвширсны дараа хэт хатуугаар дахин эхлэх нь өмнөх мөчлөгийг улам хүчтэй болгож болно.",
   cue_meal_rhythm: "Орчны дохиогоор төлөвлөөгүй идэхэд дараагийн хоолны цаг хойшилж, хоолны хэмнэл дахин алдагдаж болно.",
   cue_satiety: "Хоол байнга нүдэнд өртөх үед цадсан байсан ч дахин идэх хүсэл төрж болно.",

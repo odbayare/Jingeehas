@@ -191,7 +191,7 @@ function renderPlanDetails(plan) {
   if (!plan) return "";
   const fields = plan.kind === "emotional_observation"
     ? [["Ажиглах мөч", plan.trigger], ["Хийх нэг үйлдэл", plan.action], ["Юуг ажиглах вэ?", plan.observe], ["Юуг өөрчлөхгүй вэ?", plan.keepConstant], ["Амжилтыг хэрхэн таних вэ?", plan.success], ["Алгассан ажиглалтын дараа", plan.fallback]]
-    : [["Туршиж буй нэг зүйл", plan.variable], ["Тоон утгын төлөв", plan.parameterApprovalStatus], ["Хугацаа", plan.duration], ["Хийх хувилбар", plan.option], ["Өмнөх гэмтэлтэй холбоотой зовиур", plan.injuryBoundary], ["Нэмэлт зардал", plan.additionalCost], ["Тогтмол хийх мөч", plan.anchor], ["Давтамж", plan.frequency], ["Юуг тэмдэглэх вэ?", plan.record], ["Амжилтыг хэрхэн хэмжих вэ?", plan.success], ["Завгүй өдрийн богино хувилбар", plan.fallback], ["Алгассан өдрийн дүрэм", plan.maintenanceRule]];
+    : [["Туршиж буй нэг зүйл", plan.variable], ["Хугацаа", plan.duration], ["Хийх хувилбар", plan.option], ["Өмнөх гэмтэлтэй холбоотой зовиур", plan.injuryBoundary], ["Нэмэлт зардал", plan.additionalCost], ["Тогтмол хийх мөч", plan.anchor], ["Давтамж", plan.frequency], ["Юуг тэмдэглэх вэ?", plan.record], ["Амжилтыг хэрхэн хэмжих вэ?", plan.success], ["Завгүй өдрийн богино хувилбар", plan.fallback], ["Алгассан өдрийн дүрэм", plan.maintenanceRule]];
   const visibleFields = fields.filter(([, value]) => value);
   return visibleFields.length ? `<dl>${visibleFields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("")}</dl>` : "";
 }
@@ -212,7 +212,7 @@ function buildReportSections(full) {
     ];
   }
   const major = full.influencingPatterns || [];
-  const actions = (full.additionalPatternActions || []).filter(item => item?.patternId);
+  const actions = (full.additionalPatternActions || []).filter(item => item?.action && (item.patternTitle || item.patternId));
   const patternHeading = major.length <= 1 ? "Жин хасалтад нөлөөлж буй гол хэв маяг" : "Жин хасалтад нөлөөлж буй гол хэв маягууд";
   const interactionHeading = major.length === 1 ? "Гол хэв маяг өдөр тутмын нөхцөлтэй хэрхэн холбогдож байна вэ?" : "Эдгээр хэв маяг хэрхэн хоорондоо холбогдож байна вэ?";
   return [
@@ -222,8 +222,8 @@ function buildReportSections(full) {
     { id: "context", heading: "Нэмэлт нөлөөлөгч нөхцөл", paragraphs: [(full.contextualFactors || []).map(item => `<article><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.summary || item.explanation, ...(item.summary ? [] : [item.evidenceSummary, item.effectOnWeightLoss])])}</article>`).join("")], visible: (full.contextualFactors || []).length > 0 },
     { id: "previous", heading: "Өмнөх оролдлого яагаад үргэлжлээгүй байж болох вэ?", paragraphs: [full.previousAttemptAnalysis ? renderReportParagraphs(full.previousAttemptAnalysis.paragraphs || [full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation]) : ""], visible: Boolean(full.previousAttemptAnalysis) },
     { id: "strengths", heading: "Танд байгаа давуу тал", paragraphs: [renderReportParagraphs([full.protectiveSectionSummary, ...(!full.protectiveSectionSummary ? (full.protectiveFactors || []).map(item => item.text) : []), ...(full.contradictions || []).map(item => item.text)])], visible: Boolean(full.protectiveSectionSummary || (full.protectiveFactors || []).length || (full.contradictions || []).length) },
-    { id: "direction", heading: "Танд илүү тохирох өөрчлөлтийн чиглэл", paragraphs: [actions.map(item => `<article><h3>${escapeHtml(major.find(pattern => pattern.id === item.patternId)?.title || "Өөрчлөлтийн чиглэл")}</h3>${renderReportParagraphs([item.action, item.reason])}</article>`).join("")], visible: actions.length > 0 },
-    { id: "experiment", heading: "Эхний туршилт", paragraphs: [full.prioritizedStartingAction ? `${renderReportParagraphs([full.prioritizedStartingAction.action, full.prioritizedStartingAction.reason, full.prioritizedStartingAction.priorityReason])}${renderPlanDetails(full.prioritizedStartingAction.plan)}` : ""], visible: Boolean(full.prioritizedStartingAction) },
+    { id: "direction", heading: "Танд илүү тохирох өөрчлөлтийн чиглэл", paragraphs: [actions.map(item => `<article><h3>${escapeHtml(item.patternTitle || major.find(pattern => pattern.id === item.patternId)?.title || "Өөрчлөлтийн чиглэл")}</h3>${renderReportParagraphs([item.action, item.reason])}</article>`).join("")], visible: actions.length > 0 },
+    { id: "experiment", heading: "Эхний туршилт", paragraphs: [full.prioritizedStartingAction && !full.planDecisionPending && !full.prioritizedStartingAction.planDecisionPending ? `${renderReportParagraphs([full.prioritizedStartingAction.action, full.prioritizedStartingAction.reason, full.prioritizedStartingAction.priorityReason])}${renderPlanDetails(full.prioritizedStartingAction.plan)}` : ""], visible: Boolean(full.prioritizedStartingAction && !full.planDecisionPending && !full.prioritizedStartingAction.planDecisionPending) },
     { id: "avoid", heading: "Одоогоор юуг зэрэг өөрчлөхгүй байх вэ?", paragraphs: [renderReportParagraphs([full.avoidForNow])], visible: Boolean(full.avoidForNow) },
     { id: "guidance", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", paragraphs: [renderReportParagraphs([full.professionalGuidance, full.urgentGuidance])], visible: Boolean(full.professionalGuidance || full.urgentGuidance) }
   ];
