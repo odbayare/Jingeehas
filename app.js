@@ -15,14 +15,14 @@ const PAYMENT_COPY = Object.freeze({
 });
 const PAYMENT_STATES = new Set(["idle", "creating", "create_unknown", "reconciling", "pending", "checking", "paid", "create_error", "create_failed_confirmed", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
 const questionApi = typeof require === "function" ? require("./questions.js") : window.JingeehasQuestions;
-const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй"]);
-const BRANCH_PREFIXES = Object.freeze({ "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"] });
+const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй", "Одоогоор ямар нэг арга хэрэглээгүй", "Ямар нэг арга хэрэглэж үзээгүй", "Мэргэжлийн дэмжлэг аваагүй", "Тодорхой саад байгаагүй"]);
+const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"], "Q-METHOD-PAST": ["Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION"] });
 
 function createState() {
   return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", payment: { status: "idle" },
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
-    admin: { authenticated: false, owner: false, created: null, error: "" }, ownerPreview: false, busy: false };
+    admin: { authenticated: false, owner: false, created: null, error: "" }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
 let testComingSoonOverride = null;
@@ -168,8 +168,9 @@ function renderQuestions() {
   return `<div class="page assessment-page"><main class="content-card"><progress role="progressbar" aria-label="Тест бөглөх явц" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}" value="${percent}" max="100">${percent}%</progress>
     <p>${state.questionIndex + 1} / ${questions.length}</p><h1 id="page-title" tabindex="-1">${escapeHtml(question.section)}</h1>
     <p class="muted">Өөрт хамгийн ойр хариултаа сонгоорой. Таны хариултын зураглал тест дууссаны дараа гарна.</p>
-    <form id="question-form" novalidate>${renderQuestionInput(question, state.answers[question.id])}<p id="question-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.validationError)}</p>
-      <div class="actions">${state.questionIndex > 0 ? `<button class="button secondary" type="button" data-action="previous-question">Буцах</button>` : ""}<button class="button" type="submit">${state.questionIndex === questions.length - 1 ? "Тайлан харах" : "Үргэлжлүүлэх"}</button></div>
+    <form id="question-form" novalidate aria-busy="${state.busy ? "true" : "false"}">${renderQuestionInput(question, state.answers[question.id])}<p id="question-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.validationError)}</p>
+      <div class="save-status" role="status" aria-live="polite">${state.busy ? `<span class="spinner" aria-hidden="true"></span>${state.slowSave ? "Хариултыг хадгалж байна..." : "Хадгалж байна..."}` : ""}</div>
+      <div class="actions">${state.questionIndex > 0 ? `<button class="button secondary" type="button" data-action="previous-question" ${state.busy ? "disabled" : ""}>Буцах</button>` : ""}<button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Хадгалж байна..." : state.questionIndex === questions.length - 1 ? "Тайлан харах" : "Үргэлжлүүлэх"}</button></div>
     </form></main>${footer()}</div>`;
 }
 function renderReport() {
@@ -298,7 +299,7 @@ function updateAnswer(input) {
     if (EXCLUSIVE.has(selected)) next = input.checked ? [selected] : [];
     else {
       const withoutExclusive = current.filter(value => !EXCLUSIVE.has(value) && value !== selected);
-      if (input.checked && withoutExclusive.length >= question.max) { state.validationError = "Та хамгийн ихдээ 3 хариулт сонгох боломжтой."; render(); return; }
+      if (input.checked && withoutExclusive.length >= question.max) { state.validationError = `Та хамгийн ихдээ ${question.max} хариулт сонгох боломжтой.`; render(); return; }
       next = input.checked ? [...withoutExclusive, selected] : withoutExclusive;
     }
     state.answers[question.id] = next;
@@ -311,15 +312,38 @@ function updateAnswer(input) {
   state.validationError = "";
 }
 async function nextQuestion() {
+  if (state.busy) return;
   const questions = questionApi.visibleQuestions(state.answers); const question = questions[state.questionIndex];
   const error = questionApi.validateAnswer(question, state.answers[question.id]);
   if (error) { state.validationError = error; render(); return; }
-  await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: { [question.id]: state.answers[question.id] } }) });
-  if (state.questionIndex < questions.length - 1) { state.questionIndex += 1; state.validationError = ""; render(); return; }
-  const completed = await api("/.netlify/functions/weight-assessment-complete", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
-  state.assessmentStatus = completed.status;
-  if (completed.safetyRoute) { state.report = await loadReport(); navigate("/report"); return; }
-  navigate("/assessment/payment");
+  state.busy = true; state.slowSave = false; state.validationError = ""; render({ focus: false });
+  const slowTimer = setTimeout(() => { if (state.busy) { state.slowSave = true; render({ focus: false }); } }, 1000);
+  try {
+    const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: { [question.id]: state.answers[question.id] } }) });
+    if (!saved.savedQuestionIds?.includes(question.id)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed" } });
+    const routedQuestions = questionApi.visibleQuestions(state.answers);
+    const persistedIndex = routedQuestions.findIndex(item => item.id === question.id);
+    if (persistedIndex >= 0 && persistedIndex < routedQuestions.length - 1) {
+      state.questionIndex = persistedIndex + 1; state.validationError = ""; state.busy = false; state.slowSave = false; render(); return;
+    }
+    const completed = await api("/.netlify/functions/weight-assessment-complete", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
+    state.assessmentStatus = completed.status; state.busy = false; state.slowSave = false;
+    if (completed.safetyRoute) { state.report = await loadReport(); navigate("/report"); return; }
+    navigate("/assessment/payment");
+  } catch (requestError) {
+    const code = requestError?.body?.error;
+    if (code === "assessment_incomplete" && requestError.body.questionId) {
+      const routedQuestions = questionApi.visibleQuestions(state.answers);
+      const missingIndex = routedQuestions.findIndex(item => item.id === requestError.body.questionId);
+      if (missingIndex >= 0) state.questionIndex = missingIndex;
+      state.validationError = "Шаардлагатай өмнөх асуултын хариулт дутуу байна. Хариултаа нөхөөд дахин үргэлжлүүлнэ үү.";
+    } else if (["preview_required", "preview_expired", "session_expired"].includes(code)) {
+      state.validationError = "Туршилтын эрхийн хугацаа дууссан байна. Удирдлагын хэсгээс эрхээ дахин нээнэ үү.";
+    } else if (code === "invalid_answer" || code === "inapplicable_question") {
+      state.validationError = "Энэ хариултыг хадгалах боломжгүй байна. Сонголтоо шалгаад дахин оролдоно уу.";
+    } else state.validationError = "Хариултыг серверт баталгаажуулж чадсангүй. Таны оруулсан хариулт хадгалагдсан хэвээр; дахин оролдоно уу.";
+    state.busy = false; state.slowSave = false; render({ focus: false });
+  } finally { clearTimeout(slowTimer); }
 }
 async function loadReport() { return api(`/.netlify/functions/weight-assessment-report?assessmentId=${encodeURIComponent(state.assessmentId)}`, { method: "GET" }); }
 async function requestRecovery(form) {
@@ -355,6 +379,11 @@ async function restoreServerState() {
     if (!restored.assessment) return;
     state.assessmentId = restored.assessment.assessmentId; state.assessmentStatus = restored.assessment.status; state.payment = restored.payment || state.payment;
     state.answers = restored.answers || {}; state.report = restored.report || null;
+    if (restored.assessment.status === "draft") {
+      const routedQuestions = questionApi.visibleQuestions(state.answers);
+      const firstIncomplete = routedQuestions.findIndex(question => questionApi.validateAnswer(question, state.answers[question.id]));
+      state.questionIndex = firstIncomplete >= 0 ? firstIncomplete : Math.max(0, routedQuestions.length - 1);
+    }
   } catch {}
 }
 
@@ -364,7 +393,7 @@ function bind(root) {
   root.querySelector("#safety-form")?.addEventListener("submit", event => { event.preventDefault(); submitSafety(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("safety-error"); if (node) node.textContent = error.message; }); });
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
   root.querySelector("#consent-form")?.addEventListener("submit", event => { event.preventDefault(); submitConsent(event.currentTarget).catch(() => { state.validationError = "Сонголтыг хадгалж чадсангүй."; render(); }); });
-  root.querySelector("#question-form")?.addEventListener("submit", event => { event.preventDefault(); nextQuestion().catch(() => { state.validationError = "Хариултыг хадгалж чадсангүй. Дахин оролдоно уу."; render(); }); });
+  root.querySelector("#question-form")?.addEventListener("submit", event => { event.preventDefault(); nextQuestion(); });
   root.querySelector("#recovery-request-form")?.addEventListener("submit", event => { event.preventDefault(); requestRecovery(event.currentTarget).catch(error => { state.recovery.error = error.message; render(); }); });
   root.querySelector("#recovery-confirm-form")?.addEventListener("submit", event => { event.preventDefault(); confirmRecovery(event.currentTarget).catch(() => { state.recovery.error = "Баталгаажуулах код буруу эсвэл хугацаа дууссан байна."; render(); }); });
   root.querySelector("#advisor-login-form")?.addEventListener("submit", event => { event.preventDefault(); advisorLoginSubmit(event.currentTarget).catch(() => { state.advisor.error = "Имэйл эсвэл нууц үг буруу байна."; render(); }); });

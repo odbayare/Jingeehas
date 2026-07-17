@@ -10,5 +10,6 @@ exports.handler = handler("PATCH", async (event, body) => {
   await authenticateOwnerPreview(database, event);
   const session = await authenticateSession(database, event);
   const assessment = await saveAssessment(database, session.id, body);
-  return response(200, { assessmentId: assessment.id, status: assessment.status, savedAt: assessment.updatedAt });
+  return response(200, { assessmentId: assessment.id, status: assessment.status, savedAt: assessment.updatedAt,
+    savedQuestionIds: Object.keys(body.answers && typeof body.answers === "object" ? body.answers : {}) });
 });

@@ -53,31 +53,36 @@ async function saveAssessment(database, sessionId, input = {}, now = new Date())
   const answers = input.answers && typeof input.answers === "object" ? input.answers : {};
   const existingRows = await database.find("assessment_answers", { assessmentId: assessment.id });
   const nextAnswerMap = { ...Object.fromEntries(existingRows.map(row => [row.questionId, row.value])), ...answers };
+  const applicableIds = new Set(visibleQuestions(nextAnswerMap).map(question => question.id));
+  const operations = [];
   for (const [questionId, value] of Object.entries(answers)) {
     if (!/^[A-Z0-9-]{2,40}$/.test(questionId)) throw Object.assign(new Error("Invalid question"), { statusCode: 400, code: "invalid_question" });
     const question = questionById(questionId);
     const isConfirmation = questionId.startsWith("SAFETY-CONFIRM-OPEN-");
     if (!question && !isConfirmation) throw Object.assign(new Error("Invalid question"), { statusCode: 400, code: "invalid_question" });
+    if (question && !applicableIds.has(questionId)) {
+      throw Object.assign(new Error("Question is not applicable"), { statusCode: 400, code: "inapplicable_question", questionId });
+    }
     const validationError = question ? validateAnswer(question, value) : "";
     if (validationError) throw Object.assign(new Error(validationError), { statusCode: 400, code: "invalid_answer" });
-    await database.upsert("assessment_answers", `${assessment.id}:${questionId}`, {
+    operations.push({ action: "upsert", table: "assessment_answers", id: `${assessment.id}:${questionId}`, row: {
       assessmentId: assessment.id, questionId, value, updatedAt: now.toISOString()
-    });
+    } });
   }
-  const applicableIds = new Set(visibleQuestions(nextAnswerMap).map(question => question.id));
-  const persistedRows = await database.find("assessment_answers", { assessmentId: assessment.id });
-  for (const row of persistedRows) {
-    if (questionById(row.questionId) && !applicableIds.has(row.questionId)) await database.delete("assessment_answers", row.id);
+  for (const row of existingRows) {
+    if (questionById(row.questionId) && !applicableIds.has(row.questionId)) operations.push({ action: "delete", table: "assessment_answers", id: row.id });
   }
   const summaries = input.confirmedSummaries && typeof input.confirmedSummaries === "object" ? input.confirmedSummaries : {};
   for (const [checkpointId, summary] of Object.entries(summaries)) {
     const normalized = summary && typeof summary === "object" ? summary : { text: summary, sourceQuestionIds: [] };
-    await database.upsert("assessment_summaries", `${assessment.id}:${checkpointId}`, {
+    operations.push({ action: "upsert", table: "assessment_summaries", id: `${assessment.id}:${checkpointId}`, row: {
       assessmentId: assessment.id, checkpointId, text: String(normalized.text || "").slice(0, 2000),
       sourceQuestionIds: Array.isArray(normalized.sourceQuestionIds) ? normalized.sourceQuestionIds.slice(0, 10) : [], confirmedAt: now.toISOString()
-    });
+    } });
   }
-  return database.update("assessments", assessment.id, { updatedAt: now.toISOString() });
+  operations.push({ action: "update", table: "assessments", id: assessment.id, patch: { updatedAt: now.toISOString() } });
+  const transaction = await database.transaction(operations);
+  return transaction.results[transaction.results.length - 1];
 }
 
 async function completeAssessment(database, sessionId, input = {}, now = new Date()) {
@@ -90,14 +95,16 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
     statusCode: 409, code: "safety_confirmation_required", safety
   });
   if (safety.route !== "eligible") {
-    const completedSafety = await database.update("assessments", assessment.id, {
-      status: "complete", reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
-      completedAt: now.toISOString(), updatedAt: now.toISOString()
-    });
-    await database.upsert("report_snapshots", assessment.id, { assessmentId: assessment.id, sessionId,
-      reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
-      initialView: { guidance: ROUTE_COPY[safety.route] }, fullReport: null, createdAt: now.toISOString() });
-    return completedSafety;
+    const transaction = await database.transaction([
+      { action: "update", table: "assessments", id: assessment.id, patch: {
+        status: "complete", reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
+        completedAt: now.toISOString(), updatedAt: now.toISOString()
+      } },
+      { action: "upsert", table: "report_snapshots", id: assessment.id, row: { assessmentId: assessment.id, sessionId,
+        reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
+        initialView: { guidance: ROUTE_COPY[safety.route] }, fullReport: null, createdAt: now.toISOString() } }
+    ]);
+    return transaction.results[0];
   }
   for (const question of visibleQuestions(answerMap)) {
     const validationError = validateAnswer(question, answerMap[question.id]);
@@ -107,15 +114,17 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
   const evidence = buildEvidence(answers, summaries);
   const fullReport = buildFullReport(evidence, now);
   const reportMode = fullReport.mode;
-  const completed = await database.update("assessments", assessment.id, {
-    status: "complete", reportMode, safetyRoute: null, completedAt: now.toISOString(), updatedAt: now.toISOString()
-  });
-  await database.upsert("report_snapshots", assessment.id, {
-    assessmentId: assessment.id, sessionId, reportMode, safetyRoute: null,
-    initialView: { mode: reportMode, evidenceCount: fullReport.evidence.length, coverage: fullReport.coverage }, fullReport,
-    createdAt: now.toISOString()
-  });
-  return completed;
+  const transaction = await database.transaction([
+    { action: "update", table: "assessments", id: assessment.id, patch: {
+      status: "complete", reportMode, safetyRoute: null, completedAt: now.toISOString(), updatedAt: now.toISOString()
+    } },
+    { action: "upsert", table: "report_snapshots", id: assessment.id, row: {
+      assessmentId: assessment.id, sessionId, reportMode, safetyRoute: null,
+      initialView: { mode: reportMode, evidenceCount: fullReport.evidence.length, coverage: fullReport.coverage }, fullReport,
+      createdAt: now.toISOString()
+    } }
+  ]);
+  return transaction.results[0];
 }
 
 async function reportForSession(database, sessionId, assessmentId) {

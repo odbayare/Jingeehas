@@ -10,7 +10,8 @@ assert.equal(questions.validateAnswer(questions.questionById("Q-HEIGHT"), "abc")
 assert.equal(questions.validateAnswer(questions.questionById("Q-WEIGHT"), 0), "Зөв тоон утга оруулна уу.");
 assert.equal(questions.validateAnswer(questions.questionById("Q-MEAL-RHYTHM"), ""), "Энэ асуултад хариулна уу.");
 assert.equal(questions.validateAnswer(questions.questionById("Q-TARGET"), ""), "");
-assert(questions.QUESTIONS.filter(question => question.sensitive).every(question => question.options.includes("Хариулахгүй")));
+assert(questions.QUESTIONS.filter(question => question.sensitive && question.id !== "Q-SEX").every(question => question.options.includes("Хариулахгүй")));
+assert(questions.questionById("Q-SEX").options.includes("Хариулахгүй байхыг хүсэж байна"));
 assert.notEqual(questions.questionById("Q-SLEEP-DURATION").id, questions.questionById("Q-SLEEP-QUALITY").id);
 assert.notEqual(questions.questionById("Q-GLUCOSE").id, questions.questionById("Q-BLOOD-PRESSURE").id);
 assert.notEqual(questions.questionById("Q-TRAVEL").id, questions.questionById("Q-MOVEMENT").id);

@@ -24,6 +24,10 @@ async function completeQuestionnaire(page) {
           input.dispatchEvent(new Event("input", { bubbles: true }));
           input.dispatchEvent(new Event("change", { bubbles: true }));
         }
+        if (input.tagName === "TEXTAREA") {
+          input.value = "Өдөр тутмын хуваарьтай нийцээгүй тул тогтвортой үргэлжлээгүй.";
+          input.dispatchEvent(new Event("input", { bubbles: true }));
+        }
       }
       const requiredRadio = inputs.find(input => input.type === "radio");
       if (requiredRadio) {
@@ -125,6 +129,22 @@ test("questionnaire completion unlocks one payment attempt and full report", asy
   await expect(page.getByText("Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.")).toBeVisible();
   await page.getByRole("link", { name: "Бүрэн тайлан харах" }).click();
   await expect(page.getByRole("heading", { name: "Бүрэн тайлан" })).toBeVisible();
+});
+
+test("question transition gives immediate feedback and ignores duplicate submit", async ({ page, request }) => {
+  await completeEligibleGate(page);
+  await page.locator("#contact-email").fill("transition@example.com");
+  await page.getByRole("button", { name: "Мэдээллээ хадгалаад тест рүү үргэлжлүүлэх" }).click();
+  await expect(page).toHaveURL(/\/assessment\/questions$/);
+  await page.locator('[data-question="Q-AGE"]').fill("30");
+  await page.locator('[data-question="Q-AGE"]').dispatchEvent("change");
+  const before = (await (await request.get("/__test/stats")).json()).assessmentSave;
+  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).evaluate(button => { button.click(); button.click(); });
+  await expect(page.getByRole("button", { name: "Хадгалж байна..." })).toBeDisabled();
+  await expect(page.getByRole("status")).toContainText("Хадгалж байна...");
+  await page.waitForFunction(() => document.querySelector("[data-question]")?.dataset.question === "Q-SEX");
+  const after = (await (await request.get("/__test/stats")).json()).assessmentSave;
+  expect(after - before).toBe(1);
 });
 
 test("recovery succeeds in a new browser context", async ({ browser }) => {

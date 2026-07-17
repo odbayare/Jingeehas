@@ -45,16 +45,24 @@ function credential(value) { return String(value).split(";")[0]; }
   const assessmentId = JSON.parse(created.body).assessmentId;
 
   const answers = {
-    "Q-AGE": 30, "Q-HEIGHT": 170, "Q-WEIGHT": 80,
+    "Q-AGE": 30, "Q-SEX": "Эрэгтэй", "Q-HEIGHT": 170, "Q-WEIGHT": 80,
     "Q-MEAL-RHYTHM": "3–4 цаг", "Q-HUNGER": "Амар", "Q-SATIETY": "Амар",
     "Q-EMOTION": "Өөрчлөгддөггүй", "Q-CUE": ["Аль нь ч үгүй"],
     "Q-SLEEP-DURATION": "6–8 цаг", "Q-SLEEP-QUALITY": "Сайн амардаг", "Q-MOVEMENT": "Дунд",
-    "S1-S03": "Үгүй", "S1-S04": "Үгүй", "S1-B01": ["Аль нь ч үгүй"]
+    "S1-S03": "Үгүй", "S1-S04": "Үгүй", "S1-B01": ["Аль нь ч үгүй"],
+    "Q-METHOD-CURRENT": ["Одоогоор ямар нэг арга хэрэглээгүй"],
+    "Q-METHOD-PAST": ["Ямар нэг арга хэрэглэж үзээгүй"],
+    "Q-METHOD-BARRIERS": ["Тодорхой саад байгаагүй"]
   };
   const saved = await save(event("PATCH", { assessmentId, answers, confirmedSummaries: { "C-1": "Баталгаажсан" } }, cookie));
   assert.equal(saved.statusCode, 200);
   assert.equal((await database.find("assessment_answers", { assessmentId })).length, Object.keys(answers).length);
   assert.equal((await database.find("assessment_summaries", { assessmentId })).length, 1);
+
+  const rejectedSexRoute = await save(event("PATCH", { assessmentId, answers: { "MC-GATE": "Тийм, хамаарна" } }, cookie));
+  assert.equal(rejectedSexRoute.statusCode, 400);
+  assert.equal(JSON.parse(rejectedSexRoute.body).error, "inapplicable_question");
+  assert.equal((await database.find("assessment_answers", { assessmentId, questionId: "MC-GATE" })).length, 0);
 
   const completed = await complete(event("POST", { assessmentId }, cookie));
   assert.equal(JSON.parse(completed.body).reportMode, "sufficient");

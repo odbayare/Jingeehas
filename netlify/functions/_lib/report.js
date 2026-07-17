@@ -5,7 +5,10 @@ const DIMENSIONS = Object.freeze({
   "Q-MEAL-RHYTHM": "хооллох хэмнэл", "Q-HUNGER": "өлсөх ба цадах дохио", "Q-SATIETY": "өлсөх ба цадах дохио",
   "Q-EMOTION": "сэтгэл хөдлөл", "Q-CUE": "орчны дохио", "Q-SLEEP-DURATION": "унтах хугацаа",
   "Q-SLEEP-QUALITY": "унтах чанар", "Q-MOVEMENT": "өдөр тутмын хөдөлгөөн", "Q-TRAVEL": "зорчих хэлбэр",
-  "Q-PORTION": "идэх хэмжээ", "Q-FOOD-FEELING": "хоолны дараах мэдрэмж", "OPEN-PAST": "өмнөх оролдлого"
+  "Q-PORTION": "идэх хэмжээ", "Q-FOOD-FEELING": "хоолны дараах мэдрэмж", "OPEN-PAST": "өмнөх оролдлого",
+  "Q-METHOD-CURRENT": "одоогийн арга", "Q-METHOD-PAST": "өмнөх арга", "Q-METHOD-DURATION": "оролдлогын хугацаа",
+  "Q-METHOD-STOP": "тогтвортой байдлын саад", "Q-METHOD-RESULT": "эхний үр дүн", "Q-METHOD-REGAIN": "жин эргэн нэмэгдсэн байдал",
+  "Q-METHOD-SUPPORT": "мэргэжлийн дэмжлэг", "Q-METHOD-MEDICATION": "эм ба нэмэлт бүтээгдэхүүний хэрэглээ", "Q-METHOD-BARRIERS": "тогтвортой байдлын саад"
 });
 
 function dimensionFor(questionId) {
@@ -20,7 +23,7 @@ function answerText(value) {
 }
 
 function buildEvidence(answerRows = [], summaryRows = []) {
-  const direct = answerRows.filter(row => answerText(row.value)).map(row => ({
+  const direct = answerRows.filter(row => row.questionId !== "Q-SEX" && answerText(row.value)).map(row => ({
     questionId: row.questionId, dimension: dimensionFor(row.questionId), sourceType: "structured_answer",
     text: answerText(row.value), direct: true
   }));

@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "6751cc955f73043f478aa1fba30728da94940727314f9f0ca0b8b7e7707c6018"
+      "sha256": "0768a27fe302ead379c3b0868440212e605506c6b3609272d917bcc503408945"
     },
     {
       "file": "assets/favicon.svg",
@@ -37,11 +37,11 @@
     },
     {
       "file": "questions.js",
-      "sha256": "453bfce52a9ae93636183de986112c858dda875db6f050f6cb0b56462d6f7e0f"
+      "sha256": "1d7d63a14d937d9b394b4cdfd0958c087057d795845f6f9a503e5f5542dad575"
     },
     {
       "file": "styles.css",
-      "sha256": "32ec0688ac476dff642c5096588ea8b9bc061c1e6598d2a4e76b515b5970c645"
+      "sha256": "a17d1570afab6464d1f56e6c84e81192a0b10fa732a0735ccdb840ba5323e15a"
     }
   ],
   "serverFunctions": [

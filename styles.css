@@ -55,6 +55,9 @@ legend { margin-bottom: 0.7rem; font-weight: 800; }
 .option-label input { flex: 0 0 1.25rem; width: 1.25rem; min-height: 1.25rem; margin-top: 0.15rem; accent-color: var(--primary); }
 .option-label:has(input:checked) { border-color: var(--primary); background: #eef6f0; }
 .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+.save-status { display: flex; align-items: center; gap: 0.55rem; min-height: 1.7rem; color: var(--muted); font-weight: 750; }
+.spinner { width: 1rem; height: 1rem; border: 2px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
 .error { min-height: 1.6em; color: var(--danger); font-weight: 750; }
 .notice { border-left: 4px solid var(--warning); padding: 0.75rem 1rem; background: #fff6d8; color: #4b3600; }
 .muted, .coverage { color: var(--muted); }
@@ -118,4 +121,5 @@ code { overflow-wrap: anywhere; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+  .spinner { animation: none; }
 }

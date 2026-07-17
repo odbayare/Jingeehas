@@ -4,7 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const { evaluateSafetyGate, ROUTE_COPY } = require("../../netlify/functions/_lib/safety.js");
 const root = path.resolve(__dirname, "../..");
-const stats = { qpayCreate: 0, qpayCheck: 0 };
+const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0 };
 const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
 function json(response, status, body, headers = {}) { response.writeHead(status, { "content-type": "application/json", ...headers }); response.end(JSON.stringify(body)); }
 function readBody(request) { return new Promise(resolve => { let raw = ""; request.on("data", chunk => { raw += chunk; }); request.on("end", () => { try { resolve(JSON.parse(raw || "{}")); } catch { resolve({}); } }); }); }
@@ -19,7 +19,7 @@ const endpoints = {
   "weight-assessment-create": async (_body, response) => json(response, 201, { assessmentId: "wa-e2e", status: "draft" }),
   "qpay-create-invoice": async (_body, response) => { stats.qpayCreate += 1; json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "pending", expiresAt: "2026-07-16T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [] }); },
   "qpay-check-payment": async (_body, response) => { stats.qpayCheck += 1; json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "paid", entitlement: true }); },
-  "weight-assessment-save": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", status: "draft" }),
+  "weight-assessment-save": async (body, response) => { stats.assessmentSave += 1; const ids = Object.keys(body.answers || {}); await new Promise(resolve => setTimeout(resolve, ids.includes("Q-AGE") ? 1200 : 30)); json(response, 200, { assessmentId: "wa-e2e", status: "draft", savedQuestionIds: ids }); },
   "weight-assessment-complete": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", status: "complete", reportMode: "sufficient", safetyRoute: null }),
   "weight-assessment-report": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport, entitled: true }),
   "weight-session-state": async (_body, response) => json(response, 200, { assessment: { assessmentId: "wa-e2e", status: "complete", safetyRoute: null }, payment: { status: "paid", paymentId: "wp-e2e" }, answers: {}, report: { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport, entitled: true } }),
