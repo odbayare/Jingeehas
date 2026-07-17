@@ -1,5 +1,7 @@
 # Report Copy Owner Review
 
+> Superseded baseline retained as audit evidence. This file records the pre-freeze wording and is not the active copy source. The final proposed wording is defined in `report-copy.js`, reviewed against `FINAL_REPORT_COPY_DEFECT_MATRIX.md`, `FINAL_REPORT_MANUAL_QA.md`, `FINAL_REPORT_GENERICITY_QA.md`, and `REPORT_PLAN_PARAMETER_REVIEW.md`. Production activation remains prohibited pending explicit owner acceptance.
+
 No sentence marked `OWNER REVIEW REQUIRED` may be deployed as active report copy before explicit owner approval. The section headings are copied from the owner’s required structure and are marked approved input.
 
 ## Required section headings — owner-provided copy
