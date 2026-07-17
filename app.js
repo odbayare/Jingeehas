@@ -187,25 +187,52 @@ function renderQuestions() {
     </form></main>${footer()}</div>`;
 }
 function renderReportParagraphs(values = []) { return values.filter(Boolean).map(value => `<p>${escapeHtml(value)}</p>`).join(""); }
-function renderMultiFactorReport(full) {
+function renderPlanDetails(plan) {
+  if (!plan) return "";
+  const fields = plan.kind === "emotional_observation"
+    ? [["Ажиглах мөч", plan.trigger], ["Хийх нэг үйлдэл", plan.action], ["Юуг ажиглах вэ?", plan.observe], ["Юуг өөрчлөхгүй вэ?", plan.keepConstant], ["Амжилтыг хэрхэн таних вэ?", plan.success], ["Алгассан ажиглалтын дараа", plan.fallback]]
+    : [["Туршиж буй нэг зүйл", plan.variable], ["Тоон утгын төлөв", plan.parameterApprovalStatus], ["Хугацаа", plan.duration], ["Хийх хувилбар", plan.option], ["Өмнөх гэмтэлтэй холбоотой зовиур", plan.injuryBoundary], ["Нэмэлт зардал", plan.additionalCost], ["Тогтмол хийх мөч", plan.anchor], ["Давтамж", plan.frequency], ["Юуг тэмдэглэх вэ?", plan.record], ["Амжилтыг хэрхэн хэмжих вэ?", plan.success], ["Завгүй өдрийн богино хувилбар", plan.fallback], ["Алгассан өдрийн дүрэм", plan.maintenanceRule]];
+  const visibleFields = fields.filter(([, value]) => value);
+  return visibleFields.length ? `<dl>${visibleFields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("")}</dl>` : "";
+}
+
+function buildReportSections(full) {
+  if (full.neutralResult) {
+    const neutral = full.neutralResult;
+    const strengths = neutral.strengths?.length ? neutral.strengths : [neutral.strengthsFallback].filter(Boolean);
+    const absent = neutral.notStronglySupported?.length ? neutral.notStronglySupported : [neutral.notStronglySupportedFallback].filter(Boolean);
+    return [
+      { id: "overview", heading: "Ерөнхий зураг", body: renderReportParagraphs(neutral.overview), visible: neutral.overview?.length > 0 },
+      { id: "not-strongly-supported", heading: "Ямар нийтлэг саад хүчтэй илрээгүй вэ?", body: renderReportParagraphs(absent), visible: absent.length > 0 },
+      { id: "strengths", heading: "Танд байгаа давуу тал", body: renderReportParagraphs(strengths), visible: strengths.length > 0 },
+      { id: "limits", heading: "Энэ асуумжаар юуг дүгнэж болохгүй вэ?", body: renderReportParagraphs(neutral.limits), visible: neutral.limits?.length > 0 },
+      { id: "observation", heading: "Дараагийн 7–14 хоногт юу ажиглаж болох вэ?", body: `<dl><dt>Ажиглах нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.action)}</dd><dt>Юуг өөрчлөхгүй вэ?</dt><dd>${escapeHtml(neutral.observation?.keepConstant)}</dd><dt>Дараагийн шийдвэрийн дүрэм</dt><dd>${escapeHtml(neutral.observation?.decisionRule)}</dd></dl>`, visible: Boolean(neutral.observation?.action && neutral.observation?.decisionRule) },
+      { id: "professional", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", body: renderReportParagraphs([neutral.professionalScope]), visible: Boolean(neutral.professionalScope) },
+      { id: "use", heading: "Тайланг хэрхэн ашиглах вэ?", body: renderReportParagraphs([neutral.reportUse]), visible: Boolean(neutral.reportUse) }
+    ];
+  }
   const major = full.influencingPatterns || [];
   const actions = (full.additionalPatternActions || []).filter(item => item?.patternId);
-  const plan = full.prioritizedStartingAction?.plan;
   const patternHeading = major.length <= 1 ? "Жин хасалтад нөлөөлж буй гол хэв маяг" : "Жин хасалтад нөлөөлж буй гол хэв маягууд";
   const interactionHeading = major.length === 1 ? "Гол хэв маяг өдөр тутмын нөхцөлтэй хэрхэн холбогдож байна вэ?" : "Эдгээр хэв маяг хэрхэн хоорондоо холбогдож байна вэ?";
-  const planFields = plan ? [["Хугацаа", plan.duration], ["Хийх хувилбар", plan.option], ["Өмнөх гэмтэлтэй холбоотой зовиур", plan.injuryBoundary], ["Нэмэлт зардал", plan.additionalCost], ["Тогтмол хийх мөч", plan.anchor], ["Давтамж", plan.frequency], ["Юуг тэмдэглэх вэ?", plan.record], ["Амжилтыг хэрхэн хэмжих вэ?", plan.success], ["Завгүй өдрийн богино хувилбар", plan.fallback], ["Алгассан өдрийн дүрэм", plan.maintenanceRule]].filter(([, value]) => value) : [];
-  const planDetails = planFields.length ? `<dl>${planFields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("")}</dl>` : "";
+  return [
+    { id: "overview", heading: "Таны хариултаас харагдсан ерөнхий зураг", body: renderReportParagraphs(Array.isArray(full.overallPicture) ? full.overallPicture : [full.overallPicture]), visible: Boolean(full.overallPicture) },
+    { id: "patterns", heading: patternHeading, body: major.map(pattern => `<article><h3>${escapeHtml(pattern.title)}</h3>${renderReportParagraphs(pattern.paragraphs || [pattern.explanation, pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty])}</article>`).join(""), visible: major.length > 0 },
+    { id: "interactions", heading: interactionHeading, body: (full.interactionSummary || []).map(item => `<p>${escapeHtml(item.explanation)}</p>`).join(""), visible: (full.interactionSummary || []).length > 0 },
+    { id: "context", heading: "Нэмэлт нөлөөлөгч нөхцөл", body: (full.contextualFactors || []).map(item => `<article><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.summary || item.explanation, ...(item.summary ? [] : [item.evidenceSummary, item.effectOnWeightLoss])])}</article>`).join(""), visible: (full.contextualFactors || []).length > 0 },
+    { id: "previous", heading: "Өмнөх оролдлого яагаад тасарсан байж болох вэ?", body: full.previousAttemptAnalysis ? renderReportParagraphs(full.previousAttemptAnalysis.paragraphs || [full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation]) : "", visible: Boolean(full.previousAttemptAnalysis) },
+    { id: "strengths", heading: "Танд байгаа давуу тал", body: renderReportParagraphs([full.protectiveSectionSummary, ...(!full.protectiveSectionSummary ? (full.protectiveFactors || []).map(item => item.text) : []), ...(full.contradictions || []).map(item => item.text)]), visible: Boolean(full.protectiveSectionSummary || (full.protectiveFactors || []).length || (full.contradictions || []).length) },
+    { id: "direction", heading: "Танд илүү тохирох өөрчлөлтийн чиглэл", body: actions.map(item => `<article><h3>${escapeHtml(major.find(pattern => pattern.id === item.patternId)?.title || "Өөрчлөлтийн чиглэл")}</h3>${renderReportParagraphs([item.action, item.reason])}</article>`).join(""), visible: actions.length > 0 },
+    { id: "experiment", heading: "Эхний туршилт", body: full.prioritizedStartingAction ? `${renderReportParagraphs([full.prioritizedStartingAction.action, full.prioritizedStartingAction.reason, full.prioritizedStartingAction.priorityReason])}${renderPlanDetails(full.prioritizedStartingAction.plan)}` : "", visible: Boolean(full.prioritizedStartingAction) },
+    { id: "avoid", heading: "Одоогоор юуг зэрэг өөрчлөхгүй байх вэ?", body: renderReportParagraphs([full.avoidForNow]), visible: Boolean(full.avoidForNow) },
+    { id: "guidance", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", body: renderReportParagraphs([full.professionalGuidance, full.urgentGuidance]), visible: Boolean(full.professionalGuidance || full.urgentGuidance) }
+  ];
+}
+
+function renderMultiFactorReport(full) {
+  const visibleSections = buildReportSections(full).filter(section => section.visible);
   return `${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(new Date(full.reportDate).toLocaleDateString("mn-MN"))}</time></header>
-    <section class="report-section"><h2>1. Таны хариултаас харагдсан ерөнхий зураг</h2>${renderReportParagraphs(Array.isArray(full.overallPicture) ? full.overallPicture : [full.overallPicture])}</section>
-    <section class="report-section"><h2>2. ${patternHeading}</h2>${major.length ? major.map(pattern => `<article><h3>${escapeHtml(pattern.title)}</h3>${renderReportParagraphs([pattern.explanation, pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty])}</article>`).join("") : `<p>Одоогоор жин хасалтад нөлөөлж буй нэг тод хэв маяг ялгараагүй байна.</p>`}</section>
-    ${(full.interactionSummary || []).length ? `<section class="report-section"><h2>3. ${interactionHeading}</h2>${full.interactionSummary.map(item => `<p>${escapeHtml(item.explanation)}</p>`).join("")}</section>` : ""}
-    ${(full.contextualFactors || []).length ? `<section class="report-section"><h2>4. Нэмэлт нөлөөлөгч нөхцөл</h2>${full.contextualFactors.map(item => `<article><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.summary || item.explanation, ...(item.summary ? [] : [item.evidenceSummary, item.effectOnWeightLoss])])}</article>`).join("")}</section>` : ""}
-    ${full.previousAttemptAnalysis ? `<section class="report-section"><h2>5. Өмнөх оролдлого яагаад тасарсан байж болох вэ?</h2>${renderReportParagraphs(full.previousAttemptAnalysis.paragraphs || [full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation])}</section>` : ""}
-    ${full.protectiveSectionSummary || (full.protectiveFactors || []).length || (full.contradictions || []).length ? `<section class="report-section"><h2>6. Танд байгаа давуу тал</h2>${renderReportParagraphs([full.protectiveSectionSummary, ...(!full.protectiveSectionSummary ? (full.protectiveFactors || []).slice(0, 4).map(item => item.text) : []), ...(full.contradictions || []).map(item => item.text)])}</section>` : ""}
-    ${actions.length ? `<section class="report-section"><h2>7. Танд илүү тохирох өөрчлөлтийн чиглэл</h2>${actions.map(item => `<article><h3>${escapeHtml(major.find(pattern => pattern.id === item.patternId)?.title || "Өөрчлөлтийн чиглэл")}</h3>${renderReportParagraphs([item.action, item.reason])}</article>`).join("")}</section>` : ""}
-    ${full.prioritizedStartingAction ? `<section class="report-section"><h2>8. Эхний туршилт</h2>${renderReportParagraphs([full.prioritizedStartingAction.action, full.prioritizedStartingAction.reason, full.prioritizedStartingAction.priorityReason])}${planDetails}</section>` : ""}
-    ${full.avoidForNow ? `<section class="report-section"><h2>9. Одоогоор юуг зэрэг өөрчлөхгүй байх вэ?</h2><p>${escapeHtml(full.avoidForNow)}</p></section>` : ""}
-    ${full.professionalGuidance || full.urgentGuidance ? `<section class="report-section"><h2>10. Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?</h2>${renderReportParagraphs([full.professionalGuidance, full.urgentGuidance])}</section>` : ""}
+    ${visibleSections.map((section, index) => `<section class="report-section" data-report-section="${escapeAttribute(section.id)}"><h2>${index + 1}. ${escapeHtml(section.heading)}</h2>${section.body}</section>`).join("")}
     <button class="button print-hide" type="button" data-action="print-report">Хэвлэх эсвэл PDF-ээр хадгалах</button></main>${footer()}`;
 }
 function renderReport() {
@@ -471,4 +498,4 @@ function navigate(pathname, options = {}) { if (typeof window === "undefined") r
 function captureInviteToken() { if (typeof window === "undefined") return; const url = new URL(window.location.href); const token = url.searchParams.get("invite"); if (!token) return; state.inviteToken = token; url.searchParams.delete("invite"); window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`); }
 if (typeof window !== "undefined") { window.addEventListener("popstate", async () => { await restoreServerState(); render(); }); window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); await restoreServerState(); render({ focus: false }); }); }
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
-  _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; } } };
+  _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections } };

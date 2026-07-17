@@ -76,7 +76,27 @@ const neutralReport = publicReport(buildFullReport(buildEvidence([
 ])));
 app._test.setState({ ownerPreview: true, report: { fullReport: neutralReport } });
 const renderedNeutralReport = app.renderForPath("/report");
-for (const heading of ["Гол хэв маяг өдөр тутмын нөхцөлтэй", "Нэмэлт нөлөөлөгч нөхцөл", "Өмнөх оролдлого яагаад", "Танд илүү тохирох өөрчлөлтийн чиглэл", "Эхний туршилт", "Одоогоор юуг зэрэг", "Хэзээ мэргэжлийн хүнтэй"]) assert(!renderedNeutralReport.includes(heading), `neutral report must omit empty section: ${heading}`);
+assert(renderedNeutralReport.includes("Ямар нийтлэг саад хүчтэй илрээгүй вэ?"));
+assert(renderedNeutralReport.includes("Энэ асуумжаар юуг дүгнэж болохгүй вэ?"));
+assert(renderedNeutralReport.includes("Тайланг хэрхэн ашиглах вэ?"));
+
+function assertSequentialSections(report, name) {
+  const sections = app._test.buildReportSections(report).filter(section => section.visible);
+  app._test.setState({ ownerPreview: true, report: { fullReport: report } });
+  const html = app.renderForPath("/report");
+  const numbers = [...html.matchAll(/<h2>(\d+)\./g)].map(match => Number(match[1]));
+  assert.deepEqual(numbers, sections.map((_, index) => index + 1), `${name}: visible sections must be numbered 1..N`);
+  assert(!numbers.some((number, index) => number !== index + 1), `${name}: skipped report number`);
+}
+const ownerNumberingReport = publicReport(buildFullReport(buildEvidence([
+  { questionId: "Q-TRAVEL", value: "Машинаар" }, { questionId: "Q-MOVEMENT", value: "Бага" },
+  { questionId: "Q-METHOD-PAST", value: ["Дасгал хөдөлгөөн"] }, { questionId: "Q-METHOD-DURATION", value: "1 жилээс урт" },
+  { questionId: "Q-METHOD-RESULT", value: "Жин буурсан" }, { questionId: "Q-METHOD-REGAIN", value: "Хэсэгчлэн нэмэгдсэн" },
+  { questionId: "Q-METHOD-BARRIERS", value: ["Цагийн хуваарь", "Зардал"] }
+])));
+const limitedReport = publicReport(buildFullReport(buildEvidence([{ questionId: "Q-MOVEMENT", value: "Бага" }])));
+for (const [report, name] of [[ownerNumberingReport, "owner"], [multiFactorReport, "emotional"], [neutralReport, "neutral"], [pluralReport, "multi"], [limitedReport, "limited"]]) assertSequentialSections(report, name);
+assert(!/heading:\s*["'`]\d+\./.test(require("node:fs").readFileSync(require.resolve("../app.js"), "utf8")), "stored section headings must not contain public numbers");
 assert.equal(app.routeName("/choice"), "notFound");
 app._test.resetComingSoon();
 

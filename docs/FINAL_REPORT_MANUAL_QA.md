@@ -8,7 +8,7 @@ Review date: 2026-07-18. All reports were generated through `buildEvidence()` â†
 - Evidence-gated facts: movement-based method, duration over one year, initial success, weight regain, low current movement, car travel, schedule barrier, cost barrier, injury stop context, and historical abnormal blood-pressure response.
 - Omitted unsupported factors: emotional eating, environmental cue eating, hunger/satiety difficulty, portion difficulty, and sleep/fatigue as causes.
 - New copy requiring owner approval: all revised section 1â€“10 wording and headings in the proposed report.
-- Numeric parameters: 14-day duration, at least four selected days per week, five-minute fallback, and six of eight completion target. Each has a prior explicit owner-approval source documented in `REPORT_PLAN_PARAMETER_REVIEW.md`.
+- Numeric parameters: 14-day duration, at least four selected days per week, five-minute fallback, and six of eight completion target are candidates only. Every fixed value is `OWNER REVIEW REQUIRED`; prompt text was not approval. The nonnumeric alternative is documented in `REPORT_NUMERIC_OWNER_DECISION.md`.
 
 ## Emotional-eating dominant profile
 
@@ -26,9 +26,19 @@ Review date: 2026-07-18. All reports were generated through `buildEvidence()` â†
 - New copy requiring owner approval: insufficient-evidence overview and no-pattern section copy.
 - Numeric parameters: none.
 
+## Multi-pattern profile
+
+- Strongest personalized insight: long gaps between meals, stress-linked eating, and late hunger recognition interact, while sleep-related fatigue is a contextual influence rather than a psychological pattern.
+- Evidence-gated facts: long meal interval, late hunger recognition, emotional response, emotional/hunger barriers, short sleep, and waking tired.
+- Evidence-supported strength: the answers distinguish the recurring situations clearly enough to select one observation target without changing several behaviors together.
+- Omitted unsupported factors: injury, cost, schedule, blood pressure, movement level, environmental cues, and previous-attempt chronology.
+- New copy requiring owner approval: the multi-pattern synthesis, answer-linked strength, interaction explanation, and direction copy.
+- Numeric parameters: none.
+
 ## Manual result
 
 - Natural Mongolian and section separation: PASS pending owner wording approval.
-- Unsupported personalized details: none observed in the three manually reviewed reports.
+- Sequential visible numbering: PASS for owner, emotional, neutral, multi-pattern, and limited-evidence fixtures.
+- Unsupported personalized details: none observed in the four manually reviewed reports.
 - Exact substantive sentence duplication: none observed.
 - Report activation: prohibited until explicit owner approval.
