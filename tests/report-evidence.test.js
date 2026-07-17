@@ -8,7 +8,7 @@ const { SENTENCE_TEMPLATES, sentenceTemplateMatches } = require("../netlify/func
 const { mappingCoverage } = require("../netlify/functions/_lib/report-signals.js");
 const { buildEvidence, evidenceQuality, buildFullReport, publicReport } = require("../netlify/functions/_lib/report.js");
 const fixtures = require("./fixtures/report-gold-profiles.js");
-const forbiddenPublicTerms = ["шилжилтийн саад", "үр дүнгээ хадгалах шилжилт", "залгамж хувилбар", "Зангуу", "зангуун", "Доод хувилбар", "доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "биеийн дурдсан нөхцөл", "аюулгүй хувилбар", "нэг чиглэлд давхацсан", "гол анхаарах хэв маягийн нэг", "төлөвлөөгүй идэлт", "идэлт"];
+const forbiddenPublicTerms = ["арга тасрах", "арга тасарсан", "арга тасарсны", "арга тасрахад", "төлөвлөгөө тасрах", "төлөвлөгөө тасарсан", "дэглэм тасрах", "шилжилтийн саад", "үр дүнгээ хадгалах шилжилт", "залгамж хувилбар", "Зангуу", "зангуун", "Доод хувилбар", "доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "биеийн дурдсан нөхцөл", "аюулгүй хувилбар", "нэг чиглэлд давхацсан", "гол анхаарах хэв маягийн нэг", "төлөвлөөгүй идэлт", "идэлт"];
 
 const rows = answers => Object.entries(answers).map(([questionId, value]) => ({ questionId, value }));
 const reportFor = answers => buildFullReport(buildEvidence(rows(answers)), new Date("2026-07-17T00:00:00Z"));
@@ -106,13 +106,13 @@ assert(transition.contextualFactors.some(item => item.id === "low_movement"), "l
 assert(transition.influencingPatterns.every(item => item.category !== "psychological"), "this profile does not support a psychological pattern");
 assert(transition.protectiveSectionSummary.includes("өлсөх, цадах мэдрэмжээ харьцангуй сайн анзаардаг"));
 assert(transition.protectiveSectionSummary.includes("өөрчлөлтийг тууштай барих чадвартайг"));
-assert.equal(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").title, "Арга тасарсны дараа үр дүнгээ хадгалах төлөвлөгөө дутсан нь");
+assert.equal(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").title, "Өмнөх аргын үр дүнг хадгалж үлдэх төлөвлөгөө дутсан нь");
 assert(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").paragraphs[0].includes("Өмнөх хөдөлгөөнд суурилсан арга эхэндээ үр дүн өгч"));
 assert(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").paragraphs[1].includes("Гол хүндрэл нь эхлэх чадвар бус"));
 assert(transition.contextualFactors.find(item => item.id === "low_movement").summary.includes("өдрийн нийт хөдөлгөөнөө бага"));
 assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("нэг жилээс урт"));
-assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("гэмтэл"));
-assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("Таны дурдсан гэмтэл өмнөх хөдөлгөөнийг үргэлжлүүлэхэд саад болжээ."));
+assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("гэмт"));
+assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болсон байна."));
 assert(!transition.previousAttemptAnalysis.paragraphs.join(" ").includes("Таны дурдсан өвдөлт эсвэл хөдөлгөөний хязгаарлалт"));
 assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("хүсэл зориг дутсаныг бус"));
 assert(transition.professionalGuidance.includes("Хэрэв даралт сүүлийн үед давтан хэвийн бус"));
@@ -148,8 +148,12 @@ const withInjuryText = JSON.stringify(publicReport(withInjury));
 assert(!/хуучин гэмт|гэмтэл|өвдөлт|Зовиур/.test(withoutInjuryText), "injury language requires injury evidence");
 assert(/гэмтэл|өвдөлт|Зовиур/.test(withInjuryText), "explicit injury evidence must change injury guidance");
 assert.notEqual(withoutInjuryText, withInjuryText, "injury evidence must materially change the report");
+assert(!withoutInjuryText.includes("үргэлжлүүлэх боломжгүй болсон"), "forced-continuation wording requires explicit evidence");
+assert(withInjuryText.includes("Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болсон байна."), "explicit injury stop must use the exact continuation wording");
 assert(!withoutInjury.contextualFactors.some(item => item.id === "injury_or_pain_barrier"), "injury context requires injury evidence");
-assert(withInjury.contextualFactors.some(item => item.id === "injury_or_pain_barrier" && item.title === "Өмнөх гэмтэл хөдөлгөөнийг үргэлжлүүлэхэд саад болсон нь"), "injury context heading must use approved copy");
+assert(withInjury.contextualFactors.some(item => item.id === "injury_or_pain_barrier" && item.title === "Өмнөх гэмтэл хөдөлгөөнийг үргэлжлүүлэх боломжгүй болгосон нь"), "explicit injury stop must use the inability heading");
+const structuredInjuryOnly = reportFor({ ...genericTransitionAnswers, "Q-METHOD-BARRIERS": ["Үр дүн удаан харагдах", "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт"] });
+assert(!JSON.stringify(publicReport(structuredInjuryOnly)).includes("үргэлжлүүлэх боломжгүй болсон"), "a generic physical barrier must not imply inability to continue");
 
 const withoutCost = reportFor(genericTransitionAnswers);
 const withCost = reportFor({ ...genericTransitionAnswers, "Q-METHOD-BARRIERS": ["Үр дүн удаан харагдах", "Зардал"] });
@@ -189,7 +193,9 @@ assert.equal(openOnly.influencingPatterns.length, 0, "open text cannot independe
 const raw = buildFullReport(buildEvidence(rows(fixtures[0].answers)));
 assert(raw.internalEvidenceMap.signals.every(item => item.questionId));
 assert(raw.internalEvidenceMap.sentenceEvidence.length > 0);
-assert(raw.internalEvidenceMap.sentenceEvidence.every(item => item.sentenceTemplateId && item.section && Array.isArray(item.actualSupportingQuestionIds)));
+assert(raw.internalEvidenceMap.sentenceEvidence.every(item => item.sentenceTemplateId && item.section && item.text && Array.isArray(item.actualSupportingQuestionIds)));
+assert(raw.internalEvidenceMap.sentenceEvidence.some(item => item.sentenceTemplateId === "pattern_emotional_regulation_explanation"), "pattern explanations must have trace IDs");
+assert(raw.internalEvidenceMap.sentenceEvidence.some(item => item.sentenceTemplateId.startsWith("strategy_")), "strategy sentences must have trace IDs");
 assert(!Object.hasOwn(publicReport(raw), "internalEvidenceMap"));
 
 const sentences = substantiveSentences(publicReport(multi));
@@ -204,6 +210,7 @@ assert(bloodPressureTrigger.urgentGuidance.includes("яаралтай тусла
 
 const emotionalReport = reportFor(fixtures.find(item => item.name === "emotional eating dominant").answers);
 assert.equal(emotionalReport.prioritizedStartingAction.plan.kind, "emotional_observation");
+assert.equal(emotionalReport.prioritizedStartingAction.plan.variable, "стресс нэмэгдэх мөчид хэрэгцээгээ ялгаж анзаарах богино завсарлага");
 assert(emotionalReport.prioritizedStartingAction.plan.action.includes("Одоо биеэрээ өлсөж байна уу"));
 assert(emotionalReport.prioritizedStartingAction.plan.observe.includes("дараагийн сонголтод"));
 assert(emotionalReport.prioritizedStartingAction.plan.keepConstant.includes("зориуд өөрчлөхгүй"));
@@ -217,8 +224,12 @@ assert(neutralReport.neutralResult.overview.length >= 2, "neutral report needs t
 assert(neutralReport.neutralResult.strengths.length >= 1, "neutral report must retain every available strength");
 assert(neutralReport.neutralResult.limits.some(item => item.includes("оношлохгүй")));
 assert(neutralReport.neutralResult.observation.action);
+assert.equal(neutralReport.neutralResult.observation.variable, "нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах");
 assert(neutralReport.neutralResult.observation.decisionRule);
 assert(!/гэмтэл|зардал|цагийн хуваарь|даралт|эм хэрэглэх/i.test(JSON.stringify(neutralReport.neutralResult)), "neutral report must not insert unsupported advice");
+const sleepContextReport = reportFor(fixtures.find(item => item.name === "sleep fatigue context").answers);
+assert(sleepContextReport.contextualFactors.some(item => item.id === "sleep_fatigue"), "supported sleep context must remain contextual");
+assert(JSON.stringify(sleepContextReport.neutralResult.overview).includes("нойр, ядаргаа нь өдөр тутмын сонголтод нөлөөлөх нөхцөл"), "neutral mode must retain its supported contextual finding");
 
 const sourceCopy = ["../netlify/functions/_lib/report-copy.js", "../netlify/functions/_lib/report.js", "../app.js"].map(file => fs.readFileSync(require.resolve(file), "utf8")).join("\n");
 for (const phrase of forbiddenPublicTerms) assert(!sourceCopy.includes(phrase), `forbidden source copy: ${phrase}`);
@@ -235,6 +246,7 @@ assert(tenProfiles.every(Boolean), "ten-profile copy QA fixtures must exist");
 const tenReports = tenProfiles.map(fixture => publicReport(reportFor(fixture.answers)));
 for (const [index, report] of tenReports.entries()) {
   const text = JSON.stringify(report);
+  assert(!/арга тасар|төлөвлөгөө тасар|дэглэм тасар/i.test(text), `${tenProfiles[index].name}: incorrect stop idiom leaked`);
   for (const phrase of forbiddenPublicTerms) assert(!text.includes(phrase), `${tenProfiles[index].name}: forbidden copy ${phrase}`);
   assert((text.match(/байж болно/g) || []).length <= 3, `${tenProfiles[index].name}: excessive hedge copy`);
   assert.equal(report.influencingPatterns.length ? 1 : 0, report.prioritizedStartingAction ? 1 : 0, `${tenProfiles[index].name}: exactly one first action when patterns exist`);
@@ -257,8 +269,8 @@ const numericDecision = fs.readFileSync(require.resolve("../docs/REPORT_NUMERIC_
 assert(numericDecision.includes("OWNER REVIEW REQUIRED"));
 assert(!numericDecision.includes("OWNER APPROVED"));
 
-for (const file of ["netlify/functions/_lib/report-signals.js", "netlify/functions/_lib/report-patterns.js"]) {
-  const diff = childProcess.execFileSync("git", ["diff", "ea49d6716dff7eefe480b2b3fae20352bbbdb398", "--", file], { encoding: "utf8" });
+for (const file of ["netlify/functions/_lib/report-signals.js", "netlify/functions/_lib/report-patterns.js", "netlify/functions/_lib/safety.js", "netlify/functions/_lib/payment.js", "netlify/functions/_lib/recovery.js", "questions.js"]) {
+  const diff = childProcess.execFileSync("git", ["diff", "794b08652776095e81a49f731b9a2cd262f24d63", "--", file], { encoding: "utf8" });
   assert.equal(diff, "", `${file}: frozen inference semantics changed`);
 }
 

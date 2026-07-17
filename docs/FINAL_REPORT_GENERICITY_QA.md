@@ -19,22 +19,22 @@ Generated from the ten required fixtures on 2026-07-18. Similarity is Jaccard ov
 
 | Profile | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| 1 | 1.000 | 0.057 | 0.043 | 0.039 | 0.016 | 0.043 | 0.043 | 0.083 | 0.034 | 0.016 |
-| 2 | 0.057 | 1.000 | 0.250 | 0.188 | 0.050 | 0.250 | 0.250 | 0.200 | 0.225 | 0.050 |
-| 3 | 0.043 | 0.250 | 1.000 | 0.200 | 0.056 | 0.273 | 0.273 | 0.214 | 0.146 | 0.056 |
-| 4 | 0.039 | 0.188 | 0.200 | 1.000 | 0.038 | 0.333 | 0.200 | 0.167 | 0.571 | 0.038 |
-| 5 | 0.016 | 0.050 | 0.056 | 0.038 | 1.000 | 0.056 | 0.056 | 0.042 | 0.056 | 0.111 |
-| 6 | 0.043 | 0.250 | 0.273 | 0.333 | 0.056 | 1.000 | 0.273 | 0.214 | 0.237 | 0.056 |
-| 7 | 0.043 | 0.250 | 0.273 | 0.200 | 0.056 | 0.273 | 1.000 | 0.214 | 0.146 | 0.056 |
-| 8 | 0.083 | 0.200 | 0.214 | 0.167 | 0.042 | 0.214 | 0.214 | 1.000 | 0.128 | 0.042 |
-| 9 | 0.034 | 0.225 | 0.146 | 0.571 | 0.056 | 0.237 | 0.146 | 0.128 | 1.000 | 0.027 |
-| 10 | 0.016 | 0.050 | 0.056 | 0.038 | 0.111 | 0.056 | 0.056 | 0.042 | 0.027 | 1.000 |
+| 1 | 1.000 | 0.051 | 0.042 | 0.037 | 0.013 | 0.042 | 0.042 | 0.066 | 0.033 | 0.014 |
+| 2 | 0.051 | 1.000 | 0.121 | 0.098 | 0.027 | 0.121 | 0.121 | 0.103 | 0.143 | 0.028 |
+| 3 | 0.042 | 0.121 | 1.000 | 0.188 | 0.033 | 0.250 | 0.250 | 0.200 | 0.140 | 0.034 |
+| 4 | 0.037 | 0.098 | 0.188 | 1.000 | 0.026 | 0.310 | 0.188 | 0.158 | 0.541 | 0.027 |
+| 5 | 0.013 | 0.027 | 0.033 | 0.026 | 1.000 | 0.033 | 0.033 | 0.028 | 0.042 | 0.348 |
+| 6 | 0.042 | 0.121 | 0.250 | 0.310 | 0.033 | 1.000 | 0.250 | 0.200 | 0.225 | 0.034 |
+| 7 | 0.042 | 0.121 | 0.250 | 0.188 | 0.033 | 0.250 | 1.000 | 0.200 | 0.140 | 0.034 |
+| 8 | 0.066 | 0.103 | 0.200 | 0.158 | 0.028 | 0.200 | 0.200 | 1.000 | 0.122 | 0.029 |
+| 9 | 0.033 | 0.143 | 0.140 | 0.541 | 0.042 | 0.225 | 0.140 | 0.122 | 1.000 | 0.021 |
+| 10 | 0.014 | 0.028 | 0.034 | 0.027 | 0.348 | 0.034 | 0.034 | 0.029 | 0.021 | 1.000 |
 
 ## Result
 
-- Highest cross-profile similarity: `0.571`, between the irregular-meals profile and the multi-pattern profile that intentionally contains that same pattern.
-- Preserved owner profile similarity to every materially different profile: `0.083` or lower.
-- Mostly-neutral profile similarity to every other profile: `0.111` or lower.
+- Highest cross-profile similarity: `0.541`, between the irregular-meals profile and the multi-pattern profile that intentionally contains that same pattern.
+- Preserved owner profile similarity to every materially different profile: `0.066` or lower.
+- Mostly-neutral profile similarity to every other profile: `0.348` or lower; the highest overlap is with the contextual-only sleep profile because both correctly use the seven-section neutral structure.
 - Automated rejection threshold: `0.700`.
 - All 45 pairwise comparisons: `PASS`.
 

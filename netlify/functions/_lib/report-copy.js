@@ -34,7 +34,7 @@ const PATTERN_COPY = Object.freeze({
   restrictive_rebound: {
     explanation: "Хэт хатуу дүрэмтэй арга эхэндээ хэрэгжих мэт боловч удаан барихад хэцүү болж, төлөвлөгөөг бүхэлд нь орхих эрсдэлтэй.",
     effectOnWeightLoss: "Нэг удаагийн хазайлтыг бүтэлгүйтэл гэж үзвэл төлөвлөгөөг бүхэлд нь орхих магадлал нэмэгдэнэ.",
-    uncertainty: "Өмнөх арга бүр хэт хатуу байсан гэж дүгнэхгүй; зөвхөн давхцсан хариултуудыг тайлбарлаж байна."
+    uncertainty: "Өмнөх арга бүр хэт хатуу байсан гэж дүгнэхгүй; энэ дүгнэлт зөвхөн хэт хатуу дүрэм болон өмнөх оролдлогын талаарх мэдээлэлд тулгуурлана."
   },
   plan_daily_life_mismatch: {
     explanation: "Өдөр тутмын бодит нөхцөлтэй нийцэхгүй төлөвлөгөө сайн санаатай байсан ч тогтмол хэрэгжихгүй үлддэг.",
@@ -44,12 +44,12 @@ const PATTERN_COPY = Object.freeze({
   previous_attempt_sustainability: {
     explanation: "Өмнөх арга зогсох эсвэл нөхцөл өөрчлөгдөх үед үр дүнг хадгалах өдөр тутмын төлөвлөгөө хэрэгтэй болдог.",
     effectOnWeightLoss: "Орлуулах бодит төлөвлөгөөгүй бол өмнөх өөрчлөлтөө өдөр тутам үргэлжлүүлэхэд хэцүү болдог.",
-    uncertainty: "Энэ нь эхлэх эсвэл тууштай байх чадвар дутсан гэсэн үг биш; арга тасарсны дараах төлөвлөгөөг тайлбарлаж байна."
+    uncertainty: "Энэ нь эхлэх эсвэл тууштай байх чадвар дутсан гэсэн үг биш; өмнөх оролдлогын үр дүнг хадгалах төлөвлөгөөг тайлбарлаж байна."
   }
 });
 
 const PATTERN_PUBLIC_TITLES = Object.freeze({
-  previous_attempt_sustainability: "Арга тасарсны дараа үр дүнгээ хадгалах төлөвлөгөө дутсан нь"
+  previous_attempt_sustainability: "Өмнөх аргын үр дүнг хадгалж үлдэх төлөвлөгөө дутсан нь"
 });
 
 const CONTEXT_PUBLIC_TITLES = Object.freeze({
@@ -62,9 +62,9 @@ const SENTENCE_TEMPLATES = Object.freeze({
   overview_environmental: { requiredPatterns: ["environmental_cues"], text: "Өлсөөгүй үед хоол харагдах, үнэртэх эсвэл бусад хүн идэхэд идэх хүсэл тань хөдөлдөг байна." },
   overview_meal_rhythm: { requiredPatterns: ["irregular_meals_late_hunger"], text: "Хоолны зай уртсах үед өлсөлт хэт хүчтэй болсны дараа анзаарагдаж, оройн сонголтыг яаруулдаг байна." },
   overview_hunger_satiety: { requiredPatterns: ["hunger_satiety"], text: "Өлсөх, цадах дохиог цагт нь анзаарахад хүндрэлтэй байгаа нь идэх мөч болон хэмжээг тохируулахад нөлөөлж байна." },
-  overview_restrictive: { requiredPatterns: ["restrictive_rebound"], text: "Хэт хатуу арга тасрахад өмнөх дүрэм бүхэлдээ орхигдох эрсдэл илүү тод байна." },
+  overview_restrictive: { requiredPatterns: ["restrictive_rebound"], text: "Хэт хатуу дэглэмийг үргэлжлүүлэхэд хэцүү болоход өмнөх дүрмээ бүхэлд нь орхих эрсдэл илүү тод байна." },
   overview_plan_mismatch: { requiredPatterns: ["plan_daily_life_mismatch"], text: "Өмнөх төлөвлөгөө өдөр тутмын амьдралд багтаагүй нь тогтвортой үргэлжлүүлэхэд саад болжээ." },
-  overview_previous_attempt: { requiredPatterns: ["previous_attempt_sustainability"], text: "Хамгийн тод асуудал нь өмнөх арга үр дүнгүй байсанд бус, арга тасарсны дараа үр дүнгээ хадгалах бодит төлөвлөгөө бэлэн байгаагүйд байна." },
+  overview_previous_attempt: { requiredPatterns: ["previous_attempt_sustainability"], text: "Хамгийн тод асуудал нь өмнөх арга үр дүнгүй байсанд бус, гарсан үр дүнг өдөр тутам хадгалах бодит төлөвлөгөө бэлэн байгаагүйд байна." },
   overview_low_movement: { requiredPatterns: ["low_movement"], text: "Одоогийн өдөр тутмын хөдөлгөөн бага байгаа нь дараагийн төлөвлөгөөнд заавал тооцох нөхцөл болж байна." },
   overview_sleep: { requiredPatterns: ["sleep_fatigue"], text: "Нойр болон ядаргаа өдөр тутмын сонголтоо төлөвлөхөд нөлөөлж байна." },
   overview_schedule: { requiredSignals: ["schedule_barrier"], text: "Дараагийн хувилбар цагийн хуваарьт бодитоор багтах шаардлагатай." },
@@ -79,34 +79,37 @@ const SENTENCE_TEMPLATES = Object.freeze({
   evidence_meal_rhythm: { requiredPatterns: ["irregular_meals_late_hunger"], text: "Та хоолны зай урт байдаг, өлсөлтөө хэт хүчтэй болсны дараа анзаардаг гэж тэмдэглэсэн." },
   evidence_hunger_satiety: { requiredPatterns: ["hunger_satiety"], text: "Та өлсөлтөө хэт хүчтэй болсны дараа анзаардаг бөгөөд өлсөх эсвэл цадах мэдрэмж өмнөх аргын саад болсон гэж тэмдэглэсэн." },
   evidence_sleep: { requiredPatterns: ["sleep_fatigue"], text: "Нойр дутуу эсвэл тасалдсан үед ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөгөө дагахад хүндрэл гардаг байна." },
-  evidence_restrictive: { requiredPatterns: ["restrictive_rebound"], text: "Хатуу хязгаарлалттай арга тасарсны дараа өмнөх дүрмээ бүхэлд нь орхиж, жин буцах эрсдэл нэмэгдсэн байна." },
+  evidence_restrictive: { requiredPatterns: ["restrictive_rebound"], text: "Хэт хатуу дүрмийг удаан барихад хэцүү болж, нэг хазайлтын дараа төлөвлөгөөг бүхэлд нь орхих эрсдэл нэмэгдсэн байна." },
   evidence_plan_mismatch: { requiredPatterns: ["plan_daily_life_mismatch"], text: "Төлөвлөгөөг өдөр тутам хэрэгжүүлэхэд бодит саад тулгарч, өмнөх оролдлого тогтвортой үргэлжлээгүй байна." },
   evidence_previous_attempt: { requiredPatterns: ["previous_attempt_sustainability"], text: "Өмнөх арга зогссоны дараа гарсан үр дүнг өдөр тутам хадгалах орлуулах төлөвлөгөө бэлэн байгаагүй." },
   evidence_previous_attempt_complete: { requiredPatterns: ["previous_attempt_sustainability"], requiredSignals: ["activity_based_method", "sustained_attempt", "initial_attempt_success", "weight_regain"], text: "Өмнөх хөдөлгөөнд суурилсан арга эхэндээ үр дүн өгч, нэг жилээс урт үргэлжилсэн ч зогссоны дараа үр дүнг хадгалах хялбар хувилбар бэлэн байгаагүй." },
-  evidence_previous_attempt_meaning: { requiredPatterns: ["previous_attempt_sustainability"], text: "Гол хүндрэл нь эхлэх чадвар бус, ажиллаж байсан арга зогсоход өдөр тутам үргэлжлүүлэх өөр хувилбар бэлэн байгаагүйд байна." },
+  evidence_previous_attempt_meaning: { requiredPatterns: ["previous_attempt_sustainability"], text: "Гол хүндрэл нь эхлэх чадвар бус, өмнөх оролдлого үргэлжлэхээ болих үед өдөр тутам хэрэгжүүлэх өөр хувилбар бэлэн байгаагүйд байна." },
 
   context_low_car: { requiredSignals: ["low_movement", "car_travel_context"], text: "Та өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн бөгөөд машинаар зорчдог тул өдөр тутмын хөдөлгөөн аяндаа нэмэгдэх боломж хязгаарлагдмал байна." },
   context_low_home: { requiredSignals: ["low_movement", "home_work_context"], text: "Та гэрээсээ ажилладаг бөгөөд өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн байна." },
   context_low_only: { requiredSignals: ["low_movement"], forbiddenSignals: ["car_travel_context", "home_work_context"], text: "Та өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн байна." },
-  context_injury: { requiredContexts: ["injury_or_pain_evidence"], text: "Өмнөх гэмтлийн түүх нь хөдөлгөөний төрлийг сонгохдоо зовиурын өөрчлөлтийг харгалзах шаардлагатайг харуулна." },
-  context_schedule: { requiredSignals: ["schedule_barrier"], text: "Завгүй өдөр үндсэн төлөвлөгөө тасрах эрсдэлтэй тул урьдчилан богиносгож болох хувилбар хэрэгтэй." },
+  context_injury_impossible: { requiredContexts: ["explicit_injury_stop_context"], text: "Өмнөх гэмтэл нь дараагийн хөдөлгөөний сонголтод харгалзах нөхцөл байна." },
+  context_injury_difficult: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Таны дурдсан өвдөлт эсвэл хөдөлгөөний хязгаарлалт хөдөлгөөнөө тогтмол үргэлжлүүлэхэд саад болсон байна." },
+  context_schedule: { requiredSignals: ["schedule_barrier"], text: "Завгүй өдөр үндсэн төлөвлөгөөг хэрэгжүүлэх боломжгүй байж болох тул урьдчилан богиносгож болох хувилбар хэрэгтэй." },
   context_cost: { requiredSignals: ["cost_barrier"], text: "Зардал дахин саад болохоос сэргийлж нэмэлт төлбөргүйгээр үргэлжлүүлж болох хувилбар хэрэгтэй." },
+  context_food_discomfort: { requiredSignals: ["food_discomfort_context"], text: "Зарим хүнсний дараах тавгүй мэдрэмжийг хоол, хэмжээ, тухайн үеийн нөхцөлтэй нь хамт ажиглах нь хэрэгтэй." },
+  context_alcohol_food_change: { requiredSignals: ["alcohol_food_change"], text: "Согтууруулах ундаа хэрэглэсэн үед идэх хэмжээ эсвэл сонголт өөрчлөгдсөн бол тэр нөхцөлийг тусад нь ажиглах хэрэгтэй." },
 
   attempt_method_movement: { requiredSignals: ["activity_based_method"], text: "Өмнөх арга хөдөлгөөнд суурилж байжээ." },
   attempt_duration_long: { requiredSignals: ["sustained_attempt"], text: "Та уг аргыг нэг жилээс урт хугацаанд үргэлжлүүлсэн байна." },
   attempt_duration_medium: { requiredSignals: ["medium_duration_attempt"], forbiddenSignals: ["sustained_attempt"], text: "Та уг аргыг 6–12 сар үргэлжлүүлсэн байна." },
   attempt_initial_success: { requiredSignals: ["initial_attempt_success"], text: "Эхний үед жин буурсан нь тухайн арга тодорхой нөхцөлд үр дүн өгснийг харуулна." },
-  attempt_injury_stop_exact: { requiredContexts: ["injury_only_evidence"], text: "Таны дурдсан гэмтэл өмнөх хөдөлгөөнийг үргэлжлүүлэхэд саад болжээ." },
-  attempt_injury_stop_general: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["injury_only_evidence"], text: "Таны дурдсан өвдөлт эсвэл хөдөлгөөний хязгаарлалт өмнөх хөдөлгөөнийг үргэлжлүүлэхэд саад болжээ." },
+  previous_method_stopped_due_to_injury: { requiredContexts: ["explicit_injury_stop_context"], text: "Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болсон байна." },
+  attempt_injury_stop_general: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Таны дурдсан өвдөлт эсвэл хөдөлгөөний хязгаарлалт өмнөх хөдөлгөөнийг үргэлжлүүлэхэд саад болжээ." },
   attempt_weight_regain: { requiredSignals: ["weight_regain"], text: "Үүний дараа жин буцжээ." },
   attempt_schedule: { requiredSignals: ["schedule_barrier"], text: "Дараа нь сонгосон хувилбарыг цагийн хуваарьт багтаахад хүндрэл гарсан байна." },
   attempt_cost: { requiredSignals: ["cost_barrier"], text: "Зардал ч тогтвортой үргэлжлүүлэх боломжийг хязгаарлажээ." },
-  attempt_interpretation: { requiredPatterns: ["previous_attempt_sustainability"], text: "Энэ түүх нь хүсэл зориг дутсаныг бус, арга тасрах үед үр дүнгээ хадгалах хялбар төлөвлөгөө дутсаныг илүү тод харуулж байна." },
+  attempt_interpretation: { requiredPatterns: ["previous_attempt_sustainability"], text: "Энэ түүх нь хүсэл зориг дутсаныг бус, өмнөх оролдлого үргэлжлэхээ болих үед үр дүнгээ хадгалах хялбар төлөвлөгөө дутсаныг илүү тод харуулж байна." },
 
   strength_body: { requiredProtectiveSignals: ["hunger_recognition_difficulty", "satiety_difficulty"], text: "Та өлсөх, цадах мэдрэмжээ харьцангуй сайн анзаардаг нь хооллолтоо биеийн дохиотой уялдуулах бодит давуу тал юм." },
   strength_common_barriers: { requiredProtectiveSignals: ["emotional_eating", "environmental_cue_reactivity", "short_sleep", "poor_sleep_quality"], text: "Стресс, орчны хоолны өдөөлт болон нойр таны хооллолтыг тогтмол алдагдуулдаг шинж харагдсангүй." },
   strength_adherence_success: { requiredSignals: ["sustained_attempt", "initial_attempt_success"], text: "Өмнөх аргаа нэг жилээс урт хугацаанд хэрэгжүүлж, эхний үр дүн гаргаж чадсан нь өөрчлөлтийг тууштай барих чадвартайг харуулна." },
-  strength_strategy: { requiredPatterns: ["previous_attempt_sustainability"], requiredProtectiveSignals: ["hunger_recognition_difficulty", "satiety_difficulty"], text: "Дараагийн стратеги энэ чадварыг хадгалж, зөвхөн арга тасарсны дараах төлөвлөгөөг илүү бодит болгоход чиглэх нь тохиромжтой." },
+  strength_strategy: { requiredPatterns: ["previous_attempt_sustainability"], requiredProtectiveSignals: ["hunger_recognition_difficulty", "satiety_difficulty"], text: "Дараагийн стратеги энэ чадварыг хадгалж, өмнөх оролдлого үргэлжлэхээ болих үед хэрэгжүүлэх хувилбарыг илүү бодит болгоход чиглэх нь тохиромжтой." },
   strength_observation_base_1: { requiredPatternCount: 1, text: "Та хүндрэл давтагддаг нөхцөлийг ялгаж хариулсан нь эхний туршилтаар яг юуг ажиглахаа тодорхойлох бодит суурь болж байна." },
   strength_observation_base_2: { requiredPatternCount: 2, text: "Та хүндрэл давтагддаг нөхцөлүүдийг ялгаж хариулсан нь эхний туршилтаар яг юуг ажиглахаа тодорхойлох бодит суурь болж байна." },
   strength_observation_base_3: { requiredPatternCount: 3, text: "Та хүндрэл давтагддаг нөхцөлүүдийг ялгаж хариулсан нь эхний туршилтаар яг юуг ажиглахаа тодорхойлох бодит суурь болж байна." },
@@ -128,6 +131,13 @@ const SENTENCE_TEMPLATES = Object.freeze({
   neutral_decision_rule: { requiredPatternCount: 0, text: "Нэг ижил нөхцөл дахин давтагдвал дараагийн тайлбар, төлөвлөгөөг тэр нөхцөлд чиглүүлнэ; тодорхой зүйл давтагдахгүй бол илүү дэлгэрэнгүй мэдээлэл цуглуулна." },
   neutral_professional_scope: { requiredPatternCount: 0, text: "Асуумжид хамрагдаагүй шинж тэмдэг, эмчилгээ эсвэл биеийн өөрчлөлтийн талаар санаа зовж байгаа бол энэ тайлангаар шалтгаан тогтоохгүй, тохирох мэргэжлийн хүнтэй ярилцана уу." },
   neutral_report_use: { requiredPatternCount: 0, text: "Энэ тайланг эцсийн онош гэж бус, дараагийн ажиглалтаа хаанаас эхлэхийг заах суурь зураглал болгон ашиглана." },
+  neutral_context_sleep: { requiredPatternCount: 0, requiredPatterns: ["sleep_fatigue"], text: "Сэтгэлзүйн эсвэл зан үйлийн гол хэв маяг ялгараагүй ч нойр, ядаргаа нь өдөр тутмын сонголтод нөлөөлөх нөхцөл болж байна." },
+  neutral_context_movement: { requiredPatternCount: 0, requiredPatterns: ["low_movement"], text: "Сэтгэлзүйн гол саад ялгараагүй ч өдөр тутмын хөдөлгөөний суурь түвшин бага байгаа нь тусад нь анхаарах нөхцөл болж байна." },
+  neutral_context_schedule: { requiredPatternCount: 0, requiredSignals: ["schedule_barrier"], text: "Цагийн хуваарь нь өмнөх төлөвлөгөөг тогтмол хэрэгжүүлэхэд нөлөөлсөн бодит нөхцөл байна." },
+  neutral_context_cost: { requiredPatternCount: 0, requiredSignals: ["cost_barrier"], text: "Зардал нь өмнөх төлөвлөгөөг тогтмол хэрэгжүүлэхэд нөлөөлсөн бодит нөхцөл байна." },
+  neutral_context_injury: { requiredPatternCount: 0, requiredContexts: ["injury_or_pain_evidence"], text: "Өмнөх гэмтэл эсвэл биеийн хүндрэл нь хөдөлгөөний сонголтод тусад нь харгалзах нөхцөл болж байна." },
+  neutral_context_food: { requiredPatternCount: 0, requiredSignals: ["food_discomfort_context"], text: "Зарим хүнсний дараах биеийн мэдрэмж нь тусад нь ажиглавал зохих нөхцөл байна." },
+  neutral_context_alcohol: { requiredPatternCount: 0, requiredSignals: ["alcohol_food_change"], text: "Согтууруулах ундаа хэрэглэсэн үеийн хоолны өөрчлөлт нь тусад нь ажиглавал зохих нөхцөл байна." },
 
   emotional_experiment_trigger: { requiredPatterns: ["emotional_regulation"], text: "Стресс нэмэгдэж, хоол авах гэж буй давтагддаг мөчийг ажиглана." },
   emotional_experiment_action: { requiredPatterns: ["emotional_regulation"], text: "Хоол авахаасаа өмнө түр азнаад: “Одоо биеэрээ өлсөж байна уу, эсвэл тайвшрах, амрах, анхаарлаа сарниулах зэрэг өөр хэрэгцээ байна уу?” гэж өөрөөсөө асууна." },
@@ -141,7 +151,8 @@ const SENTENCE_TEMPLATES = Object.freeze({
 
   plan_option_injury: { requiredPatterns: ["previous_attempt_sustainability"], requiredContexts: ["injury_or_pain_evidence"], text: "Өмнөх гэмтлийг сэдрээхгүй хүрээнд бага ачааллын алхалт, сууж хийх хөдөлгөөн эсвэл өөрт эвтэйхэн ижил түвшний хөдөлгөөнөөс нэгийг сонгоно." },
   plan_option_general: { requiredPatterns: ["previous_attempt_sustainability"], forbiddenContexts: ["injury_or_pain_evidence"], text: "Бага ачааллын алхалт, сууж хийх хөдөлгөөн эсвэл өөрт эвтэйхэн ижил түвшний хөдөлгөөнөөс нэгийг сонгоно." },
-  plan_injury_stop: { requiredContexts: ["injury_or_pain_evidence"], text: "Өмнөх гэмтэлтэй холбоотой өвдөлт, хавдар, догололт эсвэл хөдөлгөөний хязгаарлалт нэмэгдвэл тухайн өдрийн хөдөлгөөнийг зогсоож, үргэлжилбэл мэргэжлийн хүнтэй зөвлөнө." },
+  plan_injury_stop_exact: { requiredContexts: ["explicit_injury_stop_context"], text: "Өмнөх гэмтэлтэй холбоотой зовиур мэдрэгдвэл тухайн өдрийн хөдөлгөөнийг зогсоож, зовиур үргэлжилбэл мэргэжлийн хүнтэй зөвлөнө." },
+  plan_injury_stop_general: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт нэмэгдвэл тухайн өдрийн хөдөлгөөнийг зогсоож, үргэлжилбэл мэргэжлийн хүнтэй зөвлөнө." },
   plan_cost: { requiredSignals: ["cost_barrier"], text: "Нэмэлт төлбөр, тоног төхөөрөмж шаардахгүй хувилбарыг сонгоно." },
   plan_fallback_schedule: { requiredSignals: ["schedule_barrier"], text: "Завгүй өдөр сонгосон хөдөлгөөнийхөө 5 минутын бага ачааллын богино хувилбарыг хийнэ." },
   plan_fallback_general: { requiredPatterns: ["previous_attempt_sustainability"], forbiddenSignals: ["schedule_barrier"], text: "Үндсэн хувилбар тухайн өдөр багтахгүй бол сонгосон хөдөлгөөнийхөө 5 минутын бага ачааллын богино хувилбарыг хийнэ." },
@@ -150,7 +161,8 @@ const SENTENCE_TEMPLATES = Object.freeze({
 
   guidance_blood_pressure: { requiredContexts: ["blood_pressure_followup"], text: "Хэрэв даралт сүүлийн үед давтан хэвийн бус гарч байгаа, эсвэл дагалдах шинж илэрдэг бол хөдөлгөөний ачааллаа нэмэхээс өмнө эмчтэй зөвлөнө үү." },
   guidance_glucose: { requiredContexts: ["glucose_followup"], text: "Хэрэв цусан дахь сахар сүүлийн үед давтан хэвийн бус гарч байгаа, эсвэл дагалдах шинж илэрдэг бол хоолны зайг огцом уртасгалгүй эмчтэй зөвлөнө үү." },
-  guidance_injury: { requiredContexts: ["injury_or_pain_evidence"], text: "Гэмтэл, өвдөлт эсвэл хөдөлгөөний хязгаарлалт үргэлжилж байгаа бол хөдөлгөөний шинэ хувилбарыг мэргэжлийн хүнтэй тохируулна уу." },
+  guidance_injury_exact: { requiredContexts: ["explicit_injury_stop_context"], text: "Өмнөх гэмтэлтэй холбоотой зовиур үргэлжилж байгаа бол хөдөлгөөний шинэ хувилбарыг мэргэжлийн хүнтэй тохируулна уу." },
+  guidance_injury_general: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт үргэлжилж байгаа бол хөдөлгөөний шинэ хувилбарыг мэргэжлийн хүнтэй тохируулна уу." },
   guidance_medication: { requiredContexts: ["unsupervised_medication"], text: "Эмчийн хяналтгүй эм хэрэглэсэн бол дахин хэрэглэхээсээ өмнө эмч эсвэл эм зүйчтэй зөвлөлдөнө үү." },
   guidance_reproductive: { requiredContexts: ["reproductive_followup"], text: "Нөхөн үржихүйн эсвэл мөчлөгийн нөхцөлтэй холбоотой өөрчлөлт байгаа бол жин бууруулах том төлөвлөгөөг мэргэжлийн хүнтэй тохируулна уу." },
   guidance_urgent_blood_pressure: { requiredContexts: ["blood_pressure_followup"], text: "Ухаан балартах, цээжээр хүчтэй өвдөх, амьсгал огцом давчдах зэрэг яаралтай шинж илэрвэл энэ төлөвлөгөөг үргэлжлүүлэхгүй, яаралтай тусламж авна уу." }
@@ -159,7 +171,7 @@ const SENTENCE_TEMPLATES = Object.freeze({
 const RECOMMENDATIONS = Object.freeze({
   pause_before_emotional_eating: { action: "Стресс ихсэх нэг давтагддаг мөчид хоол авахаасаа өмнө түр азнаад, яг одоо өлсөж байна уу эсвэл амрах хэрэгтэй байна уу гэж ялгаж тэмдэглэнэ.", reason: "Энэ алхам хоолыг хорихгүйгээр сэтгэл хөдлөл ба өлсөлтийн дохиог салгаж харахад тусална." },
   change_one_visible_cue: { action: "Хамгийн их өдөөдөг нэг хүнсийг туршилтын хугацаанд нүдэнд шууд харагдахгүй газар байрлуулна.", reason: "Нэг орчны дохиог өөрчлөх нь олон дүрэм нэмэхгүйгээр төлөвлөөгүй сонголтыг багасгаж чадна." },
-  anchor_one_meal_time: { action: "Өдөр бүр хамгийн амархан тогтоож болох нэг хоолны цагаа сонгоод, эхний туршилтын хугацаанд тогтвортой барина.", reason: "Нэг хоолны цаг тогтворжвол хэт өлсөх болон оройн яарсан сонголт зэрэг хэд хэдэн хүндрэлд зэрэг нөлөөлнө." },
+  anchor_one_meal_time: { action: "Өдөр тутам тогтвортой давтаж болох нэг хоолны цагаа сонгоод, эхний туршилтын хугацаанд баримтална.", reason: "Нэг хоолны цаг тогтворжвол хэт өлсөх болон оройн яарсан сонголт зэрэг хэд хэдэн хүндрэлд зэрэг нөлөөлнө." },
   mid_meal_pause: { action: "Нэг үндсэн хоолны дунд халбагаа тавиад, өлсөлт болон цадалтын мэдрэмжээ түр ажиглана.", reason: "Идэх хэмжээг хүчээр тогтоохын оронд биеийн дохиог цагт нь анзаарах боломж нэмэгдэнэ." },
   fixed_wind_down: { action: "Унтахаас өмнө нэг тогтмол тайвшрах үйлдэлд богино хугацаа зориулна.", reason: "Оройн ачааллыг бага зэрэг бууруулах нь маргааш ядарсан үед хамгийн ойр байгаа хоолыг яаран сонгох эрсдэлийг багасгана." },
   one_movement_anchor: { action: "Өдөрт хамгийн тогтвортой давтагддаг нэг үйл явдлын дараа алхалт, сууж хийх хөдөлгөөн эсвэл өөрт эвтэйхэн бага ачааллын хувилбараас нэгийг сонгож туршина.", reason: "Тогтсон нэг мөчид хийх нь дасгалын том төлөвлөгөөнөөс хэрэгжүүлэхэд хялбар." },
@@ -182,15 +194,15 @@ const STRATEGY_COPY = Object.freeze({
 
 const INTERACTION_COPY = Object.freeze({
   meal_hunger_satiety: "Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулахад илүү хэцүү болж болно.",
-  sleep_plan: "Нойр дутуу өдөр ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөний хамгийн амархан хувилбарыг ч хийхэд хүнд болж болно.",
+  sleep_plan: "Нойр дутуу өдөр ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөний хамгийн бага бэлтгэл шаардсан хувилбарыг ч хийхэд хүнд болж болно.",
   sleep_emotion: "Ядарсан үед сэтгэл хөдлөлөө зохицуулах нөөц багасаж, хоол түр амрах арга шиг санагдах нь нэмэгдэж болно.",
   emotion_restriction: "Стресстэй үед хоолоор түр тайвширсны дараа хэт хатуугаар дахин эхлэх нь өмнөх мөчлөгийг улам хүчтэй болгож болно.",
   cue_meal_rhythm: "Орчны дохиогоор төлөвлөөгүй идэхэд дараагийн хоолны цаг хойшилж, хоолны хэмнэл дахин алдагдаж болно.",
   cue_satiety: "Хоол байнга нүдэнд өртөх үед цадсан байсан ч дахин идэх хүсэл төрж болно.",
   cue_movement: "Гэр эсвэл суугаа орчинд хоол ойр байхад хөдөлгөөнгүй удаан суух мөчид идэх хүсэл давхар төрж болно.",
-  restriction_sustainability: "Хатуу дүрэм удаан баригдахгүй үед өмнөх оролдлого зогссон нөхцөл дахин давтагдаж болно.",
+  restriction_sustainability: "Хэт хатуу дүрмийг үргэлжлүүлэхэд хэцүү болох үед өмнөх оролдлого зогссон нөхцөл дахин давтагдаж болно.",
   routine_sustainability: "Өдөр тутмын хуваарьтай нийцээгүй төлөвлөгөө өмнөх оролдлого зогссон цэгийг дахин үүсгэж болно.",
-  movement_maintenance: "Өмнөх үр дүнг дэмжиж байсан хөдөлгөөний хэмнэл тасарсан байна. Одоогийн өдөр тутмын хөдөлгөөн бага байгаа тул түүнийг орлох тогтмол хэмнэл хараахан бүрдээгүй байна."
+  movement_maintenance: "Өмнөх үр дүнг дэмжиж байсан хөдөлгөөний хэмнэл алдагдсан байна. Одоогийн өдөр тутмын хөдөлгөөн бага байгаа тул түүнийг орлох тогтмол хэмнэл хараахан бүрдээгүй байна."
 });
 
 const PROTECTIVE_COPY = Object.freeze({

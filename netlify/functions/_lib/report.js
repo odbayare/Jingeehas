@@ -50,6 +50,7 @@ function factGates(evidence) {
   const openInjury = /гэмт|бэрт/i.test(stopText);
   const openPain = /өвдөлт|өвдө/i.test(stopText);
   const openMovementLimit = /хөдөлгөөний хязгаар/i.test(stopText);
+  const explicitInjuryStop = /(?:гэмт|бэрт).{0,60}(?:улмаас|учраас|болоод|шалтгаан|зогсо|үргэлжлүүлэх боломжгүй)|(?:улмаас|учраас|болоод|шалтгаан).{0,60}(?:гэмт|бэрт)/i.test(stopText);
   const structuredPhysicalConstraint = signals.has("injury_or_pain_barrier");
   const physicalConstraint = structuredPhysicalConstraint ? "өвдөлт эсвэл хөдөлгөөний хязгаарлалт" : openInjury ? "гэмтэл" : openPain ? "өвдөлт" : openMovementLimit ? "хөдөлгөөний хязгаарлалт" : null;
   const bloodPressure = (evidence.contexts || []).some(row => row.questionId === "Q-BLOOD-PRESSURE" && row.guidanceOnly && row.effect > 0);
@@ -69,6 +70,7 @@ function factGates(evidence) {
     openInjury,
     openPain,
     openMovementLimit,
+    explicitInjuryStop,
     openInjuryCorroboration: openInjury || openPain || openMovementLimit,
     lowMovement: signals.has("low_movement"),
     carTravel: signals.has("car_travel_context"),
@@ -91,7 +93,7 @@ function sentenceComposer(evidence, evaluated, facts) {
       ...positiveRows.filter(row => row.signal === "injury_or_pain_barrier"),
       ...(facts.openInjuryCorroboration && stopContext ? [{ questionId: stopContext.questionId }] : [])
     ],
-    injury_only_evidence: facts.openInjury && !facts.openPain && !facts.openMovementLimit && !facts.structuredInjury && stopContext ? [{ questionId: stopContext.questionId }] : [],
+    explicit_injury_stop_context: facts.explicitInjuryStop && !facts.openPain && !facts.openMovementLimit && stopContext ? [{ questionId: stopContext.questionId }] : [],
     blood_pressure_followup: (evidence.contexts || []).filter(row => row.questionId === "Q-BLOOD-PRESSURE" && row.guidanceOnly && row.effect > 0),
     glucose_followup: (evidence.contexts || []).filter(row => row.questionId === "Q-GLUCOSE" && row.guidanceOnly && row.effect > 0),
     unsupervised_medication: (evidence.contexts || []).filter(row => row.questionId === "Q-METHOD-MEDICATION" && row.guidanceOnly && row.effect > 0),
@@ -134,6 +136,8 @@ function sentenceComposer(evidence, evaluated, facts) {
       requiredPatternCount: gate.requiredPatternCount ?? null,
       requiredProtectiveCount: gate.requiredProtectiveCount ?? null,
       requiredContexts: gate.requiredContexts || [],
+      forbiddenContexts: gate.forbiddenContexts || [],
+      text,
       actualSupportingQuestionIds: questionIdsFor(gate)
     });
     return text;
@@ -181,6 +185,7 @@ function movementEvidenceNarrative(composer, section) {
 
 function patternObject(candidate, composer, section = "2") {
   const copy = PATTERN_COPY[candidate.id];
+  const patternGate = { requiredPatterns: [candidate.id] };
   const evidenceSummary = candidate.id === "low_movement"
     ? movementEvidenceNarrative(composer, section)
     : composer.render(PATTERN_EVIDENCE_TEMPLATES[candidate.id], section);
@@ -188,9 +193,13 @@ function patternObject(candidate, composer, section = "2") {
     ? [composer.render("evidence_previous_attempt_complete", section) || evidenceSummary, composer.render("evidence_previous_attempt_meaning", section)].filter(Boolean)
     : null;
   return {
-    id: candidate.id, category: candidate.category, title: PATTERN_PUBLIC_TITLES[candidate.id] || candidate.title, explanation: copy.explanation,
-    evidenceSummary, effectOnWeightLoss: copy.effectOnWeightLoss,
-    paragraphs, interactionsWith: [], uncertainty: copy.uncertainty, recommendationId: candidate.recommendationId
+    id: candidate.id, category: candidate.category, title: PATTERN_PUBLIC_TITLES[candidate.id] || candidate.title,
+    explanation: composer.recordRule(`pattern_${candidate.id}_explanation`, patternGate, copy.explanation, section),
+    evidenceSummary,
+    effectOnWeightLoss: composer.recordRule(`pattern_${candidate.id}_effect`, patternGate, copy.effectOnWeightLoss, section),
+    paragraphs, interactionsWith: [],
+    uncertainty: composer.recordRule(`pattern_${candidate.id}_uncertainty`, patternGate, copy.uncertainty, section),
+    recommendationId: candidate.recommendationId
   };
 }
 
@@ -222,15 +231,18 @@ function contextualFactors(evidence, contextualPatterns, facts, composer) {
     title: CONTEXT_PUBLIC_TITLES[candidate.id] || candidate.title,
     summary: `${candidate.id === "low_movement" ? movementEvidenceNarrative(composer, "4") : composer.render(PATTERN_EVIDENCE_TEMPLATES[candidate.id], "4")} ${PATTERN_COPY[candidate.id].effectOnWeightLoss}`
   }));
-  const contextSignals = new Set((evidence.contexts || []).map(row => row.signal));
-  if (contextSignals.has("food_discomfort_context")) items.push({ id: "food_discomfort_context", title: "Хоолны дараах биеийн мэдрэмж", summary: "Зарим хүнсний дараах тавгүй мэдрэмжийг хоол, хэмжээ, тухайн үеийн нөхцөлтэй нь хамт ажиглах нь хэрэгтэй." });
-  if (contextSignals.has("alcohol_food_change")) items.push({ id: "alcohol_food_change", title: "Согтууруулах ундааны дараах хоолны сонголт", summary: "Хэрэглэсэн үед идэх хэмжээ эсвэл сонголт өөрчлөгдсөн бол тэр нөхцөлийг тусад нь ажиглах хэрэгтэй." });
+  const foodDiscomfort = composer.render("context_food_discomfort", "4");
+  if (foodDiscomfort) items.push({ id: "food_discomfort_context", title: "Хоолны дараах биеийн мэдрэмж", summary: foodDiscomfort });
+  const alcoholFoodChange = composer.render("context_alcohol_food_change", "4");
+  if (alcoholFoodChange) items.push({ id: "alcohol_food_change", title: "Согтууруулах ундааны дараах хоолны сонголт", summary: alcoholFoodChange });
   const schedule = composer.render("context_schedule", "4");
   if (schedule) items.push({ id: "schedule_barrier", title: "Цагийн хуваарьт багтах шаардлага", summary: schedule });
   const cost = composer.render("context_cost", "4");
   if (cost) items.push({ id: "cost_barrier", title: "Зардал тогтвортой үргэлжлүүлэхэд нөлөөлсөн нь", summary: cost });
-  const injury = composer.render("context_injury", "4");
-  if (injury) items.push({ id: "injury_or_pain_barrier", title: CONTEXT_PUBLIC_TITLES.injury_or_pain_barrier, summary: injury });
+  const injuryImpossible = composer.render("context_injury_impossible", "4");
+  const injuryDifficult = composer.render("context_injury_difficult", "4");
+  if (injuryImpossible) items.push({ id: "injury_or_pain_barrier", title: "Өмнөх гэмтэл хөдөлгөөнийг үргэлжлүүлэх боломжгүй болгосон нь", summary: injuryImpossible });
+  else if (injuryDifficult) items.push({ id: "injury_or_pain_barrier", title: CONTEXT_PUBLIC_TITLES.injury_or_pain_barrier, summary: injuryDifficult });
   return items;
 }
 
@@ -239,37 +251,48 @@ function previousAttemptAnalysis(evidence, facts, composer) {
   const rows = (evidence.signals || []).filter(row => tracked.has(row.signal));
   if (new Set(rows.map(row => row.questionId)).size < 2) return null;
   const worked = [composer.render("attempt_method_movement", "5"), composer.render("attempt_duration_long", "5"), composer.render("attempt_duration_medium", "5"), composer.render("attempt_initial_success", "5")].filter(Boolean);
-  const broke = [composer.render("attempt_injury_stop_exact", "5") || composer.render("attempt_injury_stop_general", "5"), composer.render("attempt_weight_regain", "5"), composer.render("attempt_schedule", "5"), composer.render("attempt_cost", "5"), composer.render("attempt_interpretation", "5")].filter(Boolean);
+  const broke = [composer.render("previous_method_stopped_due_to_injury", "5") || composer.render("attempt_injury_stop_general", "5"), composer.render("attempt_weight_regain", "5"), composer.render("attempt_schedule", "5"), composer.render("attempt_cost", "5"), composer.render("attempt_interpretation", "5")].filter(Boolean);
   return { paragraphs: [worked.join(" "), broke.join(" ")].filter(Boolean) };
 }
 
 function professionalGuidance(composer) {
-  const items = ["guidance_blood_pressure", "guidance_glucose", "guidance_injury", "guidance_medication", "guidance_reproductive"].map(id => composer.render(id, "10")).filter(Boolean);
+  const injury = composer.render("guidance_injury_exact", "10") || composer.render("guidance_injury_general", "10");
+  const items = [composer.render("guidance_blood_pressure", "10"), composer.render("guidance_glucose", "10"), injury, composer.render("guidance_medication", "10"), composer.render("guidance_reproductive", "10")].filter(Boolean);
   return items.length ? items.join(" ") : null;
 }
 
 function recommendationFor(candidate, facts, composer) {
-  if (candidate.id !== "previous_attempt_sustainability") return { recommendationId: candidate.recommendationId, ...STRATEGY_COPY[candidate.recommendationId] };
+  const gate = { requiredPatterns: [candidate.id] };
+  if (candidate.id !== "previous_attempt_sustainability") {
+    const copy = STRATEGY_COPY[candidate.recommendationId];
+    return {
+      recommendationId: candidate.recommendationId,
+      action: composer.recordRule(`strategy_${candidate.id}_action`, gate, copy.action, "7"),
+      reason: composer.recordRule(`strategy_${candidate.id}_reason`, gate, copy.reason, "7")
+    };
+  }
   const fitSentences = [composer.render("recommendation_schedule_fit", "7"), composer.render("recommendation_cost_fit", "7")].filter(Boolean);
+  const baseAction = composer.recordRule("strategy_previous_attempt_action", gate, "Өмнөх аргыг яг хуучнаар нь давтахаас илүү өдөр тутам үргэлжлүүлж болох орлуулах төлөвлөгөө бэлдэнэ.", "7");
   return {
     recommendationId: "build_maintenance_bridge",
-    action: `Өмнөх аргыг яг хуучнаар нь давтахаас илүү өдөр тутам үргэлжлүүлж болох орлуулах төлөвлөгөө бэлдэнэ. ${fitSentences.join(" ")}`.trim(),
-    reason: "Орлуулах төлөвлөгөө нь үндсэн хувилбар, нөхцөл хүндрэхэд хийх богино хувилбар, алгассан өдрийн дараа хэвийн үргэлжлүүлэх дүрэм гэсэн гурван хэсэгтэй байна."
+    action: `${baseAction} ${fitSentences.join(" ")}`.trim(),
+    reason: composer.recordRule("strategy_previous_attempt_reason", gate, "Орлуулах төлөвлөгөө нь үндсэн хувилбар, нөхцөл хүндрэхэд хийх богино хувилбар, алгассан өдрийн дараа хэвийн үргэлжлүүлэх дүрэм гэсэн гурван хэсэгтэй байна.", "7")
   };
 }
 
 function startingAction(prioritized, facts, composer) {
   if (!prioritized) return null;
   const recommendation = recommendationFor(prioritized, facts, composer);
+  const patternGate = { requiredPatterns: [prioritized.id] };
   if (prioritized.id === "emotional_regulation") return {
     patternId: prioritized.id,
     recommendationId: recommendation.recommendationId,
-    action: "Стресс нэмэгдэж, хоол авах гэж буй мөчид ямар хэрэгцээ хамгийн хүчтэй байгааг ажиглана.",
-    reason: "Энэ туршилт хоолыг хорихгүйгээр тухайн мөчид хоол ямар үүрэг гүйцэтгэж байгааг, түр тайвшрал дараагийн сонголтод хэрхэн нөлөөлдгийг шалгана.",
-    priorityReason: "Стресс болон идэх хүсэл давтагдан холбоотой байсан тул өөр нэг зан үйлийг зэрэг өөрчлөхгүйгээр энэ холбоог эхэлж ажиглана.",
+    action: composer.recordRule("experiment_emotional_action", patternGate, "Стресс нэмэгдэж, хоол авах гэж буй мөчид ямар хэрэгцээ хамгийн хүчтэй байгааг ажиглана.", "8"),
+    reason: composer.recordRule("experiment_emotional_reason", patternGate, "Энэ туршилт хоолыг хорихгүйгээр тухайн мөчид хоол ямар үүрэг гүйцэтгэж байгааг, түр тайвшрал дараагийн сонголтод хэрхэн нөлөөлдгийг шалгана.", "8"),
+    priorityReason: composer.recordRule("experiment_emotional_priority", patternGate, "Стресс болон идэх хүсэл давтагдан холбоотой байсан тул өөр нэг зан үйлийг зэрэг өөрчлөхгүйгээр энэ холбоог эхэлж ажиглана.", "8"),
     plan: {
       kind: "emotional_observation",
-      variable: "стресс нэмэгдэх үеийн хэрэгцээ болон дараагийн сонголт",
+      variable: "стресс нэмэгдэх мөчид хэрэгцээгээ ялгаж анзаарах богино завсарлага",
       trigger: composer.render("emotional_experiment_trigger", "8"),
       action: composer.render("emotional_experiment_action", "8"),
       observe: composer.render("emotional_experiment_observe", "8"),
@@ -280,22 +303,24 @@ function startingAction(prioritized, facts, composer) {
   };
   if (prioritized.id !== "previous_attempt_sustainability" || !(facts.activityBasedMethod || facts.lowMovement)) return {
     patternId: prioritized.id, recommendationId: recommendation.recommendationId,
-    action: `Эхний туршилтаар дараах нэг алхмыг хийнэ: ${RECOMMENDATIONS[prioritized.recommendationId].action.charAt(0).toLowerCase()}${RECOMMENDATIONS[prioritized.recommendationId].action.slice(1)}`,
-    reason: "Өөрчлөлтийг нэг зүйлээр эхлүүлснээр бодит амьдралд хэрэгжиж байгаа эсэхийг тодорхой ажиглаж, дараагийн алхмаа баримжаатай сонгоно.",
-    priorityReason: "Энэ алхам одоо харагдсан гол саадтай шууд холбоотой бөгөөд ажиглаж болохоор жижиг байна."
+    action: composer.recordRule(`experiment_${prioritized.id}_action`, patternGate, `Эхний туршилтаар дараах нэг алхмыг хийнэ: ${RECOMMENDATIONS[prioritized.recommendationId].action.charAt(0).toLowerCase()}${RECOMMENDATIONS[prioritized.recommendationId].action.slice(1)}`, "8"),
+    reason: composer.recordRule(`experiment_${prioritized.id}_reason`, patternGate, "Өөрчлөлтийг нэг зүйлээр эхлүүлснээр бодит амьдралд хэрэгжиж байгаа эсэхийг тодорхой ажиглаж, дараагийн алхмаа баримжаатай сонгоно.", "8"),
+    priorityReason: composer.recordRule(`experiment_${prioritized.id}_priority`, patternGate, "Энэ алхам одоо харагдсан гол саадтай шууд холбоотой бөгөөд ажиглаж болохоор жижиг байна.", "8")
   };
+  const recordBase = composer.recordRule("plan_movement_record", patternGate, "Сонгосон хөдөлгөөн, хийсэн минут, хийхэд хэр эвтэйхэн байсныг тэмдэглэнэ.", "8");
+  const recordInjury = composer.recordRule("plan_movement_record_injury", { requiredContexts: ["injury_or_pain_evidence"] }, "Өмнөх гэмтэлтэй холбоотой зовиур өөрчлөгдсөн эсэхийг мөн тэмдэглэнэ.", "8");
   const plan = {
     kind: "movement_rhythm",
     variable: "өдөр тутам давтаж болох нэг хөдөлгөөний хэмнэл",
     parameterApprovalStatus: "OWNER REVIEW REQUIRED",
-    duration: "14 хоног",
+    duration: composer.recordRule("plan_movement_duration_candidate", patternGate, "14 хоног", "8"),
     option: composer.render("plan_option_injury", "8") || composer.render("plan_option_general", "8"),
-    anchor: "Өдөр бүр тогтвортой давтагддаг нэг үйл явдлын дараа",
-    frequency: "Долоо хоногт сонгосон дор хаяж 4 өдөр",
-    record: `Сонгосон хөдөлгөөн, хийсэн минут, хийхэд хэр эвтэйхэн байсныг тэмдэглэнэ.${facts.injury ? " Өмнөх гэмтэлтэй холбоотой зовиур өөрчлөгдсөн эсэхийг мөн тэмдэглэнэ." : ""}`,
+    anchor: composer.recordRule("plan_movement_anchor", patternGate, "Өдөр бүр тогтвортой давтагддаг нэг үйл явдлын дараа", "8"),
+    frequency: composer.recordRule("plan_movement_frequency_candidate", patternGate, "Долоо хоногт сонгосон дор хаяж 4 өдөр", "8"),
+    record: [recordBase, recordInjury].filter(Boolean).join(" "),
     success: composer.render("plan_success_injury", "8") || composer.render("plan_success_general", "8"),
     fallback: composer.render("plan_fallback_schedule", "8") || composer.render("plan_fallback_general", "8"),
-    maintenanceRule: "Алгассан өдрийг дараагийн өдөр давхар нөхөхгүй; дараагийн сонгосон өдрөөс хэвийн үргэлжлүүлнэ."
+    maintenanceRule: composer.recordRule("plan_movement_return_rule", patternGate, "Алгассан өдрийг дараагийн өдөр давхар нөхөхгүй; дараагийн сонгосон өдрөөс хэвийн үргэлжлүүлнэ.", "8")
   };
   plan.nonnumericCandidate = {
     duration: "Эхний ажиглалтын хугацаанд",
@@ -305,15 +330,15 @@ function startingAction(prioritized, facts, composer) {
       : "Үндсэн хувилбар тухайн өдөр багтахгүй бол мэдэгдэхүйц богино, бага ачааллын хувилбарыг хийнэ.",
     success: "Сонгосон боломжуудын ихэнхэд үндсэн эсвэл богино хувилбараа давтаж чадвал амжилт гэж үзнэ; жингийн тоогоор дүгнэхгүй."
   };
-  const injuryBoundary = composer.render("plan_injury_stop", "8");
+  const injuryBoundary = composer.render("plan_injury_stop_exact", "8") || composer.render("plan_injury_stop_general", "8");
   const additionalCost = composer.render("plan_cost", "8");
   if (injuryBoundary) plan.injuryBoundary = injuryBoundary;
   if (additionalCost) plan.additionalCost = additionalCost;
   return {
     patternId: prioritized.id, recommendationId: "maintenance_movement_bridge",
-    action: "Дараагийн 14 хоногт өдөр тутам давтаж болох нэг хөдөлгөөний хэмнэлийг туршина.",
-    reason: "Энэ туршилт өмнөх аргыг бүхэлд нь давтахгүйгээр, одоогийн амьдралд багтах нэг хөдөлгөөнийг олж шалгана.",
-    priorityReason: `${facts.schedule ? "Завгүй өдрийн" : "Үндсэн хувилбар багтахгүй өдрийн"} богино хувилбар болон алгассан өдрийн дараа хэвийн үргэлжлүүлэх дүрэм нь тусдаа өөрчлөлт бус, нэг хөдөлгөөний хэмнэлийг таслахгүй байхад зориулсан хамгаалалт юм.`,
+    action: composer.recordRule("experiment_movement_action", patternGate, "Дараагийн 14 хоногт өдөр тутам давтаж болох нэг хөдөлгөөний хэмнэлийг туршина.", "8"),
+    reason: composer.recordRule("experiment_movement_reason", patternGate, "Энэ туршилт өмнөх аргыг бүхэлд нь давтахгүйгээр, одоогийн амьдралд багтах нэг хөдөлгөөнийг олж шалгана.", "8"),
+    priorityReason: composer.recordRule("experiment_movement_safeguards", patternGate, `${facts.schedule ? "Завгүй өдрийн" : "Үндсэн хувилбар багтахгүй өдрийн"} богино хувилбар болон алгассан өдрийн дараа хэвийн үргэлжлүүлэх дүрэм нь тусдаа өөрчлөлт бус, нэг хөдөлгөөний хэмнэлийг алдагдуулахгүй байхад зориулсан хамгаалалт юм.`, "8"),
     plan
   };
 }
@@ -335,15 +360,23 @@ function overallPicture(evaluated, composer) {
   return paragraphs.length ? paragraphs.slice(0, 3) : [composer.render("neutral_no_pattern", "neutral_overview"), composer.render("neutral_meaning", "neutral_overview")].filter(Boolean);
 }
 
-function neutralResult(composer, strengths) {
+function neutralResult(composer, strengths, contextual = []) {
+  const contextualTemplateIds = {
+    sleep_fatigue: "neutral_context_sleep", low_movement: "neutral_context_movement",
+    schedule_barrier: "neutral_context_schedule", cost_barrier: "neutral_context_cost",
+    injury_or_pain_barrier: "neutral_context_injury", food_discomfort_context: "neutral_context_food",
+    alcohol_food_change: "neutral_context_alcohol"
+  };
+  const contextualSummary = contextual.map(item => composer.render(contextualTemplateIds[item.id], "neutral_overview")).filter(Boolean).join(" ");
   return {
-    overview: [composer.render("neutral_no_pattern", "neutral_overview"), composer.render("neutral_meaning", "neutral_overview")].filter(Boolean),
+    overview: [composer.render("neutral_no_pattern", "neutral_overview"), contextualSummary, composer.render("neutral_meaning", "neutral_overview")].filter(Boolean),
     notStronglySupported: ["neutral_absent_emotional", "neutral_absent_environmental", "neutral_absent_body_signals", "neutral_absent_sleep", "neutral_absent_portion"].map(id => composer.render(id, "neutral_absent")).filter(Boolean),
     notStronglySupportedFallback: composer.render("neutral_absent_fallback", "neutral_absent"),
     strengths: strengths.map(item => item.text),
     strengthsFallback: composer.render("neutral_strengths_fallback", "neutral_strengths"),
     limits: [composer.render("neutral_limits", "neutral_limits"), composer.render("neutral_more_information", "neutral_limits")].filter(Boolean),
     observation: {
+      variable: "нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах",
       action: composer.render("neutral_observation_action", "neutral_observation"),
       keepConstant: composer.render("neutral_observation_constant", "neutral_observation"),
       decisionRule: composer.render("neutral_decision_rule", "neutral_observation")
@@ -382,8 +415,11 @@ function buildFullReport(evidence = {}, now = new Date()) {
   const firstAction = startingAction(prioritized, facts, composer);
   const professional = professionalGuidance(composer);
   const urgent = composer.render("guidance_urgent_blood_pressure", "10");
-  const neutral = influencingPatterns.length ? null : neutralResult(composer, strengths);
+  const neutral = influencingPatterns.length ? null : neutralResult(composer, strengths, contextual);
   const overview = neutral ? null : overallPicture(evaluated, composer);
+  const avoidForNow = influencingPatterns.length
+    ? composer.recordRule("avoid_simultaneous_changes", { requiredPatterns: evaluated.influencingPatterns.map(item => item.id) }, "Эхний туршилтын хугацаанд хоолны шинэ хатуу хориг болон олон шинэ дүрмийг зэрэг нэмэхгүй. Сонгосон нэг алхам өдөр тутмын амьдралд багтаж байгаа эсэхийг эхэлж ажиглана.", "9")
+    : null;
   return {
     version: REPORT_VERSION, questionnaireVersion: QUESTIONNAIRE_VERSION,
     productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: now.toISOString(), mode: quality.mode,
@@ -393,7 +429,7 @@ function buildFullReport(evidence = {}, now = new Date()) {
     protectiveSectionSummary: protectiveSection, protectiveFactors: strengths, contradictions: contradictionItems(evidence, evaluated.candidates),
     previousAttemptAnalysis: previous, interactionSummary: interactions,
     prioritizedStartingAction: firstAction, additionalPatternActions,
-    avoidForNow: influencingPatterns.length ? "Эхний туршилтын хугацаанд хоолны шинэ хатуу хориг болон олон шинэ дүрмийг зэрэг нэмэхгүй. Сонгосон нэг алхам өдөр тутмын амьдралд багтаж байгаа эсэхийг эхэлж ажиглана." : null,
+    avoidForNow,
     professionalGuidance: professional,
     urgentGuidance: urgent,
     internalEvidenceMap: {

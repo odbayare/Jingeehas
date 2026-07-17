@@ -58,7 +58,7 @@ assert(renderedReport.includes("Сэтгэл хөдлөл ихсэх үед хо
 assert(renderedReport.includes("Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл"));
 assert(renderedReport.includes("Танд илүү тохирох өөрчлөлтийн чиглэл"));
 assert(!/Q-[A-Z]|S1-|MC-/.test(renderedReport));
-for (const phrase of ["шилжилтийн саад", "үр дүнгээ хадгалах шилжилт", "залгамж хувилбар", "Зангуу", "Доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "аюулгүй хувилбар"]) assert(!renderedReport.includes(phrase), `forbidden report copy: ${phrase}`);
+for (const phrase of ["арга тасрах", "арга тасарсан", "арга тасарсны", "төлөвлөгөө тасрах", "дэглэм тасрах", "шилжилтийн саад", "үр дүнгээ хадгалах шилжилт", "залгамж хувилбар", "Зангуу", "Доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "аюулгүй хувилбар"]) assert(!renderedReport.includes(phrase), `forbidden report copy: ${phrase}`);
 
 const pluralReport = publicReport(buildFullReport(buildEvidence([
   { questionId: "Q-EMOTION", value: "Нэлээд нэмэгддэг" },
@@ -77,11 +77,14 @@ const neutralReport = publicReport(buildFullReport(buildEvidence([
 app._test.setState({ ownerPreview: true, report: { fullReport: neutralReport } });
 const renderedNeutralReport = app.renderForPath("/report");
 assert(renderedNeutralReport.includes("Ямар нийтлэг саад хүчтэй илрээгүй вэ?"));
+assert(renderedNeutralReport.includes("Дараагийн хугацаанд юу ажиглаж болох вэ?"));
+assert(renderedNeutralReport.includes("нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах"));
 assert(renderedNeutralReport.includes("Энэ асуумжаар юуг дүгнэж болохгүй вэ?"));
 assert(renderedNeutralReport.includes("Тайланг хэрхэн ашиглах вэ?"));
 
 function assertSequentialSections(report, name) {
   const sections = app._test.buildReportSections(report).filter(section => section.visible);
+  assert(sections.every(section => Array.isArray(section.paragraphs)), `${name}: section contract must expose paragraphs arrays`);
   app._test.setState({ ownerPreview: true, report: { fullReport: report } });
   const html = app.renderForPath("/report");
   const numbers = [...html.matchAll(/<h2>(\d+)\./g)].map(match => Number(match[1]));
@@ -101,6 +104,8 @@ assert.equal(app.routeName("/choice"), "notFound");
 app._test.resetComingSoon();
 
 const visibleCopy = questions.QUESTIONS.flatMap(question => [question.section, question.text, ...(question.options || [])]).join("\n");
+for (const exactQuestion of ["Тэр оролдлого яагаад зогссон бэ?", "Аргаа зогсоосны дараа жин эргэн нэмэгдсэн үү?", "Аргаа тогтвортой үргэлжлүүлэхэд юу хамгийн их саад болдог вэ?", "Жингээ бууруулахын тулд өмнө туршсан нэг арга яагаад удаан үргэлжлээгүй вэ?"]) assert(visibleCopy.includes(exactQuestion), `neutral production question changed: ${exactQuestion}`);
+assert(!/арга тасрах|арга тасарсан|арга тасарсны|төлөвлөгөө тасрах|дэглэм тасрах/i.test(visibleCopy), "active questions must preserve neutral stop/continue wording");
 for (const phrase of ["Энгийн өдөр", "бодитоор өлссөн", "идэхээ барих", "хоол холдох", "хэмжээ барих", "бодит өдөр", "Delivery", "Snack", "challenge", "PCOS"]) {
   assert(!visibleCopy.includes(phrase), `forbidden question phrase: ${phrase}`);
 }

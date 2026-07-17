@@ -202,13 +202,13 @@ function buildReportSections(full) {
     const strengths = neutral.strengths?.length ? neutral.strengths : [neutral.strengthsFallback].filter(Boolean);
     const absent = neutral.notStronglySupported?.length ? neutral.notStronglySupported : [neutral.notStronglySupportedFallback].filter(Boolean);
     return [
-      { id: "overview", heading: "Ерөнхий зураг", body: renderReportParagraphs(neutral.overview), visible: neutral.overview?.length > 0 },
-      { id: "not-strongly-supported", heading: "Ямар нийтлэг саад хүчтэй илрээгүй вэ?", body: renderReportParagraphs(absent), visible: absent.length > 0 },
-      { id: "strengths", heading: "Танд байгаа давуу тал", body: renderReportParagraphs(strengths), visible: strengths.length > 0 },
-      { id: "limits", heading: "Энэ асуумжаар юуг дүгнэж болохгүй вэ?", body: renderReportParagraphs(neutral.limits), visible: neutral.limits?.length > 0 },
-      { id: "observation", heading: "Дараагийн 7–14 хоногт юу ажиглаж болох вэ?", body: `<dl><dt>Ажиглах нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.action)}</dd><dt>Юуг өөрчлөхгүй вэ?</dt><dd>${escapeHtml(neutral.observation?.keepConstant)}</dd><dt>Дараагийн шийдвэрийн дүрэм</dt><dd>${escapeHtml(neutral.observation?.decisionRule)}</dd></dl>`, visible: Boolean(neutral.observation?.action && neutral.observation?.decisionRule) },
-      { id: "professional", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", body: renderReportParagraphs([neutral.professionalScope]), visible: Boolean(neutral.professionalScope) },
-      { id: "use", heading: "Тайланг хэрхэн ашиглах вэ?", body: renderReportParagraphs([neutral.reportUse]), visible: Boolean(neutral.reportUse) }
+      { id: "overview", heading: "Ерөнхий зураг", paragraphs: [renderReportParagraphs(neutral.overview)], visible: neutral.overview?.length > 0 },
+      { id: "not-strongly-supported", heading: "Ямар нийтлэг саад хүчтэй илрээгүй вэ?", paragraphs: [renderReportParagraphs(absent)], visible: absent.length > 0 },
+      { id: "strengths", heading: "Танд байгаа давуу тал", paragraphs: [renderReportParagraphs(strengths)], visible: strengths.length > 0 },
+      { id: "limits", heading: "Энэ асуумжаар юуг дүгнэж болохгүй вэ?", paragraphs: [renderReportParagraphs(neutral.limits)], visible: neutral.limits?.length > 0 },
+      { id: "observation", heading: "Дараагийн хугацаанд юу ажиглаж болох вэ?", paragraphs: [`<dl><dt>Туршиж буй нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.variable)}</dd><dt>Ажиглах нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.action)}</dd><dt>Юуг өөрчлөхгүй вэ?</dt><dd>${escapeHtml(neutral.observation?.keepConstant)}</dd><dt>Дараагийн шийдвэрийн дүрэм</dt><dd>${escapeHtml(neutral.observation?.decisionRule)}</dd></dl>`], visible: Boolean(neutral.observation?.variable && neutral.observation?.action && neutral.observation?.decisionRule) },
+      { id: "professional", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", paragraphs: [renderReportParagraphs([neutral.professionalScope])], visible: Boolean(neutral.professionalScope) },
+      { id: "use", heading: "Тайланг хэрхэн ашиглах вэ?", paragraphs: [renderReportParagraphs([neutral.reportUse])], visible: Boolean(neutral.reportUse) }
     ];
   }
   const major = full.influencingPatterns || [];
@@ -216,23 +216,23 @@ function buildReportSections(full) {
   const patternHeading = major.length <= 1 ? "Жин хасалтад нөлөөлж буй гол хэв маяг" : "Жин хасалтад нөлөөлж буй гол хэв маягууд";
   const interactionHeading = major.length === 1 ? "Гол хэв маяг өдөр тутмын нөхцөлтэй хэрхэн холбогдож байна вэ?" : "Эдгээр хэв маяг хэрхэн хоорондоо холбогдож байна вэ?";
   return [
-    { id: "overview", heading: "Таны хариултаас харагдсан ерөнхий зураг", body: renderReportParagraphs(Array.isArray(full.overallPicture) ? full.overallPicture : [full.overallPicture]), visible: Boolean(full.overallPicture) },
-    { id: "patterns", heading: patternHeading, body: major.map(pattern => `<article><h3>${escapeHtml(pattern.title)}</h3>${renderReportParagraphs(pattern.paragraphs || [pattern.explanation, pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty])}</article>`).join(""), visible: major.length > 0 },
-    { id: "interactions", heading: interactionHeading, body: (full.interactionSummary || []).map(item => `<p>${escapeHtml(item.explanation)}</p>`).join(""), visible: (full.interactionSummary || []).length > 0 },
-    { id: "context", heading: "Нэмэлт нөлөөлөгч нөхцөл", body: (full.contextualFactors || []).map(item => `<article><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.summary || item.explanation, ...(item.summary ? [] : [item.evidenceSummary, item.effectOnWeightLoss])])}</article>`).join(""), visible: (full.contextualFactors || []).length > 0 },
-    { id: "previous", heading: "Өмнөх оролдлого яагаад тасарсан байж болох вэ?", body: full.previousAttemptAnalysis ? renderReportParagraphs(full.previousAttemptAnalysis.paragraphs || [full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation]) : "", visible: Boolean(full.previousAttemptAnalysis) },
-    { id: "strengths", heading: "Танд байгаа давуу тал", body: renderReportParagraphs([full.protectiveSectionSummary, ...(!full.protectiveSectionSummary ? (full.protectiveFactors || []).map(item => item.text) : []), ...(full.contradictions || []).map(item => item.text)]), visible: Boolean(full.protectiveSectionSummary || (full.protectiveFactors || []).length || (full.contradictions || []).length) },
-    { id: "direction", heading: "Танд илүү тохирох өөрчлөлтийн чиглэл", body: actions.map(item => `<article><h3>${escapeHtml(major.find(pattern => pattern.id === item.patternId)?.title || "Өөрчлөлтийн чиглэл")}</h3>${renderReportParagraphs([item.action, item.reason])}</article>`).join(""), visible: actions.length > 0 },
-    { id: "experiment", heading: "Эхний туршилт", body: full.prioritizedStartingAction ? `${renderReportParagraphs([full.prioritizedStartingAction.action, full.prioritizedStartingAction.reason, full.prioritizedStartingAction.priorityReason])}${renderPlanDetails(full.prioritizedStartingAction.plan)}` : "", visible: Boolean(full.prioritizedStartingAction) },
-    { id: "avoid", heading: "Одоогоор юуг зэрэг өөрчлөхгүй байх вэ?", body: renderReportParagraphs([full.avoidForNow]), visible: Boolean(full.avoidForNow) },
-    { id: "guidance", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", body: renderReportParagraphs([full.professionalGuidance, full.urgentGuidance]), visible: Boolean(full.professionalGuidance || full.urgentGuidance) }
+    { id: "overview", heading: "Таны хариултаас харагдсан ерөнхий зураг", paragraphs: [renderReportParagraphs(Array.isArray(full.overallPicture) ? full.overallPicture : [full.overallPicture])], visible: Boolean(full.overallPicture) },
+    { id: "patterns", heading: patternHeading, paragraphs: [major.map(pattern => `<article><h3>${escapeHtml(pattern.title)}</h3>${renderReportParagraphs(pattern.paragraphs || [pattern.explanation, pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty])}</article>`).join("")], visible: major.length > 0 },
+    { id: "interactions", heading: interactionHeading, paragraphs: [(full.interactionSummary || []).map(item => `<p>${escapeHtml(item.explanation)}</p>`).join("")], visible: (full.interactionSummary || []).length > 0 },
+    { id: "context", heading: "Нэмэлт нөлөөлөгч нөхцөл", paragraphs: [(full.contextualFactors || []).map(item => `<article><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.summary || item.explanation, ...(item.summary ? [] : [item.evidenceSummary, item.effectOnWeightLoss])])}</article>`).join("")], visible: (full.contextualFactors || []).length > 0 },
+    { id: "previous", heading: "Өмнөх оролдлого яагаад үргэлжлээгүй байж болох вэ?", paragraphs: [full.previousAttemptAnalysis ? renderReportParagraphs(full.previousAttemptAnalysis.paragraphs || [full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation]) : ""], visible: Boolean(full.previousAttemptAnalysis) },
+    { id: "strengths", heading: "Танд байгаа давуу тал", paragraphs: [renderReportParagraphs([full.protectiveSectionSummary, ...(!full.protectiveSectionSummary ? (full.protectiveFactors || []).map(item => item.text) : []), ...(full.contradictions || []).map(item => item.text)])], visible: Boolean(full.protectiveSectionSummary || (full.protectiveFactors || []).length || (full.contradictions || []).length) },
+    { id: "direction", heading: "Танд илүү тохирох өөрчлөлтийн чиглэл", paragraphs: [actions.map(item => `<article><h3>${escapeHtml(major.find(pattern => pattern.id === item.patternId)?.title || "Өөрчлөлтийн чиглэл")}</h3>${renderReportParagraphs([item.action, item.reason])}</article>`).join("")], visible: actions.length > 0 },
+    { id: "experiment", heading: "Эхний туршилт", paragraphs: [full.prioritizedStartingAction ? `${renderReportParagraphs([full.prioritizedStartingAction.action, full.prioritizedStartingAction.reason, full.prioritizedStartingAction.priorityReason])}${renderPlanDetails(full.prioritizedStartingAction.plan)}` : ""], visible: Boolean(full.prioritizedStartingAction) },
+    { id: "avoid", heading: "Одоогоор юуг зэрэг өөрчлөхгүй байх вэ?", paragraphs: [renderReportParagraphs([full.avoidForNow])], visible: Boolean(full.avoidForNow) },
+    { id: "guidance", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", paragraphs: [renderReportParagraphs([full.professionalGuidance, full.urgentGuidance])], visible: Boolean(full.professionalGuidance || full.urgentGuidance) }
   ];
 }
 
 function renderMultiFactorReport(full) {
   const visibleSections = buildReportSections(full).filter(section => section.visible);
   return `${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(new Date(full.reportDate).toLocaleDateString("mn-MN"))}</time></header>
-    ${visibleSections.map((section, index) => `<section class="report-section" data-report-section="${escapeAttribute(section.id)}"><h2>${index + 1}. ${escapeHtml(section.heading)}</h2>${section.body}</section>`).join("")}
+    ${visibleSections.map((section, index) => `<section class="report-section" data-report-section="${escapeAttribute(section.id)}"><h2>${index + 1}. ${escapeHtml(section.heading)}</h2>${section.paragraphs.join("")}</section>`).join("")}
     <button class="button print-hide" type="button" data-action="print-report">Хэвлэх эсвэл PDF-ээр хадгалах</button></main>${footer()}`;
 }
 function renderReport() {
