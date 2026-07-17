@@ -45,7 +45,9 @@ read -r -s ADMIN_PASSWORD; printf '%s' "$ADMIN_PASSWORD" | netlify dev:exec --co
 
 ## Immediate rotation
 
-Generate a new unique password, repeat the secure stdin procedure with the same email, `--rotate --apply`, and the safety confirmation. Rotation is allowed only for the matching existing active administrator. It atomically changes the scrypt hash and creates an `admin_password_rotated` audit entry. Verify login with the new credential, revoke existing admin sessions, and remove the old credential from the secret manager.
+Run `./scripts/rotate-existing-admin.sh`. It prompts for the existing owner identity and a new password, hides the password, and sends both values only through stdin. Rotation is allowed only for the matching, sole active administrator. In one database transaction it preserves the administrator ID, changes only the scrypt hash and update timestamp, revokes every existing session, and creates an `admin_password_rotated` audit entry. It then certifies the new login, logout and revoked-session rejection, expired-session rejection, disabled-account rejection with restoration, unauthenticated route rejection, and exactly one active administrator. The certification output contains only PASS/FAIL statuses and the active administrator count.
+
+The production rotation confirmation is `ROTATE EXISTING JINGEEHAS ADMIN`; it is internal to the rotation implementation and is not entered with the password.
 
 ## Failure handling and evidence
 

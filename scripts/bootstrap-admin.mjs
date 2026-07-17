@@ -8,7 +8,8 @@ const { hashPassword } = require("../netlify/functions/_lib/auth.js");
 const { randomId } = require("../netlify/functions/_lib/crypto.js");
 const { normalizeEmail } = require("../netlify/functions/_lib/recovery.js");
 const { RestDatabaseAdapter } = require("../netlify/functions/_lib/store.js");
-const CONFIRMATION = "CREATE FIRST JINGEEHAS ADMIN";
+const CREATE_CONFIRMATION = "CREATE FIRST JINGEEHAS ADMIN";
+const ROTATE_CONFIRMATION = "ROTATE EXISTING JINGEEHAS ADMIN";
 
 export function validateStrongPassword(password, email = "") {
   const value = String(password || "");
@@ -21,7 +22,8 @@ export async function bootstrapAdmin({ database, email, password, apply = false,
   const normalized = normalizeEmail(email);
   if (!normalized) throw new Error("A valid explicit admin email is required");
   validateStrongPassword(password, normalized);
-  if (apply && confirmation !== CONFIRMATION) throw new Error("Production safety confirmation is absent");
+  const requiredConfirmation = rotate ? ROTATE_CONFIRMATION : CREATE_CONFIRMATION;
+  if (apply && confirmation !== requiredConfirmation) throw new Error("Production safety confirmation is absent");
   const active = await database.find("admin_accounts", { status: "active" });
   const target = active.find(row => row.email === normalized);
   if (active.length && !rotate) throw new Error("An active administrator already exists; use the explicit rotation procedure");
@@ -30,12 +32,15 @@ export async function bootstrapAdmin({ database, email, password, apply = false,
   if (!apply) return { status: "PREPARED", dryRun: true, action, email: normalized, writes: 0 };
 
   const adminId = target?.id || randomId("admin_");
+  const existingSessions = rotate ? await database.find("admin_sessions", { adminId }) : [];
+  const changedAt = now.toISOString();
   const accountOperation = target
-    ? { action: "update", table: "admin_accounts", id: adminId, patch: { passwordHash: hashPassword(password), updatedAt: now.toISOString() } }
-    : { action: "insert", table: "admin_accounts", row: { id: adminId, email: normalized, passwordHash: hashPassword(password), status: "active", createdAt: now.toISOString(), updatedAt: now.toISOString() } };
-  const auditOperation = { action: "insert", table: "admin_audit_logs", row: { id: randomId("aal_"), adminId, action, targetType: "admin_account", targetId: adminId, details: { method: "privileged_bootstrap" }, createdAt: now.toISOString() } };
-  await database.transaction([accountOperation, auditOperation]);
-  return { status: "PASS", dryRun: false, action, email: normalized, adminId, writes: 2 };
+    ? { action: "update", table: "admin_accounts", id: adminId, patch: { passwordHash: hashPassword(password), updatedAt: changedAt } }
+    : { action: "insert", table: "admin_accounts", row: { id: adminId, email: normalized, passwordHash: hashPassword(password), status: "active", createdAt: changedAt, updatedAt: changedAt } };
+  const revokeOperations = existingSessions.map(session => ({ action: "update", table: "admin_sessions", id: session.id, patch: { revokedAt: changedAt } }));
+  const auditOperation = { action: "insert", table: "admin_audit_logs", row: { id: randomId("aal_"), adminId, action, targetType: "admin_account", targetId: adminId, details: { method: "privileged_bootstrap", revokedSessions: existingSessions.length }, createdAt: changedAt } };
+  await database.transaction([accountOperation, ...revokeOperations, auditOperation]);
+  return { status: "PASS", dryRun: false, action, email: normalized, adminId, writes: 2 + revokeOperations.length, revokedSessions: existingSessions.length };
 }
 
 function parseArguments(argv) {
