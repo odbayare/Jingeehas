@@ -2,6 +2,7 @@
 const assert = require("node:assert/strict");
 const questions = require("../questions.js");
 const app = require("../app.js");
+const { buildEvidence, buildFullReport, publicReport } = require("../netlify/functions/_lib/report.js");
 
 assert.equal(questions.questionById("Q-FOOD-FEELING").section, "Хооллосны дараах мэдрэмж ба цадалт");
 assert.equal(questions.questionById("S1-S03").text, "Идсэнээ буцаахын тулд зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол гардаг уу?");
@@ -42,6 +43,19 @@ assert(paymentPage.includes("Бүрэн тайлангаа нээх"));
 assert(paymentPage.includes("Үнэ: 9,900₮"));
 assert(paymentPage.includes("9,900₮-ийн QPay нэхэмжлэл үүсгэх"));
 assert(!paymentPage.includes("тайлан сэргээх"));
+const multiFactorReport = publicReport(buildFullReport(buildEvidence([
+  { questionId: "Q-EMOTION", value: "Нэлээд нэмэгддэг" },
+  { questionId: "Q-METHOD-BARRIERS", value: ["Стресс ба сэтгэл хөдлөл", "Ядаргаа эсвэл нойр"] },
+  { questionId: "Q-SLEEP-DURATION", value: "4–6 цаг" },
+  { questionId: "Q-SLEEP-QUALITY", value: "Өглөө ядарсан хэвээр байдаг" }
+])));
+app._test.setState({ ownerPreview: true, report: { fullReport: multiFactorReport } });
+const renderedReport = app.renderForPath("/report");
+assert(renderedReport.includes("Жин хасалтад нөлөөлж буй гол хэв маягууд"));
+assert(renderedReport.includes("Сэтгэл хөдлөл ихсэх үед хоол руу татагдах хэв маяг"));
+assert(renderedReport.includes("Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл"));
+assert(renderedReport.includes("Хэв маяг бүрд тохирох өөрчлөлтийн чиглэл"));
+assert(!/Q-[A-Z]|S1-|MC-/.test(renderedReport));
 assert.equal(app.routeName("/choice"), "notFound");
 app._test.resetComingSoon();
 

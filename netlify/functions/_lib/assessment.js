@@ -2,7 +2,7 @@
 
 const { randomId } = require("./crypto.js");
 const { calculateAssessmentSafety, ROUTE_COPY } = require("./safety.js");
-const { buildEvidence, buildFullReport } = require("./report.js");
+const { buildEvidence, buildFullReport, publicReport } = require("./report.js");
 const { questionById, visibleQuestions, validateAnswer } = require("../../../questions.js");
 
 async function ownedAssessment(database, sessionId, assessmentId) {
@@ -120,7 +120,7 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
     } },
     { action: "upsert", table: "report_snapshots", id: assessment.id, row: {
       assessmentId: assessment.id, sessionId, reportMode, safetyRoute: null,
-      initialView: { mode: reportMode, evidenceCount: fullReport.evidence.length, coverage: fullReport.coverage }, fullReport,
+      initialView: { mode: reportMode, evidenceCount: fullReport.internalEvidenceMap.informativeQuestionCount }, fullReport,
       createdAt: now.toISOString()
     } }
   ]);
@@ -133,7 +133,7 @@ async function reportForSession(database, sessionId, assessmentId) {
   if (!snapshot) throw Object.assign(new Error("Report not found"), { statusCode: 404, code: "report_not_found" });
   const entitlements = await database.find("entitlements", { assessmentId, status: "active" });
   return { assessmentId, reportMode: snapshot.reportMode, safetyRoute: snapshot.safetyRoute,
-    initialView: snapshot.initialView, fullReport: entitlements.length ? snapshot.fullReport : null,
+    initialView: snapshot.initialView, fullReport: entitlements.length ? publicReport(snapshot.fullReport) : null,
     entitled: entitlements.length > 0 };
 }
 

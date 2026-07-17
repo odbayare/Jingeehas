@@ -186,12 +186,30 @@ function renderQuestions() {
       <div class="actions">${state.questionIndex > 0 ? `<button class="button secondary" type="button" data-action="previous-question" ${state.busy ? "disabled" : ""}>Буцах</button>` : ""}<button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Хадгалж байна..." : state.questionIndex === questions.length - 1 ? "Тестийг дуусгах" : "Үргэлжлүүлэх"}</button></div>
     </form></main>${footer()}</div>`;
 }
+function renderReportParagraphs(values = []) { return values.filter(Boolean).map(value => `<p>${escapeHtml(value)}</p>`).join(""); }
+function renderMultiFactorReport(full) {
+  const major = full.influencingPatterns || [];
+  const actions = [full.prioritizedStartingAction, ...(full.additionalPatternActions || [])].filter(item => item?.patternId);
+  return `${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(new Date(full.reportDate).toLocaleDateString("mn-MN"))}</time></header>
+    <section class="report-section"><h2>1. Таны хариултаас харагдсан ерөнхий зураг</h2>${renderReportParagraphs([full.overallPicture])}</section>
+    <section class="report-section"><h2>2. Жин хасалтад нөлөөлж буй гол хэв маягууд</h2>${major.length ? major.map(pattern => `<article><h3>${escapeHtml(pattern.title)}</h3>${renderReportParagraphs([pattern.explanation, pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty])}</article>`).join("") : `<p>Хоёр ба түүнээс олон бие даасан хариултаар хангалттай дэмжигдсэн хэв маяг одоогоор алга.</p>`}</section>
+    ${(full.interactionSummary || []).length ? `<section class="report-section"><h2>3. Эдгээр хэв маяг хэрхэн хоорондоо холбогдож байна вэ?</h2>${full.interactionSummary.map(item => `<p>${escapeHtml(item.explanation)}</p>`).join("")}</section>` : ""}
+    ${(full.contextualFactors || []).length ? `<section class="report-section"><h2>4. Нэмэлт нөлөөлөгч нөхцөл</h2>${full.contextualFactors.map(item => `<article><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.explanation)}</p></article>`).join("")}</section>` : ""}
+    ${full.previousAttemptAnalysis ? `<section class="report-section"><h2>5. Өмнөх оролдлогууд яагаад тогтвортой үргэлжлээгүй байж болох вэ?</h2>${renderReportParagraphs([full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation])}</section>` : ""}
+    ${(full.protectiveFactors || []).length || (full.contradictions || []).length ? `<section class="report-section"><h2>6. Танд байгаа хамгаалах хүчин зүйл, давуу тал</h2>${renderReportParagraphs([...(full.protectiveFactors || []).map(item => item.text), ...(full.contradictions || []).map(item => item.text)])}</section>` : ""}
+    ${actions.length ? `<section class="report-section"><h2>7. Хэв маяг бүрд тохирох өөрчлөлтийн чиглэл</h2>${actions.map(item => `<article><h3>${escapeHtml(major.find(pattern => pattern.id === item.patternId)?.title || "Өөрчлөлтийн чиглэл")}</h3>${renderReportParagraphs([item.action, item.reason])}</article>`).join("")}</section>` : ""}
+    ${full.prioritizedStartingAction ? `<section class="report-section"><h2>8. Эхний 7–14 хоногт юунаас эхлэх вэ?</h2>${renderReportParagraphs([full.prioritizedStartingAction.action, full.prioritizedStartingAction.reason, full.prioritizedStartingAction.priorityReason])}</section>` : ""}
+    ${full.avoidForNow ? `<section class="report-section"><h2>9. Одоогоор юуг зэрэг өөрчлөхгүй байх вэ?</h2><p>${escapeHtml(full.avoidForNow)}</p></section>` : ""}
+    ${full.professionalGuidance ? `<section class="report-section"><h2>10. Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?</h2><p>${escapeHtml(full.professionalGuidance)}</p></section>` : ""}
+    <button class="button print-hide" type="button" data-action="print-report">Хэвлэх эсвэл PDF-ээр хадгалах</button></main>${footer()}`;
+}
 function renderReport() {
   const report = state.report;
   if (!report) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Тайлан</h1><p role="status">Тайланг ачаалж байна…</p></main>${footer()}</div>`;
   if (report.safetyRoute) return safetyGuidance({ guidance: report.initialView?.guidance, route: report.safetyRoute });
   if (!report.fullReport) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Эхний зураглал</h1><p>${escapeHtml(report.initialView?.coverage || "")}</p><p>Бүрэн тайлан нээх эрх серверээс баталгаажаагүй байна.</p></main>${footer()}</div>`;
   const full = report.fullReport;
+  if (Array.isArray(full.influencingPatterns)) return `<div class="page report-page">${renderMultiFactorReport(full)}</div>`;
   return `<div class="page report-page">${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(new Date(full.reportDate).toLocaleDateString("mn-MN"))}</time></header>
     <p class="coverage">${escapeHtml(full.coverage)}</p>${full.sections.map(section => `<section class="report-section"><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.body)}</p></section>`).join("")}
     ${full.experiment ? `<section class="report-section"><h2>Хэрэгжүүлж үзэх нэг өөрчлөлт</h2><dl><dt>Өөрчлөх нэг зүйл</dt><dd>${escapeHtml(full.experiment.variable)}</dd><dt>Юу хийх вэ?</dt><dd>${escapeHtml(full.experiment.action)}</dd><dt>Юуг ажиглах вэ?</dt><dd>${escapeHtml(full.experiment.observe)}</dd><dt>Юуг өөрчлөхгүй хэвээр үлдээх вэ?</dt><dd>${escapeHtml(full.experiment.keepConstant)}</dd></dl></section>` : ""}

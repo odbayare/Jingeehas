@@ -65,14 +65,19 @@ function credential(value) { return String(value).split(";")[0]; }
   assert.equal((await database.find("assessment_answers", { assessmentId, questionId: "MC-GATE" })).length, 0);
 
   const completed = await complete(event("POST", { assessmentId }, cookie));
-  assert.equal(JSON.parse(completed.body).reportMode, "sufficient");
+  assert.equal(JSON.parse(completed.body).reportMode, "limited");
   const reportResult = await report(event("GET", null, cookie, { assessmentId }));
   const reportBody = JSON.parse(reportResult.body);
   assert.equal(reportBody.entitled, false);
   assert.equal(reportBody.fullReport, null);
+  await database.insert("entitlements", { id: "we-contract", sessionId: sessionBody.sessionId, assessmentId, paymentId: "wp-contract", productCode: "WEIGHT_TEST_ONE_TIME", status: "active", grantedAt: new Date().toISOString() });
+  const entitledReport = JSON.parse((await report(event("GET", null, cookie, { assessmentId }))).body);
+  assert(entitledReport.fullReport);
+  assert(!Object.hasOwn(entitledReport.fullReport, "internalEvidenceMap"));
+  assert(!/Q-[A-Z]|S1-|MC-/.test(JSON.stringify(entitledReport.fullReport)), "public report API must not expose raw question IDs");
   const restored = JSON.parse((await sessionState(event("GET", null, cookie))).body);
   assert.equal(restored.assessment.assessmentId, assessmentId);
-  assert.equal(restored.report.reportMode, "sufficient");
+  assert.equal(restored.report.reportMode, "limited");
   const deletionResult = await deletion(event("POST", { assessmentId }, cookie));
   assert.equal(deletionResult.statusCode, 202);
   const duplicateDeletion = await deletion(event("POST", { assessmentId }, cookie));

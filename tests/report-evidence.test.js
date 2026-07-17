@@ -1,50 +1,67 @@
 "use strict";
 const assert = require("node:assert/strict");
-const { buildEvidence, evidenceQuality, buildFullReport, singleVariableExperiment } = require("../netlify/functions/_lib/report.js");
+const { QUESTIONS } = require("../questions.js");
+const { mappingCoverage } = require("../netlify/functions/_lib/report-signals.js");
+const { buildEvidence, evidenceQuality, buildFullReport, publicReport } = require("../netlify/functions/_lib/report.js");
+const fixtures = require("./fixtures/report-gold-profiles.js");
 
-const evidence = buildEvidence([
-  { questionId: "Q-HUNGER", value: "Орой өлсдөг" },
-  { questionId: "Q-HUNGER", value: "Давхардсан" },
-  { questionId: "Q-SATIETY", value: "Цадах дохио оройтож мэдрэгддэг" },
-  { questionId: "Q-EMOTION", value: "Стресстэй үедээ хоол иддэг" },
-  { questionId: "Q-CUE", value: "Хоол харагдахад хүсэл нэмэгддэг" },
-  { questionId: "Q-SLEEP-DURATION", value: "6 цаг" },
-  { questionId: "Q-SLEEP-QUALITY", value: "Тасалддаг" },
-  { questionId: "Q-MEAL-RHYTHM", value: "Хоол хоорондын зай уртсах" },
-  { questionId: "Q-MOVEMENT", value: "Суугаа" }
-], [{ checkpointId: "C-1", text: "Ерөнхий тайлбар" }]);
-assert.equal(evidence.filter(item => item.questionId === "Q-HUNGER").length, 1);
-assert(evidence.every(item => ["questionId", "dimension", "sourceType", "text", "direct"].every(key => Object.hasOwn(item, key))));
-assert.equal(evidence.find(item => item.questionId === "C-1").direct, false);
-assert.equal(evidenceQuality(evidence).mode, "sufficient");
+const rows = answers => Object.entries(answers).map(([questionId, value]) => ({ questionId, value }));
+const reportFor = answers => buildFullReport(buildEvidence(rows(answers)), new Date("2026-07-17T00:00:00Z"));
+function substantiveSentences(value) { return JSON.stringify(value).split(/[.!?]\s*/).map(item => item.replace(/[{}\[\]"\\]/g, "").trim()).filter(item => item.length > 45); }
 
-const report = buildFullReport(evidence, new Date("2026-01-01T00:00:00Z"));
-assert.equal(report.mode, "sufficient");
-assert(report.primaryPattern);
-assert(report.experiment);
-assert.deepEqual(Object.keys(report.experiment), ["variable", "action", "observe", "keepConstant"]);
-assert(!JSON.stringify(report.experiment).includes("Үүнтэй зэрэгцүүлж"));
-assert(!JSON.stringify(report).includes("Итгэлцлийн түвшин"));
-assert(!JSON.stringify(report).includes("хамгийн магадлалтай гол хэв маяг"));
-assert(!JSON.stringify(report).includes("7 хоногт 0.45–0.9 кг"));
+const coverage = mappingCoverage(QUESTIONS);
+assert.equal(coverage.percent, 100);
+assert.deepEqual(coverage.unmappedQuestions, []);
+assert.deepEqual(coverage.unmappedOptions, []);
 
-const limited = buildFullReport(buildEvidence([
-  { questionId: "Q-AGE", value: 30 }, { questionId: "Q-HEIGHT", value: 170 }, { questionId: "Q-WEIGHT", value: 80 },
-  { questionId: "Q-HUNGER", value: "Орой" }, { questionId: "Q-EMOTION", value: "Стресс" },
-  { questionId: "Q-CUE", value: "Харагдах" }, { questionId: "Q-MOVEMENT", value: "Суугаа" }
-]));
-assert.equal(limited.mode, "limited");
-assert.equal(evidenceQuality(buildEvidence([{ questionId: "Q-AGE", value: 30 }, { questionId: "Q-WEIGHT", value: 80 }])).mode, "insufficient");
-assert.equal(limited.primaryPattern, null);
-assert.equal(limited.experiment, null);
-assert.match(limited.sections[0].body, /хүрэлцэхгүй/);
+const unknown = buildEvidence([{ questionId: "Q-UNKNOWN", value: "anything" }]);
+assert.deepEqual(unknown.unmappedQuestions, ["Q-UNKNOWN"]);
+assert.equal(unknown.signals.length, 0);
 
-const insufficient = buildFullReport(buildEvidence([{ questionId: "Q-HUNGER", value: "Орой" }]));
-assert.equal(insufficient.mode, "insufficient");
-assert.equal(insufficient.primaryPattern, null);
-assert.equal(insufficient.experiment, null);
-assert.match(insufficient.sections[0].body, /мэдээлэл хүрэлцэхгүй/);
+const stableEmotion = reportFor({ "Q-EMOTION": "Өөрчлөгддөггүй", "Q-METHOD-BARRIERS": ["Стресс ба сэтгэл хөдлөл"] });
+const strongEmotion = reportFor({ "Q-EMOTION": "Нэлээд нэмэгддэг", "Q-METHOD-BARRIERS": ["Стресс ба сэтгэл хөдлөл"] });
+assert(!stableEmotion.influencingPatterns.some(pattern => pattern.id === "emotional_regulation"));
+assert(strongEmotion.influencingPatterns.some(pattern => pattern.id === "emotional_regulation"));
+assert.notDeepEqual(stableEmotion.influencingPatterns, strongEmotion.influencingPatterns);
 
-const oneVariable = singleVariableExperiment({ dimension: "хооллох хэмнэл" });
-assert.equal(oneVariable.variable, "хооллох хэмнэл");
-console.log("report evidence and mode tests passed");
+const neutralEvidence = buildEvidence(rows({ "Q-EMOTION": "Тодорхой биш", "Q-SATIETY": "Хариулахгүй", "Q-CUE": ["Аль нь ч үгүй"] }));
+assert.equal(evidenceQuality(neutralEvidence).questionCount, 1, "neutral/excluded answers must not increase evidence quality");
+assert.equal(reportFor({ "Q-EMOTION": "Нэлээд нэмэгддэг" }).influencingPatterns.length, 0, "one answer must never create a pattern");
+
+for (const fixture of fixtures) {
+  const report = reportFor(fixture.answers);
+  const ids = report.influencingPatterns.map(pattern => pattern.id);
+  for (const expected of fixture.expectedPatterns) assert(ids.includes(expected), `${fixture.name}: missing ${expected}; got ${ids.join(",")}`);
+  for (const absent of fixture.absentPatterns) assert(!ids.includes(absent), `${fixture.name}: unexpected ${absent}`);
+  if (fixture.expectedProtectiveSignal) assert(report.protectiveFactors.some(item => item.signal === fixture.expectedProtectiveSignal), `${fixture.name}: missing protective factor`);
+  if (fixture.expectedFirstStep) assert.equal(report.prioritizedStartingAction?.recommendationId, fixture.expectedFirstStep, `${fixture.name}: wrong first step`);
+  assert.equal(new Set(ids).size, ids.length, `${fixture.name}: duplicate pattern`);
+  assert(ids.length <= 4, `${fixture.name}: major pattern readability cap exceeded`);
+  const actionIds = [report.prioritizedStartingAction, ...report.additionalPatternActions].filter(Boolean).map(action => action.patternId);
+  assert.deepEqual(new Set(actionIds), new Set(ids), `${fixture.name}: every major pattern needs one recommendation`);
+  const publicText = JSON.stringify(publicReport(report));
+  assert(!/Q-[A-Z]|S1-|MC-/.test(publicText), `${fixture.name}: raw question ID leaked`);
+  assert(!publicText.includes("өдөр тутмын хэв маяг"));
+  assert(!/Итгэлцлийн түвшин|confidence|\d+%/.test(publicText));
+  assert(!/\$\{label\}-(тэй|той)/.test(publicText));
+  const profileSentences = substantiveSentences(publicReport(report));
+  assert.equal(profileSentences.length, new Set(profileSentences).size, `${fixture.name}: repeated substantive sentence`);
+  for (const phrase of fixture.prohibited) assert(!publicText.includes(phrase), `${fixture.name}: prohibited guidance ${phrase}`);
+}
+
+const multi = reportFor(fixtures[0].answers);
+assert(multi.influencingPatterns.length >= 3);
+assert(multi.interactionSummary.length >= 2);
+assert(new Set(multi.additionalPatternActions.map(item => item.recommendationId)).size === multi.additionalPatternActions.length);
+
+const openOnly = reportFor({ "OPEN-PAST": "Бүх зүйл нурсан мэт санагдсан" });
+assert.equal(openOnly.influencingPatterns.length, 0, "open text cannot independently create a pattern");
+
+const raw = buildFullReport(buildEvidence(rows(fixtures[0].answers)));
+assert(raw.internalEvidenceMap.signals.every(item => item.questionId));
+assert(!Object.hasOwn(publicReport(raw), "internalEvidenceMap"));
+
+const sentences = substantiveSentences(publicReport(multi));
+assert.equal(sentences.length, new Set(sentences).size, "substantive sentences must not repeat across report fields");
+
+console.log("deterministic multi-factor report tests passed");

@@ -1,4 +1,5 @@
 "use strict";
+const { publicReport } = require("./report.js");
 
 const { randomId, randomToken, hashToken } = require("./crypto.js");
 const { hashPassword, verifyPassword, createRoleSession, authenticateRole, ADVISOR_SESSION, ADMIN_SESSION } = require("./auth.js");
@@ -59,8 +60,7 @@ async function accessAdvisorReport(database, event, assessmentId, now = new Date
   else if (assessment.safetyRoute) reason = "safety_restricted";
   await database.insert("advisor_report_access_logs", { id: randomId("arl_"), coachId: session.coachId, assessmentId, allowed: reason === "allowed", reason, createdAt: now.toISOString() });
   if (reason !== "allowed") throw Object.assign(new Error("Report forbidden"), { statusCode: 403, code: "report_forbidden" });
-  const { evidence: _withheldEvidence, ...advisorReport } = snapshot.fullReport || {};
-  return { assessmentId, fullReport: advisorReport };
+  return { assessmentId, fullReport: publicReport(snapshot.fullReport) };
 }
 async function advisorDashboard(database, event) {
   const session = await authenticateRole(database, event, ADVISOR_SESSION); const clients = await database.find("advisor_clients", { coachId: session.coachId });

@@ -85,7 +85,8 @@ async function seededAssessment(database, suffix) {
   assert.equal(secondCompletion.status, "complete");
   assert.equal((await database.find("report_snapshots", { assessmentId: seeded.assessmentId })).length, 1, "completion must be idempotent");
   const report = await database.get("report_snapshots", seeded.assessmentId);
-  assert(!report.fullReport.evidence.some(item => item.questionId === "Q-SEX"), "routing intake must not become an identity claim");
+  assert(!report.fullReport.internalEvidenceMap.signals.some(item => item.questionId === "Q-SEX"), "routing intake must not become an identity claim");
+  assert(!JSON.stringify(report.fullReport.influencingPatterns).includes("Q-SEX"), "public formulation must not expose routing intake");
 
   const failingDatabase = new ReportFailureDatabase();
   const failing = await seededAssessment(failingDatabase, "report-failure");
