@@ -38,7 +38,7 @@ The following neutral questions remain exact:
 
 When the answer to the neutral stopping question explicitly attributes stopping to injury, template `previous_method_stopped_due_to_injury` requires `explicit_injury_stop_context` and says:
 
-`Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болсон байна.`
+`Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болжээ. Иймээс дараагийн хөдөлгөөнөө сонгохдоо гэмтэлтэй холбоотой зовиур нэмэгдэхгүй байхыг харгалзана.`
 
 The same forced-continuation wording is suppressed for a generic physical barrier, pain mention, practical barrier, voluntary stop, or unknown reason. The internal trace records the template, required context, and the supporting question ID. Public output does not expose that ID.
 

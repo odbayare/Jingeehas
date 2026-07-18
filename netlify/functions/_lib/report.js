@@ -299,7 +299,7 @@ function startingAction(prioritized, facts, composer) {
     patternId: prioritized.id,
     recommendationId: recommendation.recommendationId,
     action: composer.recordRule("experiment_emotional_action", patternGate, "Стресс нэмэгдэж, хоол авах гэж буй мөчид ямар хэрэгцээ хамгийн хүчтэй байгааг ажиглана.", "8"),
-    reason: composer.recordRule("experiment_emotional_reason", patternGate, "Энэ туршилт хоолыг хорихгүйгээр тухайн мөчид хоол ямар үүрэг гүйцэтгэж байгааг, түр тайвшрал дараагийн сонголтод хэрхэн нөлөөлдгийг шалгана.", "8"),
+    reason: composer.recordRule("experiment_emotional_reason", patternGate, "Энэ туршилт хоолыг хорихгүйгээр тухайн мөчид хоол ямар үүрэг гүйцэтгэж байж болохыг ажиглана.", "8"),
     priorityReason: composer.recordRule("experiment_emotional_priority", patternGate, "Стресс болон идэх хүсэл давтагдан холбоотой байсан тул өөр нэг зан үйлийг зэрэг өөрчлөхгүйгээр энэ холбоог эхэлж ажиглана.", "8"),
     plan: {
       kind: "emotional_observation",

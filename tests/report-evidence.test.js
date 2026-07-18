@@ -243,6 +243,8 @@ const emotionalReport = reportFor(fixtures.find(item => item.name === "emotional
 const conditionalRelief = "Хэрэв хоол тухайн мөчид түр амсхийх мэт мэдрэмж өгдөг бол стрессийн шалтгаан хэвээр үлдэхэд идэх хүсэл дахин төрж болно.";
 assert(JSON.stringify(publicReport(emotionalReport)).includes(conditionalRelief), "supported emotional report must distinguish hypothesis from fact");
 assert(!JSON.stringify(publicReport(withoutInjury)).includes(conditionalRelief), "food-as-relief hypothesis requires emotional evidence");
+assert(!JSON.stringify(publicReport(emotionalReport)).includes("түр тайвшрал"), "emotional experiment must not present temporary relief as a confirmed fact");
+assert(!JSON.stringify(publicReport(emotionalReport)).includes("хоолоор түр тайвширсны дараа"), "pattern interaction must not present food-as-relief as a confirmed chronology");
 assert.equal(emotionalReport.prioritizedStartingAction.plan.kind, "emotional_observation");
 assert.equal(emotionalReport.prioritizedStartingAction.plan.variable, "стресс нэмэгдэх мөчид хэрэгцээгээ ялгаж анзаарах богино завсарлага");
 assert(emotionalReport.prioritizedStartingAction.plan.action.includes("Одоо биеэрээ өлсөж байна уу"));
