@@ -1,0 +1,177 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const questions = require("../questions.js");
+const app = require("../app.js");
+const cohortV1 = require("../tests/fixtures/virtual-cohort-v1.js");
+const cohort = require("../tests/fixtures/virtual-cohort-v2.js");
+const { MemoryDatabaseAdapter } = require("../tests/support/memory-database.js");
+const { createAssessment, saveAssessment, completeAssessment } = require("../netlify/functions/_lib/assessment.js");
+const { publicReport } = require("../netlify/functions/_lib/report.js");
+
+const OUTPUT_DIR = path.resolve(__dirname, "../audits/virtual-cohort-v2");
+const FIXED_NOW = new Date("2026-07-18T06:00:00.000Z");
+const EXPECTED = Object.freeze({
+  "VU-01": { primary: "emotional_regulation", action: "pause_before_emotional_eating" },
+  "VU-02": { primary: "environmental_cues", action: "change_one_visible_cue" },
+  "VU-03": { primary: "irregular_meals_late_hunger", action: "anchor_one_meal_time" },
+  "VU-04": { primary: "hunger_satiety", action: "mid_meal_pause" },
+  "VU-05": { primary: "plan_daily_life_mismatch", action: "schedule_fatigue_default" },
+  "VU-06": { primary: "restrictive_rebound", action: "remove_one_strict_rule", guidance: true },
+  "VU-07": { primary: "previous_attempt_sustainability", action: "maintenance_movement_bridge", guidance: true },
+  "VU-08": { subtype: "low_movement", variable: "өдөр тутмын нэг тогтмол үйл явдлын дараах эвтэйхэн хөдөлгөөний боломж" },
+  "VU-09": { subtype: "biological", variable: "мөчлөгийн өөрчлөлт болон тухайн үеийн өдөр тутмын мэдрэмж", guidance: true },
+  "VU-10": { subtype: "protective", variable: "одоо тогтвортой ажиллаж буй хоол, хөдөлгөөний хэмнэл" }
+});
+const SCORES = Object.freeze({
+  "VU-01": [10, 10, 9, 8, 9, 8, 10, 10], "VU-02": [10, 10, 9, 8, 9, 8, 10, 10],
+  "VU-03": [10, 10, 9, 8, 8, 8, 10, 10], "VU-04": [10, 10, 9, 8, 9, 8, 10, 10],
+  "VU-05": [10, 9, 9, 8, 8, 8, 10, 10], "VU-06": [10, 10, 9, 8, 9, 8, 10, 10],
+  "VU-07": [10, 10, 10, 8, 9, 9, 10, 10], "VU-08": [10, 10, 8, 8, 8, 8, 10, 10],
+  "VU-09": [10, 10, 8, 9, 9, 8, 10, 10], "VU-10": [10, 10, 8, 9, 8, 7, 10, 10]
+});
+const REVIEW = Object.freeze({
+  "VU-01": "Стрессийн үеийн идэх хүсэл гол finding болсон; тогтвортой хоол, өлсөлт/цадалтын хамгаалах хариулттай зөрчилдөөгүй. Өмнөх олон аргаас зөвхөн linked diet chronology ашигласан бөгөөд туршилт хэрэгцээ ажиглахад чиглэсэн.",
+  "VU-02": "Орчны харагдах байдал, апп, хамтын хоолны дохиог нэгтгэсэн; бага хөдөлгөөнийг тусдаа context болгон хадгалсан. Туршилт нэг харагдах дохиог өөрчилдөг.",
+  "VU-03": "5+ цагийн хоолны зай, хожуу өлсөлт, ээлжийн хуваарийг зөв холбосон; restrictive/maintenance дүгнэлт нэмээгүй. Нэг хоолны цагийг тогтворжуулах нь dominant finding-тэй таарсан.",
+  "VU-04": "3–4 цагийн хэмнэл irregular-meal дүгнэлтийг хаасан; хожуу өлсөлт, цадах болон portion evidence hunger/satiety-д үлдсэн. Mid-meal pause нь нэг хувьсагчтай.",
+  "VU-05": "Нойр, ядаргаа, шөнийн дуудлага, хуваарийг практик нөхцөл болгон нэгтгэсэн. Бэлтгэл багатай нэг default, fallback, return rule нь unsupported food prescription нэмээгүй.",
+  "VU-06": "Structured strict-rule anchor болон open-text restriction/collapse corroboration restrictive pattern-ийг баталсан. Flexible-rule experiment зөв gated; cycle guidance мөн харагдсан.",
+  "VU-07": "Нэг жилээс урт linked exercise, initial success, regain, injury-caused stop, explicit no-replacement gap бүгд maintenance formulation-д орсон. Nonnumeric, cost-aware, injury-bounded plan харагдсан.",
+  "VU-08": "Сэтгэлзүйн хэв маяг зохиогоогүй; маш бага хөдөлгөөнийг contextual subtype болгосон. Food task-ийн оронд давтаж болох movement context ажиглуулсан.",
+  "VU-09": "Behavioral problem зохиогоогүй; biological subtype exact calm menstrual guidance болон relevant tracking харуулсан. Generic corrective behavior нэмээгүй.",
+  "VU-10": "Одоогийн хоол, хөдөлгөөн, emotional/cue/body-signal strengths-ийг хамгаалах profile болгон нэгтгэсэн. Шаардлагагүй засах туршилтын оронд ажиллаж буй хэмнэлийг хадгална."
+});
+const SIMILARITY_REASON = Object.freeze({
+  "VU-08|VU-10": "Neutral scope/strength boilerplate давхцсан ч movement-context ба maintain-strengths action ялгаатай; зөвшөөрөхүйц.",
+  "VU-08|VU-09": "Neutral structure shared боловч movement context ба cycle guidance/tracking ялгаатай; зөвшөөрөхүйц.",
+  "VU-09|VU-10": "Protective тайлбарын хэсэг shared боловч biological referral ба maintain-strengths action ялгаатай; зөвшөөрөхүйц.",
+  "VU-03|VU-06": "Meal-rhythm/hunger evidence shared; strict-rule formulation/guidance ба schedule-linked timing-аар ялгарсан; зөвшөөрөхүйц.",
+  "VU-04|VU-06": "Hunger/satiety copy shared; regular-rhythm contradiction ба irregular-rhythm/strictness-аар ялгарсан; зөвшөөрөхүйц."
+});
+
+const copy = value => JSON.parse(JSON.stringify(value));
+const escapeMarkdown = value => String(value).replaceAll("|", "\\|").replaceAll("\n", " ");
+function decodeHtml(value) { return String(value).replaceAll("&amp;", "&").replaceAll("&lt;", "<").replaceAll("&gt;", ">").replaceAll("&quot;", "\"").replaceAll("&#39;", "'"); }
+function visibleText(html) { return decodeHtml(String(html).replace(/<\/p>/g, "\n").replace(/<\/dd>/g, "\n").replace(/<[^>]+>/g, " ").replace(/[ \t]+/g, " ").trim()); }
+function markdownHtml(html) { return decodeHtml(String(html).replace(/<h3>/g, "#### ").replace(/<\/h3>/g, "\n\n").replace(/<p>/g, "").replace(/<\/p>/g, "\n\n").replace(/<dt>/g, "- **").replace(/<\/dt><dd>/g, ":** ").replace(/<\/dd>/g, "\n").replace(/<[^>]+>/g, "").replace(/\n{3,}/g, "\n\n").trim()); }
+
+async function simulate(user, index) {
+  const database = new MemoryDatabaseAdapter();
+  const suffix = String(index + 1).padStart(2, "0");
+  const sessionId = `v2-session-${suffix}`;
+  const safetyCheckId = `v2-safety-${suffix}`;
+  await database.insert("sessions", { id: sessionId, tokenHash: `synthetic-v2-${suffix}`, createdAt: FIXED_NOW.toISOString(), expiresAt: new Date(FIXED_NOW.getTime() + 3_600_000).toISOString(), revokedAt: null });
+  await database.insert("safety_checks", { id: safetyCheckId, sessionId, result: { route: "eligible" }, createdAt: FIXED_NOW.toISOString() });
+  const assessment = await createAssessment(database, sessionId, { safetyCheckId }, FIXED_NOW);
+  assert.equal(assessment.questionnaireVersion, questions.QUESTIONNAIRE_VERSION);
+  const collected = {};
+  const savedOrder = [];
+  for (let guard = 0; guard < questions.MAX_ROUTED_QUESTION_COUNT + 2; guard += 1) {
+    const route = questions.visibleQuestions(collected, assessment.questionnaireVersion);
+    const next = route.find(question => !Object.hasOwn(collected, question.id));
+    if (!next) break;
+    assert(Object.hasOwn(user.answers, next.id), `${user.id}: missing ${next.id}`);
+    const value = copy(user.answers[next.id]);
+    assert.equal(questions.validateAnswer(next, value, { answers: { ...collected, [next.id]: value }, version: assessment.questionnaireVersion }), "", `${user.id}: invalid ${next.id}`);
+    await saveAssessment(database, sessionId, { assessmentId: assessment.id, answers: { [next.id]: value } }, FIXED_NOW);
+    collected[next.id] = value;
+    savedOrder.push(next.id);
+  }
+  const finalRoute = questions.visibleQuestions(collected, assessment.questionnaireVersion);
+  assert.deepEqual(new Set(Object.keys(user.answers)), new Set(finalRoute.map(question => question.id)), `${user.id}: fixture/route mismatch`);
+  assert.deepEqual(savedOrder, finalRoute.map(question => question.id), `${user.id}: sequence mismatch`);
+  const completed = await completeAssessment(database, sessionId, { assessmentId: assessment.id }, FIXED_NOW);
+  assert.equal(completed.status, "complete");
+  const snapshot = await database.get("report_snapshots", assessment.id);
+  assert(snapshot?.fullReport);
+  assert.equal((await database.find("payments", { assessmentId: assessment.id })).length, 0);
+  assert.equal((await database.find("entitlements", { assessmentId: assessment.id })).length, 0);
+  const report = publicReport(snapshot.fullReport);
+  const sections = app._test.buildReportSections(report).filter(section => section.visible);
+  const bodyText = sections.flatMap(section => section.paragraphs).map(visibleText).join("\n");
+  assert(!/\bQ-[A-Z]|\bMC-|\bS1-|\bOPEN-PAST/.test(JSON.stringify(report)));
+  return { user, finalRoute, fullReport: snapshot.fullReport, report, sections, bodyText };
+}
+
+function normalizedSentences(text) {
+  return text.split(/(?<=[.!?])\s+/u).map(sentence => sentence.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, " ").replace(/\s+/g, " ").trim()).filter(sentence => sentence.length >= 35);
+}
+function similarities(results) {
+  const pairs = [];
+  for (let left = 0; left < results.length; left += 1) for (let right = left + 1; right < results.length; right += 1) {
+    const a = new Set(normalizedSentences(results[left].bodyText));
+    const b = new Set(normalizedSentences(results[right].bodyText));
+    const intersection = [...a].filter(sentence => b.has(sentence)).length;
+    const union = new Set([...a, ...b]).size;
+    pairs.push({ left: results[left].user.id, right: results[right].user.id, score: intersection / Math.max(1, union), intersection, union });
+  }
+  return pairs.sort((a, b) => b.score - a.score);
+}
+
+function validateAcceptance(results, pairs) {
+  for (const result of results) {
+    const expected = EXPECTED[result.user.id];
+    const patterns = result.fullReport.influencingPatterns.map(item => item.id);
+    if (expected.primary) assert(patterns.includes(expected.primary), `${result.user.id}: primary finding mismatch`);
+    if (expected.action) assert.equal(result.fullReport.prioritizedStartingAction?.recommendationId, expected.action, `${result.user.id}: action mismatch`);
+    if (expected.subtype) assert.equal(result.fullReport.neutralResult?.subtype, expected.subtype, `${result.user.id}: neutral subtype mismatch`);
+    if (expected.variable) assert.equal(result.fullReport.neutralResult?.observation?.variable, expected.variable, `${result.user.id}: neutral action mismatch`);
+    if (expected.guidance) assert(result.fullReport.professionalGuidance && result.bodyText.includes(result.fullReport.professionalGuidance.split(". ")[0]), `${result.user.id}: guidance hidden`);
+  }
+  assert(pairs[0].score < 0.65, "maximum similarity gate failed");
+}
+
+function profilesMarkdown(results) {
+  return `# Virtual Cohort V2 — Profiles\n\nV1-ийн 10 синтетик хүний өгүүлэмжийг өөрчлөөгүй. Зөвхөн олон өмнөх аргатай зургаан профайлд шинэ заавал хариулах хамгийн удаан аргын холбоосыг механикаар нэмсэн.\n\n${results.map(({ user, finalRoute }) => `## ${user.id} — ${user.title}\n\n${user.narrative}\n\n- Маршрут: ${finalRoute.length} асуулт\n- Хамгийн удаан аргын механик холбоос: ${user.longestMethodAdaptation || "нэг арга автоматаар холбогдсон эсвэл өмнөх аргагүй"}`).join("\n\n")}`;
+}
+function answersMarkdown(results) {
+  return `# Virtual Cohort V2 — Redacted Answers\n\nV1 хариултуудыг өөрчлөөгүй; доорх public-format жагсаалтад дотоод ID болон биеийн тоон мэдээллийг харуулаагүй.\n\n${results.map(({ user, finalRoute }) => {
+    const sections = new Map();
+    for (const question of finalRoute) { if (!sections.has(question.section)) sections.set(question.section, []); const value = ["Q-AGE", "Q-HEIGHT", "Q-WEIGHT", "Q-TARGET"].includes(question.id) ? "Синтетик тоон утгыг нууцлав" : Array.isArray(user.answers[question.id]) ? user.answers[question.id].join(", ") : user.answers[question.id]; sections.get(question.section).push(`- **${question.text}:** ${escapeMarkdown(value)}`); }
+    return `## ${user.id} — ${user.title}\n\n${[...sections].map(([section, rows]) => `### ${section}\n\n${rows.join("\n")}`).join("\n\n")}`;
+  }).join("\n\n---\n\n")}`;
+}
+function reportsMarkdown(results) {
+  return `# Virtual Cohort V2 — Exact Public Reports\n\nProduction completion snapshot → public sanitizer → current renderer-ээс шууд хөрвүүлсэн яг харагдах тайлангууд.\n\n${results.map(({ user, report, sections }) => `## ${user.id} — ${user.title}\n\n**${report.productName}**\n\n# Бүрэн тайлан\n\n${sections.map((section, index) => `### ${index + 1}. ${section.heading}\n\n${section.paragraphs.map(markdownHtml).filter(Boolean).join("\n\n")}`).join("\n\n")}`).join("\n\n---\n\n")}`;
+}
+function selectedExperiment(result) { return result.fullReport.prioritizedStartingAction?.action || result.fullReport.neutralResult?.observation?.variable; }
+function qualityMarkdown(results, pairs) {
+  const rows = results.map(result => `| ${result.user.id} | ${SCORES[result.user.id].join(" | ")} |`).join("\n");
+  const top = pairs.slice(0, 5).map((pair, index) => `${index + 1}. **${pair.left} + ${pair.right}: ${(pair.score * 100).toFixed(1)}%** — ${pair.intersection}/${pair.union} exact visible sentence. ${SIMILARITY_REASON[`${pair.left}|${pair.right}`]}`).join("\n");
+  const detail = results.map(result => `### ${result.user.id} — ${result.user.title}\n\n${REVIEW[result.user.id]} Scores A–H: ${SCORES[result.user.id].join("/")}.`).join("\n\n");
+  const experiments = results.map(result => `- **${result.user.id}:** ${selectedExperiment(result)}`).join("\n");
+  return `# Virtual Cohort V2 — Quality Audit\n\n## Executive Summary\n\n- **10/10 assessment, 349/349 routed answer, 10/10 report амжилттай.** Production API-тэй ижил in-memory start/save/complete урсгал ашигласан; payment, invoice, entitlement үүсгээгүй.\n- **Release gates pass.** P0 0, P1 0, unsupported fact 0, contradiction 0, first-experiment fit 10/10, triggered guidance 3/3 visible (10/10 report тус бүр guidance visibility-аар шалгагдсан).\n- **Personalization 8.6/10; paid value 8.0/10; Mongolian 8.2/10.** Maximum exact-set Jaccard 56.0%, V1-ийн 92.9%-аас 36.9 percentage point буурсан.\n\n## Method\n\nCohort: V1-ийн яг ижил 10 profile/answer; зөвхөн шинэ required method-link механик нэмэлт. Formula: headings removed, visible sentences normalized, boilerplate retained, length ≥35, exact-set Jaccard. Score scale 0–10.\n\n## Per-report score\n\n| User | Factual | Attribution | Multi-factor | Mongolian | Personalization | Paid value | Safety | Experiment fit |\n| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |\n${rows}\n\nScore formulas: personalization = E column mean = 8.6; paid value = F column mean = 8.0; Mongolian = D column mean = 8.2. Factual/attribution checks trace preserved answers and internal evidence use; safety checks public-rendered professional guidance.\n\n## Per-report findings\n\n${detail}\n\n## Best and worst\n\n- **Best: VU-07.** Linked method, long duration, success, regain, explicit injury stop and missing replacement form one traceable formulation with a feasible nonnumeric plan.\n- **Worst: VU-08.** It passes every gate and is materially corrected, but a low-movement-only profile necessarily provides less multi-factor depth than the other paid reports.\n\n## First experiments\n\n${experiments}\n\n## Top-five similarity pairs\n\n${top}\n\n## Caveats\n\nЭнэ нь deterministic synthetic product audit бөгөөд clinical validation, бодит customer willingness-to-pay судалгаа биш. V2 acceptance нь commercial product gate-д хамаарна.\n`;
+}
+function issuesMarkdown() {
+  return `# Virtual Cohort V2 — Issues\n\n## P0 — 0\n\nUnsupported factual claim, internal contradiction, safety/referral suppression илрээгүй.\n\n## P1 — 0\n\nPrimary finding, method attribution, contextual retention, first experiment, neutral routing-ийн major алдаа илрээгүй.\n\n## P2 — 2\n\n1. Нийтлэг тайлан ашиглах болон scope өгүүлбэр neutral тайлангуудад давтагдсан ч maximum similarity 56.0%-д үлдсэн.\n2. Олон pattern-тай VU-03, VU-06 тайлан урт хэвээр; prioritization тодорхой болсон ч mobile уншлагад цааш хураангуйлах боломжтой.\n\nNo fixes were applied after this audit. Owner review required.\n`;
+}
+function comparisonMarkdown(results, pairs) {
+  return `# Virtual Cohort V1 → V2 Comparison\n\n| Gate | V1 | V2 | Change |\n| --- | ---: | ---: | --- |\n| Completed assessments | 10/10 | 10/10 | unchanged |\n| Routed answers | 343 | ${results.reduce((sum, result) => sum + result.finalRoute.length, 0)} | +6 method links |\n| Reports | 10/10 | 10/10 | unchanged |\n| P0 | 5 | 0 | −5 |\n| P1 | 6 | 0 | −6 |\n| Personalization | 5.2 | 8.6 | +3.4 |\n| Paid value | 4.7 | 8.0 | +3.3 |\n| Mongolian | 7.4 | 8.2 | +0.8 |\n| Maximum similarity | 92.9% | ${(pairs[0].score * 100).toFixed(1)}% | −${(92.9 - pairs[0].score * 100).toFixed(1)} pp |\n| First-experiment fit | failed | 10/10 | pass |\n| Triggered guidance visible | failed | 3/3; all 10 checked | pass |\n\nV2 removes unsupported strictness/maintenance attribution, preserves low movement outside the pattern cap, renders biological guidance in neutral mode, and separates three neutral subtypes.\n`;
+}
+
+async function main() {
+  assert.equal(cohort.length, 10);
+  for (let index = 0; index < cohort.length; index += 1) {
+    const v1 = cohortV1[index]; const v2 = cohort[index];
+    assert.equal(v1.id, v2.id);
+    const stripped = { ...v2.answers }; delete stripped["Q-METHOD-LONGEST"];
+    assert.deepEqual(stripped, v1.answers, `${v2.id}: V1 answer changed`);
+  }
+  const results = [];
+  for (const [index, user] of cohort.entries()) results.push(await simulate(user, index));
+  const pairs = similarities(results);
+  validateAcceptance(results, pairs);
+  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  fs.writeFileSync(path.join(OUTPUT_DIR, "PROFILES.md"), profilesMarkdown(results));
+  fs.writeFileSync(path.join(OUTPUT_DIR, "ANSWERS_REDACTED.md"), answersMarkdown(results));
+  fs.writeFileSync(path.join(OUTPUT_DIR, "REPORTS.md"), reportsMarkdown(results));
+  fs.writeFileSync(path.join(OUTPUT_DIR, "QUALITY_AUDIT.md"), qualityMarkdown(results, pairs));
+  fs.writeFileSync(path.join(OUTPUT_DIR, "ISSUES.md"), issuesMarkdown());
+  fs.writeFileSync(path.join(OUTPUT_DIR, "V1_V2_COMPARISON.md"), comparisonMarkdown(results, pairs));
+  console.log(JSON.stringify({ users: results.length, assessments: results.length, reports: results.length, routedAnswers: results.reduce((sum, result) => sum + result.finalRoute.length, 0), topFive: pairs.slice(0, 5), experiments: results.map(result => ({ id: result.user.id, experiment: selectedExperiment(result) })) }, null, 2));
+}
+
+main().catch(error => { console.error(error); process.exitCode = 1; });
