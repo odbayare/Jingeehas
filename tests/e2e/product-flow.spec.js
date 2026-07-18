@@ -217,3 +217,22 @@ test("print mode hides controls and keeps report", async ({ page }) => {
   await expect(page.locator("#report-content")).toBeVisible();
   await expect(page.getByRole("button", { name: "Хэвлэх эсвэл PDF-ээр хадгалах" })).toBeHidden();
 });
+
+for (const id of ["VU-03", "VU-06"]) {
+  test(`${id} report remains readable at 375px and complete in print`, async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 800 });
+    await page.goto(`/__test/select-report?id=${id}`);
+    await expect(page.getByRole("heading", { name: "Бүрэн тайлан" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Эхний туршилт" })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    const paragraphSentenceCounts = await page.locator("#report-content p").evaluateAll(paragraphs => paragraphs.map(paragraph => paragraph.textContent.split(/[.!?](?:\s|$)/u).filter(Boolean).length));
+    expect(Math.max(...paragraphSentenceCounts)).toBeLessThanOrEqual(3);
+    const sectionCount = await page.locator("#report-content .report-section").count();
+    expect(sectionCount).toBeGreaterThanOrEqual(8);
+    await page.emulateMedia({ media: "print" });
+    await expect(page.locator("#report-content")).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Эхний туршилт" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Хэвлэх эсвэл PDF-ээр хадгалах" })).toBeHidden();
+    expect(await page.locator("#report-content .report-section").count()).toBe(sectionCount);
+  });
+}

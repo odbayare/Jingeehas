@@ -80,7 +80,7 @@ assert(renderedNeutralReport.includes("Ямар нийтлэг саад хүчт
 assert(renderedNeutralReport.includes("Дараагийн хугацаанд юу ажиглаж болох вэ?"));
 assert(renderedNeutralReport.includes("нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах"));
 assert(renderedNeutralReport.includes("Энэ асуумжаар юуг дүгнэж болохгүй вэ?"));
-assert(renderedNeutralReport.includes("Тайланг хэрхэн ашиглах вэ?"));
+assert(!renderedNeutralReport.includes("Тайланг хэрхэн ашиглах вэ?"), "redundant generic neutral report-use section remains");
 
 function assertSequentialSections(report, name) {
   const sections = app._test.buildReportSections(report).filter(section => section.visible);

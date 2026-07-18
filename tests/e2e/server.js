@@ -3,9 +3,21 @@ const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
 const { evaluateSafetyGate, ROUTE_COPY } = require("../../netlify/functions/_lib/safety.js");
+const questions = require("../../questions.js");
+const cohort = require("../fixtures/virtual-cohort-v2.js");
+const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/functions/_lib/report.js");
 const root = path.resolve(__dirname, "../..");
 const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0 };
 const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
+const cohortReports = Object.fromEntries(cohort.filter(profile => ["VU-03", "VU-06"].includes(profile.id)).map(profile => {
+  const linkedLongestMethod = profile.answers["Q-METHOD-LONGEST"] || questions.autoLinkedLongestMethod(profile.answers);
+  const evidence = buildEvidence(Object.entries(profile.answers).map(([questionId, value]) => ({ questionId, value })), [], { questionnaireVersion: questions.QUESTIONNAIRE_VERSION, linkedLongestMethod });
+  return [profile.id, publicReport(buildFullReport(evidence, new Date("2026-07-18T06:00:00.000Z"), { questionnaireVersion: questions.QUESTIONNAIRE_VERSION }))];
+}));
+function selectedReport(request) {
+  const match = String(request.headers.cookie || "").match(/(?:^|;\s*)jingeehas_cohort=(VU-0[36])/);
+  return cohortReports[match?.[1]] || fullReport;
+}
 function json(response, status, body, headers = {}) { response.writeHead(status, { "content-type": "application/json", ...headers }); response.end(JSON.stringify(body)); }
 function readBody(request) { return new Promise(resolve => { let raw = ""; request.on("data", chunk => { raw += chunk; }); request.on("end", () => { try { resolve(JSON.parse(raw || "{}")); } catch { resolve({}); } }); }); }
 const endpoints = {
@@ -21,8 +33,8 @@ const endpoints = {
   "qpay-check-payment": async (_body, response) => { stats.qpayCheck += 1; json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "paid", entitlement: true }); },
   "weight-assessment-save": async (body, response) => { stats.assessmentSave += 1; const ids = Object.keys(body.answers || {}); await new Promise(resolve => setTimeout(resolve, ids.includes("Q-AGE") ? 1200 : 30)); json(response, 200, { assessmentId: "wa-e2e", status: "draft", savedQuestionIds: ids }); },
   "weight-assessment-complete": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", status: "complete", reportMode: "sufficient", safetyRoute: null }),
-  "weight-assessment-report": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport, entitled: true }),
-  "weight-session-state": async (_body, response) => { const paid = stats.qpayCheck > 0; const hasPayment = stats.paymentRows > 0; json(response, 200, { assessment: { assessmentId: "wa-e2e", status: "complete", safetyRoute: null }, payment: hasPayment ? { status: paid ? "paid" : "pending", paymentId: "wp-e2e" } : null, answers: {}, report: { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport, entitled: true } }); },
+  "weight-assessment-report": async (_body, response, request) => json(response, 200, { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport: selectedReport(request), entitled: true }),
+  "weight-session-state": async (_body, response, request) => { const paid = stats.qpayCheck > 0; const hasPayment = stats.paymentRows > 0; json(response, 200, { assessment: { assessmentId: "wa-e2e", status: "complete", safetyRoute: null }, payment: hasPayment ? { status: paid ? "paid" : "pending", paymentId: "wp-e2e" } : null, answers: {}, report: { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport: selectedReport(request), entitled: true } }); },
   "weight-recovery-request": async (_body, response) => json(response, 202, { recoveryId: "rr-e2e", message: "Хэрэв тохирох бүрэн тайлан байгаа бол баталгаажуулах код илгээгдлээ." }),
   "weight-recovery-confirm": async (body, response) => body.code === "123456" ? json(response, 200, { assessmentId: "wa-e2e", recovered: true }, { "set-cookie": "jingeehas_session=recovered; Path=/; HttpOnly" }) : json(response, 400, { error: "invalid_recovery_code" }),
   "advisor-invite-resolve": async (_body, response) => json(response, 200, { coachClientId: "ac-e2e", coachId: "adv-e2e", advisorName: "Нараа", consentStatus: "pending" }),
@@ -37,6 +49,10 @@ const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
 http.createServer(async (request, response) => {
   const url = new URL(request.url, "http://127.0.0.1:4178");
   if (url.pathname === "/__test/stats") return json(response, 200, stats);
+  if (url.pathname === "/__test/select-report" && cohortReports[url.searchParams.get("id")]) {
+    response.writeHead(302, { location: "/report?e2e=1", "set-cookie": `jingeehas_cohort=${url.searchParams.get("id")}; Path=/; HttpOnly; SameSite=Lax` });
+    return response.end();
+  }
   if (url.pathname.startsWith("/.netlify/functions/")) { const action = endpoints[url.pathname.split("/").pop()]; if (!action) return json(response, 404, { error: "not_found" }); return action(await readBody(request), response, request); }
   if (url.pathname === "/app-test.js" || url.pathname === "/app-production.js") { let source = fs.readFileSync(path.join(root, "app.js"), "utf8"); if (url.pathname === "/app-test.js") source = source.replace("const WEIGHT_TEST_COMING_SOON_MODE = true;", "const WEIGHT_TEST_COMING_SOON_MODE = false;"); response.writeHead(200, { "content-type": types[".js"] }); return response.end(source); }
   const relative = url.pathname === "/" ? "index.html" : url.pathname.slice(1); const absolute = path.join(root, relative);

@@ -4,12 +4,13 @@
 
 - **10/10 assessment, 349/349 routed answer, 10/10 report амжилттай.** V2.1-ийн яг ижил cohort, answers, Q-METHOD-LONGEST linkage болон in-memory start/save/complete урсгал ашигласан; payment, invoice, entitlement үүсгээгүй.
 - **Гурван copy-exactness gate бүгд pass.** Menstrual guidance exact answer-аар салсан, environmental evidence зөвхөн selected cue-г нэрлэсэн, public “өгөгдмөл хувилбар” 0 болсон.
-- **Release evidence хэвээр баталгаатай.** P0 0, P1 0, unsupported factual claim 0, internal contradiction 0, first-experiment fit 10/10. 10/10 тайланг guidance visibility-аар шалгаж, trigger-тэй 3/3 guidance public output-д харагдсан.
-- **Subjective scores автоматаар нэмэгдээгүй.** Personalization 8.6/10, paid value 8.0/10, Mongolian 8.2/10. Maximum exact-set Jaccard 58.3%, 65%-ийн gate-ээс доогуур.
+- **Release evidence хэвээр баталгаатай.** P0 0, P1 0, P2 0, unsupported factual claim 0, internal contradiction 0, first-experiment fit 10/10. 10/10 тайланг guidance visibility-аар шалгаж, trigger-тэй 3/3 guidance public output-д харагдсан.
+- **V2.2 P2 closeout pass.** Neutral тайлангийн давхардсан хоёр scope өгүүлбэрийг хассан ч uncertainty, supported strengths, limitation, observation, decision rule болон гурван өөр subtype хэвээр. VU-03 688-аас 591 үг, VU-06 619-өөс 518 үг болж, зөвхөн давхардсан тайлбар хасагдсан.
+- **Subjective scores автоматаар нэмэгдээгүй.** Personalization 8.6/10, paid value 8.0/10, Mongolian 8.2/10. Maximum exact-set Jaccard 54.5%, 65%-ийн gate-ээс доогуур.
 
 ## Unchanged cohort, engine, and rubric
 
-V2.1 profile, answer, method linkage, report engine, routing, signal mapping, pattern threshold, prioritization, safety болон similarity formula өөрчлөгдөөгүй. Formula: headings removed, public visible sentences normalized, boilerplate retained, length ≥35, exact-set Jaccard. A–H rubric: factual correctness, attribution, multi-factor reasoning, Mongolian, personalization, paid value, safety, first-experiment fit.
+V2.1 profile, answer, method linkage, inference engine, routing, signal mapping, pattern threshold, prioritization, safety болон similarity formula өөрчлөгдөөгүй. Зөвхөн public report composition-оос давхардсан өгүүлбэрийг хассан. Formula: headings removed, public visible sentences normalized, boilerplate retained, length ≥35, exact-set Jaccard. A–H rubric: factual correctness, attribution, multi-factor reasoning, Mongolian, personalization, paid value, safety, first-experiment fit.
 
 ## Three exactness checks
 
@@ -36,7 +37,7 @@ Score formulas: personalization = E column mean = 8.6; paid value = F column mea
 
 ## Manual sentence-to-answer review
 
-Every changed public sentence and its surrounding report section was compared with the unchanged V2.1 fixture answers. VU-06 and VU-09 preserve their distinct cycle answers; VU-02 names exactly its three selected cues; VU-05 changes wording only. No unsupported diagnosis, cue, prescription, chronology, internal identifier, or contradictory claim remained.
+Every retained public sentence and its surrounding report section was compared with the unchanged V2.1 fixture answers. VU-03 and VU-06 preserve every supported major pattern, attribution, interaction, context, safety guidance, and first experiment. The neutral profiles preserve all supported strengths and distinct observations. No unsupported diagnosis, cue, prescription, chronology, internal identifier, or contradictory claim remained.
 
 ## Per-report findings
 
@@ -95,12 +96,12 @@ Behavioral problem зохиогоогүй; `Ихэнхдээ тогтмол би
 
 ## Top-five similarity pairs
 
-1. **VU-08 + VU-10: 58.3%** — 14/24 exact visible sentence. Neutral scope/strength boilerplate давхцсан ч movement-context ба maintain-strengths action ялгаатай; зөвшөөрөхүйц.
-2. **VU-08 + VU-09: 53.8%** — 14/26 exact visible sentence. Neutral structure shared боловч movement context ба cycle guidance/tracking ялгаатай; зөвшөөрөхүйц.
-3. **VU-09 + VU-10: 48.1%** — 13/27 exact visible sentence. Protective тайлбарын хэсэг shared боловч biological referral ба maintain-strengths action ялгаатай; зөвшөөрөхүйц.
-4. **VU-03 + VU-06: 44.2%** — 23/52 exact visible sentence. Meal-rhythm/hunger evidence shared; strict-rule formulation/guidance ба schedule-linked timing-аар ялгарсан; зөвшөөрөхүйц.
-5. **VU-04 + VU-06: 41.0%** — 16/39 exact visible sentence. Hunger/satiety copy shared; regular-rhythm contradiction ба irregular-rhythm/strictness-аар ялгарсан; зөвшөөрөхүйц.
+1. **VU-08 + VU-10: 54.5%** — 12/22 exact visible sentence. Neutral scope/strength boilerplate давхцсан ч movement-context ба maintain-strengths action ялгаатай; зөвшөөрөхүйц.
+2. **VU-08 + VU-09: 50.0%** — 12/24 exact visible sentence. Neutral structure shared боловч movement context ба cycle guidance/tracking ялгаатай; зөвшөөрөхүйц.
+3. **VU-09 + VU-10: 44.0%** — 11/25 exact visible sentence. Protective тайлбарын хэсэг shared боловч biological referral ба maintain-strengths action ялгаатай; зөвшөөрөхүйц.
+4. **VU-03 + VU-06: 41.9%** — 18/43 exact visible sentence. Meal-rhythm/hunger evidence shared; strict-rule formulation/guidance ба schedule-linked timing-аар ялгарсан; зөвшөөрөхүйц.
+5. **VU-04 + VU-06: 33.3%** — 12/36 exact visible sentence. Hunger/satiety copy shared; regular-rhythm contradiction ба irregular-rhythm/strictness-аар ялгарсан; зөвшөөрөхүйц.
 
 ## Caveats and assumptions
 
-Энэ нь deterministic synthetic product audit бөгөөд clinical validation эсвэл бодит customer willingness-to-pay судалгаа биш. No fixes were applied after the V2.2 audit artifacts were generated.
+Энэ нь deterministic synthetic product audit бөгөөд clinical validation эсвэл бодит customer willingness-to-pay судалгаа биш. P2 closeout-ийн дараа ижил cohort-оор дахин үүсгэв.

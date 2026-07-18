@@ -315,7 +315,8 @@ const groupedNeutralStrengths = JSON.stringify(neutralReport.neutralResult.stren
 for (const expectedStrength of ["өлсөх мэдрэмжээ анзаарах", "цадсанаа мэдээд зогсох", "идэх хэмжээгээ тохируулах", "стрессийн үеийн идэх хүсэл", "орчны хоолны дохио", "нойрны хугацаа, чанар", "өдрийн хөдөлгөөний түвшин", "тогтвортой хоолны хэмнэл", "өмнөх аргаа удаан хугацаанд үргэлжлүүлсэн"]) assert(groupedNeutralStrengths.toLowerCase().includes(expectedStrength), `neutral report missing grouped strength: ${expectedStrength}`);
 assert(!groupedNeutralStrengths.includes("үр дүнгээ хадгалсан"), "no-regain without explicit initial success must not become a maintenance strength");
 assert(!groupedNeutralStrengths.includes("эрсдэлийг бууруулж байна"), "neutral strengths must not claim causal risk reduction");
-assert(neutralReport.neutralResult.limits.includes("Асуумжийн хариултаар тод хэв маяг ялгараагүй тул өдөр тутмын бодит нөхцөл хэд хэдэн удаа давтагдаж байгаа эсэхийг ажиглавал дараагийн дүгнэлт илүү тод болно."));
+assert.equal(neutralReport.neutralResult.limits.length, 1, "neutral limitation must not repeat the observation rationale");
+assert(!neutralPublicText.includes("Асуумжийн хариултаар тод хэв маяг ялгараагүй тул өдөр тутмын бодит нөхцөл хэд хэдэн удаа давтагдаж байгаа эсэхийг ажиглавал дараагийн дүгнэлт илүү тод болно."), "redundant neutral observation rationale remains");
 assert(!JSON.stringify(neutralReport.neutralResult).includes("өмнөх оролдлогын явцын талаар илүү дэлгэрэнгүй мэдээлэл"), "fully routed neutral report must not claim previous-attempt information is missing");
 const emotionOnlyNeutral = reportFor({ "Q-EMOTION": "Өөрчлөгддөггүй" });
 assert.equal(emotionOnlyNeutral.neutralResult.strengths.length, 1);

@@ -8,13 +8,10 @@ Unsupported factual claim, internal contradiction, diagnosis, safety/referral su
 
 Answer-specific guidance, selected-cue evidence, experiment wording, primary finding, attribution, contextual retention, first experiment болон neutral routing-ийн major алдаа илрээгүй.
 
-## P2 — 2
+## P2 — 0
 
-1. Нийтлэг scope өгүүлбэр neutral тайлангуудад давтагдсан ч maximum similarity release threshold-ээс доогуур үлдсэн.
-2. Олон pattern-тай VU-03, VU-06 тайлан урт хэвээр; prioritization тодорхой боловч mobile уншлагад цааш хураангуйлах боломжтой.
+Neutral scope repetition болон VU-03/VU-06 mobile length findings хаагдсан. Давхардсан copy хасагдсан боловч uncertainty, supported evidence, interaction, context, safety болон first experiment хадгалагдсан.
 
-## Remaining P0/P1
+## Remaining P0/P1/P2
 
 None.
-
-No fixes were applied after this audit. Owner review required.

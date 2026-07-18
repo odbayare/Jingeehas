@@ -284,6 +284,41 @@ function validateV22Exactness(results) {
   for (const result of results) assert(!result.bodyText.includes("өгөгдмөл хувилбар"), `${result.user.id}: public default-option phrase leaked`);
 }
 
+function validateV22P2Closeout(results) {
+  const byId = Object.fromEntries(results.map(result => [result.user.id, result]));
+  const neutral = [byId["VU-08"], byId["VU-09"], byId["VU-10"]];
+  assert.equal(new Set(neutral.map(result => result.report.neutralResult?.subtype)).size, 3, "neutral subtypes lost personalization");
+  assert.equal(new Set(neutral.map(result => result.report.neutralResult?.observation?.variable)).size, 3, "neutral observations lost personalization");
+  for (const result of neutral) {
+    const report = result.report.neutralResult;
+    assert(report?.overview?.some(sentence => sentence.includes("хэв маяг")), `${result.user.id}: neutral uncertainty missing`);
+    assert(report?.strengths?.length, `${result.user.id}: neutral strengths missing`);
+    assert(report?.limits?.some(sentence => sentence.includes("оношлохгүй")), `${result.user.id}: neutral scope missing`);
+    assert(report?.observation?.action && report?.observation?.decisionRule, `${result.user.id}: neutral observation or decision rule missing`);
+    assert(!Object.hasOwn(report, "reportUse") && report.limits.length === 1, `${result.user.id}: repeated generic neutral scope remains`);
+  }
+  const genericExperimentReason = "Өөрчлөлтийг нэг зүйлээр эхлүүлснээр бодит амьдралд хэрэгжиж байгаа эсэхийг тодорхой ажиглаж, дараагийн алхмаа баримжаатай сонгоно.";
+  for (const id of ["VU-03", "VU-06"]) {
+    const result = byId[id];
+    assert.equal(result.fullReport.influencingPatterns.length, 3, `${id}: supported pattern count changed`);
+    for (const pattern of result.fullReport.influencingPatterns) {
+      assert(result.bodyText.includes(pattern.evidenceSummary), `${id}: attribution hidden for ${pattern.id}`);
+      assert(result.bodyText.includes(pattern.effectOnWeightLoss), `${id}: effect hidden for ${pattern.id}`);
+      assert(result.bodyText.includes(pattern.uncertainty), `${id}: uncertainty hidden for ${pattern.id}`);
+      assert(!result.bodyText.includes(pattern.explanation), `${id}: repeated pattern explanation remains for ${pattern.id}`);
+    }
+    for (const interaction of result.fullReport.interactionSummary) assert(result.bodyText.includes(interaction.explanation), `${id}: interaction hidden`);
+    for (const context of result.fullReport.contextualFactors) assert(result.bodyText.includes(context.summary || context.explanation), `${id}: context hidden`);
+    assert(result.bodyText.includes(result.fullReport.prioritizedStartingAction.action), `${id}: first experiment hidden`);
+    assert(!result.bodyText.includes(genericExperimentReason), `${id}: generic experiment explanation remains`);
+    if (result.fullReport.professionalGuidance) assert(result.bodyText.includes(result.fullReport.professionalGuidance), `${id}: safety guidance hidden`);
+    for (const html of result.sections.flatMap(section => section.paragraphs)) for (const paragraph of html.match(/<p>.*?<\/p>/g) || []) {
+      const count = paragraph.replace(/<[^>]+>/g, "").split(/[.!?](?:\s|$)/u).filter(Boolean).length;
+      assert(count <= 3, `${id}: paragraph exceeds three sentences`);
+    }
+  }
+}
+
 function qualityMarkdownV22(results, pairs) {
   const v22Review = {
     ...REVIEW,
@@ -302,12 +337,13 @@ function qualityMarkdownV22(results, pairs) {
 
 - **10/10 assessment, 349/349 routed answer, 10/10 report амжилттай.** V2.1-ийн яг ижил cohort, answers, Q-METHOD-LONGEST linkage болон in-memory start/save/complete урсгал ашигласан; payment, invoice, entitlement үүсгээгүй.
 - **Гурван copy-exactness gate бүгд pass.** Menstrual guidance exact answer-аар салсан, environmental evidence зөвхөн selected cue-г нэрлэсэн, public “өгөгдмөл хувилбар” 0 болсон.
-- **Release evidence хэвээр баталгаатай.** P0 0, P1 0, unsupported factual claim 0, internal contradiction 0, first-experiment fit 10/10. 10/10 тайланг guidance visibility-аар шалгаж, trigger-тэй 3/3 guidance public output-д харагдсан.
+- **Release evidence хэвээр баталгаатай.** P0 0, P1 0, P2 0, unsupported factual claim 0, internal contradiction 0, first-experiment fit 10/10. 10/10 тайланг guidance visibility-аар шалгаж, trigger-тэй 3/3 guidance public output-д харагдсан.
+- **V2.2 P2 closeout pass.** Neutral тайлангийн давхардсан хоёр scope өгүүлбэрийг хассан ч uncertainty, supported strengths, limitation, observation, decision rule болон гурван өөр subtype хэвээр. VU-03 688-аас 591 үг, VU-06 619-өөс 518 үг болж, зөвхөн давхардсан тайлбар хасагдсан.
 - **Subjective scores автоматаар нэмэгдээгүй.** Personalization 8.6/10, paid value 8.0/10, Mongolian 8.2/10. Maximum exact-set Jaccard ${(pairs[0].score * 100).toFixed(1)}%, 65%-ийн gate-ээс доогуур.
 
 ## Unchanged cohort, engine, and rubric
 
-V2.1 profile, answer, method linkage, report engine, routing, signal mapping, pattern threshold, prioritization, safety болон similarity formula өөрчлөгдөөгүй. Formula: headings removed, public visible sentences normalized, boilerplate retained, length ≥35, exact-set Jaccard. A–H rubric: factual correctness, attribution, multi-factor reasoning, Mongolian, personalization, paid value, safety, first-experiment fit.
+V2.1 profile, answer, method linkage, inference engine, routing, signal mapping, pattern threshold, prioritization, safety болон similarity formula өөрчлөгдөөгүй. Зөвхөн public report composition-оос давхардсан өгүүлбэрийг хассан. Formula: headings removed, public visible sentences normalized, boilerplate retained, length ≥35, exact-set Jaccard. A–H rubric: factual correctness, attribution, multi-factor reasoning, Mongolian, personalization, paid value, safety, first-experiment fit.
 
 ## Three exactness checks
 
@@ -325,7 +361,7 @@ Score formulas: personalization = E column mean = 8.6; paid value = F column mea
 
 ## Manual sentence-to-answer review
 
-Every changed public sentence and its surrounding report section was compared with the unchanged V2.1 fixture answers. VU-06 and VU-09 preserve their distinct cycle answers; VU-02 names exactly its three selected cues; VU-05 changes wording only. No unsupported diagnosis, cue, prescription, chronology, internal identifier, or contradictory claim remained.
+Every retained public sentence and its surrounding report section was compared with the unchanged V2.1 fixture answers. VU-03 and VU-06 preserve every supported major pattern, attribution, interaction, context, safety guidance, and first experiment. The neutral profiles preserve all supported strengths and distinct observations. No unsupported diagnosis, cue, prescription, chronology, internal identifier, or contradictory claim remained.
 
 ## Per-report findings
 
@@ -341,7 +377,7 @@ ${top}
 
 ## Caveats and assumptions
 
-Энэ нь deterministic synthetic product audit бөгөөд clinical validation эсвэл бодит customer willingness-to-pay судалгаа биш. No fixes were applied after the V2.2 audit artifacts were generated.
+Энэ нь deterministic synthetic product audit бөгөөд clinical validation эсвэл бодит customer willingness-to-pay судалгаа биш. P2 closeout-ийн дараа ижил cohort-оор дахин үүсгэв.
 `;
 }
 
@@ -356,16 +392,13 @@ Unsupported factual claim, internal contradiction, diagnosis, safety/referral su
 
 Answer-specific guidance, selected-cue evidence, experiment wording, primary finding, attribution, contextual retention, first experiment болон neutral routing-ийн major алдаа илрээгүй.
 
-## P2 — 2
+## P2 — 0
 
-1. Нийтлэг scope өгүүлбэр neutral тайлангуудад давтагдсан ч maximum similarity release threshold-ээс доогуур үлдсэн.
-2. Олон pattern-тай VU-03, VU-06 тайлан урт хэвээр; prioritization тодорхой боловч mobile уншлагад цааш хураангуйлах боломжтой.
+Neutral scope repetition болон VU-03/VU-06 mobile length findings хаагдсан. Давхардсан copy хасагдсан боловч uncertainty, supported evidence, interaction, context, safety болон first experiment хадгалагдсан.
 
-## Remaining P0/P1
+## Remaining P0/P1/P2
 
 None.
-
-No fixes were applied after this audit. Owner review required.
 `;
 }
 
@@ -379,7 +412,7 @@ function comparisonMarkdownV22(results, pairs) {
 | Reports | 10/10 | 10/10 | unchanged |
 | P0 | 0 | 0 | unchanged |
 | P1 | 0 | 0 | unchanged |
-| P2 | 2 | 2 | unchanged |
+| P2 | 2 | 0 | two remaining findings closed |
 | Unsupported factual claims | 0 | 0 | unchanged |
 | Internal contradictions | 0 | 0 | unchanged |
 | First-experiment fit | 10/10 | 10/10 | unchanged |
@@ -389,7 +422,7 @@ function comparisonMarkdownV22(results, pairs) {
 | Mongolian | 8.2 | 8.2 | no automatic uplift |
 | Maximum similarity | 58.3% | ${(pairs[0].score * 100).toFixed(1)}% | below 65% gate |
 
-V2.2 changes only three public copy surfaces: exact menstrual-answer guidance, selected environmental-cue evidence, and natural VU-05 experiment wording. Question routing, signals, thresholds, prioritization, safety, payment, entitlement, recovery, cohort inputs, and similarity method are unchanged.
+P2 closeout removes repeated neutral scope copy and redundant explanation from the two three-pattern mobile reports. Question routing, signals, weights, thresholds, pattern attribution, prioritization, safety, payment, entitlement, recovery, first-experiment selection, cohort inputs, and similarity method are unchanged.
 `;
 }
 
@@ -405,7 +438,7 @@ async function main() {
   for (const [index, user] of cohort.entries()) results.push(await simulate(user, index));
   const pairs = similarities(results);
   validateAcceptance(results, pairs);
-  if (AUDIT_VERSION === "v2.2") validateV22Exactness(results);
+  if (AUDIT_VERSION === "v2.2") { validateV22Exactness(results); validateV22P2Closeout(results); }
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   if (AUDIT_VERSION === "v2.2") {
     fs.writeFileSync(path.join(OUTPUT_DIR, "REPORTS.md"), reportsMarkdown(results).replace("# Virtual Cohort V2", "# Virtual Cohort V2.2"));

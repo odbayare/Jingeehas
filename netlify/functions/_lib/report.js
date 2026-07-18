@@ -619,10 +619,9 @@ function neutralResult(evidence, composer, strengths, contextual = [], quality =
     notStronglySupportedFallback: composer.render("neutral_absent_fallback", "neutral_absent"),
     strengths: groupedNeutralStrengths(strengths),
     strengthsFallback: composer.render("neutral_strengths_fallback", "neutral_strengths"),
-    limits: [composer.render("neutral_limits", "neutral_limits"), composer.render("neutral_more_information", "neutral_limits")].filter(Boolean),
+    limits: [composer.render("neutral_limits", "neutral_limits")].filter(Boolean),
     observation: neutralObservation(subtype, composer),
-    professionalScope: professional || composer.render("neutral_professional_scope", "neutral_guidance"),
-    reportUse: composer.render("neutral_report_use", "neutral_use")
+    professionalScope: professional || composer.render("neutral_professional_scope", "neutral_guidance")
   };
 }
 
