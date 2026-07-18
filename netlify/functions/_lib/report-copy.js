@@ -13,12 +13,12 @@ const PATTERN_COPY = Object.freeze({
   },
   irregular_meals_late_hunger: {
     explanation: "Хоолны зай уртсах эсвэл тогтмол бус болох үед өлсөлтийн дохио хэт хүчтэй болсны дараа анзаарагддаг.",
-    effectOnWeightLoss: "Орой бие яарч эхлэхэд идэх хэмжээ, хурд, сонголтоо тайван тохируулахад хэцүү болдог.",
+    effectOnWeightLoss: "Орой хэт өлсөхөд идэх хэмжээ, хурд, сонголтоо тайван тохируулахад хэцүү болдог.",
     uncertainty: "Өдөр бүр ижил биш тул яг аль цагт хүндрэл үүсдгийг ажиглах хэрэгтэй."
   },
   hunger_satiety: {
-    explanation: "Өлсөх эсвэл цадах дохиог цагт нь анзаарахад хэцүү үед хоол эхлэх, зогсох мөч хоёулаа оройтдог.",
-    effectOnWeightLoss: "Идэх хэмжээ биеийн дохионоос илүү таваг, орчин эсвэл тухайн мөчийн яарлаар шийдэгдэх эрсдэлтэй.",
+    explanation: "Өлсөх эсвэл цадах дохиог цагт нь анзаарахад хэцүү үед хооллож эхлэх болон идэхээ зогсоох мөч хоёулаа оройтдог.",
+    effectOnWeightLoss: "Ийм үед идэх хэмжээгээ тайван тохируулахад хэцүү болж болно.",
     uncertainty: "Нэг хоолны туршлагаар биш, давтагддаг мөчөөр нь дүгнэнэ."
   },
   sleep_fatigue: {
@@ -76,13 +76,14 @@ const SENTENCE_TEMPLATES = Object.freeze({
 
   evidence_emotional: { requiredPatterns: ["emotional_regulation"], text: "Стресс нэмэгдэхэд идэх хүсэл тань хүчтэй болж, сэтгэл хөдлөл өдөр тутмын сонголтоо тогтвортой барихад саад болсон байна." },
   evidence_environmental: { requiredPatterns: ["environmental_cues"], text: "Өлсөөгүй үед орчны хоолны дохио нөлөөлдөг бөгөөд орчин төлөвлөсөн сонголтоо барихад саад болсон байна." },
-  evidence_meal_rhythm: { requiredPatterns: ["irregular_meals_late_hunger"], text: "Та хоолны зай урт байдаг, өлсөлтөө хэт хүчтэй болсны дараа анзаардаг гэж тэмдэглэсэн." },
+  evidence_meal_rhythm: { requiredPatterns: ["irregular_meals_late_hunger"], text: "Хоол хоорондын зай тань урт байдаг бөгөөд өлсөлт хэт хүчтэй болсон хойно л анзаарагддаг гэж хариулжээ." },
   evidence_hunger_satiety: { requiredPatterns: ["hunger_satiety"], text: "Та өлсөлтөө хэт хүчтэй болсны дараа анзаардаг бөгөөд өлсөх эсвэл цадах мэдрэмж өмнөх аргын саад болсон гэж тэмдэглэсэн." },
   evidence_sleep: { requiredPatterns: ["sleep_fatigue"], text: "Нойр дутуу эсвэл тасалдсан үед ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөгөө дагахад хүндрэл гардаг байна." },
   evidence_restrictive: { requiredPatterns: ["restrictive_rebound"], text: "Хэт хатуу дүрмийг удаан барихад хэцүү болж, нэг хазайлтын дараа төлөвлөгөөг бүхэлд нь орхих эрсдэл нэмэгдсэн байна." },
   evidence_plan_mismatch: { requiredPatterns: ["plan_daily_life_mismatch"], text: "Төлөвлөгөөг өдөр тутам хэрэгжүүлэхэд бодит саад тулгарч, өмнөх оролдлого тогтвортой үргэлжлээгүй байна." },
   evidence_previous_attempt: { requiredPatterns: ["previous_attempt_sustainability"], text: "Өмнөх арга зогссоны дараа гарсан үр дүнг өдөр тутам хадгалах орлуулах төлөвлөгөө бэлэн байгаагүй." },
   evidence_previous_attempt_complete: { requiredPatterns: ["previous_attempt_sustainability"], requiredSignals: ["activity_based_method", "sustained_attempt", "initial_attempt_success", "weight_regain"], text: "Өмнөх хөдөлгөөнд суурилсан арга эхэндээ үр дүн өгч, нэг жилээс урт үргэлжилсэн ч зогссоны дараа үр дүнг хадгалах хялбар хувилбар бэлэн байгаагүй." },
+  evidence_previous_attempt_injury_cluster: { requiredPatterns: ["previous_attempt_sustainability"], requiredSignals: ["activity_based_method", "sustained_attempt", "initial_attempt_success", "weight_regain"], requiredContexts: ["explicit_injury_stop_context"], text: "Таны хувьд гол хүндрэл нь өөрчлөлт эхлүүлэх чадвар биш. Харин ажиллаж байсан хөдөлгөөнөө үргэлжлүүлэх боломжгүй болсон үед өмнөх үр дүнг хадгалах, өдөр тутмын амьдралд хэрэгжүүлж болох өөр төлөвлөгөө бэлэн байгаагүйд байна." },
   evidence_previous_attempt_maintenance: { requiredPatterns: ["previous_attempt_sustainability"], text: "Тэр үед өмнөх үр дүнг дэмжих, өдөр тутам хэрэгжүүлж болох өөр хувилбар бэлэн байгаагүй байна." },
   evidence_previous_attempt_meaning_voluntary: { requiredPatterns: ["previous_attempt_sustainability"], requiredContexts: ["explicit_voluntary_stop_context"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Өмнөх аргаа зогсоосны дараа үр дүнг өдөр тутам хадгалах өөр хувилбар бэлэн байгаагүй байна." },
   evidence_previous_attempt_meaning_neutral: { requiredPatterns: ["previous_attempt_sustainability"], forbiddenContexts: ["explicit_injury_stop_context", "explicit_voluntary_stop_context"], text: "Өмнөх оролдлого үргэлжлээгүй үед үр дүнг өдөр тутам хадгалах өөр хувилбар бэлэн байгаагүй байна." },
@@ -113,7 +114,8 @@ const SENTENCE_TEMPLATES = Object.freeze({
   strength_adherence_success: { requiredSignals: ["sustained_attempt", "initial_attempt_success"], text: "Өмнөх аргаа нэг жилээс урт хугацаанд хэрэгжүүлж, эхний үр дүн гаргаж чадсан нь өөрчлөлтийг тууштай барих чадвартайг харуулна." },
 
   neutral_no_pattern: { requiredPatternCount: 0, text: "Одоогийн өгсөн хариултуудаар жин хасалтад саад болж буй нэг тод сэтгэлзүйн эсвэл зан үйлийн хэв маяг ялгараагүй байна." },
-  neutral_meaning: { requiredPatternCount: 0, text: "Энэ нь хүндрэл огт байхгүй гэсэн үг биш; зөвхөн асуумжид хамрагдсан чиглэлүүдээс аль нэгийг гол шалтгаан гэж нэрлэх хангалттай мэдээлэл бүрдээгүйг илэрхийлнэ." },
+  neutral_meaning_complete: { requiredPatternCount: 0, text: "Энэ нь хүндрэл огт байхгүй гэсэн үг биш. Харин асуумжид хамрагдсан чиглэлүүдээс аль нэг нь бусдаасаа илүү тод, давтагдсан хэв маяг болж ялгараагүйг илэрхийлнэ." },
+  neutral_meaning_insufficient: { requiredPatternCount: 0, text: "Одоогийн хариултаар тод хэв маяг дүгнэхэд мэдээлэл хүрэлцээгүй байна." },
   neutral_absent_emotional: { requiredPatternCount: 0, requiredProtectiveSignals: ["emotional_eating"], text: "Стресс нэмэгдэхэд идэх хүсэл тогтмол өөрчлөгддөг шинж илрээгүй." },
   neutral_absent_environmental: { requiredPatternCount: 0, requiredProtectiveSignals: ["environmental_cue_reactivity"], text: "Хоол харагдах, үнэртэх эсвэл бусад хүн идэх нь өлсөөгүй үед идэх хүсэл тогтмол төрүүлдэг шинж илрээгүй." },
   neutral_absent_body_signals: { requiredPatternCount: 0, requiredProtectiveSignals: ["hunger_recognition_difficulty", "satiety_difficulty"], text: "Өлсөх, цадах мэдрэмжээ анзаарах нь одоогийн гол хүндрэл болж харагдсангүй." },
@@ -183,12 +185,12 @@ const STRATEGY_COPY = Object.freeze({
   pause_before_emotional_eating: { action: "Стрессийн үеийн идэх хүсэлтэй тэмцэхээс илүү өлсөлт болон амрах хэрэгцээг ялгаж танихад төвлөрнө.", reason: "Ингэснээр хоолыг хорихгүйгээр тухайн мөчийн хэрэгцээнд тохирсон сонголт хийх зай гарна." },
   change_one_visible_cue: { action: "Бүх орчноо нэг дор өөрчлөхгүй; өлсөөгүй үед идэх хүсэл хамгийн их төрүүлдэг нэг дохиог нүднээс холдуулна.", reason: "Нэг тодорхой дохиог өөрчлөх нь олон дүрэм нэмэхгүйгээр орчны нөлөөг шалгах боломж өгнө." },
   anchor_one_meal_time: { action: "Бүх хоолны цагаа зэрэг засахгүй; хэт өлсөхөөс өмнө барьж болох нэг тогтвортой хоолны мөчөөс эхэлнэ.", reason: "Нэг мөч тогтворжиход оройн яарсан сонголт болон хоолны урт зайг хамтад нь багасгах боломжтой." },
-  mid_meal_pause: { action: "Хоолны хэмжээг гаднаас хатуу тогтоохоос илүү идэж байх үеийн өлсөлт, цадалтын дохиог анзаарах чадварыг ашиглана.", reason: "Энэ чиглэл биеийн дохиог хүчээр дарахгүйгээр хоол зогсоох мөчийг илүү тод болгоно." },
+  mid_meal_pause: { action: "Хоолны хэмжээг гаднаас хатуу тогтоохоос илүү идэж байх үеийн өлсөлт, цадалтын дохиог анзаарах чадварыг ашиглана.", reason: "Энэ чиглэл биеийн дохиог хүчээр дарахгүйгээр идэхээ зогсоох мөчийг илүү тод болгоно." },
   fixed_wind_down: { action: "Нойрыг нэг дор төгс болгох зорилго тавихгүй; оройн ачааллыг бууруулах тогтмол нэг үйлдлээс эхэлнэ.", reason: "Оройн хэмнэл тогтворжих нь маргаашийн ядаргаа болон яарсан сонголтыг ажиглах суурь болно." },
   one_movement_anchor: { action: "Дасгалын том хөтөлбөрөөс өмнө өдөр тутам давтаж болох бага ачааллын нэг хөдөлгөөнийг тогтмол мөчтэй холбоно.", reason: "Ингэснээр хөдөлгөөний хэмжээнээс түрүүлж давтаж болох нөхцөлийг олно." },
   remove_one_strict_rule: { action: "Төлөвлөгөөг бүхэлд нь солихгүй; тасрах эрсдэлийг хамгийн их нэмэгдүүлдэг нэг хатуу дүрмийг уян болгоно.", reason: "Нэг дүрмийг өөрчлөх нь хазайлтын дараа бүх төлөвлөгөөг орхих эрсдэлийг багасгана." },
   minimum_viable_plan: { action: "Төгс өдрийн төлөвлөгөө бус, хамгийн завгүй өдөр ч багтах хялбаршуулсан хувилбар бэлдэнэ.", reason: "Өдөр тутмын бодит нөхцөлд багтсан төлөвлөгөөг тогтмол давтах боломж илүү өндөр." },
-  build_maintenance_bridge: { action: "Өмнөх аргыг яг хуучнаар нь давтахаас илүү өдөр тутам үргэлжлүүлж болох орлуулах төлөвлөгөө бэлдэнэ.", reason: "Орлуулах төлөвлөгөө нь үндсэн хувилбар, нөхцөл хүндрэхэд хийх богино хувилбар, алгассан өдрийн дараа хэвийн үргэлжлүүлэх дүрэм гэсэн гурван хэсэгтэй байна." }
+  build_maintenance_bridge: { action: "Өмнөх аргыг яг хуучнаар нь давтахаас илүү өдөр тутмын амьдралд тогтмол хэрэгжүүлж болох орлуулах төлөвлөгөө бэлдэнэ.", reason: "Орлуулах төлөвлөгөө нь үндсэн хувилбар, нөхцөл хүндрэхэд хийх богино хувилбар, алгассан өдрийн дараа хэвийн үргэлжлүүлэх дүрэм гэсэн гурван хэсэгтэй байна." }
 });
 
 const INTERACTION_COPY = Object.freeze({
@@ -208,9 +210,9 @@ const PROTECTIVE_COPY = Object.freeze({
   emotional_eating: "Стресстэй үед идэх хүсэл өөрчлөгддөггүй нь сэтгэл хөдлөл хооллолтыг шууд удирддаггүй хамгаалах хүчин зүйл болж байна.",
   environmental_cue_reactivity: "Өлсөөгүй үед орчны хоолны дохио гол саад болж харагдсангүй.",
   portion_difficulty: "Тодорхой хүнсний хэмжээг тохируулахад хүндрэлгүй байгаа нь цадах дохиогоо ашиглах давуу тал болж байна.",
-  regular_meal_rhythm: "Тогтвортой хоолны хэмнэл нь ашиглаж болох давуу тал байна.",
+  regular_meal_rhythm: "Таны хоолны хэмнэл тогтвортой байгаа нь хэт өлсөлт одоогийн гол саад биш байгааг харуулна.",
   hunger_recognition_difficulty: "Өлсөх мэдрэмжээ амархан анзаардаг нь биеийн дохиогоо ашиглах хамгаалах хүчин зүйл болж байна.",
-  satiety_difficulty: "Цадсанаа анзаараад зогсож чаддаг нь идэх хэмжээг тохируулах давуу тал болж байна.",
+  satiety_difficulty: "Цадсанаа анзаараад зогсож чаддаг нь идэх хэмжээгээ тохируулахад ашиглаж болох бодит давуу тал юм.",
   short_sleep: "Унтах хугацаа гол саад болж харагдсангүй.",
   poor_sleep_quality: "Нойрны чанар сайн байгаа нь өдөр тутмын сонголтоо төлөвлөхөд дэмжлэг болно.",
   low_movement: "Өдрийн хөдөлгөөн их байгаа нь одоо байгаа бодит давуу тал юм.",

@@ -191,6 +191,8 @@ function renderPlanDetails(plan) {
   if (!plan) return "";
   const fields = plan.kind === "emotional_observation"
     ? [["Ажиглах мөч", plan.trigger], ["Хийх нэг үйлдэл", plan.action], ["Юуг ажиглах вэ?", plan.observe], ["Юуг өөрчлөхгүй вэ?", plan.keepConstant], ["Амжилтыг хэрхэн таних вэ?", plan.success], ["Алгассан ажиглалтын дараа", plan.fallback]]
+    : plan.kind === "meal_timing_observation"
+      ? [["Туршиж буй нэг зүйл", plan.variable], ["Юуг ажиглах вэ?", plan.observe], ["Юуг өөрчлөхгүй вэ?", plan.keepConstant], ["Амжилтыг хэрхэн таних вэ?", plan.success], ["Алгассан өдрийн дараа", plan.fallback]]
     : [["Туршиж буй нэг зүйл", plan.variable], ["Хугацаа", plan.duration], ["Хийх хувилбар", plan.option], ["Өмнөх гэмтэлтэй холбоотой зовиур", plan.injuryBoundary], ["Нэмэлт зардал", plan.additionalCost], ["Тогтмол хийх мөч", plan.anchor], ["Давтамж", plan.frequency], ["Юуг тэмдэглэх вэ?", plan.record], ["Амжилтыг хэрхэн хэмжих вэ?", plan.success], ["Завгүй өдрийн богино хувилбар", plan.fallback], ["Алгассан өдрийн дүрэм", plan.maintenanceRule]];
   const visibleFields = fields.filter(([, value]) => value);
   return visibleFields.length ? `<dl>${visibleFields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("")}</dl>` : "";

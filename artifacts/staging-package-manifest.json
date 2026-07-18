@@ -62,7 +62,7 @@
     },
     {
       "file": "netlify/functions/_lib/report-copy.js",
-      "sha256": "0d3cd8cf95ae1aaf3be9388c57e39e45992487537d5fbc9079ebf4e8a70e9772"
+      "sha256": "c906f157ecd58875984e9876687a48998fe5bb570d26e29c91e3130aff96ac94"
     },
     {
       "file": "netlify/functions/_lib/report-patterns.js",
@@ -74,7 +74,7 @@
     },
     {
       "file": "netlify/functions/_lib/report.js",
-      "sha256": "1f55971dcb2ca12281c82f53e3a3311e1d4b569295eeaf0dc9665686bc94f6a5"
+      "sha256": "c757d27cebdf80249891e03bc1a2689adfb474c9851d32168884cbeb37b5d1d8"
     },
     {
       "file": "netlify/functions/_lib/safety.js",
@@ -226,7 +226,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "8c5bbc8caa3c719b62f98ca09009351c292014e8a4853ec7ce459b612ca313e4"
+      "sha256": "ccc7387d8821c38f002468ce57133c0386bdde56a6843cffdd9b555058afe235"
     },
     {
       "file": "site/assets/favicon.svg",
