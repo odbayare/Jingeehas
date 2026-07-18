@@ -5,6 +5,9 @@
 })(typeof window !== "undefined" ? window : globalThis, function buildQuestionBank() {
   "use strict";
 
+  const LEGACY_QUESTIONNAIRE_VERSION = "jingeehas-production-2026-07";
+  const QUESTIONNAIRE_VERSION = "jingeehas-production-2026-07-v2-method-link";
+
   const QUESTIONS = Object.freeze([
     { id: "Q-AGE", section: "Суурь мэдээлэл", type: "number", text: "Таны нас", required: true, min: 18, max: 120, unit: "нас" },
     { id: "Q-SEX", section: "Суурь мэдээлэл", type: "single", text: "Таны биологийн хүйс аль вэ?", required: true, options: ["Эмэгтэй", "Эрэгтэй", "Хариулахгүй байхыг хүсэж байна"], sensitive: true, routingOnly: true },
@@ -37,6 +40,7 @@
     { id: "S1-B01", section: "Аюулгүй байдлын дохио", type: "multi", text: "Одоо илэрч буй биеийн яаралтай шинж аль нь вэ?", required: true, max: 3, options: ["Будилах", "Ухаан балартах", "Бие огцом муудах", "Аль нь ч үгүй", "Хариулахгүй"], sensitive: true },
     { id: "Q-METHOD-CURRENT", section: "Жин бууруулах аргын түүх", type: "multi", text: "Та одоогоор жингээ бууруулахын тулд ямар арга хэрэглэж байна вэ?", required: true, max: 8, options: ["Хоолны дэглэм", "Илчлэг тоолох", "Мацаг барих", "Нүүрс ус багасгах", "Дасгал хөдөлгөөн", "Алхалт", "Жин хасах эм", "Хоолны дуршил бууруулах бүтээгдэхүүн", "Нэмэлт бүтээгдэхүүн", "Мэргэжлийн хоолзүйчийн зөвлөгөө", "Сэтгэлзүйн зөвлөгөө", "Мэс заслын арга", "Онлайн хөтөлбөр эсвэл апп", "Өөр арга", "Одоогоор ямар нэг арга хэрэглээгүй"] },
     { id: "Q-METHOD-PAST", section: "Жин бууруулах аргын түүх", type: "multi", text: "Жингээ бууруулахын тулд дараах аргуудаас алийг нь хэрэглэж үзсэн бэ?", required: true, max: 8, options: ["Хоолны дэглэм", "Илчлэг тоолох", "Мацаг барих", "Нүүрс ус багасгах", "Дасгал хөдөлгөөн", "Алхалт", "Жин хасах эм", "Хоолны дуршил бууруулах бүтээгдэхүүн", "Нэмэлт бүтээгдэхүүн", "Мэргэжлийн хоолзүйчийн зөвлөгөө", "Сэтгэлзүйн зөвлөгөө", "Мэс заслын арга", "Онлайн хөтөлбөр эсвэл апп", "Өөр арга", "Ямар нэг арга хэрэглэж үзээгүй"] },
+    { id: "Q-METHOD-LONGEST", introducedIn: QUESTIONNAIRE_VERSION, parent: "Q-METHOD-PAST", showWhenSelectionCountAtLeast: 2, showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], dynamicOptionsFrom: "Q-METHOD-PAST", section: "Жин бууруулах аргын түүх", type: "single", text: "Таны хамгийн удаан үргэлжилсэн оролдлого аль арга байсан бэ?", required: true, options: [] },
     { id: "Q-METHOD-DURATION", parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], section: "Жин бууруулах аргын түүх", type: "single", text: "Өмнөх оролдлогоос хамгийн удаан үргэлжилсэн нь хэр удаан байсан бэ?", required: true, options: ["2 долоо хоногоос бага", "2–8 долоо хоног", "2–6 сар", "6–12 сар", "1 жилээс урт", "Тодорхой санахгүй"] },
     { id: "Q-METHOD-STOP", parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], section: "Жин бууруулах аргын түүх", type: "text", text: "Тэр оролдлого яагаад зогссон бэ?", required: true, maxLength: 1000 },
     { id: "Q-METHOD-RESULT", parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], section: "Жин бууруулах аргын түүх", type: "single", text: "Эхний үед ямар үр дүн ажиглагдсан бэ?", required: true, options: ["Жин буурсан", "Жин тогтвортой байсан", "Жин нэмэгдсэн", "Тодорхой өөрчлөлт ажиглагдаагүй", "Тодорхой санахгүй"] },
@@ -46,23 +50,45 @@
     { id: "Q-METHOD-BARRIERS", section: "Жин бууруулах аргын түүх", type: "multi", text: "Аргаа тогтвортой үргэлжлүүлэхэд юу хамгийн их саад болдог вэ?", required: true, max: 5, options: ["Цагийн хуваарь", "Өлсөх эсвэл цадах мэдрэмж", "Стресс ба сэтгэл хөдлөл", "Гэр бүл эсвэл орчны нөлөө", "Зардал", "Ядаргаа эсвэл нойр", "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт", "Үр дүн удаан харагдах", "Хэт хатуу дүрэм", "Тодорхой саад байгаагүй", "Хариулахгүй"] },
     { id: "OPEN-PAST", section: "Өмнөх оролдлого", type: "text", text: "Жингээ бууруулахын тулд өмнө туршсан нэг арга яагаад удаан үргэлжлээгүй вэ?", required: false, maxLength: 2000 }
   ]);
-  const MAX_ROUTED_QUESTION_COUNT = 39;
+  const MAX_ROUTED_QUESTION_COUNT = 40;
 
-  function questionById(id) { return QUESTIONS.find(question => question.id === id) || null; }
-  function isApplicable(question, answers, seen = new Set()) {
+  function versionAllows(question, version = QUESTIONNAIRE_VERSION) {
+    return !question.introducedIn || version === question.introducedIn;
+  }
+  function questionById(id, version = QUESTIONNAIRE_VERSION) {
+    const question = QUESTIONS.find(item => item.id === id) || null;
+    return question && versionAllows(question, version) ? question : null;
+  }
+  function isApplicable(question, answers, seen = new Set(), version = QUESTIONNAIRE_VERSION) {
+    if (!versionAllows(question, version)) return false;
     if (!question.parent) return true;
     if (seen.has(question.id)) return false;
-    const parentQuestion = questionById(question.parent);
-    if (!parentQuestion || !isApplicable(parentQuestion, answers, new Set([...seen, question.id]))) return false;
+    const parentQuestion = questionById(question.parent, version);
+    if (!parentQuestion || !isApplicable(parentQuestion, answers, new Set([...seen, question.id]), version)) return false;
     const parentValue = answers[question.parent];
     if (question.showWhenExcludes) {
       if (!Array.isArray(parentValue) || parentValue.length === 0) return false;
-      return !question.showWhenExcludes.some(value => parentValue.includes(value));
+      if (question.showWhenExcludes.some(value => parentValue.includes(value))) return false;
+      if (question.showWhenSelectionCountAtLeast && parentValue.length < question.showWhenSelectionCountAtLeast) return false;
+      return true;
     }
     return Array.isArray(question.showWhen) ? question.showWhen.includes(parentValue) : parentValue === question.showWhen;
   }
-  function visibleQuestions(answers = {}) { return QUESTIONS.filter(question => isApplicable(question, answers)); }
-  function validateAnswer(question, value) {
+  function materializeQuestion(question, answers = {}) {
+    if (!question.dynamicOptionsFrom) return question;
+    const selected = Array.isArray(answers[question.dynamicOptionsFrom]) ? answers[question.dynamicOptionsFrom] : [];
+    return { ...question, options: selected.filter(option => option !== "Ямар нэг арга хэрэглэж үзээгүй") };
+  }
+  function visibleQuestions(answers = {}, version = QUESTIONNAIRE_VERSION) {
+    return QUESTIONS.filter(question => isApplicable(question, answers, new Set(), version)).map(question => materializeQuestion(question, answers));
+  }
+  function autoLinkedLongestMethod(answers = {}, version = QUESTIONNAIRE_VERSION) {
+    if (version !== QUESTIONNAIRE_VERSION) return null;
+    const selected = Array.isArray(answers["Q-METHOD-PAST"]) ? answers["Q-METHOD-PAST"].filter(option => option !== "Ямар нэг арга хэрэглэж үзээгүй") : [];
+    return selected.length === 1 ? selected[0] : answers["Q-METHOD-LONGEST"] || null;
+  }
+  function validateAnswer(question, value, context = {}) {
+    question = materializeQuestion(question, context.answers || {});
     const empty = value == null || value === "" || (Array.isArray(value) && value.length === 0);
     if (empty) return question.required ? "Энэ асуултад хариулна уу." : "";
     if (question.type === "number") {
@@ -78,5 +104,5 @@
     return "";
   }
 
-  return { QUESTIONS, MAX_ROUTED_QUESTION_COUNT, questionById, isApplicable, visibleQuestions, validateAnswer };
+  return { QUESTIONS, LEGACY_QUESTIONNAIRE_VERSION, QUESTIONNAIRE_VERSION, MAX_ROUTED_QUESTION_COUNT, questionById, isApplicable, visibleQuestions, autoLinkedLongestMethod, validateAnswer };
 });

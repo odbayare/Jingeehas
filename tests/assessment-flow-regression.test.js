@@ -38,7 +38,7 @@ function assertRoute(name, overrides, requiredIds = [], excludedIds = []) {
   assert(ids.length <= questions.MAX_ROUTED_QUESTION_COUNT, `${name}: route exceeds maximum`);
   for (const id of requiredIds) assert(ids.includes(id), `${name}: missing ${id}`);
   for (const id of excludedIds) assert(!ids.includes(id), `${name}: unexpected ${id}`);
-  for (const question of route) assert.equal(questions.validateAnswer(question, answers[question.id]), "", `${name}: invalid ${question.id}`);
+  for (const question of route) assert.equal(questions.validateAnswer(question, answers[question.id], { answers, version: questions.QUESTIONNAIRE_VERSION }), "", `${name}: invalid ${question.id}`);
   return { answers, ids };
 }
 
@@ -54,7 +54,7 @@ async function seededAssessment(database, suffix) {
   const assessmentId = `wa-${suffix}`;
   const now = new Date().toISOString();
   await database.insert("sessions", { id: sessionId, tokenHash: `hash-${suffix}`, createdAt: now, expiresAt: new Date(Date.now() + 3600000).toISOString(), revokedAt: null });
-  await database.insert("assessments", { id: assessmentId, sessionId, safetyCheckId: `sc-${suffix}`, status: "draft", reportMode: null, safetyRoute: null, createdAt: now, updatedAt: now, completedAt: null });
+  await database.insert("assessments", { id: assessmentId, sessionId, safetyCheckId: `sc-${suffix}`, status: "draft", reportMode: null, safetyRoute: null, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, createdAt: now, updatedAt: now, completedAt: null });
   return { sessionId, assessmentId };
 }
 
@@ -66,7 +66,7 @@ async function seededAssessment(database, suffix) {
   assertRoute("post-menopausal female", { "Q-SEX": "Эмэгтэй", "MC-GATE": "Үгүй, хамаарахгүй", "MENO-GATE": "Тийм, хамаарна" }, ["MENO-GATE"], ["MC-01"]);
   assertRoute("prefer not to answer", { "Q-SEX": "Хариулахгүй байхыг хүсэж байна" }, [], ["MC-GATE", "MC-01", "PREG-GATE", "MENO-GATE"]);
   assertRoute("no previous attempts", { "Q-METHOD-PAST": ["Ямар нэг арга хэрэглэж үзээгүй"] }, ["Q-METHOD-BARRIERS"], ["Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN"]);
-  assertRoute("multiple prior attempts", { "Q-METHOD-PAST": ["Хоолны дэглэм", "Дасгал хөдөлгөөн"] }, ["Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN"]);
+  assertRoute("multiple prior attempts", { "Q-METHOD-PAST": ["Хоолны дэглэм", "Дасгал хөдөлгөөн"] }, ["Q-METHOD-LONGEST", "Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN"]);
   assertRoute("medication supported", { "Q-METHOD-PAST": ["Жин хасах эм"], "Q-METHOD-MEDICATION": "Эмчийн хяналттай эм хэрэглэсэн" }, ["Q-METHOD-MEDICATION"]);
   assertRoute("emotional eating", { "Q-EMOTION": "Нэлээд нэмэгддэг" }, ["Q-EMOTION"]);
   assertRoute("sleep risk", { "Q-SLEEP-DURATION": "4 цагаас бага", "Q-SLEEP-QUALITY": "Өглөө ядарсан хэвээр байдаг" }, ["Q-SLEEP-DURATION", "Q-SLEEP-QUALITY"]);
@@ -91,7 +91,7 @@ async function seededAssessment(database, suffix) {
 
   const neutralFixture = reportFixtures.find(item => item.name === "fully routed neutral protective");
   const neutralSeeded = await seededAssessment(database, "neutral-full-route");
-  assert.equal(questions.visibleQuestions(neutralFixture.answers).length, questions.MAX_ROUTED_QUESTION_COUNT, "neutral acceptance fixture must use the complete route");
+  assert.equal(questions.visibleQuestions(neutralFixture.answers).length, questions.MAX_ROUTED_QUESTION_COUNT - 1, "single-method fixture auto-binds the longest method without adding a visible question");
   await saveAssessment(database, neutralSeeded.sessionId, { assessmentId: neutralSeeded.assessmentId, answers: neutralFixture.answers });
   const neutralCompletion = await completeAssessment(database, neutralSeeded.sessionId, { assessmentId: neutralSeeded.assessmentId });
   assert.equal(neutralCompletion.status, "complete", "fully routed neutral fixture must complete successfully");

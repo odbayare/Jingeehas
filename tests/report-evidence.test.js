@@ -303,7 +303,7 @@ assert(!/\d/.test(JSON.stringify(emotionalReport.prioritizedStartingAction.plan)
 const neutralFixture = fixtures.find(item => item.name === "fully routed neutral protective");
 const neutralRoute = questionBank.visibleQuestions(neutralFixture.answers);
 const neutralReport = reportFor(neutralFixture.answers);
-assert.equal(neutralRoute.length, questionBank.MAX_ROUTED_QUESTION_COUNT, "neutral fixture must traverse the complete production route");
+assert.equal(neutralRoute.length, questionBank.MAX_ROUTED_QUESTION_COUNT - 1, "single-method fixture auto-binds the longest method without adding a visible question");
 assert.equal(neutralRoute.filter(question => question.required).length, 23, "neutral route required-question coverage changed");
 assert.equal(neutralRoute.filter(question => neutralFixture.answers[question.id] != null).length, neutralRoute.length, "neutral fixture must answer every routed question");
 assert.deepEqual(neutralRoute.filter(question => questionBank.validateAnswer(question, neutralFixture.answers[question.id])).map(question => question.id), [], "neutral fixture must complete without validation errors");

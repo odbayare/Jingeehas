@@ -16,10 +16,10 @@ const PAYMENT_COPY = Object.freeze({
 const PAYMENT_STATES = new Set(["idle", "creating", "create_unknown", "reconciling", "pending", "checking", "paid", "create_error", "create_failed_confirmed", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
 const questionApi = typeof require === "function" ? require("./questions.js") : window.JingeehasQuestions;
 const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй", "Одоогоор ямар нэг арга хэрэглээгүй", "Ямар нэг арга хэрэглэж үзээгүй", "Мэргэжлийн дэмжлэг аваагүй", "Тодорхой саад байгаагүй"]);
-const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"], "Q-METHOD-PAST": ["Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION"] });
+const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"], "Q-METHOD-PAST": ["Q-METHOD-LONGEST", "Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION"] });
 
 function createState() {
-  return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", payment: { status: "idle" },
+  return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, error: "" }, ownerPreview: false, busy: false, slowSave: false };
@@ -174,7 +174,7 @@ function renderQuestionInput(question, value) {
   return `<fieldset><legend>${escapeHtml(question.text)}</legend>${question.options.map(option => `<label class="option-label"><input type="${type}" name="answer-${question.id}" data-question="${question.id}" value="${escapeAttribute(option)}" ${validity} ${(type === "checkbox" ? values.includes(option) : value === option) ? "checked" : ""}><span>${escapeHtml(option)}</span></label>`).join("")}</fieldset>`;
 }
 function renderQuestions() {
-  const questions = questionApi.visibleQuestions(state.answers);
+  const questions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
   state.questionIndex = Math.min(state.questionIndex, Math.max(0, questions.length - 1));
   const question = questions[state.questionIndex];
   const percent = Math.round(((state.questionIndex + 1) / questions.length) * 100);
@@ -333,13 +333,13 @@ async function submitContact(form) {
     state.inviteToken = ""; state.busy = false; render(); return;
   }
   const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId }) });
-  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.busy = false; navigate("/assessment/questions");
+  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.busy = false; navigate("/assessment/questions");
 }
 async function submitConsent(form) {
   const accepted = formObject(form).consent === "yes";
   const result = await api("/.netlify/functions/advisor-consent", { method: "POST", body: JSON.stringify({ coachClientId: state.invitation.coachClientId, consent: accepted }) });
   const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId, ...(accepted ? { coachClientId: result.coachClientId } : {}) }) });
-  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.invitation = null; navigate("/assessment/questions");
+  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.invitation = null; navigate("/assessment/questions");
 }
 async function createInvoice() {
   if (state.busy || state.assessmentStatus !== "complete") return;
@@ -385,15 +385,15 @@ function updateAnswer(input) {
 }
 async function nextQuestion() {
   if (state.busy) return;
-  const questions = questionApi.visibleQuestions(state.answers); const question = questions[state.questionIndex];
-  const error = questionApi.validateAnswer(question, state.answers[question.id]);
+  const questions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion); const question = questions[state.questionIndex];
+  const error = questionApi.validateAnswer(question, state.answers[question.id], { answers: state.answers, version: state.questionnaireVersion });
   if (error) { state.validationError = error; render(); return; }
   state.busy = true; state.slowSave = false; state.validationError = ""; render({ focus: false });
   const slowTimer = setTimeout(() => { if (state.busy) { state.slowSave = true; render({ focus: false }); } }, 1000);
   try {
     const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: { [question.id]: state.answers[question.id] } }) });
     if (!saved.savedQuestionIds?.includes(question.id)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed" } });
-    const routedQuestions = questionApi.visibleQuestions(state.answers);
+    const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
     const persistedIndex = routedQuestions.findIndex(item => item.id === question.id);
     if (persistedIndex >= 0 && persistedIndex < routedQuestions.length - 1) {
       state.questionIndex = persistedIndex + 1; state.validationError = ""; state.busy = false; state.slowSave = false; render(); return;
@@ -405,7 +405,7 @@ async function nextQuestion() {
   } catch (requestError) {
     const code = requestError?.body?.error;
     if (code === "assessment_incomplete" && requestError.body.questionId) {
-      const routedQuestions = questionApi.visibleQuestions(state.answers);
+      const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
       const missingIndex = routedQuestions.findIndex(item => item.id === requestError.body.questionId);
       if (missingIndex >= 0) state.questionIndex = missingIndex;
       state.validationError = "Шаардлагатай өмнөх асуултын хариулт дутуу байна. Хариултаа нөхөөд дахин үргэлжлүүлнэ үү.";
@@ -453,11 +453,11 @@ async function restoreServerState() {
   try {
     const restored = await api("/.netlify/functions/weight-session-state", { method: "GET" });
     if (!restored.assessment) return;
-    state.assessmentId = restored.assessment.assessmentId; state.assessmentStatus = restored.assessment.status; state.payment = restored.payment || state.payment;
+    state.assessmentId = restored.assessment.assessmentId; state.assessmentStatus = restored.assessment.status; state.questionnaireVersion = restored.assessment.questionnaireVersion || questionApi.LEGACY_QUESTIONNAIRE_VERSION; state.payment = restored.payment || state.payment;
     state.answers = restored.answers || {}; state.report = restored.report || null;
     if (restored.assessment.status === "draft") {
-      const routedQuestions = questionApi.visibleQuestions(state.answers);
-      const firstIncomplete = routedQuestions.findIndex(question => questionApi.validateAnswer(question, state.answers[question.id]));
+      const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
+      const firstIncomplete = routedQuestions.findIndex(question => questionApi.validateAnswer(question, state.answers[question.id], { answers: state.answers, version: state.questionnaireVersion }));
       state.questionIndex = firstIncomplete >= 0 ? firstIncomplete : Math.max(0, routedQuestions.length - 1);
     }
   } catch {}

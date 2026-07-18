@@ -3,7 +3,11 @@
 const { randomId } = require("./crypto.js");
 const { calculateAssessmentSafety, ROUTE_COPY } = require("./safety.js");
 const { buildEvidence, buildFullReport, publicReport } = require("./report.js");
-const { questionById, visibleQuestions, validateAnswer } = require("../../../questions.js");
+const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION, questionById, visibleQuestions, autoLinkedLongestMethod, validateAnswer } = require("../../../questions.js");
+
+function assessmentQuestionnaireVersion(assessment) {
+  return assessment.questionnaireVersion || LEGACY_QUESTIONNAIRE_VERSION;
+}
 
 async function ownedAssessment(database, sessionId, assessmentId) {
   const assessment = await database.get("assessments", assessmentId);
@@ -32,7 +36,7 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
   }
   const id = randomId("wa_");
   const assessment = await database.insert("assessments", {
-    id, sessionId, status: "draft", reportMode: null, safetyRoute: null,
+    id, sessionId, status: "draft", reportMode: null, safetyRoute: null, questionnaireVersion: QUESTIONNAIRE_VERSION,
     safetyCheckId: safetyCheck.id,
     coachClientId: input.coachClientId || null, consentStatus: null,
     createdAt: now.toISOString(), updatedAt: now.toISOString(), completedAt: null
@@ -49,28 +53,29 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
 
 async function saveAssessment(database, sessionId, input = {}, now = new Date()) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
+  const questionnaireVersion = assessmentQuestionnaireVersion(assessment);
   if (assessment.status !== "draft") throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
   const answers = input.answers && typeof input.answers === "object" ? input.answers : {};
   const existingRows = await database.find("assessment_answers", { assessmentId: assessment.id });
   const nextAnswerMap = { ...Object.fromEntries(existingRows.map(row => [row.questionId, row.value])), ...answers };
-  const applicableIds = new Set(visibleQuestions(nextAnswerMap).map(question => question.id));
+  const applicableIds = new Set(visibleQuestions(nextAnswerMap, questionnaireVersion).map(question => question.id));
   const operations = [];
   for (const [questionId, value] of Object.entries(answers)) {
     if (!/^[A-Z0-9-]{2,40}$/.test(questionId)) throw Object.assign(new Error("Invalid question"), { statusCode: 400, code: "invalid_question" });
-    const question = questionById(questionId);
+    const question = questionById(questionId, questionnaireVersion);
     const isConfirmation = questionId.startsWith("SAFETY-CONFIRM-OPEN-");
     if (!question && !isConfirmation) throw Object.assign(new Error("Invalid question"), { statusCode: 400, code: "invalid_question" });
     if (question && !applicableIds.has(questionId)) {
       throw Object.assign(new Error("Question is not applicable"), { statusCode: 400, code: "inapplicable_question", questionId });
     }
-    const validationError = question ? validateAnswer(question, value) : "";
+    const validationError = question ? validateAnswer(question, value, { answers: nextAnswerMap, version: questionnaireVersion }) : "";
     if (validationError) throw Object.assign(new Error(validationError), { statusCode: 400, code: "invalid_answer" });
     operations.push({ action: "upsert", table: "assessment_answers", id: `${assessment.id}:${questionId}`, row: {
       assessmentId: assessment.id, questionId, value, updatedAt: now.toISOString()
     } });
   }
   for (const row of existingRows) {
-    if (questionById(row.questionId) && !applicableIds.has(row.questionId)) operations.push({ action: "delete", table: "assessment_answers", id: row.id });
+    if (questionById(row.questionId, questionnaireVersion) && !applicableIds.has(row.questionId)) operations.push({ action: "delete", table: "assessment_answers", id: row.id });
   }
   const summaries = input.confirmedSummaries && typeof input.confirmedSummaries === "object" ? input.confirmedSummaries : {};
   for (const [checkpointId, summary] of Object.entries(summaries)) {
@@ -87,6 +92,7 @@ async function saveAssessment(database, sessionId, input = {}, now = new Date())
 
 async function completeAssessment(database, sessionId, input = {}, now = new Date()) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
+  const questionnaireVersion = assessmentQuestionnaireVersion(assessment);
   if (assessment.status === "complete") return assessment;
   const answers = await database.find("assessment_answers", { assessmentId: assessment.id });
   const answerMap = Object.fromEntries(answers.map(row => [row.questionId, row.value]));
@@ -106,13 +112,17 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
     ]);
     return transaction.results[0];
   }
-  for (const question of visibleQuestions(answerMap)) {
-    const validationError = validateAnswer(question, answerMap[question.id]);
+  for (const question of visibleQuestions(answerMap, questionnaireVersion)) {
+    const validationError = validateAnswer(question, answerMap[question.id], { answers: answerMap, version: questionnaireVersion });
     if (validationError) throw Object.assign(new Error(validationError), { statusCode: 400, code: "assessment_incomplete", questionId: question.id });
   }
   const summaries = await database.find("assessment_summaries", { assessmentId: assessment.id });
-  const evidence = buildEvidence(answers, summaries);
-  const fullReport = buildFullReport(evidence, now);
+  const linkedLongestMethod = autoLinkedLongestMethod(answerMap, questionnaireVersion);
+  const evidenceRows = linkedLongestMethod && !answerMap["Q-METHOD-LONGEST"]
+    ? [...answers, { questionId: "Q-METHOD-LONGEST", value: linkedLongestMethod, derived: true }]
+    : answers;
+  const evidence = buildEvidence(evidenceRows, summaries, { questionnaireVersion, linkedLongestMethod });
+  const fullReport = buildFullReport(evidence, now, { questionnaireVersion });
   const reportMode = fullReport.mode;
   const transaction = await database.transaction([
     { action: "update", table: "assessments", id: assessment.id, patch: {
@@ -137,4 +147,4 @@ async function reportForSession(database, sessionId, assessmentId) {
     entitled: entitlements.length > 0 };
 }
 
-module.exports = { ownedAssessment, createAssessment, saveAssessment, completeAssessment, reportForSession };
+module.exports = { assessmentQuestionnaireVersion, ownedAssessment, createAssessment, saveAssessment, completeAssessment, reportForSession };

@@ -10,5 +10,5 @@ exports.handler = handler("POST", async (event, body) => {
   await authenticateOwnerPreview(database, event);
   const session = await authenticateSession(database, event);
   const assessment = await createAssessment(database, session.id, body);
-  return response(201, { assessmentId: assessment.id, status: assessment.status });
+  return response(201, { assessmentId: assessment.id, status: assessment.status, questionnaireVersion: assessment.questionnaireVersion });
 });

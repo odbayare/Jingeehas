@@ -17,5 +17,6 @@ exports.handler = handler("GET", async event => {
   const payment = payments.sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0] || null;
   const answers = assessment.status === "draft" ? Object.fromEntries((await database.find("assessment_answers", { assessmentId: assessment.id })).map(row => [row.questionId, row.value])) : {};
   let report = null; if (assessment.status === "complete") report = await reportForSession(database, session.id, assessment.id);
-  return response(200, { assessment: { assessmentId: assessment.id, status: assessment.status, safetyRoute: assessment.safetyRoute }, payment: payment ? publicPayment(payment) : null, answers, report });
+  return response(200, { assessment: { assessmentId: assessment.id, status: assessment.status, safetyRoute: assessment.safetyRoute,
+    questionnaireVersion: assessment.questionnaireVersion || require("../../questions.js").LEGACY_QUESTIONNAIRE_VERSION }, payment: payment ? publicPayment(payment) : null, answers, report });
 });
