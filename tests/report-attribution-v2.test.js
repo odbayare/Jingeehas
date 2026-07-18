@@ -53,7 +53,7 @@ assert(reports["VU-07"].internalEvidenceMap.factGates.explicitInjuryStop);
 assert(!report(byId["VU-07"], { "Q-METHOD-STOP": "Өвдөг хааяа өвддөг ч аргаа өөрийн хүсэлтээр зогсоосон.", "OPEN-PAST": "Өвдөлтөө ажиглаж байсан." }).internalEvidenceMap.factGates.explicitInjuryStop, "generic pain must not become injury-caused stopping");
 
 assert(reports["VU-02"].contextualFactors.some(item => item.id === "low_movement"), "low movement must survive crowded pattern output");
-assert(publicText("VU-09").includes("Сарын тэмдгийн мөчлөг тогтмол бус байгаа нь жингийн шалтгааныг дангаараа тогтоохгүй"));
+assert(publicText("VU-09").includes("Сарын тэмдгийн мөчлөг тань ихэнхдээ тогтмол биш гэж хариулжээ."));
 
 const expectedFirst = {
   "VU-01": "pause_before_emotional_eating", "VU-02": "change_one_visible_cue", "VU-03": "anchor_one_meal_time",

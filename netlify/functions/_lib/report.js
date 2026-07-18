@@ -103,7 +103,8 @@ function factGates(evidence) {
     commonEatingBarriersProtected: ["emotional_eating", "environmental_cue_reactivity", "hunger_recognition_difficulty", "satiety_difficulty", "portion_difficulty"].every(signal => protectiveSignals.has(signal)),
     environmentalCues: Array.isArray(answerMap["Q-CUE"])
       ? answerMap["Q-CUE"].filter(cue => !["Аль нь ч үгүй", "Хариулахгүй"].includes(cue))
-      : []
+      : [],
+    menstrualAnswer: answerMap["MC-01"] || null
   });
 }
 
@@ -126,7 +127,9 @@ function sentenceComposer(evidence, evaluated, facts) {
     blood_pressure_followup: (evidence.contexts || []).filter(row => row.questionId === "Q-BLOOD-PRESSURE" && row.guidanceOnly && row.effect > 0),
     glucose_followup: (evidence.contexts || []).filter(row => row.questionId === "Q-GLUCOSE" && row.guidanceOnly && row.effect > 0),
     unsupervised_medication: (evidence.contexts || []).filter(row => row.questionId === "Q-METHOD-MEDICATION" && row.guidanceOnly && row.effect > 0),
-    menstrual_followup: (evidence.contexts || []).filter(row => row.questionId === "MC-01" && row.guidanceOnly && row.effect > 0),
+    menstrual_sometimes_irregular: facts.menstrualAnswer === "Заримдаа зөрдөг" ? [{ questionId: "MC-01" }] : [],
+    menstrual_mostly_irregular: facts.menstrualAnswer === "Ихэнхдээ тогтмол биш" ? [{ questionId: "MC-01" }] : [],
+    menstrual_absent_three_months: facts.menstrualAnswer === "Сүүлийн 3 сард ирээгүй" ? [{ questionId: "MC-01" }] : [],
     pregnancy_followup: (evidence.contexts || []).filter(row => row.questionId === "PREG-GATE" && row.guidanceOnly && row.effect > 0),
     reproductive_followup: (evidence.contexts || []).filter(row => ["MC-01", "PREG-GATE"].includes(row.questionId) && row.guidanceOnly && row.effect > 0)
   });
@@ -217,12 +220,29 @@ function movementEvidenceNarrative(composer, section) {
     || composer.render("context_low_only", section);
 }
 
+function environmentalCueEvidence(facts, composer, section) {
+  const cues = facts.environmentalCues || [];
+  if (!cues.length) return null;
+  const normalized = cues.map((cue, index) => index === 0 ? cue : `${cue.charAt(0).toLowerCase()}${cue.slice(1)}`);
+  const selected = normalized.length === 1
+    ? normalized[0]
+    : `${normalized.slice(0, -1).join(", ")} эсвэл ${normalized.at(-1)}`;
+  return composer.recordRule(
+    "evidence_environmental_selected_cues",
+    { requiredPatterns: ["environmental_cues"] },
+    `${selected} үед өлсөөгүй байсан ч идэх хүсэл төрдөг гэж хариулжээ.`,
+    section
+  );
+}
+
 function patternObject(candidate, composer, facts, section = "2") {
   const copy = PATTERN_COPY[candidate.id];
   const patternGate = { requiredPatterns: [candidate.id] };
   const evidenceSummary = candidate.id === "low_movement"
     ? movementEvidenceNarrative(composer, section)
-    : composer.render(PATTERN_EVIDENCE_TEMPLATES[candidate.id], section);
+    : candidate.id === "environmental_cues"
+      ? environmentalCueEvidence(facts, composer, section)
+      : composer.render(PATTERN_EVIDENCE_TEMPLATES[candidate.id], section);
   const paragraphs = candidate.id === "previous_attempt_sustainability"
     ? (() => {
       const injuryCluster = composer.render("evidence_previous_attempt_injury_cluster", section);
@@ -358,7 +378,10 @@ function previousAttemptAnalysis(evidence, facts, composer) {
 
 function professionalGuidance(composer) {
   const injury = composer.render("guidance_injury_exact", "10") || composer.render("guidance_injury_general", "10");
-  const items = [composer.render("guidance_blood_pressure", "10"), composer.render("guidance_glucose", "10"), injury, composer.render("guidance_medication", "10"), composer.render("guidance_menstrual", "10"), composer.render("guidance_pregnancy", "10")].filter(Boolean);
+  const menstrual = composer.render("guidance_menstrual_sometimes_irregular", "10")
+    || composer.render("guidance_menstrual_mostly_irregular", "10")
+    || composer.render("guidance_menstrual_absent_three_months", "10");
+  const items = [composer.render("guidance_blood_pressure", "10"), composer.render("guidance_glucose", "10"), injury, composer.render("guidance_medication", "10"), menstrual, composer.render("guidance_pregnancy", "10")].filter(Boolean);
   return items.length ? items.join(" ") : null;
 }
 
@@ -432,12 +455,12 @@ function startingAction(prioritized, facts, composer) {
   if (prioritized.id === "sleep_fatigue") return {
     patternId: prioritized.id,
     recommendationId: "schedule_fatigue_default",
-    action: composer.recordRule("experiment_sleep_schedule_action", patternGate, "Шөнийн дуудлага эсвэл урт ажлын өдрийн дараа хэрэглэх, бэлтгэл хамгийн бага шаарддаг нэг өгөгдмөл хувилбарыг урьдчилж сонгоно.", "8"),
-    reason: composer.recordRule("experiment_sleep_schedule_reason", patternGate, "Нойр болон ядаргаа давтагдсан үед төлөвлөгөө хуваарьт багтахаа больсон тул нэг л хувьсагч болох бэлэн өгөгдмөл хувилбар бодит нөхцөлд ажиллах эсэхийг шалгана.", "8"),
+    action: composer.recordRule("experiment_sleep_schedule_action", patternGate, "Шөнийн дуудлага эсвэл урт ажлын өдрийн дараа хэрэглэх, урьдчилан сонгосон, бэлтгэл бага шаарддаг нэг хялбар хувилбар бэлдэнэ.", "8"),
+    reason: composer.recordRule("experiment_sleep_schedule_reason", patternGate, "Нойр болон ядаргаа давтагдсан үед төлөвлөгөө хуваарьт багтахаа больсон тул урьдчилан сонгосон хялбар хувилбар бодит нөхцөлд ажиллах эсэхийг шалгана.", "8"),
     priorityReason: composer.recordRule("experiment_sleep_schedule_priority", patternGate, "Ядарсан өдрийн шийдвэрийн ачааллыг багасгах нь энэ тайланд харагдсан нойр, хуваарийн холбоотой хамгийн шууд нийцнэ.", "8"),
     plan: {
       kind: "schedule_fatigue_default",
-      variable: "шөнийн дуудлага эсвэл урт ажлын өдрийн дараах нэг бэлэн өгөгдмөл хувилбар",
+      variable: "шөнийн дуудлага эсвэл урт ажлын өдрийн дараах урьдчилан сонгосон хялбар хувилбар",
       action: "Тухайн нөхцөл үүсэхээс өмнө нэмэлт бэлтгэл шаардахгүй, өөрийн боломжид нийцсэн нэг хувилбарыг бичиж сонгоно.",
       observe: "Тэр хувилбарыг ядарсан өдөр санаж, бодитоор ашиглаж чадсан эсэхээ л тэмдэглэнэ.",
       keepConstant: "Бусад хоол, хөдөлгөөн, нойрны дүрмийг зэрэг өөрчлөхгүй.",

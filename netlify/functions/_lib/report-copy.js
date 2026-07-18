@@ -7,7 +7,7 @@ const PATTERN_COPY = Object.freeze({
     uncertainty: "Энэ нь онош биш бөгөөд сэтгэл хөдлөл бүр хооллолтыг өөрчилдөг гэсэн үг биш."
   },
   environmental_cues: {
-    explanation: "Хоол нүдэнд ойр байх, үнэртэх эсвэл захиалгын апп нээхэд өлсөөгүй байсан ч идэх хүсэл хөдөлдөг.",
+    explanation: "Өлсөөгүй үед орчны зарим дохио идэх хүсэл төрүүлж болно.",
     effectOnWeightLoss: "Орчин хоолыг дахин дахин сануулахад төлөвлөөгүй үед идэх нь нэмэгдэж, хоолны хэмнэл алдагдахад нөлөөлдөг.",
     uncertainty: "Орчны дохио дангаараа бүх сонголтыг тайлбарлахгүй."
   },
@@ -169,7 +169,9 @@ const SENTENCE_TEMPLATES = Object.freeze({
   guidance_injury_exact: { requiredContexts: ["explicit_injury_stop_context"], text: "Өмнөх гэмтэлтэй холбоотой зовиур үргэлжилж байгаа бол хөдөлгөөний шинэ хувилбарыг мэргэжлийн хүнтэй тохируулна уу." },
   guidance_injury_general: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт үргэлжилж байгаа бол хөдөлгөөний шинэ хувилбарыг мэргэжлийн хүнтэй тохируулна уу." },
   guidance_medication: { requiredContexts: ["unsupervised_medication"], text: "Эмчийн хяналтгүй эм хэрэглэсэн бол дахин хэрэглэхээсээ өмнө эмч эсвэл эм зүйчтэй зөвлөлдөнө үү." },
-  guidance_menstrual: { requiredContexts: ["menstrual_followup"], text: "Сарын тэмдгийн мөчлөг тогтмол бус байгаа нь жингийн шалтгааныг дангаараа тогтоохгүй. Хэрэв энэ өөрчлөлт үргэлжилж байгаа эсвэл танд санаа зовнил төрүүлж байвал эмэгтэйчүүдийн эмчтэй зөвлөнө үү." },
+  guidance_menstrual_sometimes_irregular: { requiredContexts: ["menstrual_sometimes_irregular"], text: "Та мөчлөг тань заримдаа зөрдөг гэж хариулжээ. Энэ нь жингийн өөрчлөлтийн шалтгааныг дангаараа тогтоохгүй. Хэрэв зөрүү давтагдах, удаан үргэлжлэх эсвэл танд санаа зовнил төрүүлэх бол эмэгтэйчүүдийн эмчтэй зөвлөнө үү." },
+  guidance_menstrual_mostly_irregular: { requiredContexts: ["menstrual_mostly_irregular"], text: "Сарын тэмдгийн мөчлөг тань ихэнхдээ тогтмол биш гэж хариулжээ. Энэ нь жингийн өөрчлөлтийн шалтгааныг дангаараа тогтоохгүй. Хэрэв энэ байдал үргэлжилж байгаа эсвэл танд санаа зовнил төрүүлж байвал эмэгтэйчүүдийн эмчтэй зөвлөнө үү." },
+  guidance_menstrual_absent_three_months: { requiredContexts: ["menstrual_absent_three_months"], text: "Та сүүлийн гурван сард сарын тэмдэг ирээгүй гэж хариулжээ. Үүний шалтгааныг энэ тестээр тогтоох боломжгүй тул эмэгтэйчүүдийн эмчтэй зөвлөнө үү." },
   guidance_pregnancy: { requiredContexts: ["pregnancy_followup"], text: "Жирэмсэн, төрсний дараах эсвэл хөхүүл үед жинтэй холбоотой томоохон өөрчлөлтийг эмчтэйгээ тохируулна уу." },
   guidance_urgent_blood_pressure: { requiredContexts: ["blood_pressure_followup"], text: "Ухаан балартах, цээжээр хүчтэй өвдөх, амьсгал огцом давчдах зэрэг яаралтай шинж илэрвэл энэ төлөвлөгөөг үргэлжлүүлэхгүй, яаралтай тусламж авна уу." }
 });
