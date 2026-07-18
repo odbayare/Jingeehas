@@ -9,7 +9,7 @@ const { SENTENCE_TEMPLATES, sentenceTemplateMatches } = require("../netlify/func
 const { mappingCoverage } = require("../netlify/functions/_lib/report-signals.js");
 const { buildEvidence, evidenceQuality, buildFullReport, publicReport } = require("../netlify/functions/_lib/report.js");
 const fixtures = require("./fixtures/report-gold-profiles.js");
-const forbiddenPublicTerms = ["арга тасрах", "арга тасарсан", "арга тасарсны", "арга тасрахад", "төлөвлөгөө тасрах", "төлөвлөгөө тасарсан", "дэглэм тасрах", "хадгалж үлдэх", "өмнөх оролдлого үргэлжлэхээ болих", "анзаарах хэцүү", "сэтгэл хөдлөлөө зохицуулах нөөц", "шилжилтийн саад", "үр дүнгээ хадгалах шилжилт", "залгамж хувилбар", "Зангуу", "зангуун", "Доод хувилбар", "доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "биеийн дурдсан нөхцөл", "аюулгүй хувилбар", "нэг чиглэлд давхацсан", "гол анхаарах хэв маягийн нэг", "Та хүндрэл давтагддаг нөхцөлийг ялгаж хариулсан", "төлөвлөөгүй идэлт", "идэлт"];
+const forbiddenPublicTerms = ["арга тасрах", "арга тасарсан", "арга тасарсны", "арга тасрахад", "төлөвлөгөө тасрах", "төлөвлөгөө тасарсан", "дэглэм тасрах", "хадгалж үлдэх", "өмнөх оролдлого үргэлжлэхээ болих", "анзаарах хэцүү", "сэтгэл хөдлөлөө зохицуулах нөөц", "эрсдэлийг бууруулж байна", "шилжилтийн саад", "үр дүнгээ хадгалах шилжилт", "залгамж хувилбар", "Зангуу", "зангуун", "Доод хувилбар", "доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "биеийн дурдсан нөхцөл", "аюулгүй хувилбар", "нэг чиглэлд давхацсан", "гол анхаарах хэв маягийн нэг", "Та хүндрэл давтагддаг нөхцөлийг ялгаж хариулсан", "төлөвлөөгүй идэлт", "идэлт"];
 const internalReviewTerms = ["OWNER REVIEW REQUIRED", "OWNER APPROVED", "Candidate A", "Candidate B", "review status", "templateId", "signalId", "questionId", "evidence-gate", "debug", "QA note", "planDecisionPending"];
 
 const rows = answers => Object.entries(answers).map(([questionId, value]) => ({ questionId, value }));
@@ -94,7 +94,10 @@ for (const fixture of fixtures) {
   assert(!publicText.includes("өдөр тутмын хэв маяг"));
   assert(!/Итгэлцлийн түвшин|confidence|\d+%/.test(publicText));
   assert(!/\$\{label\}-(тэй|той)/.test(publicText));
-  if (report.neutralResult) assert.equal(report.overallPicture, null, `${fixture.name}: neutral mode must use its dedicated overview`);
+  if (report.neutralResult) {
+    assert.equal(report.overallPicture, null, `${fixture.name}: neutral mode must use its dedicated overview`);
+    assert(report.neutralResult.strengths.length <= 4, `${fixture.name}: neutral strengths must have at most four narrative groups`);
+  }
   else assert(Array.isArray(report.overallPicture) && report.overallPicture.length <= 3, `${fixture.name}: section 1 must have at most three paragraphs`);
   if (report.previousAttemptAnalysis) assert(report.previousAttemptAnalysis.paragraphs.length <= 2, `${fixture.name}: section 5 must have at most two paragraphs`);
   assert(!/QPay|нэхэмжлэл үүсгэх/.test(publicText), `${fixture.name}: report generation must not create or advertise an invoice`);
@@ -106,11 +109,15 @@ for (const fixture of fixtures) {
 }
 
 const multi = reportFor(fixtures[0].answers);
+const mealTimingPriority = "Хоолны зайг эхэлж тогтворжуулснаар хэт өлсөлтийн нөлөөг багасгаж, стресс болон цадах дохионы хүндрэл тусдаа үедээ хэр хүчтэй байгааг илүү тод ажиглах боломжтой.";
 assert(multi.influencingPatterns.length >= 3);
 assert(multi.interactionSummary.length >= 2);
 assert(new Set(multi.additionalPatternActions.map(item => item.recommendationId)).size === multi.additionalPatternActions.length);
 assert.equal(multi.protectiveSectionSummary, null, "a profile without meaningful protective evidence must omit the strengths synthesis");
 assert.equal(multi.protectiveFactors.length, 0, "strengths must not be fabricated from answer completeness");
+assert.equal(multi.prioritizedStartingAction.priorityReason, mealTimingPriority, "multi-pattern report must explain meal-timing priority");
+assert(!JSON.stringify(publicReport(reportFor(fixtures.find(item => item.name === "emotional eating dominant").answers))).includes(mealTimingPriority), "meal-timing priority requires both meal-rhythm and hunger/satiety patterns");
+assert(!JSON.stringify(publicReport(reportFor(fixtures.find(item => item.name === "environmental cue dominant").answers))).includes(mealTimingPriority), "unrelated patterns must not receive meal-timing priority copy");
 
 const transition = reportFor(fixtures.find(item => item.name === "sustained movement attempt with explicit constraints").answers);
 assert(!transition.influencingPatterns.some(item => item.id === "low_movement"), "low movement must not be a psychological or behavioral pattern");
@@ -120,11 +127,12 @@ assert(transition.protectiveSectionSummary.includes("өлсөх, цадах мэ
 assert(transition.protectiveSectionSummary.includes("өөрчлөлтийг тууштай барих чадвартайг"));
 assert.equal(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").title, "Өмнөх аргын үр дүнг хадгалах төлөвлөгөө дутсан нь");
 assert(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").paragraphs[0].includes("Өмнөх хөдөлгөөнд суурилсан арга эхэндээ үр дүн өгч"));
-assert(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").paragraphs[1].includes("Гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болоход"));
+assert.equal(transition.influencingPatterns.find(item => item.id === "previous_attempt_sustainability").paragraphs[1], "Тэр үед өмнөх үр дүнг дэмжих, өдөр тутам хэрэгжүүлж болох өөр хувилбар бэлэн байгаагүй байна.");
 assert(transition.contextualFactors.find(item => item.id === "low_movement").summary.includes("өдрийн нийт хөдөлгөөнөө бага"));
 assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("нэг жилээс урт"));
 assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("гэмт"));
-assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("Өмнөх хөдөлгөөн гэмтлийн улмаас зогсжээ."));
+const injuryChronology = "Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болжээ.";
+assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes(injuryChronology));
 assert(!transition.previousAttemptAnalysis.paragraphs.join(" ").includes("Таны дурдсан өвдөлт эсвэл хөдөлгөөний хязгаарлалт"));
 assert(transition.previousAttemptAnalysis.paragraphs.join(" ").includes("Цагийн хуваарь болон зардал нь дараагийн төлөвлөгөөг тогтвортой хэрэгжүүлэхэд нэмэлт саад болжээ."));
 assert(transition.professionalGuidance.includes("Хэрэв даралт сүүлийн үед давтан хэвийн бус"));
@@ -138,8 +146,12 @@ assert(transition.planAppendices.candidateA.plan.frequency.includes("дор ха
 assert(transition.planAppendices.candidateA.plan.success.includes("дор хаяж 6"));
 assert(transition.planAppendices.candidateA.plan.fallback.includes("5 минут"));
 assert(!/\d/.test(JSON.stringify(transition.planAppendices.candidateB.plan)), "Candidate B must remain nonnumeric");
+assert.equal(transition.planAppendices.candidateB.plan.duration, "Эхлэх өдөр болон үр дүнгээ эргэн харах өдрөө урьдчилан сонгоно.");
+assert.equal(transition.planAppendices.candidateB.plan.success, "Урьдчилан сонгосон мөчүүдэд үндсэн эсвэл богино хувилбарыг бодитоор давтаж болох эсэхийг ажиглана.");
+assert(!/хоног|долоо хоног|минут|дор хаяж|\d/.test(JSON.stringify(transition.planAppendices.candidateB)), "Candidate B must contain no fixed duration, frequency, minute, or completion threshold");
 assert(transition.planAppendices.candidateB.priorityReason.includes("тусдаа өөрчлөлт бус"));
 const transitionPublicText = JSON.stringify(publicReport(transition));
+assert.equal(transitionPublicText.split(injuryChronology).length - 1, 1, "explicit injury chronology must appear exactly once");
 assert.equal(transitionPublicText.split("Өмнөх аргаа нэг жилээс урт хугацаанд хэрэгжүүлж, эхний үр дүн гаргаж чадсан").length - 1, 1, "protective synthesis must appear once");
 assert(!/Цагийн хуваарь саад болсон,|Зардал саад болсон,|Гэмтэл саад болсон,/.test(transitionPublicText), "evidence must be a narrative, not comma-separated fragments");
 const rejectedMeta = ["хангалттай дэмжигдсэн", "зэрэг дэмжигдээгүй", "Зохиомол харилцан холбоо", "дангаараа тусдаа хэв маяг", "дангаараа шинэ хэв маяг"];
@@ -173,10 +185,12 @@ assert(!/хуучин гэмт|гэмтэл|өвдөлт|Зовиур/.test(with
 assert(/гэмтэл|өвдөлт|Зовиур/.test(withInjuryText), "explicit injury evidence must change injury guidance");
 assert.notEqual(withoutInjuryText, withInjuryText, "injury evidence must materially change the report");
 assert(!withoutInjuryText.includes("үргэлжлүүлэх боломжгүй болсон"), "forced-continuation wording requires explicit evidence");
-assert(withInjuryText.includes("Гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болоход түүнийг өдөр тутам орлох хувилбар бэлэн байгаагүй байна."), "explicit injury stop must use the evidence-specific transition wording");
+assert(withInjuryText.includes(injuryChronology), "explicit injury stop must use the exact chronology wording");
+assert(withInjuryText.includes("Тэр үед өмнөх үр дүнг дэмжих, өдөр тутам хэрэгжүүлж болох өөр хувилбар бэлэн байгаагүй байна."), "maintenance sentence must remain independently pattern-gated");
+assert.equal(withInjuryText.split(injuryChronology).length - 1, 1, "injury chronology must not repeat across sections");
 assert(!withoutInjury.contextualFactors.some(item => item.id === "injury_or_pain_barrier"), "injury context requires injury evidence");
 assert(withInjury.contextualFactors.some(item => item.id === "injury_or_pain_barrier" && item.title === "Өмнөх гэмтлийг дараагийн хөдөлгөөнд харгалзах шаардлага"), "explicit injury stop must use the required heading");
-assert(withInjury.contextualFactors.some(item => item.summary === "Таны дурдсан гэмтлийн улмаас өмнөх хөдөлгөөнөө үргэлжлүүлэх боломжгүй болжээ. Иймээс дараагийн хөдөлгөөнөө сонгохдоо гэмтэлтэй холбоотой зовиур нэмэгдэхгүй байхыг харгалзана."), "explicit injury context must use the required body");
+assert(withInjury.contextualFactors.some(item => item.summary === "Дараагийн хөдөлгөөнөө сонгохдоо гэмтэлтэй холбоотой зовиур нэмэгдэхгүй байхыг харгалзана."), "injury context must not repeat the chronology");
 const structuredInjuryOnly = reportFor({ ...genericTransitionAnswers, "Q-METHOD-BARRIERS": ["Үр дүн удаан харагдах", "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт"] });
 assert(!JSON.stringify(publicReport(structuredInjuryOnly)).includes("үргэлжлүүлэх боломжгүй болсон"), "a generic physical barrier must not imply inability to continue");
 
@@ -245,6 +259,8 @@ assert(JSON.stringify(publicReport(emotionalReport)).includes(conditionalRelief)
 assert(!JSON.stringify(publicReport(withoutInjury)).includes(conditionalRelief), "food-as-relief hypothesis requires emotional evidence");
 assert(!JSON.stringify(publicReport(emotionalReport)).includes("түр тайвшрал"), "emotional experiment must not present temporary relief as a confirmed fact");
 assert(!JSON.stringify(publicReport(emotionalReport)).includes("хоолоор түр тайвширсны дараа"), "pattern interaction must not present food-as-relief as a confirmed chronology");
+assert.equal(emotionalReport.prioritizedStartingAction.reason, "Энэ туршилт хоолыг хорихгүйгээр тухайн мөчид хоол ямар хэрэгцээг нөхөж байгаа мэт санагддаг, идсэний дараа тэр хэрэгцээ хэрхэн өөрчлөгддөгийг ажиглана.");
+assert(!JSON.stringify(publicReport(emotionalReport)).includes("түр тайвшрал дараагийн сонголтод хэрхэн нөлөөлдгийг шалгана"));
 assert.equal(emotionalReport.prioritizedStartingAction.plan.kind, "emotional_observation");
 assert.equal(emotionalReport.prioritizedStartingAction.plan.variable, "стресс нэмэгдэх мөчид хэрэгцээгээ ялгаж анзаарах богино завсарлага");
 assert(emotionalReport.prioritizedStartingAction.plan.action.includes("Одоо биеэрээ өлсөж байна уу"));
@@ -263,8 +279,16 @@ assert.equal(neutralRoute.filter(question => neutralFixture.answers[question.id]
 assert.deepEqual(neutralRoute.filter(question => questionBank.validateAnswer(question, neutralFixture.answers[question.id])).map(question => question.id), [], "neutral fixture must complete without validation errors");
 assert.equal(neutralReport.influencingPatterns.length, 0);
 assert(neutralReport.neutralResult.overview.length >= 2, "neutral report needs two meaningful conclusions");
-assert.equal(neutralReport.neutralResult.strengths.length, 12, "neutral report must surface every unique available strength");
-for (const expectedStrength of ["Хоолны хэмнэл", "Өлсөх мэдрэмжээ", "Цадсанаа", "Стресстэй үед", "орчны аль ч дохио", "Унтах хугацаа", "Нойрны чанар"]) assert(JSON.stringify(neutralReport.neutralResult.strengths).includes(expectedStrength), `neutral report missing strength: ${expectedStrength}`);
+assert.equal(neutralReport.neutralResult.strengths.length, 4, "neutral strengths must be grouped into four narratives");
+const groupedNeutralStrengths = JSON.stringify(neutralReport.neutralResult.strengths);
+for (const expectedStrength of ["өлсөх мэдрэмжээ анзаарах", "цадсанаа мэдээд зогсох", "идэх хэмжээгээ тохируулах", "стрессийн үеийн идэх хүсэл", "орчны хоолны дохио", "нойрны хугацаа, чанар", "өдрийн хөдөлгөөний түвшин", "тогтвортой хоолны хэмнэл", "өмнөх аргаа удаан хугацаанд үргэлжлүүлсэн", "үр дүнгээ хадгалсан"]) assert(groupedNeutralStrengths.toLowerCase().includes(expectedStrength), `neutral report missing grouped strength: ${expectedStrength}`);
+assert(!groupedNeutralStrengths.includes("эрсдэлийг бууруулж байна"), "neutral strengths must not claim causal risk reduction");
+assert(neutralReport.neutralResult.limits.includes("Асуумжийн хариултаар тод хэв маяг ялгараагүй тул өдөр тутмын бодит нөхцөл хэд хэдэн удаа давтагдаж байгаа эсэхийг ажиглавал дараагийн дүгнэлт илүү тод болно."));
+assert(!JSON.stringify(neutralReport.neutralResult).includes("өмнөх оролдлогын явцын талаар илүү дэлгэрэнгүй мэдээлэл"), "fully routed neutral report must not claim previous-attempt information is missing");
+const emotionOnlyNeutral = reportFor({ "Q-EMOTION": "Өөрчлөгддөггүй" });
+assert.equal(emotionOnlyNeutral.neutralResult.strengths.length, 1);
+assert(emotionOnlyNeutral.neutralResult.strengths[0].includes("Стрессийн үеийн идэх хүсэл"));
+assert(!JSON.stringify(emotionOnlyNeutral.neutralResult.strengths).includes("өлсөх мэдрэмжээ"), "neutral group must not claim unsupported body-signal strength");
 assert(neutralReport.neutralResult.limits.some(item => item.includes("оношлохгүй")));
 assert(neutralReport.neutralResult.observation.action);
 assert.equal(neutralReport.neutralResult.observation.variable, "нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах");

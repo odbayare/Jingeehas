@@ -186,7 +186,7 @@ function movementEvidenceNarrative(composer, section) {
     || composer.render("context_low_only", section);
 }
 
-function patternObject(candidate, composer, section = "2") {
+function patternObject(candidate, composer, facts, section = "2") {
   const copy = PATTERN_COPY[candidate.id];
   const patternGate = { requiredPatterns: [candidate.id] };
   const evidenceSummary = candidate.id === "low_movement"
@@ -195,9 +195,10 @@ function patternObject(candidate, composer, section = "2") {
   const paragraphs = candidate.id === "previous_attempt_sustainability"
     ? [
       composer.render("evidence_previous_attempt_complete", section) || evidenceSummary,
-      composer.render("evidence_previous_attempt_meaning_injury", section)
-        || composer.render("evidence_previous_attempt_meaning_voluntary", section)
-        || composer.render("evidence_previous_attempt_meaning_neutral", section)
+      facts.explicitInjuryStop
+        ? composer.render("evidence_previous_attempt_maintenance", section)
+        : composer.render("evidence_previous_attempt_meaning_voluntary", section)
+          || composer.render("evidence_previous_attempt_meaning_neutral", section)
     ].filter(Boolean)
     : null;
   return {
@@ -220,6 +221,49 @@ function strengthItems(evidence, composer) {
     const text = composer.recordRule(`strength_detail_${row.signal}`, { requiredProtectiveSignals: [row.signal] }, copy, "6");
     return text ? [{ signal: row.signal, text }] : [];
   });
+}
+
+function naturalList(items) {
+  if (items.length <= 1) return items[0] || "";
+  return `${items.slice(0, -1).join(", ")} болон ${items.at(-1)}`;
+}
+
+function sentenceCase(text) {
+  return text ? `${text.charAt(0).toUpperCase()}${text.slice(1)}` : text;
+}
+
+function groupedNeutralStrengths(strengths) {
+  const signals = new Set(strengths.map(item => item.signal));
+  const groups = [];
+  const body = [
+    signals.has("hunger_recognition_difficulty") ? "өлсөх мэдрэмжээ анзаарах" : null,
+    signals.has("satiety_difficulty") ? "цадсанаа мэдээд зогсох" : null,
+    signals.has("portion_difficulty") ? "идэх хэмжээгээ тохируулах" : null
+  ].filter(Boolean);
+  if (body.length) groups.push(`${sentenceCase(naturalList(body))} нь ашиглаж болох давуу тал байна.`);
+
+  const protections = [
+    signals.has("emotional_eating") ? "стрессийн үеийн идэх хүсэл" : null,
+    signals.has("environmental_cue_reactivity") ? "орчны хоолны дохио" : null,
+    signals.has("short_sleep") || signals.has("poor_sleep_quality") ? "нойрны хугацаа, чанар" : null
+  ].filter(Boolean);
+  if (protections.length) groups.push(`${sentenceCase(naturalList(protections))} нь гол саад болж харагдсангүй.`);
+
+  const routine = [
+    signals.has("low_movement") ? "өдрийн хөдөлгөөний түвшин" : null,
+    signals.has("regular_meal_rhythm") ? "тогтвортой хоолны хэмнэл" : null
+  ].filter(Boolean);
+  if (routine.length) groups.push(`${sentenceCase(naturalList(routine))} нь өдөр тутмын төлөвлөгөөнд ашиглаж болох давуу тал байна.`);
+
+  const experience = [
+    signals.has("sustained_attempt") || signals.has("medium_duration_attempt") ? "өмнөх аргаа удаан хугацаанд үргэлжлүүлсэн" : null,
+    signals.has("initial_attempt_success") ? "эхний үр дүн гаргаж чадсан" : null,
+    signals.has("weight_regain") ? "үр дүнгээ хадгалсан" : null,
+    signals.has("sustainability_barrier") ? "тодорхой саадгүй хэрэгжүүлсэн" : null,
+    signals.has("professional_support") ? "мэргэжлийн дэмжлэг ашигласан" : null
+  ].filter(Boolean);
+  if (experience.length) groups.push(`${sentenceCase(naturalList(experience))} туршлага нь дараагийн өөрчлөлтөд ашиглаж болох давуу тал байна.`);
+  return groups;
 }
 
 function contradictionItems(evidence, candidates) {
@@ -299,7 +343,7 @@ function startingAction(prioritized, facts, composer) {
     patternId: prioritized.id,
     recommendationId: recommendation.recommendationId,
     action: composer.recordRule("experiment_emotional_action", patternGate, "Стресс нэмэгдэж, хоол авах гэж буй мөчид ямар хэрэгцээ хамгийн хүчтэй байгааг ажиглана.", "8"),
-    reason: composer.recordRule("experiment_emotional_reason", patternGate, "Энэ туршилт хоолыг хорихгүйгээр тухайн мөчид хоол ямар үүрэг гүйцэтгэж байж болохыг ажиглана.", "8"),
+    reason: composer.recordRule("experiment_emotional_reason", patternGate, "Энэ туршилт хоолыг хорихгүйгээр тухайн мөчид хоол ямар хэрэгцээг нөхөж байгаа мэт санагддаг, идсэний дараа тэр хэрэгцээ хэрхэн өөрчлөгддөгийг ажиглана.", "8"),
     priorityReason: composer.recordRule("experiment_emotional_priority", patternGate, "Стресс болон идэх хүсэл давтагдан холбоотой байсан тул өөр нэг зан үйлийг зэрэг өөрчлөхгүйгээр энэ холбоог эхэлж ажиглана.", "8"),
     plan: {
       kind: "emotional_observation",
@@ -316,7 +360,10 @@ function startingAction(prioritized, facts, composer) {
     patternId: prioritized.id, recommendationId: recommendation.recommendationId,
     action: composer.recordRule(`experiment_${prioritized.id}_action`, patternGate, `Эхний туршилтаар дараах нэг алхмыг хийнэ: ${RECOMMENDATIONS[prioritized.recommendationId].action.charAt(0).toLowerCase()}${RECOMMENDATIONS[prioritized.recommendationId].action.slice(1)}`, "8"),
     reason: composer.recordRule(`experiment_${prioritized.id}_reason`, patternGate, "Өөрчлөлтийг нэг зүйлээр эхлүүлснээр бодит амьдралд хэрэгжиж байгаа эсэхийг тодорхой ажиглаж, дараагийн алхмаа баримжаатай сонгоно.", "8"),
-    priorityReason: composer.recordRule(`experiment_${prioritized.id}_priority`, patternGate, "Энэ алхам одоо харагдсан гол саадтай шууд холбоотой бөгөөд ажиглаж болохоор жижиг байна.", "8")
+    priorityReason: prioritized.id === "irregular_meals_late_hunger"
+      ? composer.render("experiment_meal_timing_priority", "8")
+        || composer.recordRule(`experiment_${prioritized.id}_priority`, patternGate, "Энэ алхам одоо харагдсан гол саадтай шууд холбоотой бөгөөд ажиглаж болохоор жижиг байна.", "8")
+      : composer.recordRule(`experiment_${prioritized.id}_priority`, patternGate, "Энэ алхам одоо харагдсан гол саадтай шууд холбоотой бөгөөд ажиглаж болохоор жижиг байна.", "8")
   };
   const recordBase = composer.recordRule("plan_movement_record", patternGate, "Сонгосон хөдөлгөөн, хийсэн минут, хийхэд хэр эвтэйхэн байсныг тэмдэглэнэ.", "8");
   const recordInjury = composer.recordRule("plan_movement_record_injury", { requiredContexts: ["injury_or_pain_evidence"] }, "Өмнөх гэмтэлтэй холбоотой зовиур өөрчлөгдсөн эсэхийг мөн тэмдэглэнэ.", "8");
@@ -335,15 +382,15 @@ function startingAction(prioritized, facts, composer) {
   const candidateBPlan = {
     kind: "movement_rhythm",
     variable: "өдөр тутам давтаж болох нэг хөдөлгөөний хэмнэл",
-    duration: "Эхний ажиглалтын хугацаанд",
+    duration: "Эхлэх өдөр болон үр дүнгээ эргэн харах өдрөө урьдчилан сонгоно.",
     option: composer.render("plan_option_injury", "8") || composer.render("plan_option_general", "8"),
     anchor: "Өдөр тутам тогтвортой давтагддаг, урьдчилан сонгосон нэг үйл явдлын дараа",
     frequency: "Урьдчилан сонгосон боломж бүрд",
-    record: [recordBase, recordInjury].filter(Boolean).join(" "),
+    record: ["Сонгосон хөдөлгөөн, хийсэн хугацаа, хийхэд хэр эвтэйхэн байсныг тэмдэглэнэ.", recordInjury].filter(Boolean).join(" "),
     fallback: facts.schedule
       ? "Завгүй өдөр үндсэн хувилбараасаа мэдэгдэхүйц богино, бага ачааллын хувилбарыг хийнэ."
       : "Үндсэн хувилбар тухайн өдөр багтахгүй бол мэдэгдэхүйц богино, бага ачааллын хувилбарыг хийнэ.",
-    success: "Сонгосон боломжуудын ихэнхэд үндсэн эсвэл богино хувилбараа давтаж чадвал амжилт гэж үзнэ; жингийн тоогоор дүгнэхгүй.",
+    success: "Урьдчилан сонгосон мөчүүдэд үндсэн эсвэл богино хувилбарыг бодитоор давтаж болох эсэхийг ажиглана.",
     maintenanceRule: "Алгассан боломжийг дараагийн өдөр давхар нөхөхгүй; дараагийн сонгосон боломжоос хэвийн үргэлжлүүлнэ."
   };
   const injuryBoundary = composer.render("plan_injury_stop_exact", "8") || composer.render("plan_injury_stop_general", "8");
@@ -361,7 +408,7 @@ function startingAction(prioritized, facts, composer) {
     recommendedCandidate: "B",
     selectedCandidate: null,
     candidateA: { ...shared, action: composer.recordRule("experiment_movement_action_candidate_a", patternGate, "Дараагийн 14 хоногт өдөр тутам давтаж болох нэг хөдөлгөөний хэмнэлийг туршина.", "8"), plan: candidateAPlan },
-    candidateB: { ...shared, action: composer.recordRule("experiment_movement_action_candidate_b", patternGate, "Эхний ажиглалтын хугацаанд өдөр тутам давтаж болох нэг хөдөлгөөний хэмнэлийг туршина.", "8"), plan: candidateBPlan }
+    candidateB: { ...shared, action: composer.recordRule("experiment_movement_action_candidate_b", patternGate, "Өдөр тутам давтаж болох нэг хөдөлгөөний хэмнэлийг туршиж, эхлэх болон эргэн харах өдрөө урьдчилан сонгоно.", "8"), plan: candidateBPlan }
   };
 }
 
@@ -394,7 +441,7 @@ function neutralResult(composer, strengths, contextual = []) {
     overview: [composer.render("neutral_no_pattern", "neutral_overview"), contextualSummary, composer.render("neutral_meaning", "neutral_overview")].filter(Boolean),
     notStronglySupported: ["neutral_absent_emotional", "neutral_absent_environmental", "neutral_absent_body_signals", "neutral_absent_sleep", "neutral_absent_portion"].map(id => composer.render(id, "neutral_absent")).filter(Boolean),
     notStronglySupportedFallback: composer.render("neutral_absent_fallback", "neutral_absent"),
-    strengths: strengths.map(item => item.text),
+    strengths: groupedNeutralStrengths(strengths),
     strengthsFallback: composer.render("neutral_strengths_fallback", "neutral_strengths"),
     limits: [composer.render("neutral_limits", "neutral_limits"), composer.render("neutral_more_information", "neutral_limits")].filter(Boolean),
     observation: {
@@ -413,8 +460,8 @@ function buildFullReport(evidence = {}, now = new Date()) {
   const evaluated = quality.patternResult;
   const facts = factGates(evidence);
   const composer = sentenceComposer(evidence, evaluated, facts);
-  const influencingPatterns = evaluated.influencingPatterns.map(candidate => patternObject(candidate, composer, "2"));
-  const contextualPatternObjects = evaluated.contextualPatterns.map(candidate => patternObject(candidate, composer, "4"));
+  const influencingPatterns = evaluated.influencingPatterns.map(candidate => patternObject(candidate, composer, facts, "2"));
+  const contextualPatternObjects = evaluated.contextualPatterns.map(candidate => patternObject(candidate, composer, facts, "4"));
   const allPatternObjects = [...influencingPatterns, ...contextualPatternObjects];
   const patternById = new Map(allPatternObjects.map(pattern => [pattern.id, pattern]));
   const interactions = evaluated.interactions.filter(rule => rule.patterns.every(id => patternById.has(id))).map(rule => ({

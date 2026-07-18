@@ -6,10 +6,10 @@ Prompt text that proposes a value is not owner approval. No report containing th
 
 | Parameter | Proposed value | Purpose | Dose or adherence tracking? | Possible risk | Product rule or source | Nonnumeric alternative | Owner decision | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| Trial duration | 14 days | Bound the initial experiment. | Adherence/observation window, not an exercise dose. | May imply that the same duration suits every user. | AI-directed review prompt only; not approval. | “Эхний ажиглалтын хугацаанд” | PENDING | OWNER REVIEW REQUIRED |
+| Trial duration | 14 days | Bound the initial experiment. | Adherence/observation window, not an exercise dose. | May imply that the same duration suits every user. | AI-directed review prompt only; not approval. | “Эхлэх өдөр болон үр дүнгээ эргэн харах өдрөө урьдчилан сонгоно.” | PENDING | OWNER REVIEW REQUIRED |
 | Minimum frequency | At least 4 selected days per week | Make repeatability observable. | Controls exposure frequency and therefore partly affects exercise dose. | May be too frequent or too infrequent for an individual situation. | AI-directed review prompt only; not approval. | “Урьдчилан сонгосон боломж бүрд” | PENDING | OWNER REVIEW REQUIRED |
 | Planned opportunities | 8 occasions | Define the denominator for adherence review. | Adherence tracking, derived from the proposed frequency. | Can appear clinically precise without validation. | AI-directed review prompt only; not approval. | “Сонгосон боломж бүрийн дараа” | PENDING | OWNER REVIEW REQUIRED |
-| Completion target | At least 6 of 8 | Define success without using weight. | Adherence threshold. | Can turn a flexible experiment into a pass/fail score. | AI-directed review prompt only; not approval. | “Ихэнх сонгосон боломжид үндсэн эсвэл богино хувилбараа давтаж чадсан бол” | PENDING | OWNER REVIEW REQUIRED |
+| Completion target | At least 6 of 8 | Define success without using weight. | Adherence threshold. | Can turn a flexible experiment into a pass/fail score. | AI-directed review prompt only; not approval. | “Урьдчилан сонгосон мөчүүдэд үндсэн эсвэл богино хувилбарыг бодитоор давтаж болох эсэхийг ажиглана.” | PENDING | OWNER REVIEW REQUIRED |
 | Busy-day fallback | 5 minutes | Preserve continuity on a constrained day. | A short movement-duration dose. | Suitability is not established and a fixed duration can imply medical precision. | AI-directed review prompt only; not approval. | “Үндсэн хувилбараасаа мэдэгдэхүйц богино, бага ачааллын хувилбар” | PENDING | OWNER REVIEW REQUIRED |
 
 ## Candidate A — numeric
@@ -21,10 +21,10 @@ Prompt text that proposes a value is not owner approval. No report containing th
 
 ## Candidate B — nonnumeric
 
-- Duration: the initial observation period.
+- Review window: choose the start date and review date in advance.
 - Frequency: on preselected days that fit the person’s routine.
 - Busy-day fallback: a clearly shorter low-intensity version.
-- Success: the main or short version is repeatable on most selected opportunities; if injury evidence exists, symptoms do not worsen.
+- Success observation: observe whether the main or short version can be repeated at the preselected moments; if injury evidence exists, symptoms do not worsen.
 
 Candidate B is the recommended launch option for owner review. This recommendation is not a selection or approval.
 

@@ -97,7 +97,7 @@ async function seededAssessment(database, suffix) {
   assert.equal(neutralCompletion.status, "complete", "fully routed neutral fixture must complete successfully");
   const neutralSnapshot = await database.get("report_snapshots", neutralSeeded.assessmentId);
   assert.equal(neutralSnapshot.fullReport.influencingPatterns.length, 0);
-  assert.equal(neutralSnapshot.fullReport.neutralResult.strengths.length, 12, "completed neutral report must surface every unique supported strength");
+  assert.equal(neutralSnapshot.fullReport.neutralResult.strengths.length, 4, "completed neutral report must group supported strengths into four narratives");
 
   const failingDatabase = new ReportFailureDatabase();
   const failing = await seededAssessment(failingDatabase, "report-failure");
