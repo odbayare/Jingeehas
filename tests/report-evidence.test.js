@@ -1,7 +1,7 @@
 "use strict";
 const assert = require("node:assert/strict");
+const crypto = require("node:crypto");
 const fs = require("node:fs");
-const childProcess = require("node:child_process");
 const questionBank = require("../questions.js");
 const { QUESTIONS } = questionBank;
 const app = require("../app.js");
@@ -313,9 +313,17 @@ const numericDecision = fs.readFileSync(require.resolve("../docs/REPORT_NUMERIC_
 assert(numericDecision.includes("OWNER REVIEW REQUIRED"));
 assert(!numericDecision.includes("OWNER APPROVED"));
 
-for (const file of ["netlify/functions/_lib/report-signals.js", "netlify/functions/_lib/report-patterns.js", "netlify/functions/_lib/safety.js", "netlify/functions/_lib/payment.js", "netlify/functions/_lib/recovery.js", "questions.js"]) {
-  const diff = childProcess.execFileSync("git", ["diff", "7569319f333b79a9528135822488925ccd1aabf2", "--", file], { encoding: "utf8" });
-  assert.equal(diff, "", `${file}: frozen inference semantics changed`);
+const frozenFileHashes = Object.freeze({
+  "netlify/functions/_lib/report-signals.js": "732c0c0b848c57c5a87fbcbbc6f8bd378b6d73d782b3625a7990e42af02255bb",
+  "netlify/functions/_lib/report-patterns.js": "bd292754707f253e296a9d2cba4e8d56ed1395b17139aac64d9153a75c62a4e2",
+  "netlify/functions/_lib/safety.js": "406551d98b383a4905bd24dd6ccd9970552725f88374c0e5a10f3419590f0607",
+  "netlify/functions/_lib/payment.js": "c3c0901a648c3fc1e88e056c984b394576affe2638921b89b3b06855e245f2cd",
+  "netlify/functions/_lib/recovery.js": "e8f0f11a8e6f9b39ba17ddf51469e0061bf746c1df1ae9ad131107b22420e374",
+  "questions.js": "1d7d63a14d937d9b394b4cdfd0958c087057d795845f6f9a503e5f5542dad575"
+});
+for (const [file, expectedHash] of Object.entries(frozenFileHashes)) {
+  const actualHash = crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex");
+  assert.equal(actualHash, expectedHash, `${file}: frozen semantics changed`);
 }
 
 console.log("deterministic multi-factor report tests passed");
