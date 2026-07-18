@@ -4,15 +4,20 @@ const { ANSWER_SIGNAL_CONTRACT, directivesFor } = require("./report-signals.js")
 const { PATTERN_PRIORITY, evaluatePatterns } = require("./report-patterns.js");
 const { PATTERN_COPY, PATTERN_PUBLIC_TITLES, CONTEXT_PUBLIC_TITLES, SENTENCE_TEMPLATES, RECOMMENDATIONS, STRATEGY_COPY, INTERACTION_COPY, PROTECTIVE_COPY, sentenceTemplateMatches } = require("./report-copy.js");
 
-const REPORT_VERSION = "jingeehas-case-formulation-v4-generic";
-const QUESTIONNAIRE_VERSION = "jingeehas-production-2026-07";
+const REPORT_VERSION = "jingeehas-case-formulation-v5-attribution";
+const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION } = require("../../../questions.js");
 
 function answerText(value) {
   return Array.isArray(value) ? value.join(", ") : String(value ?? "").trim();
 }
 
-function buildEvidence(answerRows = [], summaryRows = []) {
-  const evidence = { signals: [], protective: [], contradictions: [], neutral: [], excluded: [], routingOnly: [], contexts: [], unmappedQuestions: [], summaries: [] };
+function buildEvidence(answerRows = [], summaryRows = [], metadata = {}) {
+  const answerMap = Object.fromEntries(answerRows.filter(row => row?.questionId).map(row => [row.questionId, row.value]));
+  const pastMethods = Array.isArray(answerMap["Q-METHOD-PAST"]) ? answerMap["Q-METHOD-PAST"].filter(item => item !== "Ямар нэг арга хэрэглэж үзээгүй") : [];
+  const linkedLongestMethod = metadata.linkedLongestMethod || answerMap["Q-METHOD-LONGEST"] || (pastMethods.length === 1 ? pastMethods[0] : null);
+  const evidence = { signals: [], protective: [], contradictions: [], neutral: [], excluded: [], routingOnly: [], contexts: [], unmappedQuestions: [], summaries: [],
+    questionnaireVersion: metadata.questionnaireVersion || LEGACY_QUESTIONNAIRE_VERSION, linkedLongestMethod,
+    answerMap };
   const seenQuestions = new Set();
   for (const row of answerRows) {
     if (!row?.questionId || seenQuestions.has(row.questionId)) continue;
@@ -36,6 +41,9 @@ function buildEvidence(answerRows = [], summaryRows = []) {
   evidence.summaries = summaryRows.filter(row => answerText(row.text)).map(row => ({
     checkpointId: row.checkpointId, text: answerText(row.text), sourceQuestionIds: Array.isArray(row.sourceQuestionIds) ? row.sourceQuestionIds : []
   }));
+  if (["Дасгал хөдөлгөөн", "Алхалт"].includes(linkedLongestMethod)) {
+    evidence.signals.push({ questionId: "Q-METHOD-LONGEST", dimension: "linked_previous_method", signal: "activity_based_method", effect: 2, derived: true });
+  }
   return evidence;
 }
 
@@ -48,7 +56,7 @@ function factGates(evidence) {
   const stopContext = (evidence.neutral || []).find(row => row.questionId === "Q-METHOD-STOP" && String(row.contextValue || "").trim());
   const stopText = String(stopContext?.contextValue || "");
   const openInjury = /гэмт|бэрт/i.test(stopText);
-  const openPain = /өвдөлт|өвдө/i.test(stopText);
+  const openPain = /өвдөлт|өвдөж|өвдсөн|өвдөх/i.test(stopText);
   const openMovementLimit = /хөдөлгөөний хязгаар/i.test(stopText);
   const explicitInjuryStop = /(?:гэмт|бэрт).{0,60}(?:улмаас|учраас|болоод|шалтгаан|зогсо|үргэлжлүүлэх боломжгүй)|(?:улмаас|учраас|болоод|шалтгаан).{0,60}(?:гэмт|бэрт)/i.test(stopText);
   const explicitVoluntaryStop = !explicitInjuryStop && /өөрийн хүсэлтээр|өөрөө зогсоосон|зогсоохоор шийд|болихоор шийд|хэрэгжүүлэхээ больсон/i.test(stopText);
@@ -74,7 +82,7 @@ function factGates(evidence) {
     explicitInjuryStop,
     explicitVoluntaryStop,
     openInjuryCorroboration: openInjury || openPain || openMovementLimit,
-    lowMovement: signals.has("low_movement"),
+    lowMovement: signals.has("low_movement") || signals.has("very_low_movement"),
     carTravel: signals.has("car_travel_context"),
     homeWork: signals.has("home_work_context"),
     bloodPressure
@@ -100,6 +108,8 @@ function sentenceComposer(evidence, evaluated, facts) {
     blood_pressure_followup: (evidence.contexts || []).filter(row => row.questionId === "Q-BLOOD-PRESSURE" && row.guidanceOnly && row.effect > 0),
     glucose_followup: (evidence.contexts || []).filter(row => row.questionId === "Q-GLUCOSE" && row.guidanceOnly && row.effect > 0),
     unsupervised_medication: (evidence.contexts || []).filter(row => row.questionId === "Q-METHOD-MEDICATION" && row.guidanceOnly && row.effect > 0),
+    menstrual_followup: (evidence.contexts || []).filter(row => row.questionId === "MC-01" && row.guidanceOnly && row.effect > 0),
+    pregnancy_followup: (evidence.contexts || []).filter(row => row.questionId === "PREG-GATE" && row.guidanceOnly && row.effect > 0),
     reproductive_followup: (evidence.contexts || []).filter(row => ["MC-01", "PREG-GATE"].includes(row.questionId) && row.guidanceOnly && row.effect > 0)
   });
   const sentenceEvidence = [];
@@ -164,7 +174,7 @@ function evidenceQuality(evidence = {}) {
   const informative = (evidence.signals || []).filter(item => !item.contextOnly && !item.guidanceOnly && item.effect !== 0);
   const questions = new Set(informative.map(item => item.questionId));
   const dimensions = new Set(informative.map(item => item.dimension));
-  const patternResult = evaluatePatterns(evidence.signals || []);
+  const patternResult = evaluatePatterns(evidence.signals || [], evidence);
   const mode = patternResult.supported.length ? "sufficient" : questions.size >= 3 && dimensions.size >= 2 ? "limited" : "insufficient";
   return { mode, questionCount: questions.size, dimensionCount: dimensions.size, dimensions: [...dimensions], patternResult };
 }
@@ -181,7 +191,10 @@ const PATTERN_EVIDENCE_TEMPLATES = Object.freeze({
 });
 
 function movementEvidenceNarrative(composer, section) {
-  return composer.render("context_low_car", section)
+  return composer.render("context_very_low_car", section)
+    || composer.render("context_very_low_home", section)
+    || composer.render("context_very_low_only", section)
+    || composer.render("context_low_car", section)
     || composer.render("context_low_home", section)
     || composer.render("context_low_only", section);
 }
@@ -253,7 +266,7 @@ function groupedNeutralStrengths(strengths) {
   if (protections.length) groups.push(`${sentenceCase(naturalList(protections))} нь гол саад болж харагдсангүй.`);
 
   const routine = [
-    signals.has("low_movement") ? "өдрийн хөдөлгөөний түвшин" : null,
+    signals.has("high_movement") ? "өдрийн хөдөлгөөний түвшин" : null,
     signals.has("regular_meal_rhythm") ? "тогтвортой хоолны хэмнэл" : null
   ].filter(Boolean);
   if (routine.length) groups.push(`${sentenceCase(naturalList(routine))} нь өдөр тутмын төлөвлөгөөнд ашиглаж болох давуу тал байна.`);
@@ -315,7 +328,7 @@ function previousAttemptAnalysis(evidence, facts, composer) {
 
 function professionalGuidance(composer) {
   const injury = composer.render("guidance_injury_exact", "10") || composer.render("guidance_injury_general", "10");
-  const items = [composer.render("guidance_blood_pressure", "10"), composer.render("guidance_glucose", "10"), injury, composer.render("guidance_medication", "10"), composer.render("guidance_reproductive", "10")].filter(Boolean);
+  const items = [composer.render("guidance_blood_pressure", "10"), composer.render("guidance_glucose", "10"), injury, composer.render("guidance_medication", "10"), composer.render("guidance_menstrual", "10"), composer.render("guidance_pregnancy", "10")].filter(Boolean);
   return items.length ? items.join(" ") : null;
 }
 
@@ -357,6 +370,23 @@ function startingAction(prioritized, facts, composer) {
       keepConstant: composer.render("emotional_experiment_constant", "8"),
       success: composer.render("emotional_experiment_success", "8"),
       fallback: composer.render("emotional_experiment_fallback", "8")
+    }
+  };
+  if (prioritized.id === "sleep_fatigue") return {
+    patternId: prioritized.id,
+    recommendationId: "schedule_fatigue_default",
+    action: composer.recordRule("experiment_sleep_schedule_action", patternGate, "Шөнийн дуудлага эсвэл урт ажлын өдрийн дараа хэрэглэх, бэлтгэл хамгийн бага шаарддаг нэг өгөгдмөл хувилбарыг урьдчилж сонгоно.", "8"),
+    reason: composer.recordRule("experiment_sleep_schedule_reason", patternGate, "Нойр болон ядаргаа давтагдсан үед төлөвлөгөө хуваарьт багтахаа больсон тул нэг л хувьсагч болох бэлэн өгөгдмөл хувилбар бодит нөхцөлд ажиллах эсэхийг шалгана.", "8"),
+    priorityReason: composer.recordRule("experiment_sleep_schedule_priority", patternGate, "Ядарсан өдрийн шийдвэрийн ачааллыг багасгах нь энэ тайланд харагдсан нойр, хуваарийн холбоотой хамгийн шууд нийцнэ.", "8"),
+    plan: {
+      kind: "schedule_fatigue_default",
+      variable: "шөнийн дуудлага эсвэл урт ажлын өдрийн дараах нэг бэлэн өгөгдмөл хувилбар",
+      action: "Тухайн нөхцөл үүсэхээс өмнө нэмэлт бэлтгэл шаардахгүй, өөрийн боломжид нийцсэн нэг хувилбарыг бичиж сонгоно.",
+      observe: "Тэр хувилбарыг ядарсан өдөр санаж, бодитоор ашиглаж чадсан эсэхээ л тэмдэглэнэ.",
+      keepConstant: "Бусад хоол, хөдөлгөөн, нойрны дүрмийг зэрэг өөрчлөхгүй.",
+      fallback: "Үндсэн хувилбар багтахгүй бол түүнээс ч бага бэлтгэлтэй хувилбарыг хэрэглэнэ; өнжсөн бол нөхөж хийхгүй.",
+      success: "Дараагийн шөнийн дуудлага эсвэл урт ажлын өдрийн дараа сонгосон хувилбар бодит амьдралд багтсан эсэхээр дүгнэнэ.",
+      maintenanceRule: "Алгассан өдрийн дараа дараагийн тохирох ажлын өдрөөс хэвийн үргэлжлүүлнэ."
     }
   };
   if (prioritized.id !== "previous_attempt_sustainability" || !(facts.activityBasedMethod || facts.lowMovement)) {
@@ -422,12 +452,9 @@ function startingAction(prioritized, facts, composer) {
     reason: composer.recordRule("experiment_movement_reason", patternGate, "Энэ туршилт өмнөх аргыг бүхэлд нь давтахгүйгээр, одоогийн амьдралд багтах нэг хөдөлгөөнийг олж шалгана.", "8"),
     priorityReason: composer.recordRule("experiment_movement_safeguards", patternGate, `${facts.schedule ? "Завгүй өдрийн" : "Үндсэн хувилбар багтахгүй өдрийн"} богино хувилбар болон алгассан өдрийн дараа хэвийн үргэлжлүүлэх дүрэм нь тусдаа өөрчлөлт бус, нэг хөдөлгөөний хэмнэлийг алдагдуулахгүй байхад зориулсан хамгаалалт юм.`, "8")
   };
-  return {
-    planDecisionPending: true,
-    recommendedCandidate: "B",
-    selectedCandidate: null,
-    candidateA: { ...shared, action: composer.recordRule("experiment_movement_action_candidate_a", patternGate, "Дараагийн 14 хоногт өдөр тутам давтаж болох нэг хөдөлгөөний хэмнэлийг туршина.", "8"), plan: candidateAPlan },
-    candidateB: { ...shared, action: composer.recordRule("experiment_movement_action_candidate_b", patternGate, "Өдөр тутмын амьдралд давтаж болох нэг хөдөлгөөний хэмнэлийг туршиж, эхлэх болон эргэн харах өдрөө урьдчилан сонгоно.", "8"), plan: candidateBPlan }
+  return { ...shared,
+    action: composer.recordRule("experiment_movement_action_candidate_b", patternGate, "Өдөр тутмын амьдралд давтаж болох нэг хөдөлгөөний хэмнэлийг туршиж, эхлэх болон эргэн харах өдрөө урьдчилан сонгоно.", "8"),
+    plan: candidateBPlan
   };
 }
 
@@ -448,7 +475,41 @@ function overallPicture(evaluated, composer) {
   return paragraphs.length ? paragraphs.slice(0, 3) : [composer.render("neutral_no_pattern", "neutral_overview"), composer.render("neutral_meaning_complete", "neutral_overview")].filter(Boolean);
 }
 
-function neutralResult(composer, strengths, contextual = [], quality = {}) {
+function neutralSubtype(evidence, contextual, strengths) {
+  if (contextual.some(item => item.id === "low_movement")) return "low_movement";
+  if ((evidence.contexts || []).some(row => ["MC-01", "PREG-GATE", "MENO-GATE"].includes(row.questionId) && row.guidanceOnly && row.effect > 0)) return "biological";
+  if (strengths.length >= 5) return "protective";
+  return "indeterminate";
+}
+
+function neutralObservation(subtype, composer) {
+  if (subtype === "low_movement") return {
+    variable: "өдөр тутмын нэг тогтмол үйл явдлын дараах эвтэйхэн хөдөлгөөний боломж",
+    action: "Сонгосон мөчид өөрт эвтэйхэн, давтаж болох нэг хөдөлгөөний хувилбарыг туршаад хийхэд ямар нөхцөл дэмжсэн эсвэл саад болсныг тэмдэглэнэ.",
+    keepConstant: "Хоолны хэмнэл болон бусад сайн ажиллаж буй дадлыг зориуд өөрчлөхгүй.",
+    decisionRule: "Давтаж болох нөхцөл тодорвол тэр мөчөө хадгална; багтахгүй бол хөдөлгөөний төрлийг бус, хийх мөчийг нэг удаа солино."
+  };
+  if (subtype === "biological") return {
+    variable: "мөчлөгийн өөрчлөлт болон тухайн үеийн өдөр тутмын мэдрэмж",
+    action: "Мөчлөгийн огноо, үргэлжилсэн өөрчлөлт болон санаа зовоосон шинж байгаа эсэхийг товч тэмдэглэнэ.",
+    keepConstant: "Дэмжигдээгүй хооллолтын асуудлыг засах шинэ дүрэм нэмэхгүй.",
+    decisionRule: "Өөрчлөлт үргэлжилбэл эсвэл санаа зовнил төрүүлбэл тэмдэглэлээ эмэгтэйчүүдийн эмчтэй ярилцахдаа ашиглана."
+  };
+  if (subtype === "protective") return {
+    variable: "одоо тогтвортой ажиллаж буй хоол, хөдөлгөөний хэмнэл",
+    action: "Ажиллаж буй хэмнэлээ өөрчлөхгүй хадгалаад, алдагдсан тохиолдолд ямар нөхцөл нөлөөлснийг л тэмдэглэнэ.",
+    keepConstant: "Шинэ хориг, засах дүрэм эсвэл шаардлагагүй туршилт нэмэхгүй.",
+    decisionRule: "Хэмнэл тогтвортой хэвээр бол одоогийн аргаа хадгална; давтагдсан өөрчлөлт гарвал зөвхөн тэр нөхцөлийг дараа нь шинжилнэ."
+  };
+  return {
+    variable: "нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах",
+    action: composer.render("neutral_observation_action", "neutral_observation"),
+    keepConstant: composer.render("neutral_observation_constant", "neutral_observation"),
+    decisionRule: composer.render("neutral_decision_rule", "neutral_observation")
+  };
+}
+
+function neutralResult(evidence, composer, strengths, contextual = [], quality = {}, professional = null) {
   const contextualTemplateIds = {
     sleep_fatigue: "neutral_context_sleep", low_movement: "neutral_context_movement",
     schedule_barrier: "neutral_context_schedule", cost_barrier: "neutral_context_cost",
@@ -456,7 +517,9 @@ function neutralResult(composer, strengths, contextual = [], quality = {}) {
     alcohol_food_change: "neutral_context_alcohol"
   };
   const contextualSummary = contextual.map(item => composer.render(contextualTemplateIds[item.id], "neutral_overview")).filter(Boolean).join(" ");
+  const subtype = neutralSubtype(evidence, contextual, strengths);
   return {
+    subtype,
     overview: [
       composer.render("neutral_no_pattern", "neutral_overview"),
       contextualSummary,
@@ -467,18 +530,13 @@ function neutralResult(composer, strengths, contextual = [], quality = {}) {
     strengths: groupedNeutralStrengths(strengths),
     strengthsFallback: composer.render("neutral_strengths_fallback", "neutral_strengths"),
     limits: [composer.render("neutral_limits", "neutral_limits"), composer.render("neutral_more_information", "neutral_limits")].filter(Boolean),
-    observation: {
-      variable: "нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах",
-      action: composer.render("neutral_observation_action", "neutral_observation"),
-      keepConstant: composer.render("neutral_observation_constant", "neutral_observation"),
-      decisionRule: composer.render("neutral_decision_rule", "neutral_observation")
-    },
-    professionalScope: composer.render("neutral_professional_scope", "neutral_guidance"),
+    observation: neutralObservation(subtype, composer),
+    professionalScope: professional || composer.render("neutral_professional_scope", "neutral_guidance"),
     reportUse: composer.render("neutral_report_use", "neutral_use")
   };
 }
 
-function buildFullReport(evidence = {}, now = new Date()) {
+function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
   const quality = evidenceQuality(evidence);
   const evaluated = quality.patternResult;
   const facts = factGates(evidence);
@@ -496,7 +554,10 @@ function buildFullReport(evidence = {}, now = new Date()) {
     const pattern = patternById.get(id);
     pattern.interactionsWith = [...new Set([...pattern.interactionsWith, ...interaction.patternIds.filter(other => other !== id)])];
   }
-  const prioritized = evaluated.influencingPatterns.slice().sort((left, right) => (PATTERN_PRIORITY[right.id] || 0) - (PATTERN_PRIORITY[left.id] || 0) || right.score - left.score)[0] || null;
+  const sleepCandidate = evaluated.supported.find(item => item.id === "sleep_fatigue");
+  const prioritized = sleepCandidate && facts.schedule
+    ? sleepCandidate
+    : evaluated.influencingPatterns.slice().sort((left, right) => (PATTERN_PRIORITY[right.id] || 0) - (PATTERN_PRIORITY[left.id] || 0) || right.score - left.score)[0] || null;
   const supportedIds = new Set(evaluated.supported.map(item => item.id));
   const previous = previousAttemptAnalysis(evidence, facts, composer);
   const contextual = contextualFactors(evidence, evaluated.contextualPatterns, facts, composer);
@@ -508,13 +569,13 @@ function buildFullReport(evidence = {}, now = new Date()) {
   const firstAction = planDecisionPending ? null : startDecision;
   const professional = professionalGuidance(composer);
   const urgent = composer.render("guidance_urgent_blood_pressure", "10");
-  const neutral = influencingPatterns.length ? null : neutralResult(composer, strengths, contextual, quality);
+  const neutral = influencingPatterns.length ? null : neutralResult(evidence, composer, strengths, contextual, quality, professional);
   const overview = neutral ? null : overallPicture(evaluated, composer);
   const avoidForNow = influencingPatterns.length
     ? composer.recordRule("avoid_simultaneous_changes", { requiredPatterns: evaluated.influencingPatterns.map(item => item.id) }, "Эхний туршилтын хугацаанд хоолны шинэ хатуу хориг болон олон шинэ дүрмийг зэрэг нэмэхгүй. Сонгосон нэг алхам өдөр тутмын амьдралд багтаж байгаа эсэхийг эхэлж ажиглана.", "9")
     : null;
   return {
-    version: REPORT_VERSION, questionnaireVersion: QUESTIONNAIRE_VERSION,
+    version: REPORT_VERSION, questionnaireVersion: metadata.questionnaireVersion || evidence.questionnaireVersion || LEGACY_QUESTIONNAIRE_VERSION,
     productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: now.toISOString(), mode: quality.mode,
     overallPicture: overview, influencingPatterns,
     contextualFactors: contextual,
@@ -536,7 +597,10 @@ function buildFullReport(evidence = {}, now = new Date()) {
       mappedQuestionCount: new Set([...(evidence.signals || []), ...(evidence.neutral || []), ...(evidence.excluded || []), ...(evidence.routingOnly || [])].map(row => row.questionId)).size,
       informativeQuestionCount: quality.questionCount, unmappedQuestions: evidence.unmappedQuestions || [], factGates: facts,
       signals: (evidence.signals || []).map(row => ({ questionId: row.questionId, dimension: row.dimension, signal: row.signal, effect: row.effect, protective: row.protective === true, contextOnly: row.contextOnly === true, guidanceOnly: row.guidanceOnly === true })),
-      patternEvidence: evaluated.candidates.map(candidate => ({ id: candidate.id, category: candidate.category, supported: supportedIds.has(candidate.id), score: candidate.score, threshold: candidate.threshold, questionIds: candidate.questionIds, dimensions: candidate.dimensions })),
+      patternEvidence: evaluated.candidates.map(candidate => ({ id: candidate.id, category: candidate.category, supported: supportedIds.has(candidate.id), score: candidate.score, threshold: candidate.threshold,
+        mandatoryAnchor: candidate.mandatoryAnchor || [], independentSupportingQuestionIds: candidate.independentSupportingQuestionIds || [],
+        sharedContextualEvidence: candidate.sharedContextualEvidence || [], contradictions: candidate.contradictionEvidence || [],
+        questionIds: candidate.questionIds, dimensions: candidate.dimensions })),
       sentenceEvidence: composer.sentenceEvidence,
       recommendationSelection: firstAction ? { patternId: firstAction.patternId, recommendationId: firstAction.recommendationId, reason: "The highest-priority eligible influencing pattern selected one first action; all other supported patterns retain their own section-7 direction." } : planDecisionPending ? { patternId: prioritized.id, recommendationId: "maintenance_movement_bridge", reason: "Numeric plan selection remains pending; no public first action is selected." } : null
     }

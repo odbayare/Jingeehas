@@ -20,7 +20,7 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   "Q-WEIGHT": { dimension: "anthropometric", valueType: "number", classification: "routing_only" },
   "Q-TARGET": { dimension: "anthropometric", valueType: "number", classification: "neutral_context" },
   "Q-MEAL-RHYTHM": { dimension: "meal_rhythm", options: {
-    "3–4 цаг": [protective("regular_meal_rhythm")], "4–5 цаг": [signal("meal_gap", 1)],
+    "3–4 цаг": [protective("regular_meal_rhythm")], "4–5 цаг": [neutral],
     "5 цагаас урт": [signal("meal_gap", 3)], "Тогтмол биш": [signal("irregular_meal_rhythm", 3)]
   } },
   "Q-HUNGER": { dimension: "interoception", options: {
@@ -51,7 +51,7 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
     "Гэрээсээ ажилладаг": [signal("home_work_context", 1), signal("home_environment_exposure", 1)], "Өөр хэлбэрээр": [neutral]
   } },
   "Q-MOVEMENT": { dimension: "movement", options: {
-    "Маш бага": [signal("low_movement", 3)], "Бага": [signal("low_movement", 2)], "Дунд": [signal("low_movement", -1)], "Их": [protective("low_movement", -3)]
+    "Маш бага": [signal("very_low_movement", 3, { contextOnly: true })], "Бага": [signal("low_movement", 2, { contextOnly: true })], "Дунд": [neutral], "Их": [protective("high_movement", -3)]
   } },
   "Q-GLUCOSE": { dimension: "medical_context", options: {
     "Хэмжиж байгаагүй": [neutral], "Хэвийн": [protective("medical_followup_context", -1)],
@@ -78,7 +78,8 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   "S1-S04": { dimension: "safety", options: optionMap(["Үгүй", "Өнгөрсөнд байсан", "Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Үгүй" ? [protective("self_harm_context", -3)] : [signal("self_harm_context", 3, { guidanceOnly: true })]) },
   "S1-B01": { dimension: "safety", options: optionMap(["Будилах", "Ухаан балартах", "Бие огцом муудах", "Аль нь ч үгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Аль нь ч үгүй" ? [protective("urgent_body_signal", -3)] : [signal("urgent_body_signal", 3, { guidanceOnly: true })]) },
   "Q-METHOD-CURRENT": { dimension: "current_method", options: Object.freeze({ ...optionMap(METHOD_OPTIONS, option => restrictiveMethod(option) ? [signal("restrictive_method_current", 1)] : [neutral]), "Одоогоор ямар нэг арга хэрэглээгүй": [neutral] }) },
-  "Q-METHOD-PAST": { dimension: "previous_method", options: Object.freeze({ ...optionMap(METHOD_OPTIONS, option => restrictiveMethod(option) ? [signal("restrictive_method_past", 1)] : ["Дасгал хөдөлгөөн", "Алхалт"].includes(option) ? [signal("activity_based_method", 2)] : [neutral]), "Ямар нэг арга хэрэглэж үзээгүй": [neutral] }) },
+  "Q-METHOD-PAST": { dimension: "previous_method", options: Object.freeze({ ...optionMap(METHOD_OPTIONS, option => restrictiveMethod(option) ? [signal("restrictive_method_past", 1, { contextOnly: true })] : [neutral]), "Ямар нэг арга хэрэглэж үзээгүй": [neutral] }) },
+  "Q-METHOD-LONGEST": { dimension: "linked_previous_method", valueType: "text", classification: "neutral_context" },
   "Q-METHOD-DURATION": { dimension: "attempt_duration", options: {
     "2 долоо хоногоос бага": [signal("short_lived_attempt", 3)], "2–8 долоо хоног": [signal("short_lived_attempt", 2)],
     "2–6 сар": [signal("short_lived_attempt", 1)], "6–12 сар": [signal("medium_duration_attempt", 1, { protective: true })], "1 жилээс урт": [signal("sustained_attempt", 2, { protective: true })], "Тодорхой санахгүй": [neutral]

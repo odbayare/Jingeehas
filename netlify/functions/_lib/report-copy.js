@@ -89,8 +89,11 @@ const SENTENCE_TEMPLATES = Object.freeze({
   evidence_previous_attempt_meaning_neutral: { requiredPatterns: ["previous_attempt_sustainability"], forbiddenContexts: ["explicit_injury_stop_context", "explicit_voluntary_stop_context"], text: "Өмнөх оролдлого үргэлжлээгүй үед үр дүнг өдөр тутам хадгалах өөр хувилбар бэлэн байгаагүй байна." },
 
   context_low_car: { requiredSignals: ["low_movement", "car_travel_context"], text: "Та өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн бөгөөд машинаар зорчдог тул өдөр тутмын хөдөлгөөн аяндаа нэмэгдэх боломж хязгаарлагдмал байна." },
+  context_very_low_car: { requiredSignals: ["very_low_movement", "car_travel_context"], text: "Та өдрийн нийт хөдөлгөөнөө маш бага гэж үнэлсэн бөгөөд машинаар зорчдог нь хөдөлгөөн аяндаа нэмэгдэх боломжийг хязгаарлаж байна." },
   context_low_home: { requiredSignals: ["low_movement", "home_work_context"], text: "Та гэрээсээ ажилладаг бөгөөд өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн байна." },
+  context_very_low_home: { requiredSignals: ["very_low_movement", "home_work_context"], text: "Та гэрээсээ ажилладаг бөгөөд өдрийн нийт хөдөлгөөнөө маш бага гэж үнэлсэн байна." },
   context_low_only: { requiredSignals: ["low_movement"], forbiddenSignals: ["car_travel_context", "home_work_context"], text: "Та өдрийн нийт хөдөлгөөнөө бага гэж үнэлсэн байна." },
+  context_very_low_only: { requiredSignals: ["very_low_movement"], forbiddenSignals: ["car_travel_context", "home_work_context"], text: "Та өдрийн нийт хөдөлгөөнөө маш бага гэж үнэлсэн байна." },
   context_injury_impossible: { requiredContexts: ["explicit_injury_stop_context"], text: "Дараагийн хөдөлгөөнөө сонгохдоо гэмтэлтэй холбоотой зовиур нэмэгдэхгүй байхыг харгалзана." },
   context_injury_difficult: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Таны дурдсан өвдөлт эсвэл хөдөлгөөний хязгаарлалт хөдөлгөөнөө тогтмол үргэлжлүүлэхэд саад болсон байна." },
   context_schedule: { requiredSignals: ["schedule_barrier"], text: "Завгүй өдөр үндсэн төлөвлөгөөг хэрэгжүүлэх боломжгүй байж болох тул урьдчилан богиносгож болох хувилбар хэрэгтэй." },
@@ -165,7 +168,8 @@ const SENTENCE_TEMPLATES = Object.freeze({
   guidance_injury_exact: { requiredContexts: ["explicit_injury_stop_context"], text: "Өмнөх гэмтэлтэй холбоотой зовиур үргэлжилж байгаа бол хөдөлгөөний шинэ хувилбарыг мэргэжлийн хүнтэй тохируулна уу." },
   guidance_injury_general: { requiredContexts: ["injury_or_pain_evidence"], forbiddenContexts: ["explicit_injury_stop_context"], text: "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт үргэлжилж байгаа бол хөдөлгөөний шинэ хувилбарыг мэргэжлийн хүнтэй тохируулна уу." },
   guidance_medication: { requiredContexts: ["unsupervised_medication"], text: "Эмчийн хяналтгүй эм хэрэглэсэн бол дахин хэрэглэхээсээ өмнө эмч эсвэл эм зүйчтэй зөвлөлдөнө үү." },
-  guidance_reproductive: { requiredContexts: ["reproductive_followup"], text: "Нөхөн үржихүйн эсвэл мөчлөгийн нөхцөлтэй холбоотой өөрчлөлт байгаа бол жин бууруулах том төлөвлөгөөг мэргэжлийн хүнтэй тохируулна уу." },
+  guidance_menstrual: { requiredContexts: ["menstrual_followup"], text: "Сарын тэмдгийн мөчлөг тогтмол бус байгаа нь жингийн шалтгааныг дангаараа тогтоохгүй. Хэрэв энэ өөрчлөлт үргэлжилж байгаа эсвэл танд санаа зовнил төрүүлж байвал эмэгтэйчүүдийн эмчтэй зөвлөнө үү." },
+  guidance_pregnancy: { requiredContexts: ["pregnancy_followup"], text: "Жирэмсэн, төрсний дараах эсвэл хөхүүл үед жинтэй холбоотой томоохон өөрчлөлтийг эмчтэйгээ тохируулна уу." },
   guidance_urgent_blood_pressure: { requiredContexts: ["blood_pressure_followup"], text: "Ухаан балартах, цээжээр хүчтэй өвдөх, амьсгал огцом давчдах зэрэг яаралтай шинж илэрвэл энэ төлөвлөгөөг үргэлжлүүлэхгүй, яаралтай тусламж авна уу." }
 });
 
@@ -215,7 +219,7 @@ const PROTECTIVE_COPY = Object.freeze({
   satiety_difficulty: "Цадсанаа анзаараад зогсож чаддаг нь идэх хэмжээгээ тохируулахад ашиглаж болох бодит давуу тал юм.",
   short_sleep: "Унтах хугацаа гол саад болж харагдсангүй.",
   poor_sleep_quality: "Нойрны чанар сайн байгаа нь өдөр тутмын сонголтоо төлөвлөхөд дэмжлэг болно.",
-  low_movement: "Өдрийн хөдөлгөөн их байгаа нь одоо байгаа бодит давуу тал юм.",
+  high_movement: "Өдрийн нийт хөдөлгөөн их байгаа нь одоо байгаа бодит давуу тал юм.",
   weight_regain: "Өмнөх оролдлогын дараа жин буцаагүй нь тогтвортой болгож чадсан зүйл байсныг харуулж байна.",
   professional_support: "Өмнө нь мэргэжлийн дэмжлэг авч байсан нь тусламж ашиглах бодит туршлага болж байна.",
   sustainability_barrier: "Тодорхой саад байгаагүй гэсэн хариулт нь хэрэгжүүлэх суурь боломж байгааг харуулж байна.",

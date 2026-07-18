@@ -22,7 +22,7 @@ module.exports = Object.freeze([
   profile("restrictive dieting + regain + rigid restart", {
     "Q-METHOD-PAST": ["Хоолны дэглэм", "Мацаг барих"], "Q-METHOD-DURATION": "2–8 долоо хоног",
     "Q-METHOD-REGAIN": "Ихэнх нь эргэн нэмэгдсэн", "Q-METHOD-BARRIERS": ["Хэт хатуу дүрэм"]
-  }, ["restrictive_rebound", "previous_attempt_sustainability"], { expectedFirstStep: "remove_one_strict_rule" }),
+  }, ["restrictive_rebound"], { expectedFirstStep: "remove_one_strict_rule" }),
   profile("satiety difficulty + emotional eating + food availability", {
     "Q-SATIETY": "Ихэнхдээ хэцүү", "Q-HUNGER": "Заримдаа анзаардаг", "Q-PORTION": ["Амттан", "Давслаг зууш"],
     "Q-EMOTION": "Нэлээд нэмэгддэг", "Q-CUE": ["Хоол харагдах", "Хоолны үнэр үнэртэх"],
@@ -49,7 +49,7 @@ module.exports = Object.freeze([
   }, ["hunger_satiety"], { expectedFirstStep: "mid_meal_pause" }),
   profile("restrictive attempt and regain", {
     "Q-METHOD-CURRENT": ["Мацаг барих"], "Q-METHOD-PAST": ["Нүүрс ус багасгах"], "Q-METHOD-REGAIN": "Өмнөхөөс илүү нэмэгдсэн"
-  }, ["restrictive_rebound"], { expectedFirstStep: "remove_one_strict_rule" }),
+  }, [], { absentPatterns: ["restrictive_rebound"] }),
   profile("plan incompatible with routine", {
     "Q-METHOD-DURATION": "2 долоо хоногоос бага", "Q-METHOD-BARRIERS": ["Цагийн хуваарь", "Зардал"]
   }, ["plan_daily_life_mismatch"], { expectedFirstStep: "minimum_viable_plan" }),
@@ -62,7 +62,8 @@ module.exports = Object.freeze([
     "Q-EMOTION": "Өөрчлөгддөггүй", "Q-CUE": ["Аль нь ч үгүй"], "Q-SLEEP-DURATION": "6–8 цаг", "Q-SLEEP-QUALITY": "Сайн амардаг",
     "Q-TRAVEL": "Машинаар", "Q-MOVEMENT": "Бага", "Q-BLOOD-PRESSURE": "Хэвийн хэмжээнээс бага эсвэл их гарч байсан",
     "Q-METHOD-PAST": ["Дасгал хөдөлгөөн"], "Q-METHOD-DURATION": "1 жилээс урт", "Q-METHOD-STOP": "Өмнөх хөдөлгөөн гэмтлийн улмаас зогссон",
-    "Q-METHOD-RESULT": "Жин буурсан", "Q-METHOD-REGAIN": "Хэсэгчлэн нэмэгдсэн", "Q-METHOD-BARRIERS": ["Цагийн хуваарь", "Зардал"]
+    "Q-METHOD-RESULT": "Жин буурсан", "Q-METHOD-REGAIN": "Хэсэгчлэн нэмэгдсэн", "Q-METHOD-BARRIERS": ["Цагийн хуваарь", "Зардал"],
+    "OPEN-PAST": "Гэмтлийн дараа өдөр тутам үргэлжлүүлэх орлуулах хувилбар бэлэн байгаагүй."
   }, ["previous_attempt_sustainability"], { expectedContextualFactors: ["low_movement"], expectedFirstStep: "maintenance_movement_bridge", expectedProtectiveSignal: "emotional_eating", absentPatterns: ["emotional_regulation", "hunger_satiety", "environmental_cues"] }),
   profile("mixed weak evidence", {
     "Q-EMOTION": "Бага зэрэг нэмэгддэг", "Q-SLEEP-QUALITY": "Заримдаа тасалддаг", "Q-MOVEMENT": "Бага", "Q-MEAL-RHYTHM": "4–5 цаг"
