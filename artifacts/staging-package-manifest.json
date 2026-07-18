@@ -26,7 +26,7 @@
     },
     {
       "file": "netlify/functions/_lib/assessment.js",
-      "sha256": "f1e0cd8cbc45102ab02c8f1b6fb31a2d076b9284ca8543eb09b0acda93721d5f"
+      "sha256": "f738aa729cddfce5c528f7db398ba8a1503fc3a5ce8063faff56199c90a22776"
     },
     {
       "file": "netlify/functions/_lib/auth.js",
@@ -62,19 +62,19 @@
     },
     {
       "file": "netlify/functions/_lib/report-copy.js",
-      "sha256": "c906f157ecd58875984e9876687a48998fe5bb570d26e29c91e3130aff96ac94"
+      "sha256": "8f48c8ef19b3f430cfdb2c2294f2dc8d4358cd4aae8d07be1b0feab6a0c9fd27"
     },
     {
       "file": "netlify/functions/_lib/report-patterns.js",
-      "sha256": "bd292754707f253e296a9d2cba4e8d56ed1395b17139aac64d9153a75c62a4e2"
+      "sha256": "489110da1226350da09e775b63741deefead01172cebbb67044372ac60e5b97f"
     },
     {
       "file": "netlify/functions/_lib/report-signals.js",
-      "sha256": "732c0c0b848c57c5a87fbcbbc6f8bd378b6d73d782b3625a7990e42af02255bb"
+      "sha256": "9b0f5926b274cea21cf256c8033a8ca8639267319f1115633b162c5d22d0493e"
     },
     {
       "file": "netlify/functions/_lib/report.js",
-      "sha256": "c757d27cebdf80249891e03bc1a2689adfb474c9851d32168884cbeb37b5d1d8"
+      "sha256": "952220cda5d7b585dfc715649e09a40078afc55268429ce40bf47f079dd6a75c"
     },
     {
       "file": "netlify/functions/_lib/safety.js",
@@ -166,7 +166,7 @@
     },
     {
       "file": "netlify/functions/weight-assessment-create.js",
-      "sha256": "118829708be76e56f92e304b812e8df5cb87a0c412615d147f912062b72950ef"
+      "sha256": "5adf2c42854692e27c2c21da840eade7857c7c0c2d03653b318db2236dcb17f6"
     },
     {
       "file": "netlify/functions/weight-assessment-report.js",
@@ -206,7 +206,7 @@
     },
     {
       "file": "netlify/functions/weight-session-state.js",
-      "sha256": "235559cd576ad1fbb606351e6d1c476452081f869bcfe756dcbb6ac9dce6779c"
+      "sha256": "e89417bd401bba9fb3c09e455d7cbb6846ed905f1ebf65b3c84844c3cc612646"
     },
     {
       "file": "netlify.toml",
@@ -214,7 +214,7 @@
     },
     {
       "file": "questions.js",
-      "sha256": "1d7d63a14d937d9b394b4cdfd0958c087057d795845f6f9a503e5f5542dad575"
+      "sha256": "ac79aa5e83d6c37234f886f2683fd036ba80862afa5f3b6f3d8b2131f7f22d14"
     },
     {
       "file": "site/_headers",
@@ -226,7 +226,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "ccc7387d8821c38f002468ce57133c0386bdde56a6843cffdd9b555058afe235"
+      "sha256": "c18113e055a4f8eef37e32873a0950a1d5bd7499c067c5961076a2d92f140d79"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -246,7 +246,7 @@
     },
     {
       "file": "site/questions.js",
-      "sha256": "1d7d63a14d937d9b394b4cdfd0958c087057d795845f6f9a503e5f5542dad575"
+      "sha256": "ac79aa5e83d6c37234f886f2683fd036ba80862afa5f3b6f3d8b2131f7f22d14"
     },
     {
       "file": "site/styles.css",
