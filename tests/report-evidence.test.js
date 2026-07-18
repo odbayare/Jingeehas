@@ -109,7 +109,7 @@ for (const fixture of fixtures) {
 }
 
 const multi = reportFor(fixtures[0].answers);
-const mealTimingPriority = "Хоолны зайг эхэлж тогтворжуулснаар хэт өлсөлтийн нөлөөг багасгаж, стресс болон цадах дохионы хүндрэл тусдаа үедээ хэр хүчтэй байгааг илүү тод ажиглах боломжтой.";
+const mealTimingPriority = "Хоолны зайг эхэлж тогтворжуулснаар хэт өлсөлтийн нөлөөг багасгаж, өлсөх болон цадах дохиогоо анзаарах хүндрэл хэр өөрчлөгдөж байгааг илүү тод ажиглана. Стрессийн үеийн идэх хүсэл тусдаа хэвээр байгаа эсэхийг мөн ажиглана.";
 assert(multi.influencingPatterns.length >= 3);
 assert(multi.interactionSummary.length >= 2);
 assert(new Set(multi.additionalPatternActions.map(item => item.recommendationId)).size === multi.additionalPatternActions.length);
@@ -278,7 +278,7 @@ assert(bloodPressureTrigger.urgentGuidance.includes("яаралтай тусла
 
 const emotionalReport = reportFor(fixtures.find(item => item.name === "emotional eating dominant").answers);
 const emotionalPublicText = JSON.stringify(publicReport(emotionalReport));
-assert(emotionalPublicText.includes("Таны хоолны хэмнэл тогтвортой байгаа нь хэт өлсөлт одоогийн гол саад биш байгааг харуулна."));
+assert(emotionalPublicText.includes("Хоол хоорондын зай тань тогтвортой байгаа нь хоолны цаг тогтмол бус байх асуудал гол саад биш гэдгийг харуулна."));
 assert(emotionalPublicText.includes("Цадсанаа анзаараад зогсож чаддаг нь идэх хэмжээгээ тохируулахад ашиглаж болох бодит давуу тал юм."));
 const conditionalRelief = "Хэрэв хоол тухайн мөчид түр амсхийх мэт мэдрэмж өгдөг бол стрессийн шалтгаан хэвээр үлдэхэд идэх хүсэл дахин төрж болно.";
 assert(JSON.stringify(publicReport(emotionalReport)).includes(conditionalRelief), "supported emotional report must distinguish hypothesis from fact");
@@ -312,7 +312,8 @@ const incompleteNeutralText = JSON.stringify(publicReport(reportFor({ "Q-EMOTION
 assert(incompleteNeutralText.includes("мэдээлэл хүрэлцээгүй"), "incomplete assessment must retain separately gated insufficient-information copy");
 assert.equal(neutralReport.neutralResult.strengths.length, 4, "neutral strengths must be grouped into four narratives");
 const groupedNeutralStrengths = JSON.stringify(neutralReport.neutralResult.strengths);
-for (const expectedStrength of ["өлсөх мэдрэмжээ анзаарах", "цадсанаа мэдээд зогсох", "идэх хэмжээгээ тохируулах", "стрессийн үеийн идэх хүсэл", "орчны хоолны дохио", "нойрны хугацаа, чанар", "өдрийн хөдөлгөөний түвшин", "тогтвортой хоолны хэмнэл", "өмнөх аргаа удаан хугацаанд үргэлжлүүлсэн", "үр дүнгээ хадгалсан"]) assert(groupedNeutralStrengths.toLowerCase().includes(expectedStrength), `neutral report missing grouped strength: ${expectedStrength}`);
+for (const expectedStrength of ["өлсөх мэдрэмжээ анзаарах", "цадсанаа мэдээд зогсох", "идэх хэмжээгээ тохируулах", "стрессийн үеийн идэх хүсэл", "орчны хоолны дохио", "нойрны хугацаа, чанар", "өдрийн хөдөлгөөний түвшин", "тогтвортой хоолны хэмнэл", "өмнөх аргаа удаан хугацаанд үргэлжлүүлсэн"]) assert(groupedNeutralStrengths.toLowerCase().includes(expectedStrength), `neutral report missing grouped strength: ${expectedStrength}`);
+assert(!groupedNeutralStrengths.includes("үр дүнгээ хадгалсан"), "no-regain without explicit initial success must not become a maintenance strength");
 assert(!groupedNeutralStrengths.includes("эрсдэлийг бууруулж байна"), "neutral strengths must not claim causal risk reduction");
 assert(neutralReport.neutralResult.limits.includes("Асуумжийн хариултаар тод хэв маяг ялгараагүй тул өдөр тутмын бодит нөхцөл хэд хэдэн удаа давтагдаж байгаа эсэхийг ажиглавал дараагийн дүгнэлт илүү тод болно."));
 assert(!JSON.stringify(neutralReport.neutralResult).includes("өмнөх оролдлогын явцын талаар илүү дэлгэрэнгүй мэдээлэл"), "fully routed neutral report must not claim previous-attempt information is missing");

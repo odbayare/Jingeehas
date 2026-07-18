@@ -53,6 +53,18 @@ function positiveSignals(evidence) {
 
 function factGates(evidence) {
   const signals = positiveSignals(evidence);
+  const protectiveSignals = new Set((evidence.protective || []).map(row => row.signal));
+  const answerMap = evidence.answerMap || {};
+  const pastMethods = Array.isArray(answerMap["Q-METHOD-PAST"])
+    ? answerMap["Q-METHOD-PAST"].filter(method => method !== "Ямар нэг арга хэрэглэж үзээгүй")
+    : [];
+  const linkedMethod = evidence.linkedLongestMethod || (pastMethods.length === 1 ? pastMethods[0] : null);
+  const validLinkedMethod = Boolean(linkedMethod && pastMethods.includes(linkedMethod));
+  const duration = String(answerMap["Q-METHOD-DURATION"] || "").trim();
+  const explicitImplementation = /(?:хэрэгжүүл|үргэлжлүүл|баримтал|дагаж|туршиж).{0,50}(?:өдөр|долоо хоног|сар|жил|хугацаа)/i.test(`${answerMap["Q-METHOD-STOP"] || ""} ${answerMap["OPEN-PAST"] || ""}`);
+  const explicitMaintainedResult = /(?:жин|үр дүн).{0,50}(?:буур|зорилгодоо хүр|хадгал|тогтвортой болг)/i.test(`${answerMap["Q-METHOD-STOP"] || ""} ${answerMap["OPEN-PAST"] || ""}`);
+  const noRegainAfterSuccess = answerMap["Q-METHOD-REGAIN"] === "Үгүй"
+    && (answerMap["Q-METHOD-RESULT"] === "Жин буурсан" || explicitMaintainedResult);
   const stopContext = (evidence.neutral || []).find(row => row.questionId === "Q-METHOD-STOP" && String(row.contextValue || "").trim());
   const stopText = String(stopContext?.contextValue || "");
   const openInjury = /гэмт|бэрт/i.test(stopText);
@@ -85,7 +97,13 @@ function factGates(evidence) {
     lowMovement: signals.has("low_movement") || signals.has("very_low_movement"),
     carTravel: signals.has("car_travel_context"),
     homeWork: signals.has("home_work_context"),
-    bloodPressure
+    bloodPressure,
+    noRegainAfterSuccess,
+    implementationExperience: pastMethods.length > 0 && validLinkedMethod && ((duration && duration !== "Тодорхой санахгүй") || explicitImplementation),
+    commonEatingBarriersProtected: ["emotional_eating", "environmental_cue_reactivity", "hunger_recognition_difficulty", "satiety_difficulty", "portion_difficulty"].every(signal => protectiveSignals.has(signal)),
+    environmentalCues: Array.isArray(answerMap["Q-CUE"])
+      ? answerMap["Q-CUE"].filter(cue => !["Аль нь ч үгүй", "Хариулахгүй"].includes(cue))
+      : []
   });
 }
 
@@ -228,15 +246,25 @@ function patternObject(candidate, composer, facts, section = "2") {
   };
 }
 
-function strengthItems(evidence, composer) {
+function strengthItems(evidence, composer, facts) {
   const seen = new Set();
-  return (evidence.protective || []).flatMap(row => {
+  const strengths = (evidence.protective || []).flatMap(row => {
+    if (row.signal === "weight_regain" && !facts.noRegainAfterSuccess) return [];
+    if (row.signal === "sustainability_barrier" && !facts.implementationExperience) return [];
     const copy = PROTECTIVE_COPY[row.signal];
     if (!copy || seen.has(copy)) return [];
     seen.add(copy);
     const text = composer.recordRule(`strength_detail_${row.signal}`, { requiredProtectiveSignals: [row.signal] }, copy, "6");
     return text ? [{ signal: row.signal, text }] : [];
   });
+  const rhythmCaveat = composer.recordRule(
+    "strength_regular_rhythm_hunger_caveat",
+    { requiredProtectiveSignals: ["regular_meal_rhythm"], requiredSignals: ["hunger_recognition_difficulty", "satiety_difficulty"] },
+    "Харин өлсөх, цадах дохиогоо цагт нь анзаарах хүндрэл тусдаа хэвээр байна.",
+    "6"
+  );
+  if (rhythmCaveat) strengths.push({ signal: "regular_meal_rhythm_hunger_caveat", text: rhythmCaveat });
+  return strengths;
 }
 
 function naturalList(items) {
@@ -297,7 +325,9 @@ function contextualFactors(evidence, contextualPatterns, facts, composer) {
   const items = contextualPatterns.map(candidate => ({
     id: candidate.id,
     title: CONTEXT_PUBLIC_TITLES[candidate.id] || candidate.title,
-    summary: `${candidate.id === "low_movement" ? movementEvidenceNarrative(composer, "4") : composer.render(PATTERN_EVIDENCE_TEMPLATES[candidate.id], "4")} ${PATTERN_COPY[candidate.id].effectOnWeightLoss}`
+    summary: `${candidate.id === "low_movement" ? movementEvidenceNarrative(composer, "4") : composer.render(PATTERN_EVIDENCE_TEMPLATES[candidate.id], "4")} ${candidate.id === "low_movement" && facts.commonEatingBarriersProtected
+      ? composer.recordRule("context_low_movement_protective_eating", { requiredPatterns: ["low_movement"], requiredProtectiveSignals: ["emotional_eating", "environmental_cue_reactivity", "hunger_recognition_difficulty", "satiety_difficulty", "portion_difficulty"] }, "Хооллолттой холбоотой нийтлэг саад хүчтэй илрээгүй боловч өдөр тутмын хөдөлгөөн бага байх нь зорилгод хүрэх хурдад нөлөөлж болно.", "4")
+      : PATTERN_COPY[candidate.id].effectOnWeightLoss}`
   }));
   const foodDiscomfort = composer.render("context_food_discomfort", "4");
   if (foodDiscomfort) items.push({ id: "food_discomfort_context", title: "Хоолны дараах биеийн мэдрэмж", summary: foodDiscomfort });
@@ -332,8 +362,35 @@ function professionalGuidance(composer) {
   return items.length ? items.join(" ") : null;
 }
 
+function environmentalCueCopy(facts) {
+  const cues = facts.environmentalCues || [];
+  const generic = "Өлсөөгүй үед идэх хүсэл хамгийн их төрүүлдэг нэг орчны дохиог сонгож, түүний хүртээмж эсвэл нөлөөг нэг аргаар багасгана.";
+  if (cues.length !== 1) return { action: generic, strategy: generic };
+  if (cues[0] === "Хоол харагдах") return {
+    action: "Давтагдан ил харагддаг нэг хүнсийг нүдэнд шууд өртөхгүй газар байрлуулна.",
+    strategy: "Бүх орчноо нэг дор өөрчлөхгүй; давтагдан ил харагддаг нэг хүнсийг нүдэнд шууд өртөхгүй газар байрлуулна."
+  };
+  if (cues[0] === "Хоол захиалгын апп нээх") return {
+    action: "Хоол захиалгын аппын нэг нэвтрэх дохиог багасгана: мэдэгдлийг унтраах эсвэл нүүр дэлгэцийн товчлолыг далд байрлуулна.",
+    strategy: "Хоол захиалгын аппын мэдэгдэл эсвэл нүүр дэлгэцийн товчлолын аль нэгийг багасгаж, апп руу автоматаар орох дохиог өөрчилнө."
+  };
+  if (cues[0] === "Бусад хүн идэж байх") return {
+    action: "Бусад хүн идэж байх нөхцөлд хэрэглэх нэг урьдчилсан хариу эсвэл өөр үйлдлийг бэлдэнэ.",
+    strategy: "Бусад хүн идэж байх үед дагаж идэхээс өмнө хэрэглэх нэг урьдчилсан хариу эсвэл өөр үйлдлийг бэлдэнэ."
+  };
+  return { action: generic, strategy: generic };
+}
+
 function recommendationFor(candidate, facts, composer) {
   const gate = { requiredPatterns: [candidate.id] };
+  if (candidate.id === "environmental_cues") {
+    const cue = environmentalCueCopy(facts);
+    return {
+      recommendationId: candidate.recommendationId,
+      action: composer.recordRule("strategy_environmental_cues_action", gate, cue.strategy, "7"),
+      reason: composer.recordRule("strategy_environmental_cues_reason", gate, "Нэг тодорхой орчны дохиог өөрчлөх нь олон дүрэм нэмэхгүйгээр түүний нөлөөг шалгах боломж өгнө.", "7")
+    };
+  }
   if (candidate.id !== "previous_attempt_sustainability") {
     const copy = STRATEGY_COPY[candidate.recommendationId];
     return {
@@ -389,9 +446,19 @@ function startingAction(prioritized, facts, composer) {
       maintenanceRule: "Алгассан өдрийн дараа дараагийн тохирох ажлын өдрөөс хэвийн үргэлжлүүлнэ."
     }
   };
+  if (prioritized.id === "environmental_cues") {
+    const cue = environmentalCueCopy(facts);
+    return {
+      patternId: prioritized.id,
+      recommendationId: recommendation.recommendationId,
+      action: composer.recordRule("experiment_environmental_cues_action", patternGate, `Эхний туршилтаар дараах нэг алхмыг хийнэ. ${cue.action}`, "8"),
+      reason: composer.recordRule("experiment_environmental_cues_reason", patternGate, "Нэг орчны дохионы хүртээмж эсвэл нөлөөг өөрчилснөөр төлөвлөөгүй идэх хүсэлд тухайн дохио хэр нөлөөлдгийг тусад нь ажиглана.", "8"),
+      priorityReason: composer.recordRule("experiment_environmental_cues_priority", patternGate, "Энэ алхам дэмжигдсэн орчны дохиотой шууд холбоотой бөгөөд бусад хооллолтын дүрмийг зэрэг өөрчлөхгүй.", "8")
+    };
+  }
   if (prioritized.id !== "previous_attempt_sustainability" || !(facts.activityBasedMethod || facts.lowMovement)) {
     const mealTimingPriority = prioritized.id === "irregular_meals_late_hunger"
-      ? composer.render("experiment_meal_timing_priority", "8")
+      ? [composer.render("experiment_meal_timing_priority", "8"), composer.render("experiment_meal_timing_stress", "8")].filter(Boolean).join(" ")
       : null;
     const result = {
       patternId: prioritized.id, recommendationId: recommendation.recommendationId,
@@ -561,7 +628,7 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
   const supportedIds = new Set(evaluated.supported.map(item => item.id));
   const previous = previousAttemptAnalysis(evidence, facts, composer);
   const contextual = contextualFactors(evidence, evaluated.contextualPatterns, facts, composer);
-  const strengths = strengthItems(evidence, composer);
+  const strengths = strengthItems(evidence, composer, facts);
   const protectiveSection = [composer.render("strength_body", "6"), composer.render("strength_common_barriers", "6"), composer.render("strength_adherence_success", "6")].filter(Boolean).join(" ") || null;
   const additionalPatternActions = evaluated.influencingPatterns.map(candidate => ({ patternId: candidate.id, patternTitle: PATTERN_PUBLIC_TITLES[candidate.id] || candidate.title, ...recommendationFor(candidate, facts, composer) }));
   const startDecision = startingAction(prioritized, facts, composer);

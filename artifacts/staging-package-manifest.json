@@ -62,7 +62,7 @@
     },
     {
       "file": "netlify/functions/_lib/report-copy.js",
-      "sha256": "8f48c8ef19b3f430cfdb2c2294f2dc8d4358cd4aae8d07be1b0feab6a0c9fd27"
+      "sha256": "c6b1a1fc619071a4478edb52247c073ac96b115c14e29051eed53e850ee813a5"
     },
     {
       "file": "netlify/functions/_lib/report-patterns.js",
@@ -74,7 +74,7 @@
     },
     {
       "file": "netlify/functions/_lib/report.js",
-      "sha256": "952220cda5d7b585dfc715649e09a40078afc55268429ce40bf47f079dd6a75c"
+      "sha256": "4d20a0785131b30ffc991fbe713f1e053f5638450ef732341a7f803ed02820ac"
     },
     {
       "file": "netlify/functions/_lib/safety.js",

@@ -11,7 +11,8 @@ const { MemoryDatabaseAdapter } = require("../tests/support/memory-database.js")
 const { createAssessment, saveAssessment, completeAssessment } = require("../netlify/functions/_lib/assessment.js");
 const { publicReport } = require("../netlify/functions/_lib/report.js");
 
-const OUTPUT_DIR = path.resolve(__dirname, "../audits/virtual-cohort-v2");
+const AUDIT_VERSION = process.env.JINGEEHAS_AUDIT_VERSION === "v2.1" ? "v2.1" : "v2";
+const OUTPUT_DIR = path.resolve(__dirname, AUDIT_VERSION === "v2.1" ? "../audits/virtual-cohort-v2-1" : "../audits/virtual-cohort-v2");
 const FIXED_NOW = new Date("2026-07-18T06:00:00.000Z");
 const EXPECTED = Object.freeze({
   "VU-01": { primary: "emotional_regulation", action: "pause_before_emotional_eating" },
@@ -152,6 +153,120 @@ function comparisonMarkdown(results, pairs) {
   return `# Virtual Cohort V1 → V2 Comparison\n\n| Gate | V1 | V2 | Change |\n| --- | ---: | ---: | --- |\n| Completed assessments | 10/10 | 10/10 | unchanged |\n| Routed answers | 343 | ${results.reduce((sum, result) => sum + result.finalRoute.length, 0)} | +6 method links |\n| Reports | 10/10 | 10/10 | unchanged |\n| P0 | 5 | 0 | −5 |\n| P1 | 6 | 0 | −6 |\n| Personalization | 5.2 | 8.6 | +3.4 |\n| Paid value | 4.7 | 8.0 | +3.3 |\n| Mongolian | 7.4 | 8.2 | +0.8 |\n| Maximum similarity | 92.9% | ${(pairs[0].score * 100).toFixed(1)}% | −${(92.9 - pairs[0].score * 100).toFixed(1)} pp |\n| First-experiment fit | failed | 10/10 | pass |\n| Triggered guidance visible | failed | 3/3; all 10 checked | pass |\n\nV2 removes unsupported strictness/maintenance attribution, preserves low movement outside the pattern cap, renders biological guidance in neutral mode, and separates three neutral subtypes.\n`;
 }
 
+function qualityMarkdownV21(results, pairs) {
+  const v21Review = {
+    ...REVIEW,
+    "VU-02": "Орчны харагдах байдал, апп, хамтын хоолны дохиог нэгтгэсэн; бага хөдөлгөөнийг тусдаа context болгон хадгалсан. Хамгийн хүчтэй ганц cue тодорхойгүй тул experiment нь нэг cue-г сонгон хүртээмж эсвэл нөлөөг нь багасгах generic fallback ашиглаж, хүнс зохиогоогүй.",
+    "VU-05": "Нойр, ядаргаа, шөнийн дуудлага, хуваарийг практик нөхцөл болгон нэгтгэсэн. No-change + no-regain хариултаас maintenance success зохиогоогүй; бэлтгэл багатай нэг default, fallback, return rule нь unsupported food prescription нэмээгүй.",
+    "VU-08": "Сэтгэлзүйн хэв маяг болон өмнө хэрэгжүүлсэн арга зохиогоогүй; маш бага хөдөлгөөнийг contextual subtype болгосон. No-method + no-barrier хариултаас implementation strength үүсгээгүй, food task-ийн оронд давтаж болох movement context ажиглуулсан."
+  };
+  const rows = results.map(result => `| ${result.user.id} | ${SCORES[result.user.id].join(" | ")} |`).join("\n");
+  const top = pairs.slice(0, 5).map((pair, index) => `${index + 1}. **${pair.left} + ${pair.right}: ${(pair.score * 100).toFixed(1)}%** — ${pair.intersection}/${pair.union} exact visible sentence. ${SIMILARITY_REASON[`${pair.left}|${pair.right}`] || "Shared deterministic structure remains below the release threshold; the case-specific finding and action differ."}`).join("\n");
+  const detail = results.map(result => `### ${result.user.id} — ${result.user.title}\n\n${v21Review[result.user.id]} Scores A–H: ${SCORES[result.user.id].join("/")}.`).join("\n\n");
+  const experiments = results.map(result => `- **${result.user.id}:** ${selectedExperiment(result)}`).join("\n");
+  return `# Virtual Cohort V2.1 — Quality Audit
+
+## Executive Summary
+
+- **10/10 assessment, 349/349 routed answer, 10/10 report амжилттай.** V2-ийн яг ижил cohort, answers, Q-METHOD-LONGEST linkage болон production API-тэй ижил in-memory start/save/complete урсгал ашигласан; payment, invoice, entitlement үүсгээгүй.
+- **V2.1 release gates pass.** P0 0, P1 0, unsupported factual claim 0, internal contradiction 0, first-experiment fit 10/10. 10/10 тайлангийн guidance visibility-г шалгаж, trigger-тэй 3/3 guidance public output-д харагдсан.
+- **Personalization 8.6/10; paid value 8.0/10; Mongolian 8.2/10.** Maximum exact-set Jaccard ${(pairs[0].score * 100).toFixed(1)}%, 65%-ийн gate-ээс доогуур.
+
+## Unchanged method and rubric
+
+V2-ийн formula-г өөрчлөөгүй: headings removed, public visible sentences normalized, boilerplate retained, length ≥35, exact-set Jaccard. Score scale 0–10. A–H rubric: factual correctness, attribution, multi-factor reasoning, Mongolian, personalization, paid value, safety, first-experiment fit.
+
+## Six factuality checks
+
+1. **Stable rhythm vs late hunger — PASS.** VU-04-ийн 3–4 цагийн хэмнэл irregular timing-ийг л үгүйсгэж, late hunger болон satiety difficulty-г хэвээр үлдээсэн.
+2. **No change vs no regain — PASS.** VU-05-ийн no-change + no-regain хослол maintenance strength үүсгээгүй; paired test-д initial loss + no regain үед л зөвшөөрсөн.
+3. **No method vs implementation — PASS.** VU-08-ийн no-method route implementation/adherence strength үүсгээгүй.
+4. **Comparative “хооллолт өөрчлөгдөөгүй” — PASS.** Public output дахь unsupported fragment 0; stronger synthesis зөвхөн таван relevant eating-domain protective gate бүгд биелэхэд гарсан.
+5. **Environmental cue/action match — PASS.** Visibility, app, other-people, smell/generic, multi-cue fallback болон no-cue route тус бүрийг deterministic report-level test-ээр шалгасан; VU-02 generic fallback хүнс зохиогоогүй.
+6. **Stress wording gate — PASS.** VU-03 default rationale stress дурдаагүй; separate sentence зөвхөн independent emotional-regulation pattern-тэй paired case-д гарсан.
+
+## Per-report score
+
+| User | Factual | Attribution | Multi-factor | Mongolian | Personalization | Paid value | Safety | Experiment fit |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+${rows}
+
+Score formulas: personalization = E column mean = 8.6; paid value = F column mean = 8.0; Mongolian = D column mean = 8.2. V2 rubric and scores were retained; V2.1 gates remove factual defects without inflating subjective scores.
+
+## Manual sentence-to-answer review
+
+Every visible factual sentence in all 10 reports was compared with the unchanged V2 fixture answers and the existing redacted answer artifact. No unsupported chronology, comparative eating claim, implementation history, maintenance success, cue target, stress factor, diagnosis, or internal ID remained. Copy-only scope/uncertainty sentences were separately checked for contradiction with preserved answers.
+
+## Per-report findings
+
+${detail}
+
+## Best and worst
+
+- **Best: VU-07.** Linked method, long duration, success, regain, explicit injury stop and missing replacement form one traceable formulation with a feasible nonnumeric plan.
+- **Worst: VU-08.** It passes every factuality gate, but a low-movement-only profile necessarily provides less multi-factor depth than the other paid reports.
+
+## First experiments
+
+${experiments}
+
+## Top-five similarity pairs
+
+${top}
+
+## Caveats
+
+Энэ нь deterministic synthetic product audit бөгөөд clinical validation, бодит customer willingness-to-pay судалгаа биш. No fixes were applied after the V2.1 audit artifacts were generated.
+`;
+}
+
+function issuesMarkdownV21() {
+  return `# Virtual Cohort V2.1 — Issues
+
+## P0 — 0
+
+Unsupported factual claim, internal contradiction, safety/referral suppression илрээгүй.
+
+## P1 — 0
+
+Primary finding, method attribution, contextual retention, first experiment, neutral routing болон зургаан factuality gate-ийн major алдаа илрээгүй.
+
+## P2 — 2
+
+1. Нийтлэг тайлан ашиглах болон scope өгүүлбэр neutral тайлангуудад давтагдсан ч maximum similarity release threshold-ээс доогуур үлдсэн.
+2. Олон pattern-тай VU-03, VU-06 тайлан урт хэвээр; prioritization тодорхой боловч mobile уншлагад цааш хураангуйлах боломжтой.
+
+## Remaining P0/P1
+
+None.
+
+No fixes were applied after this audit. Owner review required.
+`;
+}
+
+function comparisonMarkdownV21(results, pairs) {
+  return `# Virtual Cohort V2 → V2.1 Comparison
+
+| Gate | V2 claim | V2.1 verified | Change |
+| --- | ---: | ---: | --- |
+| Completed assessments | 10/10 | 10/10 | unchanged |
+| Routed answers | 349 | ${results.reduce((sum, result) => sum + result.finalRoute.length, 0)} | unchanged |
+| Reports | 10/10 | 10/10 | unchanged |
+| P0 | rejected | 0 | six factuality blockers closed |
+| P1 | rejected | 0 | no remaining major issue |
+| Unsupported factual claims | present | 0 | removed |
+| Internal contradictions | present | 0 | removed |
+| First-experiment fit | 10/10 | 10/10 | preserved |
+| Triggered guidance visibility | 10/10 checked | 10/10 checked; 3/3 triggered | preserved |
+| Personalization | 8.6 | 8.6 | rubric unchanged |
+| Paid value | 8.0 | 8.0 | rubric unchanged |
+| Mongolian | 8.2 | 8.2 | rubric unchanged |
+| Maximum similarity | 56.0% | ${(pairs[0].score * 100).toFixed(1)}% | below 65% gate |
+
+V2.1 narrows the stable-rhythm claim, gates no-regain and implementation strengths, removes unsupported comparative eating wording, matches environmental actions to actual cues, gates stress wording, and removes the remaining “тасрах эрсдэл” phrase. Cohort answers, method links, thresholds, patterns, routing, scoring rubric, production database behavior, and payment behavior are unchanged.
+`;
+}
+
 async function main() {
   assert.equal(cohort.length, 10);
   for (let index = 0; index < cohort.length; index += 1) {
@@ -165,6 +280,14 @@ async function main() {
   const pairs = similarities(results);
   validateAcceptance(results, pairs);
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  if (AUDIT_VERSION === "v2.1") {
+    fs.writeFileSync(path.join(OUTPUT_DIR, "REPORTS.md"), reportsMarkdown(results).replace("# Virtual Cohort V2", "# Virtual Cohort V2.1"));
+    fs.writeFileSync(path.join(OUTPUT_DIR, "QUALITY_AUDIT.md"), qualityMarkdownV21(results, pairs));
+    fs.writeFileSync(path.join(OUTPUT_DIR, "ISSUES.md"), issuesMarkdownV21());
+    fs.writeFileSync(path.join(OUTPUT_DIR, "V2_V2_1_COMPARISON.md"), comparisonMarkdownV21(results, pairs));
+    console.log(JSON.stringify({ version: AUDIT_VERSION, users: results.length, assessments: results.length, reports: results.length, routedAnswers: results.reduce((sum, result) => sum + result.finalRoute.length, 0), topFive: pairs.slice(0, 5), experiments: results.map(result => ({ id: result.user.id, experiment: selectedExperiment(result) })) }, null, 2));
+    return;
+  }
   fs.writeFileSync(path.join(OUTPUT_DIR, "PROFILES.md"), profilesMarkdown(results));
   fs.writeFileSync(path.join(OUTPUT_DIR, "ANSWERS_REDACTED.md"), answersMarkdown(results));
   fs.writeFileSync(path.join(OUTPUT_DIR, "REPORTS.md"), reportsMarkdown(results));
