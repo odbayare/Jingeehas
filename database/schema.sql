@@ -114,6 +114,33 @@ create index report_snapshot_versions_engine_idx on report_snapshot_versions (re
 create index report_snapshot_versions_supersedes_idx on report_snapshot_versions (supersedes_snapshot_id) where supersedes_snapshot_id is not null;
 create index report_snapshot_versions_legacy_source_idx on report_snapshot_versions (source_legacy_assessment_id) where source_legacy_assessment_id is not null;
 
+create table analytics_events (
+  id uuid primary key,
+  event_id uuid not null unique,
+  event_name text not null check (event_name in ('landing_viewed','start_cta_clicked','assessment_started','assessment_completed','paywall_viewed','invoice_created','payment_confirmed','invoice_create_failed','payment_check_started','payment_check_failed','recovery_requested','recovery_succeeded','report_opened')),
+  occurred_at timestamptz not null,
+  visitor_id_hash text check (visitor_id_hash is null or visitor_id_hash ~ '^[a-f0-9]{64}$'),
+  session_id_hash text check (session_id_hash is null or session_id_hash ~ '^[a-f0-9]{64}$'),
+  assessment_id text references assessments(id) on delete set null,
+  invoice_id text,
+  payment_id text,
+  amount_mnt integer check (amount_mnt is null or amount_mnt >= 0),
+  utm_source text, utm_medium text, utm_campaign text, utm_content text, utm_term text,
+  referrer_host text, device_class text not null check (device_class in ('mobile','tablet','desktop','unknown')),
+  rate_key_hash text check (rate_key_hash is null or rate_key_hash ~ '^[a-f0-9]{64}$'),
+  is_admin boolean not null default false, is_owner_preview boolean not null default false, is_test boolean not null default false,
+  idempotency_key text, metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  check (jsonb_typeof(metadata) = 'object' and octet_length(metadata::text) <= 2048)
+);
+create unique index analytics_events_idempotency_uidx on analytics_events (idempotency_key) where idempotency_key is not null;
+create index analytics_events_name_occurred_idx on analytics_events (event_name, occurred_at desc);
+create index analytics_events_assessment_idx on analytics_events (assessment_id) where assessment_id is not null;
+create index analytics_events_invoice_idx on analytics_events (invoice_id) where invoice_id is not null;
+create index analytics_events_payment_idx on analytics_events (payment_id) where payment_id is not null;
+create index analytics_events_campaign_idx on analytics_events (utm_campaign, occurred_at desc) where utm_campaign is not null;
+create index analytics_events_rate_idx on analytics_events (rate_key_hash, created_at desc) where rate_key_hash is not null;
+
 create table payments (
   id text primary key,
   session_id text not null references sessions(id) on delete restrict,

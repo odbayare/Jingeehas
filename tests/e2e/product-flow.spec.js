@@ -69,6 +69,18 @@ test("methodology trust content stacks without mobile overflow", async ({ page }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 });
 
+test("owner daily funnel dashboard is readable at 375px", async ({ page, context }) => {
+  await context.addCookies([{ name: "jingeehas_admin", value: "admin-e2e", domain: "127.0.0.1", path: "/" }]);
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/admin?e2e=1");
+  await expect(page.getByRole("heading", { name: "Өдөр тутмын үзүүлэлт" })).toBeVisible();
+  await expect(page.getByText("Цагийн бүс: Улаанбаатар")).toBeVisible();
+  await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+  await expect(page.locator(".table-scroll")).toHaveCSS("overflow-x", "auto");
+});
+
 test("detailed methodology route returns its conservative evidence disclosure", async ({ page, request }) => {
   const response = await request.get("/methodology");
   expect(response.status()).toBe(200);

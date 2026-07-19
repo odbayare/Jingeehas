@@ -7,6 +7,7 @@ const TABLES = Object.freeze([
   "advisor_accounts", "advisor_sessions", "advisor_clients", "advisor_commissions",
   "advisor_report_access_logs", "admin_accounts", "admin_sessions", "admin_audit_logs", "recovery_challenges", "data_deletion_requests",
   "schema_migrations", "certification_records"
+  , "analytics_events"
 ]);
 
 function databaseConfig(env = process.env) {

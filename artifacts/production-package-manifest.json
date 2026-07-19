@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "ebea3fa4581231cd815b8fe212f82b1cbbb953ca934a082f3686233dd3bf55ce"
+      "sha256": "11249bada212d6db337684846424ac766543c47d8619755b23755119339694ba"
     },
     {
       "file": "assets/favicon.svg",
@@ -41,12 +41,13 @@
     },
     {
       "file": "styles.css",
-      "sha256": "ab0cba2f966cbd39d429d5260987fc22108f4da28349136d481f229f9a1c0d44"
+      "sha256": "542ef023ed9965e94ecdb67a11fa2fcdb2cb1779650a9a7a43e1373b84f3790c"
     }
   ],
   "serverFunctions": [
     "admin-advisor-create",
     "admin-advisor-update",
+    "admin-analytics-daily",
     "admin-login",
     "admin-logout",
     "admin-preview-revoke",
@@ -64,6 +65,7 @@
     "advisor-logout",
     "advisor-password-change",
     "advisor-report",
+    "analytics-collect",
     "qpay-check-payment",
     "qpay-create-invoice",
     "weight-assessment-complete",
