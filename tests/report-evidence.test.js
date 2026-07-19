@@ -328,6 +328,7 @@ assert.equal(neutralReport.neutralResult.subtype, "protective");
 assert.equal(neutralReport.neutralResult.observation.variable, "одоо тогтвортой ажиллаж буй хоол, хөдөлгөөний хэмнэл");
 assert(neutralReport.neutralResult.observation.decisionRule);
 assert(!/гэмтэл|зардал|цагийн хуваарь|даралт|эм хэрэглэх/i.test(JSON.stringify(neutralReport.neutralResult)), "neutral report must not insert unsupported advice");
+assert(!Object.hasOwn(publicReport(neutralReport), "professionalGuidance"), "neutral public payload must not repeat its professional-scope guidance in an unused top-level field");
 const sleepContextReport = reportFor(fixtures.find(item => item.name === "sleep fatigue context").answers);
 assert(sleepContextReport.contextualFactors.some(item => item.id === "sleep_fatigue"), "supported sleep context must remain contextual");
 assert(JSON.stringify(sleepContextReport.neutralResult.overview).includes("нойр, ядаргаа нь өдөр тутмын сонголтод нөлөөлөх нөхцөл"), "neutral mode must retain its supported contextual finding");

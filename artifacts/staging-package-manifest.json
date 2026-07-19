@@ -86,7 +86,7 @@
     },
     {
       "file": "netlify/functions/_lib/report.js",
-      "sha256": "38693bf1a48572ba5400dae26bb6a4cd85b3cc2a4fa54adaa29cbcc9ce530dbd"
+      "sha256": "c36692e12e01f12f506dcbba6e3fe0047a6bf5db23117f64fbaf9087a21101c3"
     },
     {
       "file": "netlify/functions/_lib/safety.js",

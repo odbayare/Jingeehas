@@ -712,6 +712,10 @@ function publicReport(fullReport) {
     return Object.fromEntries(Object.entries(value).filter(([key]) => !internalKeys.has(key)).map(([key, child]) => [key, sanitize(child)]));
   }
   const safe = sanitize(fullReport);
+  // Neutral reports render the evidence-gated guidance from
+  // neutralResult.professionalScope. Do not also expose the unused top-level
+  // alias, which would duplicate the same substantive public sentence.
+  if (safe.neutralResult) delete safe.professionalGuidance;
   if (pending) safe.prioritizedStartingAction = null;
   return safe;
 }
