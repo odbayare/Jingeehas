@@ -111,6 +111,8 @@ create index report_snapshot_versions_assessment_version_idx on report_snapshot_
 create index report_snapshot_versions_assessment_created_idx on report_snapshot_versions (assessment_id, created_at desc);
 create index report_snapshot_versions_status_idx on report_snapshot_versions (snapshot_status);
 create index report_snapshot_versions_engine_idx on report_snapshot_versions (report_engine_version);
+create index report_snapshot_versions_supersedes_idx on report_snapshot_versions (supersedes_snapshot_id) where supersedes_snapshot_id is not null;
+create index report_snapshot_versions_legacy_source_idx on report_snapshot_versions (source_legacy_assessment_id) where source_legacy_assessment_id is not null;
 
 create table payments (
   id text primary key,

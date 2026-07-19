@@ -34,6 +34,7 @@ The migration was applied to an isolated PostgreSQL 16 cluster seeded with non-p
 | `anon` table access denied | PASS |
 | `authenticated` table access denied | PASS |
 | backend role access retained | PASS |
+| Version-table foreign keys covered by indexes | PASS |
 | Legacy fallback with no active version | PASS |
 | Active version precedence | PASS |
 | Partial unique active index | PASS |
