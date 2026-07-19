@@ -1,7 +1,7 @@
 "use strict";
 
 const PRODUCT = Object.freeze({ name: "Илүүдэл жингээс салах тест үнэлгээ", code: "WEIGHT_TEST_ONE_TIME", amount: 9900, displayPrice: "9,900₮" });
-const SUPPORT_EMAIL = "odbayar.enkh@gmail.com";
+const SUPPORT_EMAIL = "jingeehas@gmail.com";
 const WEIGHT_TEST_COMING_SOON_MODE = true;
 const PAYMENT_COPY = Object.freeze({
   creating: "QPay нэхэмжлэл үүсгэж байна…",
