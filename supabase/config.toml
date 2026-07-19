@@ -1,0 +1,2 @@
+[functions.jingeehas-database-gateway]
+verify_jwt = false

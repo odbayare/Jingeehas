@@ -1,105 +1,112 @@
-# Жин хасалтын гүн зураглал — mobile-first MVP demo
+# Jingeehas
 
-This workspace contains a runnable static MVP demo for the “Жин хасалтын гүн зураглал” product spec and User Journey v0.2.
+`Илүүдэл жингээс салах тест үнэлгээ` нь нэг удаагийн, `9,900₮`-ийн тест үнэлгээ. Controlled production QPay smoke test амжилттай баталгаажсаны дараа `WEIGHT_TEST_COMING_SOON_MODE`-ийг унтрааж, олон нийтийн урсгалыг нээсэн.
 
-## Run
+## Хамгаалагдсан бүтээгдэхүүн
 
-Open `index.html` in a browser, or run a small local server:
+- Бүтээгдэхүүний код: `WEIGHT_TEST_ONE_TIME`
+- Дүн: `9900`
+- Харагдах үнэ: `9,900₮`
+- Нэхэмжлэл үүсгэх: `/.netlify/functions/qpay-create-invoice`
+- Төлбөр шалгах: `/.netlify/functions/qpay-check-payment`
+
+Өөр арилжааны бүтээгдэхүүн, нэмэлт шат, тэмдэглэлийн бүтээгдэхүүн байхгүй.
+
+## Архитектур
+
+Статик клиент нь Netlify Functions-тэй зөвхөн ижил домэйноор харилцана. Сервер HTTP-only cookie session үүсгэж, assessment, payment, entitlement, recovery, advisor/admin authorization-ыг сервер талд шийднэ. Browser storage-д эрүүл мэндийн хариулт, тайлан, төлбөрийн эрх, нууц үг, session эсвэл урилгын token хадгалахгүй.
+
+Production database нь `netlify/functions/_lib/store.js` дахь adapter boundary-аар Enneagram test Supabase төслийн private `jingeehas` schema-д зориулсан dedicated-secret Edge Function gateway-тай ажиллана. Gateway нь Netlify-гээс ирэх хүсэлтийг `JINGEEHAS_GATEWAY_SECRET`-ээр шалгаад, Supabase-ийн service-role түлхүүрийг зөвхөн Edge Function дотроос RPC руу ашиглана. Gateway base URL нь `https://nemgfbanmwqudjfzddrn.supabase.co/functions/v1/jingeehas-database-gateway`; adapter `/transaction` нэмнэ. Environment байхгүй үед production endpoint `503` буцааж, memory/localStorage fallback хийхгүй. Memory adapter зөвхөн `tests/support` дотор байна.
+
+QPay integration нь [албан ёсны Merchant V2 урсгал](https://developer.qpay.mn/mn/docs/merchant?version=2.0.0)-ын `POST /v2/auth/token`, `POST /v2/invoice`, `POST /v2/payment/check` contract-ыг ашиглана. Автомат тест provider HTTP-г mock хийдэг бөгөөд бодит нэхэмжлэл үүсгэдэггүй.
+
+## Environment variables
+
+Production launch-аас өмнө:
+
+- `JINGEEHAS_DATABASE_API_URL`
+- `JINGEEHAS_DATABASE_API_KEY`
+- `QPAY_API_BASE_URL`
+- `QPAY_CLIENT_ID`
+- `QPAY_CLIENT_SECRET`
+- `QPAY_INVOICE_CODE`
+- `QPAY_CALLBACK_ORIGIN`
+- `QPAY_ALLOWED_APP_SCHEMES`
+- `QPAY_ALLOWED_HTTPS_HOSTS`
+- `RECOVERY_ENCRYPTION_KEY` — 32-byte key, base64
+- `RECOVERY_HASH_PEPPER` — 32+ character secret
+- `RECOVERY_DELIVERY_API_URL`
+- `RECOVERY_DELIVERY_API_KEY`
+- `RECOVERY_SENDER_EMAIL`
+- `RECOVERY_SENDER_NAME`
+- `RECOVERY_CHANNEL=email`
+- `RECOVERY_RATE_LIMIT_STORE=database`
+- `CROSS_PROJECT_FORBIDDEN_TOKEN` — CI contamination guard secret
+
+Admin account-ыг `admin_accounts` хүснэгтэд scrypt password hash-тайгаар аюулгүй bootstrap хийнэ. Нууц үгийг repository эсвэл browser storage-д оруулахгүй.
+
+## Local development
 
 ```bash
-python3 -m http.server 4177
-```
-
-Then open `http://127.0.0.1:4177/`.
-
-## Test
-
-Run everything:
-
-```bash
+npm ci
 npm test
+npm run test:contracts
+npx playwright install chromium
+npm run test:e2e
+npm run verify:production-package
+npm run verify:database-config
+npm run verify:database-gateway-auth
+npm run verify:recovery-config
+npm run verify:qpay-config
+npm run verify:domain-config
+npm run build:staging
+npm run verify:staging-package
 ```
 
-Equivalent explicit commands:
+`npm run build:production` зөвхөн `index.html`, client JS/CSS, security files, local assets-ыг `dist/` рүү хуулна. Tests, fixtures, E2E mock server, source documentation publish package-д орохгүй.
 
-```bash
-node --check app.js
-node tests/safety-readiness.test.js
-node tests/voice-summary-confirmation.test.js
-node tests/report-bible-sections.test.js
-node tests/question-metadata-mechanisms.test.js
-node tests/evidence-scoring-calibration.test.js
-node tests/virtual-user-qa.test.js
-node tests/ten-person-simulation-audit.test.js
-node tests/partial-persona-fix.test.js
-node tests/input-focus.test.js
-node tests/report-compression-ai-smell.test.js
-node tests/copy-localization.test.js
-node tests/ai-blind-demo-panel.test.js
-node tests/sample-preview-choice-clarity.test.js
-node tests/pricing-paywall.test.js
-node tests/commercial-flow-qa.test.js
-node tests/backend-qpay-plan.test.js
-node tests/mock-backend-entitlements.test.js
-node tests/fake-payment-lead-capture.test.js
-node tests/deep-mongolian-copy-rewrite.test.js
-node tests/public-language-purge.test.js
-```
+## Mock дүрэм
 
-## Demo Readiness checklist
+- Production HTML mock backend ачаалахгүй.
+- Memory database, QPay provider, recovery delivery injection зөвхөн test process-д нээгдэнэ.
+- Automated tests бодит QPay HTTP хүсэлт, бодит нэхэмжлэл, бодит төлбөр хийхгүй.
+- URL query, localStorage, raw advisor ID нь entitlement эсвэл privileged access болохгүй.
 
-For human demo validation, use [HUMAN_DEMO_QA.md](/Users/odbayare/Documents/Weight%20Loss%20Test/HUMAN_DEMO_QA.md).
-For the synthetic 45-year-old male office-worker virtual QA pass, use [HUMAN_LIKE_VIRTUAL_USER_QA_45M_OFFICE.md](/Users/odbayare/Documents/Weight%20Loss%20Test/HUMAN_LIKE_VIRTUAL_USER_QA_45M_OFFICE.md).
-For the Sprint 10 ten-person simulation audit, use [TEN_PERSON_SIMULATION_AUDIT.md](/Users/odbayare/Documents/Weight%20Loss%20Test/TEN_PERSON_SIMULATION_AUDIT.md).
-For the Sprint 12 AI blind demo panel, use [AI_BLIND_DEMO_PANEL.md](/Users/odbayare/Documents/Weight%20Loss%20Test/AI_BLIND_DEMO_PANEL.md).
-For the Sprint 15 commercial flow QA audit, use [COMMERCIAL_FLOW_QA.md](/Users/odbayare/Documents/Weight%20Loss%20Test/COMMERCIAL_FLOW_QA.md).
-For the Sprint 16 backend and QPay integration plan, use [BACKEND_QPAY_INTEGRATION_PLAN.md](/Users/odbayare/Documents/Weight%20Loss%20Test/BACKEND_QPAY_INTEGRATION_PLAN.md).
-For the Sprint 17 mock backend and entitlement persistence layer, use [MOCK_BACKEND_ENTITLEMENTS.md](/Users/odbayare/Documents/Weight%20Loss%20Test/MOCK_BACKEND_ENTITLEMENTS.md).
-For the Sprint 18 fake payment and lead capture validation flow, use [FAKE_PAYMENT_VALIDATION.md](/Users/odbayare/Documents/Weight%20Loss%20Test/FAKE_PAYMENT_VALIDATION.md).
-For the Sprint 19A/19B Mongolian copy rewrite inventory, Sprint 20A public language purge note, and manual QA rubric, use [COPY_REWRITE_INVENTORY.md](/Users/odbayare/Documents/Weight%20Loss%20Test/COPY_REWRITE_INVENTORY.md).
+## Launch checklist
 
-- Open the local server and check the landing screen.
-- Open the assessment choice screen and compare one-time vs 7-day cards.
-- Run the one-time assessment path and confirm the 7-day refinement CTA appears.
-- Confirm One-Time shows a preview before demo payment, then unlocks the full report with the prototype payment button.
-- Confirm 7-Day shows pricing before diary onboarding, then unlocks with the prototype payment button.
-- Run or seed a 7-day full-report-eligible scenario and check report readability.
-- Check limited diary state at 2-4 entries.
-- Check Mode 3 Professional-first and Mode 4 urgent safety routes.
-- Check at mobile widths around 390px and 430px, plus desktop.
-- Confirm there is no horizontal overflow and no console error.
-- Run `npm test`.
+- [x] Database API-г schema contract-аар provision хийж, backup/restore турших
+- [ ] Recovery delivery provider болон rate limit-ийг staging-д баталгаажуулах
+- [ ] QPay callback origin, app scheme, HTTPS host allowlist-ийг owner/provider-оор баталгаажуулах
+- [ ] Admin account-ыг secure bootstrap хийх
+- [ ] Privacy/terms/support copy-г owner/legal review хийх
+- [x] Canonical domain болон social preview URL-г `https://jingeehas.fit/` гэж owner баталгаажуулсан
+- [ ] Staging дээр owner-assisted sandbox payment хийх
+- [ ] CI бүх алхам ногоон болох
+- [ ] Дээрх blocker-ууд хаагдсаны дараа л coming-soon mode-г тусдаа owner-approved өөрчлөлтөөр нээх
 
-## Manual demo paths
+Энэ repository-ийн CI deploy хийдэггүй. Энэ ажлын хүрээнд deploy, merge, бодит нэхэмжлэл эсвэл бодит төлбөр хийх ёсгүй.
 
-- One-Time assessment: landing -> choice -> one-time -> answer Stage 1 -> report.
-- 7-Day full report: choose 7-day, complete setup, enter at least 5 diary days.
-- Limited diary report: create 2-4 diary entries and open the current report state.
-- Professional-first: answer insulin/sugar-lowering medication or concerning measured body signal.
-- Urgent safety: answer active self-harm text or severe confusion/fainting signal.
+## External launch certification status
 
-## What is included
+- Database schema: **PASS** — private Supabase schema, constraints, RLS and database-side transaction/rollback are verified.
+- Supabase gateway: **PASS / ACTIVE** — dedicated-secret authentication and insert/get/update/find/delete/rollback/cleanup pass with no residual certification rows.
+- Database application injection: **PASS** — `JINGEEHAS_DATABASE_API_KEY` contains only the dedicated gateway secret; the shared Supabase service-role credential is absent from Netlify.
+- Database backup/restore: **PASS** — access-controlled logical artifacts were restored into a disposable PostgreSQL 17 instance with 22 tables and zero `public` tables.
+- Recovery delivery: **PASS** — the verified Resend sender delivered to the monitored owner inbox; live expiry, one-minute cooldown, five-attempt lockout, one-time use, anti-enumeration, clean-context report recovery, and cleanup all pass. No test address, API key, or code is recorded.
+- QPay configuration: **PASS / LIVE MERCHANT** — reusable TIAS merchant configuration is installed server-side and a live no-provider-request probe passes. The provider configuration is production-only, so no invoice or payment was created.
+- QPay sandbox: **OWNER BLOCKED** — the verified merchant configuration is production-only and no isolated sandbox/test endpoint exists. A controlled owner-approved real-payment smoke test remains required before launch.
+- Admin bootstrap: **OWNER ACTION REQUIRED** — tooling passes, but the existing TIAS password does not meet the Jingeehas password policy; no real administrator or audit row was created.
+- Support inbox: **OWNER BLOCKED** — the live delivery retry was rejected and the available Namecheap session requires owner sign-in before the alias can be repaired and retested.
+- Owner/legal: **PENDING** — see `docs/OWNER_LAUNCH_REVIEW.md`.
+- Domain/live site: **PASS** — HTTPS, canonical, apex/www routing, public routes, security headers, and coming-soon enforcement pass.
+- Pre-launch deployment: **PASS** — production deploy `6a593860da8604112e80ab38` is live with coming-soon mode enabled.
 
-- Stage 1 initial deep pattern test
-- Assessment choice screen
-- One-time deep assessment journey
-- One-time self-report based deep report
-- 7-day deep assessment journey
-- Preliminary pattern map
-- Diary onboarding with reminder choices
-- 7-day guided diary
-- No-unplanned day short flow
-- Daily micro-insight
-- Pattern-specific daily probes
-- Deterministic voice/text summary confirmation engine
-- Confirmed reflection evidence extraction
-- Evidence-rule scoring calibration
-- Virtual user QA scenario suite
-- Safety-aware report modes
-- One-time report refinement CTAs
-- Full observed deep report generator
-- Local browser persistence with `localStorage`
+Engineering preparation and the staging package can pass while external certification and public launch remain blocked. Configuration verifiers report missing dependencies as `BLOCKED`; this is not a launch PASS.
 
-## Product boundaries
+Certification procedures:
 
-The prototype is a self-reflection and pattern-mapping tool. It does not diagnose medical, psychological, eating disorder, glucose, sleep, or reproductive conditions. When high-risk signals appear, the report switches away from weight-loss guidance.
+- `docs/STAGING_DATABASE_CERTIFICATION.md`
+- `docs/STAGING_RECOVERY_CERTIFICATION.md`
+- `docs/QPAY_SANDBOX_CERTIFICATION.md`
+- `docs/ADMIN_BOOTSTRAP_AND_ROTATION.md`
+- `docs/OWNER_LAUNCH_REVIEW.md`

@@ -1,0 +1,315 @@
+{
+  "schemaVersion": 1,
+  "product": {
+    "code": "WEIGHT_TEST_ONE_TIME",
+    "amount": 9900,
+    "displayPrice": "9,900₮",
+    "comingSoon": true
+  },
+  "packageRoot": "staging",
+  "files": [
+    {
+      "file": "configuration.json",
+      "sha256": "2bd9a8611ddacad1d2619b6f7b3fc3db33ddc59896c95900687f4dea9f204cfc"
+    },
+    {
+      "file": "netlify/functions/_lib/admin.js",
+      "sha256": "cbcacd80c912d107d41ee0204c116c2f8d2b97916dcbd2d60d554a5387453012"
+    },
+    {
+      "file": "netlify/functions/_lib/advisor.js",
+      "sha256": "2b07b7a86e56d00487332918e5a589a7884fe58b3e5797d4d7b12bb20f6f6b71"
+    },
+    {
+      "file": "netlify/functions/_lib/answer-rules.js",
+      "sha256": "4923c670df3cbd0153ef53014c26c8717fc28df1d1d31b6d27cf2a380a56f0a2"
+    },
+    {
+      "file": "netlify/functions/_lib/assessment.js",
+      "sha256": "42ad73fe9ee34dd04329dc64dc91a2257e32276e890ef41d93e22d6f9ea44ec8"
+    },
+    {
+      "file": "netlify/functions/_lib/auth.js",
+      "sha256": "101e00fcbe5c5f473775af2adfb27c49b1ee40064ad57aab53c3debdf581ff1a"
+    },
+    {
+      "file": "netlify/functions/_lib/config.js",
+      "sha256": "5e5001bee23a6c24aecc6772276beea013b08e953c435a153826509f5a69ffc9"
+    },
+    {
+      "file": "netlify/functions/_lib/crypto.js",
+      "sha256": "ad4251b8575b9da7ce807df0c3cef22853a80b314e6b883cb09b945053a1bd6b"
+    },
+    {
+      "file": "netlify/functions/_lib/http.js",
+      "sha256": "20c436a98d1f82ea3d01aab919360b67ca0b59e5c78ce1f8b9b2653aa7e5a9d0"
+    },
+    {
+      "file": "netlify/functions/_lib/payment.js",
+      "sha256": "c3c0901a648c3fc1e88e056c984b394576affe2638921b89b3b06855e245f2cd"
+    },
+    {
+      "file": "netlify/functions/_lib/preview.js",
+      "sha256": "8f64434b11f3c95aedcc0b11798852d32846862df9c660942fa8d9163d4e93f8"
+    },
+    {
+      "file": "netlify/functions/_lib/qpay.js",
+      "sha256": "d1276dc7cddc99e487ac5d46f9998f03bb4782ff5cb7144691151a63bae28d43"
+    },
+    {
+      "file": "netlify/functions/_lib/recovery.js",
+      "sha256": "e8f0f11a8e6f9b39ba17ddf51469e0061bf746c1df1ae9ad131107b22420e374"
+    },
+    {
+      "file": "netlify/functions/_lib/report-copy.js",
+      "sha256": "93904cfdd0beea1b72041ddb727596905ed27c18466c62e762ad5f69c2136c96"
+    },
+    {
+      "file": "netlify/functions/_lib/report-patterns.js",
+      "sha256": "489110da1226350da09e775b63741deefead01172cebbb67044372ac60e5b97f"
+    },
+    {
+      "file": "netlify/functions/_lib/report-regeneration.js",
+      "sha256": "a38c9cb370f9224eae731cf3fbaa374b99f4de71270a50c41849deae4ea2aaab"
+    },
+    {
+      "file": "netlify/functions/_lib/report-signals.js",
+      "sha256": "9b0f5926b274cea21cf256c8033a8ca8639267319f1115633b162c5d22d0493e"
+    },
+    {
+      "file": "netlify/functions/_lib/report-snapshots.js",
+      "sha256": "9090fea58b12c9e963447b7938414f3b74ef67ebb1457c6b3ffbf4257236e1ee"
+    },
+    {
+      "file": "netlify/functions/_lib/report-validation.js",
+      "sha256": "1479d0a0c62f978bc367177374a271b7e2f04f56d0929801af03ff965cfafa6d"
+    },
+    {
+      "file": "netlify/functions/_lib/report.js",
+      "sha256": "c36692e12e01f12f506dcbba6e3fe0047a6bf5db23117f64fbaf9087a21101c3"
+    },
+    {
+      "file": "netlify/functions/_lib/safety.js",
+      "sha256": "406551d98b383a4905bd24dd6ccd9970552725f88374c0e5a10f3419590f0607"
+    },
+    {
+      "file": "netlify/functions/_lib/session.js",
+      "sha256": "41ac015e397bb36e5eb920c025bf6582d730f3a105aa75f1087f3ca092d6fa21"
+    },
+    {
+      "file": "netlify/functions/_lib/store.js",
+      "sha256": "f2889ae8f8add147a6b2bc19a448f99876b34965cfa03149d434318346f32256"
+    },
+    {
+      "file": "netlify/functions/admin-advisor-create.js",
+      "sha256": "52503f94c741c8cd411a5af3e23e756811ebd12119bb5f887adfd600c007db1b"
+    },
+    {
+      "file": "netlify/functions/admin-advisor-update.js",
+      "sha256": "b25bd99f79e4a5a04ae91b76c1cf1296456566ea0b6cebac7345d6c677581e9b"
+    },
+    {
+      "file": "netlify/functions/admin-login.js",
+      "sha256": "532744219dfe5aaa7a4e86a05eaa110b2151ac1903af603920baf93f67380a94"
+    },
+    {
+      "file": "netlify/functions/admin-logout.js",
+      "sha256": "ead63705d1a48c57a0e90c9d26184fb609c982e0083ee1d13cba138f9bebc07b"
+    },
+    {
+      "file": "netlify/functions/admin-preview-revoke.js",
+      "sha256": "ef42580ef1f13313f85fb9932238c5f2f1fe250b5a52a8dee205e4acefd743e7"
+    },
+    {
+      "file": "netlify/functions/admin-preview-start.js",
+      "sha256": "32d6629877c29c652d52e5eb5d75556807963f253c2a98f392a38408f78f5c79"
+    },
+    {
+      "file": "netlify/functions/admin-preview-status.js",
+      "sha256": "e022a77ef13e570cbaa803ca6cc650b974ec12f7bd0c6cc064313be1e56ae62e"
+    },
+    {
+      "file": "netlify/functions/admin-regenerate-report-version.js",
+      "sha256": "5c3837e26125cd0bfec7294487d7826a2eb336770da4d6ef7dc467f58e6a1d4d"
+    },
+    {
+      "file": "netlify/functions/admin-report-preview.js",
+      "sha256": "1a6e382e678313ddb59526d53a49896cd55259f12d3bfa8cda9235048237dd9d"
+    },
+    {
+      "file": "netlify/functions/admin-report-regeneration-candidates.js",
+      "sha256": "9d97b490c48d91b2ba3b82db471586a8898e8fa98f1c22f649c2cd60c9397a73"
+    },
+    {
+      "file": "netlify/functions/admin-session-state.js",
+      "sha256": "400d130c37cedcece31437040c7c548d5182a97f443d9ab1a680f5051b92f2bf"
+    },
+    {
+      "file": "netlify/functions/advisor-client-invite.js",
+      "sha256": "6a244ea3c6b1a3c9e2d428baa4437e910152c1ea05f5c8b5941788ed1c4e3b09"
+    },
+    {
+      "file": "netlify/functions/advisor-consent.js",
+      "sha256": "5da360ae63852c86c682499027cc9985c036c3eb0ceaa12d15a5b731e9c42a68"
+    },
+    {
+      "file": "netlify/functions/advisor-dashboard.js",
+      "sha256": "b69c03c86ed79cd1d221f8dec7bfd0bedd590bb54c66c3ba1cc8125491a7f775"
+    },
+    {
+      "file": "netlify/functions/advisor-invite-resolve.js",
+      "sha256": "9247b13d961385debe92562521e3f71d63c93ddf2261cc9029d750778687806e"
+    },
+    {
+      "file": "netlify/functions/advisor-login.js",
+      "sha256": "fdd3f7e5b85ae269db191da414e93c77e0aa412063af20570cbb9b71af1fd486"
+    },
+    {
+      "file": "netlify/functions/advisor-logout.js",
+      "sha256": "c3c81a82b1485edfe8a40179631e64b9f893623dde576e3dcc9fae8b3b015a2b"
+    },
+    {
+      "file": "netlify/functions/advisor-password-change.js",
+      "sha256": "c06c1ac0c89304a82b42c88baf7ae0a33d8111e1f01911443416a5b14da12084"
+    },
+    {
+      "file": "netlify/functions/advisor-report.js",
+      "sha256": "9e4b595f7bde4ddb28e94c66e16138a26e1b57aa3a11075c6c8eb79f8fc8657c"
+    },
+    {
+      "file": "netlify/functions/qpay-check-payment.js",
+      "sha256": "8421a6bc26fa53dcb67440ca8a264180c9a2748285ad15f7e860ccf3d3f0d3c3"
+    },
+    {
+      "file": "netlify/functions/qpay-create-invoice.js",
+      "sha256": "ac23fc122169be32845da388c557d0cb6cfbf5714b6032ed12539186daff8a95"
+    },
+    {
+      "file": "netlify/functions/weight-assessment-complete.js",
+      "sha256": "ccec18186887a17443d2f09d9ba928bd82f735f61f34bde16aee640475aa8bdd"
+    },
+    {
+      "file": "netlify/functions/weight-assessment-create.js",
+      "sha256": "5adf2c42854692e27c2c21da840eade7857c7c0c2d03653b318db2236dcb17f6"
+    },
+    {
+      "file": "netlify/functions/weight-assessment-report.js",
+      "sha256": "ba654f0926b2ec345e138aaaacecd787ebf2f823767a00d52743fab4b56c6edf"
+    },
+    {
+      "file": "netlify/functions/weight-assessment-save.js",
+      "sha256": "570a70a84bc4946f1909d26d5ea7f3905b00f4a4fb0db97249d5ce1249169200"
+    },
+    {
+      "file": "netlify/functions/weight-data-deletion-request.js",
+      "sha256": "6dfd990f7a4eb40911b0328c0fc7f4f0e02196da807f685a7f0b56c3fc37128d"
+    },
+    {
+      "file": "netlify/functions/weight-entitlements.js",
+      "sha256": "6a3e36faf672587cd1a76cf3b0cd4193359eb5252ce07cf3b6c86a2a6bebf9a0"
+    },
+    {
+      "file": "netlify/functions/weight-recovery-confirm.js",
+      "sha256": "3670422aad576be6866cff87aae595e9b1a7f58e13300576900ee6a4b9c77309"
+    },
+    {
+      "file": "netlify/functions/weight-recovery-contact-save.js",
+      "sha256": "1ffcccd28368eb0f87a5f431bb77939e04c8878b3bfcb1f8d06b0110176e5597"
+    },
+    {
+      "file": "netlify/functions/weight-recovery-request.js",
+      "sha256": "315cb0925bf2c554044c78eaa1df69c9c54c53971792447f01659611831aadbe"
+    },
+    {
+      "file": "netlify/functions/weight-safety-gate.js",
+      "sha256": "c797cbe12485160c53e2af01e4c223d7f222a537752804e55e23009031836f51"
+    },
+    {
+      "file": "netlify/functions/weight-session-start.js",
+      "sha256": "75f7170fdc74080bf88e041b6e48cb2a2aea29450a3e94e85ce3f787327d7595"
+    },
+    {
+      "file": "netlify/functions/weight-session-state.js",
+      "sha256": "e89417bd401bba9fb3c09e455d7cbb6846ed905f1ebf65b3c84844c3cc612646"
+    },
+    {
+      "file": "netlify.toml",
+      "sha256": "11d078fcad90aa12b785c2c96180d3580eeea1fc05e15feabfaf599d2d77f5fe"
+    },
+    {
+      "file": "questions.js",
+      "sha256": "ac79aa5e83d6c37234f886f2683fd036ba80862afa5f3b6f3d8b2131f7f22d14"
+    },
+    {
+      "file": "site/_headers",
+      "sha256": "c174d1500c48b608a6f77817dda418514825c27297abfbdfc487415d98a22950"
+    },
+    {
+      "file": "site/_redirects",
+      "sha256": "6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef"
+    },
+    {
+      "file": "site/app.js",
+      "sha256": "ebea3fa4581231cd815b8fe212f82b1cbbb953ca934a082f3686233dd3bf55ce"
+    },
+    {
+      "file": "site/assets/favicon.svg",
+      "sha256": "95bea179e8bb51b4acc6374a1c43f284039dd60e4f3fbada62caf2be3b39e5dc"
+    },
+    {
+      "file": "site/assets/hero.svg",
+      "sha256": "c8feb02e4b698f6979eed05d1623b0f77e081e834fdf54160a39b945bf528e84"
+    },
+    {
+      "file": "site/assets/social-preview.png",
+      "sha256": "a5a78006bb6f0577a295c180a03779d1277c59b91529c2499ab01be6a7709694"
+    },
+    {
+      "file": "site/index.html",
+      "sha256": "a0f35701bad0b996ad1ca3db8a9bfe70ed3c3143a5292d86366640789adc1308"
+    },
+    {
+      "file": "site/questions.js",
+      "sha256": "ac79aa5e83d6c37234f886f2683fd036ba80862afa5f3b6f3d8b2131f7f22d14"
+    },
+    {
+      "file": "site/styles.css",
+      "sha256": "ab0cba2f966cbd39d429d5260987fc22108f4da28349136d481f229f9a1c0d44"
+    }
+  ],
+  "functionNames": [
+    "admin-advisor-create",
+    "admin-advisor-update",
+    "admin-login",
+    "admin-logout",
+    "admin-preview-revoke",
+    "admin-preview-start",
+    "admin-preview-status",
+    "admin-regenerate-report-version",
+    "admin-report-preview",
+    "admin-report-regeneration-candidates",
+    "admin-session-state",
+    "advisor-client-invite",
+    "advisor-consent",
+    "advisor-dashboard",
+    "advisor-invite-resolve",
+    "advisor-login",
+    "advisor-logout",
+    "advisor-password-change",
+    "advisor-report",
+    "qpay-check-payment",
+    "qpay-create-invoice",
+    "weight-assessment-complete",
+    "weight-assessment-create",
+    "weight-assessment-report",
+    "weight-assessment-save",
+    "weight-data-deletion-request",
+    "weight-entitlements",
+    "weight-recovery-confirm",
+    "weight-recovery-contact-save",
+    "weight-recovery-request",
+    "weight-safety-gate",
+    "weight-session-start",
+    "weight-session-state"
+  ]
+}

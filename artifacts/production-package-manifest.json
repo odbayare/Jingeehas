@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "product": {
+    "code": "WEIGHT_TEST_ONE_TIME",
+    "amount": 9900,
+    "displayPrice": "9,900₮",
+    "comingSoon": true
+  },
+  "staticFiles": [
+    {
+      "file": "_headers",
+      "sha256": "c174d1500c48b608a6f77817dda418514825c27297abfbdfc487415d98a22950"
+    },
+    {
+      "file": "_redirects",
+      "sha256": "6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef"
+    },
+    {
+      "file": "app.js",
+      "sha256": "ebea3fa4581231cd815b8fe212f82b1cbbb953ca934a082f3686233dd3bf55ce"
+    },
+    {
+      "file": "assets/favicon.svg",
+      "sha256": "95bea179e8bb51b4acc6374a1c43f284039dd60e4f3fbada62caf2be3b39e5dc"
+    },
+    {
+      "file": "assets/hero.svg",
+      "sha256": "c8feb02e4b698f6979eed05d1623b0f77e081e834fdf54160a39b945bf528e84"
+    },
+    {
+      "file": "assets/social-preview.png",
+      "sha256": "a5a78006bb6f0577a295c180a03779d1277c59b91529c2499ab01be6a7709694"
+    },
+    {
+      "file": "index.html",
+      "sha256": "a0f35701bad0b996ad1ca3db8a9bfe70ed3c3143a5292d86366640789adc1308"
+    },
+    {
+      "file": "questions.js",
+      "sha256": "ac79aa5e83d6c37234f886f2683fd036ba80862afa5f3b6f3d8b2131f7f22d14"
+    },
+    {
+      "file": "styles.css",
+      "sha256": "ab0cba2f966cbd39d429d5260987fc22108f4da28349136d481f229f9a1c0d44"
+    }
+  ],
+  "serverFunctions": [
+    "admin-advisor-create",
+    "admin-advisor-update",
+    "admin-login",
+    "admin-logout",
+    "admin-preview-revoke",
+    "admin-preview-start",
+    "admin-preview-status",
+    "admin-regenerate-report-version",
+    "admin-report-preview",
+    "admin-report-regeneration-candidates",
+    "admin-session-state",
+    "advisor-client-invite",
+    "advisor-consent",
+    "advisor-dashboard",
+    "advisor-invite-resolve",
+    "advisor-login",
+    "advisor-logout",
+    "advisor-password-change",
+    "advisor-report",
+    "qpay-check-payment",
+    "qpay-create-invoice",
+    "weight-assessment-complete",
+    "weight-assessment-create",
+    "weight-assessment-report",
+    "weight-assessment-save",
+    "weight-data-deletion-request",
+    "weight-entitlements",
+    "weight-recovery-confirm",
+    "weight-recovery-contact-save",
+    "weight-recovery-request",
+    "weight-safety-gate",
+    "weight-session-start",
+    "weight-session-state"
+  ]
+}

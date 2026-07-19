@@ -1,0 +1,5 @@
+"use strict";
+const { getDatabase } = require("./_lib/store.js"); const { handler, response } = require("./_lib/http.js");
+const { authenticateSession } = require("./_lib/session.js"); const { ownedAssessment } = require("./_lib/assessment.js"); const { randomId } = require("./_lib/crypto.js");
+const { authenticateOwnerPreview } = require("./_lib/preview.js");
+exports.handler = handler("POST", async (event, body) => { const database = getDatabase(); await authenticateOwnerPreview(database, event); const session = await authenticateSession(database, event); await ownedAssessment(database, session.id, body.assessmentId); const existing = await database.find("data_deletion_requests", { assessmentId: body.assessmentId, status: "pending" }); if (existing.length) return response(200, { requestId: existing[0].id, status: "pending" }); const row = { id: randomId("ddr_"), sessionId: session.id, assessmentId: body.assessmentId, status: "pending", createdAt: new Date().toISOString() }; await database.insert("data_deletion_requests", row); return response(202, { requestId: row.id, status: row.status }); });
