@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "12311f8a7b49538a9d802453dc81b43426a32cd5923c530f78519403e348f267"
+      "sha256": "3dae071a9a0dd0ecd7f29662c5732693c93d45cb9d884364bd8285c4ac1957b9"
     },
     {
       "file": "assets/favicon.svg",
@@ -52,6 +52,9 @@
     "admin-preview-revoke",
     "admin-preview-start",
     "admin-preview-status",
+    "admin-regenerate-report-version",
+    "admin-report-preview",
+    "admin-report-regeneration-candidates",
     "admin-session-state",
     "advisor-client-invite",
     "advisor-consent",

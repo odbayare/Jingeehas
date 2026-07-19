@@ -27,6 +27,21 @@ class RestDatabaseAdapter {
   consumeRecoveryChallenge(id, codeHash, now) {
     return this.request({ action: "consume_recovery_challenge", id, codeHash, now });
   }
+  getActiveReportSnapshot(assessmentId) {
+    return this.request({ action: "get_active_report_snapshot", assessmentId });
+  }
+  listReportSnapshotVersions(assessmentId) {
+    return this.request({ action: "list_report_snapshot_versions", assessmentId });
+  }
+  getReportSnapshotVersion(snapshotId) {
+    return this.request({ action: "get_report_snapshot_version", snapshotId });
+  }
+  createReportSnapshotVersion(input) {
+    return this.request({ action: "create_report_snapshot_version", ...input });
+  }
+  activateReportSnapshotVersion(snapshotId, expectedCurrentSnapshotId = null, now = new Date()) {
+    return this.request({ action: "activate_report_snapshot_version", snapshotId, expectedCurrentSnapshotId, now: now.toISOString() });
+  }
 }
 
 let testDatabase = null;

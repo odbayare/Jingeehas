@@ -3,6 +3,7 @@
 const { randomId } = require("./crypto.js");
 const { calculateAssessmentSafety, ROUTE_COPY } = require("./safety.js");
 const { buildEvidence, buildFullReport, publicReport } = require("./report.js");
+const { resolveReportSnapshot } = require("./report-snapshots.js");
 const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION, questionById, visibleQuestions, autoLinkedLongestMethod, validateAnswer } = require("../../../questions.js");
 
 function assessmentQuestionnaireVersion(assessment) {
@@ -139,12 +140,12 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
 
 async function reportForSession(database, sessionId, assessmentId) {
   await ownedAssessment(database, sessionId, assessmentId);
-  const snapshot = await database.get("report_snapshots", assessmentId);
+  const snapshot = await resolveReportSnapshot(database, assessmentId);
   if (!snapshot) throw Object.assign(new Error("Report not found"), { statusCode: 404, code: "report_not_found" });
   const entitlements = await database.find("entitlements", { assessmentId, status: "active" });
   return { assessmentId, reportMode: snapshot.reportMode, safetyRoute: snapshot.safetyRoute,
     initialView: snapshot.initialView, fullReport: entitlements.length ? publicReport(snapshot.fullReport) : null,
-    entitled: entitlements.length > 0 };
+    entitled: entitlements.length > 0, reportVersion: snapshot.snapshotMetadata };
 }
 
 module.exports = { assessmentQuestionnaireVersion, ownedAssessment, createAssessment, saveAssessment, completeAssessment, reportForSession };

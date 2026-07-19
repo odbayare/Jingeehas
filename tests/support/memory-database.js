@@ -3,7 +3,7 @@ const { TABLES } = require("../../netlify/functions/_lib/config.js");
 function copy(value) { return value == null ? value : JSON.parse(JSON.stringify(value)); }
 
 class MemoryDatabaseAdapter {
-  constructor() { this.tables = Object.fromEntries(TABLES.map(table => [table, new Map()])); }
+  constructor() { this.tables = Object.fromEntries(TABLES.map(table => [table, new Map()])); this.activationLocks = new Map(); }
   table(name) { if (!this.tables[name]) throw new Error(`Unknown table: ${name}`); return this.tables[name]; }
   async get(table, id) { return copy(this.table(table).get(id) || null); }
   async find(table, filters = {}) { return copy([...this.table(table).values()].filter(row => Object.entries(filters).every(([key, value]) => row[key] === value))); }
@@ -51,6 +51,57 @@ class MemoryDatabaseAdapter {
       if (options.rollback) { this.tables = snapshot; return { rolledBack: true, results }; }
       return { rolledBack: false, results };
     } catch (error) { this.tables = snapshot; throw error; }
+  }
+  async getActiveReportSnapshot(assessmentId) {
+    const active = (await this.listReportSnapshotVersions(assessmentId)).find(row => row.isActive && row.snapshotStatus === "active");
+    if (active) return { ...copy(active.reportPayload), snapshotId: active.snapshotId, versionNumber: active.versionNumber,
+      reportEngineVersion: active.reportEngineVersion, reportSchemaVersion: active.reportSchemaVersion, source: "versioned" };
+    const legacy = await this.get("report_snapshots", assessmentId);
+    return legacy ? { ...legacy, snapshotId: null, versionNumber: null, reportEngineVersion: legacy.fullReport?.version || null,
+      reportSchemaVersion: null, source: "legacy" } : null;
+  }
+  async listReportSnapshotVersions(assessmentId) {
+    return copy([...this.table("report_snapshot_versions").values()].filter(row => row.assessmentId === assessmentId)
+      .sort((left, right) => right.versionNumber - left.versionNumber));
+  }
+  async getReportSnapshotVersion(snapshotId) { return this.get("report_snapshot_versions", snapshotId); }
+  async createReportSnapshotVersion(input) {
+    const rows = this.table("report_snapshot_versions");
+    const existing = [...rows.values()].find(row => row.assessmentId === input.assessmentId && row.operationKey === input.operationKey);
+    if (existing) return copy(existing);
+    const versions = await this.listReportSnapshotVersions(input.assessmentId);
+    const row = { snapshotId: input.snapshotId, assessmentId: input.assessmentId, versionNumber: (versions[0]?.versionNumber || 0) + 1,
+      reportEngineVersion: input.reportEngineVersion, reportSchemaVersion: input.reportSchemaVersion, reportPayload: copy(input.reportPayload),
+      snapshotStatus: "generated", isActive: false, generationReason: input.generationReason,
+      supersedesSnapshotId: input.supersedesSnapshotId || null, sourceLegacyAssessmentId: input.sourceLegacyAssessmentId || null,
+      createdAt: input.createdAt, activatedAt: null, supersededAt: null, createdBy: input.createdBy,
+      payloadChecksum: input.payloadChecksum, operationKey: input.operationKey };
+    rows.set(row.snapshotId, copy(row));
+    return copy(row);
+  }
+  async activateReportSnapshotVersion(snapshotId, expectedCurrentSnapshotId = null, now = new Date()) {
+    const target = await this.getReportSnapshotVersion(snapshotId);
+    if (!target) throw Object.assign(new Error("Snapshot not found"), { statusCode: 404, code: "snapshot_not_found" });
+    const previous = this.activationLocks.get(target.assessmentId) || Promise.resolve();
+    let release;
+    const currentLock = new Promise(resolve => { release = resolve; });
+    this.activationLocks.set(target.assessmentId, previous.then(() => currentLock));
+    await previous;
+    try {
+      const fresh = await this.getReportSnapshotVersion(snapshotId);
+      if (fresh.snapshotStatus === "active" && fresh.isActive) return fresh;
+      if (fresh.snapshotStatus !== "generated" || fresh.isActive) throw Object.assign(new Error("Snapshot is not activatable"), { statusCode: 409, code: "snapshot_not_generated" });
+      const versions = await this.listReportSnapshotVersions(fresh.assessmentId);
+      const active = versions.find(row => row.isActive && row.snapshotStatus === "active") || null;
+      if ((active?.snapshotId || null) !== (expectedCurrentSnapshotId || null)) throw Object.assign(new Error("Active snapshot changed"), { statusCode: 409, code: "active_snapshot_changed" });
+      const activatedAt = new Date(now).toISOString();
+      if (active) this.table("report_snapshot_versions").set(active.snapshotId, { ...active, isActive: false, snapshotStatus: "superseded", supersededAt: activatedAt });
+      const activated = { ...fresh, isActive: true, snapshotStatus: "active", activatedAt };
+      this.table("report_snapshot_versions").set(fresh.snapshotId, activated);
+      const activeCount = (await this.listReportSnapshotVersions(fresh.assessmentId)).filter(row => row.isActive && row.snapshotStatus === "active").length;
+      if (activeCount !== 1) throw new Error("Activation invariant failed");
+      return copy(activated);
+    } finally { release(); if (this.activationLocks.get(target.assessmentId) === currentLock) this.activationLocks.delete(target.assessmentId); }
   }
 }
 module.exports = { MemoryDatabaseAdapter };

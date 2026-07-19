@@ -3,7 +3,7 @@
 const PRODUCT = Object.freeze({ code: "WEIGHT_TEST_ONE_TIME", amount: 9900 });
 const TABLES = Object.freeze([
   "sessions", "assessment_sessions", "safety_checks", "assessments", "assessment_answers", "assessment_summaries",
-  "report_snapshots", "payments", "entitlements", "recovery_contacts",
+  "report_snapshots", "report_snapshot_versions", "payments", "entitlements", "recovery_contacts",
   "advisor_accounts", "advisor_sessions", "advisor_clients", "advisor_commissions",
   "advisor_report_access_logs", "admin_accounts", "admin_sessions", "admin_audit_logs", "recovery_challenges", "data_deletion_requests",
   "schema_migrations", "certification_records"

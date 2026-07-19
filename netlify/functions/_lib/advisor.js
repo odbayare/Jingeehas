@@ -1,5 +1,6 @@
 "use strict";
 const { publicReport } = require("./report.js");
+const { resolveReportSnapshot } = require("./report-snapshots.js");
 
 const { randomId, randomToken, hashToken } = require("./crypto.js");
 const { hashPassword, verifyPassword, createRoleSession, authenticateRole, ADVISOR_SESSION, ADMIN_SESSION } = require("./auth.js");
@@ -51,7 +52,7 @@ async function accessAdvisorReport(database, event, assessmentId, now = new Date
   const session = await authenticateRole(database, event, ADVISOR_SESSION); const assessment = await database.get("assessments", assessmentId);
   const client = assessment?.coachClientId ? await database.get("advisor_clients", assessment.coachClientId) : null;
   const entitlement = assessment ? (await database.find("entitlements", { assessmentId, status: "active" }))[0] : null;
-  const snapshot = assessment ? await database.get("report_snapshots", assessmentId) : null;
+  const snapshot = assessment ? await resolveReportSnapshot(database, assessmentId) : null;
   let reason = "allowed";
   if (!client || client.coachId !== session.coachId) reason = "wrong_advisor";
   else if (client.consentStatus !== "consent_accepted") reason = "consent_missing";
@@ -60,7 +61,7 @@ async function accessAdvisorReport(database, event, assessmentId, now = new Date
   else if (assessment.safetyRoute) reason = "safety_restricted";
   await database.insert("advisor_report_access_logs", { id: randomId("arl_"), coachId: session.coachId, assessmentId, allowed: reason === "allowed", reason, createdAt: now.toISOString() });
   if (reason !== "allowed") throw Object.assign(new Error("Report forbidden"), { statusCode: 403, code: "report_forbidden" });
-  return { assessmentId, fullReport: publicReport(snapshot.fullReport) };
+  return { assessmentId, fullReport: publicReport(snapshot.fullReport), reportVersion: snapshot.snapshotMetadata };
 }
 async function advisorDashboard(database, event) {
   const session = await authenticateRole(database, event, ADVISOR_SESSION); const clients = await database.find("advisor_clients", { coachId: session.coachId });

@@ -18,7 +18,7 @@
     },
     {
       "file": "netlify/functions/_lib/advisor.js",
-      "sha256": "7ddeed5d18f395bb812fa5886886a09361f471110e337cc8e43fcfbc9008b7e7"
+      "sha256": "2b07b7a86e56d00487332918e5a589a7884fe58b3e5797d4d7b12bb20f6f6b71"
     },
     {
       "file": "netlify/functions/_lib/answer-rules.js",
@@ -26,7 +26,7 @@
     },
     {
       "file": "netlify/functions/_lib/assessment.js",
-      "sha256": "f738aa729cddfce5c528f7db398ba8a1503fc3a5ce8063faff56199c90a22776"
+      "sha256": "42ad73fe9ee34dd04329dc64dc91a2257e32276e890ef41d93e22d6f9ea44ec8"
     },
     {
       "file": "netlify/functions/_lib/auth.js",
@@ -34,7 +34,7 @@
     },
     {
       "file": "netlify/functions/_lib/config.js",
-      "sha256": "cdcc36d4704bf05ddc5bb969e2d15227b5e16fc2adcd6e9ed2fcfb7fe96e980c"
+      "sha256": "5e5001bee23a6c24aecc6772276beea013b08e953c435a153826509f5a69ffc9"
     },
     {
       "file": "netlify/functions/_lib/crypto.js",
@@ -69,8 +69,20 @@
       "sha256": "489110da1226350da09e775b63741deefead01172cebbb67044372ac60e5b97f"
     },
     {
+      "file": "netlify/functions/_lib/report-regeneration.js",
+      "sha256": "a38c9cb370f9224eae731cf3fbaa374b99f4de71270a50c41849deae4ea2aaab"
+    },
+    {
       "file": "netlify/functions/_lib/report-signals.js",
       "sha256": "9b0f5926b274cea21cf256c8033a8ca8639267319f1115633b162c5d22d0493e"
+    },
+    {
+      "file": "netlify/functions/_lib/report-snapshots.js",
+      "sha256": "9090fea58b12c9e963447b7938414f3b74ef67ebb1457c6b3ffbf4257236e1ee"
+    },
+    {
+      "file": "netlify/functions/_lib/report-validation.js",
+      "sha256": "1479d0a0c62f978bc367177374a271b7e2f04f56d0929801af03ff965cfafa6d"
     },
     {
       "file": "netlify/functions/_lib/report.js",
@@ -86,7 +98,7 @@
     },
     {
       "file": "netlify/functions/_lib/store.js",
-      "sha256": "ddb483e5128e17f2427b5ba6fca38f7cd6acee931854209c9d5b26c7f987e823"
+      "sha256": "f2889ae8f8add147a6b2bc19a448f99876b34965cfa03149d434318346f32256"
     },
     {
       "file": "netlify/functions/admin-advisor-create.js",
@@ -115,6 +127,18 @@
     {
       "file": "netlify/functions/admin-preview-status.js",
       "sha256": "609b977916e895b9177c51e7267471a0fade5cbf4ee096a5911bad1ba458551d"
+    },
+    {
+      "file": "netlify/functions/admin-regenerate-report-version.js",
+      "sha256": "5c3837e26125cd0bfec7294487d7826a2eb336770da4d6ef7dc467f58e6a1d4d"
+    },
+    {
+      "file": "netlify/functions/admin-report-preview.js",
+      "sha256": "1a6e382e678313ddb59526d53a49896cd55259f12d3bfa8cda9235048237dd9d"
+    },
+    {
+      "file": "netlify/functions/admin-report-regeneration-candidates.js",
+      "sha256": "9d97b490c48d91b2ba3b82db471586a8898e8fa98f1c22f649c2cd60c9397a73"
     },
     {
       "file": "netlify/functions/admin-session-state.js",
@@ -226,7 +250,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "12311f8a7b49538a9d802453dc81b43426a32cd5923c530f78519403e348f267"
+      "sha256": "3dae071a9a0dd0ecd7f29662c5732693c93d45cb9d884364bd8285c4ac1957b9"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -261,6 +285,9 @@
     "admin-preview-revoke",
     "admin-preview-start",
     "admin-preview-status",
+    "admin-regenerate-report-version",
+    "admin-report-preview",
+    "admin-report-regeneration-candidates",
     "admin-session-state",
     "advisor-client-invite",
     "advisor-consent",

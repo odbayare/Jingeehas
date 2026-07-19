@@ -22,7 +22,7 @@ function createState() {
   return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
-    admin: { authenticated: false, owner: false, created: null, error: "" }, ownerPreview: false, busy: false, slowSave: false };
+    admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "" }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
 let testComingSoonOverride = null;
@@ -269,7 +269,9 @@ function renderAdvisorDashboard() {
 }
 function renderAdmin() {
   if (!state.admin.authenticated) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Удирдлагын нэвтрэх хэсэг</h1><form id="admin-login-form"><label class="field"><span>Имэйл</span><input name="email" type="email" autocomplete="username" required></label><label class="field"><span>Нууц үг</span><input name="password" type="password" autocomplete="current-password" required></label><button class="button" type="submit">Нэвтрэх</button></form><p class="error">${escapeHtml(state.admin.error)}</p></main></div>`;
-  return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөхийн удирдлага</h1>${state.admin.owner ? `<section aria-labelledby="owner-preview-title"><h2 id="owner-preview-title">Эзэмшигчийн бодит туршилт</h2><p>Нийтийн “Тун удахгүй” хамгаалалтыг өөрчлөхгүйгээр 2 цагийн турш бодит тестийг шалгана.</p><button class="button" type="button" data-action="start-owner-preview">Бодит тестийг шалгах</button>${state.ownerPreview ? `<button class="button secondary" type="button" data-action="revoke-owner-preview">Туршилтын эрхийг цуцлах</button>` : ""}</section>` : ""}<form id="admin-advisor-form"><label class="field"><span>Зөвлөхийн нэр</span><input name="name" required></label><label class="field"><span>Зөвлөхийн имэйл</span><input name="email" type="email" required></label><label class="field"><span>Нэг төлбөрөөс зөвлөхөд олгох шимтгэл (₮)</span><input name="commissionAmount" type="number" min="0" max="9900" value="4000" required></label><button class="button" type="submit">Зөвлөх нэмэх</button></form>${state.admin.created ? `<div class="notice" role="status"><p>Түр нууц үгийг зөвхөн одоо хуулж авна уу.</p><code>${escapeHtml(state.admin.created.temporaryPassword)}</code></div>` : ""}<p class="error">${escapeHtml(state.admin.error)}</p><button class="button secondary" type="button" data-action="admin-logout">Гарах</button></main></div>`;
+  const reportRows = (state.admin.reportCandidates || []).map(candidate => `<tr><td>${escapeHtml(candidate.reportMode || "—")}</td><td>${candidate.activeVersionNumber ? `v${escapeHtml(candidate.activeVersionNumber)}` : "Legacy"}</td><td>${candidate.acceptedEngineActive ? "Идэвхтэй" : `<button class="button compact" type="button" data-regenerate-report="${escapeAttribute(candidate.assessmentId)}">Шинэ хувилбар үүсгэж идэвхжүүлэх</button>`}</td><td><button class="button compact secondary" type="button" data-preview-report="${escapeAttribute(candidate.assessmentId)}">Тайлан харах</button></td></tr>`).join("");
+  const reportAdmin = state.admin.owner ? `<section aria-labelledby="report-version-title"><h2 id="report-version-title">Тайлангийн хувилбарын удирдлага</h2><p>Хуучин тайланг өөрчлөхгүйгээр шинэ хувилбар үүсгэж, шалгалт амжилттай бол идэвхжүүлнэ.</p>${reportRows ? `<div class="table-scroll" tabindex="0"><table><thead><tr><th>Төлөв</th><th>Идэвхтэй хувилбар</th><th>Үйлдэл</th><th>Урьдчилан харах</th></tr></thead><tbody>${reportRows}</tbody></table></div>` : `<p>Шинэчлэх боломжтой дууссан тайлан олдсонгүй.</p>`}${state.admin.regenerated ? `<p class="notice" role="status">Тайлангийн v${escapeHtml(state.admin.regenerated.versionNumber)} хувилбар идэвхжлээ.</p>` : ""}</section>` : "";
+  return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөхийн удирдлага</h1>${state.admin.owner ? `<section aria-labelledby="owner-preview-title"><h2 id="owner-preview-title">Эзэмшигчийн бодит туршилт</h2><p>Нийтийн “Тун удахгүй” хамгаалалтыг өөрчлөхгүйгээр 2 цагийн турш бодит тестийг шалгана.</p><button class="button" type="button" data-action="start-owner-preview">Бодит тестийг шалгах</button>${state.ownerPreview ? `<button class="button secondary" type="button" data-action="revoke-owner-preview">Туршилтын эрхийг цуцлах</button>` : ""}</section>` : ""}${reportAdmin}<form id="admin-advisor-form"><label class="field"><span>Зөвлөхийн нэр</span><input name="name" required></label><label class="field"><span>Зөвлөхийн имэйл</span><input name="email" type="email" required></label><label class="field"><span>Нэг төлбөрөөс зөвлөхөд олгох шимтгэл (₮)</span><input name="commissionAmount" type="number" min="0" max="9900" value="4000" required></label><button class="button" type="submit">Зөвлөх нэмэх</button></form>${state.admin.created ? `<div class="notice" role="status"><p>Түр нууц үгийг зөвхөн одоо хуулж авна уу.</p><code>${escapeHtml(state.admin.created.temporaryPassword)}</code></div>` : ""}<p class="error">${escapeHtml(state.admin.error)}</p><button class="button secondary" type="button" data-action="admin-logout">Гарах</button></main></div>`;
 }
 function legalPage(title, body) { return `<div class="page">${navigation()}<main class="content-card legal-page"><h1 id="page-title" tabindex="-1">${escapeHtml(title)}</h1>${body}</main>${footer()}</div>`; }
 function renderPrivacy() { return legalPage("Нууцлалын бодлого", `<p>Үйлчилгээ үзүүлэгч: Customer Business Development LLC-ийн ажиллуулдаг Jingeehas. Үйлчилгээ Монгол Улсын харьяалалд үйл ажиллагаа явуулна.</p><p>Тестийн хариулт, аюулгүй байдлын шинж, холбоо барих мэдээлэл нь тайлан гаргах, төлбөр баталгаажуулах, тайлан сэргээх зорилгоор серверт хадгалагдана. Холбоо барих мэдээллийг шифрлэж, хайлтын утгыг тусад нь хэшлэнэ.</p><p>Түүхий хариултыг QPay нэхэмжлэлийн тайлбар, төлбөрийн мэдээлэл эсвэл ерөнхий хэрэглээний хэмжилтэд дамжуулахгүй. Зөвлөх зөвхөн таны тодорхой зөвшөөрөлтэй бүрэн тайланг харж болох бөгөөд асуулт бүрийн түүхий хариултыг тусад нь харахгүй.</p><p>Хэрэглэгч зөвшөөрлөө цуцалж, хууль болон төлбөрийн бүртгэлээр заавал хадгалах мэдээллээс бусдыг устгуулах хүсэлт гаргаж болно. Баталгаажсан устгах хүсэлтийг 30 хоногийн дотор шийдвэрлэнэ.</p><p>Байнгын зочны мөрдөлт одоогоор эхлээгүй. Ирээдүйд ийм хэмжилт нэмэх бол хадгалалт эхлэхээс өмнө ил тод зөвшөөрөл авна.</p><p>Нууцлалын хүсэлт: ${supportContactLink()}.</p>`); }
@@ -431,7 +433,8 @@ async function confirmRecovery(form) {
 async function advisorLoginSubmit(form) { const result = await api("/.netlify/functions/advisor-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.profile = result; state.advisor.temporaryPasswordChange = result.forcePasswordChange; if (result.forcePasswordChange) render(); else { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); } }
 async function advisorPasswordSubmit(form) { await api("/.netlify/functions/advisor-password-change", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.temporaryPasswordChange = false; state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); }
 async function advisorInviteSubmit(form) { const result = await api("/.netlify/functions/advisor-client-invite", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.dashboard = { ...state.advisor.dashboard, inviteToken: result.inviteToken }; render(); }
-async function adminLoginSubmit(form) { const result = await api("/.netlify/functions/admin-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.admin.authenticated = true; state.admin.owner = result.owner === true; state.admin.error = ""; render(); }
+async function loadAdminReportCandidates() { if (!state.admin.owner) return; const result = await api("/.netlify/functions/admin-report-regeneration-candidates", { method: "GET" }); state.admin.reportCandidates = result.candidates || []; state.admin.reportEngineVersion = result.reportEngineVersion; state.admin.reportSchemaVersion = result.reportSchemaVersion; state.admin.generationReason = result.generationReason; }
+async function adminLoginSubmit(form) { const result = await api("/.netlify/functions/admin-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.admin.authenticated = true; state.admin.owner = result.owner === true; state.admin.error = ""; await loadAdminReportCandidates(); render(); }
 async function adminAdvisorSubmit(form) { const input = formObject(form); input.commissionAmount = Number(input.commissionAmount); state.admin.created = await api("/.netlify/functions/admin-advisor-create", { method: "POST", body: JSON.stringify(input) }); render(); }
 async function startOwnerPreview() {
   const preview = await api("/.netlify/functions/admin-preview-start", { method: "POST", body: "{}" });
@@ -444,9 +447,28 @@ async function startOwnerPreview() {
   } else navigate("/assessment/start");
 }
 async function revokeOwnerPreview() { await api("/.netlify/functions/admin-preview-revoke", { method: "POST", body: "{}" }); state.ownerPreview = false; render(); }
+async function regenerateAdminReport(assessmentId) {
+  const candidate = state.admin.reportCandidates.find(item => item.assessmentId === assessmentId); if (!candidate || state.busy) return;
+  state.busy = true; state.admin.error = ""; render({ focus: false });
+  const operationKey = state.admin.regenerationKeys[assessmentId] || `report-${crypto.randomUUID()}`;
+  state.admin.regenerationKeys[assessmentId] = operationKey;
+  try {
+    state.admin.regenerated = await api("/.netlify/functions/admin-regenerate-report-version", { method: "POST", body: JSON.stringify({
+      assessmentId, generationReason: state.admin.generationReason, expectedCurrentSnapshotId: candidate.activeSnapshotId || "legacy",
+      requestedReportEngineVersion: state.admin.reportEngineVersion, operationKey
+    }) });
+    delete state.admin.regenerationKeys[assessmentId]; await loadAdminReportCandidates();
+  } finally { state.busy = false; render(); }
+}
+async function previewAdminReport(assessmentId) {
+  await api("/.netlify/functions/admin-preview-start", { method: "POST", body: "{}" });
+  state.ownerPreview = true;
+  state.report = await api(`/.netlify/functions/admin-report-preview?assessmentId=${encodeURIComponent(assessmentId)}`, { method: "GET" });
+  navigate("/report");
+}
 async function restoreServerState() {
   const route = routeName(window.location.pathname);
-  if (route === "admin") { try { const admin = await api("/.netlify/functions/admin-session-state", { method: "GET" }); state.admin.authenticated = true; state.admin.owner = admin.owner === true; try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch {} } catch {} return; }
+  if (route === "admin") { try { const admin = await api("/.netlify/functions/admin-session-state", { method: "GET" }); state.admin.authenticated = true; state.admin.owner = admin.owner === true; await loadAdminReportCandidates(); try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch {} } catch {} return; }
   if (route === "advisorDashboard") { try { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); } catch {} return; }
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route)) { try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch { state.ownerPreview = false; return; } }
   if (!["assessmentCompleted", "payment", "questions", "report", "dataDeletion"].includes(route)) return;
@@ -479,6 +501,8 @@ function bind(root) {
   root.querySelector("#admin-advisor-form")?.addEventListener("submit", event => { event.preventDefault(); adminAdvisorSubmit(event.currentTarget).catch(() => { state.admin.error = "Зөвлөх үүсгэж чадсангүй."; render(); }); });
   root.querySelector('[data-action="start-owner-preview"]')?.addEventListener("click", () => startOwnerPreview().catch(() => { state.admin.error = "Бодит тестийн эрх нээж чадсангүй."; render(); }));
   root.querySelector('[data-action="revoke-owner-preview"]')?.addEventListener("click", () => revokeOwnerPreview().catch(() => { state.admin.error = "Туршилтын эрхийг цуцалж чадсангүй."; render(); }));
+  root.querySelectorAll("[data-regenerate-report]").forEach(button => button.addEventListener("click", () => regenerateAdminReport(button.dataset.regenerateReport).catch(() => { state.busy = false; state.admin.error = "Тайлангийн шинэ хувилбарыг үүсгэж чадсангүй."; render(); })));
+  root.querySelectorAll("[data-preview-report]").forEach(button => button.addEventListener("click", () => previewAdminReport(button.dataset.previewReport).catch(() => { state.admin.error = "Тайланг нээж чадсангүй."; render(); })));
   root.querySelector('[data-action="create-invoice"]')?.addEventListener("click", createInvoice);
   root.querySelector('[data-action="continue-to-payment"]')?.addEventListener("click", continueToPayment);
   root.querySelector('[data-action="check-payment"]')?.addEventListener("click", checkPayment);
