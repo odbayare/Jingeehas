@@ -30,7 +30,7 @@
     },
     {
       "file": "netlify/functions/_lib/assessment.js",
-      "sha256": "42ad73fe9ee34dd04329dc64dc91a2257e32276e890ef41d93e22d6f9ea44ec8"
+      "sha256": "a786fbc5139644ea0e167db75a943a237f1959281527cbba4e932308ad45c4e3"
     },
     {
       "file": "netlify/functions/_lib/auth.js",
@@ -262,7 +262,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "11249bada212d6db337684846424ac766543c47d8619755b23755119339694ba"
+      "sha256": "c984b1f503f0a4545c3ccad7d66b7a4d6973c479ed395df44d52bca1faf370e7"
     },
     {
       "file": "site/assets/favicon.svg",

@@ -143,25 +143,6 @@ function safetyGuidance(result) {
     <p>${escapeHtml(guidance.body || "")}</p><p class="notice">Энэ зөвлөмж төлбөргүй.</p>
     <a class="button danger" href="tel:103">${escapeHtml(guidance.action || "Тусламж авах")}</a></main>${footer()}</div>`;
 }
-function renderSafetyGate() {
-  if (state.safetyResult && state.safetyResult.route !== "eligible") return safetyGuidance(state.safetyResult);
-  return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөрөөс өмнөх аюулгүй байдлын шалгалт</h1>
-    <p>Энэ хэсэг төлбөргүй. Тест үнэлгээ танд тохирох эсэхийг эхэлж шалгана.</p>
-    <form id="safety-form" novalidate>
-      <label class="field" for="safety-age"><span>Таны нас</span><input id="safety-age" name="age" type="number" min="1" max="120" required></label>
-      ${radioGroup("selfHarm", "Сүүлийн үед өөртөө хор хүргэх бодол төрсөн үү?", ["Үгүй", "Өнгөрсөнд байсан", "Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна", "Хариулахгүй"], true)}
-      ${checkboxGroup("acuteMedical", "Одоо дараах шинжээс аль нэг нь илэрч байна уу?", ["Будилах", "Ухаан балартах", "Бие огцом муудах", "Аль нь ч үгүй"], true)}
-      ${radioGroup("compensatoryBehavior", "Идсэнээ буцаахын тулд зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол гардаг уу?", ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], true)}
-      ${radioGroup("medicalSuitability", "Эмчтэй эхэлж зөвлөлдөх шаардлагатай гэж танд өмнө нь хэлж байсан уу?", ["Үргэлжлүүлэхэд тохиромжтой", "Эмчтэй эхэлж зөвлөлдөх шаардлагатай", "Хариулахгүй"], true)}
-      <p id="safety-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Тохирох эсэхийг шалгах</button>
-    </form></main>${footer()}</div>`;
-}
-function radioGroup(name, legend, options, required = false) {
-  return `<fieldset><legend>${escapeHtml(legend)}</legend>${options.map(option => `<label class="option-label"><input type="radio" name="${escapeAttribute(name)}" value="${escapeAttribute(option)}" ${required ? "required" : ""}><span>${escapeHtml(option)}</span></label>`).join("")}</fieldset>`;
-}
-function checkboxGroup(name, legend, options) {
-  return `<fieldset><legend>${escapeHtml(legend)}</legend>${options.map(option => `<label class="option-label"><input type="checkbox" name="${escapeAttribute(name)}" value="${escapeAttribute(option)}"><span>${escapeHtml(option)}</span></label>`).join("")}</fieldset>`;
-}
 function renderAssessmentContact() {
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тайлан авах мэдээллээ хадгалах</h1>
     ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд энэ тест үнэлгээг санал болгосон байна.</p><form id="consent-form"><fieldset><legend>Тайлан хуваалцах зөвшөөрөл</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Би тест үнэлгээний бүрэн тайланг ${escapeHtml(state.invitation.advisorName || "Зөвлөх")} зөвлөх харахыг зөвшөөрч байна.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Миний асуулт бүрд өгсөн түүхий хариултыг тусад нь харуулахгүй.</p><button class="button" type="submit">Сонголтоо баталгаажуулах</button></form></section>` : `<form id="contact-form" novalidate><p>Имэйл хаягаа оруулна уу. Бүрэн тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.</p>
@@ -340,7 +321,7 @@ function renderForPath(pathname) {
   if (route === "about") return renderAbout();
   if (route === "methodology") return renderMethodology();
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route) && !state.ownerPreview) return renderComingSoon();
-  if (route === "assessmentStart") return renderSafetyGate();
+  if (route === "assessmentStart") return renderAssessmentContact();
   if (route === "assessmentContact") return renderAssessmentContact();
   if (route === "assessmentCompleted") return renderAssessmentCompleted();
   if (route === "payment") return renderPayment();
@@ -375,15 +356,6 @@ function saveAdminReportPreviewAssessment(assessmentId, storage = typeof session
 function loadAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { return String(storage?.getItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY) || ""); }
 function clearAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { storage?.removeItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY); }
 
-async function submitSafety(form) {
-  const input = formObject(form); input.acuteMedical = new FormData(form).getAll("acuteMedical");
-  if (!input.age || !input.selfHarm || !input.acuteMedical.length || !input.compensatoryBehavior || !input.medicalSuitability) throw new Error("Бүх асуултад хариулна уу.");
-  state.busy = true; render();
-  await ensureSession();
-  state.safetyResult = await api("/.netlify/functions/weight-safety-gate", { method: "POST", body: JSON.stringify(input) });
-  state.safetyCheckId = state.safetyResult.safetyCheckId; state.busy = false;
-  if (state.safetyResult.route === "eligible") navigate("/assessment/contact"); else render();
-}
 async function submitContact(form) {
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
   state.busy = true; render();
@@ -393,13 +365,13 @@ async function submitContact(form) {
     state.invitation = await api("/.netlify/functions/advisor-invite-resolve", { method: "POST", body: JSON.stringify({ inviteToken: state.inviteToken }) });
     state.inviteToken = ""; state.busy = false; render(); return;
   }
-  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity() }) });
+  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity() }) });
   state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.busy = false; navigate("/assessment/questions");
 }
 async function submitConsent(form) {
   const accepted = formObject(form).consent === "yes";
   const result = await api("/.netlify/functions/advisor-consent", { method: "POST", body: JSON.stringify({ coachClientId: state.invitation.coachClientId, consent: accepted }) });
-  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity(), ...(accepted ? { coachClientId: result.coachClientId } : {}) }) });
+  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity(), ...(accepted ? { coachClientId: result.coachClientId } : {}) }) });
   state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.invitation = null; navigate("/assessment/questions");
 }
 async function createInvoice() {
@@ -577,7 +549,6 @@ async function restoreServerState() {
 function bind(root) {
   root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); if (window.location.pathname === "/" && link.getAttribute("href") === "/assessment/start") trackEvent("start_cta_clicked", "", `start_cta_clicked:${Date.now()}`); navigate(link.getAttribute("href")); }));
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(input.type === "text" || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
-  root.querySelector("#safety-form")?.addEventListener("submit", event => { event.preventDefault(); submitSafety(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("safety-error"); if (node) node.textContent = error.message; }); });
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
   root.querySelector("#consent-form")?.addEventListener("submit", event => { event.preventDefault(); submitConsent(event.currentTarget).catch(() => { state.validationError = "Сонголтыг хадгалж чадсангүй."; render(); }); });
   root.querySelector("#question-form")?.addEventListener("submit", event => { event.preventDefault(); nextQuestion(); });

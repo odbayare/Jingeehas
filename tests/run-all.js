@@ -4,6 +4,7 @@ const tests = [
   "tests/removal-guard.test.js",
   "tests/safety-gate.test.js",
   "tests/safety-branching.test.js",
+  "tests/direct-assessment-start.test.js",
   "tests/report-evidence.test.js",
   "tests/report-snapshot-versioning.test.js",
   "tests/report-attribution-v2.test.js",
