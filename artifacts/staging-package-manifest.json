@@ -50,7 +50,7 @@
     },
     {
       "file": "netlify/functions/_lib/preview.js",
-      "sha256": "36de54c47953af6eff3cf73c737503e23930fca8b9a86ab984c48c25904b9f93"
+      "sha256": "8f64434b11f3c95aedcc0b11798852d32846862df9c660942fa8d9163d4e93f8"
     },
     {
       "file": "netlify/functions/_lib/qpay.js",
@@ -126,7 +126,7 @@
     },
     {
       "file": "netlify/functions/admin-preview-status.js",
-      "sha256": "609b977916e895b9177c51e7267471a0fade5cbf4ee096a5911bad1ba458551d"
+      "sha256": "e022a77ef13e570cbaa803ca6cc650b974ec12f7bd0c6cc064313be1e56ae62e"
     },
     {
       "file": "netlify/functions/admin-regenerate-report-version.js",
@@ -250,7 +250,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "b84a3518a386388e5c82ab7b249903f332e97db268650822bdfb43634f6e8477"
+      "sha256": "ebea3fa4581231cd815b8fe212f82b1cbbb953ca934a082f3686233dd3bf55ce"
     },
     {
       "file": "site/assets/favicon.svg",

@@ -43,6 +43,16 @@ assert(paymentPage.includes("Бүрэн тайлангаа нээх"));
 assert(paymentPage.includes("Үнэ: 9,900₮"));
 assert(paymentPage.includes("9,900₮-ийн QPay нэхэмжлэл үүсгэх"));
 assert(!paymentPage.includes("тайлан сэргээх"));
+app._test.setState({ ownerPreview: true, assessmentStatus: "complete", assessmentId: "test-assessment", payment: {
+  status: "paid", qrImage: "dynamic-qr-image", expiresAt: "2026-07-19T15:52:45.000+08:00"
+} });
+const paidPaymentPage = app.renderForPath("/assessment/payment");
+assert(paidPaymentPage.includes("Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ."));
+assert(paidPaymentPage.includes("Бүрэн тайлан харах"));
+assert(!paidPaymentPage.includes("QPay QR код"));
+assert(!paidPaymentPage.includes("dynamic-qr-image"));
+assert(!paidPaymentPage.includes("Нэхэмжлэлийн хугацаа"));
+assert(!paidPaymentPage.includes("Төлбөр шалгах"));
 const multiFactorReport = publicReport(buildFullReport(buildEvidence([
   { questionId: "Q-EMOTION", value: "Нэлээд нэмэгддэг" },
   { questionId: "Q-METHOD-BARRIERS", value: ["Стресс ба сэтгэл хөдлөл", "Ядаргаа эсвэл нойр"] },

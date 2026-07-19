@@ -137,6 +137,6 @@ async function seededDatabase({ includeVersion = true } = {}) {
   const regenerationSource = fs.readFileSync(path.join(__dirname, "..", "netlify", "functions", "_lib", "report-regeneration.js"), "utf8");
   assert(!/console\.(?:log|info|warn|error)/.test(regenerationSource), "report payload must not enter application logs");
   assert(!/ownerLike|ownerProfile|ownerSpecialCase/.test(regenerationSource), "owner-specific inference path is prohibited");
-  assert.equal(app.WEIGHT_TEST_COMING_SOON_MODE, true);
+  assert.equal(app.WEIGHT_TEST_COMING_SOON_MODE, false);
   console.log("versioned report snapshot and regeneration tests passed");
 })().catch(error => { console.error(error); process.exitCode = 1; });

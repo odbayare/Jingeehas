@@ -18,7 +18,7 @@ const headers = fs.readFileSync(path.join(root, "dist", "_headers"), "utf8");
 for (const required of ["Content-Security-Policy", "Referrer-Policy", "X-Content-Type-Options", "frame-ancestors", "Permissions-Policy", "Strict-Transport-Security"]) if (!headers.includes(required)) failures.push(`missing security header: ${required}`);
 if (headers.includes("unsafe-inline")) failures.push("CSP allows inline execution");
 const app = fs.readFileSync(path.join(root, "dist", "app.js"), "utf8");
-for (const invariant of ["WEIGHT_TEST_COMING_SOON_MODE = true", "WEIGHT_TEST_ONE_TIME", "amount: 9900", "displayPrice: \"9,900₮\""]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
+for (const invariant of ["WEIGHT_TEST_COMING_SOON_MODE = false", "WEIGHT_TEST_ONE_TIME", "amount: 9900", "displayPrice: \"9,900₮\""]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
 const allowedHosts = new Set(["jingeehas.fit", "merchant.qpay.mn", "www.w3.org"]);
 for (const match of publicText.matchAll(/https?:\/\/([^/\s"')]+)/g)) if (!allowedHosts.has(match[1].toLowerCase())) failures.push(`unapproved public domain: ${match[1]}`);
 const forbiddenName = String(process.env.CROSS_PROJECT_FORBIDDEN_TOKEN || "").trim();

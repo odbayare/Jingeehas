@@ -4,6 +4,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const app = require("../app.js");
 const { advisorStatusLabel } = require("../netlify/functions/_lib/advisor.js");
+const { WEIGHT_TEST_COMING_SOON_MODE: serverComingSoonMode } = require("../netlify/functions/_lib/preview.js");
 
 const root = path.resolve(__dirname, "..");
 const publicFiles = ["index.html", "app.js", "questions.js"];
@@ -31,8 +32,12 @@ const authSource = fs.readFileSync(path.join(root, "netlify", "functions", "_lib
 assert(authSource.includes("scrypt"));
 assert(authSource.includes("HttpOnly"));
 assert(authSource.includes("SameSite=Strict"));
-assert.equal(app.WEIGHT_TEST_COMING_SOON_MODE, true);
+assert.equal(app.WEIGHT_TEST_COMING_SOON_MODE, false);
+assert.equal(serverComingSoonMode, app.WEIGHT_TEST_COMING_SOON_MODE, "browser and server launch gates must stay aligned");
+app._test.setComingSoon(true);
 for (const protectedRoute of ["/assessment/start", "/assessment/contact", "/assessment/questions", "/assessment/completed", "/assessment/payment"]) {
   assert(app.renderForPath(protectedRoute).includes("Тун удахгүй"), protectedRoute);
 }
+app._test.resetComingSoon();
+assert(!app.renderForPath("/assessment/start").includes("Тун удахгүй"));
 console.log("production security tests passed");

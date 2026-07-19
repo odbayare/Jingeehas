@@ -54,7 +54,7 @@ http.createServer(async (request, response) => {
     return response.end();
   }
   if (url.pathname.startsWith("/.netlify/functions/")) { const action = endpoints[url.pathname.split("/").pop()]; if (!action) return json(response, 404, { error: "not_found" }); return action(await readBody(request), response, request); }
-  if (url.pathname === "/app-test.js" || url.pathname === "/app-production.js") { let source = fs.readFileSync(path.join(root, "app.js"), "utf8"); if (url.pathname === "/app-test.js") source = source.replace("const WEIGHT_TEST_COMING_SOON_MODE = true;", "const WEIGHT_TEST_COMING_SOON_MODE = false;"); response.writeHead(200, { "content-type": types[".js"] }); return response.end(source); }
+  if (url.pathname === "/app-test.js" || url.pathname === "/app-production.js") { let source = fs.readFileSync(path.join(root, "app.js"), "utf8"); if (url.pathname === "/app-production.js") source = source.replace("const WEIGHT_TEST_COMING_SOON_MODE = false;", "const WEIGHT_TEST_COMING_SOON_MODE = true;"); response.writeHead(200, { "content-type": types[".js"] }); return response.end(source); }
   const relative = url.pathname === "/" ? "index.html" : url.pathname.slice(1); const absolute = path.join(root, relative);
   if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) { response.writeHead(200, { "content-type": types[path.extname(absolute)] || "application/octet-stream" }); return response.end(fs.readFileSync(absolute)); }
   let html = fs.readFileSync(path.join(root, "index.html"), "utf8"); html = html.replace("app.js", url.searchParams.get("e2e") === "1" ? "app-test.js" : "app-production.js"); response.writeHead(200, { "content-type": types[".html"] }); response.end(html);

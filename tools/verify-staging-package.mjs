@@ -24,8 +24,9 @@ for (const item of manifest.files) {
   if (actual !== item.sha256) failures.push(`hash mismatch: ${item.file}`);
 }
 const app = fs.readFileSync(path.join(staging, "site", "app.js"), "utf8");
-const allowDisabled = process.env.STAGING_CERTIFICATION_ALLOW_COMING_SOON_DISABLED === "CERTIFIED STAGING ONLY";
-if (!app.includes("WEIGHT_TEST_COMING_SOON_MODE = true") && !allowDisabled) failures.push("coming-soon mode is disabled without explicit staging certification configuration");
+if (!app.includes("WEIGHT_TEST_COMING_SOON_MODE = false")) failures.push("public launch switch is not disabled in the staging package");
+const preview = fs.readFileSync(path.join(staging, "netlify", "functions", "_lib", "preview.js"), "utf8");
+if (!preview.includes("WEIGHT_TEST_COMING_SOON_MODE = false")) failures.push("server launch switch is not disabled in the staging package");
 for (const invariant of ["WEIGHT_TEST_ONE_TIME", "amount: 9900", "displayPrice: \"9,900₮\""]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
 const requiredFunctions = productionManifest.serverFunctions;
 for (const name of requiredFunctions) if (!manifest.functionNames.includes(name) || !fs.existsSync(path.join(staging, "netlify", "functions", `${name}.js`))) failures.push(`required function missing: ${name}`);

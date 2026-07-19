@@ -5,7 +5,7 @@ const { MemoryDatabaseAdapter } = require("../support/memory-database.js");
 const { setDatabaseForTests } = require("../../netlify/functions/_lib/store.js");
 const { hashPassword, authenticateRole, ADMIN_SESSION } = require("../../netlify/functions/_lib/auth.js");
 const { adminLogin } = require("../../netlify/functions/_lib/advisor.js");
-const { createOwnerPreview, authenticateOwnerPreview } = require("../../netlify/functions/_lib/preview.js");
+const { createOwnerPreview, authenticateOwnerPreviewStrict } = require("../../netlify/functions/_lib/preview.js");
 const { createSession } = require("../../netlify/functions/_lib/session.js");
 
 const database = new MemoryDatabaseAdapter();
@@ -33,8 +33,8 @@ function event(method, cookie = "", body = null) { return { httpMethod: method, 
   const existingUserCookie = credential(existingUser.cookie);
   await database.insert("assessments", { id: "wa-resumable", sessionId: existingUser.session.id, safetyCheckId: "sc-resumable", status: "draft", reportMode: null, safetyRoute: null, createdAt: now.toISOString(), updatedAt: now.toISOString(), completedAt: null });
 
-  // Public/incognito and non-owner sessions cannot establish preview access.
-  assert.equal((await sessionStart(event("POST"))).statusCode, 401);
+  // Public launch permits an incognito session, while payment and report access still require an authenticated assessment session.
+  assert.equal((await sessionStart(event("POST"))).statusCode, 201);
   assert.equal((await qpayCreate(event("POST", "", { assessmentId: "public-attempt" }))).statusCode, 401);
   assert.equal((await assessmentReport({ httpMethod: "GET", headers: {}, queryStringParameters: { assessmentId: "public-attempt" } })).statusCode, 401);
   assert.equal((await previewStart(event("POST", nonOwnerCookie, {}))).statusCode, 403);
@@ -68,8 +68,8 @@ function event(method, cookie = "", body = null) { return { httpMethod: method, 
   const previewRows = await database.find("admin_sessions", { adminId: "owner-admin", purpose: "preview" });
   assert.equal(previewRows.filter(row => !row.revokedAt).length, 1);
 
-  // Preview is required before an ordinary assessment session can start.
-  const userStarted = await sessionStart(event("POST", `${secondAccess}; ${existingUserCookie}`));
+  // An ordinary assessment session resumes without requiring owner-preview access after launch.
+  const userStarted = await sessionStart(event("POST", existingUserCookie));
   assert.equal(userStarted.statusCode, 200);
   assert.equal(JSON.parse(userStarted.body).resumed, true);
 
@@ -97,7 +97,7 @@ function event(method, cookie = "", body = null) { return { httpMethod: method, 
   const direct = await createOwnerPreview(database, event("POST", credential(freshOwner.cookie)), now);
   const directCookie = `${credential(freshOwner.cookie)}; ${credential(direct.cookie)}`;
   await database.update("admin_sessions", freshOwner.id, { expiresAt: new Date(0).toISOString() });
-  await assert.rejects(() => authenticateOwnerPreview(database, event("GET", directCookie), now), error => ["unauthorized", "preview_revoked"].includes(error.code));
+  await assert.rejects(() => authenticateOwnerPreviewStrict(database, event("GET", directCookie), now), error => ["unauthorized", "preview_revoked"].includes(error.code));
 
   assert((await database.find("admin_audit_logs", { adminId: "owner-admin" })).some(row => row.action === "owner_preview_started"));
   console.log("owner preview access contract tests passed");

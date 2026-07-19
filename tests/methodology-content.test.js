@@ -24,7 +24,7 @@ assert(methodology.includes("Сүүлийн шинэчлэл:</strong> 2026 он
 
 for (const claim of ["шинжлэх ухаанаар батлагдсан", "клиникийн баталгаажсан", "validated assessment", "эмч нар боловсруулсан", "сэтгэлзүйчид боловсруулсан", "олон улсын стандарт тест"]) assert(!source.toLowerCase().includes(claim.toLowerCase()), claim);
 assert(!/turn\d+(?:view|search|fetch|open)\d+/i.test(source));
-assert(source.includes("const WEIGHT_TEST_COMING_SOON_MODE = true;"));
+assert(source.includes("const WEIGHT_TEST_COMING_SOON_MODE = false;"));
 assert(styles.includes(":focus-visible"));
 assert(styles.includes(".methodology-pillars { grid-template-columns: 1fr; }"));
 assert(landing.indexOf("<h1") < landing.indexOf("<h2"));

@@ -6,6 +6,8 @@ const { authenticateRole, ADMIN_SESSION } = require("./auth.js");
 
 const PREVIEW_COOKIE_NAME = "jingeehas_owner_preview";
 const PREVIEW_SECONDS = 2 * 60 * 60;
+// Keep aligned with the public application launch switch in app.js.
+const WEIGHT_TEST_COMING_SOON_MODE = false;
 
 function previewCookie(value, maxAge = PREVIEW_SECONDS) {
   return `${PREVIEW_COOKIE_NAME}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Strict`;
@@ -54,7 +56,7 @@ async function createOwnerPreview(database, event, now = new Date()) {
   return { preview: { active: true, expiresAt }, cookie: previewCookie(`${id}.${secret}`) };
 }
 
-async function authenticateOwnerPreview(database, event, now = new Date()) {
+async function authenticateOwnerPreviewStrict(database, event, now = new Date()) {
   const credential = cookies(event)[PREVIEW_COOKIE_NAME] || "";
   const separator = credential.indexOf(".");
   const id = separator > 0 ? credential.slice(0, separator) : "";
@@ -72,6 +74,11 @@ async function authenticateOwnerPreview(database, event, now = new Date()) {
   return preview;
 }
 
+async function authenticateOwnerPreview(database, event, now = new Date()) {
+  if (!WEIGHT_TEST_COMING_SOON_MODE) return null;
+  return authenticateOwnerPreviewStrict(database, event, now);
+}
+
 async function revokeOwnerPreview(database, event, now = new Date()) {
   const adminSession = await authenticateOwnerAdmin(database, event);
   const revoked = await revokePreviewRows(database, { adminId: adminSession.adminId }, now);
@@ -83,6 +90,6 @@ async function revokeOwnerPreview(database, event, now = new Date()) {
 }
 
 module.exports = {
-  PREVIEW_COOKIE_NAME, PREVIEW_SECONDS, previewCookie, ownerAdmin, authenticateOwnerAdmin,
-  revokePreviewRows, createOwnerPreview, authenticateOwnerPreview, revokeOwnerPreview
+  PREVIEW_COOKIE_NAME, PREVIEW_SECONDS, WEIGHT_TEST_COMING_SOON_MODE, previewCookie, ownerAdmin, authenticateOwnerAdmin,
+  revokePreviewRows, createOwnerPreview, authenticateOwnerPreview, authenticateOwnerPreviewStrict, revokeOwnerPreview
 };
