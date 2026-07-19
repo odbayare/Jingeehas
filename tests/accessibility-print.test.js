@@ -26,5 +26,17 @@ assert(question.includes('aria-describedby="question-error"'));
 assert(!/<button[^>]*>\s*<input/i.test(question));
 assert(!/\son(?:click|input|change)=/i.test(question));
 assert(!question.includes("style="));
+const previewStorageValues = new Map();
+const previewStorage = {
+  setItem(key, value) { previewStorageValues.set(key, value); },
+  getItem(key) { return previewStorageValues.get(key) || null; },
+  removeItem(key) { previewStorageValues.delete(key); }
+};
+app.saveAdminReportPreviewAssessment("wa_preview", previewStorage);
+assert.equal(app.loadAdminReportPreviewAssessment(previewStorage), "wa_preview");
+app.clearAdminReportPreviewAssessment(previewStorage);
+assert.equal(app.loadAdminReportPreviewAssessment(previewStorage), "");
+const appSource = fs.readFileSync(require.resolve("../app.js"), "utf8");
+assert.match(appSource, /route === "report" && state\.ownerPreview[\s\S]*admin-report-preview/, "owner-preview report refresh must resolve the active report through the admin endpoint");
 app._test.resetComingSoon();
 console.log("accessibility and print tests passed");

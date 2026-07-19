@@ -14,6 +14,7 @@ const PAYMENT_COPY = Object.freeze({
   paidAfterAssessment: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ."
 });
 const PAYMENT_STATES = new Set(["idle", "creating", "create_unknown", "reconciling", "pending", "checking", "paid", "create_error", "create_failed_confirmed", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
+const ADMIN_REPORT_PREVIEW_STORAGE_KEY = "jingeehas_admin_report_preview_assessment";
 const questionApi = typeof require === "function" ? require("./questions.js") : window.JingeehasQuestions;
 const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй", "Одоогоор ямар нэг арга хэрэглээгүй", "Ямар нэг арга хэрэглэж үзээгүй", "Мэргэжлийн дэмжлэг аваагүй", "Тодорхой саад байгаагүй"]);
 const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"], "Q-METHOD-PAST": ["Q-METHOD-LONGEST", "Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION"] });
@@ -315,6 +316,9 @@ function contactValidation(input) {
   return "";
 }
 function setPaymentStatus(status, patch = {}) { state.payment = { ...state.payment, ...patch, status: PAYMENT_STATES.has(status) ? status : "failed" }; }
+function saveAdminReportPreviewAssessment(assessmentId, storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { storage?.setItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY, String(assessmentId || "")); }
+function loadAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { return String(storage?.getItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY) || ""); }
+function clearAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { storage?.removeItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY); }
 
 async function submitSafety(form) {
   const input = formObject(form); input.acuteMedical = new FormData(form).getAll("acuteMedical");
@@ -446,7 +450,7 @@ async function startOwnerPreview() {
     render();
   } else navigate("/assessment/start");
 }
-async function revokeOwnerPreview() { await api("/.netlify/functions/admin-preview-revoke", { method: "POST", body: "{}" }); state.ownerPreview = false; render(); }
+async function revokeOwnerPreview() { await api("/.netlify/functions/admin-preview-revoke", { method: "POST", body: "{}" }); clearAdminReportPreviewAssessment(); state.ownerPreview = false; render(); }
 async function regenerateAdminReport(assessmentId) {
   const candidate = state.admin.reportCandidates.find(item => item.assessmentId === assessmentId); if (!candidate || state.busy) return;
   state.busy = true; state.admin.error = ""; render({ focus: false });
@@ -464,6 +468,7 @@ async function previewAdminReport(assessmentId) {
   await api("/.netlify/functions/admin-preview-start", { method: "POST", body: "{}" });
   state.ownerPreview = true;
   state.report = await api(`/.netlify/functions/admin-report-preview?assessmentId=${encodeURIComponent(assessmentId)}`, { method: "GET" });
+  saveAdminReportPreviewAssessment(assessmentId);
   navigate("/report");
 }
 async function restoreServerState() {
@@ -471,6 +476,19 @@ async function restoreServerState() {
   if (route === "admin") { try { const admin = await api("/.netlify/functions/admin-session-state", { method: "GET" }); state.admin.authenticated = true; state.admin.owner = admin.owner === true; await loadAdminReportCandidates(); try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch {} } catch {} return; }
   if (route === "advisorDashboard") { try { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); } catch {} return; }
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route)) { try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch { state.ownerPreview = false; return; } }
+  if (route === "report" && state.ownerPreview) {
+    const previewAssessmentId = loadAdminReportPreviewAssessment();
+    if (previewAssessmentId) {
+      try {
+        const admin = await api("/.netlify/functions/admin-session-state", { method: "GET" });
+        if (admin.owner === true) {
+          state.assessmentId = previewAssessmentId;
+          state.report = await api(`/.netlify/functions/admin-report-preview?assessmentId=${encodeURIComponent(previewAssessmentId)}`, { method: "GET" });
+          return;
+        }
+      } catch {}
+    }
+  }
   if (!["assessmentCompleted", "payment", "questions", "report", "dataDeletion"].includes(route)) return;
   try {
     const restored = await api("/.netlify/functions/weight-session-state", { method: "GET" });
@@ -509,7 +527,7 @@ function bind(root) {
   root.querySelector('[data-action="previous-question"]')?.addEventListener("click", () => { state.questionIndex = Math.max(0, state.questionIndex - 1); state.validationError = ""; render(); });
   root.querySelector('[data-action="print-report"]')?.addEventListener("click", () => window.print());
   root.querySelector('[data-action="advisor-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/advisor-logout", { method: "POST", body: "{}" }); state.advisor = createState().advisor; navigate("/advisor/login"); });
-  root.querySelector('[data-action="admin-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/admin-logout", { method: "POST", body: "{}" }); state.admin = createState().admin; state.ownerPreview = false; render(); });
+  root.querySelector('[data-action="admin-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/admin-logout", { method: "POST", body: "{}" }); clearAdminReportPreviewAssessment(); state.admin = createState().admin; state.ownerPreview = false; render(); });
   root.querySelectorAll("[data-advisor-report]").forEach(button => button.addEventListener("click", async () => { const result = await api(`/.netlify/functions/advisor-report?assessmentId=${encodeURIComponent(button.dataset.advisorReport)}`, { method: "GET" }); state.report = { assessmentId: result.assessmentId, fullReport: result.fullReport, entitled: true }; navigate("/report"); }));
   root.querySelector('[data-action="request-deletion"]')?.addEventListener("click", async () => { const result = await api("/.netlify/functions/weight-data-deletion-request", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) }); state.deletionMessage = result.status === "pending" ? "Таны хүсэлтийг хүлээн авлаа." : "Хүсэлтийн төлөв шинэчлэгдлээ."; render(); });
 }
@@ -524,4 +542,5 @@ function navigate(pathname, options = {}) { if (typeof window === "undefined") r
 function captureInviteToken() { if (typeof window === "undefined") return; const url = new URL(window.location.href); const token = url.searchParams.get("invite"); if (!token) return; state.inviteToken = token; url.searchParams.delete("invite"); window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`); }
 if (typeof window !== "undefined") { window.addEventListener("popstate", async () => { await restoreServerState(); render(); }); window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); await restoreServerState(); render({ focus: false }); }); }
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
+  saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections } };
