@@ -76,6 +76,42 @@ create table report_snapshots (
   created_at timestamptz not null
 );
 
+-- Immutable legacy snapshots remain in report_snapshots. New report history
+-- is stored separately and resolved active-first with a legacy fallback.
+create table report_snapshot_versions (
+  snapshot_id uuid primary key,
+  assessment_id text not null references assessments(id) on delete restrict,
+  version_number integer not null check (version_number >= 1),
+  report_engine_version text not null,
+  report_schema_version text not null,
+  report_payload jsonb not null,
+  snapshot_status text not null check (snapshot_status in ('generated', 'active', 'superseded', 'failed')),
+  is_active boolean not null default false,
+  generation_reason text not null,
+  supersedes_snapshot_id uuid references report_snapshot_versions(snapshot_id) on delete restrict,
+  source_legacy_assessment_id text references assessments(id) on delete restrict,
+  created_at timestamptz not null,
+  activated_at timestamptz,
+  superseded_at timestamptz,
+  created_by text not null,
+  payload_checksum text not null check (payload_checksum ~ '^[a-f0-9]{64}$'),
+  operation_key text not null unique,
+  unique (assessment_id, version_number),
+  check (supersedes_snapshot_id is null or supersedes_snapshot_id <> snapshot_id),
+  check (
+    (snapshot_status = 'generated' and not is_active and activated_at is null and superseded_at is null) or
+    (snapshot_status = 'active' and is_active and activated_at is not null and superseded_at is null) or
+    (snapshot_status = 'superseded' and not is_active and activated_at is not null and superseded_at is not null) or
+    (snapshot_status = 'failed' and not is_active and activated_at is null)
+  )
+);
+
+create unique index report_snapshot_versions_one_active_uidx on report_snapshot_versions (assessment_id) where is_active = true;
+create index report_snapshot_versions_assessment_version_idx on report_snapshot_versions (assessment_id, version_number desc);
+create index report_snapshot_versions_assessment_created_idx on report_snapshot_versions (assessment_id, created_at desc);
+create index report_snapshot_versions_status_idx on report_snapshot_versions (snapshot_status);
+create index report_snapshot_versions_engine_idx on report_snapshot_versions (report_engine_version);
+
 create table payments (
   id text primary key,
   session_id text not null references sessions(id) on delete restrict,
