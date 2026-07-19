@@ -45,8 +45,14 @@ function mapRecordKeys(value: unknown, keyMapper: (key: string) => string): unkn
 function normalizeOperation(operation: Record<string, unknown>): Record<string, unknown> {
   // Custom RPC operations keep their arguments at the request root, while
   // generic CRUD operations put data under row/patch/filters. Normalize both
-  // shapes without recursively rewriting report payload contents.
-  const normalized = mapRecordKeys(operation, snakeKey) as Record<string, unknown>;
+  // shapes without changing established custom RPC contracts such as recovery.
+  const reportVersionActions = new Set([
+    "get_active_report_snapshot", "list_report_snapshot_versions", "get_report_snapshot_version",
+    "create_report_snapshot_version", "activate_report_snapshot_version",
+  ]);
+  const normalized = reportVersionActions.has(String(operation.action || ""))
+    ? mapRecordKeys(operation, snakeKey) as Record<string, unknown>
+    : { ...operation };
   for (const field of ["row", "patch", "filters"]) {
     if (field in normalized) normalized[field] = mapRecordKeys(normalized[field], snakeKey);
   }
