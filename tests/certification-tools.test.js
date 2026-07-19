@@ -84,6 +84,7 @@ const fs = require("node:fs");
   assert.match(gatewaySource, /SUPABASE_SERVICE_ROLE_KEY/);
   assert.match(gatewaySource, /constantTimeEqual\(bearer, gatewaySecret\)/);
   assert.match(gatewaySource, /normalizeOperation/);
+  assert.match(gatewaySource, /mapRecordKeys\(operation, snakeKey\)/, "custom RPC root fields must be normalized to PostgreSQL snake_case");
   assert.match(gatewaySource, /normalizeResult/);
   assert.match(gatewaySource, /body\.byteLength > 262_144/);
   assert(!/constantTimeEqual\([^\n]*serviceRoleKey/.test(gatewaySource));
