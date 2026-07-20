@@ -23,7 +23,8 @@ function createState() {
   return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
-    admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "" }, ownerPreview: false, busy: false, slowSave: false };
+    admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
+      analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null, coverage: null, loading: false, error: "" } }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
 let testComingSoonOverride = null;
@@ -31,6 +32,33 @@ function isComingSoon() { return testComingSoonOverride === null ? WEIGHT_TEST_C
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]); }
 function escapeAttribute(value) { return escapeHtml(value).replace(/`/g, "&#96;"); }
 function supportContactLink() { return `<a href="mailto:${escapeAttribute(SUPPORT_EMAIL)}">${escapeHtml(SUPPORT_EMAIL)}</a>`; }
+
+const ANALYTICS_COOKIE = "jingeehas_analytics";
+function browserUuid() { if (typeof crypto !== "undefined" && crypto.randomUUID) return crypto.randomUUID(); return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, token => { const value = Math.random() * 16 | 0; return (token === "x" ? value : (value & 3) | 8).toString(16); }); }
+function analyticsIdentity(now = Date.now()) {
+  if (typeof document === "undefined") return {};
+  let saved = {};
+  try { const raw = document.cookie.split(";").map(item => item.trim()).find(item => item.startsWith(`${ANALYTICS_COOKIE}=`)); if (raw) saved = JSON.parse(decodeURIComponent(raw.slice(ANALYTICS_COOKIE.length + 1))); } catch { saved = {}; }
+  const params = new URLSearchParams(window.location.search); const touch = {};
+  for (const key of ["source", "medium", "campaign", "content", "term"]) { const value = params.get(`utm_${key}`); if (value) touch[`utm${key[0].toUpperCase()}${key.slice(1)}`] = value.slice(0, 100); }
+  try { if (document.referrer) touch.referrerHost = new URL(document.referrer).hostname; } catch {}
+  const expired = !Number(saved.seen) || now - Number(saved.seen) > 30 * 60 * 1000;
+  const next = { visitorId: /^[0-9a-f-]{36}$/i.test(saved.visitorId || "") ? saved.visitorId : browserUuid(),
+    sessionId: !expired && /^[0-9a-f-]{36}$/i.test(saved.sessionId || "") ? saved.sessionId : browserUuid(), seen: now,
+    firstTouch: saved.firstTouch || touch };
+  document.cookie = `${ANALYTICS_COOKIE}=${encodeURIComponent(JSON.stringify(next))}; Path=/; Max-Age=31536000; Secure; SameSite=Lax`;
+  const width = window.innerWidth || 1024; return { visitorId: next.visitorId, sessionId: next.sessionId, ...next.firstTouch, ...touch,
+    deviceClass: width < 768 ? "mobile" : width < 1024 ? "tablet" : "desktop" };
+}
+const trackedPageEvents = new Set();
+function trackEvent(eventName, assessmentId = "", dedupeKey = "") {
+  if (typeof fetch === "undefined" || typeof window === "undefined") return;
+  const key = dedupeKey || `${eventName}:${assessmentId}`; if (trackedPageEvents.has(key)) return; trackedPageEvents.add(key);
+  fetch("/.netlify/functions/analytics-collect", { method: "POST", credentials: "same-origin", keepalive: true,
+    headers: { "content-type": "application/json" }, body: JSON.stringify({ eventId: browserUuid(), eventName, assessmentId: assessmentId || undefined, context: analyticsIdentity() }) })
+    .then(response => { if (!response.ok) console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: response.status })); })
+    .catch(() => console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: "network_error" })));
+}
 
 const ROUTES = Object.freeze({
   "/": "landing", "/about": "about", "/methodology": "methodology", "/assessment/start": "assessmentStart", "/assessment/contact": "assessmentContact",
@@ -47,7 +75,7 @@ function renderLanding() {
   return `<div class="page landing-page">${navigation()}<main><section class="hero" aria-labelledby="page-title"><div class="hero-copy">
     <p class="eyebrow">Сэтгэлзүйн хэв маяг, далд зуршлын үнэлгээ</p><h1 id="page-title" tabindex="-1">${PRODUCT.name}</h1>
     <div class="approved-copy"><p>Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаанаа илрүүл.</p><p>Ямар далд зуршлууд илүүдэл жин үүсэхэд нөлөөлж буйг тайлж мэд.</p><p>Жин хасахад тань тохирох дөт хэв маяг, дасгал сургуулилтын чиглэлээ мэдэж ав.</p></div>
-    <p class="price">Үнэ: ${PRODUCT.displayPrice}</p><a class="button" href="/assessment/start" data-route>Тест бөглөх</a>
+    <a class="button" href="/assessment/start" data-route>Тест бөглөх</a>
     </div><div class="hero-visual" aria-hidden="true"></div></section>
     <section class="methodology-summary" aria-labelledby="methodology-title">
       <div class="methodology-heading"><p class="eyebrow">Үнэлгээний зарчим</p><h2 id="methodology-title">Арга зүй ба судалгааны үндэслэл</h2>
@@ -116,25 +144,6 @@ function safetyGuidance(result) {
   return `<div class="page"><main class="content-card safety-route" aria-live="polite"><h1 id="page-title" tabindex="-1">${escapeHtml(guidance.title || "Аюулгүй байдлын зөвлөмж")}</h1>
     <p>${escapeHtml(guidance.body || "")}</p><p class="notice">Энэ зөвлөмж төлбөргүй.</p>
     <a class="button danger" href="tel:103">${escapeHtml(guidance.action || "Тусламж авах")}</a></main>${footer()}</div>`;
-}
-function renderSafetyGate() {
-  if (state.safetyResult && state.safetyResult.route !== "eligible") return safetyGuidance(state.safetyResult);
-  return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөрөөс өмнөх аюулгүй байдлын шалгалт</h1>
-    <p>Энэ хэсэг төлбөргүй. Тест үнэлгээ танд тохирох эсэхийг эхэлж шалгана.</p>
-    <form id="safety-form" novalidate>
-      <label class="field" for="safety-age"><span>Таны нас</span><input id="safety-age" name="age" type="number" min="1" max="120" required></label>
-      ${radioGroup("selfHarm", "Сүүлийн үед өөртөө хор хүргэх бодол төрсөн үү?", ["Үгүй", "Өнгөрсөнд байсан", "Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна", "Хариулахгүй"], true)}
-      ${checkboxGroup("acuteMedical", "Одоо дараах шинжээс аль нэг нь илэрч байна уу?", ["Будилах", "Ухаан балартах", "Бие огцом муудах", "Аль нь ч үгүй"], true)}
-      ${radioGroup("compensatoryBehavior", "Идсэнээ буцаахын тулд зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол гардаг уу?", ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], true)}
-      ${radioGroup("medicalSuitability", "Эмчтэй эхэлж зөвлөлдөх шаардлагатай гэж танд өмнө нь хэлж байсан уу?", ["Үргэлжлүүлэхэд тохиромжтой", "Эмчтэй эхэлж зөвлөлдөх шаардлагатай", "Хариулахгүй"], true)}
-      <p id="safety-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Тохирох эсэхийг шалгах</button>
-    </form></main>${footer()}</div>`;
-}
-function radioGroup(name, legend, options, required = false) {
-  return `<fieldset><legend>${escapeHtml(legend)}</legend>${options.map(option => `<label class="option-label"><input type="radio" name="${escapeAttribute(name)}" value="${escapeAttribute(option)}" ${required ? "required" : ""}><span>${escapeHtml(option)}</span></label>`).join("")}</fieldset>`;
-}
-function checkboxGroup(name, legend, options) {
-  return `<fieldset><legend>${escapeHtml(legend)}</legend>${options.map(option => `<label class="option-label"><input type="checkbox" name="${escapeAttribute(name)}" value="${escapeAttribute(option)}"><span>${escapeHtml(option)}</span></label>`).join("")}</fieldset>`;
 }
 function renderAssessmentContact() {
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тайлан авах мэдээллээ хадгалах</h1>
@@ -257,6 +266,45 @@ function renderRecovery() {
     <p class="error" role="alert" aria-live="assertive">${escapeHtml(recovery.error)}</p><p>Сэргээхэд тусламж хэрэгтэй бол ${supportContactLink()} хаягаар холбогдоно уу.</p></main>${footer()}</div>`;
 }
 function money(value) { return `${Number(value || 0).toLocaleString("en-US")}₮`; }
+function isoDay(date) { return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(date); }
+function shiftDay(day, offset) { const date = new Date(`${day}T12:00:00+08:00`); date.setUTCDate(date.getUTCDate() + offset); return isoDay(date); }
+function analyticsRange(preset, now = new Date()) {
+  const today = isoDay(now); const monthStart = `${today.slice(0, 8)}01`;
+  if (preset === "today") return { startDate: today, endDate: today };
+  if (preset === "yesterday") { const yesterday = shiftDay(today, -1); return { startDate: yesterday, endDate: yesterday }; }
+  if (preset === "last30") return { startDate: shiftDay(today, -29), endDate: today };
+  if (preset === "thisMonth") return { startDate: monthStart, endDate: today };
+  if (preset === "previousMonth") { const endDate = shiftDay(monthStart, -1); return { startDate: `${endDate.slice(0, 8)}01`, endDate }; }
+  return { startDate: shiftDay(today, -6), endDate: today };
+}
+function analyticsTotals(days = []) { return days.reduce((total, day) => ({ uniqueVisitors: total.uniqueVisitors + Number(day.uniqueVisitors || 0), landingViews: total.landingViews + Number(day.landingViews || 0),
+  assessmentsStarted: total.assessmentsStarted + Number(day.assessmentsStarted || 0), assessmentsCompleted: total.assessmentsCompleted + Number(day.assessmentsCompleted || 0),
+  paywallViews: total.paywallViews + Number(day.paywallViews || 0), invoicesCreated: total.invoicesCreated + Number(day.invoicesCreated || 0),
+  paymentsConfirmed: total.paymentsConfirmed + Number(day.paymentsConfirmed || 0), revenueMnt: total.revenueMnt + Number(day.revenueMnt || 0) }),
+  { uniqueVisitors: 0, landingViews: 0, assessmentsStarted: 0, assessmentsCompleted: 0, paywallViews: 0, invoicesCreated: 0, paymentsConfirmed: 0, revenueMnt: 0 }); }
+function rate(numerator, denominator) { return denominator ? `${(100 * numerator / denominator).toFixed(1)}%` : "—"; }
+function comparison(current, prior) { if (!Number.isFinite(Number(prior)) || Number(prior) === 0) return "—"; const change = 100 * (Number(current) - Number(prior)) / Number(prior); return Number.isFinite(change) ? `Өмнөх хугацаанаас ${change >= 0 ? "+" : ""}${change.toFixed(1)}%` : "—"; }
+function hasAnalyticsData(summary) { return summary && ["uniqueVisitors", "assessmentsStarted", "assessmentsCompleted", "paywallViews", "invoicesCreated", "paymentsConfirmed"].some(key => Number(summary[key] || 0) > 0); }
+function analyticsCoverageCopy(coverage) {
+  if (!coverage?.visitorTrackingStartedAt) return "";
+  const started = new Date(coverage.visitorTrackingStartedAt).toLocaleDateString("mn-MN", { timeZone: "Asia/Ulaanbaatar" });
+  return `Зочны хэмжилт ${started}-өөс эхэлсэн. Үүнээс өмнөх зочны болон төлбөрийн хэсгийн үзэлтийн дата байхгүй байж болно. Тест, нэхэмжлэл, төлбөрийн тоо нь серверийн бодит бүртгэлээс гарна.`;
+}
+function renderAdminAnalytics() {
+  const analytics = state.admin.analytics; const total = analytics.summary || analyticsTotals(analytics.days); const prior = analytics.priorSummary || analyticsTotals(analytics.priorDays);
+  const priorAvailable = hasAnalyticsData(analytics.priorSummary);
+  const card = (label, value, conversion, key) => `<article><h3>${label}</h3><p class="metric-value">${value}</p><p>${conversion}</p><p class="metric-compare">${priorAvailable ? comparison(total[key], prior[key]) : "—"}</p></article>`;
+  const stages = [["Зочилсон", total.uniqueVisitors], ["Тест эхлүүлсэн", total.assessmentsStarted], ["Тест дуусгасан", total.assessmentsCompleted], ["Төлбөрийн хэсэг үзсэн", total.paywallViews], ["Нэхэмжлэл үүсгэсэн", total.invoicesCreated], ["Төлбөр төлсөн", total.paymentsConfirmed]];
+  return `<section class="analytics-dashboard" aria-labelledby="analytics-title"><h2 id="analytics-title">Өдөр тутмын үзүүлэлт</h2><p>Цагийн бүс: Улаанбаатар</p>
+    <form id="analytics-filter-form" class="analytics-filters"><label><span>Хугацаа</span><select name="preset"><option value="today"${analytics.preset === "today" ? " selected" : ""}>Өнөөдөр</option><option value="yesterday"${analytics.preset === "yesterday" ? " selected" : ""}>Өчигдөр</option><option value="last7"${analytics.preset === "last7" ? " selected" : ""}>Сүүлийн 7 хоног</option><option value="last30"${analytics.preset === "last30" ? " selected" : ""}>Сүүлийн 30 хоног</option><option value="thisMonth"${analytics.preset === "thisMonth" ? " selected" : ""}>Энэ сар</option><option value="previousMonth"${analytics.preset === "previousMonth" ? " selected" : ""}>Өмнөх сар</option><option value="custom"${analytics.preset === "custom" ? " selected" : ""}>Өөр хугацаа</option></select></label><label><span>Эхлэх өдөр</span><input type="date" name="startDate" value="${escapeAttribute(analytics.startDate)}"></label><label><span>Дуусах өдөр</span><input type="date" name="endDate" value="${escapeAttribute(analytics.endDate)}"></label><button class="button compact" type="submit">Харах</button></form>
+    ${analytics.loading ? `<p role="status">Үзүүлэлтийг ачаалж байна…</p>` : ""}${analytics.error ? `<p class="error">${escapeHtml(analytics.error)}</p>` : ""}
+    ${analyticsCoverageCopy(analytics.coverage) ? `<p class="analytics-coverage">${escapeHtml(analyticsCoverageCopy(analytics.coverage))}</p>` : ""}
+    ${!priorAvailable ? `<p class="analytics-comparison-note">Сонгосон хугацааг өмнөх ижил хугацаатай харьцуулах боломжгүй байна.</p>` : ""}
+    <div class="metric-grid analytics-metrics">${card("Зочилсон хүн", total.uniqueVisitors, `Тест эхлүүлсэн хувь: ${rate(total.assessmentsStarted, total.uniqueVisitors)}`, "uniqueVisitors")}${card("Тест эхлүүлсэн", total.assessmentsStarted, `Дуусгасан хувь: ${rate(total.assessmentsCompleted, total.assessmentsStarted)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted, `Төлбөрийн хэсэгт хүрсэн хувь: ${rate(total.paywallViews, total.assessmentsCompleted)}`, "assessmentsCompleted")}${card("Төлбөрийн хэсэг үзсэн", total.paywallViews, `Нэхэмжлэл үүсгэсэн хувь: ${rate(total.invoicesCreated, total.paywallViews)}`, "paywallViews")}${card("Нэхэмжлэл үүсгэсэн", total.invoicesCreated, `Төлбөр төлсөн хувь: ${rate(total.paymentsConfirmed, total.invoicesCreated)}`, "invoicesCreated")}${card("Төлбөр төлсөн", total.paymentsConfirmed, `Зочиноос төлбөр: ${rate(total.paymentsConfirmed, total.uniqueVisitors)}`, "paymentsConfirmed")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
+    <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value], index) => `<li><span>${label}</span><strong>${value}</strong>${index ? `<small>${rate(value, stages[index - 1][1])}</small>` : ""}</li>`).join("")}</ol>
+    <p class="analytics-daily-note">Өдөр тутмын зочны тоо нь тухайн өдрийн давтагдаагүй зочдыг харуулна.</p>
+    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Зочин</th><th>Эхэлсэн</th><th>Эхлэх хувь</th><th>Дууссан</th><th>Дуусгах хувь</th><th>Төлбөрийн хэсэг</th><th>Хүрсэн хувь</th><th>Нэхэмжлэл</th><th>Нэхэмжлэл үүсгэсэн хувь</th><th>Төлбөр</th><th>Төлбөр төлсөн хувь</th><th>Зочиноос төлбөр</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${day.uniqueVisitors}</td><td>${day.assessmentsStarted}</td><td>${rate(day.assessmentsStarted, day.uniqueVisitors)}</td><td>${day.assessmentsCompleted}</td><td>${rate(day.assessmentsCompleted, day.assessmentsStarted)}</td><td>${day.paywallViews}</td><td>${rate(day.paywallViews, day.assessmentsCompleted)}</td><td>${day.invoicesCreated}</td><td>${rate(day.invoicesCreated, day.paywallViews)}</td><td>${day.paymentsConfirmed}</td><td>${rate(day.paymentsConfirmed, day.invoicesCreated)}</td><td>${rate(day.paymentsConfirmed, day.uniqueVisitors)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
+}
 function renderAdvisorLogin() {
   if (state.advisor.temporaryPasswordChange) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Нууц үгээ солино уу</h1><form id="advisor-password-form"><label class="field"><span>Одоогийн нууц үг</span><input name="currentPassword" type="password" autocomplete="current-password" required></label><label class="field"><span>Шинэ нууц үг</span><input name="newPassword" type="password" autocomplete="new-password" minlength="12" required></label><button class="button" type="submit">Нууц үг солих</button></form><p class="error">${escapeHtml(state.advisor.error)}</p></main></div>`;
   return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөх нэвтрэх</h1><form id="advisor-login-form"><label class="field"><span>Имэйл</span><input name="email" type="email" autocomplete="username" required></label><label class="field"><span>Нууц үг</span><input name="password" type="password" autocomplete="current-password" required></label><button class="button" type="submit">Нэвтрэх</button></form><p class="error">${escapeHtml(state.advisor.error)}</p></main></div>`;
@@ -271,11 +319,11 @@ function renderAdvisorDashboard() {
 function renderAdmin() {
   if (!state.admin.authenticated) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Удирдлагын нэвтрэх хэсэг</h1><form id="admin-login-form"><label class="field"><span>Имэйл</span><input name="email" type="email" autocomplete="username" required></label><label class="field"><span>Нууц үг</span><input name="password" type="password" autocomplete="current-password" required></label><button class="button" type="submit">Нэвтрэх</button></form><p class="error">${escapeHtml(state.admin.error)}</p></main></div>`;
   const reportRows = (state.admin.reportCandidates || []).map(candidate => `<tr><td>${escapeHtml(candidate.reportMode || "—")}</td><td>${candidate.activeVersionNumber ? `v${escapeHtml(candidate.activeVersionNumber)}` : "Legacy"}</td><td>${candidate.acceptedEngineActive ? "Идэвхтэй" : `<button class="button compact" type="button" data-regenerate-report="${escapeAttribute(candidate.assessmentId)}">Шинэ хувилбар үүсгэж идэвхжүүлэх</button>`}</td><td><button class="button compact secondary" type="button" data-preview-report="${escapeAttribute(candidate.assessmentId)}">Тайлан харах</button></td></tr>`).join("");
-  const reportAdmin = state.admin.owner ? `<section aria-labelledby="report-version-title"><h2 id="report-version-title">Тайлангийн хувилбарын удирдлага</h2><p>Хуучин тайланг өөрчлөхгүйгээр шинэ хувилбар үүсгэж, шалгалт амжилттай бол идэвхжүүлнэ.</p>${reportRows ? `<div class="table-scroll" tabindex="0"><table><thead><tr><th>Төлөв</th><th>Идэвхтэй хувилбар</th><th>Үйлдэл</th><th>Урьдчилан харах</th></tr></thead><tbody>${reportRows}</tbody></table></div>` : `<p>Шинэчлэх боломжтой дууссан тайлан олдсонгүй.</p>`}${state.admin.regenerated ? `<p class="notice" role="status">Тайлангийн v${escapeHtml(state.admin.regenerated.versionNumber)} хувилбар идэвхжлээ.</p>` : ""}</section>` : "";
+  const reportAdmin = state.admin.owner ? `${renderAdminAnalytics()}<section aria-labelledby="report-version-title"><h2 id="report-version-title">Тайлангийн хувилбарын удирдлага</h2><p>Хуучин тайланг өөрчлөхгүйгээр шинэ хувилбар үүсгэж, шалгалт амжилттай бол идэвхжүүлнэ.</p>${reportRows ? `<div class="table-scroll" tabindex="0"><table><thead><tr><th>Төлөв</th><th>Идэвхтэй хувилбар</th><th>Үйлдэл</th><th>Урьдчилан харах</th></tr></thead><tbody>${reportRows}</tbody></table></div>` : `<p>Шинэчлэх боломжтой дууссан тайлан олдсонгүй.</p>`}${state.admin.regenerated ? `<p class="notice" role="status">Тайлангийн v${escapeHtml(state.admin.regenerated.versionNumber)} хувилбар идэвхжлээ.</p>` : ""}</section>` : "";
   return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Зөвлөхийн удирдлага</h1>${state.admin.owner ? `<section aria-labelledby="owner-preview-title"><h2 id="owner-preview-title">Эзэмшигчийн бодит туршилт</h2><p>Нийтийн “Тун удахгүй” хамгаалалтыг өөрчлөхгүйгээр 2 цагийн турш бодит тестийг шалгана.</p><button class="button" type="button" data-action="start-owner-preview">Бодит тестийг шалгах</button>${state.ownerPreview ? `<button class="button secondary" type="button" data-action="revoke-owner-preview">Туршилтын эрхийг цуцлах</button>` : ""}</section>` : ""}${reportAdmin}<form id="admin-advisor-form"><label class="field"><span>Зөвлөхийн нэр</span><input name="name" required></label><label class="field"><span>Зөвлөхийн имэйл</span><input name="email" type="email" required></label><label class="field"><span>Нэг төлбөрөөс зөвлөхөд олгох шимтгэл (₮)</span><input name="commissionAmount" type="number" min="0" max="9900" value="4000" required></label><button class="button" type="submit">Зөвлөх нэмэх</button></form>${state.admin.created ? `<div class="notice" role="status"><p>Түр нууц үгийг зөвхөн одоо хуулж авна уу.</p><code>${escapeHtml(state.admin.created.temporaryPassword)}</code></div>` : ""}<p class="error">${escapeHtml(state.admin.error)}</p><button class="button secondary" type="button" data-action="admin-logout">Гарах</button></main></div>`;
 }
 function legalPage(title, body) { return `<div class="page">${navigation()}<main class="content-card legal-page"><h1 id="page-title" tabindex="-1">${escapeHtml(title)}</h1>${body}</main>${footer()}</div>`; }
-function renderPrivacy() { return legalPage("Нууцлалын бодлого", `<p>Үйлчилгээ үзүүлэгч: Customer Business Development LLC-ийн ажиллуулдаг Jingeehas. Үйлчилгээ Монгол Улсын харьяалалд үйл ажиллагаа явуулна.</p><p>Тестийн хариулт, аюулгүй байдлын шинж, холбоо барих мэдээлэл нь тайлан гаргах, төлбөр баталгаажуулах, тайлан сэргээх зорилгоор серверт хадгалагдана. Холбоо барих мэдээллийг шифрлэж, хайлтын утгыг тусад нь хэшлэнэ.</p><p>Түүхий хариултыг QPay нэхэмжлэлийн тайлбар, төлбөрийн мэдээлэл эсвэл ерөнхий хэрэглээний хэмжилтэд дамжуулахгүй. Зөвлөх зөвхөн таны тодорхой зөвшөөрөлтэй бүрэн тайланг харж болох бөгөөд асуулт бүрийн түүхий хариултыг тусад нь харахгүй.</p><p>Хэрэглэгч зөвшөөрлөө цуцалж, хууль болон төлбөрийн бүртгэлээр заавал хадгалах мэдээллээс бусдыг устгуулах хүсэлт гаргаж болно. Баталгаажсан устгах хүсэлтийг 30 хоногийн дотор шийдвэрлэнэ.</p><p>Байнгын зочны мөрдөлт одоогоор эхлээгүй. Ирээдүйд ийм хэмжилт нэмэх бол хадгалалт эхлэхээс өмнө ил тод зөвшөөрөл авна.</p><p>Нууцлалын хүсэлт: ${supportContactLink()}.</p>`); }
+function renderPrivacy() { return legalPage("Нууцлалын бодлого", `<p>Үйлчилгээ үзүүлэгч: Customer Business Development LLC-ийн ажиллуулдаг Jingeehas. Үйлчилгээ Монгол Улсын харьяалалд үйл ажиллагаа явуулна.</p><p>Тестийн хариулт, аюулгүй байдлын шинж, холбоо барих мэдээлэл нь тайлан гаргах, төлбөр баталгаажуулах, тайлан сэргээх зорилгоор серверт хадгалагдана. Холбоо барих мэдээллийг шифрлэж, хайлтын утгыг тусад нь хэшлэнэ.</p><p>Түүхий хариултыг QPay нэхэмжлэлийн тайлбар, төлбөрийн мэдээлэл эсвэл ерөнхий хэрэглээний хэмжилтэд дамжуулахгүй. Зөвлөх зөвхөн таны тодорхой зөвшөөрөлтэй бүрэн тайланг харж болох бөгөөд асуулт бүрийн түүхий хариултыг тусад нь харахгүй.</p><p>Хэрэглэгч зөвшөөрлөө цуцалж, хууль болон төлбөрийн бүртгэлээр заавал хадгалах мэдээллээс бусдыг устгуулах хүсэлт гаргаж болно. Баталгаажсан устгах хүсэлтийг 30 хоногийн дотор шийдвэрлэнэ.</p><p>Үйлчилгээний үндсэн үе шатны ашиглалтыг сайжруулахын тулд нэр, холбоо барих мэдээлэл, тестийн хариулт агуулаагүй нууцлагдсан зочин болон сессийн танигчаар өдрийн нийлбэр үзүүлэлт хэмжинэ. Төхөөрөмжийн хурууны хээ үүсгэхгүй бөгөөд түүхий IP хаяг хадгалахгүй.</p><p>Нууцлалын хүсэлт: ${supportContactLink()}.</p>`); }
 function renderTerms() { return legalPage("Үйлчилгээний нөхцөл", `<p>Үйлчилгээ үзүүлэгч: Customer Business Development LLC-ийн ажиллуулдаг Jingeehas. Үйлчилгээ Монгол Улсын харьяалалд үйл ажиллагаа явуулна.</p><p>Энэ тест үнэлгээ нь насанд хүрсэн хэрэглэгчийн өөрийн хариултад тулгуурласан ажиглалт гаргана. Эмнэлгийн онош тавихгүй бөгөөд эмч, сэтгэлзүйч, хоолзүйчийн зөвлөгөө, эмчилгээ, яаралтай тусламжийг орлохгүй.</p><p>Нэг удаагийн бүтээгдэхүүний үнэ ${PRODUCT.displayPrice}. Бүрэн тайлан зөвхөн сервер төлбөрийг баталгаажуулсны дараа нээгдэнэ. Аюулгүй байдлын зөвлөмж төлбөргүй.</p><p>Давхар төлбөр, баталгаатай системийн алдаа, эсвэл төлбөр төлсөн боловч бүрэн тайланг техникийн шалтгаанаар өгөөгүй бөгөөд дэмжлэгээр шийдвэрлэж чадаагүй тохиолдлыг шалгаж, буцаан олголтын хүсэлтийг хянан шийдвэрлэнэ.</p><p>Нөхцөлтэй холбоотой хүсэлт: ${supportContactLink()}.</p>`); }
 function renderSupport() { return legalPage("Төлбөрийн тусламж", `<p>Үйлчилгээ үзүүлэгч: Customer Business Development LLC-ийн ажиллуулдаг Jingeehas.</p><p>Нэхэмжлэл үүсэхгүй, хугацаа дууссан, эсвэл төлбөр баталгаажсан ч бүрэн тайлан нээгдэхгүй бол дахин төлөхөөсөө өмнө “Төлбөр шалгах” үйлдлийг ашиглана уу.</p><p>Тайлангаа өөр төхөөрөмжөөс авах бол <a href="/recovery" data-route>Тайлан сэргээх</a> хэсэгт төлбөр хийхдээ ашигласан имэйл хаягаа оруулна уу. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.</p><p>Дэмжлэгийн имэйл: ${supportContactLink()}.</p>`); }
 function renderDataDeletion() { const contact = `<p>Устгах хүсэлтийн тусламж: ${supportContactLink()}.</p>`; return legalPage("Өгөгдөл устгах хүсэлт", (state.assessmentId ? `<p>Одоогийн баталгаажсан тест үнэлгээтэй холбоотой өгөгдөл устгах хүсэлт илгээж болно. Баталгаажсан хүсэлтийг 30 хоногийн дотор шийдвэрлэнэ. Хууль болон төлбөрийн бүртгэлээр заавал хадгалах мэдээлэл үлдэж болох бөгөөд хүсэлтийг шалгах хугацаанд тайлан сэргээх боломж хязгаарлагдаж болно.</p><button class="button danger" type="button" data-action="request-deletion">Устгах хүсэлт илгээх</button><p class="notice" role="status">${escapeHtml(state.deletionMessage || "")}</p>` : `<p>Өгөгдлийн эзэмшлийг баталгаажуулахын тулд эхлээд <a href="/recovery" data-route>тайлангаа сэргээнэ үү</a>. Дараа нь энэ хуудсанд буцаж хүсэлт илгээнэ. Баталгаажсан хүсэлтийг 30 хоногийн дотор шийдвэрлэнэ.</p>`) + contact); }
@@ -285,7 +333,7 @@ function renderForPath(pathname) {
   if (route === "about") return renderAbout();
   if (route === "methodology") return renderMethodology();
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route) && !state.ownerPreview) return renderComingSoon();
-  if (route === "assessmentStart") return renderSafetyGate();
+  if (route === "assessmentStart") return renderAssessmentContact();
   if (route === "assessmentContact") return renderAssessmentContact();
   if (route === "assessmentCompleted") return renderAssessmentCompleted();
   if (route === "payment") return renderPayment();
@@ -320,31 +368,23 @@ function saveAdminReportPreviewAssessment(assessmentId, storage = typeof session
 function loadAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { return String(storage?.getItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY) || ""); }
 function clearAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { storage?.removeItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY); }
 
-async function submitSafety(form) {
-  const input = formObject(form); input.acuteMedical = new FormData(form).getAll("acuteMedical");
-  if (!input.age || !input.selfHarm || !input.acuteMedical.length || !input.compensatoryBehavior || !input.medicalSuitability) throw new Error("Бүх асуултад хариулна уу.");
-  state.busy = true; render();
-  await ensureSession();
-  state.safetyResult = await api("/.netlify/functions/weight-safety-gate", { method: "POST", body: JSON.stringify(input) });
-  state.safetyCheckId = state.safetyResult.safetyCheckId; state.busy = false;
-  if (state.safetyResult.route === "eligible") navigate("/assessment/contact"); else render();
-}
 async function submitContact(form) {
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
   state.busy = true; render();
+  await ensureSession();
   const contact = await api("/.netlify/functions/weight-recovery-contact-save", { method: "POST", body: JSON.stringify(input) });
   state.contactGroupId = contact.contactGroupId;
   if (state.inviteToken) {
     state.invitation = await api("/.netlify/functions/advisor-invite-resolve", { method: "POST", body: JSON.stringify({ inviteToken: state.inviteToken }) });
     state.inviteToken = ""; state.busy = false; render(); return;
   }
-  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId }) });
+  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity() }) });
   state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.busy = false; navigate("/assessment/questions");
 }
 async function submitConsent(form) {
   const accepted = formObject(form).consent === "yes";
   const result = await api("/.netlify/functions/advisor-consent", { method: "POST", body: JSON.stringify({ coachClientId: state.invitation.coachClientId, consent: accepted }) });
-  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ safetyCheckId: state.safetyCheckId, recoveryContactGroupId: state.contactGroupId, ...(accepted ? { coachClientId: result.coachClientId } : {}) }) });
+  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity(), ...(accepted ? { coachClientId: result.coachClientId } : {}) }) });
   state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.invitation = null; navigate("/assessment/questions");
 }
 async function createInvoice() {
@@ -427,6 +467,7 @@ async function loadReport() { return api(`/.netlify/functions/weight-assessment-
 async function requestRecovery(form) {
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
   const result = await api("/.netlify/functions/weight-recovery-request", { method: "POST", body: JSON.stringify(input) });
+  trackEvent("recovery_requested", "", `recovery_requested:${result.recoveryId}`);
   state.recovery = { recoveryId: result.recoveryId, message: result.message, error: "" }; render();
 }
 async function confirmRecovery(form) {
@@ -438,7 +479,22 @@ async function advisorLoginSubmit(form) { const result = await api("/.netlify/fu
 async function advisorPasswordSubmit(form) { await api("/.netlify/functions/advisor-password-change", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.temporaryPasswordChange = false; state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); }
 async function advisorInviteSubmit(form) { const result = await api("/.netlify/functions/advisor-client-invite", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.dashboard = { ...state.advisor.dashboard, inviteToken: result.inviteToken }; render(); }
 async function loadAdminReportCandidates() { if (!state.admin.owner) return; const result = await api("/.netlify/functions/admin-report-regeneration-candidates", { method: "GET" }); state.admin.reportCandidates = result.candidates || []; state.admin.reportEngineVersion = result.reportEngineVersion; state.admin.reportSchemaVersion = result.reportSchemaVersion; state.admin.generationReason = result.generationReason; }
-async function adminLoginSubmit(form) { const result = await api("/.netlify/functions/admin-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.admin.authenticated = true; state.admin.owner = result.owner === true; state.admin.error = ""; await loadAdminReportCandidates(); render(); }
+async function loadAdminAnalytics(preset = state.admin.analytics.preset, custom = {}) {
+  if (!state.admin.owner) return; const analytics = state.admin.analytics;
+  const selected = preset === "custom" ? { startDate: custom.startDate, endDate: custom.endDate } : analyticsRange(preset);
+  analytics.preset = preset; analytics.startDate = selected.startDate; analytics.endDate = selected.endDate; analytics.loading = true; analytics.error = ""; render({ focus: false });
+  const length = Math.floor((Date.parse(`${selected.endDate}T00:00:00Z`) - Date.parse(`${selected.startDate}T00:00:00Z`)) / 86400000) + 1;
+  const priorEnd = shiftDay(selected.startDate, -1); const priorStart = shiftDay(priorEnd, -(length - 1));
+  try {
+    const [current, prior] = await Promise.all([
+      api(`/.netlify/functions/admin-analytics-daily?startDate=${selected.startDate}&endDate=${selected.endDate}`, { method: "GET" }),
+      api(`/.netlify/functions/admin-analytics-daily?startDate=${priorStart}&endDate=${priorEnd}`, { method: "GET" })
+    ]);
+    analytics.days = current.days || []; analytics.priorDays = prior.days || []; analytics.summary = current.summary || null; analytics.priorSummary = prior.summary || null; analytics.coverage = current.coverage || null;
+  } catch { analytics.error = "Өдөр тутмын үзүүлэлтийг ачаалж чадсангүй."; }
+  analytics.loading = false;
+}
+async function adminLoginSubmit(form) { const result = await api("/.netlify/functions/admin-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.admin.authenticated = true; state.admin.owner = result.owner === true; state.admin.error = ""; await Promise.all([loadAdminReportCandidates(), loadAdminAnalytics()]); render(); }
 async function adminAdvisorSubmit(form) { const input = formObject(form); input.commissionAmount = Number(input.commissionAmount); state.admin.created = await api("/.netlify/functions/admin-advisor-create", { method: "POST", body: JSON.stringify(input) }); render(); }
 async function startOwnerPreview() {
   const preview = await api("/.netlify/functions/admin-preview-start", { method: "POST", body: "{}" });
@@ -473,7 +529,7 @@ async function previewAdminReport(assessmentId) {
 }
 async function restoreServerState() {
   const route = routeName(window.location.pathname);
-  if (route === "admin") { try { const admin = await api("/.netlify/functions/admin-session-state", { method: "GET" }); state.admin.authenticated = true; state.admin.owner = admin.owner === true; await loadAdminReportCandidates(); try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch {} } catch {} return; }
+  if (route === "admin") { try { const admin = await api("/.netlify/functions/admin-session-state", { method: "GET" }); state.admin.authenticated = true; state.admin.owner = admin.owner === true; await Promise.all([loadAdminReportCandidates(), loadAdminAnalytics()]); try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch {} } catch {} return; }
   if (route === "advisorDashboard") { try { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); } catch {} return; }
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route)) { try { await api("/.netlify/functions/admin-preview-status", { method: "GET" }); state.ownerPreview = true; } catch { state.ownerPreview = false; return; } }
   if (route === "report" && state.ownerPreview) {
@@ -504,9 +560,8 @@ async function restoreServerState() {
 }
 
 function bind(root) {
-  root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); navigate(link.getAttribute("href")); }));
+  root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); if (window.location.pathname === "/" && link.getAttribute("href") === "/assessment/start") trackEvent("start_cta_clicked", "", `start_cta_clicked:${Date.now()}`); navigate(link.getAttribute("href")); }));
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(input.type === "text" || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
-  root.querySelector("#safety-form")?.addEventListener("submit", event => { event.preventDefault(); submitSafety(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("safety-error"); if (node) node.textContent = error.message; }); });
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
   root.querySelector("#consent-form")?.addEventListener("submit", event => { event.preventDefault(); submitConsent(event.currentTarget).catch(() => { state.validationError = "Сонголтыг хадгалж чадсангүй."; render(); }); });
   root.querySelector("#question-form")?.addEventListener("submit", event => { event.preventDefault(); nextQuestion(); });
@@ -517,6 +572,7 @@ function bind(root) {
   root.querySelector("#advisor-invite-form")?.addEventListener("submit", event => { event.preventDefault(); advisorInviteSubmit(event.currentTarget).catch(() => { state.advisor.error = "Урилга үүсгэж чадсангүй."; render(); }); });
   root.querySelector("#admin-login-form")?.addEventListener("submit", event => { event.preventDefault(); adminLoginSubmit(event.currentTarget).catch(() => { state.admin.error = "Нэвтрэх мэдээлэл буруу байна."; render(); }); });
   root.querySelector("#admin-advisor-form")?.addEventListener("submit", event => { event.preventDefault(); adminAdvisorSubmit(event.currentTarget).catch(() => { state.admin.error = "Зөвлөх үүсгэж чадсангүй."; render(); }); });
+  root.querySelector("#analytics-filter-form")?.addEventListener("submit", event => { event.preventDefault(); const input = formObject(event.currentTarget); loadAdminAnalytics(input.preset, input).then(() => render()).catch(() => { state.admin.analytics.error = "Хугацааг шалгана уу."; render(); }); });
   root.querySelector('[data-action="start-owner-preview"]')?.addEventListener("click", () => startOwnerPreview().catch(() => { state.admin.error = "Бодит тестийн эрх нээж чадсангүй."; render(); }));
   root.querySelector('[data-action="revoke-owner-preview"]')?.addEventListener("click", () => revokeOwnerPreview().catch(() => { state.admin.error = "Туршилтын эрхийг цуцалж чадсангүй."; render(); }));
   root.querySelectorAll("[data-regenerate-report]").forEach(button => button.addEventListener("click", () => regenerateAdminReport(button.dataset.regenerateReport).catch(() => { state.busy = false; state.admin.error = "Тайлангийн шинэ хувилбарыг үүсгэж чадсангүй."; render(); })));
@@ -535,6 +591,10 @@ function render(options = {}) {
   if (typeof document === "undefined") return "";
   const root = document.getElementById("app"); if (!root) return "";
   root.innerHTML = renderForPath(window.location.pathname); bind(root);
+  const route = routeName(window.location.pathname);
+  if (route === "landing") trackEvent("landing_viewed", "", "landing_viewed:page-load");
+  if (route === "payment" && state.assessmentStatus === "complete") trackEvent("paywall_viewed", state.assessmentId);
+  if (route === "report" && state.report) trackEvent("report_opened", state.assessmentId);
   const heading = document.getElementById("page-title"); if (options.focus !== false && heading) heading.focus();
   return root.innerHTML;
 }
@@ -543,4 +603,5 @@ function captureInviteToken() { if (typeof window === "undefined") return; const
 if (typeof window !== "undefined") { window.addEventListener("popstate", async () => { await restoreServerState(); render(); }); window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); await restoreServerState(); render({ focus: false }); }); }
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
-  _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections } };
+  _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,
+    analyticsRange, analyticsTotals, rate, comparison, hasAnalyticsData, analyticsCoverageCopy, renderAdminAnalytics } };

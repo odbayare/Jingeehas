@@ -18,7 +18,8 @@ assert.equal(fs.readFileSync(path.join(root, "assets", "social-preview.png")).su
 
 for (const route of ["/", "/methodology", "/assessment/start", "/assessment/contact", "/assessment/questions", "/assessment/completed", "/assessment/payment", "/report", "/recovery", "/advisor/login", "/advisor/dashboard", "/admin", "/privacy", "/terms", "/support", "/data-deletion"]) assert.notEqual(app.routeName(route), "notFound", route);
 app._test.setComingSoon(false);
-assert(app.renderForPath("/privacy").includes("Байнгын зочны мөрдөлт одоогоор эхлээгүй"));
+assert(app.renderForPath("/privacy").includes("нууцлагдсан зочин болон сессийн танигчаар өдрийн нийлбэр үзүүлэлт хэмжинэ"));
+assert(app.renderForPath("/privacy").includes("түүхий IP хаяг хадгалахгүй"));
 assert(app.renderForPath("/terms").includes("9,900₮"));
 assert(app.renderForPath("/support").includes("Төлбөр шалгах"));
 assert(app.renderForPath("/data-deletion").includes("тайлангаа сэргээнэ үү"));

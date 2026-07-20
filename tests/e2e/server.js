@@ -7,7 +7,7 @@ const questions = require("../../questions.js");
 const cohort = require("../fixtures/virtual-cohort-v2.js");
 const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/functions/_lib/report.js");
 const root = path.resolve(__dirname, "../..");
-const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0 };
+const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0, sessionStart: 0 };
 const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
 const cohortReports = Object.fromEntries(cohort.filter(profile => ["VU-03", "VU-06"].includes(profile.id)).map(profile => {
   const linkedLongestMethod = profile.answers["Q-METHOD-LONGEST"] || questions.autoLinkedLongestMethod(profile.answers);
@@ -23,11 +23,13 @@ function readBody(request) { return new Promise(resolve => { let raw = ""; reque
 const endpoints = {
   "admin-login": async (_body, response) => json(response, 200, { adminId: "owner-e2e", owner: true }, { "set-cookie": "jingeehas_admin=admin-e2e; Path=/; HttpOnly; Secure; SameSite=Strict" }),
   "admin-session-state": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") ? json(response, 200, { authenticated: true, owner: true }) : json(response, 401, { error: "unauthorized" }),
+  "admin-report-regeneration-candidates": async (_body, response) => json(response, 200, { candidates: [], reportEngineVersion: "test", reportSchemaVersion: "test", generationReason: "test" }),
+  "admin-analytics-daily": async (_body, response) => json(response, 200, { timeZone: "Asia/Ulaanbaatar", days: [{ date: "2026-07-19", uniqueVisitors: 10, landingViews: 12, assessmentsStarted: 8, assessmentsCompleted: 6, paywallViews: 6, invoicesCreated: 4, paymentsConfirmed: 3, revenueMnt: 29700 }], summary: { uniqueVisitors: 10, landingViews: 12, assessmentsStarted: 8, assessmentsCompleted: 6, paywallViews: 6, invoicesCreated: 4, paymentsConfirmed: 3, revenueMnt: 29700 } }),
   "admin-preview-start": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") ? json(response, 201, { active: true, expiresAt: "2026-07-17T14:00:00.000Z", resumeDraft: false }, { "set-cookie": "jingeehas_owner_preview=preview-e2e; Path=/; HttpOnly; Secure; SameSite=Strict" }) : json(response, 401, { error: "unauthorized" }),
   "admin-preview-status": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") && String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e") ? json(response, 200, { active: true, expiresAt: "2026-07-17T14:00:00.000Z" }) : json(response, 401, { error: "preview_required" }),
-  "weight-session-start": async (_body, response) => json(response, 201, { sessionId: "ws-e2e", resumed: false }, { "set-cookie": "jingeehas_session=e2e; Path=/; HttpOnly; SameSite=Lax" }),
+  "weight-session-start": async (_body, response) => { stats.sessionStart += 1; json(response, 201, { sessionId: "ws-e2e", resumed: false }, { "set-cookie": "jingeehas_session=e2e; Path=/; HttpOnly; SameSite=Lax" }); },
   "weight-safety-gate": async (body, response) => { const result = evaluateSafetyGate(body); json(response, 200, { safetyCheckId: "sc-e2e", ...result, guidance: result.route === "eligible" ? null : ROUTE_COPY[result.route] }); },
-  "weight-recovery-contact-save": async (_body, response) => json(response, 201, { contactGroupId: "rcg-e2e" }),
+  "weight-recovery-contact-save": async (_body, response) => stats.sessionStart > 0 ? json(response, 201, { contactGroupId: "rcg-e2e" }) : json(response, 401, { error: "unauthorized" }),
   "weight-assessment-create": async (_body, response) => json(response, 201, { assessmentId: "wa-e2e", status: "draft" }),
   "qpay-create-invoice": async (_body, response) => { stats.qpayCreate += 1; stats.paymentRows += 1; json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "pending", expiresAt: "2026-07-16T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [] }); },
   "qpay-check-payment": async (_body, response) => { stats.qpayCheck += 1; json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "paid", entitlement: true }); },

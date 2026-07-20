@@ -16,7 +16,9 @@ class MemoryDatabaseAdapter {
     const activePaymentConflict = table === "payments" && activePaymentStatuses.has(row.status) && [...rows.values()].some(existing =>
       activePaymentStatuses.has(existing.status) && existing.sessionId === row.sessionId &&
       existing.assessmentId === row.assessmentId && existing.productCode === row.productCode);
-    if (!row.id || rows.has(row.id) || cooldownConflict || activePaymentConflict) throw Object.assign(new Error("Record conflict"), { statusCode: 409, code: "conflict" });
+    const analyticsConflict = table === "analytics_events" && [...rows.values()].some(existing =>
+      existing.eventId === row.eventId || (row.idempotencyKey && existing.idempotencyKey === row.idempotencyKey));
+    if (!row.id || rows.has(row.id) || cooldownConflict || activePaymentConflict || analyticsConflict) throw Object.assign(new Error("Record conflict"), { statusCode: 409, code: "conflict" });
     rows.set(row.id, copy(row)); return copy(row);
   }
   async update(table, id, patch) { const current = await this.get(table, id); if (!current) throw Object.assign(new Error("Record not found"), { statusCode: 404, code: "not_found" }); const next = { ...current, ...copy(patch), id }; this.table(table).set(id, next); return copy(next); }
@@ -102,6 +104,45 @@ class MemoryDatabaseAdapter {
       if (activeCount !== 1) throw new Error("Activation invariant failed");
       return copy(activated);
     } finally { release(); if (this.activationLocks.get(target.assessmentId) === currentLock) this.activationLocks.delete(target.assessmentId); }
+  }
+  async getDailyFunnelAnalytics(startDate, endDate) {
+    const allEvents = [...this.table("analytics_events").values()];
+    const excludedAssessments = new Set(allEvents.filter(row => row.assessmentId && (row.isAdmin || row.isOwnerPreview || row.isTest)).map(row => row.assessmentId));
+    for (const row of this.table("assessment_sessions").values()) if (row.source === "owner") excludedAssessments.add(row.assessmentId);
+    const rows = allEvents.filter(row => !row.isAdmin && !row.isOwnerPreview && !row.isTest);
+    const assessments = [...this.table("assessments").values()].filter(row => !excludedAssessments.has(row.id));
+    const payments = [...this.table("payments").values()].filter(row => !excludedAssessments.has(row.assessmentId));
+    const entitlements = [...this.table("entitlements").values()].filter(row => row.status === "active");
+    const day = value => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
+    const output = [];
+    for (let cursor = new Date(`${startDate}T00:00:00+08:00`); cursor <= new Date(`${endDate}T00:00:00+08:00`); cursor.setUTCDate(cursor.getUTCDate() + 1)) {
+      const date = day(cursor); const events = rows.filter(row => day(row.occurredAt) === date);
+      const distinct = (name, key) => new Set(events.filter(row => row.eventName === name && row[key]).map(row => row[key])).size;
+      const dayAssessments = assessments.filter(row => day(row.createdAt) === date);
+      const completed = assessments.filter(row => row.status === "complete" && row.completedAt && day(row.completedAt) === date);
+      const invoices = payments.filter(row => row.invoiceId && day(row.createdAt) === date);
+      const paid = entitlements.map(entitlement => ({ entitlement, payment: payments.find(payment => payment.id === entitlement.paymentId) }))
+        .filter(item => item.payment?.status === "paid" && item.entitlement.grantedAt && day(item.entitlement.grantedAt) === date);
+      output.push({ date, uniqueVisitors: distinct("landing_viewed", "visitorIdHash"), landingViews: events.filter(row => row.eventName === "landing_viewed").length,
+        assessmentsStarted: new Set(dayAssessments.map(row => row.id)).size, assessmentsCompleted: new Set(completed.map(row => row.id)).size,
+        paywallViews: distinct("paywall_viewed", "assessmentId"), invoicesCreated: new Set(invoices.map(row => row.invoiceId)).size,
+        paymentsConfirmed: new Set(paid.map(item => item.payment.id)).size,
+        revenueMnt: [...new Map(paid.map(item => [item.payment.id, Number(item.payment.amount || 0)])).values()].reduce((sum, value) => sum + value, 0) });
+    }
+    const selected = rows.filter(row => { const value = day(row.occurredAt); return value >= startDate && value <= endDate; });
+    const distinct = (name, key) => new Set(selected.filter(row => row.eventName === name && row[key]).map(row => row[key])).size;
+    const selectedAssessments = assessments.filter(row => { const value = day(row.createdAt); return value >= startDate && value <= endDate; });
+    const selectedCompleted = assessments.filter(row => row.status === "complete" && row.completedAt && day(row.completedAt) >= startDate && day(row.completedAt) <= endDate);
+    const selectedInvoices = payments.filter(row => row.invoiceId && day(row.createdAt) >= startDate && day(row.createdAt) <= endDate);
+    const selectedPaid = entitlements.map(entitlement => ({ entitlement, payment: payments.find(payment => payment.id === entitlement.paymentId) }))
+      .filter(item => item.payment?.status === "paid" && item.entitlement.grantedAt && day(item.entitlement.grantedAt) >= startDate && day(item.entitlement.grantedAt) <= endDate);
+    const earliest = name => rows.filter(row => row.eventName === name).map(row => row.occurredAt).sort()[0] || null;
+    return { days: output, summary: { uniqueVisitors: distinct("landing_viewed", "visitorIdHash"), landingViews: selected.filter(row => row.eventName === "landing_viewed").length,
+      assessmentsStarted: new Set(selectedAssessments.map(row => row.id)).size, assessmentsCompleted: new Set(selectedCompleted.map(row => row.id)).size,
+      paywallViews: distinct("paywall_viewed", "assessmentId"), invoicesCreated: new Set(selectedInvoices.map(row => row.invoiceId)).size,
+      paymentsConfirmed: new Set(selectedPaid.map(item => item.payment.id)).size,
+      revenueMnt: [...new Map(selectedPaid.map(item => [item.payment.id, Number(item.payment.amount || 0)])).values()].reduce((sum, value) => sum + value, 0) },
+      coverage: { visitorTrackingStartedAt: earliest("landing_viewed"), paymentSectionTrackingStartedAt: earliest("paywall_viewed"), businessRecordSource: true } };
   }
 }
 module.exports = { MemoryDatabaseAdapter };

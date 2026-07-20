@@ -18,8 +18,8 @@ class RestDatabaseAdapter {
     return response.json();
   }
   get(table, id) { return this.request({ action: "get", table, id }); }
-  find(table, filters) { return this.request({ action: "find", table, filters }); }
-  insert(table, row) { return this.request({ action: "insert", table, row }); }
+  find(table, filters) { return table === "analytics_events" ? this.request({ action: "find_analytics_events", filters }) : this.request({ action: "find", table, filters }); }
+  insert(table, row) { return table === "analytics_events" ? this.request({ action: "insert_analytics_event", row }) : this.request({ action: "insert", table, row }); }
   update(table, id, patch) { return this.request({ action: "update", table, id, patch }); }
   upsert(table, id, row) { return this.request({ action: "upsert", table, id, row }); }
   delete(table, id) { return this.request({ action: "delete", table, id }); }
@@ -41,6 +41,9 @@ class RestDatabaseAdapter {
   }
   activateReportSnapshotVersion(snapshotId, expectedCurrentSnapshotId = null, now = new Date()) {
     return this.request({ action: "activate_report_snapshot_version", snapshotId, expectedCurrentSnapshotId, now: now.toISOString() });
+  }
+  getDailyFunnelAnalytics(startDate, endDate) {
+    return this.request({ action: "get_daily_funnel_analytics", startDate, endDate });
   }
 }
 

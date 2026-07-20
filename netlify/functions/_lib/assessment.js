@@ -20,9 +20,15 @@ async function ownedAssessment(database, sessionId, assessmentId) {
 }
 
 async function createAssessment(database, sessionId, input = {}, now = new Date()) {
-  const safetyCheck = await database.get("safety_checks", input.safetyCheckId);
-  if (!safetyCheck || safetyCheck.sessionId !== sessionId) throw Object.assign(new Error("Safety check required"), { statusCode: 400, code: "safety_check_required" });
-  if (safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Commercial assessment is not suitable"), { statusCode: 409, code: "safety_route_required" });
+  let safetyCheck = input.safetyCheckId ? await database.get("safety_checks", input.safetyCheckId) : null;
+  if (input.safetyCheckId && (!safetyCheck || safetyCheck.sessionId !== sessionId)) {
+    throw Object.assign(new Error("Safety check not found"), { statusCode: 400, code: "safety_check_invalid" });
+  }
+  if (safetyCheck && safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Commercial assessment is not suitable"), { statusCode: 409, code: "safety_route_required" });
+  if (!safetyCheck) {
+    safetyCheck = await database.insert("safety_checks", { id: randomId("sc_"), sessionId,
+      result: { route: "pending_assessment", mode: "pending", category: "assessment_safety_questions" }, createdAt: now.toISOString() });
+  }
   let client = null;
   let contacts = [];
   if (input.coachClientId) {
@@ -101,8 +107,9 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
   if (safety.route === "confirmation_required") throw Object.assign(new Error("Safety confirmation required"), {
     statusCode: 409, code: "safety_confirmation_required", safety
   });
+  const safetyCheck = assessment.safetyCheckId ? await database.get("safety_checks", assessment.safetyCheckId) : null;
   if (safety.route !== "eligible") {
-    const transaction = await database.transaction([
+    const operations = [
       { action: "update", table: "assessments", id: assessment.id, patch: {
         status: "complete", reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
         completedAt: now.toISOString(), updatedAt: now.toISOString()
@@ -110,8 +117,10 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
       { action: "upsert", table: "report_snapshots", id: assessment.id, row: { assessmentId: assessment.id, sessionId,
         reportMode: "safety", safetyRoute: safety.route, safetyProvenance: safety,
         initialView: { guidance: ROUTE_COPY[safety.route] }, fullReport: null, createdAt: now.toISOString() } }
-    ]);
-    return transaction.results[0];
+    ];
+    if (safetyCheck) operations.unshift({ action: "update", table: "safety_checks", id: assessment.safetyCheckId, patch: { result: safety } });
+    const transaction = await database.transaction(operations);
+    return transaction.results[safetyCheck ? 1 : 0];
   }
   for (const question of visibleQuestions(answerMap, questionnaireVersion)) {
     const validationError = validateAnswer(question, answerMap[question.id], { answers: answerMap, version: questionnaireVersion });
@@ -125,7 +134,7 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
   const evidence = buildEvidence(evidenceRows, summaries, { questionnaireVersion, linkedLongestMethod });
   const fullReport = buildFullReport(evidence, now, { questionnaireVersion });
   const reportMode = fullReport.mode;
-  const transaction = await database.transaction([
+  const operations = [
     { action: "update", table: "assessments", id: assessment.id, patch: {
       status: "complete", reportMode, safetyRoute: null, completedAt: now.toISOString(), updatedAt: now.toISOString()
     } },
@@ -134,8 +143,10 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
       initialView: { mode: reportMode, evidenceCount: fullReport.internalEvidenceMap.informativeQuestionCount }, fullReport,
       createdAt: now.toISOString()
     } }
-  ]);
-  return transaction.results[0];
+  ];
+  if (safetyCheck) operations.unshift({ action: "update", table: "safety_checks", id: assessment.safetyCheckId, patch: { result: safety } });
+  const transaction = await database.transaction(operations);
+  return transaction.results[safetyCheck ? 1 : 0];
 }
 
 async function reportForSession(database, sessionId, assessmentId) {

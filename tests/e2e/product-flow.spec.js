@@ -3,13 +3,8 @@ const { test, expect } = require("@playwright/test");
 
 async function completeEligibleGate(page, suffix = "") {
   await page.goto(`/assessment/start?e2e=1${suffix}`);
-  await page.locator("#safety-age").fill("30");
-  await page.locator('input[name="selfHarm"][value="Үгүй"]').check();
-  await page.locator('input[name="acuteMedical"][value="Аль нь ч үгүй"]').check();
-  await page.locator('input[name="compensatoryBehavior"][value="Үгүй"]').check();
-  await page.locator('input[name="medicalSuitability"][value="Үргэлжлүүлэхэд тохиромжтой"]').check();
-  await page.getByRole("button", { name: "Тохирох эсэхийг шалгах" }).click();
-  await expect(page).toHaveURL(/\/assessment\/contact$/);
+  await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.locator("#safety-form")).toHaveCount(0);
 }
 
 async function completeQuestionnaire(page) {
@@ -55,6 +50,9 @@ for (const width of [375, 390, 430, 1280]) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "Илүүдэл жингээс салах тест үнэлгээ" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Тест бөглөх" })).toBeVisible();
+    await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
+    await expect(page.locator(".hero")).not.toContainText("9,900₮");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 }
@@ -67,6 +65,20 @@ test("methodology trust content stacks without mobile overflow", async ({ page }
   await expect(page.getByRole("heading", { name: "Сэтгэлзүй ба зан үйлийн хэв маяг" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Өдөр тутмын саад ба орчны нөлөө" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+});
+
+test("owner daily funnel dashboard is readable at 375px", async ({ page, context }) => {
+  await context.addCookies([{ name: "jingeehas_admin", value: "admin-e2e", domain: "127.0.0.1", path: "/" }]);
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/admin?e2e=1");
+  await expect(page.getByRole("heading", { name: "Өдөр тутмын үзүүлэлт" })).toBeVisible();
+  await expect(page.getByText("Цагийн бүс: Улаанбаатар")).toBeVisible();
+  await expect(page.getByText("Төлбөрийн хэсэг үзсэн", { exact: true })).toHaveCount(2);
+  await expect(page.getByText("Paywall", { exact: false })).toHaveCount(0);
+  await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+  expect(overflow).toBeLessThanOrEqual(1);
+  await expect(page.locator(".table-scroll")).toHaveCSS("overflow-x", "auto");
 });
 
 test("detailed methodology route returns its conservative evidence disclosure", async ({ page, request }) => {
@@ -91,20 +103,14 @@ test("authenticated owner can establish a production-mode preview", async ({ pag
   await page.getByRole("button", { name: "Нэвтрэх" }).click();
   await page.getByRole("button", { name: "Бодит тестийг шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тайлан авах мэдээллээ хадгалах" })).toBeVisible();
 });
 
-test("urgent self-harm guidance is free and does not create an invoice", async ({ page, request }) => {
+test("assessment starts without the duplicated eligibility gate", async ({ page, request }) => {
   await page.goto("/assessment/start?e2e=1");
-  await page.locator("#safety-age").fill("30");
-  await page.locator('input[name="selfHarm"][value="Одоо идэвхтэй бодогдож байна"]').check();
-  await page.locator('input[name="acuteMedical"][value="Аль нь ч үгүй"]').check();
-  await page.locator('input[name="compensatoryBehavior"][value="Үгүй"]').check();
-  await page.locator('input[name="medicalSuitability"][value="Үргэлжлүүлэхэд тохиромжтой"]').check();
-  await page.getByRole("button", { name: "Тохирох эсэхийг шалгах" }).click();
-  await expect(page.getByRole("heading", { name: "Яаралтай тусламж аваарай" })).toBeVisible();
-  await expect(page.getByText("Энэ зөвлөмж төлбөргүй.")).toBeVisible();
-  await expect(page.getByText(/ухаан балар/)).toHaveCount(0);
+  await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.locator("#safety-form")).toHaveCount(0);
+  await expect(page.getByText("Тест үнэлгээ танд тохирох эсэхийг эхэлж шалгана.")).toHaveCount(0);
   expect((await (await request.get("/__test/stats")).json()).qpayCreate).toBe(0);
 });
 
