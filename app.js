@@ -24,7 +24,7 @@ function createState() {
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
-      analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null, loading: false, error: "" } }, ownerPreview: false, busy: false, slowSave: false };
+      analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null, coverage: null, loading: false, error: "" } }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
 let testComingSoonOverride = null;
@@ -55,7 +55,9 @@ function trackEvent(eventName, assessmentId = "", dedupeKey = "") {
   if (typeof fetch === "undefined" || typeof window === "undefined") return;
   const key = dedupeKey || `${eventName}:${assessmentId}`; if (trackedPageEvents.has(key)) return; trackedPageEvents.add(key);
   fetch("/.netlify/functions/analytics-collect", { method: "POST", credentials: "same-origin", keepalive: true,
-    headers: { "content-type": "application/json" }, body: JSON.stringify({ eventId: browserUuid(), eventName, assessmentId: assessmentId || undefined, context: analyticsIdentity() }) }).catch(() => {});
+    headers: { "content-type": "application/json" }, body: JSON.stringify({ eventId: browserUuid(), eventName, assessmentId: assessmentId || undefined, context: analyticsIdentity() }) })
+    .then(response => { if (!response.ok) console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: response.status })); })
+    .catch(() => console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: "network_error" })));
 }
 
 const ROUTES = Object.freeze({
@@ -73,7 +75,7 @@ function renderLanding() {
   return `<div class="page landing-page">${navigation()}<main><section class="hero" aria-labelledby="page-title"><div class="hero-copy">
     <p class="eyebrow">Сэтгэлзүйн хэв маяг, далд зуршлын үнэлгээ</p><h1 id="page-title" tabindex="-1">${PRODUCT.name}</h1>
     <div class="approved-copy"><p>Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаанаа илрүүл.</p><p>Ямар далд зуршлууд илүүдэл жин үүсэхэд нөлөөлж буйг тайлж мэд.</p><p>Жин хасахад тань тохирох дөт хэв маяг, дасгал сургуулилтын чиглэлээ мэдэж ав.</p></div>
-    <p class="price">Үнэ: ${PRODUCT.displayPrice}</p><a class="button" href="/assessment/start" data-route>Тест бөглөх</a>
+    <a class="button" href="/assessment/start" data-route>Тест бөглөх</a>
     </div><div class="hero-visual" aria-hidden="true"></div></section>
     <section class="methodology-summary" aria-labelledby="methodology-title">
       <div class="methodology-heading"><p class="eyebrow">Үнэлгээний зарчим</p><h2 id="methodology-title">Арга зүй ба судалгааны үндэслэл</h2>
@@ -281,17 +283,27 @@ function analyticsTotals(days = []) { return days.reduce((total, day) => ({ uniq
   paymentsConfirmed: total.paymentsConfirmed + Number(day.paymentsConfirmed || 0), revenueMnt: total.revenueMnt + Number(day.revenueMnt || 0) }),
   { uniqueVisitors: 0, landingViews: 0, assessmentsStarted: 0, assessmentsCompleted: 0, paywallViews: 0, invoicesCreated: 0, paymentsConfirmed: 0, revenueMnt: 0 }); }
 function rate(numerator, denominator) { return denominator ? `${(100 * numerator / denominator).toFixed(1)}%` : "—"; }
-function comparison(current, prior) { if (!prior) return "Өмнөх хугацаатай харьцуулах боломжгүй"; const change = 100 * (current - prior) / prior; return `Өмнөх хугацаанаас ${change >= 0 ? "+" : ""}${change.toFixed(1)}%`; }
+function comparison(current, prior) { if (!Number.isFinite(Number(prior)) || Number(prior) === 0) return "—"; const change = 100 * (Number(current) - Number(prior)) / Number(prior); return Number.isFinite(change) ? `Өмнөх хугацаанаас ${change >= 0 ? "+" : ""}${change.toFixed(1)}%` : "—"; }
+function hasAnalyticsData(summary) { return summary && ["uniqueVisitors", "assessmentsStarted", "assessmentsCompleted", "paywallViews", "invoicesCreated", "paymentsConfirmed"].some(key => Number(summary[key] || 0) > 0); }
+function analyticsCoverageCopy(coverage) {
+  if (!coverage?.visitorTrackingStartedAt) return "";
+  const started = new Date(coverage.visitorTrackingStartedAt).toLocaleDateString("mn-MN", { timeZone: "Asia/Ulaanbaatar" });
+  return `Зочны хэмжилт ${started}-өөс эхэлсэн. Үүнээс өмнөх зочны болон төлбөрийн хэсгийн үзэлтийн дата байхгүй байж болно. Тест, нэхэмжлэл, төлбөрийн тоо нь серверийн бодит бүртгэлээс гарна.`;
+}
 function renderAdminAnalytics() {
   const analytics = state.admin.analytics; const total = analytics.summary || analyticsTotals(analytics.days); const prior = analytics.priorSummary || analyticsTotals(analytics.priorDays);
-  const card = (label, value, conversion, key) => `<article><h3>${label}</h3><p class="metric-value">${value}</p><p>${conversion}</p><p class="metric-compare">${comparison(total[key], prior[key])}</p></article>`;
-  const stages = [["Зочилсон", total.uniqueVisitors], ["Тест эхлүүлсэн", total.assessmentsStarted], ["Тест дуусгасан", total.assessmentsCompleted], ["Paywall харсан", total.paywallViews], ["Нэхэмжлэл үүсгэсэн", total.invoicesCreated], ["Төлбөр төлсөн", total.paymentsConfirmed]];
+  const priorAvailable = hasAnalyticsData(analytics.priorSummary);
+  const card = (label, value, conversion, key) => `<article><h3>${label}</h3><p class="metric-value">${value}</p><p>${conversion}</p><p class="metric-compare">${priorAvailable ? comparison(total[key], prior[key]) : "—"}</p></article>`;
+  const stages = [["Зочилсон", total.uniqueVisitors], ["Тест эхлүүлсэн", total.assessmentsStarted], ["Тест дуусгасан", total.assessmentsCompleted], ["Төлбөрийн хэсэг үзсэн", total.paywallViews], ["Нэхэмжлэл үүсгэсэн", total.invoicesCreated], ["Төлбөр төлсөн", total.paymentsConfirmed]];
   return `<section class="analytics-dashboard" aria-labelledby="analytics-title"><h2 id="analytics-title">Өдөр тутмын үзүүлэлт</h2><p>Цагийн бүс: Улаанбаатар</p>
     <form id="analytics-filter-form" class="analytics-filters"><label><span>Хугацаа</span><select name="preset"><option value="today"${analytics.preset === "today" ? " selected" : ""}>Өнөөдөр</option><option value="yesterday"${analytics.preset === "yesterday" ? " selected" : ""}>Өчигдөр</option><option value="last7"${analytics.preset === "last7" ? " selected" : ""}>Сүүлийн 7 хоног</option><option value="last30"${analytics.preset === "last30" ? " selected" : ""}>Сүүлийн 30 хоног</option><option value="thisMonth"${analytics.preset === "thisMonth" ? " selected" : ""}>Энэ сар</option><option value="previousMonth"${analytics.preset === "previousMonth" ? " selected" : ""}>Өмнөх сар</option><option value="custom"${analytics.preset === "custom" ? " selected" : ""}>Өөр хугацаа</option></select></label><label><span>Эхлэх өдөр</span><input type="date" name="startDate" value="${escapeAttribute(analytics.startDate)}"></label><label><span>Дуусах өдөр</span><input type="date" name="endDate" value="${escapeAttribute(analytics.endDate)}"></label><button class="button compact" type="submit">Харах</button></form>
     ${analytics.loading ? `<p role="status">Үзүүлэлтийг ачаалж байна…</p>` : ""}${analytics.error ? `<p class="error">${escapeHtml(analytics.error)}</p>` : ""}
-    <div class="metric-grid analytics-metrics">${card("Зочилсон хүн", total.uniqueVisitors, `Эхлүүлсэн: ${rate(total.assessmentsStarted, total.uniqueVisitors)}`, "uniqueVisitors")}${card("Тест эхлүүлсэн", total.assessmentsStarted, `Дуусгасан: ${rate(total.assessmentsCompleted, total.assessmentsStarted)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted, `Paywall: ${rate(total.paywallViews, total.assessmentsCompleted)}`, "assessmentsCompleted")}${card("Paywall харсан", total.paywallViews, `Нэхэмжлэл: ${rate(total.invoicesCreated, total.paywallViews)}`, "paywallViews")}${card("Төлбөр төлсөн", total.paymentsConfirmed, `Нэхэмжлэлээс: ${rate(total.paymentsConfirmed, total.invoicesCreated)}`, "paymentsConfirmed")}${card("Орлого", money(total.revenueMnt), `Зочиноос төлбөр: ${rate(total.paymentsConfirmed, total.uniqueVisitors)}`, "revenueMnt")}</div>
+    ${analyticsCoverageCopy(analytics.coverage) ? `<p class="analytics-coverage">${escapeHtml(analyticsCoverageCopy(analytics.coverage))}</p>` : ""}
+    ${!priorAvailable ? `<p class="analytics-comparison-note">Сонгосон хугацааг өмнөх ижил хугацаатай харьцуулах боломжгүй байна.</p>` : ""}
+    <div class="metric-grid analytics-metrics">${card("Зочилсон хүн", total.uniqueVisitors, `Тест эхлүүлсэн хувь: ${rate(total.assessmentsStarted, total.uniqueVisitors)}`, "uniqueVisitors")}${card("Тест эхлүүлсэн", total.assessmentsStarted, `Дуусгасан хувь: ${rate(total.assessmentsCompleted, total.assessmentsStarted)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted, `Төлбөрийн хэсэгт хүрсэн хувь: ${rate(total.paywallViews, total.assessmentsCompleted)}`, "assessmentsCompleted")}${card("Төлбөрийн хэсэг үзсэн", total.paywallViews, `Нэхэмжлэл үүсгэсэн хувь: ${rate(total.invoicesCreated, total.paywallViews)}`, "paywallViews")}${card("Нэхэмжлэл үүсгэсэн", total.invoicesCreated, `Төлбөр төлсөн хувь: ${rate(total.paymentsConfirmed, total.invoicesCreated)}`, "invoicesCreated")}${card("Төлбөр төлсөн", total.paymentsConfirmed, `Зочиноос төлбөр: ${rate(total.paymentsConfirmed, total.uniqueVisitors)}`, "paymentsConfirmed")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
     <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value], index) => `<li><span>${label}</span><strong>${value}</strong>${index ? `<small>${rate(value, stages[index - 1][1])}</small>` : ""}</li>`).join("")}</ol>
-    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Зочин</th><th>Эхэлсэн</th><th>Эхлэх хувь</th><th>Дууссан</th><th>Дуусгах хувь</th><th>Paywall</th><th>Paywall хүрэлт</th><th>Нэхэмжлэл</th><th>Нэхэмжлэл үүсгэх хувь</th><th>Төлбөр</th><th>Нэхэмжлэл төлөгдөх хувь</th><th>Paywall төлөгдөх хувь</th><th>Нийт худалдан авалт</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${day.uniqueVisitors}</td><td>${day.assessmentsStarted}</td><td>${rate(day.assessmentsStarted, day.uniqueVisitors)}</td><td>${day.assessmentsCompleted}</td><td>${rate(day.assessmentsCompleted, day.assessmentsStarted)}</td><td>${day.paywallViews}</td><td>${rate(day.paywallViews, day.assessmentsCompleted)}</td><td>${day.invoicesCreated}</td><td>${rate(day.invoicesCreated, day.paywallViews)}</td><td>${day.paymentsConfirmed}</td><td>${rate(day.paymentsConfirmed, day.invoicesCreated)}</td><td>${rate(day.paymentsConfirmed, day.paywallViews)}</td><td>${rate(day.paymentsConfirmed, day.uniqueVisitors)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
+    <p class="analytics-daily-note">Өдөр тутмын зочны тоо нь тухайн өдрийн давтагдаагүй зочдыг харуулна.</p>
+    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Зочин</th><th>Эхэлсэн</th><th>Эхлэх хувь</th><th>Дууссан</th><th>Дуусгах хувь</th><th>Төлбөрийн хэсэг</th><th>Хүрсэн хувь</th><th>Нэхэмжлэл</th><th>Нэхэмжлэл үүсгэсэн хувь</th><th>Төлбөр</th><th>Төлбөр төлсөн хувь</th><th>Зочиноос төлбөр</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${day.uniqueVisitors}</td><td>${day.assessmentsStarted}</td><td>${rate(day.assessmentsStarted, day.uniqueVisitors)}</td><td>${day.assessmentsCompleted}</td><td>${rate(day.assessmentsCompleted, day.assessmentsStarted)}</td><td>${day.paywallViews}</td><td>${rate(day.paywallViews, day.assessmentsCompleted)}</td><td>${day.invoicesCreated}</td><td>${rate(day.invoicesCreated, day.paywallViews)}</td><td>${day.paymentsConfirmed}</td><td>${rate(day.paymentsConfirmed, day.invoicesCreated)}</td><td>${rate(day.paymentsConfirmed, day.uniqueVisitors)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
 }
 function renderAdvisorLogin() {
   if (state.advisor.temporaryPasswordChange) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Нууц үгээ солино уу</h1><form id="advisor-password-form"><label class="field"><span>Одоогийн нууц үг</span><input name="currentPassword" type="password" autocomplete="current-password" required></label><label class="field"><span>Шинэ нууц үг</span><input name="newPassword" type="password" autocomplete="new-password" minlength="12" required></label><button class="button" type="submit">Нууц үг солих</button></form><p class="error">${escapeHtml(state.advisor.error)}</p></main></div>`;
@@ -477,7 +489,7 @@ async function loadAdminAnalytics(preset = state.admin.analytics.preset, custom 
       api(`/.netlify/functions/admin-analytics-daily?startDate=${selected.startDate}&endDate=${selected.endDate}`, { method: "GET" }),
       api(`/.netlify/functions/admin-analytics-daily?startDate=${priorStart}&endDate=${priorEnd}`, { method: "GET" })
     ]);
-    analytics.days = current.days || []; analytics.priorDays = prior.days || []; analytics.summary = current.summary || null; analytics.priorSummary = prior.summary || null;
+    analytics.days = current.days || []; analytics.priorDays = prior.days || []; analytics.summary = current.summary || null; analytics.priorSummary = prior.summary || null; analytics.coverage = current.coverage || null;
   } catch { analytics.error = "Өдөр тутмын үзүүлэлтийг ачаалж чадсангүй."; }
   analytics.loading = false;
 }
@@ -591,4 +603,4 @@ if (typeof window !== "undefined") { window.addEventListener("popstate", async (
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,
-    analyticsRange, analyticsTotals, rate, comparison, renderAdminAnalytics } };
+    analyticsRange, analyticsTotals, rate, comparison, hasAnalyticsData, analyticsCoverageCopy, renderAdminAnalytics } };

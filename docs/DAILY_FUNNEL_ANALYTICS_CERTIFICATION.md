@@ -8,6 +8,12 @@
 4. Set a dedicated random `ANALYTICS_HASH_PEPPER` of at least 32 characters in Netlify production functions. Never print it.
 5. Record assessment, payment, entitlement, report-snapshot, and QPay-invoice counts. Applying the migration must not change them.
 
+## 2026-07-20 production root cause
+
+The dashboard originally counted every funnel stage from `analytics_events`. Visitor instrumentation began at 2026-07-19 22:18 Ulaanbaatar time, after all four then-existing assessments had already been created. The selected 2026-07-14 through 2026-07-20 range therefore showed hundreds of distinct first-party visitor-cookie landing users but zero starts, even though canonical records contained four assessments, two completions, two successful invoices, and two provider-confirmed entitled payments. This was a source-of-truth/query defect, not an event-name or timezone mismatch and not evidence that every visitor started a test.
+
+Migration `20260720073844_repair_daily_funnel_source_of_truth.sql` changes the aggregate RPC to use canonical assessment/payment/entitlement records while retaining distinct eligible visitor and payment-section view events. It does not fabricate historical visitor or payment-section rows.
+
 ## Deterministic probes
 
 - Insert synthetic rows marked `is_test=true`; prove the owner aggregate excludes them.

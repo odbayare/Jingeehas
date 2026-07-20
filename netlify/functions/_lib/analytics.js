@@ -8,6 +8,7 @@ const BROWSER_EVENTS = new Set(["landing_viewed", "start_cta_clicked", "paywall_
 const SERVER_EVENTS = new Set(["assessment_started", "assessment_completed", "invoice_created", "payment_confirmed", "invoice_create_failed", "payment_check_started", "payment_check_failed", "recovery_succeeded"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SAFE_ID = /^[A-Za-z0-9_-]{3,100}$/;
+const BOT_USER_AGENT = /(?:facebookexternalhit|facebot|googlebot|bingbot|duckduckbot|yandexbot|baiduspider|slurp|crawler|spider|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|uptimerobot|pingdom|headlesschrome|playwright|puppeteer|lighthouse|\bbot\b|curl\/|wget\/)/i;
 
 function analyticsPepper(env = process.env) {
   const value = String(env.ANALYTICS_HASH_PEPPER || "");
@@ -40,8 +41,13 @@ function clientContext(input = {}, env = process.env) {
 }
 function flagsFromEvent(event = {}) {
   const jar = cookies(event); const host = String(event.headers?.host || event.headers?.Host || "").split(":")[0].toLowerCase();
-  return { isAdmin: Boolean(jar.jingeehas_admin), isOwnerPreview: Boolean(jar[PREVIEW_COOKIE_NAME]),
-    isTest: process.env.NODE_ENV === "test" || host === "localhost" || host === "127.0.0.1" || host.endsWith(".netlify.app") };
+  return { isAdmin: Boolean(jar.jingeehas_admin || jar.jingeehas_advisor), isOwnerPreview: Boolean(jar[PREVIEW_COOKIE_NAME]),
+    isTest: process.env.NODE_ENV === "test" || host === "localhost" || host === "127.0.0.1" || host.endsWith(".netlify.app") || isKnownBotRequest(event) };
+}
+function isKnownBotRequest(event = {}) {
+  const method = String(event.httpMethod || "GET").toUpperCase();
+  if (["HEAD", "OPTIONS"].includes(method)) return true;
+  return BOT_USER_AGENT.test(String(event.headers?.["user-agent"] || event.headers?.["User-Agent"] || ""));
 }
 function browserOriginAllowed(event = {}) {
   const origin = String(event.headers?.origin || event.headers?.Origin || "");
@@ -54,6 +60,15 @@ function browserOriginAllowed(event = {}) {
   } catch { return false; }
 }
 function idValue(value) { const text = String(value || ""); return SAFE_ID.test(text) ? text : null; }
+function localAnalyticsDay(now = new Date()) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+}
+function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now = new Date()) {
+  if (name === "landing_viewed" && context.visitorIdHash) return `landing_viewed:${context.visitorIdHash}:${localAnalyticsDay(now)}`;
+  if (["paywall_viewed", "report_opened"].includes(name) && assessmentId) return `${name}:${assessmentId}`;
+  if (name === "start_cta_clicked" && context.sessionIdHash) return `start_cta_clicked:${context.sessionIdHash}`;
+  return null;
+}
 function eventRow(name, context = {}, values = {}, options = {}) {
   const eventId = UUID.test(String(options.eventId || "")) ? options.eventId : crypto.randomUUID();
   return { id: crypto.randomUUID(), eventId, eventName: name, occurredAt: (options.now || new Date()).toISOString(),
@@ -83,4 +98,5 @@ async function assessmentContext(database, assessmentId) {
 }
 
 module.exports = { BROWSER_EVENTS, SERVER_EVENTS, UUID, analyticsPepper, hashAnonymous, cleanText, cleanHost, attribution, clientContext,
-  flagsFromEvent, browserOriginAllowed, eventRow, recordEvent, recordEventSafe, assessmentContext };
+  flagsFromEvent, isKnownBotRequest, browserOriginAllowed, localAnalyticsDay, browserEventIdempotencyKey,
+  eventRow, recordEvent, recordEventSafe, assessmentContext };

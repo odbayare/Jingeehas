@@ -50,6 +50,9 @@ for (const width of [375, 390, 430, 1280]) {
     await page.setViewportSize({ width, height: 800 });
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "Илүүдэл жингээс салах тест үнэлгээ" })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Тест бөглөх" })).toBeVisible();
+    await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
+    await expect(page.locator(".hero")).not.toContainText("9,900₮");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
   });
 }
@@ -70,6 +73,8 @@ test("owner daily funnel dashboard is readable at 375px", async ({ page, context
   await page.goto("/admin?e2e=1");
   await expect(page.getByRole("heading", { name: "Өдөр тутмын үзүүлэлт" })).toBeVisible();
   await expect(page.getByText("Цагийн бүс: Улаанбаатар")).toBeVisible();
+  await expect(page.getByText("Төлбөрийн хэсэг үзсэн", { exact: true })).toHaveCount(2);
+  await expect(page.getByText("Paywall", { exact: false })).toHaveCount(0);
   await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
