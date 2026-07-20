@@ -371,6 +371,7 @@ function clearAdminReportPreviewAssessment(storage = typeof sessionStorage === "
 async function submitContact(form) {
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
   state.busy = true; render();
+  await ensureSession();
   const contact = await api("/.netlify/functions/weight-recovery-contact-save", { method: "POST", body: JSON.stringify(input) });
   state.contactGroupId = contact.contactGroupId;
   if (state.inviteToken) {
