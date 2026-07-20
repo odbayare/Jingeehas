@@ -7,7 +7,7 @@ const questions = require("../../questions.js");
 const cohort = require("../fixtures/virtual-cohort-v2.js");
 const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/functions/_lib/report.js");
 const root = path.resolve(__dirname, "../..");
-const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0, sessionStart: 0 };
+const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0, sessionStart: 0, analyticsCollect: 0 };
 const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
 const cohortReports = Object.fromEntries(cohort.filter(profile => ["VU-03", "VU-06"].includes(profile.id)).map(profile => {
   const linkedLongestMethod = profile.answers["Q-METHOD-LONGEST"] || questions.autoLinkedLongestMethod(profile.answers);
@@ -21,6 +21,7 @@ function selectedReport(request) {
 function json(response, status, body, headers = {}) { response.writeHead(status, { "content-type": "application/json", ...headers }); response.end(JSON.stringify(body)); }
 function readBody(request) { return new Promise(resolve => { let raw = ""; request.on("data", chunk => { raw += chunk; }); request.on("end", () => { try { resolve(JSON.parse(raw || "{}")); } catch { resolve({}); } }); }); }
 const endpoints = {
+  "analytics-collect": async (_body, response) => { stats.analyticsCollect += 1; json(response, 202, { accepted: true, recorded: true }); },
   "admin-login": async (_body, response) => json(response, 200, { adminId: "owner-e2e", owner: true }, { "set-cookie": "jingeehas_admin=admin-e2e; Path=/; HttpOnly; Secure; SameSite=Strict" }),
   "admin-session-state": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") ? json(response, 200, { authenticated: true, owner: true }) : json(response, 401, { error: "unauthorized" }),
   "admin-report-regeneration-candidates": async (_body, response) => json(response, 200, { candidates: [], reportEngineVersion: "test", reportSchemaVersion: "test", generationReason: "test" }),

@@ -45,15 +45,23 @@ async function completeQuestionnaire(page) {
   await expect(page).toHaveURL(/\/assessment\/completed(?:\?e2e=1)?$/);
 }
 
-for (const width of [375, 390, 430, 1280]) {
-  test(`landing has no page overflow at ${width}px`, async ({ page }) => {
-    await page.setViewportSize({ width, height: 800 });
+for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]) {
+  test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Илүүдэл жингээс салах тест үнэлгээ" })).toBeVisible();
-    await expect(page.getByRole("link", { name: "Тест бөглөх" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" })).toBeVisible();
+    const questions = page.locator(".hero-question");
+    await expect(questions).toHaveCount(3);
+    await expect(page.locator(".hero-highlight")).toBeVisible();
+    const cta = page.getByRole("link", { name: "Сэтгэлзүйн хэв маягаа тодорхойлох" });
+    await expect(cta).toBeVisible();
+    await expect(cta).toHaveAttribute("href", "/assessment/start");
+    await expect(page.locator(".hero-note")).toBeVisible();
+    await expect(page.locator(".hero-visual")).toBeVisible();
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
     await expect(page.locator(".hero")).not.toContainText("9,900₮");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+    expect(await cta.evaluate(element => element.getBoundingClientRect().width <= window.innerWidth)).toBe(true);
   });
 }
 

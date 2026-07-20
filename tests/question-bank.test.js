@@ -19,13 +19,21 @@ assert.notEqual(questions.questionById("Q-TRAVEL").id, questions.questionById("Q
 
 app._test.setComingSoon(false);
 const landing = app.renderForPath("/");
-assert(landing.includes("Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаанаа илрүүл."));
-assert(landing.includes("Ямар далд зуршлууд илүүдэл жин үүсэхэд нөлөөлж буйг тайлж мэд."));
-assert(landing.includes("Жин хасахад тань тохирох дөт хэв маяг, дасгал сургуулилтын чиглэлээ мэдэж ав."));
-assert(landing.includes("Тест бөглөх"));
+assert(landing.includes("Жин хасахад саад болж буй шалтгаанаа тань"));
+assert(landing.includes("Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?"));
+for (const question of ["Илүүдэл жин тань таны санааг байнга зовоодог уу?", "Янз бүрийн дасгал хөдөлгөөн туршсан ч өөрчлөлт бага байна уу?", "Тураах бэлдмэл, хоолны дэглэм хэрэглэсэн ч үр дүн нь хангалтгүй эсвэл удаан тогтдоггүй юу?"]) assert(landing.includes(question), question);
+assert(landing.includes("Жин хасахад зөвхөн хоол, дасгал биш — таны сэтгэлзүйн хэв маяг, далд зуршил хүчтэй нөлөөлдөг."));
+assert(landing.includes("Өөрт тань саад болж буй сэтгэлзүйн шалтгааныг эхлээд ойлгож чадвал жин хасах арга барилаа илүү бодитой, өөртөө тохирсон, тогтвортой сонгоход хялбар болно."));
+assert(landing.includes("Сэтгэлзүйн хэв маягаа тодорхойлох"));
+assert(landing.includes('href="/assessment/start"'));
+assert(landing.includes("Эмнэлгийн онош тавихгүй. Таны жин хасахад нөлөөлж буй давтагддаг хэв маяг, далд зуршлыг таньж ойлгоход тусална."));
+assert.equal((landing.match(/class="hero-question"/g) || []).length, 3);
+assert(!/<section class="hero"[^>]*>[\s\S]*?<h1[^>]*>Илүүдэл жингээс салах тест үнэлгээ<\/h1>/.test(landing));
 assert(!landing.includes("Үнэ: 9,900₮"));
 assert(!/<section class="hero"[\s\S]*?9,900₮[\s\S]*?<\/section>/.test(landing));
 assert.equal(app.PRODUCT.amount, 9900);
+const appSource = require("node:fs").readFileSync(require.resolve("../app.js"), "utf8");
+assert(appSource.includes('if (route === "landing") trackEvent("landing_viewed"'), "landing analytics event remains wired");
 assert(!landing.includes("Үе 1"));
 assert(!app.renderForPath("/assessment/questions").includes("эхний хэв маяг"));
 assert(app.renderForPath("/assessment/questions").includes("Таны хариултын зураглал тест дууссаны дараа гарна."));
