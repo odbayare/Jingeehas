@@ -4,7 +4,7 @@ import path from "node:path";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const output = path.join(root, "artifacts", "production-package-manifest.json");
-const staticFiles = ["_headers", "_redirects", "app.js", "assets/favicon.svg", "assets/hero.svg", "assets/social-preview.png", "index.html", "questions.js", "styles.css"];
+const staticFiles = ["_headers", "_redirects", "app.js", "assets/favicon.svg", "assets/hero.svg", "assets/hero-woman-stretch.png", "assets/social-preview.png", "index.html", "questions.js", "styles.css"];
 const functions = fs.readdirSync(path.join(root, "netlify", "functions"), { withFileTypes: true })
   .filter(entry => entry.isFile() && entry.name.endsWith(".js"))
   .map(entry => entry.name.replace(/\.js$/, ""))

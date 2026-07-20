@@ -58,6 +58,7 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]
     await expect(cta).toHaveAttribute("href", "/assessment/start");
     await expect(page.locator(".hero-note")).toBeVisible();
     await expect(page.locator(".hero-visual")).toBeVisible();
+    expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
     await expect(page.locator(".hero")).not.toContainText("9,900₮");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);

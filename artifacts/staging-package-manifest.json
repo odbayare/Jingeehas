@@ -269,6 +269,10 @@
       "sha256": "95bea179e8bb51b4acc6374a1c43f284039dd60e4f3fbada62caf2be3b39e5dc"
     },
     {
+      "file": "site/assets/hero-woman-stretch.png",
+      "sha256": "e64a1c311c97f3d154359cf5caffc4d9ab45f7f22fc72ca506e6ac0668c43b16"
+    },
+    {
       "file": "site/assets/hero.svg",
       "sha256": "c8feb02e4b698f6979eed05d1623b0f77e081e834fdf54160a39b945bf528e84"
     },
@@ -286,7 +290,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "d92cfa18e7a489c6dae120791ba80d69c5bb898d7617ea2c83c714a15cdac9b6"
+      "sha256": "49278329fbca6e4a3220bb9f45732e65f2569ef0097bc2b6cba76167bfd8f694"
     }
   ],
   "functionNames": [
