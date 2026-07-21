@@ -70,7 +70,7 @@
     },
     {
       "file": "netlify/functions/_lib/question-progress.js",
-      "sha256": "d60d088611fa4d974b6215a18d4ff1a279c140e513373fae0490da2cd7515e18"
+      "sha256": "fa45ea43f0946e392ae2ecce15d0564c88a9c8edb2cc7cc119e158b013ffcf1b"
     },
     {
       "file": "netlify/functions/_lib/recovery.js",

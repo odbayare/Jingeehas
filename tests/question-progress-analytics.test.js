@@ -121,11 +121,11 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   await paidDatabase.insert("assessment_sessions", { id: "wa_owner_progress:ws_owner_progress", assessmentId: "wa_owner_progress", sessionId: "ws_owner_progress", source: "owner" });
   process.env.NODE_ENV = "production";
   try {
-    const excludedView = await recordQuestionView(paidDatabase, "ws_owner_progress", { assessmentId: "wa_owner_progress", questionId: "Q-AGE" },
+    const ownerView = await recordQuestionView(paidDatabase, "ws_owner_progress", { assessmentId: "wa_owner_progress", questionId: "Q-AGE" },
       { httpMethod: "POST", headers: { host: "jingeehas.fit", cookie: "jingeehas_owner_preview=preview", "user-agent": "Mozilla/5.0" } }, paidNow);
-    assert.deepEqual(excludedView, { recorded: false, excluded: true });
+    assert.deepEqual(ownerView, { recorded: true, excluded: false });
   } finally { process.env.NODE_ENV = originalNodeEnv; }
-  assert.equal((await paidDatabase.find("assessment_question_progress", { assessmentId: "wa_owner_progress" })).length, 0, "owner preview is excluded from progress writes");
+  assert.equal((await paidDatabase.find("assessment_question_progress", { assessmentId: "wa_owner_progress" })).length, 1, "owner preview records the functional question journey");
   const ownerExcluded = await paidDatabase.getQuestionProgressAnalytics("2026-07-21", "2026-07-21", new Date("2026-07-23T08:00:00.000Z"));
   assert.equal(ownerExcluded.summary.cohortStarted, 1, "owner preview is excluded from progress cohort");
   await assert.rejects(() => paidDatabase.recordQuestionProgress({ assessmentId: "wa_paid_progress", questionnaireVersion: "spoofed-version", questionId: "Q-AGE",

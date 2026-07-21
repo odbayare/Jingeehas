@@ -34,7 +34,7 @@ async function recordQuestionView(database, sessionId, input, event, now = new D
   }
   const canonical = await canonicalQuestion(database, sessionId, input);
   const flags = flagsFromEvent(event);
-  if (flags.isAdmin || flags.isOwnerPreview || flags.isTest) return { recorded: false, excluded: true };
+  if (flags.isTest || (flags.isAdmin && !flags.isOwnerPreview)) return { recorded: false, excluded: true };
   await database.recordQuestionProgress({ assessmentId: canonical.assessment.id, questionnaireVersion: canonical.version,
     questionId: canonical.metadata.questionId, sectionKey: canonical.metadata.sectionKey,
     questionOrder: canonical.metadata.questionOrder, branchDepth: canonical.metadata.branchDepth,
@@ -44,7 +44,7 @@ async function recordQuestionView(database, sessionId, input, event, now = new D
 
 async function markAnswersRecordedSafe(database, assessment, questionIds, event, now = new Date()) {
   const flags = flagsFromEvent(event);
-  if (flags.isAdmin || flags.isOwnerPreview || flags.isTest) return;
+  if (flags.isTest || (flags.isAdmin && !flags.isOwnerPreview)) return;
   const version = assessmentQuestionnaireVersion(assessment);
   for (const questionId of questionIds) {
     const metadata = questionAnalytics(questionId, version);

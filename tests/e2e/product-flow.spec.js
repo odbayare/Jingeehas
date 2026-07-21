@@ -147,7 +147,11 @@ test("authenticated owner preview starts through the server gate without QPay", 
   const afterPreview = await (await request.get("/__test/stats")).json();
   expect(afterPreview.qpayCreate).toBe(beforePreview.qpayCreate);
   expect(afterPreview.paymentRows).toBe(beforePreview.paymentRows);
-  expect(afterPreview.questionProgressRows).toBe(beforePreview.questionProgressRows);
+  expect(afterPreview.questionProgressRows).toBeGreaterThan(beforePreview.questionProgressRows);
+  const ownerFirstQuestionRows = afterPreview.questionProgressRows;
+  await page.reload();
+  await expect(page.locator('[data-question="Q-AGE"]')).toBeVisible();
+  expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(ownerFirstQuestionRows);
 });
 
 test("assessment starts with the short free safety gate", async ({ page, request }) => {
