@@ -3,6 +3,7 @@
 const nodeCrypto = require("node:crypto");
 const { randomId, randomDigits, hashToken, safeEqual } = require("./crypto.js");
 const { createSession } = require("./session.js");
+const { nextRoute } = require("./commercial-flow.js");
 
 const PHONE_ERROR = "Утасны дугаараа зөв оруулна уу.";
 const EMAIL_ERROR = "Имэйл хаягаа зөв оруулна уу.";
@@ -133,7 +134,7 @@ async function requestRecovery(database, delivery, input, clientContext, now = n
     throw Object.assign(new Error("Too many requests"), { statusCode: 429, code: "rate_limited" });
   }
   const matching = await database.find("recovery_contacts", { type, contactHash: hash });
-  const eligible = matching.find(contact => contact.entitlementId);
+  const eligible = matching.find(contact => contact.assessmentId);
   const recoveryId = randomId("rr_");
   const code = randomDigits(6);
   const bucket = Math.floor(now.getTime() / COOLDOWN_MS);
@@ -171,14 +172,14 @@ async function confirmRecovery(database, input, now = new Date()) {
     : null;
   if (!challenge) throw Object.assign(new Error("Invalid recovery code"), { statusCode: 400, code: "invalid_recovery_code" });
   const contact = await database.get("recovery_contacts", challenge.contactId);
-  const entitlement = contact ? await database.get("entitlements", contact.entitlementId) : null;
-  if (!contact || !entitlement || entitlement.status !== "active") throw Object.assign(new Error("Invalid recovery code"), { statusCode: 400, code: "invalid_recovery_code" });
+  const assessment = contact?.assessmentId ? await database.get("assessments", contact.assessmentId) : null;
+  if (!contact || !assessment) throw Object.assign(new Error("Invalid recovery code"), { statusCode: 400, code: "invalid_recovery_code" });
   const created = await createSession(database, now);
-  await database.upsert("assessment_sessions", `${entitlement.assessmentId}:${created.session.id}`, {
-    assessmentId: entitlement.assessmentId, sessionId: created.session.id, source: "recovery", createdAt: now.toISOString()
+  await database.upsert("assessment_sessions", `${assessment.id}:${created.session.id}`, {
+    assessmentId: assessment.id, sessionId: created.session.id, source: "recovery", createdAt: now.toISOString()
   });
   await database.update("recovery_contacts", contact.id, { verifiedAt: now.toISOString() });
-  return { assessmentId: entitlement.assessmentId, session: created.session, cookie: created.cookie };
+  return { assessmentId: assessment.id, nextRoute: await nextRoute(database, assessment), session: created.session, cookie: created.cookie };
 }
 
 module.exports = { PHONE_ERROR, EMAIL_ERROR, EMAIL_ONLY_ERROR, RECOVERY_SUBJECT, GENERIC_RECOVERY_MESSAGE, normalizePhone, normalizeEmail,

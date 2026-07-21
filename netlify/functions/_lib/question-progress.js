@@ -4,6 +4,7 @@ const { ownedAssessment, assessmentQuestionnaireVersion } = require("./assessmen
 const { flagsFromEvent } = require("./analytics.js");
 const { visibleQuestions } = require("../../../questions.js");
 const { questionAnalytics } = require("./question-analytics.js");
+const { isPrepaid, requirePaidAccess } = require("./commercial-flow.js");
 
 function safeLog(action, error) {
   console.warn(JSON.stringify({ event: "question_progress_write_failed", action, code: error?.code || "unknown" }));
@@ -11,7 +12,14 @@ function safeLog(action, error) {
 
 async function canonicalQuestion(database, sessionId, input) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
-  if (assessment.status !== "draft") throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
+  if (isPrepaid(assessment)) {
+    await requirePaidAccess(database, assessment);
+    if (assessment.status !== "in_progress" || !assessment.startedAt) {
+      throw Object.assign(new Error("Question access is not authorized"), { statusCode: 409, code: "question_access_required" });
+    }
+  } else if (assessment.status !== "draft") {
+    throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
+  }
   const version = assessmentQuestionnaireVersion(assessment);
   const answers = Object.fromEntries((await database.find("assessment_answers", { assessmentId: assessment.id })).map(row => [row.questionId, row.value]));
   const question = visibleQuestions(answers, version).find(item => item.id === input.questionId);

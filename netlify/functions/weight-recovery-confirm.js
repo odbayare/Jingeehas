@@ -9,5 +9,5 @@ exports.handler = handler("POST", async (event, body) => {
   const result = await confirmRecovery(database, body);
   await recordEventSafe(database, "recovery_succeeded", await assessmentContext(database, result.assessmentId), { assessmentId: result.assessmentId },
     { idempotencyKey: `recovery_succeeded:${body.recoveryId}`, ...flagsFromEvent(event) });
-  return response(200, { assessmentId: result.assessmentId, recovered: true }, { "set-cookie": result.cookie });
+  return response(200, { assessmentId: result.assessmentId, nextRoute: result.nextRoute, recovered: true }, { "set-cookie": result.cookie });
 });

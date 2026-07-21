@@ -25,7 +25,10 @@ function questionAnalytics(id, version = questionBank.QUESTIONNAIRE_VERSION) {
   const question = questionBank.questionById(id, version); if (!question) return null;
   let branchDepth = 0; let parent = question.parent;
   while (parent) { branchDepth += 1; parent = questionBank.questionById(parent, version)?.parent; }
-  return { questionId: question.id, analyticsLabel: LABELS[question.id] || question.id, sectionKey: SECTION_KEYS[question.section] || "other",
-    sectionLabel: question.section, questionOrder: questionBank.QUESTIONS.findIndex(item => item.id === question.id) + 1, branchDepth };
+  const analyticsLabel = LABELS[question.id] || question.id; const sectionKey = SECTION_KEYS[question.section] || "other";
+  const canonicalText = String(question.text || "").trim().replace(/\s+/g, " ");
+  return { questionId: question.id, analyticsLabel, sectionKey, sectionLabel: question.section, canonicalText,
+    meaningIdentity: [question.id, sectionKey, question.section, analyticsLabel, canonicalText].join("\u001f"),
+    questionOrder: questionBank.QUESTIONS.findIndex(item => item.id === question.id) + 1, branchDepth };
 }
 module.exports = { LABELS, SECTION_KEYS, questionAnalytics };

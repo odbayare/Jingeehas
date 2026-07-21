@@ -118,7 +118,7 @@ class MemoryDatabaseAdapter {
     for (let cursor = new Date(`${startDate}T00:00:00+08:00`); cursor <= new Date(`${endDate}T00:00:00+08:00`); cursor.setUTCDate(cursor.getUTCDate() + 1)) {
       const date = day(cursor); const events = rows.filter(row => day(row.occurredAt) === date);
       const distinct = (name, key) => new Set(events.filter(row => row.eventName === name && row[key]).map(row => row[key])).size;
-      const dayAssessments = assessments.filter(row => day(row.createdAt) === date);
+      const dayAssessments = assessments.filter(row => day(row.commercialFlowVersion === "prepaid_v2" ? row.startedAt : row.createdAt) === date && (row.commercialFlowVersion !== "prepaid_v2" || row.startedAt));
       const completed = assessments.filter(row => row.status === "complete" && row.completedAt && day(row.completedAt) === date);
       const invoices = payments.filter(row => row.invoiceId && day(row.createdAt) === date);
       const paid = entitlements.map(entitlement => ({ entitlement, payment: payments.find(payment => payment.id === entitlement.paymentId) }))
@@ -126,12 +126,12 @@ class MemoryDatabaseAdapter {
       output.push({ date, uniqueVisitors: distinct("landing_viewed", "visitorIdHash"), landingViews: events.filter(row => row.eventName === "landing_viewed").length,
         assessmentsStarted: new Set(dayAssessments.map(row => row.id)).size, assessmentsCompleted: new Set(completed.map(row => row.id)).size,
         paywallViews: distinct("paywall_viewed", "assessmentId"), invoicesCreated: new Set(invoices.map(row => row.invoiceId)).size,
-        paymentsConfirmed: new Set(paid.map(item => item.payment.id)).size,
+        paymentsConfirmed: new Set(paid.map(item => item.payment.id)).size, reportsOpened: distinct("report_opened", "assessmentId"),
         revenueMnt: [...new Map(paid.map(item => [item.payment.id, Number(item.payment.amount || 0)])).values()].reduce((sum, value) => sum + value, 0) });
     }
     const selected = rows.filter(row => { const value = day(row.occurredAt); return value >= startDate && value <= endDate; });
     const distinct = (name, key) => new Set(selected.filter(row => row.eventName === name && row[key]).map(row => row[key])).size;
-    const selectedAssessments = assessments.filter(row => { const value = day(row.createdAt); return value >= startDate && value <= endDate; });
+    const selectedAssessments = assessments.filter(row => { const source = row.commercialFlowVersion === "prepaid_v2" ? row.startedAt : row.createdAt; if (!source) return false; const value = day(source); return value >= startDate && value <= endDate; });
     const selectedCompleted = assessments.filter(row => row.status === "complete" && row.completedAt && day(row.completedAt) >= startDate && day(row.completedAt) <= endDate);
     const selectedInvoices = payments.filter(row => row.invoiceId && day(row.createdAt) >= startDate && day(row.createdAt) <= endDate);
     const selectedPaid = entitlements.map(entitlement => ({ entitlement, payment: payments.find(payment => payment.id === entitlement.paymentId) }))
@@ -140,11 +140,18 @@ class MemoryDatabaseAdapter {
     return { days: output, summary: { uniqueVisitors: distinct("landing_viewed", "visitorIdHash"), landingViews: selected.filter(row => row.eventName === "landing_viewed").length,
       assessmentsStarted: new Set(selectedAssessments.map(row => row.id)).size, assessmentsCompleted: new Set(selectedCompleted.map(row => row.id)).size,
       paywallViews: distinct("paywall_viewed", "assessmentId"), invoicesCreated: new Set(selectedInvoices.map(row => row.invoiceId)).size,
-      paymentsConfirmed: new Set(selectedPaid.map(item => item.payment.id)).size,
+      paymentsConfirmed: new Set(selectedPaid.map(item => item.payment.id)).size, reportsOpened: distinct("report_opened", "assessmentId"),
       revenueMnt: [...new Map(selectedPaid.map(item => [item.payment.id, Number(item.payment.amount || 0)])).values()].reduce((sum, value) => sum + value, 0) },
-      coverage: { visitorTrackingStartedAt: earliest("landing_viewed"), paymentSectionTrackingStartedAt: earliest("paywall_viewed"), businessRecordSource: true } };
+      coverage: { visitorTrackingStartedAt: earliest("landing_viewed"), paymentSectionTrackingStartedAt: earliest("paywall_viewed"), businessRecordSource: true,
+        legacyFlowCount: assessments.filter(row => row.commercialFlowVersion !== "prepaid_v2").length,
+        prepaidFlowCount: assessments.filter(row => row.commercialFlowVersion === "prepaid_v2").length,
+        mixedFlow: assessments.some(row => row.commercialFlowVersion === "prepaid_v2") && assessments.some(row => row.commercialFlowVersion !== "prepaid_v2") } };
   }
   async recordQuestionProgress(input) {
+    const assessment = await this.get("assessments", input.assessmentId);
+    if (!assessment || assessment.questionnaireVersion !== input.questionnaireVersion) {
+      throw Object.assign(new Error("Question progress version mismatch"), { code: "invalid_questionnaire_version" });
+    }
     const id = `${input.assessmentId}:${input.questionnaireVersion}:${input.questionId}`;
     const existing = await this.get("assessment_question_progress", id);
     const viewedAt = input.viewedAt;
@@ -159,7 +166,9 @@ class MemoryDatabaseAdapter {
     const events = [...this.table("analytics_events").values()];
     const excluded = new Set(events.filter(row => row.assessmentId && (row.isAdmin || row.isOwnerPreview || row.isTest)).map(row => row.assessmentId));
     for (const row of this.table("assessment_sessions").values()) if (row.source === "owner") excluded.add(row.assessmentId);
-    const cohort = [...this.table("assessments").values()].filter(row => !excluded.has(row.id) && day(row.createdAt) >= startDate && day(row.createdAt) <= endDate);
+    const cohort = [...this.table("assessments").values()].filter(row => { if (excluded.has(row.id)) return false;
+      const started = row.commercialFlowVersion === "prepaid_v2" ? row.startedAt : (row.startedAt || row.createdAt);
+      return started && day(started) >= startDate && day(started) <= endDate; });
     const cohortIds = new Set(cohort.map(row => row.id));
     const progress = [...this.table("assessment_question_progress").values()].filter(row => cohortIds.has(row.assessmentId));
     const byAssessment = new Map();
