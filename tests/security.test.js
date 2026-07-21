@@ -22,7 +22,7 @@ assert.equal(advisorStatusLabel("consent_accepted"), "Зөвшөөрсөн");
 assert.equal(advisorStatusLabel("pending"), "Хүлээгдэж байна");
 
 const functions = fs.readdirSync(path.join(root, "netlify", "functions")).filter(file => file.endsWith(".js"));
-const previewProtected = ["weight-session-start.js", "weight-safety-gate.js", "weight-recovery-contact-save.js", "weight-assessment-create.js", "weight-assessment-save.js", "weight-assessment-complete.js", "weight-assessment-report.js", "weight-session-state.js", "weight-entitlements.js", "weight-recovery-request.js", "weight-recovery-confirm.js", "weight-data-deletion-request.js", "qpay-create-invoice.js", "qpay-check-payment.js", "advisor-invite-resolve.js", "advisor-consent.js"];
+const previewProtected = ["weight-session-start.js", "weight-safety-gate.js", "weight-recovery-contact-save.js", "weight-assessment-create.js", "weight-assessment-questions.js", "weight-assessment-save.js", "weight-assessment-complete.js", "weight-assessment-report.js", "weight-session-state.js", "weight-entitlements.js", "weight-recovery-request.js", "weight-recovery-confirm.js", "weight-data-deletion-request.js", "qpay-create-invoice.js", "qpay-check-payment.js", "advisor-invite-resolve.js", "advisor-consent.js"];
 for (const required of previewProtected) {
   assert(functions.includes(required));
   assert(fs.readFileSync(path.join(root, "netlify", "functions", required), "utf8").includes("authenticateOwnerPreview"), `${required} must enforce server-side owner preview access`);

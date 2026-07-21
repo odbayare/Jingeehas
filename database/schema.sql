@@ -25,7 +25,9 @@ create table assessments (
   id text primary key,
   session_id text not null references sessions(id) on delete restrict,
   safety_check_id text not null references safety_checks(id) on delete restrict,
-  status text not null check (status in ('draft', 'complete')),
+  status text not null check (status in ('draft', 'payment_pending', 'paid_ready', 'in_progress', 'complete')),
+  commercial_flow_version text not null default 'legacy_postpaid_v1' check (commercial_flow_version in ('legacy_postpaid_v1', 'prepaid_v2')),
+  started_at timestamptz,
   report_mode text check (report_mode in ('safety', 'sufficient', 'limited', 'insufficient')),
   safety_route text,
   coach_client_id text,
@@ -34,8 +36,11 @@ create table assessments (
   updated_at timestamptz not null,
   completed_at timestamptz,
   check (updated_at >= created_at),
-  check (completed_at is null or completed_at >= created_at)
+  check (completed_at is null or completed_at >= created_at),
+  check (started_at is null or started_at >= created_at)
 );
+create index assessments_flow_status_idx on assessments (commercial_flow_version, status, updated_at desc);
+create index assessments_started_at_idx on assessments (started_at desc) where started_at is not null;
 
 create table assessment_sessions (
   id text primary key,

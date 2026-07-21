@@ -16,7 +16,7 @@ assert(html.includes("skip-link"));
 assert(!html.includes("<main id=\"app\""));
 
 app._test.setComingSoon(false);
-app._test.setState({ questionIndex: 5 });
+app._test.setState({ questionIndex: 5, questionsAuthorized: true });
 const question = app.renderForPath("/assessment/questions");
 assert(question.includes('role="progressbar"'));
 assert(question.includes('aria-label="Тест бөглөх явц"'));

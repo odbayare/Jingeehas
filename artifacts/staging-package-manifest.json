@@ -22,7 +22,7 @@
     },
     {
       "file": "netlify/functions/_lib/analytics.js",
-      "sha256": "28ff81c1149bed8b9e523b6093ce2ee6e8cd244457b1b443de373b25bda5f535"
+      "sha256": "af09d10e0a9add9794c6265df165c058f8628d2ff2f673b288ce4e4ea840f5e8"
     },
     {
       "file": "netlify/functions/_lib/answer-rules.js",
@@ -30,11 +30,15 @@
     },
     {
       "file": "netlify/functions/_lib/assessment.js",
-      "sha256": "a786fbc5139644ea0e167db75a943a237f1959281527cbba4e932308ad45c4e3"
+      "sha256": "93ac8212ac062ddb79a595aec73c8042d99914b0ff0d7084ccd90fa91f69758c"
     },
     {
       "file": "netlify/functions/_lib/auth.js",
       "sha256": "101e00fcbe5c5f473775af2adfb27c49b1ee40064ad57aab53c3debdf581ff1a"
+    },
+    {
+      "file": "netlify/functions/_lib/commercial-flow.js",
+      "sha256": "6dac7c8c52fd52c504ce67001bebe2cf2c1509220d107a690fea7729555545b6"
     },
     {
       "file": "netlify/functions/_lib/config.js",
@@ -50,7 +54,7 @@
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "c3c0901a648c3fc1e88e056c984b394576affe2638921b89b3b06855e245f2cd"
+      "sha256": "f8f8cd9a00abb4179525ebda2c2fc0b13c64072d93e908213b4a04a2c2d66e87"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -62,7 +66,7 @@
     },
     {
       "file": "netlify/functions/_lib/recovery.js",
-      "sha256": "e8f0f11a8e6f9b39ba17ddf51469e0061bf746c1df1ae9ad131107b22420e374"
+      "sha256": "60a78d270997e28ab6985c878d3ee55cb9792061a0daa9eaa4becf7c35a3d765"
     },
     {
       "file": "netlify/functions/_lib/report-copy.js",
@@ -202,15 +206,19 @@
     },
     {
       "file": "netlify/functions/weight-assessment-create.js",
-      "sha256": "6ae73fd77673360d97140739374aef657e1a134356208e51d6ef14faa81cfe4b"
+      "sha256": "d8794c6508d4c6147666764012858fef46fccb5eefd2c95946580ee23ccd9da9"
+    },
+    {
+      "file": "netlify/functions/weight-assessment-questions.js",
+      "sha256": "5098394c69a29f203c5779f7aefa7a29f63efc948c4ac60851eb8385bf8a2422"
     },
     {
       "file": "netlify/functions/weight-assessment-report.js",
-      "sha256": "ba654f0926b2ec345e138aaaacecd787ebf2f823767a00d52743fab4b56c6edf"
+      "sha256": "94f230033de4b4a0387248d18a9304a588131c714c16ca6792b799cd7016b5ee"
     },
     {
       "file": "netlify/functions/weight-assessment-save.js",
-      "sha256": "570a70a84bc4946f1909d26d5ea7f3905b00f4a4fb0db97249d5ce1249169200"
+      "sha256": "fba46847b9500e05a9dbd89003b2b52ff51df8d0a01227ac24c3d029e0f5c397"
     },
     {
       "file": "netlify/functions/weight-data-deletion-request.js",
@@ -242,7 +250,7 @@
     },
     {
       "file": "netlify/functions/weight-session-state.js",
-      "sha256": "e89417bd401bba9fb3c09e455d7cbb6846ed905f1ebf65b3c84844c3cc612646"
+      "sha256": "47b101452dff6f6bcd38e4470afd5b0d8b46ede00fbd1f92e44a321a43444b33"
     },
     {
       "file": "netlify.toml",
@@ -262,7 +270,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "2421225a96d4c31755e83783f79da14f8c4a1fc5b8fe4df828cc748ea1d8bc17"
+      "sha256": "d95ecbeda37717ce6548e359a3b96d933f354e73eb6ee8a9156646dfa56f5982"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -290,7 +298,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "49278329fbca6e4a3220bb9f45732e65f2569ef0097bc2b6cba76167bfd8f694"
+      "sha256": "2c1b214484211e9e25b6f78858832a90773bb94d3854e4715249de0d25348ee5"
     }
   ],
   "functionNames": [
@@ -319,6 +327,7 @@
     "qpay-create-invoice",
     "weight-assessment-complete",
     "weight-assessment-create",
+    "weight-assessment-questions",
     "weight-assessment-report",
     "weight-assessment-save",
     "weight-data-deletion-request",

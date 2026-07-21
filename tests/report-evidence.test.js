@@ -376,8 +376,8 @@ const frozenFileHashes = Object.freeze({
   "netlify/functions/_lib/report-signals.js": "9b0f5926b274cea21cf256c8033a8ca8639267319f1115633b162c5d22d0493e",
   "netlify/functions/_lib/report-patterns.js": "489110da1226350da09e775b63741deefead01172cebbb67044372ac60e5b97f",
   "netlify/functions/_lib/safety.js": "406551d98b383a4905bd24dd6ccd9970552725f88374c0e5a10f3419590f0607",
-  "netlify/functions/_lib/payment.js": "c3c0901a648c3fc1e88e056c984b394576affe2638921b89b3b06855e245f2cd",
-  "netlify/functions/_lib/recovery.js": "e8f0f11a8e6f9b39ba17ddf51469e0061bf746c1df1ae9ad131107b22420e374",
+  "netlify/functions/_lib/payment.js": "f8f8cd9a00abb4179525ebda2c2fc0b13c64072d93e908213b4a04a2c2d66e87",
+  "netlify/functions/_lib/recovery.js": "60a78d270997e28ab6985c878d3ee55cb9792061a0daa9eaa4becf7c35a3d765",
   "questions.js": "ac79aa5e83d6c37234f886f2683fd036ba80862afa5f3b6f3d8b2131f7f22d14"
 });
 for (const [file, expectedHash] of Object.entries(frozenFileHashes)) {

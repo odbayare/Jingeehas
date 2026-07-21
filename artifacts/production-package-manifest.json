@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "2421225a96d4c31755e83783f79da14f8c4a1fc5b8fe4df828cc748ea1d8bc17"
+      "sha256": "d95ecbeda37717ce6548e359a3b96d933f354e73eb6ee8a9156646dfa56f5982"
     },
     {
       "file": "assets/favicon.svg",
@@ -45,7 +45,7 @@
     },
     {
       "file": "styles.css",
-      "sha256": "49278329fbca6e4a3220bb9f45732e65f2569ef0097bc2b6cba76167bfd8f694"
+      "sha256": "2c1b214484211e9e25b6f78858832a90773bb94d3854e4715249de0d25348ee5"
     }
   ],
   "serverFunctions": [
@@ -74,6 +74,7 @@
     "qpay-create-invoice",
     "weight-assessment-complete",
     "weight-assessment-create",
+    "weight-assessment-questions",
     "weight-assessment-report",
     "weight-assessment-save",
     "weight-data-deletion-request",

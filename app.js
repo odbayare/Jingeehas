@@ -8,9 +8,9 @@ const PAYMENT_COPY = Object.freeze({
   create_unknown: "Нэхэмжлэл үүссэн эсэхийг баталгаажуулах шаардлагатай байна. Давтан нэхэмжлэл үүсгэхгүйгээр дэмжлэгтэй холбогдоно уу.",
   reconciling: "Өмнөх нэхэмжлэлийн төлөвийг QPay талаас шалгаж байна…",
   create_failed_confirmed: "Өмнөх оролдлогоор нэхэмжлэл үүсээгүй нь баталгаажсан. Шинэ оролдлогыг дэмжлэгээр зөвшөөрүүлнэ үү.",
-  pending: "Төлбөрөө хийсний дараа “Төлбөр шалгах” товчийг дарна уу.",
+  pending: "QPay төлбөрөө хийсний дараа тест автоматаар нээгдэнэ.",
   checking: "Төлбөрийг шалгаж байна…",
-  paidBeforeTest: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.",
+  paidBeforeTest: "Төлбөр баталгаажлаа. Тест нээгдлээ.",
   paidAfterAssessment: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ."
 });
 const PAYMENT_STATES = new Set(["idle", "creating", "create_unknown", "reconciling", "pending", "checking", "paid", "create_error", "create_failed_confirmed", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
@@ -20,7 +20,7 @@ const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "
 const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"], "Q-METHOD-PAST": ["Q-METHOD-LONGEST", "Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION"] });
 
 function createState() {
-  return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
+  return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
@@ -28,6 +28,8 @@ function createState() {
 }
 let state = createState();
 let testComingSoonOverride = null;
+let paymentPollTimer = null;
+let paymentPollingStartedAt = 0;
 function isComingSoon() { return testComingSoonOverride === null ? WEIGHT_TEST_COMING_SOON_MODE : testComingSoonOverride; }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]); }
 function escapeAttribute(value) { return escapeHtml(value).replace(/`/g, "&#96;"); }
@@ -106,7 +108,7 @@ function renderLanding() {
 }
 function renderAbout() {
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тест үнэлгээний тухай</h1>
-    <p>Таны шууд өгсөн хариултаас давтагдсан хэв маяг болон ажиглалтыг ялгаж, эхний зураглал гаргана. Төлбөр баталгаажсаны дараа тест бөглөж, бүрэн тайлангаа авна.</p>
+    <p>Таны шууд өгсөн хариултаас давтагдсан хэв маяг болон ажиглалтыг ялгаж, эхний зураглал гаргана. Төлбөр баталгаажсаны дараа тестээ бөглөж, таны хариултад тулгуурласан бүрэн тайлангаа авна.</p>
     <p>Энэ нь эмнэлгийн онош, эмчилгээний зөвлөгөө биш.</p><a class="button" href="/assessment/start" data-route>Тест бөглөх</a></main>${footer()}</div>`;
 }
 function renderMethodology() {
@@ -154,13 +156,28 @@ function safetyGuidance(result) {
     <p>${escapeHtml(guidance.body || "")}</p><p class="notice">Энэ зөвлөмж төлбөргүй.</p>
     <a class="button danger" href="tel:103">${escapeHtml(guidance.action || "Тусламж авах")}</a></main>${footer()}</div>`;
 }
+function renderSafetyCheck() {
+  return `<div class="page">${navigation()}<main class="content-card safety-check"><p class="eyebrow">Төлбөрөөс өмнөх аюулгүй байдлын шалгалт</p><h1 id="page-title" tabindex="-1">Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах</h1>
+    <p>Энэ богино шалгалт нь яаралтай эсвэл мэргэжлийн тусламж түрүүнд шаардлагатай эсэхийг ялгана.</p>
+    <form id="safety-form" novalidate><label class="field"><span>Нас</span><input name="age" type="number" min="18" max="120" required></label>
+    <fieldset><legend>Өөртөө хор хүргэх бодол одоо төрж байна уу?</legend><label class="option-label"><input type="radio" name="selfHarm" value="Үгүй" required><span>Үгүй</span></label><label class="option-label"><input type="radio" name="selfHarm" value="Одоо хааяа бодогддог" required><span>Одоо хааяа бодогддог</span></label><label class="option-label"><input type="radio" name="selfHarm" value="Одоо идэвхтэй бодогдож байна" required><span>Одоо идэвхтэй бодогдож байна</span></label></fieldset>
+    <fieldset><legend>Одоо ухаан балартах зэрэг яаралтай шинж байна уу?</legend><label class="option-label"><input type="radio" name="acuteMedical" value="Аль нь ч үгүй" required><span>Аль нь ч үгүй</span></label><label class="option-label"><input type="radio" name="acuteMedical" value="Ухаан балартах" required><span>Тийм</span></label></fieldset>
+    <fieldset><legend>Идсэнээ нөхөх зорилгоор бөөлжих эсвэл хэт дасгал хийх давтамж</legend><label class="option-label"><input type="radio" name="compensatoryBehavior" value="Үгүй" required><span>Үгүй</span></label><label class="option-label"><input type="radio" name="compensatoryBehavior" value="Одоо хааяа" required><span>Одоо хааяа</span></label></fieldset>
+    <fieldset><legend>Одоогийн биеийн байдлаар тест үргэлжлүүлэхэд</legend><label class="option-label"><input type="radio" name="medicalSuitability" value="Үргэлжлүүлэхэд тохиромжтой" required><span>Тохиромжтой</span></label><label class="option-label"><input type="radio" name="medicalSuitability" value="Эмчтэй түрүүлж ярилцах шаардлагатай" required><span>Эмчтэй түрүүлж ярилцана</span></label></fieldset>
+    <p id="safety-error" class="error" role="alert"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Үргэлжлүүлэх</button></form></main>${footer()}</div>`;
+}
 function renderAssessmentContact() {
-  return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тайлан авах мэдээллээ хадгалах</h1>
-    ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд энэ тест үнэлгээг санал болгосон байна.</p><form id="consent-form"><fieldset><legend>Тайлан хуваалцах зөвшөөрөл</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Би тест үнэлгээний бүрэн тайланг ${escapeHtml(state.invitation.advisorName || "Зөвлөх")} зөвлөх харахыг зөвшөөрч байна.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Миний асуулт бүрд өгсөн түүхий хариултыг тусад нь харуулахгүй.</p><button class="button" type="submit">Сонголтоо баталгаажуулах</button></form></section>` : `<form id="contact-form" novalidate><p>Имэйл хаягаа оруулна уу. Бүрэн тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана. Утсаар сэргээх үйлчилгээ одоогоор нээгдээгүй.</p>
-      <label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email" required></label>
-      <p id="contact-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Мэдээллээ хадгалаад тест рүү үргэлжлүүлэх</button></form>`}</main>${footer()}</div>`;
+  return `<div class="page">${navigation()}<main class="content-card checkout-preparation"><h1 id="page-title" tabindex="-1">Тест үнэлгээгээ эхлүүлэх</h1>
+    <p><strong>Тест үнэлгээ болон бүрэн хувийн тайлан</strong></p><p class="price">${PRODUCT.displayPrice}</p>
+    <ul><li>Жин хасахад саад болж буй сэтгэлзүйн хэв маяг, далд зуршлаа тодорхойлно.</li><li>Таны хариултад тулгуурласан бүрэн хувийн тайлан авна.</li><li>Явц автоматаар хадгалагдах тул завсарласан ч үргэлжлүүлж болно.</li></ul>
+    <form id="contact-form" novalidate><label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email" required></label>
+    <p class="muted">Имэйл хаягийг төлбөр, тестийн явц болон тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана.</p>
+    ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд тест үнэлгээг санал болгосон байна.</p><fieldset><legend>Тайлан хуваалцах сонголт</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Бүрэн тайлангаа зөвлөхтэй хуваалцана.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Асуулт бүрийн түүхий хариултыг зөвлөхөд харуулахгүй.</p></section>` : ""}
+    <p id="contact-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Бэлтгэж байна…" : "QPay-аар төлөөд тестээ эхлүүлэх"}</button>
+    <p>Төлбөр баталгаажсаны дараа тест шууд нээгдэнэ.</p><p><a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/support" data-route>Төлбөрийн тусламж</a></p></form></main>${footer()}</div>`;
 }
 function renderAssessmentCompleted() {
+  if (state.commercialFlowVersion === "prepaid_v2") return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тест дууслаа. Таны тайланг боловсруулж байна.</h1><p role="status">Бүрэн тайланг ачаалж байна…</p></main>${footer()}</div>`;
   const completed = state.assessmentStatus === "complete";
   return `<div class="page">${navigation()}<main class="content-card completion-card"><p class="completion-mark" aria-hidden="true">✓</p><h1 id="page-title" tabindex="-1">Таны хариултуудыг цуглуулж дууслаа</h1>
     <p>Таны өгсөн хариултуудад үндэслэн жин хасахад тань нөлөөлж буй сэтгэлзүйн хэв маяг, далд зуршил болон тогтвортой өөрчлөлт хийхэд саад болж буй хүчин зүйлсийг нэгтгэн тайлан боловсруулна.</p>
@@ -173,15 +190,17 @@ function renderPayment() {
   const payment = state.payment || { status: "idle" };
   const statusCopy = payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY[payment.status] || "";
   const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
-  const paymentReady = state.assessmentStatus === "complete";
-  return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Бүрэн тайлангаа нээх</h1>
-      <p>Жин хасалтад тань нөлөөлж буй сэтгэлзүйн шалтгаан, хэв маяг болон танд тохирох өөрчлөлтийн чиглэлийг агуулсан бүрэн тайлангаа нээнэ үү.</p>
+  const prepaid = state.commercialFlowVersion === "prepaid_v2";
+  const paymentReady = prepaid ? state.assessmentStatus === "payment_pending" : state.assessmentStatus === "complete";
+  return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">${prepaid ? "Төлбөрөө баталгаажуулж байна" : "Бүрэн тайлангаа нээх"}</h1>
+      <p>${prepaid ? "Тест үнэлгээ болон бүрэн хувийн тайлан" : "Жин хасалтад тань нөлөөлж буй сэтгэлзүйн шалтгаан, хэв маяг болон танд тохирох өөрчлөлтийн чиглэлийг агуулсан бүрэн тайлангаа нээнэ үү."}</p>
       <section aria-labelledby="payment-title"><h2 id="payment-title">QPay нэхэмжлэл</h2><p class="price">Үнэ: ${PRODUCT.displayPrice}</p>
-        ${paymentReady ? "" : `<p class="notice">QPay төлбөрийн товч тест үнэлгээг бүрэн дуусгасны дараа нээгдэнэ.</p>`}
+        ${prepaid ? `<p class="notice">QPay төлбөрөө хийсний дараа тест автоматаар нээгдэнэ.</p>` : paymentReady ? "" : `<p class="notice">QPay төлбөрийн товч тест үнэлгээг бүрэн дуусгасны дараа нээгдэнэ.</p>`}
         <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
         ${payment.status !== "paid" && payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
+        ${payment.status !== "paid" && Array.isArray(payment.urls) && payment.urls.length ? `<ul class="payment-app-links">${payment.urls.filter(item => /^https:\/\//.test(String(item.link || item.url || ""))).map(item => `<li><a class="button secondary" href="${escapeAttribute(item.link || item.url)}" rel="noopener">${escapeHtml(item.name || item.description || "Банкны апп")}</a></li>`).join("")}</ul>` : ""}
         ${payment.status !== "paid" && payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа: <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(new Date(payment.expiresAt).toLocaleString("mn-MN"))}</time></p>` : ""}
-        ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">${payment.status === "paid_but_not_unlocked" ? "Тайлангийн эрхээ дахин нээх" : "Төлбөр шалгах"}</button>` : payment.status === "paid" ? `<a class="button" href="/report" data-route>Бүрэн тайлан харах</a>` : !paymentReady || createBlocked ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
+        ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">Төлбөр шалгах</button>` : payment.status === "paid" ? (prepaid ? `<p class="notice">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>` : `<p class="notice">Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.</p><a class="button" href="/report" data-route>Бүрэн тайлан харах</a>`) : !paymentReady || createBlocked || prepaid ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
       </section></main>${footer()}</div>`;
 }
 function renderQuestionInput(question, value) {
@@ -199,7 +218,7 @@ function renderQuestions() {
   const percent = Math.round(((state.questionIndex + 1) / questions.length) * 100);
   return `<div class="page assessment-page"><main class="content-card"><progress role="progressbar" aria-label="Тест бөглөх явц" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${percent}" value="${percent}" max="100">${percent}%</progress>
     <p>${state.questionIndex + 1} / ${questions.length}</p><h1 id="page-title" tabindex="-1">${escapeHtml(question.section)}</h1>
-    <p class="muted">Өөрт хамгийн ойр хариултаа сонгоорой. Таны хариултын зураглал тест дууссаны дараа гарна.</p>
+    <p class="muted">Өөрт хамгийн ойр хариултаа сонгоорой. Таны явц автоматаар хадгалагдана.</p>
     <form id="question-form" novalidate aria-busy="${state.busy ? "true" : "false"}">${renderQuestionInput(question, state.answers[question.id])}<p id="question-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.validationError)}</p>
       <div class="save-status" role="status" aria-live="polite">${state.busy ? `<span class="spinner" aria-hidden="true"></span>${state.slowSave ? "Хариултыг хадгалж байна..." : "Хадгалж байна..."}` : ""}</div>
       <div class="actions">${state.questionIndex > 0 ? `<button class="button secondary" type="button" data-action="previous-question" ${state.busy ? "disabled" : ""}>Буцах</button>` : ""}<button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Хадгалж байна..." : state.questionIndex === questions.length - 1 ? "Тестийг дуусгах" : "Үргэлжлүүлэх"}</button></div>
@@ -289,8 +308,8 @@ function analyticsRange(preset, now = new Date()) {
 function analyticsTotals(days = []) { return days.reduce((total, day) => ({ uniqueVisitors: total.uniqueVisitors + Number(day.uniqueVisitors || 0), landingViews: total.landingViews + Number(day.landingViews || 0),
   assessmentsStarted: total.assessmentsStarted + Number(day.assessmentsStarted || 0), assessmentsCompleted: total.assessmentsCompleted + Number(day.assessmentsCompleted || 0),
   paywallViews: total.paywallViews + Number(day.paywallViews || 0), invoicesCreated: total.invoicesCreated + Number(day.invoicesCreated || 0),
-  paymentsConfirmed: total.paymentsConfirmed + Number(day.paymentsConfirmed || 0), revenueMnt: total.revenueMnt + Number(day.revenueMnt || 0) }),
-  { uniqueVisitors: 0, landingViews: 0, assessmentsStarted: 0, assessmentsCompleted: 0, paywallViews: 0, invoicesCreated: 0, paymentsConfirmed: 0, revenueMnt: 0 }); }
+  paymentsConfirmed: total.paymentsConfirmed + Number(day.paymentsConfirmed || 0), reportsOpened: total.reportsOpened + Number(day.reportsOpened || 0), revenueMnt: total.revenueMnt + Number(day.revenueMnt || 0) }),
+  { uniqueVisitors: 0, landingViews: 0, assessmentsStarted: 0, assessmentsCompleted: 0, paywallViews: 0, invoicesCreated: 0, paymentsConfirmed: 0, reportsOpened: 0, revenueMnt: 0 }); }
 function rate(numerator, denominator) { return denominator ? `${(100 * numerator / denominator).toFixed(1)}%` : "—"; }
 function comparison(current, prior) { if (!Number.isFinite(Number(prior)) || Number(prior) === 0) return "—"; const change = 100 * (Number(current) - Number(prior)) / Number(prior); return Number.isFinite(change) ? `Өмнөх хугацаанаас ${change >= 0 ? "+" : ""}${change.toFixed(1)}%` : "—"; }
 function hasAnalyticsData(summary) { return summary && ["uniqueVisitors", "assessmentsStarted", "assessmentsCompleted", "paywallViews", "invoicesCreated", "paymentsConfirmed"].some(key => Number(summary[key] || 0) > 0); }
@@ -302,15 +321,17 @@ function analyticsCoverageCopy(coverage) {
 function renderAdminAnalytics() {
   const analytics = state.admin.analytics; const total = analytics.summary || analyticsTotals(analytics.days); const prior = analytics.priorSummary || analyticsTotals(analytics.priorDays);
   const priorAvailable = hasAnalyticsData(analytics.priorSummary);
+  const mixed = analytics.coverage?.mixedFlow === true; const sequentialRate = (numerator, denominator) => mixed ? "—" : rate(numerator, denominator);
   const card = (label, value, conversion, key) => `<article><h3>${label}</h3><p class="metric-value">${value}</p><p>${conversion}</p><p class="metric-compare">${priorAvailable ? comparison(total[key], prior[key]) : "—"}</p></article>`;
-  const stages = [["Зочилсон", total.uniqueVisitors], ["Тест эхлүүлсэн", total.assessmentsStarted], ["Тест дуусгасан", total.assessmentsCompleted], ["Төлбөрийн хэсэг үзсэн", total.paywallViews], ["Нэхэмжлэл үүсгэсэн", total.invoicesCreated], ["Төлбөр төлсөн", total.paymentsConfirmed]];
-  return `<section class="analytics-dashboard" aria-labelledby="analytics-title"><h2 id="analytics-title">Өдөр тутмын үзүүлэлт</h2><p>Цагийн бүс: Улаанбаатар</p>
+  const stages = [["Зочилсон", total.uniqueVisitors], ["Төлбөрийн хэсэг", total.paywallViews], ["Нэхэмжлэл", total.invoicesCreated], ["Төлбөр", total.paymentsConfirmed], ["Тест эхлүүлсэн", total.assessmentsStarted], ["Тест дуусгасан", total.assessmentsCompleted], ["Тайлан нээсэн", total.reportsOpened || 0]];
+  return `<section class="analytics-dashboard" aria-labelledby="analytics-title"><h2 id="analytics-title">Өдөр тутмын үзүүлэлт</h2><p><strong>Одоогийн урсгал: Төлбөр эхэнд</strong></p><p>Цагийн бүс: Улаанбаатар</p>
     <form id="analytics-filter-form" class="analytics-filters"><label><span>Хугацаа</span><select name="preset"><option value="today"${analytics.preset === "today" ? " selected" : ""}>Өнөөдөр</option><option value="yesterday"${analytics.preset === "yesterday" ? " selected" : ""}>Өчигдөр</option><option value="last7"${analytics.preset === "last7" ? " selected" : ""}>Сүүлийн 7 хоног</option><option value="last30"${analytics.preset === "last30" ? " selected" : ""}>Сүүлийн 30 хоног</option><option value="thisMonth"${analytics.preset === "thisMonth" ? " selected" : ""}>Энэ сар</option><option value="previousMonth"${analytics.preset === "previousMonth" ? " selected" : ""}>Өмнөх сар</option><option value="custom"${analytics.preset === "custom" ? " selected" : ""}>Өөр хугацаа</option></select></label><label><span>Эхлэх өдөр</span><input type="date" name="startDate" value="${escapeAttribute(analytics.startDate)}"></label><label><span>Дуусах өдөр</span><input type="date" name="endDate" value="${escapeAttribute(analytics.endDate)}"></label><button class="button compact" type="submit">Харах</button></form>
     ${analytics.loading ? `<p role="status">Үзүүлэлтийг ачаалж байна…</p>` : ""}${analytics.error ? `<p class="error">${escapeHtml(analytics.error)}</p>` : ""}
     ${analyticsCoverageCopy(analytics.coverage) ? `<p class="analytics-coverage">${escapeHtml(analyticsCoverageCopy(analytics.coverage))}</p>` : ""}
+    ${mixed ? `<p class="notice">Сонгосон хугацаанд хуучин болон шинэ төлбөрийн урсгал хоёулаа багтсан тул зарим шатны хөрвөлтийн хувийг шууд харьцуулах боломжгүй.</p>` : ""}
     ${!priorAvailable ? `<p class="analytics-comparison-note">Сонгосон хугацааг өмнөх ижил хугацаатай харьцуулах боломжгүй байна.</p>` : ""}
-    <div class="metric-grid analytics-metrics">${card("Зочилсон хүн", total.uniqueVisitors, `Тест эхлүүлсэн хувь: ${rate(total.assessmentsStarted, total.uniqueVisitors)}`, "uniqueVisitors")}${card("Тест эхлүүлсэн", total.assessmentsStarted, `Дуусгасан хувь: ${rate(total.assessmentsCompleted, total.assessmentsStarted)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted, `Төлбөрийн хэсэгт хүрсэн хувь: ${rate(total.paywallViews, total.assessmentsCompleted)}`, "assessmentsCompleted")}${card("Төлбөрийн хэсэг үзсэн", total.paywallViews, `Нэхэмжлэл үүсгэсэн хувь: ${rate(total.invoicesCreated, total.paywallViews)}`, "paywallViews")}${card("Нэхэмжлэл үүсгэсэн", total.invoicesCreated, `Төлбөр төлсөн хувь: ${rate(total.paymentsConfirmed, total.invoicesCreated)}`, "invoicesCreated")}${card("Төлбөр төлсөн", total.paymentsConfirmed, `Зочиноос төлбөр: ${rate(total.paymentsConfirmed, total.uniqueVisitors)}`, "paymentsConfirmed")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
-    <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value], index) => `<li><span>${label}</span><strong>${value}</strong>${index ? `<small>${rate(value, stages[index - 1][1])}</small>` : ""}</li>`).join("")}</ol>
+    <div class="metric-grid analytics-metrics">${card("Зочилсон хүн", total.uniqueVisitors, `Төлбөрийн хэсэгт хүрсэн хувь: ${rate(total.paywallViews, total.uniqueVisitors)}`, "uniqueVisitors")}${card("Төлбөрийн хэсэг", total.paywallViews, `Нэхэмжлэл үүсгэсэн хувь: ${sequentialRate(total.invoicesCreated, total.paywallViews)}`, "paywallViews")}${card("Нэхэмжлэл", total.invoicesCreated, `Төлбөр төлсөн хувь: ${sequentialRate(total.paymentsConfirmed, total.invoicesCreated)}`, "invoicesCreated")}${card("Төлбөр", total.paymentsConfirmed, `Тест эхлүүлсэн хувь: ${sequentialRate(total.assessmentsStarted, total.paymentsConfirmed)}`, "paymentsConfirmed")}${card("Тест эхлүүлсэн", total.assessmentsStarted, `Тест дуусгасан хувь: ${sequentialRate(total.assessmentsCompleted, total.assessmentsStarted)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted, `Тайлан нээсэн хувь: ${sequentialRate(total.reportsOpened || 0, total.assessmentsCompleted)}`, "assessmentsCompleted")}${card("Тайлан нээсэн", total.reportsOpened || 0, `Зочиноос төлбөр: ${rate(total.paymentsConfirmed, total.uniqueVisitors)}`, "reportsOpened")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
+    <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value], index) => `<li><span>${label}</span><strong>${value}</strong>${index ? `<small>${sequentialRate(value, stages[index - 1][1])}</small>` : ""}</li>`).join("")}</ol>
     <p class="analytics-daily-note">Өдөр тутмын зочны тоо нь тухайн өдрийн давтагдаагүй зочдыг харуулна.</p>
     <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Зочин</th><th>Эхэлсэн</th><th>Эхлэх хувь</th><th>Дууссан</th><th>Дуусгах хувь</th><th>Төлбөрийн хэсэг</th><th>Хүрсэн хувь</th><th>Нэхэмжлэл</th><th>Нэхэмжлэл үүсгэсэн хувь</th><th>Төлбөр</th><th>Төлбөр төлсөн хувь</th><th>Зочиноос төлбөр</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${day.uniqueVisitors}</td><td>${day.assessmentsStarted}</td><td>${rate(day.assessmentsStarted, day.uniqueVisitors)}</td><td>${day.assessmentsCompleted}</td><td>${rate(day.assessmentsCompleted, day.assessmentsStarted)}</td><td>${day.paywallViews}</td><td>${rate(day.paywallViews, day.assessmentsCompleted)}</td><td>${day.invoicesCreated}</td><td>${rate(day.invoicesCreated, day.paywallViews)}</td><td>${day.paymentsConfirmed}</td><td>${rate(day.paymentsConfirmed, day.invoicesCreated)}</td><td>${rate(day.paymentsConfirmed, day.uniqueVisitors)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
 }
@@ -342,11 +363,11 @@ function renderForPath(pathname) {
   if (route === "about") return renderAbout();
   if (route === "methodology") return renderMethodology();
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route) && !state.ownerPreview) return renderComingSoon();
-  if (route === "assessmentStart") return renderAssessmentContact();
+  if (route === "assessmentStart") return state.safetyResult && state.safetyResult.route !== "eligible" ? safetyGuidance(state.safetyResult) : renderSafetyCheck();
   if (route === "assessmentContact") return renderAssessmentContact();
   if (route === "assessmentCompleted") return renderAssessmentCompleted();
   if (route === "payment") return renderPayment();
-  if (route === "questions") return renderQuestions();
+  if (route === "questions") return state.questionsAuthorized ? renderQuestions() : `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөрийн эрхийг шалгаж байна</h1><p role="status">Тест нээх эрхийг серверээс баталгаажуулж байна…</p></main>${footer()}</div>`;
   if (route === "report") return renderReport();
   if (route === "recovery") return renderRecovery();
   if (route === "advisorLogin") return renderAdvisorLogin();
@@ -377,18 +398,36 @@ function saveAdminReportPreviewAssessment(assessmentId, storage = typeof session
 function loadAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { return String(storage?.getItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY) || ""); }
 function clearAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { storage?.removeItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY); }
 
+async function submitSafety(form) {
+  if (state.busy) return;
+  const input = formObject(form); input.age = Number(input.age); input.acuteMedical = [input.acuteMedical];
+  state.busy = true; render({ focus: false }); await ensureSession();
+  const result = await api("/.netlify/functions/weight-safety-gate", { method: "POST", body: JSON.stringify(input) });
+  state.safetyResult = result; state.safetyCheckId = result.safetyCheckId || ""; state.busy = false;
+  if (result.route !== "eligible") { render(); return; }
+  if (state.inviteToken) { state.invitation = await api("/.netlify/functions/advisor-invite-resolve", { method: "POST", body: JSON.stringify({ inviteToken: state.inviteToken }) }); state.inviteToken = ""; }
+  navigate("/assessment/contact");
+}
 async function submitContact(form) {
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
   state.busy = true; render();
   await ensureSession();
   const contact = await api("/.netlify/functions/weight-recovery-contact-save", { method: "POST", body: JSON.stringify(input) });
   state.contactGroupId = contact.contactGroupId;
-  if (state.inviteToken) {
-    state.invitation = await api("/.netlify/functions/advisor-invite-resolve", { method: "POST", body: JSON.stringify({ inviteToken: state.inviteToken }) });
-    state.inviteToken = ""; state.busy = false; render(); return;
+  let coachClientId = null;
+  if (state.invitation) {
+    if (!input.consent) throw new Error("Тайлан хуваалцах сонголтоо хийнэ үү.");
+    const consent = await api("/.netlify/functions/advisor-consent", { method: "POST", body: JSON.stringify({ coachClientId: state.invitation.coachClientId, consent: input.consent === "yes" }) });
+    if (input.consent === "yes") coachClientId = consent.coachClientId;
   }
-  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity() }) });
-  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.busy = false; navigate("/assessment/questions");
+  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ prepaid: true, safetyCheckId: state.safetyCheckId,
+    recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity(), ...(coachClientId ? { coachClientId } : {}) }) });
+  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.commercialFlowVersion = assessment.commercialFlowVersion;
+  state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion;
+  if (assessment.previewBypass) { state.questionsAuthorized = true; state.busy = false; navigate("/assessment/questions"); return; }
+  try { state.payment = await api("/.netlify/functions/qpay-create-invoice", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) }); }
+  catch (requestError) { const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(requestError?.body?.error); setPaymentStatus(ambiguous ? "create_unknown" : "create_error"); }
+  state.busy = false; navigate("/assessment/payment");
 }
 async function submitConsent(form) {
   const accepted = formObject(form).consent === "yes";
@@ -412,9 +451,21 @@ function continueToPayment() {
   window.requestAnimationFrame(() => { state.busy = false; navigate("/assessment/payment"); });
 }
 async function checkPayment() {
+  if (state.busy || !state.payment?.paymentId) return;
+  state.busy = true;
   setPaymentStatus("checking"); render();
-  try { state.payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: state.payment.paymentId }) }); if (state.payment.status === "paid") state.report = await loadReport(); }
-  catch { setPaymentStatus("check_error"); } render();
+  try { state.payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: state.payment.paymentId }) }); if (state.payment.status === "paid") { state.assessmentStatus = state.commercialFlowVersion === "prepaid_v2" ? "paid_ready" : state.assessmentStatus; state.questionsAuthorized = state.commercialFlowVersion === "prepaid_v2"; state.busy = false; navigate(state.payment.nextRoute || (state.commercialFlowVersion === "prepaid_v2" ? "/assessment/questions" : "/report")); return; } }
+  catch { setPaymentStatus("check_error"); } finally { state.busy = false; } render();
+}
+function schedulePaymentPolling() {
+  if (typeof window === "undefined") return;
+  if (paymentPollTimer) { clearTimeout(paymentPollTimer); paymentPollTimer = null; }
+  const payment = state.payment || {};
+  if (routeName(window.location.pathname) !== "payment" || !["pending", "check_error"].includes(payment.status) || !payment.paymentId) return;
+  if (!paymentPollingStartedAt) paymentPollingStartedAt = Date.now();
+  const expired = payment.expiresAt && Date.parse(payment.expiresAt) <= Date.now();
+  if (expired || Date.now() - paymentPollingStartedAt > 15 * 60 * 1000) return;
+  paymentPollTimer = setTimeout(() => { if (!document.hidden) checkPayment(); else schedulePaymentPolling(); }, document.hidden ? 12000 : 4000);
 }
 function updateAnswer(input) {
   const question = questionApi.questionById(input.dataset.question); if (!question) return;
@@ -456,6 +507,7 @@ async function nextQuestion() {
     const completed = await api("/.netlify/functions/weight-assessment-complete", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
     state.assessmentStatus = completed.status; state.busy = false; state.slowSave = false;
     if (completed.safetyRoute) { state.report = await loadReport(); navigate("/report"); return; }
+    if (state.commercialFlowVersion === "prepaid_v2") { state.report = await loadReport(); navigate("/report"); return; }
     navigate("/assessment/completed");
   } catch (requestError) {
     const code = requestError?.body?.error;
@@ -482,7 +534,7 @@ async function requestRecovery(form) {
 async function confirmRecovery(form) {
   const input = formObject(form);
   const result = await api("/.netlify/functions/weight-recovery-confirm", { method: "POST", body: JSON.stringify({ recoveryId: state.recovery.recoveryId, code: input.code }) });
-  state.assessmentId = result.assessmentId; state.report = await loadReport(); navigate("/report");
+  state.assessmentId = result.assessmentId; navigate(result.nextRoute || "/report"); await restoreServerState(); render();
 }
 async function advisorLoginSubmit(form) { const result = await api("/.netlify/functions/advisor-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.profile = result; state.advisor.temporaryPasswordChange = result.forcePasswordChange; if (result.forcePasswordChange) render(); else { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); } }
 async function advisorPasswordSubmit(form) { await api("/.netlify/functions/advisor-password-change", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.temporaryPasswordChange = false; state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); }
@@ -557,10 +609,15 @@ async function restoreServerState() {
   if (!["assessmentCompleted", "payment", "questions", "report", "dataDeletion"].includes(route)) return;
   try {
     const restored = await api("/.netlify/functions/weight-session-state", { method: "GET" });
-    if (!restored.assessment) return;
-    state.assessmentId = restored.assessment.assessmentId; state.assessmentStatus = restored.assessment.status; state.questionnaireVersion = restored.assessment.questionnaireVersion || questionApi.LEGACY_QUESTIONNAIRE_VERSION; state.payment = restored.payment || state.payment;
+    if (!restored.assessment) { if (route === "questions") navigate("/assessment/start", { replace: true }); return; }
+    state.assessmentId = restored.assessment.assessmentId; state.assessmentStatus = restored.assessment.status; state.commercialFlowVersion = restored.assessment.commercialFlowVersion || "legacy_postpaid_v1"; state.questionnaireVersion = restored.assessment.questionnaireVersion || questionApi.LEGACY_QUESTIONNAIRE_VERSION; state.payment = restored.payment || state.payment;
     state.answers = restored.answers || {}; state.report = restored.report || null;
-    if (restored.assessment.status === "draft") {
+    if (restored.nextRoute && route === "questions" && restored.nextRoute !== "/assessment/questions") { navigate(restored.nextRoute, { replace: true }); return; }
+    if (route === "questions" && restored.nextRoute === "/assessment/questions") {
+      const access = await api("/.netlify/functions/weight-assessment-questions", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
+      state.assessmentStatus = access.status; state.startedAt = access.startedAt || state.startedAt; state.questionsAuthorized = true;
+    }
+    if (["draft", "paid_ready", "in_progress"].includes(restored.assessment.status)) {
       const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
       const firstIncomplete = routedQuestions.findIndex(question => questionApi.validateAnswer(question, state.answers[question.id], { answers: state.answers, version: state.questionnaireVersion }));
       state.questionIndex = firstIncomplete >= 0 ? firstIncomplete : Math.max(0, routedQuestions.length - 1);
@@ -569,6 +626,7 @@ async function restoreServerState() {
 }
 
 function bind(root) {
+  root.querySelector("#safety-form")?.addEventListener("submit", event => { event.preventDefault(); submitSafety(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("safety-error"); if (node) node.textContent = error.message; }); });
   root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); if (window.location.pathname === "/" && link.getAttribute("href") === "/assessment/start") trackEvent("start_cta_clicked", "", `start_cta_clicked:${Date.now()}`); navigate(link.getAttribute("href")); }));
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(input.type === "text" || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
@@ -602,9 +660,9 @@ function render(options = {}) {
   root.innerHTML = renderForPath(window.location.pathname); bind(root);
   const route = routeName(window.location.pathname);
   if (route === "landing") trackEvent("landing_viewed", "", "landing_viewed:page-load");
-  if (route === "payment" && state.assessmentStatus === "complete") trackEvent("paywall_viewed", state.assessmentId);
-  if (route === "report" && state.report) trackEvent("report_opened", state.assessmentId);
+  if (route === "payment" || route === "assessmentContact") trackEvent("paywall_viewed", state.assessmentId || undefined);
   const heading = document.getElementById("page-title"); if (options.focus !== false && heading) heading.focus();
+  schedulePaymentPolling();
   return root.innerHTML;
 }
 function navigate(pathname, options = {}) { if (typeof window === "undefined") return; window.history[options.replace ? "replaceState" : "pushState"]({}, "", pathname); render(); }

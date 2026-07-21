@@ -34,6 +34,7 @@ const app = require("../app.js");
   assert.equal(await recordEvent(database, "paywall_viewed", context, { assessmentId: "wa_test" }, { idempotencyKey: "paywall_viewed:wa_test", now: new Date("2026-07-19T16:34:00Z") }), null, "payment section refresh is idempotent");
   await recordEvent(database, "invoice_created", context, { assessmentId: "wa_test", invoiceId: "INV-1", paymentId: "wp_test", amountMnt: 9900 }, { idempotencyKey: "invoice_created:INV-1", now: new Date("2026-07-19T16:34:00Z") });
   await recordEvent(database, "payment_confirmed", context, { assessmentId: "wa_test", invoiceId: "INV-1", paymentId: "wp_test", amountMnt: 9900 }, { idempotencyKey: "payment_confirmed:wp_test", now: new Date("2026-07-19T16:35:00Z") });
+  await recordEvent(database, "report_opened", context, { assessmentId: "wa_test" }, { idempotencyKey: "report_opened:wa_test", now: new Date("2026-07-19T16:35:10Z") });
   await recordEvent(database, "payment_confirmed", context, { assessmentId: "wa_forged", invoiceId: "INV-FORGED", paymentId: "wp_forged", amountMnt: 9900 }, { now: new Date("2026-07-19T16:35:30Z") });
   await recordEvent(database, "landing_viewed", context, {}, { isAdmin: true, now: new Date("2026-07-19T16:36:00Z") });
   await database.insert("assessments", { id: "wa_test", sessionId: "ws_test", status: "complete", createdAt: "2026-07-19T16:31:00.000Z", completedAt: "2026-07-19T16:32:00.000Z" });
@@ -41,7 +42,7 @@ const app = require("../app.js");
   await database.insert("entitlements", { id: "we_test", assessmentId: "wa_test", paymentId: "wp_test", status: "active", grantedAt: "2026-07-19T16:35:00.000Z" });
   const aggregate = await database.getDailyFunnelAnalytics("2026-07-20", "2026-07-20"); const days = aggregate.days;
   assert.deepEqual(days[0], { date: "2026-07-20", uniqueVisitors: 1, landingViews: 1, assessmentsStarted: 1, assessmentsCompleted: 1,
-    paywallViews: 1, invoicesCreated: 1, paymentsConfirmed: 1, revenueMnt: 9900 });
+    paywallViews: 1, invoicesCreated: 1, paymentsConfirmed: 1, reportsOpened: 1, revenueMnt: 9900 });
   const boundaryAggregate = await database.getDailyFunnelAnalytics("2026-07-19", "2026-07-20");
   assert.deepEqual(boundaryAggregate.days.map(row => [row.date, row.uniqueVisitors]), [["2026-07-19", 2], ["2026-07-20", 1]], "UTC timestamps group on Ulaanbaatar midnight");
   assert.equal(boundaryAggregate.summary.uniqueVisitors, 2, "range visitors are distinct across days rather than summed daily uniques");
@@ -65,7 +66,7 @@ const app = require("../app.js");
   app._test.setState({ admin: { ...app._test.getState().admin, authenticated: true, owner: true,
     analytics: { preset: "last7", startDate: "2026-07-14", endDate: "2026-07-20", days, priorDays: [], summary: aggregate.summary, priorSummary: null, coverage: aggregate.coverage, loading: false, error: "" } } });
   const dashboard = app._test.renderAdminAnalytics();
-  for (const label of ["Өдөр тутмын үзүүлэлт", "Цагийн бүс: Улаанбаатар", "Зочилсон хүн", "Тест эхлүүлсэн", "Тест дуусгасан", "Төлбөрийн хэсэг үзсэн", "Нэхэмжлэл үүсгэсэн", "Төлбөр төлсөн", "Орлого", "Өдөр тутмын зочны тоо нь тухайн өдрийн давтагдаагүй зочдыг харуулна."]) assert(dashboard.includes(label), label);
+  for (const label of ["Өдөр тутмын үзүүлэлт", "Одоогийн урсгал: Төлбөр эхэнд", "Цагийн бүс: Улаанбаатар", "Зочилсон хүн", "Төлбөрийн хэсэг", "Нэхэмжлэл", "Төлбөр", "Тест эхлүүлсэн", "Тест дуусгасан", "Тайлан нээсэн", "Орлого", "Өдөр тутмын зочны тоо нь тухайн өдрийн давтагдаагүй зочдыг харуулна."]) assert(dashboard.includes(label), label);
   assert(!dashboard.includes("Paywall"));
   assert.equal((dashboard.match(/Сонгосон хугацааг өмнөх ижил хугацаатай харьцуулах боломжгүй байна\./g) || []).length, 1);
   assert.equal((dashboard.match(/Өмнөх хугацаатай харьцуулах боломжгүй/g) || []).length, 0);
