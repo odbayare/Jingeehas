@@ -17,7 +17,7 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; min-width: 320px; background: var(--background); color: var(--text); line-height: 1.6; }
+body { margin: 0; min-width: 320px; overflow-x: clip; background: var(--background); color: var(--text); line-height: 1.6; }
 a { color: var(--primary-dark); }
 button, input, textarea, select { font: inherit; }
 button, a { touch-action: manipulation; }
@@ -116,6 +116,19 @@ code { overflow-wrap: anywhere; }
 .funnel-visual li:not(:last-child)::after { content: "→"; position: absolute; right: -0.48rem; top: 42%; z-index: 1; color: var(--primary); font-weight: 900; }
 .funnel-visual span, .funnel-visual small { font-size: 0.75rem; }
 .funnel-visual strong { font-size: 1.35rem; }
+.question-progress-card { max-width: 100%; margin: 1.5rem 0; border: 1px solid var(--border); border-radius: 1rem; padding: 1rem; background: #f9fbf8; }
+.question-progress-card > h3 { margin: 0 0 0.75rem; }
+.question-progress-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.65rem; }
+.question-progress-summary article { min-width: 0; border: 1px solid var(--border); border-radius: 0.75rem; padding: 0.65rem; background: #fff; }
+.question-progress-summary span { display: block; color: var(--muted); font-size: 0.72rem; font-weight: 750; line-height: 1.3; }
+.question-progress-summary strong { display: block; margin-top: 0.25rem; font-size: 0.95rem; line-height: 1.35; overflow-wrap: anywhere; }
+.question-progress-coverage { margin: 0.65rem 0; color: var(--muted); font-size: 0.8rem; }
+.question-progress-card:not(.is-expanded) { min-height: 0; }
+.question-progress-toggle { max-width: 100%; white-space: normal; }
+.question-progress-card h4 { margin: 1.25rem 0 0.5rem; }
+.question-progress-table { margin-block: 0.75rem; }
+.question-progress-table table { min-width: 720px; }
+.question-progress-table th, .question-progress-table td { font-size: 0.85rem; }
 
 @media (max-width: 760px) {
   .page { padding-inline: 1rem; }
@@ -133,6 +146,7 @@ code { overflow-wrap: anywhere; }
   .metric-grid { grid-template-columns: 1fr; }
   .analytics-filters { grid-template-columns: 1fr; }
   .analytics-metrics { grid-template-columns: 1fr 1fr; }
+  .question-progress-summary { grid-template-columns: 1fr 1fr; }
   .funnel-visual { grid-template-columns: 1fr; }
   .funnel-visual li { min-height: 70px; }
   .funnel-visual li:not(:last-child)::after { content: "↓"; right: 49%; top: auto; bottom: -0.7rem; }
@@ -140,6 +154,10 @@ code { overflow-wrap: anywhere; }
   .methodology-summary { padding: 1.1rem; border-radius: 1rem; }
   .actions .button { flex: 1 1 100%; }
   .site-nav { align-items: flex-start; }
+}
+
+@media (max-width: 390px) {
+  .question-progress-summary { grid-template-columns: 1fr; }
 }
 
 @media print {

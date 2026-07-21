@@ -38,7 +38,7 @@
     },
     {
       "file": "netlify/functions/_lib/config.js",
-      "sha256": "371de85958f25e51b887aa4872eef34c46c69ca34ccda7ae73648cd137a2a199"
+      "sha256": "0697409c54bfec564f6a6a41c7a2ed8aa17c5c3f96a40a30f12df2b36eed45af"
     },
     {
       "file": "netlify/functions/_lib/crypto.js",
@@ -59,6 +59,14 @@
     {
       "file": "netlify/functions/_lib/qpay.js",
       "sha256": "d1276dc7cddc99e487ac5d46f9998f03bb4782ff5cb7144691151a63bae28d43"
+    },
+    {
+      "file": "netlify/functions/_lib/question-analytics.js",
+      "sha256": "6e5d452e40539fd681c9a7c4a32fe7d93db2745e8075e3a1ccd1f23c6e1e35eb"
+    },
+    {
+      "file": "netlify/functions/_lib/question-progress.js",
+      "sha256": "c2ab62ef7b233eb6c6efb235a5dae39bc3eb69008fdf4b06bab9cb2f1299aa39"
     },
     {
       "file": "netlify/functions/_lib/recovery.js",
@@ -102,7 +110,7 @@
     },
     {
       "file": "netlify/functions/_lib/store.js",
-      "sha256": "c40e8a3dfb81d81a0006e9175dc18272daf254da157334ed9c17468d3ac6d6c7"
+      "sha256": "b14ce48e027053a89b26eee0ad1109b9f1d132156ecee58bcc7c05cc9da6fe77"
     },
     {
       "file": "netlify/functions/admin-advisor-create.js",
@@ -135,6 +143,10 @@
     {
       "file": "netlify/functions/admin-preview-status.js",
       "sha256": "e022a77ef13e570cbaa803ca6cc650b974ec12f7bd0c6cc064313be1e56ae62e"
+    },
+    {
+      "file": "netlify/functions/admin-question-progress.js",
+      "sha256": "748d889fed40169780ed83f322328f9e79c82956bf1c5d70354b5589eae4177b"
     },
     {
       "file": "netlify/functions/admin-regenerate-report-version.js",
@@ -210,7 +222,7 @@
     },
     {
       "file": "netlify/functions/weight-assessment-save.js",
-      "sha256": "570a70a84bc4946f1909d26d5ea7f3905b00f4a4fb0db97249d5ce1249169200"
+      "sha256": "1c1dbec486dd00afaa99971ba860bc93feda5dceda197034787ae219336fb20f"
     },
     {
       "file": "netlify/functions/weight-data-deletion-request.js",
@@ -219,6 +231,10 @@
     {
       "file": "netlify/functions/weight-entitlements.js",
       "sha256": "6a3e36faf672587cd1a76cf3b0cd4193359eb5252ce07cf3b6c86a2a6bebf9a0"
+    },
+    {
+      "file": "netlify/functions/weight-question-progress.js",
+      "sha256": "6fc90a0c717c5c061db3dd7655a04fef0bce214a56b49cbc36217f6b82299a18"
     },
     {
       "file": "netlify/functions/weight-recovery-confirm.js",
@@ -262,7 +278,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "2421225a96d4c31755e83783f79da14f8c4a1fc5b8fe4df828cc748ea1d8bc17"
+      "sha256": "9929e381b2e7692f0751e8edf7b1d1ec140fcf7221d973979a2fc6803b01a60c"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -290,7 +306,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "49278329fbca6e4a3220bb9f45732e65f2569ef0097bc2b6cba76167bfd8f694"
+      "sha256": "39be4b96f35e1ad1a372e4ef72b4e1310860d2acb8c13331d3cee23d42a89887"
     }
   ],
   "functionNames": [
@@ -302,6 +318,7 @@
     "admin-preview-revoke",
     "admin-preview-start",
     "admin-preview-status",
+    "admin-question-progress",
     "admin-regenerate-report-version",
     "admin-report-preview",
     "admin-report-regeneration-candidates",
@@ -323,6 +340,7 @@
     "weight-assessment-save",
     "weight-data-deletion-request",
     "weight-entitlements",
+    "weight-question-progress",
     "weight-recovery-confirm",
     "weight-recovery-contact-save",
     "weight-recovery-request",
