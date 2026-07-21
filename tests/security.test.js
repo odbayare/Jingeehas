@@ -16,6 +16,7 @@ assert(!publicSource.includes("internalTest"));
 assert(!/window\.(?:markMockPaymentPaid|createEntitlementFromPayment|createCoachAccount|resetCoachPassword|setCoachStatus|getCoachDashboard|viewCoachReport|getMockBackendState|resetMockBackend)/.test(publicSource));
 assert(!/\?invite=.*localStorage|localStorage.*invite/i.test(publicSource));
 assert(!/advisorSessionToken|adminSessionToken/.test(publicSource));
+assert(publicSource.includes("Сэргээх кодыг одоогоор илгээж чадсангүй. Түр хүлээгээд дахин оролдоно уу."), "recovery delivery failures are localized");
 assert.equal(app.money(9900), "9,900₮");
 assert.equal(app.money(4000), "4,000₮");
 assert.equal(advisorStatusLabel("consent_accepted"), "Зөвшөөрсөн");
