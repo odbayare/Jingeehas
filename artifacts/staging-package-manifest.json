@@ -230,7 +230,7 @@
     },
     {
       "file": "netlify/functions/weight-recovery-confirm.js",
-      "sha256": "7a69b32f5b39cb6b57835508b8b09fae88bb8401fff134d820d8ca3537ca72a7"
+      "sha256": "dbc17e1f1302a2069be7299649957bbd330069cc4b3d5e09d6b9b5f9f1d2a1b1"
     },
     {
       "file": "netlify/functions/weight-recovery-contact-save.js",
@@ -270,7 +270,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "d95ecbeda37717ce6548e359a3b96d933f354e73eb6ee8a9156646dfa56f5982"
+      "sha256": "e1e90c428d3997c692b83a69a413e69b655693b9cce3f5943c6b35cab958f196"
     },
     {
       "file": "site/assets/favicon.svg",
