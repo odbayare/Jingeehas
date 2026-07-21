@@ -262,11 +262,15 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "465b834838065008ff1d845a909b6836413c8e5badbca3014d2296cc032b9bf5"
+      "sha256": "2421225a96d4c31755e83783f79da14f8c4a1fc5b8fe4df828cc748ea1d8bc17"
     },
     {
       "file": "site/assets/favicon.svg",
       "sha256": "95bea179e8bb51b4acc6374a1c43f284039dd60e4f3fbada62caf2be3b39e5dc"
+    },
+    {
+      "file": "site/assets/hero-woman-stretch.png",
+      "sha256": "e64a1c311c97f3d154359cf5caffc4d9ab45f7f22fc72ca506e6ac0668c43b16"
     },
     {
       "file": "site/assets/hero.svg",
@@ -278,7 +282,7 @@
     },
     {
       "file": "site/index.html",
-      "sha256": "a0f35701bad0b996ad1ca3db8a9bfe70ed3c3143a5292d86366640789adc1308"
+      "sha256": "1b2e1bbfe06b90b3cdb51bd066cda8e2d1ff354afa41031f9b12395da21971e5"
     },
     {
       "file": "site/questions.js",
@@ -286,7 +290,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "542ef023ed9965e94ecdb67a11fa2fcdb2cb1779650a9a7a43e1373b84f3790c"
+      "sha256": "49278329fbca6e4a3220bb9f45732e65f2569ef0097bc2b6cba76167bfd8f694"
     }
   ],
   "functionNames": [

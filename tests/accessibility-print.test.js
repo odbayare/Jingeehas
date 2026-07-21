@@ -11,7 +11,7 @@ assert(css.includes("@media print"));
 assert(css.includes("#report-content"));
 assert(css.includes("overflow-x: auto"));
 assert(!/https?:\/\//.test(css));
-assert(css.includes('url("assets/hero.svg")'));
+assert(css.includes('url("assets/hero-woman-stretch.png")'));
 assert(html.includes("skip-link"));
 assert(!html.includes("<main id=\"app\""));
 

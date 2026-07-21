@@ -73,9 +73,18 @@ function footer() { return `<footer class="site-footer"><p>${PRODUCT.name}</p><n
 
 function renderLanding() {
   return `<div class="page landing-page">${navigation()}<main><section class="hero" aria-labelledby="page-title"><div class="hero-copy">
-    <p class="eyebrow">Сэтгэлзүйн хэв маяг, далд зуршлын үнэлгээ</p><h1 id="page-title" tabindex="-1">${PRODUCT.name}</h1>
-    <div class="approved-copy"><p>Илүүдэл жин үүсгэж буй сэтгэлзүйн шалтгаанаа илрүүл.</p><p>Ямар далд зуршлууд илүүдэл жин үүсэхэд нөлөөлж буйг тайлж мэд.</p><p>Жин хасахад тань тохирох дөт хэв маяг, дасгал сургуулилтын чиглэлээ мэдэж ав.</p></div>
-    <a class="button" href="/assessment/start" data-route>Тест бөглөх</a>
+    <p class="eyebrow">Жин хасахад саад болж буй шалтгаанаа тань</p>
+    <h1 id="page-title" tabindex="-1">Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?</h1>
+    <div class="hero-question-list" role="list" aria-label="Танд танил байж болох нөхцөлүүд">
+      <p class="hero-question" role="listitem">Илүүдэл жин тань таны санааг байнга зовоодог уу?</p>
+      <p class="hero-question" role="listitem">Янз бүрийн дасгал хөдөлгөөн туршсан ч өөрчлөлт бага байна уу?</p>
+      <p class="hero-question" role="listitem">Тураах бэлдмэл, хоолны дэглэм хэрэглэсэн ч үр дүн нь хангалтгүй эсвэл удаан тогтдоггүй юу?</p>
+    </div>
+    <div class="hero-highlight"><p>Жин хасахад зөвхөн хоол, дасгал биш — таны сэтгэлзүйн хэв маяг, далд зуршил хүчтэй нөлөөлдөг.</p></div>
+    <p class="hero-lead">Өөрт тань саад болж буй сэтгэлзүйн шалтгааныг эхлээд ойлгож чадвал жин хасах арга барилаа илүү бодитой, өөртөө тохирсон, тогтвортой сонгоход хялбар болно.</p>
+    <div class="hero-actions"><a class="button" href="/assessment/start" data-route>Сэтгэлзүйн хэв маягаа тодорхойлох</a>
+      <p class="hero-note">Эмнэлгийн онош тавихгүй. Таны жин хасахад нөлөөлж буй давтагддаг хэв маяг, далд зуршлыг таньж ойлгоход тусална.</p>
+    </div>
     </div><div class="hero-visual" aria-hidden="true"></div></section>
     <section class="methodology-summary" aria-labelledby="methodology-title">
       <div class="methodology-heading"><p class="eyebrow">Үнэлгээний зарчим</p><h2 id="methodology-title">Арга зүй ба судалгааны үндэслэл</h2>
