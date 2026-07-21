@@ -10,13 +10,10 @@ const { calculateAssessmentSafety } = require("../netlify/functions/_lib/safety.
 (async () => {
   app._test.setComingSoon(false);
   const start = app.renderForPath("/assessment/start");
-  assert(start.includes('id="contact-email"'), "start route opens the assessment setup directly");
-  for (const removed of ["safety-form", "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт", "Тест үнэлгээ танд тохирох эсэхийг эхэлж шалгана", "Тохирох эсэхийг шалгах"]) {
-    assert(!start.includes(removed), removed);
-  }
+  assert(start.includes('id="safety-form"'), "start route opens the short pre-payment safety check");
+  assert(start.includes("Төлбөрөөс өмнөх аюулгүй байдлын шалгалт"));
   const appSource = fs.readFileSync(require.resolve("../app.js"), "utf8");
-  assert(!appSource.includes("function renderSafetyGate"));
-  assert(!appSource.includes('api("/.netlify/functions/weight-safety-gate"'));
+  assert(appSource.includes('api("/.netlify/functions/weight-safety-gate"'));
   const submitContactSource = /async function submitContact\(form\) \{[\s\S]*?\n\}/.exec(appSource)?.[0] || "";
   assert(submitContactSource.indexOf("await ensureSession();") < submitContactSource.indexOf('weight-recovery-contact-save'), "contact submit creates or resumes the authenticated session before protected writes");
 

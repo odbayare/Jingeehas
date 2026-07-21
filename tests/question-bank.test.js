@@ -34,9 +34,11 @@ assert(!/<section class="hero"[\s\S]*?9,900₮[\s\S]*?<\/section>/.test(landing)
 assert.equal(app.PRODUCT.amount, 9900);
 const appSource = require("node:fs").readFileSync(require.resolve("../app.js"), "utf8");
 assert(appSource.includes('if (route === "landing") trackEvent("landing_viewed"'), "landing analytics event remains wired");
+assert(appSource.includes('["text", "number"].includes(input.type)'), "number answers update on input without waiting for blur");
 assert(!landing.includes("Үе 1"));
+app._test.setState({ questionsAuthorized: true });
 assert(!app.renderForPath("/assessment/questions").includes("эхний хэв маяг"));
-assert(app.renderForPath("/assessment/questions").includes("Таны хариултын зураглал тест дууссаны дараа гарна."));
+assert(app.renderForPath("/assessment/questions").includes("Таны явц автоматаар хадгалагдана."));
 app._test.setState({ ownerPreview: true, assessmentStatus: "complete", assessmentId: "test-assessment" });
 const completion = app.renderForPath("/assessment/completed");
 assert(completion.includes("Таны хариултуудыг цуглуулж дууслаа"));
