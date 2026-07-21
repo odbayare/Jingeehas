@@ -424,7 +424,11 @@ async function submitContact(form) {
     recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity(), ...(coachClientId ? { coachClientId } : {}) }) });
   state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.commercialFlowVersion = assessment.commercialFlowVersion;
   state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion;
-  if (assessment.previewBypass) { state.questionsAuthorized = true; state.busy = false; navigate("/assessment/questions"); return; }
+  if (assessment.previewBypass) {
+    const access = await api("/.netlify/functions/weight-assessment-questions", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
+    state.assessmentStatus = access.status; state.startedAt = access.startedAt || state.startedAt; state.questionsAuthorized = true;
+    state.busy = false; navigate("/assessment/questions"); return;
+  }
   try { state.payment = await api("/.netlify/functions/qpay-create-invoice", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) }); }
   catch (requestError) { const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(requestError?.body?.error); setPaymentStatus(ambiguous ? "create_unknown" : "create_error"); }
   state.busy = false; navigate("/assessment/payment");

@@ -112,7 +112,7 @@ test("coming-soon cannot be bypassed by a public query", async ({ page }) => {
   expect(await page.evaluate(() => Object.keys(localStorage).length)).toBe(0);
 });
 
-test("authenticated owner can establish a production-mode preview", async ({ page }) => {
+test("authenticated owner preview starts through the server gate without QPay", async ({ page, request }) => {
   await page.goto("/admin");
   await page.getByLabel("Имэйл").fill("owner@example.com");
   await page.getByLabel("Нууц үг").fill("owner-password-strong");
@@ -120,6 +120,14 @@ test("authenticated owner can establish a production-mode preview", async ({ pag
   await page.getByRole("button", { name: "Бодит тестийг шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/start$/);
   await expect(page.getByRole("heading", { name: "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах" })).toBeVisible();
+  await completeEligibleGate(page);
+  const beforePreview = await (await request.get("/__test/stats")).json();
+  await page.locator("#contact-email").fill("owner-preview@example.com");
+  await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
+  await expect(page).toHaveURL(/\/assessment\/questions$/);
+  const afterPreview = await (await request.get("/__test/stats")).json();
+  expect(afterPreview.qpayCreate).toBe(beforePreview.qpayCreate);
+  expect(afterPreview.paymentRows).toBe(beforePreview.paymentRows);
 });
 
 test("assessment starts with the short free safety gate", async ({ page, request }) => {
