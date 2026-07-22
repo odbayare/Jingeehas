@@ -126,7 +126,7 @@
     },
     {
       "file": "netlify/functions/admin-analytics-daily.js",
-      "sha256": "3f8728e8d2ce6c42da01e45b965e1ba848644cbecb629fe794ec0efd39e1bcc4"
+      "sha256": "6dbfa4b97733765e917c0ecc8fdf76ff829301f3d3052ff7327fd0b02c268471"
     },
     {
       "file": "netlify/functions/admin-login.js",
@@ -286,7 +286,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "233429089d9893edfe003a373a3968698f1c6b875f8eeb05e324f714cb2831c4"
+      "sha256": "a53b8e1fd3ad1622cb0e355103ee9b54ccfa30a0943f7f58b9f5257736b203a0"
     },
     {
       "file": "site/assets/favicon.svg",

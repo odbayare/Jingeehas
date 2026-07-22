@@ -107,6 +107,7 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
   assert(dashboard.includes("Legacy тест эхлүүлсэн: 9")); assert(dashboard.includes("Legacy төлбөр: 1"));
   assert(dashboard.includes("Сонгосон хугацаанд хэмжигдсэн нийт зочин: 5"));
   assert(dashboard.includes("Төлбөр-эхэнд урсгалын шинэ зочин"));
+  assert(dashboard.includes("Deploy-оос хойших цагийн эхний хөрвөлт"));
   assert(dashboard.includes("Хуучин урсгалын бодит бүртгэл"));
   assert(dashboard.includes("Доорх хүснэгт төлбөр-эхэнд урсгалын үзүүлэлтийг өдрөөр харуулна."));
   assert(dashboard.includes("Сонгосон хугацаанд хуучин болон төлбөр-эхэнд урсгалын бүртгэл хоёулаа байна. Урсгал хоорондын тоог хольж хувь тооцоогүй."));
@@ -128,6 +129,8 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
   assert.equal(tracked.filter(row => row.eventName === "landing_viewed").length, 1, "landing refresh remains idempotent per visitor and day");
   assert.equal(tracked.filter(row => row.eventName === "payment_preparation_viewed").length, 1, "payment preparation render is idempotent per public session");
   assert.equal(tracked.filter(row => row.eventName === "paywall_viewed").length, 1, "payment preparation refresh remains idempotent per assessment");
+  const trackedHourly = await trackingDatabase.getDailyFunnelAnalytics("2026-07-22", "2026-07-22");
+  assert.equal(trackedHourly.landingCutoverHourly.totals.ctaClicks, 0, "test localhost traffic is excluded from commercial hourly totals");
   assert.equal((await trackingDatabase.find("payments", {})).length, 0, "payment-section tracking requires no QPay invoice");
   setDatabaseForTests(database);
 
