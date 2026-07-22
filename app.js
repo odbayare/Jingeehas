@@ -21,7 +21,7 @@ const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "
 const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"], "Q-METHOD-PAST": ["Q-METHOD-LONGEST", "Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION"] });
 
 function createState() {
-  return { safetyResult: null, safetyCheckId: "", contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
+  return { contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
@@ -168,16 +168,6 @@ function safetyGuidance(result) {
   return `<div class="page"><main class="content-card safety-route" aria-live="polite"><h1 id="page-title" tabindex="-1">${escapeHtml(guidance.title || "Аюулгүй байдлын зөвлөмж")}</h1>
     <p>${escapeHtml(guidance.body || "")}</p><p class="notice">Энэ зөвлөмж төлбөргүй.</p>
     <a class="button danger" href="tel:103">${escapeHtml(guidance.action || "Тусламж авах")}</a></main>${footer()}</div>`;
-}
-function renderSafetyCheck() {
-  return `<div class="page">${navigation()}<main class="content-card safety-check"><p class="eyebrow">Төлбөрөөс өмнөх аюулгүй байдлын шалгалт</p><h1 id="page-title" tabindex="-1">Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах</h1>
-    <p>Энэ богино шалгалт нь яаралтай эсвэл мэргэжлийн тусламж түрүүнд шаардлагатай эсэхийг ялгана.</p>
-    <form id="safety-form" novalidate><label class="field"><span>Нас</span><input name="age" type="number" min="18" max="120" required></label>
-    <fieldset><legend>Өөртөө хор хүргэх бодол одоо төрж байна уу?</legend><label class="option-label"><input type="radio" name="selfHarm" value="Үгүй" required><span>Үгүй</span></label><label class="option-label"><input type="radio" name="selfHarm" value="Одоо хааяа бодогддог" required><span>Одоо хааяа бодогддог</span></label><label class="option-label"><input type="radio" name="selfHarm" value="Одоо идэвхтэй бодогдож байна" required><span>Одоо идэвхтэй бодогдож байна</span></label></fieldset>
-    <fieldset><legend>Одоо ухаан балартах зэрэг яаралтай шинж байна уу?</legend><label class="option-label"><input type="radio" name="acuteMedical" value="Аль нь ч үгүй" required><span>Аль нь ч үгүй</span></label><label class="option-label"><input type="radio" name="acuteMedical" value="Ухаан балартах" required><span>Тийм</span></label></fieldset>
-    <fieldset><legend>Идсэнээ нөхөх зорилгоор бөөлжих эсвэл хэт дасгал хийх давтамж</legend><label class="option-label"><input type="radio" name="compensatoryBehavior" value="Үгүй" required><span>Үгүй</span></label><label class="option-label"><input type="radio" name="compensatoryBehavior" value="Одоо хааяа" required><span>Одоо хааяа</span></label></fieldset>
-    <fieldset><legend>Одоогийн биеийн байдлаар тест үргэлжлүүлэхэд</legend><label class="option-label"><input type="radio" name="medicalSuitability" value="Үргэлжлүүлэхэд тохиромжтой" required><span>Тохиромжтой</span></label><label class="option-label"><input type="radio" name="medicalSuitability" value="Эмчтэй түрүүлж ярилцах шаардлагатай" required><span>Эмчтэй түрүүлж ярилцана</span></label></fieldset>
-    <p id="safety-error" class="error" role="alert"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Үргэлжлүүлэх</button></form></main>${footer()}</div>`;
 }
 function renderAssessmentContact() {
   return `<div class="page">${navigation()}<main class="content-card checkout-preparation"><h1 id="page-title" tabindex="-1">Тест үнэлгээгээ эхлүүлэх</h1>
@@ -452,7 +442,7 @@ function renderForPath(pathname) {
   if (route === "about") return renderAbout();
   if (route === "methodology") return renderMethodology();
   if (isComingSoon() && OWNER_PREVIEW_ROUTES.has(route) && !state.ownerPreview) return renderComingSoon();
-  if (route === "assessmentStart") return state.safetyResult && state.safetyResult.route !== "eligible" ? safetyGuidance(state.safetyResult) : renderSafetyCheck();
+  if (route === "assessmentStart") return renderAssessmentContact();
   if (route === "assessmentContact") return renderAssessmentContact();
   if (route === "assessmentCompleted") return renderAssessmentCompleted();
   if (route === "payment") return renderPayment();
@@ -487,20 +477,11 @@ function saveAdminReportPreviewAssessment(assessmentId, storage = typeof session
 function loadAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { return String(storage?.getItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY) || ""); }
 function clearAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { storage?.removeItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY); }
 
-async function submitSafety(form) {
-  if (state.busy) return;
-  const input = formObject(form); input.age = Number(input.age); input.acuteMedical = [input.acuteMedical];
-  state.busy = true; render({ focus: false }); await ensureSession();
-  const result = await api("/.netlify/functions/weight-safety-gate", { method: "POST", body: JSON.stringify(input) });
-  state.safetyResult = result; state.safetyCheckId = result.safetyCheckId || ""; state.busy = false;
-  if (result.route !== "eligible") { render(); return; }
-  if (state.inviteToken) { state.invitation = await api("/.netlify/functions/advisor-invite-resolve", { method: "POST", body: JSON.stringify({ inviteToken: state.inviteToken }) }); state.inviteToken = ""; }
-  navigate("/assessment/contact");
-}
 async function submitContact(form) {
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
   state.busy = true; render();
   await ensureSession();
+  if (state.inviteToken) { state.invitation = await api("/.netlify/functions/advisor-invite-resolve", { method: "POST", body: JSON.stringify({ inviteToken: state.inviteToken }) }); state.inviteToken = ""; render(); }
   const contact = await api("/.netlify/functions/weight-recovery-contact-save", { method: "POST", body: JSON.stringify(input) });
   state.contactGroupId = contact.contactGroupId;
   let coachClientId = null;
@@ -509,7 +490,7 @@ async function submitContact(form) {
     const consent = await api("/.netlify/functions/advisor-consent", { method: "POST", body: JSON.stringify({ coachClientId: state.invitation.coachClientId, consent: input.consent === "yes" }) });
     if (input.consent === "yes") coachClientId = consent.coachClientId;
   }
-  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ prepaid: true, safetyCheckId: state.safetyCheckId,
+  const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ prepaid: true,
     recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity(), ...(coachClientId ? { coachClientId } : {}) }) });
   state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.commercialFlowVersion = assessment.commercialFlowVersion;
   state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion;
@@ -737,7 +718,6 @@ async function restoreServerState() {
 }
 
 function bind(root) {
-  root.querySelector("#safety-form")?.addEventListener("submit", event => { event.preventDefault(); submitSafety(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("safety-error"); if (node) node.textContent = error.message; }); });
   root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); if (window.location.pathname === "/" && link.getAttribute("href") === "/assessment/start") trackEvent("start_cta_clicked", "", `start_cta_clicked:${Date.now()}`); navigate(link.getAttribute("href")); }));
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(["text", "number"].includes(input.type) || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
