@@ -106,46 +106,97 @@ class MemoryDatabaseAdapter {
     } finally { release(); if (this.activationLocks.get(target.assessmentId) === currentLock) this.activationLocks.delete(target.assessmentId); }
   }
   async getDailyFunnelAnalytics(startDate, endDate) {
+    const cutover = new Date("2026-07-21T16:17:45.493Z");
     const allEvents = [...this.table("analytics_events").values()];
     const excludedAssessments = new Set(allEvents.filter(row => row.assessmentId && (row.isAdmin || row.isOwnerPreview || row.isTest)).map(row => row.assessmentId));
     for (const row of this.table("assessment_sessions").values()) if (row.source === "owner") excludedAssessments.add(row.assessmentId);
     const rows = allEvents.filter(row => !row.isAdmin && !row.isOwnerPreview && !row.isTest);
     const assessments = [...this.table("assessments").values()].filter(row => !excludedAssessments.has(row.id));
     const payments = [...this.table("payments").values()].filter(row => !excludedAssessments.has(row.assessmentId));
-    const entitlements = [...this.table("entitlements").values()].filter(row => row.status === "active");
+    const entitlements = [...this.table("entitlements").values()].filter(row => row.status === "active" && payments.some(payment => payment.id === row.paymentId && payment.status === "paid"));
     const day = value => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
+    const inRange = value => value && day(value) >= startDate && day(value) <= endDate;
+    const assessmentById = new Map(assessments.map(row => [row.id, row]));
+    const paymentById = new Map(payments.map(row => [row.id, row]));
+    const firstLanding = new Map(); const firstSection = new Map(); const firstReport = new Map();
+    for (const event of rows.sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
+      if (event.eventName === "landing_viewed" && event.visitorIdHash && !firstLanding.has(event.visitorIdHash)) firstLanding.set(event.visitorIdHash, event);
+      if (event.eventName === "paywall_viewed" && event.assessmentId && assessmentById.has(event.assessmentId) && !firstSection.has(event.assessmentId)) firstSection.set(event.assessmentId, event);
+      if (event.eventName === "report_opened" && event.assessmentId && assessmentById.has(event.assessmentId) && !firstReport.has(event.assessmentId)) firstReport.set(event.assessmentId, event);
+    }
+    const paid = entitlements.map(entitlement => ({ entitlement, payment: paymentById.get(entitlement.paymentId) })).filter(item => item.payment);
+    const firstLandingEntries = [...firstLanding.values()].filter(row => inRange(row.occurredAt) && new Date(row.occurredAt) >= cutover);
+    const flow = assessment => assessment?.commercialFlowVersion === "prepaid_v2" ? "prepaid_v2" : "legacy_postpaid_v1";
+    const totalsForFlow = wanted => {
+      const scopedAssessments = assessments.filter(row => flow(row) === wanted); const ids = new Set(scopedAssessments.map(row => row.id));
+      const scopedPayments = payments.filter(row => ids.has(row.assessmentId)); const scopedPaymentIds = new Set(scopedPayments.map(row => row.id));
+      const scopedPaid = paid.filter(item => scopedPaymentIds.has(item.payment.id) && inRange(item.entitlement.grantedAt));
+      return { paymentSectionViews: [...firstSection.values()].filter(row => ids.has(row.assessmentId) && inRange(row.occurredAt)).length,
+        invoicesCreated: new Set(scopedPayments.filter(row => row.invoiceId && inRange(row.createdAt)).map(row => row.invoiceId)).size,
+        paymentsConfirmed: new Set(scopedPaid.map(item => item.payment.id)).size,
+        assessmentsStarted: scopedAssessments.filter(row => inRange(wanted === "prepaid_v2" ? row.startedAt : row.createdAt)).length,
+        assessmentsCompleted: scopedAssessments.filter(row => row.status === "complete" && inRange(row.completedAt)).length,
+        reportsOpened: [...firstReport.values()].filter(row => ids.has(row.assessmentId) && inRange(row.occurredAt)).length,
+        revenueMnt: [...new Map(scopedPaid.map(item => [item.payment.id, Number(item.payment.amount || 0)])).values()].reduce((sum, value) => sum + value, 0) };
+    };
+    const prepaid = totalsForFlow("prepaid_v2"); const legacy = totalsForFlow("legacy_postpaid_v1");
+    const conversion = (entryCount, convertedCount, unavailable = false, reason = "") => ({ entryCount, convertedCount,
+      rate: unavailable || !entryCount ? null : convertedCount / entryCount,
+      status: unavailable ? "tracking_unavailable" : entryCount ? "available" : "no_denominator",
+      reason: unavailable ? reason : entryCount ? null : "no_denominator" });
+    const rangeEnd = new Date(`${endDate}T16:00:00.000Z`);
+    const sectionEntries = [...firstSection.values()].filter(row => flow(assessmentById.get(row.assessmentId)) === "prepaid_v2" && inRange(row.occurredAt));
+    const invoiceEntries = [...new Map(payments.filter(row => flow(assessmentById.get(row.assessmentId)) === "prepaid_v2" && row.invoiceId && inRange(row.createdAt)).map(row => [row.invoiceId, row])).values()];
+    const paymentEntries = [...new Map(paid.filter(item => flow(assessmentById.get(item.payment.assessmentId)) === "prepaid_v2" && inRange(item.entitlement.grantedAt))
+      .sort((a, b) => String(a.entitlement.grantedAt).localeCompare(String(b.entitlement.grantedAt))).map(item => [item.payment.assessmentId, item])).values()];
+    const startEntries = assessments.filter(row => flow(row) === "prepaid_v2" && inRange(row.startedAt));
+    const completeEntries = assessments.filter(row => flow(row) === "prepaid_v2" && row.status === "complete" && inRange(row.completedAt));
+    const visitorTracking = [...firstLanding.values()].map(row => row.occurredAt).sort()[0] || null;
+    const sectionTracking = [...firstSection.values()].map(row => row.occurredAt).sort()[0] || null;
+    const linkageTracking = [...firstSection.values()].filter(row => row.visitorIdHash && flow(assessmentById.get(row.assessmentId)) === "prepaid_v2").map(row => row.occurredAt).sort()[0] || null;
+    const conversions = {
+      visitorToPaymentSection: conversion(firstLandingEntries.length, firstLandingEntries.filter(landing => sectionEntries.some(section => section.visitorIdHash === landing.visitorIdHash && new Date(section.occurredAt) >= new Date(landing.occurredAt) && new Date(section.occurredAt) < rangeEnd)).length,
+        !visitorTracking || !linkageTracking, "visitor_assessment_linkage_unavailable"),
+      paymentSectionToInvoice: conversion(sectionEntries.length, sectionEntries.filter(section => payments.some(payment => payment.assessmentId === section.assessmentId && payment.invoiceId && new Date(payment.createdAt) >= new Date(section.occurredAt) && new Date(payment.createdAt) < rangeEnd)).length),
+      invoiceToPayment: conversion(invoiceEntries.length, invoiceEntries.filter(payment => paid.some(item => item.payment.id === payment.id && new Date(item.entitlement.grantedAt) >= new Date(payment.createdAt) && new Date(item.entitlement.grantedAt) < rangeEnd)).length),
+      paymentToStart: conversion(paymentEntries.length, paymentEntries.filter(item => { const assessment = assessmentById.get(item.payment.assessmentId); return assessment?.startedAt && new Date(assessment.startedAt) >= new Date(item.entitlement.grantedAt) && new Date(assessment.startedAt) < rangeEnd; }).length),
+      startToComplete: conversion(startEntries.length, startEntries.filter(assessment => assessment.completedAt && new Date(assessment.completedAt) >= new Date(assessment.startedAt) && new Date(assessment.completedAt) < rangeEnd).length),
+      completeToReportOpen: conversion(completeEntries.length, completeEntries.filter(assessment => { const report = firstReport.get(assessment.id); return report && new Date(report.occurredAt) >= new Date(assessment.completedAt) && new Date(report.occurredAt) < rangeEnd; }).length)
+    };
     const output = [];
     for (let cursor = new Date(`${startDate}T00:00:00+08:00`); cursor <= new Date(`${endDate}T00:00:00+08:00`); cursor.setUTCDate(cursor.getUTCDate() + 1)) {
-      const date = day(cursor); const events = rows.filter(row => day(row.occurredAt) === date);
-      const distinct = (name, key) => new Set(events.filter(row => row.eventName === name && row[key]).map(row => row[key])).size;
-      const dayAssessments = assessments.filter(row => day(row.commercialFlowVersion === "prepaid_v2" ? row.startedAt : row.createdAt) === date && (row.commercialFlowVersion !== "prepaid_v2" || row.startedAt));
-      const completed = assessments.filter(row => row.status === "complete" && row.completedAt && day(row.completedAt) === date);
-      const invoices = payments.filter(row => row.invoiceId && day(row.createdAt) === date);
-      const paid = entitlements.map(entitlement => ({ entitlement, payment: payments.find(payment => payment.id === entitlement.paymentId) }))
-        .filter(item => item.payment?.status === "paid" && item.entitlement.grantedAt && day(item.entitlement.grantedAt) === date);
-      output.push({ date, uniqueVisitors: distinct("landing_viewed", "visitorIdHash"), landingViews: events.filter(row => row.eventName === "landing_viewed").length,
-        assessmentsStarted: new Set(dayAssessments.map(row => row.id)).size, assessmentsCompleted: new Set(completed.map(row => row.id)).size,
-        paywallViews: distinct("paywall_viewed", "assessmentId"), invoicesCreated: new Set(invoices.map(row => row.invoiceId)).size,
-        paymentsConfirmed: new Set(paid.map(item => item.payment.id)).size, reportsOpened: distinct("report_opened", "assessmentId"),
-        revenueMnt: [...new Map(paid.map(item => [item.payment.id, Number(item.payment.amount || 0)])).values()].reduce((sum, value) => sum + value, 0) });
+      const date = day(cursor); const dayPaid = paymentEntries.filter(item => day(item.entitlement.grantedAt) === date);
+      output.push({ date, uniqueVisitors: firstLandingEntries.filter(row => day(row.occurredAt) === date).length,
+        paymentSectionViews: sectionEntries.filter(row => day(row.occurredAt) === date).length,
+        invoicesCreated: invoiceEntries.filter(row => day(row.createdAt) === date).length,
+        paymentsConfirmed: dayPaid.length, assessmentsStarted: startEntries.filter(row => day(row.startedAt) === date).length,
+        assessmentsCompleted: completeEntries.filter(row => day(row.completedAt) === date).length,
+        reportsOpened: [...firstReport.values()].filter(row => flow(assessmentById.get(row.assessmentId)) === "prepaid_v2" && day(row.occurredAt) === date).length,
+        revenueMnt: [...new Map(dayPaid.map(item => [item.payment.id, Number(item.payment.amount || 0)])).values()].reduce((sum, value) => sum + value, 0) });
     }
     const selected = rows.filter(row => { const value = day(row.occurredAt); return value >= startDate && value <= endDate; });
-    const distinct = (name, key) => new Set(selected.filter(row => row.eventName === name && row[key]).map(row => row[key])).size;
-    const selectedAssessments = assessments.filter(row => { const source = row.commercialFlowVersion === "prepaid_v2" ? row.startedAt : row.createdAt; if (!source) return false; const value = day(source); return value >= startDate && value <= endDate; });
-    const selectedCompleted = assessments.filter(row => row.status === "complete" && row.completedAt && day(row.completedAt) >= startDate && day(row.completedAt) <= endDate);
-    const selectedInvoices = payments.filter(row => row.invoiceId && day(row.createdAt) >= startDate && day(row.createdAt) <= endDate);
-    const selectedPaid = entitlements.map(entitlement => ({ entitlement, payment: payments.find(payment => payment.id === entitlement.paymentId) }))
-      .filter(item => item.payment?.status === "paid" && item.entitlement.grantedAt && day(item.entitlement.grantedAt) >= startDate && day(item.entitlement.grantedAt) <= endDate);
-    const earliest = name => rows.filter(row => row.eventName === name).map(row => row.occurredAt).sort()[0] || null;
-    return { days: output, summary: { uniqueVisitors: distinct("landing_viewed", "visitorIdHash"), landingViews: selected.filter(row => row.eventName === "landing_viewed").length,
-      assessmentsStarted: new Set(selectedAssessments.map(row => row.id)).size, assessmentsCompleted: new Set(selectedCompleted.map(row => row.id)).size,
-      paywallViews: distinct("paywall_viewed", "assessmentId"), invoicesCreated: new Set(selectedInvoices.map(row => row.invoiceId)).size,
-      paymentsConfirmed: new Set(selectedPaid.map(item => item.payment.id)).size, reportsOpened: distinct("report_opened", "assessmentId"),
-      revenueMnt: [...new Map(selectedPaid.map(item => [item.payment.id, Number(item.payment.amount || 0)])).values()].reduce((sum, value) => sum + value, 0) },
-      coverage: { visitorTrackingStartedAt: earliest("landing_viewed"), paymentSectionTrackingStartedAt: earliest("paywall_viewed"), businessRecordSource: true,
-        legacyFlowCount: assessments.filter(row => row.commercialFlowVersion !== "prepaid_v2").length,
-        prepaidFlowCount: assessments.filter(row => row.commercialFlowVersion === "prepaid_v2").length,
-        mixedFlow: assessments.some(row => row.commercialFlowVersion === "prepaid_v2") && assessments.some(row => row.commercialFlowVersion !== "prepaid_v2") } };
+    const allFlows = { uniqueVisitors: new Set(selected.filter(row => row.eventName === "landing_viewed" && row.visitorIdHash).map(row => row.visitorIdHash)).size,
+      paymentSectionViews: prepaid.paymentSectionViews + legacy.paymentSectionViews, invoicesCreated: prepaid.invoicesCreated + legacy.invoicesCreated,
+      paymentsConfirmed: prepaid.paymentsConfirmed + legacy.paymentsConfirmed, assessmentsStarted: prepaid.assessmentsStarted + legacy.assessmentsStarted,
+      assessmentsCompleted: prepaid.assessmentsCompleted + legacy.assessmentsCompleted, reportsOpened: prepaid.reportsOpened + legacy.reportsOpened,
+      revenueMnt: prepaid.revenueMnt + legacy.revenueMnt };
+    const activity = wanted => assessments.some(row => flow(row) === wanted && (inRange(wanted === "prepaid_v2" ? row.startedAt : row.createdAt) || inRange(row.completedAt)))
+      || [...firstSection.values()].some(row => flow(assessmentById.get(row.assessmentId)) === wanted && inRange(row.occurredAt))
+      || payments.some(row => flow(assessmentById.get(row.assessmentId)) === wanted && inRange(row.createdAt))
+      || paid.some(item => flow(assessmentById.get(item.payment.assessmentId)) === wanted && inRange(item.entitlement.grantedAt))
+      || [...firstReport.values()].some(row => flow(assessmentById.get(row.assessmentId)) === wanted && inRange(row.occurredAt));
+    const legacyPresent = activity("legacy_postpaid_v1"); const prepaidAssessmentPresent = activity("prepaid_v2");
+    const prepaidVisitorPresent = firstLandingEntries.length > 0;
+    const flowState = legacyPresent && prepaidAssessmentPresent ? "mixed"
+      : legacyPresent && prepaidVisitorPresent ? "legacy_with_prepaid_visitors"
+        : legacyPresent ? "legacy_only" : prepaidAssessmentPresent ? "prepaid_only" : prepaidVisitorPresent ? "prepaid_visitors_only" : "empty";
+    return { days: output, summary: allFlows, allFlows,
+      currentFlow: { eligibleVisitors: firstLandingEntries.length, ...prepaid }, legacyFlow: legacy, conversions,
+      coverage: { paidFirstCutoverAt: cutover.toISOString(), rangeStartsBeforeCutover: new Date(`${startDate}T00:00:00+08:00`) < cutover,
+        rangeEndsAfterCutover: rangeEnd > cutover, allMeasuredVisitors: allFlows.uniqueVisitors, paidFirstEligibleVisitors: firstLandingEntries.length,
+        legacyActivityPresent: legacyPresent, prepaidActivityPresent: prepaidAssessmentPresent,
+        prepaidAssessmentActivityPresent: prepaidAssessmentPresent, prepaidVisitorActivityPresent: prepaidVisitorPresent, flowState,
+        visitorTrackingStartedAt: visitorTracking, paymentSectionTrackingStartedAt: sectionTracking } };
   }
   async recordQuestionProgress(input) {
     const assessment = await this.get("assessments", input.assessmentId);

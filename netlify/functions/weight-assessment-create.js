@@ -23,6 +23,9 @@ exports.handler = handler("POST", async (event, body) => {
   if (assessment.commercialFlowVersion !== "prepaid_v2") await recordEventSafe(database, "assessment_started", clientContext(body.analyticsContext || {}), { assessmentId: assessment.id }, {
     idempotencyKey: `assessment_started:${assessment.id}`, ...flagsFromEvent(event)
   });
+  else await recordEventSafe(database, "paywall_viewed", clientContext(body.analyticsContext || {}), { assessmentId: assessment.id }, {
+    idempotencyKey: `paywall_viewed:${assessment.id}`, ...flagsFromEvent(event)
+  });
   return response(201, { assessmentId: assessment.id, status: assessment.status, commercialFlowVersion: assessment.commercialFlowVersion,
     questionnaireVersion: assessment.questionnaireVersion, previewBypass });
 });

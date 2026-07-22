@@ -4,7 +4,7 @@ const crypto = require("node:crypto");
 const { cookies } = require("./http.js");
 const { PREVIEW_COOKIE_NAME } = require("./preview.js");
 
-const BROWSER_EVENTS = new Set(["landing_viewed", "start_cta_clicked", "paywall_viewed", "recovery_requested"]);
+const BROWSER_EVENTS = new Set(["landing_viewed", "start_cta_clicked", "payment_preparation_viewed", "paywall_viewed", "recovery_requested"]);
 const SERVER_EVENTS = new Set(["assessment_started", "assessment_completed", "invoice_created", "payment_confirmed", "invoice_create_failed", "payment_check_started", "payment_check_failed", "recovery_succeeded", "report_opened"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SAFE_ID = /^[A-Za-z0-9_-]{3,100}$/;
@@ -65,6 +65,7 @@ function localAnalyticsDay(now = new Date()) {
 }
 function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now = new Date()) {
   if (name === "landing_viewed" && context.visitorIdHash) return `landing_viewed:${context.visitorIdHash}:${localAnalyticsDay(now)}`;
+  if (name === "payment_preparation_viewed" && context.sessionIdHash) return `payment_preparation_viewed:${context.sessionIdHash}`;
   if (["paywall_viewed", "report_opened"].includes(name) && assessmentId) return `${name}:${assessmentId}`;
   if (name === "start_cta_clicked" && context.sessionIdHash) return `start_cta_clicked:${context.sessionIdHash}`;
   return null;
