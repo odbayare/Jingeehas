@@ -88,7 +88,9 @@ test("owner daily funnel dashboard is readable at 375px", async ({ page, context
   await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
-  await expect(page.locator(".table-scroll")).toHaveCSS("overflow-x", "auto");
+  const dailyTable = page.locator(".analytics-daily-note + .table-scroll");
+  expect(await dailyTable.count()).toBe(1);
+  await expect(dailyTable).toHaveCSS("overflow-x", "auto");
 });
 
 test("question progress card stays compact and expands in two levels", async ({ page, context }) => {
