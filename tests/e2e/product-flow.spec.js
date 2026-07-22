@@ -51,13 +51,12 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]
     await page.setViewportSize({ width, height });
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" })).toBeVisible();
-    const questions = page.locator(".hero-question");
-    await expect(questions).toHaveCount(3);
-    await expect(page.locator(".hero-highlight")).toBeVisible();
-    const cta = page.getByRole("link", { name: "Сэтгэлзүйн хэв маягаа тодорхойлох" });
+    await expect(page.locator(".hero-steps p")).toHaveCount(3);
+    await expect(page.locator(".hero-steps")).toBeVisible();
+    const cta = page.getByRole("link", { name: "Тестээ авах — 9,900₮" }).first();
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
-    await expect(page.locator(".hero-note")).toBeVisible();
+    await expect(page.locator(".landing-microcopy")).toBeVisible();
     await expect(page.locator(".hero-visual")).toBeVisible();
     expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
@@ -70,7 +69,7 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]
 test("methodology trust content stacks without mobile overflow", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Арга зүй ба судалгааны үндэслэл" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Яагаад хоол, дасгал дангаараа хангалтгүй байдаг вэ?" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Аюулгүй байдлын дохио" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Сэтгэлзүй ба зан үйлийн хэв маяг" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Өдөр тутмын саад ба орчны нөлөө" })).toBeVisible();
