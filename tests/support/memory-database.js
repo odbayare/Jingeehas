@@ -185,12 +185,17 @@ class MemoryDatabaseAdapter {
       || payments.some(row => flow(assessmentById.get(row.assessmentId)) === wanted && inRange(row.createdAt))
       || paid.some(item => flow(assessmentById.get(item.payment.assessmentId)) === wanted && inRange(item.entitlement.grantedAt))
       || [...firstReport.values()].some(row => flow(assessmentById.get(row.assessmentId)) === wanted && inRange(row.occurredAt));
-    const legacyPresent = activity("legacy_postpaid_v1"); const prepaidPresent = activity("prepaid_v2");
+    const legacyPresent = activity("legacy_postpaid_v1"); const prepaidAssessmentPresent = activity("prepaid_v2");
+    const prepaidVisitorPresent = firstLandingEntries.length > 0;
+    const flowState = legacyPresent && prepaidAssessmentPresent ? "mixed"
+      : legacyPresent && prepaidVisitorPresent ? "legacy_with_prepaid_visitors"
+        : legacyPresent ? "legacy_only" : prepaidAssessmentPresent ? "prepaid_only" : prepaidVisitorPresent ? "prepaid_visitors_only" : "empty";
     return { days: output, summary: allFlows, allFlows,
       currentFlow: { eligibleVisitors: firstLandingEntries.length, ...prepaid }, legacyFlow: legacy, conversions,
       coverage: { paidFirstCutoverAt: cutover.toISOString(), rangeStartsBeforeCutover: new Date(`${startDate}T00:00:00+08:00`) < cutover,
-        rangeEndsAfterCutover: rangeEnd > cutover, legacyActivityPresent: legacyPresent, prepaidActivityPresent: prepaidPresent,
-        flowState: legacyPresent && prepaidPresent ? "mixed" : legacyPresent ? "legacy_only" : prepaidPresent ? "prepaid_only" : "empty",
+        rangeEndsAfterCutover: rangeEnd > cutover, allMeasuredVisitors: allFlows.uniqueVisitors, paidFirstEligibleVisitors: firstLandingEntries.length,
+        legacyActivityPresent: legacyPresent, prepaidActivityPresent: prepaidAssessmentPresent,
+        prepaidAssessmentActivityPresent: prepaidAssessmentPresent, prepaidVisitorActivityPresent: prepaidVisitorPresent, flowState,
         visitorTrackingStartedAt: visitorTracking, paymentSectionTrackingStartedAt: sectionTracking } };
   }
   async recordQuestionProgress(input) {
