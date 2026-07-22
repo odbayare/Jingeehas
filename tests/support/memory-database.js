@@ -210,6 +210,10 @@ class MemoryDatabaseAdapter {
         prepaidAssessmentActivityPresent: prepaidAssessmentPresent, prepaidVisitorActivityPresent: prepaidVisitorPresent, flowState,
         visitorTrackingStartedAt: visitorTracking, paymentSectionTrackingStartedAt: sectionTracking } };
   }
+  async getLandingCutoverHourlyAnalytics(startDate, endDate) {
+    const aggregate = await this.getDailyFunnelAnalytics(startDate, endDate);
+    return aggregate.landingCutoverHourly;
+  }
   async recordQuestionProgress(input) {
     const assessment = await this.get("assessments", input.assessmentId);
     if (!assessment || assessment.questionnaireVersion !== input.questionnaireVersion) {

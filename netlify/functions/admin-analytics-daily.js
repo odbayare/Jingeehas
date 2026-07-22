@@ -14,11 +14,14 @@ exports.handler = handler("GET", async event => {
   }
   const days = Math.floor((Date.parse(`${query.endDate}T00:00:00Z`) - Date.parse(`${query.startDate}T00:00:00Z`)) / 86400000) + 1;
   if (days < 1 || days > 366) throw Object.assign(new Error("Date range too large"), { statusCode: 400, code: "invalid_date_range" });
-  const analytics = await database.getDailyFunnelAnalytics(query.startDate, query.endDate);
-  const hourly = analytics.landingCutoverHourly || analytics.landing_cutover_hourly || { hours: [], totals: { newVisitors: 0, ctaClicks: 0, paymentPreparationViews: 0 } };
+  const [analytics, hourlyPayload] = await Promise.all([
+    database.getDailyFunnelAnalytics(query.startDate, query.endDate),
+    database.getLandingCutoverHourlyAnalytics(query.startDate, query.endDate)
+  ]);
+  const hourly = hourlyPayload || { hours: [], totals: { newVisitors: 0, ctaClicks: 0, paymentPreparationViews: 0 } };
   const hourlyTotals = hourly.totals || {};
   const currentFlow = { ...(analytics.currentFlow || analytics.current_flow || {}), landingCtaClicks: Number(hourlyTotals.ctaClicks ?? hourlyTotals.cta_clicks ?? 0), paymentPreparationViews: Number(hourlyTotals.paymentPreparationViews ?? hourlyTotals.payment_preparation_views ?? 0) };
   return response(200, { timeZone: "Asia/Ulaanbaatar", days: analytics.days, summary: analytics.allFlows || analytics.summary,
     allFlows: analytics.allFlows || analytics.summary, currentFlow, legacyFlow: analytics.legacyFlow,
-    conversions: analytics.conversions || analytics.conversions, coverage: analytics.coverage, landingCutoverHourly: hourly });
+    conversions: analytics.conversions, coverage: analytics.coverage, landingCutoverHourly: hourly });
 });
