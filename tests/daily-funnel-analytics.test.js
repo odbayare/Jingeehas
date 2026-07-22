@@ -152,5 +152,7 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
   assert(!migration.includes("updated_at"), "flow presence never uses updated_at");
   const clarityMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260722075053_clarify_funnel_visitor_coverage.sql"), "utf8");
   for (const expected of ["all_measured_visitors", "paid_first_eligible_visitors", "prepaid_assessment_activity_present", "prepaid_visitor_activity_present", "legacy_with_prepaid_visitors", "revoke all on function"]) assert(clarityMigration.includes(expected), expected);
+  const preparationMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260722081512_allow_payment_preparation_analytics_event.sql"), "utf8");
+  for (const expected of ["analytics_events_event_name_check", "payment_preparation_viewed", "schema_migrations"]) assert(preparationMigration.includes(expected), expected);
   console.log("flow-aware daily funnel analytics tests passed");
 })().catch(error => { console.error(error); process.exit(1); });
