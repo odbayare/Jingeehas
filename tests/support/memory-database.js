@@ -118,14 +118,16 @@ class MemoryDatabaseAdapter {
     const inRange = value => value && day(value) >= startDate && day(value) <= endDate;
     const assessmentById = new Map(assessments.map(row => [row.id, row]));
     const paymentById = new Map(payments.map(row => [row.id, row]));
-    const firstLanding = new Map(); const firstSection = new Map(); const firstReport = new Map();
+    const firstLanding = new Map(); const firstLandingCta = new Map(); const firstSection = new Map(); const firstReport = new Map();
     for (const event of rows.sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
       if (event.eventName === "landing_viewed" && event.visitorIdHash && !firstLanding.has(event.visitorIdHash)) firstLanding.set(event.visitorIdHash, event);
+      if (event.eventName === "landing_cta_clicked" && event.sessionIdHash && !firstLandingCta.has(event.sessionIdHash)) firstLandingCta.set(event.sessionIdHash, event);
       if (event.eventName === "paywall_viewed" && event.assessmentId && assessmentById.has(event.assessmentId) && !firstSection.has(event.assessmentId)) firstSection.set(event.assessmentId, event);
       if (event.eventName === "report_opened" && event.assessmentId && assessmentById.has(event.assessmentId) && !firstReport.has(event.assessmentId)) firstReport.set(event.assessmentId, event);
     }
     const paid = entitlements.map(entitlement => ({ entitlement, payment: paymentById.get(entitlement.paymentId) })).filter(item => item.payment);
     const firstLandingEntries = [...firstLanding.values()].filter(row => inRange(row.occurredAt) && new Date(row.occurredAt) >= cutover);
+    const firstLandingCtaEntries = [...firstLandingCta.values()].filter(row => inRange(row.occurredAt) && new Date(row.occurredAt) >= cutover);
     const flow = assessment => assessment?.commercialFlowVersion === "prepaid_v2" ? "prepaid_v2" : "legacy_postpaid_v1";
     const totalsForFlow = wanted => {
       const scopedAssessments = assessments.filter(row => flow(row) === wanted); const ids = new Set(scopedAssessments.map(row => row.id));
@@ -191,7 +193,7 @@ class MemoryDatabaseAdapter {
       : legacyPresent && prepaidVisitorPresent ? "legacy_with_prepaid_visitors"
         : legacyPresent ? "legacy_only" : prepaidAssessmentPresent ? "prepaid_only" : prepaidVisitorPresent ? "prepaid_visitors_only" : "empty";
     return { days: output, summary: allFlows, allFlows,
-      currentFlow: { eligibleVisitors: firstLandingEntries.length, ...prepaid }, legacyFlow: legacy, conversions,
+      currentFlow: { eligibleVisitors: firstLandingEntries.length, landingCtaClicks: firstLandingCtaEntries.length, ...prepaid }, legacyFlow: legacy, conversions,
       coverage: { paidFirstCutoverAt: cutover.toISOString(), rangeStartsBeforeCutover: new Date(`${startDate}T00:00:00+08:00`) < cutover,
         rangeEndsAfterCutover: rangeEnd > cutover, allMeasuredVisitors: allFlows.uniqueVisitors, paidFirstEligibleVisitors: firstLandingEntries.length,
         legacyActivityPresent: legacyPresent, prepaidActivityPresent: prepaidAssessmentPresent,

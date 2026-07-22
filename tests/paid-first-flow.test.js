@@ -43,7 +43,7 @@ const { nextRoute } = require("../netlify/functions/_lib/commercial-flow.js");
   assert.equal(refreshed.startedAt, started.startedAt, "started_at is immutable after first persisted answer");
 
   const prep = app.renderForPath("/assessment/contact");
-  for (const copy of ["Тест үнэлгээгээ эхлүүлэх", "Тест үнэлгээ болон бүрэн хувийн тайлан", "9,900₮", "QPay-аар төлөөд тестээ эхлүүлэх"]) assert(prep.includes(copy), copy);
+  for (const copy of ["Тест үнэлгээ болон хувийн тайлангаа авах", "Тест үнэлгээ болон бүрэн хувийн тайлан", "9,900₮", "QPay-аар төлөөд тестээ эхлүүлэх"]) assert(prep.includes(copy), copy);
   app._test.setState({ commercialFlowVersion: "prepaid_v2", assessmentStatus: "complete", report: { fullReport: {} } });
   assert(!app.renderForPath("/assessment/completed").includes("Бүрэн тайлангийн үнэ"));
   app._test.setState({ questionsAuthorized: false });
