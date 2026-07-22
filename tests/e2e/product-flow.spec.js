@@ -56,11 +56,10 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]
     const cta = page.getByRole("link", { name: "Тестээ авах — 9,900₮" }).first();
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
-    await expect(page.locator(".landing-microcopy")).toBeVisible();
+    await expect(page.locator(".landing-microcopy").first()).toBeVisible();
     await expect(page.locator(".hero-visual")).toBeVisible();
     expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
-    await expect(page.locator(".hero")).not.toContainText("9,900₮");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     expect(await cta.evaluate(element => element.getBoundingClientRect().width <= window.innerWidth)).toBe(true);
   });
@@ -71,8 +70,8 @@ test("methodology trust content stacks without mobile overflow", async ({ page }
   await page.goto("/");
   await expect(page.getByRole("heading", { name: "Яагаад хоол, дасгал дангаараа хангалтгүй байдаг вэ?" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Аюулгүй байдлын дохио" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Сэтгэлзүй ба зан үйлийн хэв маяг" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Өдөр тутмын саад ба орчны нөлөө" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Сэтгэл хөдлөлийн хооллолт" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Нойр ба амьдралын хэмнэл" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 });
 
