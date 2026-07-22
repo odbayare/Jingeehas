@@ -28,6 +28,8 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   const done = await assessment(database, "wa_done", "2026-07-19T19:00:00.000Z", "complete", "2026-07-20T10:00:00.000Z", "Эрэгтэй");
   const branch = await assessment(database, "wa_branch", "2026-07-19T20:00:00.000Z", "draft", "2026-07-19T20:00:00.000Z", "Эмэгтэй");
   const backfill = await assessment(database, "wa_backfill", "2026-07-19T21:00:00.000Z", "draft", "2026-07-21T15:50:00.000Z", "Эмэгтэй");
+  const adminSynthetic = await assessment(database, "wa_admin_synthetic", "2026-07-19T22:00:00.000Z");
+  const testSynthetic = await assessment(database, "wa_test_synthetic", "2026-07-19T23:00:00.000Z");
 
   const qAge = questionAnalytics("Q-AGE"); const qSex = questionAnalytics("Q-SEX"); const mc = questionAnalytics("MC-GATE");
   await database.recordQuestionProgress({ assessmentId: old.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge, viewedAt: "2026-07-19T16:10:00.000Z", answered: false, source: "live" });
@@ -52,10 +54,16 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   await database.recordQuestionProgress({ assessmentId: done.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge, viewedAt: "2026-07-19T19:10:00.000Z", answered: false, source: "live" });
   await database.recordQuestionProgress({ assessmentId: backfill.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge,
     viewedAt: "2026-07-19T21:05:00.000Z", answered: true, source: "canonical_answer_backfill" });
+  await database.recordQuestionProgress({ assessmentId: adminSynthetic.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge,
+    viewedAt: "2026-07-19T22:05:00.000Z", answered: false, source: "live" });
+  await database.recordQuestionProgress({ assessmentId: testSynthetic.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge,
+    viewedAt: "2026-07-19T23:05:00.000Z", answered: false, source: "live" });
+  await database.insert("analytics_events", { id: "ae_admin_synthetic", eventId: "event_admin_synthetic", assessmentId: adminSynthetic.id, isAdmin: true, isOwnerPreview: false, isTest: false });
+  await database.insert("analytics_events", { id: "ae_test_synthetic", eventId: "event_test_synthetic", assessmentId: testSynthetic.id, isAdmin: false, isOwnerPreview: false, isTest: true });
   await database.update("assessments", old.id, { updatedAt: "2026-07-21T15:59:00.000Z" });
 
   const aggregate = await database.getQuestionProgressAnalytics("2026-07-20", "2026-07-20", new Date("2026-07-21T16:00:00.000Z"));
-  assert.equal(aggregate.summary.cohortStarted, 5, "Ulaanbaatar cohort includes UTC timestamps on the selected local day");
+  assert.equal(aggregate.summary.cohortStarted, 5, "Ulaanbaatar cohort includes UTC timestamps while admin and test assessments stay excluded");
   assert.equal(aggregate.summary.liveProgressAssessments, 4); assert.equal(aggregate.summary.backfillOnlyAssessments, 1);
   const age = aggregate.questions.find(row => row.questionId === "Q-AGE"); const sex = aggregate.questions.find(row => row.questionId === "Q-SEX"); const branchRow = aggregate.questions.find(row => row.questionId === "MC-GATE");
   assert.equal(age.totalReachedCount, 4); assert.equal(age.totalAnsweredCount, 2, "backfill contributes to total answered evidence");
