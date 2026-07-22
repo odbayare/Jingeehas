@@ -158,7 +158,8 @@ class MemoryDatabaseAdapter {
     return this.upsert("assessment_question_progress", id, { assessmentId: input.assessmentId, questionnaireVersion: input.questionnaireVersion,
       questionId: input.questionId, sectionKey: input.sectionKey || null, questionOrder: input.questionOrder || null, branchDepth: input.branchDepth || 0,
       firstViewedAt: existing?.firstViewedAt || viewedAt, lastViewedAt: viewedAt,
-      answeredAt: existing?.answeredAt || (input.answered ? viewedAt : null), source: existing?.source || input.source || "live",
+      answeredAt: existing?.answeredAt || (input.answered ? viewedAt : null),
+      source: input.source === "live" ? "live" : (existing?.source || input.source || "live"),
       createdAt: existing?.createdAt || viewedAt, updatedAt: viewedAt });
   }
   async getQuestionProgressAnalytics(startDate, endDate, now = new Date()) {
@@ -176,18 +177,27 @@ class MemoryDatabaseAdapter {
     const cutoff = new Date(new Date(now).getTime() - 86400000);
     const states = new Map(cohort.map(assessment => { const rows = (byAssessment.get(assessment.id) || []).filter(row => row.source === "live");
       const last = [...rows].sort((a, b) => String(b.lastViewedAt).localeCompare(String(a.lastViewedAt)) || Number(b.questionOrder || 0) - Number(a.questionOrder || 0))[0] || null;
-      const activity = new Date([assessment.updatedAt, ...rows.map(row => row.lastViewedAt)].filter(Boolean).sort().at(-1) || assessment.createdAt);
+      const activity = new Date(rows.flatMap(row => [row.lastViewedAt, row.answeredAt]).filter(Boolean).sort().at(-1) || 0);
       return [assessment.id, { last, stopped: assessment.status !== "complete" && last && activity < cutoff, active: assessment.status !== "complete" && last && activity >= cutoff }]; }));
     const keys = new Map();
     for (const row of progress) { const key = `${row.questionnaireVersion}:${row.questionId}`; const item = keys.get(key) || { questionId: row.questionId, questionnaireVersion: row.questionnaireVersion,
-      sectionKey: row.sectionKey, questionOrder: row.questionOrder, reached: new Set(), answered: new Set(), stopped: new Set(), active: new Set() };
-      item.reached.add(row.assessmentId); if (row.answeredAt) item.answered.add(row.assessmentId);
+      sectionKey: row.sectionKey, questionOrder: row.questionOrder, totalReached: new Set(), totalAnswered: new Set(), liveReached: new Set(),
+      backfillReached: new Set(), stopped: new Set(), active: new Set() };
+      item.totalReached.add(row.assessmentId); if (row.answeredAt) item.totalAnswered.add(row.assessmentId);
+      if (row.source === "live") item.liveReached.add(row.assessmentId); else item.backfillReached.add(row.assessmentId);
       const state = states.get(row.assessmentId); if (state?.last?.id === row.id && state.stopped) item.stopped.add(row.assessmentId); if (state?.last?.id === row.id && state.active) item.active.add(row.assessmentId); keys.set(key, item); }
     const questions = [...keys.values()].map(item => ({ questionId: item.questionId, questionnaireVersion: item.questionnaireVersion, sectionKey: item.sectionKey,
-      questionOrder: item.questionOrder, reachedCount: item.reached.size, answeredCount: item.answered.size, stoppedCount: item.stopped.size, activeCount: item.active.size }));
+      questionOrder: item.questionOrder, totalReachedCount: item.totalReached.size, totalAnsweredCount: item.totalAnswered.size,
+      liveReachedCount: item.liveReached.size, backfillReachedCount: item.backfillReached.size,
+      activeAtQuestionCount: item.active.size, confirmedStoppedCount: item.stopped.size,
+      dropoffEligibleCount: Math.max(0, item.liveReached.size - item.active.size),
+      confirmedDropoffRate: item.liveReached.size - item.active.size > 0 ? item.stopped.size / (item.liveReached.size - item.active.size) : null,
+      reachedCount: item.totalReached.size, answeredCount: item.totalAnswered.size, stoppedCount: item.stopped.size, activeCount: item.active.size }));
     const covered = byAssessment.size; const completed = cohort.filter(row => row.status === "complete").length;
     return { summary: { cohortStarted: cohort.length, coveredAssessments: covered, coverageRate: cohort.length ? covered / cohort.length : 0,
       averageQuestionsReached: covered ? progress.length / covered : 0, completedCount: completed, completionRate: cohort.length ? completed / cohort.length : 0,
+      liveProgressAssessments: [...byAssessment.keys()].filter(id => (byAssessment.get(id) || []).some(row => row.source === "live")).length,
+      backfillOnlyAssessments: [...byAssessment.keys()].filter(id => (byAssessment.get(id) || []).every(row => row.source !== "live")).length,
       activeInProgressCount: [...states.values()].filter(item => item.active).length,
       instrumentationStartedAt: progress.map(row => row.createdAt).sort()[0] || null }, questions };
   }

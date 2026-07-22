@@ -111,6 +111,11 @@ test("question progress card stays compact and expands in two levels", async ({ 
     await expect(card.locator("tbody").first().locator("tr")).toHaveCount(5);
     const allToggle = card.getByRole("button", { name: "Бүх асуултыг харах" }); await expect(allToggle).toHaveAttribute("aria-expanded", "false");
     await allToggle.click(); await expect(allToggle).toHaveAttribute("aria-expanded", "true"); await expect(card.locator("tbody").nth(1).locator("tr")).toHaveCount(8);
+    for (const heading of ["Нийт хүрсэн", "Хариулсан", "Идэвхтэй <24ц", "Уналтад тооцсон", "24+ц зогссон", "Уналтын хувь"]) {
+      await expect(card.getByRole("columnheader", { name: heading }).last()).toBeVisible();
+    }
+    await expect(card).toContainText("Уналтын хувь нь зөвхөн бодитоор бүртгэгдсэн бөгөөд 24 цагийн ажиглалтын хугацаа бүрдсэн тестүүдэд тооцогдоно.");
+    await expect(card.locator('span[title="Хэмжихэд хараахан хангалттай live хугацаа бүрдээгүй."]')).toBeVisible();
     await expect(card.locator(".question-progress-table").last()).toHaveCSS("overflow-x", "auto");
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
   }

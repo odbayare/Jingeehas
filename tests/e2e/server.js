@@ -9,9 +9,21 @@ const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/
 const root = path.resolve(__dirname, "../..");
 const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0, sessionStart: 0, analyticsCollect: 0, questionProgressRows: 0 };
 const recordedQuestionProgress = new Set();
-const questionProgressRows = Array.from({ length: 8 }, (_, index) => ({ questionId: `Q-${index + 1}`, questionnaireVersion: "jingeehas-production-2026-07",
-  sectionKey: "baseline", sectionLabel: "Суурь мэдээлэл", analyticsLabel: `Богино нэр ${index + 1}`, questionOrder: index + 1,
-  reachedCount: 6, answeredCount: 5, stoppedCount: 8 - index, activeCount: 0, dropoffRate: (8 - index) / 6 }));
+const questionProgressRows = Array.from({ length: 8 }, (_, index) => {
+  const activeAtQuestionCount = index === 7 ? 1 : 0;
+  const liveReachedCount = index === 7 ? 1 : 6;
+  const backfillReachedCount = index === 7 ? 5 : 2;
+  const dropoffEligibleCount = Math.max(liveReachedCount - activeAtQuestionCount, 0);
+  const confirmedStoppedCount = index === 7 ? 0 : Math.max(1, 5 - index);
+  return { questionId: `Q-${index + 1}`, questionnaireVersion: "jingeehas-production-2026-07",
+    sectionKey: "baseline", sectionLabel: "Суурь мэдээлэл", analyticsLabel: `Богино нэр ${index + 1}`, questionOrder: index + 1,
+    totalReachedCount: liveReachedCount + backfillReachedCount, totalAnsweredCount: liveReachedCount + backfillReachedCount - 1,
+    liveReachedCount, backfillReachedCount, activeAtQuestionCount, confirmedStoppedCount, dropoffEligibleCount,
+    confirmedDropoffRate: dropoffEligibleCount ? confirmedStoppedCount / dropoffEligibleCount : null,
+    reachedCount: liveReachedCount + backfillReachedCount, answeredCount: liveReachedCount + backfillReachedCount - 1,
+    activeCount: activeAtQuestionCount, stoppedCount: confirmedStoppedCount,
+    dropoffRate: dropoffEligibleCount ? confirmedStoppedCount / dropoffEligibleCount : null };
+});
 let assessmentStatus = "payment_pending";
 const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
 const cohortReports = Object.fromEntries(cohort.filter(profile => ["VU-03", "VU-06"].includes(profile.id)).map(profile => {
@@ -33,7 +45,8 @@ const endpoints = {
   "admin-analytics-daily": async (_body, response) => json(response, 200, { timeZone: "Asia/Ulaanbaatar", days: [{ date: "2026-07-19", uniqueVisitors: 10, landingViews: 12, assessmentsStarted: 8, assessmentsCompleted: 6, paywallViews: 6, invoicesCreated: 4, paymentsConfirmed: 3, reportsOpened: 2, revenueMnt: 29700 }], summary: { uniqueVisitors: 10, landingViews: 12, assessmentsStarted: 8, assessmentsCompleted: 6, paywallViews: 6, invoicesCreated: 4, paymentsConfirmed: 3, reportsOpened: 2, revenueMnt: 29700 }, coverage: { mixedFlow: false } }),
   "admin-question-progress": async (_body, response) => json(response, 200, { timeZone: "Asia/Ulaanbaatar", summary: { cohortStarted: 7, coveredAssessments: 6,
     coverageRate: 6 / 7, averageQuestionsReached: 18, completedCount: 2, completionRate: 2 / 7, activeInProgressCount: 1,
-    topStopQuestionId: "Q-1", topStopLabel: "Өмнө туршсан арга", topStopCount: 3, instrumentationStartedAt: "2026-07-21T00:00:00Z" }, questions: questionProgressRows }),
+    liveProgressAssessments: 5, backfillOnlyAssessments: 1,
+    topStopQuestionId: "Q-1", topStopLabel: "Өмнө туршсан арга", topStopCount: 5, instrumentationStartedAt: "2026-07-21T00:00:00Z" }, questions: questionProgressRows }),
   "admin-preview-start": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") ? json(response, 201, { active: true, expiresAt: "2026-07-17T14:00:00.000Z", resumeDraft: false }, { "set-cookie": "jingeehas_owner_preview=preview-e2e; Path=/; HttpOnly; Secure; SameSite=Strict" }) : json(response, 401, { error: "unauthorized" }),
   "admin-preview-status": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") && String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e") ? json(response, 200, { active: true, expiresAt: "2026-07-17T14:00:00.000Z" }) : json(response, 401, { error: "preview_required" }),
   "weight-session-start": async (_body, response) => { stats.sessionStart += 1; json(response, 201, { sessionId: "ws-e2e", resumed: false }, { "set-cookie": "jingeehas_session=e2e; Path=/; HttpOnly; SameSite=Lax" }); },

@@ -14,17 +14,28 @@ function mergeCanonicalQuestionRows(rows, resolver = questionAnalytics) {
     const identity = metadata.meaningIdentity || [row.questionId, row.questionnaireVersion].join("\u001f");
     const current = groups.get(identity) || { questionId: row.questionId, sectionKey: row.sectionKey || metadata.sectionKey || "other",
       sectionLabel: metadata.sectionLabel || row.sectionKey || "Бусад", analyticsLabel: metadata.analyticsLabel || row.questionId,
-      questionOrder: Number(row.questionOrder || metadata.questionOrder || 9999), versions: new Set(), reachedCount: 0, answeredCount: 0,
-      stoppedCount: 0, activeCount: 0 };
+      questionOrder: Number(row.questionOrder || metadata.questionOrder || 9999), versions: new Set(), totalReachedCount: 0,
+      totalAnsweredCount: 0, liveReachedCount: 0, backfillReachedCount: 0, activeAtQuestionCount: 0,
+      confirmedStoppedCount: 0, dropoffEligibleCount: 0 };
     current.versions.add(row.questionnaireVersion); current.questionOrder = Math.min(current.questionOrder, Number(row.questionOrder || metadata.questionOrder || 9999));
-    for (const field of ["reachedCount", "answeredCount", "stoppedCount", "activeCount"]) current[field] += Number(row[field] || 0);
+    current.totalReachedCount += Number(row.totalReachedCount ?? row.reachedCount ?? 0);
+    current.totalAnsweredCount += Number(row.totalAnsweredCount ?? row.answeredCount ?? 0);
+    current.liveReachedCount += Number(row.liveReachedCount ?? row.reachedCount ?? 0);
+    current.backfillReachedCount += Number(row.backfillReachedCount || 0);
+    current.activeAtQuestionCount += Number(row.activeAtQuestionCount ?? row.activeCount ?? 0);
+    current.confirmedStoppedCount += Number(row.confirmedStoppedCount ?? row.stoppedCount ?? 0);
+    current.dropoffEligibleCount += Number(row.dropoffEligibleCount ?? Math.max(0,
+      Number(row.liveReachedCount ?? row.reachedCount ?? 0) - Number(row.activeAtQuestionCount ?? row.activeCount ?? 0)));
     groups.set(identity, current);
   }
   const merged = [...groups.values()]; const identitiesByQuestion = new Map();
   for (const item of merged) identitiesByQuestion.set(item.questionId, (identitiesByQuestion.get(item.questionId) || 0) + 1);
   return merged.map(item => { const itemVersions = [...item.versions].sort(); const changedMeaning = identitiesByQuestion.get(item.questionId) > 1;
     const versionBadge = changedMeaning ? itemVersions.map(version => `v${Math.max(1, versions.indexOf(version) + 1)}`).join("/") : null;
-    const reachedCount = item.reachedCount; return { ...item, versions: itemVersions, versionBadge, dropoffRate: reachedCount ? item.stoppedCount / reachedCount : null }; });
+    const confirmedDropoffRate = item.dropoffEligibleCount > 0 ? item.confirmedStoppedCount / item.dropoffEligibleCount : null;
+    return { ...item, versions: itemVersions, versionBadge, confirmedDropoffRate,
+      reachedCount: item.totalReachedCount, answeredCount: item.totalAnsweredCount,
+      stoppedCount: item.confirmedStoppedCount, activeCount: item.activeAtQuestionCount, dropoffRate: confirmedDropoffRate }; });
 }
 
 exports.handler = handler("GET", async event => {
@@ -35,12 +46,15 @@ exports.handler = handler("GET", async event => {
   }
   const result = await database.getQuestionProgressAnalytics(query.startDate, query.endDate);
   const questions = mergeCanonicalQuestionRows(result.questions || []);
-  questions.sort((a, b) => b.stoppedCount - a.stoppedCount || (b.dropoffRate || 0) - (a.dropoffRate || 0) || b.reachedCount - a.reachedCount || a.questionOrder - b.questionOrder);
-  const top = questions.find(row => row.stoppedCount > 0) || null; const summary = result.summary || {};
+  questions.sort((a, b) => b.confirmedStoppedCount - a.confirmedStoppedCount
+    || (b.confirmedDropoffRate || 0) - (a.confirmedDropoffRate || 0)
+    || b.dropoffEligibleCount - a.dropoffEligibleCount || a.questionOrder - b.questionOrder);
+  const top = questions.find(row => row.confirmedStoppedCount > 0 && row.dropoffEligibleCount > 0) || null; const summary = result.summary || {};
   return response(200, { timeZone: "Asia/Ulaanbaatar", summary: { cohortStarted: Number(summary.cohortStarted || 0), coveredAssessments: Number(summary.coveredAssessments || 0),
+    liveProgressAssessments: Number(summary.liveProgressAssessments || 0), backfillOnlyAssessments: Number(summary.backfillOnlyAssessments || 0),
     coverageRate: Number(summary.coverageRate || 0), averageQuestionsReached: Number(summary.averageQuestionsReached || 0), completedCount: Number(summary.completedCount || 0),
     completionRate: Number(summary.completionRate || 0), activeInProgressCount: Number(summary.activeInProgressCount || 0),
-    topStopQuestionId: top?.questionId || null, topStopLabel: top?.analyticsLabel || null, topStopCount: Number(top?.stoppedCount || 0),
+    topStopQuestionId: top?.questionId || null, topStopLabel: top?.analyticsLabel || null, topStopCount: Number(top?.confirmedStoppedCount || 0),
     instrumentationStartedAt: summary.instrumentationStartedAt || null }, questions });
 });
 

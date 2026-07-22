@@ -332,7 +332,10 @@ function questionProgressWarning(covered) {
   return "";
 }
 function renderQuestionRows(rows) {
-  return rows.map(row => `<tr><td>${escapeHtml(row.sectionLabel || row.sectionKey || "—")}</td><td><code>${escapeHtml(row.questionId)}</code>${row.versionBadge ? ` <span class="question-version-badge">${escapeHtml(row.versionBadge)}</span>` : ""} — ${escapeHtml(row.analyticsLabel || row.questionId)}</td><td>${Number(row.reachedCount || 0)}</td><td>${Number(row.answeredCount || 0)}</td><td>${Number(row.stoppedCount || 0)}</td><td>${row.reachedCount ? safeRate(Number(row.stoppedCount || 0) / Number(row.reachedCount)) : "—"}</td></tr>`).join("");
+  return rows.map(row => { const eligible = Number(row.dropoffEligibleCount || 0); const rate = eligible > 0
+    ? safeRate(Number(row.confirmedStoppedCount || 0) / eligible)
+    : `<span title="Хэмжихэд хараахан хангалттай live хугацаа бүрдээгүй.">—</span>`;
+    return `<tr><td>${escapeHtml(row.sectionLabel || row.sectionKey || "—")}</td><td><code>${escapeHtml(row.questionId)}</code>${row.versionBadge ? ` <span class="question-version-badge">${escapeHtml(row.versionBadge)}</span>` : ""} — ${escapeHtml(row.analyticsLabel || row.questionId)}</td><td>${Number(row.totalReachedCount || 0)}</td><td>${Number(row.totalAnsweredCount || 0)}</td><td>${Number(row.activeAtQuestionCount || 0)}</td><td>${eligible}</td><td>${Number(row.confirmedStoppedCount || 0)}</td><td>${rate}</td></tr>`; }).join("");
 }
 function formatAnalyticsDate(value) {
   if (!value) return "";
@@ -343,15 +346,18 @@ function formatAnalyticsDate(value) {
 function renderQuestionProgressAnalytics() {
   const progress = state.admin.analytics.questionProgress || { summary: null, questions: [], expanded: false, showAll: false }; const summary = progress.summary || {};
   const cohort = Number(summary.cohortStarted || 0); const covered = Number(summary.coveredAssessments || 0); const completed = Number(summary.completedCount || 0);
-  const questions = progress.questions || []; const topFive = questions.filter(row => Number(row.stoppedCount || 0) > 0).slice(0, 5); const warning = questionProgressWarning(covered);
+  const liveCovered = Number(summary.liveProgressAssessments || 0); const backfillOnly = Number(summary.backfillOnlyAssessments || 0);
+  const questions = progress.questions || []; const topFive = questions.filter(row => Number(row.confirmedStoppedCount || 0) > 0 && Number(row.dropoffEligibleCount || 0) > 0).slice(0, 5); const warning = questionProgressWarning(covered);
   const started = summary.instrumentationStartedAt ? formatAnalyticsDate(summary.instrumentationStartedAt) : "бүртгэл үүссэн өдрөөс";
-  const table = rows => `<div class="table-scroll question-progress-table" tabindex="0"><table><thead><tr><th>Үе шат</th><th>Асуулт</th><th>Хүрсэн</th><th>Хариулсан</th><th>Энд зогссон</th><th>Уналтын хувь</th></tr></thead><tbody>${renderQuestionRows(rows)}</tbody></table></div>`;
+  const table = rows => `<div class="table-scroll question-progress-table" tabindex="0"><table><thead><tr><th>Үе шат</th><th>Асуулт</th><th>Нийт хүрсэн</th><th>Хариулсан</th><th>Идэвхтэй &lt;24ц</th><th>Уналтад тооцсон</th><th>24+ц зогссон</th><th>Уналтын хувь</th></tr></thead><tbody>${renderQuestionRows(rows)}</tbody></table></div>`;
   return `<section class="question-progress-card${progress.expanded ? " is-expanded" : ""}" aria-labelledby="question-progress-title"><h3 id="question-progress-title">Тестийн явц ба уналт</h3>
     <div class="question-progress-summary"><article><span>Явц бүртгэгдсэн</span><strong>${covered} / ${cohort} үнэлгээ</strong></article><article><span>Дундаж хүрсэн асуулт</span><strong>${compactNumber(summary.averageQuestionsReached)}</strong></article><article><span>Дуусгасан</span><strong>${completed} / ${cohort} буюу ${cohort ? safeRate(completed / cohort) : "—"}</strong></article><article><span>Хамгийн олон зогссон цэг</span><strong>${summary.topStopLabel ? `${escapeHtml(summary.topStopLabel)} — ${Number(summary.topStopCount || 0)} хүн` : "Одоогоор бүртгэгдээгүй"}</strong></article></div>
     <p class="question-progress-coverage">Нийт эхэлсэн: ${cohort}. Явцтай: ${covered}. Хамралт: ${cohort ? safeRate(covered / cohort) : "—"}.</p>
     <button class="button compact secondary question-progress-toggle" type="button" data-action="toggle-question-progress" aria-expanded="${progress.expanded}" aria-controls="question-progress-details">Асуултын явцыг дэлгэрэнгүй харах</button>
     ${progress.expanded ? `<div id="question-progress-details">${topFive.length ? `<h4>Хамгийн их уналттай цэгүүд</h4>${table(topFive)}` : `<p>24 цагаас хуучин зогсолт одоогоор бүртгэгдээгүй байна.</p>`}
-      <p>Сүүлийн 24 цагт идэвхтэй байгаа тестийг зогссон гэж тооцоогүй.</p>${warning ? `<p class="analytics-comparison-note">${escapeHtml(warning)}</p>` : ""}
+      <p>Уналтын хувь нь зөвхөн бодитоор бүртгэгдсэн бөгөөд 24 цагийн ажиглалтын хугацаа бүрдсэн тестүүдэд тооцогдоно. Өмнөх хадгалагдсан хариултууд нийт хүрсэн, хариулсан тоонд багтсан боловч уналтын хувь бодоход орохгүй.</p>
+      <p>Сүүлийн 24 цагт идэвхтэй байгаа тестийг зогссон гэж тооцоогүй.</p>
+      <p class="analytics-coverage">Live явцтай: ${liveCovered}. Зөвхөн өмнөх хадгалагдсан хариултын нотолгоотой: ${backfillOnly}. Дундаж хүрсэн асуулт нь нийт батлагдсан асуултын нотолгоонд тулгуурлана.</p>${warning ? `<p class="analytics-comparison-note">${escapeHtml(warning)}</p>` : ""}
       <p class="analytics-coverage">Асуултын явцын нарийвчилсан бүртгэл ${escapeHtml(started)}-ээс эхэлсэн. Өмнөх хариултуудыг зөвхөн хадгалагдсан бодит хариултаар нөхөн тооцов.</p>
       <button class="button compact secondary question-progress-toggle" type="button" data-action="toggle-all-questions" aria-expanded="${progress.showAll}" aria-controls="question-progress-all">Бүх асуултыг харах</button>
       ${progress.showAll ? `<div id="question-progress-all"><h4>Бүх бүртгэгдсэн асуулт</h4>${table(questions)}</div>` : ""}</div>` : ""}</section>`;
