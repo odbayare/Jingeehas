@@ -150,7 +150,7 @@
     },
     {
       "file": "netlify/functions/admin-question-progress.js",
-      "sha256": "18e3db8e5fd84b99c039ae106babee4bbc7807a31695d5de727f2abe2d820fcc"
+      "sha256": "2cb56dffd64b98d55ef2e57f831d7957f4ef31bab076081a5465345b272f5ed8"
     },
     {
       "file": "netlify/functions/admin-regenerate-report-version.js",
@@ -286,7 +286,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "019a95f184efbcc6c678710b66b4d7079606186e863167a30ce1e6158e640b13"
+      "sha256": "1fe892841c8e0f56234cb0f9e39e9807a3a29fd42ff36a03b6ba5e286884318c"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -314,7 +314,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "8414549447eb6c5eabe278c77cc929d5f3b9edc31ad6f9274f1d8eb6d7c03287"
+      "sha256": "58e4936d2b9d6053d84abae41386b99868191eb16dd5a708fc6124a95955338c"
     }
   ],
   "functionNames": [

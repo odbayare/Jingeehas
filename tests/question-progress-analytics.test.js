@@ -27,6 +27,7 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   const active = await assessment(database, "wa_active", "2026-07-19T18:00:00.000Z", "draft", "2026-07-20T15:30:00.000Z", "Эрэгтэй");
   const done = await assessment(database, "wa_done", "2026-07-19T19:00:00.000Z", "complete", "2026-07-20T10:00:00.000Z", "Эрэгтэй");
   const branch = await assessment(database, "wa_branch", "2026-07-19T20:00:00.000Z", "draft", "2026-07-19T20:00:00.000Z", "Эмэгтэй");
+  const backfill = await assessment(database, "wa_backfill", "2026-07-19T21:00:00.000Z", "draft", "2026-07-21T15:50:00.000Z", "Эмэгтэй");
 
   const qAge = questionAnalytics("Q-AGE"); const qSex = questionAnalytics("Q-SEX"); const mc = questionAnalytics("MC-GATE");
   await database.recordQuestionProgress({ assessmentId: old.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge, viewedAt: "2026-07-19T16:10:00.000Z", answered: false, source: "live" });
@@ -49,15 +50,23 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   await database.recordQuestionProgress({ assessmentId: branch.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "MC-GATE", ...mc, viewedAt: "2026-07-19T20:10:00.000Z", answered: false, source: "live" });
   await database.recordQuestionProgress({ assessmentId: active.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge, viewedAt: "2026-07-21T15:30:00.000Z", answered: false, source: "live" });
   await database.recordQuestionProgress({ assessmentId: done.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge, viewedAt: "2026-07-19T19:10:00.000Z", answered: false, source: "live" });
+  await database.recordQuestionProgress({ assessmentId: backfill.id, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, questionId: "Q-AGE", ...qAge,
+    viewedAt: "2026-07-19T21:05:00.000Z", answered: true, source: "canonical_answer_backfill" });
+  await database.update("assessments", old.id, { updatedAt: "2026-07-21T15:59:00.000Z" });
 
   const aggregate = await database.getQuestionProgressAnalytics("2026-07-20", "2026-07-20", new Date("2026-07-21T16:00:00.000Z"));
-  assert.equal(aggregate.summary.cohortStarted, 4, "Ulaanbaatar cohort includes UTC timestamps on the selected local day");
+  assert.equal(aggregate.summary.cohortStarted, 5, "Ulaanbaatar cohort includes UTC timestamps on the selected local day");
+  assert.equal(aggregate.summary.liveProgressAssessments, 4); assert.equal(aggregate.summary.backfillOnlyAssessments, 1);
   const age = aggregate.questions.find(row => row.questionId === "Q-AGE"); const sex = aggregate.questions.find(row => row.questionId === "Q-SEX"); const branchRow = aggregate.questions.find(row => row.questionId === "MC-GATE");
-  assert.equal(age.reachedCount, 3); assert.equal(age.stoppedCount, 0, "earlier reached question is not the stop point");
-  assert.equal(sex.stoppedCount, 1, "last viewed unanswered question becomes the stop point");
-  assert.equal(branchRow.reachedCount, 1, "branch denominator includes only reached assessments");
-  assert.equal(branchRow.stoppedCount, 1);
-  assert.equal(age.activeCount, 1, "activity within 24 hours is active, not stopped");
+  assert.equal(age.totalReachedCount, 4); assert.equal(age.totalAnsweredCount, 2, "backfill contributes to total answered evidence");
+  assert.equal(age.liveReachedCount, 3); assert.equal(age.backfillReachedCount, 1, "backfill is reported separately from live reach");
+  assert.equal(age.activeAtQuestionCount, 1); assert.equal(age.dropoffEligibleCount, 2); assert.equal(age.confirmedStoppedCount, 0);
+  assert.equal(age.confirmedDropoffRate, 0, "positive denominator and zero stopped renders a real zero rate");
+  assert.equal(sex.liveReachedCount, 1); assert.equal(sex.dropoffEligibleCount, 1); assert.equal(sex.confirmedStoppedCount, 1);
+  assert.equal(sex.confirmedDropoffRate, 1, "unrelated assessment update does not reset meaningful live activity");
+  assert.equal(branchRow.liveReachedCount, 1, "branch denominator includes only reached assessments");
+  assert.equal(branchRow.confirmedStoppedCount, 1); assert.equal(branchRow.dropoffEligibleCount, 1);
+  assert.equal(age.activeCount, 1, "compatibility alias remains available");
   assert.equal(app._test.questionProgressWarning(9), "Түүвэр бага тул уналтын үзүүлэлтийг урьдчилсан дохио гэж үзнэ.");
   assert.equal(app._test.questionProgressWarning(10), "Түүвэр нэмэгдэж байна. Гол уналтын цэгүүдийг ажиглана.");
   assert.equal(app._test.questionProgressWarning(30), ""); assert.equal(app._test.safeRate(null), "—");
@@ -67,7 +76,9 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
     questionProgress: { summary: { cohortStarted: 7, coveredAssessments: 6, averageQuestionsReached: 18, completedCount: 2,
       topStopLabel: "Өмнө туршсан арга", topStopCount: 3, instrumentationStartedAt: "2026-07-21T00:00:00Z" },
       questions: Array.from({ length: 8 }, (_, index) => ({ questionId: `Q-${index}`, analyticsLabel: `Асуулт ${index}`, sectionLabel: "Үе шат",
-        reachedCount: 6, answeredCount: 5, stoppedCount: 8 - index, dropoffRate: (8 - index) / 6 })), expanded: false, showAll: false } } } });
+        totalReachedCount: 6, totalAnsweredCount: 5, liveReachedCount: 6, backfillReachedCount: 0,
+        activeAtQuestionCount: 1, dropoffEligibleCount: 5, confirmedStoppedCount: Math.max(0, 5 - index),
+        confirmedDropoffRate: Math.max(0, 5 - index) / 5 })), expanded: false, showAll: false } } } });
   let html = app._test.renderQuestionProgressAnalytics();
   assert(html.includes('aria-expanded="false"')); assert(!html.includes("Хамгийн их уналттай цэгүүд"), "details are collapsed by default");
   app._test.getState().admin.analytics.questionProgress.expanded = true; html = app._test.renderQuestionProgressAnalytics();
@@ -76,15 +87,22 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   assert.equal((html.match(/<tbody>/g) || []).length, 2, "second expansion renders full table");
   assert(!/(NaN|Infinity|null)/.test(html));
 
-  app._test.getState().admin.analytics.questionProgress = { summary: { cohortStarted: 4, coveredAssessments: 4, averageQuestionsReached: 3,
+  app._test.getState().admin.analytics.questionProgress = { summary: { cohortStarted: 4, coveredAssessments: 4, liveProgressAssessments: 1, backfillOnlyAssessments: 3, averageQuestionsReached: 3,
     completedCount: 1, topStopLabel: null, topStopCount: 0, instrumentationStartedAt: "2026-07-21T00:00:00Z" },
-    questions: [{ questionId: "Q-AGE", analyticsLabel: "Нас", sectionLabel: "Суурь мэдээлэл", reachedCount: 4, answeredCount: 4, stoppedCount: 0 }],
+    questions: [{ questionId: "Q-AGE", analyticsLabel: "Нас", sectionLabel: "Суурь мэдээлэл", totalReachedCount: 4,
+      totalAnsweredCount: 4, liveReachedCount: 1, backfillReachedCount: 3, activeAtQuestionCount: 1,
+      dropoffEligibleCount: 0, confirmedStoppedCount: 0, confirmedDropoffRate: null }],
     expanded: true, showAll: false };
   html = app._test.renderQuestionProgressAnalytics();
   assert(html.includes("Одоогоор бүртгэгдээгүй"), "collapsed summary has exact no-stop copy");
   assert(html.includes("24 цагаас хуучин зогсолт одоогоор бүртгэгдээгүй байна."), "expanded empty state has exact copy");
   assert(!html.includes("Хамгийн их уналттай цэгүүд"), "no-stop state hides the top-five table heading");
   assert.equal((html.match(/<tbody>/g) || []).length, 0, "no-stop state hides the table");
+  app._test.getState().admin.analytics.questionProgress.showAll = true; html = app._test.renderQuestionProgressAnalytics();
+  for (const copy of ["Нийт хүрсэн", "Идэвхтэй &lt;24ц", "Уналтад тооцсон", "24+ц зогссон",
+    "Өмнөх хадгалагдсан хариултууд нийт хүрсэн, хариулсан тоонд багтсан боловч уналтын хувь бодоход орохгүй.",
+    "Хэмжихэд хараахан хангалттай live хугацаа бүрдээгүй."]) assert(html.includes(copy), copy);
+  assert(!html.includes("0.0%</td>"), "zero eligible denominator renders dash, not zero percent");
 
   const paidDatabase = new MemoryDatabaseAdapter();
   const paidNow = new Date("2026-07-21T08:00:00.000Z");
@@ -137,14 +155,32 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   const { handler, mergeCanonicalQuestionRows } = require("../netlify/functions/admin-question-progress.js");
   const response = await handler({ httpMethod: "GET", headers: { cookie: role.cookie.split(";")[0] }, queryStringParameters: { startDate: "2026-07-20", endDate: "2026-07-20" } });
   assert.equal(response.statusCode, 200); const payload = JSON.parse(response.body); const serialized = JSON.stringify(payload);
-  for (const forbidden of ["assessmentId", "email", "phone", "sessionToken", "answers"]) assert(!serialized.includes(forbidden), `admin payload excludes ${forbidden}`);
+  for (const forbidden of ["assessmentId", "email", "phone", "sessionToken", "answers", "freeText", "payment", "reportContent"]) assert(!serialized.includes(forbidden), `admin payload excludes ${forbidden}`);
 
   const sameMeaning = mergeCanonicalQuestionRows([
-    { questionId: "Q-AGE", questionnaireVersion: questions.LEGACY_QUESTIONNAIRE_VERSION, reachedCount: 6, answeredCount: 5, stoppedCount: 2, activeCount: 0 },
-    { questionId: "Q-AGE", questionnaireVersion: questions.QUESTIONNAIRE_VERSION, reachedCount: 2, answeredCount: 2, stoppedCount: 0, activeCount: 1 }
+    { questionId: "Q-AGE", questionnaireVersion: questions.LEGACY_QUESTIONNAIRE_VERSION, totalReachedCount: 6, totalAnsweredCount: 5,
+      liveReachedCount: 1, backfillReachedCount: 5, activeAtQuestionCount: 1, confirmedStoppedCount: 0, dropoffEligibleCount: 0 },
+    { questionId: "Q-AGE", questionnaireVersion: questions.QUESTIONNAIRE_VERSION, totalReachedCount: 2, totalAnsweredCount: 2,
+      liveReachedCount: 2, backfillReachedCount: 0, activeAtQuestionCount: 0, confirmedStoppedCount: 1, dropoffEligibleCount: 2 }
   ]);
   assert.equal(sameMeaning.length, 1, "same canonical question across versions is one visible row");
-  assert.equal(sameMeaning[0].reachedCount, 8); assert.equal(sameMeaning[0].answeredCount, 7); assert.equal(sameMeaning[0].versionBadge, null);
+  assert.equal(sameMeaning[0].totalReachedCount, 8); assert.equal(sameMeaning[0].totalAnsweredCount, 7);
+  assert.equal(sameMeaning[0].liveReachedCount, 3); assert.equal(sameMeaning[0].backfillReachedCount, 5);
+  assert.equal(sameMeaning[0].dropoffEligibleCount, 2); assert.equal(sameMeaning[0].confirmedStoppedCount, 1);
+  assert.equal(sameMeaning[0].confirmedDropoffRate, 0.5, "aggregated rate uses summed numerator over summed denominator, not average percentages");
+  assert.equal(sameMeaning[0].versionBadge, null);
+  const formulaExamples = [
+    { totalReachedCount: 8, totalAnsweredCount: 7, liveReachedCount: 8, backfillReachedCount: 0, activeAtQuestionCount: 1,
+      dropoffEligibleCount: 7, confirmedStoppedCount: 0, confirmedDropoffRate: 0 },
+    { totalReachedCount: 8, totalAnsweredCount: 8, liveReachedCount: 1, backfillReachedCount: 7, activeAtQuestionCount: 1,
+      dropoffEligibleCount: 0, confirmedStoppedCount: 0, confirmedDropoffRate: null },
+    { totalReachedCount: 5, totalAnsweredCount: 4, liveReachedCount: 5, backfillReachedCount: 0, activeAtQuestionCount: 1,
+      dropoffEligibleCount: 4, confirmedStoppedCount: 1, confirmedDropoffRate: 0.25 }
+  ].map((row, index) => mergeCanonicalQuestionRows([{ questionId: `Q-EXAMPLE-${index}`, questionnaireVersion: questions.QUESTIONNAIRE_VERSION, ...row }],
+    questionId => ({ questionId, sectionKey: "baseline", sectionLabel: "Суурь", analyticsLabel: questionId, meaningIdentity: questionId, questionOrder: index + 1 }))[0]);
+  assert.deepEqual(formulaExamples.map(row => [row.liveReachedCount, row.activeAtQuestionCount, row.dropoffEligibleCount, row.confirmedStoppedCount, row.confirmedDropoffRate]), [
+    [8, 1, 7, 0, 0], [1, 1, 0, 0, null], [5, 1, 4, 1, 0.25]
+  ], "examples A/B/C use live minus active as denominator and stopped divided by eligible");
   const changedMeaning = mergeCanonicalQuestionRows([
     { questionId: "Q-AGE", questionnaireVersion: "old", reachedCount: 3 }, { questionId: "Q-AGE", questionnaireVersion: "new", reachedCount: 4 }
   ], (_id, version) => ({ questionId: "Q-AGE", sectionKey: "baseline", sectionLabel: "Суурь", analyticsLabel: "Нас",
@@ -161,5 +197,20 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   const integrationMigration = fs.readFileSync(path.join(root, "supabase/migrations/20260721165021_integrate_question_progress_paid_first.sql"), "utf8");
   for (const rule of ["commercial_flow_version = 'prepaid_v2' then a.started_at", "JH_QUESTION_PROGRESS_VERSION_MISMATCH",
     "revoke all on function jingeehas.get_question_progress_analytics(date, date, timestamptz) from public, anon, authenticated"]) assert(integrationMigration.includes(rule), rule);
+  const denominatorMigration = fs.readFileSync(path.join(root, "supabase/migrations/20260722015052_fix_question_dropoff_denominator_and_active_reporting.sql"), "utf8");
+  for (const rule of ["total_reached_count", "total_answered_count", "live_reached_count", "backfill_reached_count",
+    "active_at_question_count", "confirmed_stopped_count", "dropoff_eligible_count", "confirmed_dropoff_rate",
+    "greatest(live_reached_count - active_at_question_count, 0)", "source = 'canonical_answer_backfill'",
+    "source = case when excluded.source = 'live' then 'live' else progress.source end"]) assert(denominatorMigration.includes(rule), rule);
+  assert(!denominatorMigration.includes("greatest(c.updated_at"), "unrelated assessment updated_at cannot reset inactivity");
+
+  const promoted = new MemoryDatabaseAdapter();
+  await assessment(promoted, "wa_promoted", "2026-07-20T01:00:00.000Z");
+  await promoted.recordQuestionProgress({ assessmentId: "wa_promoted", questionnaireVersion: questions.QUESTIONNAIRE_VERSION,
+    questionId: "Q-AGE", ...qAge, viewedAt: "2026-07-20T01:01:00.000Z", answered: true, source: "canonical_answer_backfill" });
+  await promoted.recordQuestionProgress({ assessmentId: "wa_promoted", questionnaireVersion: questions.QUESTIONNAIRE_VERSION,
+    questionId: "Q-AGE", ...qAge, viewedAt: "2026-07-21T01:01:00.000Z", answered: false, source: "live" });
+  assert.equal((await promoted.find("assessment_question_progress", { assessmentId: "wa_promoted" }))[0].source, "live",
+    "an actual live render promotes the existing row without rewriting untouched historical backfill rows");
   console.log("question progress analytics tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

@@ -127,7 +127,7 @@ code { overflow-wrap: anywhere; }
 .question-progress-toggle { max-width: 100%; white-space: normal; }
 .question-progress-card h4 { margin: 1.25rem 0 0.5rem; }
 .question-progress-table { margin-block: 0.75rem; }
-.question-progress-table table { min-width: 720px; }
+.question-progress-table table { min-width: 980px; }
 .question-progress-table th, .question-progress-table td { font-size: 0.85rem; }
 .question-version-badge { display: inline-block; padding: 0.08rem 0.35rem; border-radius: 999px; background: #e4eee7; color: var(--primary); font-size: 0.7rem; font-weight: 800; }
 .checkout-preparation { max-width: 720px; }
