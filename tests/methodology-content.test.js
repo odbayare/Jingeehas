@@ -14,7 +14,7 @@ assert.equal(app.routeName("/methodology"), "methodology");
 assert(landing.includes("Яагаад хоол, дасгал дангаараа хангалтгүй байдаг вэ?"));
 for (const pillar of ["Аюулгүй байдлын дохио", "Хоолны зан үйлийн судалгаа", "Сэтгэл хөдлөлийн хооллолт", "Нойр ба амьдралын хэмнэл"]) assert(landing.includes(pillar), pillar);
 assert(!landing.includes("TFEQ, DEBQ, AEBQ, EEQ, BEDS-7, SCOFF, WEL-SF, STOP-Bang, PHQ-9, IPAQ, IWQOL-Lite"));
-assert(landing.includes("мэргэжлийн тусламж шаардлагатай байж болох дохио"));
+assert(landing.includes("Мэргэжлийн тусламж хэрэгтэйг илтгэх дохио хариултаас илэрвэл"));
 assert(landing.includes('href="/methodology"'));
 
 for (const name of ["TFEQ", "TFEQ-R18", "DEBQ", "AEBQ", "EEQ", "BEDS-7", "SCOFF", "PHQ-9", "STOP-Bang", "WEL", "WEL-SF", "IPAQ", "IWQOL-Lite", "Obesity Canada 5As", "Obesity Canada 4Ms", "AACE", "NICE", "Noom", "WeightWatchers", "Calibrate", "Wegovy consumer quiz"]) assert(methodology.includes(name), name);
