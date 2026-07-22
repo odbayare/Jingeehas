@@ -286,7 +286,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "ba61d497925d8905232704f06891ef414c1b9ded984feb9b941975625988c893"
+      "sha256": "233429089d9893edfe003a373a3968698f1c6b875f8eeb05e324f714cb2831c4"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -314,7 +314,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "637c113ee4354b521260ba91d88599b8a0f7f955da572d7b8e28ba8f83bd6bd3"
+      "sha256": "560c14925d1e7a88f1cabececb1c1e76a90de9c2e91364c1bdcd9eed766d7f66"
     }
   ],
   "functionNames": [

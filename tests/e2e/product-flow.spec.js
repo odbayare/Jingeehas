@@ -58,7 +58,9 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]
     await expect(cta).toHaveAttribute("href", "/assessment/start");
     await expect(page.locator(".landing-microcopy").first()).toBeVisible();
     await expect(page.locator(".hero-visual")).toBeVisible();
-    expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
+    await expect(page.locator(".hero-art")).toBeVisible();
+    expect(await page.locator(".hero-art").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
+    expect(await page.locator(".hero-steps").evaluate(element => { const art = element.previousElementSibling.getBoundingClientRect(); const card = element.getBoundingClientRect(); return card.top >= art.bottom; })).toBe(true);
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     expect(await cta.evaluate(element => element.getBoundingClientRect().width <= window.innerWidth)).toBe(true);
