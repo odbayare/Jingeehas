@@ -25,7 +25,8 @@ function createState() {
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
-      analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null, coverage: null, loading: false, error: "",
+      analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
+        allFlows: null, currentFlow: null, priorCurrentFlow: null, legacyFlow: null, conversions: null, coverage: null, loading: false, error: "",
         questionProgress: { summary: null, questions: [], expanded: false, showAll: false } } }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
@@ -362,29 +363,47 @@ function renderQuestionProgressAnalytics() {
       <button class="button compact secondary question-progress-toggle" type="button" data-action="toggle-all-questions" aria-expanded="${progress.showAll}" aria-controls="question-progress-all">Бүх асуултыг харах</button>
       ${progress.showAll ? `<div id="question-progress-all"><h4>Бүх бүртгэгдсэн асуулт</h4>${table(questions)}</div>` : ""}</div>` : ""}</section>`;
 }
-function hasAnalyticsData(summary) { return summary && ["uniqueVisitors", "assessmentsStarted", "assessmentsCompleted", "paywallViews", "invoicesCreated", "paymentsConfirmed"].some(key => Number(summary[key] || 0) > 0); }
+function hasAnalyticsData(summary) { return summary && ["eligibleVisitors", "uniqueVisitors", "assessmentsStarted", "assessmentsCompleted", "paymentSectionViews", "invoicesCreated", "paymentsConfirmed"].some(key => Number(summary[key] || 0) > 0); }
+const CONVERSION_REASONS = Object.freeze({
+  no_denominator: "Сонгосон хугацаанд энэ шатны эхлэх бүртгэл байхгүй.",
+  no_paid_first_visitors: "Сонгосон хугацаанд төлбөр-эхэнд урсгалын зочны бүлэг байхгүй.",
+  visitor_assessment_linkage_unavailable: "Зочныг төлбөрийн хэсгийн үнэлгээтэй найдвартай холбох бүртгэл хүрэлцэхгүй.",
+  no_paid_first_payment_section_entries: "Сонгосон хугацаанд төлбөрийн хэсэгт хүрсэн төлбөр-эхэнд үнэлгээ байхгүй.",
+  no_paid_first_invoice_entries: "Сонгосон хугацаанд үүссэн төлбөр-эхэнд нэхэмжлэл байхгүй.",
+  no_paid_first_payment_entries: "Сонгосон хугацаанд баталгаажсан төлбөр-эхэнд төлбөр байхгүй.",
+  no_paid_first_start_entries: "Сонгосон хугацаанд эхэлсэн төлбөр-эхэнд тест байхгүй.",
+  no_paid_first_complete_entries: "Сонгосон хугацаанд дууссан төлбөр-эхэнд тест байхгүй."
+});
+function conversionDisplay(conversion) {
+  if (conversion?.status === "available" && conversion.rate != null) return safeRate(conversion.rate);
+  const reason = CONVERSION_REASONS[conversion?.reason] || CONVERSION_REASONS[conversion?.status] || "Энэ хөрвөлтийн хувийг ижил cohort-оор тооцох боломжгүй.";
+  return `<span title="${escapeAttribute(reason)}">—</span>`;
+}
 function analyticsCoverageCopy(coverage) {
   if (!coverage?.visitorTrackingStartedAt) return "";
   const started = new Date(coverage.visitorTrackingStartedAt).toLocaleDateString("mn-MN", { timeZone: "Asia/Ulaanbaatar" });
   return `Зочны хэмжилт ${started}-өөс эхэлсэн. Үүнээс өмнөх зочны болон төлбөрийн хэсгийн үзэлтийн дата байхгүй байж болно. Тест, нэхэмжлэл, төлбөрийн тоо нь серверийн бодит бүртгэлээс гарна.`;
 }
 function renderAdminAnalytics() {
-  const analytics = state.admin.analytics; const total = analytics.summary || analyticsTotals(analytics.days); const prior = analytics.priorSummary || analyticsTotals(analytics.priorDays);
-  const priorAvailable = hasAnalyticsData(analytics.priorSummary);
-  const mixed = analytics.coverage?.mixedFlow === true; const sequentialRate = (numerator, denominator) => mixed ? "—" : rate(numerator, denominator);
-  const card = (label, value, conversion, key) => `<article><h3>${label}</h3><p class="metric-value">${value}</p><p>${conversion}</p><p class="metric-compare">${priorAvailable ? comparison(total[key], prior[key]) : "—"}</p></article>`;
-  const stages = [["Зочилсон", total.uniqueVisitors], ["Төлбөрийн хэсэг", total.paywallViews], ["Нэхэмжлэл", total.invoicesCreated], ["Төлбөр", total.paymentsConfirmed], ["Тест эхлүүлсэн", total.assessmentsStarted], ["Тест дуусгасан", total.assessmentsCompleted], ["Тайлан нээсэн", total.reportsOpened || 0]];
+  const analytics = state.admin.analytics; const total = analytics.currentFlow || {}; const prior = analytics.priorCurrentFlow || {};
+  const legacy = analytics.legacyFlow || {}; const conversions = analytics.conversions || {}; const priorAvailable = hasAnalyticsData(analytics.priorCurrentFlow);
+  const flowState = analytics.coverage?.flowState || "empty"; const legacyPresent = analytics.coverage?.legacyActivityPresent === true;
+  const card = (label, value, description, key) => `<article><h3>${label}</h3><p class="metric-value">${value}</p><p>${description}</p><p class="metric-compare">${priorAvailable ? comparison(total[key], prior[key]) : "—"}</p></article>`;
+  const stages = [["Зочилсон", total.eligibleVisitors || 0, null], ["Төлбөрийн хэсэг", total.paymentSectionViews || 0, conversions.visitorToPaymentSection], ["Нэхэмжлэл", total.invoicesCreated || 0, conversions.paymentSectionToInvoice], ["Төлбөр", total.paymentsConfirmed || 0, conversions.invoiceToPayment], ["Тест эхлүүлсэн", total.assessmentsStarted || 0, conversions.paymentToStart], ["Тест дуусгасан", total.assessmentsCompleted || 0, conversions.startToComplete], ["Тайлан нээсэн", total.reportsOpened || 0, conversions.completeToReportOpen]];
+  const dailyUnavailable = `<span title="Өдөр тутмын шатны хугацаа өөр байж болох тул хувь тооцоогүй.">—</span>`;
   return `<section class="analytics-dashboard" aria-labelledby="analytics-title"><h2 id="analytics-title">Өдөр тутмын үзүүлэлт</h2><p><strong>Одоогийн урсгал: Төлбөр эхэнд</strong></p><p>Цагийн бүс: Улаанбаатар</p>
     <form id="analytics-filter-form" class="analytics-filters"><label><span>Хугацаа</span><select name="preset"><option value="today"${analytics.preset === "today" ? " selected" : ""}>Өнөөдөр</option><option value="yesterday"${analytics.preset === "yesterday" ? " selected" : ""}>Өчигдөр</option><option value="last7"${analytics.preset === "last7" ? " selected" : ""}>Сүүлийн 7 хоног</option><option value="last30"${analytics.preset === "last30" ? " selected" : ""}>Сүүлийн 30 хоног</option><option value="thisMonth"${analytics.preset === "thisMonth" ? " selected" : ""}>Энэ сар</option><option value="previousMonth"${analytics.preset === "previousMonth" ? " selected" : ""}>Өмнөх сар</option><option value="custom"${analytics.preset === "custom" ? " selected" : ""}>Өөр хугацаа</option></select></label><label><span>Эхлэх өдөр</span><input type="date" name="startDate" value="${escapeAttribute(analytics.startDate)}"></label><label><span>Дуусах өдөр</span><input type="date" name="endDate" value="${escapeAttribute(analytics.endDate)}"></label><button class="button compact" type="submit">Харах</button></form>
     ${analytics.loading ? `<p role="status">Үзүүлэлтийг ачаалж байна…</p>` : ""}${analytics.error ? `<p class="error">${escapeHtml(analytics.error)}</p>` : ""}
     ${analyticsCoverageCopy(analytics.coverage) ? `<p class="analytics-coverage">${escapeHtml(analyticsCoverageCopy(analytics.coverage))}</p>` : ""}
-    ${mixed ? `<p class="notice">Сонгосон хугацаанд хуучин болон шинэ төлбөрийн урсгал хоёулаа багтсан тул зарим шатны хөрвөлтийн хувийг шууд харьцуулах боломжгүй.</p>` : ""}
+    ${flowState === "mixed" ? `<p class="notice">Сонгосон хугацаанд хуучин болон төлбөр-эхэнд урсгалын бүртгэл хоёулаа байна. Урсгал хоорондын тоог хольж хувь тооцоогүй.</p>` : ""}
+    ${flowState === "legacy_only" ? `<p class="notice">Сонгосон хугацааны тестийн бүртгэлүүд хуучин төлбөрийн урсгалд хамаарна. Төлбөр-эхэнд урсгалын хөрвөлтийн хувь хараахан үүсээгүй.</p>` : ""}
     ${!priorAvailable ? `<p class="analytics-comparison-note">Сонгосон хугацааг өмнөх ижил хугацаатай харьцуулах боломжгүй байна.</p>` : ""}
-    <div class="metric-grid analytics-metrics">${card("Зочилсон хүн", total.uniqueVisitors, `Төлбөрийн хэсэгт хүрсэн хувь: ${rate(total.paywallViews, total.uniqueVisitors)}`, "uniqueVisitors")}${card("Төлбөрийн хэсэг", total.paywallViews, `Нэхэмжлэл үүсгэсэн хувь: ${sequentialRate(total.invoicesCreated, total.paywallViews)}`, "paywallViews")}${card("Нэхэмжлэл", total.invoicesCreated, `Төлбөр төлсөн хувь: ${sequentialRate(total.paymentsConfirmed, total.invoicesCreated)}`, "invoicesCreated")}${card("Төлбөр", total.paymentsConfirmed, `Тест эхлүүлсэн хувь: ${sequentialRate(total.assessmentsStarted, total.paymentsConfirmed)}`, "paymentsConfirmed")}${card("Тест эхлүүлсэн", total.assessmentsStarted, `Тест дуусгасан хувь: ${sequentialRate(total.assessmentsCompleted, total.assessmentsStarted)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted, `Тайлан нээсэн хувь: ${sequentialRate(total.reportsOpened || 0, total.assessmentsCompleted)}`, "assessmentsCompleted")}${card("Тайлан нээсэн", total.reportsOpened || 0, `Зочиноос төлбөр: ${rate(total.paymentsConfirmed, total.uniqueVisitors)}`, "reportsOpened")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
-    <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value], index) => `<li><span>${label}</span><strong>${value}</strong>${index ? `<small>${sequentialRate(value, stages[index - 1][1])}</small>` : ""}</li>`).join("")}</ol>
+    <div class="metric-grid analytics-metrics">${card("Зочилсон хүн", total.eligibleVisitors || 0, `Төлбөрийн хэсэгт хүрсэн хувь: ${conversionDisplay(conversions.visitorToPaymentSection)}`, "eligibleVisitors")}${card("Төлбөрийн хэсэг", total.paymentSectionViews || 0, `Нэхэмжлэл үүсгэсэн хувь: ${conversionDisplay(conversions.paymentSectionToInvoice)}`, "paymentSectionViews")}${card("Нэхэмжлэл", total.invoicesCreated || 0, `Төлбөр төлсөн хувь: ${conversionDisplay(conversions.invoiceToPayment)}`, "invoicesCreated")}${card("Төлбөр", total.paymentsConfirmed || 0, `Тест эхлүүлсэн хувь: ${conversionDisplay(conversions.paymentToStart)}`, "paymentsConfirmed")}${card("Тест эхлүүлсэн", total.assessmentsStarted || 0, `Тест дуусгасан хувь: ${conversionDisplay(conversions.startToComplete)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted || 0, `Тайлан нээсэн хувь: ${conversionDisplay(conversions.completeToReportOpen)}`, "assessmentsCompleted")}${card("Тайлан нээсэн", total.reportsOpened || 0, "Бүрэн тайлан серверээр нээгдсэн", "reportsOpened")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
+    <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value, conversion]) => `<li><span>${label}</span><strong>${value}</strong>${conversion ? `<small>${conversionDisplay(conversion)}</small>` : ""}</li>`).join("")}</ol>
+    ${legacyPresent ? `<aside class="analytics-coverage" aria-label="Хуучин төлбөрийн урсгал"><p><strong>Сонгосон хугацаанд хуучин төлбөрийн урсгалын бүртгэл байна.</strong></p><ul><li>Legacy тест эхлүүлсэн: ${Number(legacy.assessmentsStarted || 0)}</li><li>Legacy тест дуусгасан: ${Number(legacy.assessmentsCompleted || 0)}</li><li>Legacy нэхэмжлэл: ${Number(legacy.invoicesCreated || 0)}</li><li>Legacy төлбөр: ${Number(legacy.paymentsConfirmed || 0)}</li><li>Legacy орлого: ${money(legacy.revenueMnt)}</li></ul></aside>` : ""}
     ${renderQuestionProgressAnalytics()}
     <p class="analytics-daily-note">Өдөр тутмын зочны тоо нь тухайн өдрийн давтагдаагүй зочдыг харуулна.</p>
-    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Зочин</th><th>Эхэлсэн</th><th>Эхлэх хувь</th><th>Дууссан</th><th>Дуусгах хувь</th><th>Төлбөрийн хэсэг</th><th>Хүрсэн хувь</th><th>Нэхэмжлэл</th><th>Нэхэмжлэл үүсгэсэн хувь</th><th>Төлбөр</th><th>Төлбөр төлсөн хувь</th><th>Зочиноос төлбөр</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${day.uniqueVisitors}</td><td>${day.assessmentsStarted}</td><td>${rate(day.assessmentsStarted, day.uniqueVisitors)}</td><td>${day.assessmentsCompleted}</td><td>${rate(day.assessmentsCompleted, day.assessmentsStarted)}</td><td>${day.paywallViews}</td><td>${rate(day.paywallViews, day.assessmentsCompleted)}</td><td>${day.invoicesCreated}</td><td>${rate(day.invoicesCreated, day.paywallViews)}</td><td>${day.paymentsConfirmed}</td><td>${rate(day.paymentsConfirmed, day.invoicesCreated)}</td><td>${rate(day.paymentsConfirmed, day.uniqueVisitors)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
+    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Зочин</th><th>Төлбөрийн хэсэг</th><th>Хүрсэн хувь</th><th>Нэхэмжлэл</th><th>Нэхэмжлэл үүсгэсэн хувь</th><th>Төлбөр</th><th>Төлбөр төлсөн хувь</th><th>Тест эхлүүлсэн</th><th>Тест эхлүүлсэн хувь</th><th>Тест дуусгасан</th><th>Дуусгасан хувь</th><th>Тайлан нээсэн</th><th>Тайлан нээсэн хувь</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${day.uniqueVisitors}</td><td>${day.paymentSectionViews}</td><td>${dailyUnavailable}</td><td>${day.invoicesCreated}</td><td>${dailyUnavailable}</td><td>${day.paymentsConfirmed}</td><td>${dailyUnavailable}</td><td>${day.assessmentsStarted}</td><td>${dailyUnavailable}</td><td>${day.assessmentsCompleted}</td><td>${dailyUnavailable}</td><td>${day.reportsOpened}</td><td>${dailyUnavailable}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
 }
 function renderAdvisorLogin() {
   if (state.advisor.temporaryPasswordChange) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Нууц үгээ солино уу</h1><form id="advisor-password-form"><label class="field"><span>Одоогийн нууц үг</span><input name="currentPassword" type="password" autocomplete="current-password" required></label><label class="field"><span>Шинэ нууц үг</span><input name="newPassword" type="password" autocomplete="new-password" minlength="12" required></label><button class="button" type="submit">Нууц үг солих</button></form><p class="error">${escapeHtml(state.advisor.error)}</p></main></div>`;
@@ -621,7 +640,9 @@ async function loadAdminAnalytics(preset = state.admin.analytics.preset, custom 
       api(`/.netlify/functions/admin-analytics-daily?startDate=${priorStart}&endDate=${priorEnd}`, { method: "GET" }),
       api(`/.netlify/functions/admin-question-progress?startDate=${selected.startDate}&endDate=${selected.endDate}`, { method: "GET" })
     ]);
-    analytics.days = current.days || []; analytics.priorDays = prior.days || []; analytics.summary = current.summary || null; analytics.priorSummary = prior.summary || null; analytics.coverage = current.coverage || null;
+    analytics.days = current.days || []; analytics.priorDays = prior.days || []; analytics.summary = current.summary || null; analytics.priorSummary = prior.summary || null;
+    analytics.allFlows = current.allFlows || current.summary || null; analytics.currentFlow = current.currentFlow || null; analytics.priorCurrentFlow = prior.currentFlow || null;
+    analytics.legacyFlow = current.legacyFlow || null; analytics.conversions = current.conversions || null; analytics.coverage = current.coverage || null;
     analytics.questionProgress.summary = questionProgress.summary || null; analytics.questionProgress.questions = questionProgress.questions || [];
   } catch { analytics.error = "Өдөр тутмын үзүүлэлтийг ачаалж чадсангүй."; }
   analytics.loading = false;
@@ -745,5 +766,5 @@ if (typeof window !== "undefined") { window.addEventListener("popstate", async (
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,
-    analyticsRange, analyticsTotals, rate, safeRate, comparison, hasAnalyticsData, analyticsCoverageCopy, questionProgressWarning, formatAnalyticsDate,
+    analyticsRange, analyticsTotals, rate, safeRate, comparison, conversionDisplay, hasAnalyticsData, analyticsCoverageCopy, questionProgressWarning, formatAnalyticsDate,
     renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics } };

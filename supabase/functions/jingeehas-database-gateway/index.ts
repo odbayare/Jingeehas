@@ -42,6 +42,13 @@ function mapRecordKeys(value: unknown, keyMapper: (key: string) => string): unkn
   return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([key, item]) => [keyMapper(key), item]));
 }
 
+function deepCamelKeys(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(deepCamelKeys);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.entries(value as Record<string, unknown>)
+    .map(([key, item]) => [camelKey(key), deepCamelKeys(item)]));
+}
+
 function normalizeOperation(operation: Record<string, unknown>): Record<string, unknown> {
   // Custom RPC operations keep their arguments at the request root, while
   // generic CRUD operations put data under row/patch/filters. Normalize both
@@ -68,6 +75,9 @@ function normalizeResult(result: unknown): unknown {
   if (Array.isArray(result)) return result.map(item => mapRecordKeys(item, camelKey));
   if (!result || typeof result !== "object") return result;
   const record = result as Record<string, unknown>;
+  if ("current_flow" in record && "legacy_flow" in record && "conversions" in record && "coverage" in record) {
+    return deepCamelKeys(record);
+  }
   if (Array.isArray(record.days)) {
     return { ...(mapRecordKeys(record, camelKey) as Record<string, unknown>), days: record.days.map(item => mapRecordKeys(item, camelKey)),
       summary: mapRecordKeys(record.summary, camelKey) };
