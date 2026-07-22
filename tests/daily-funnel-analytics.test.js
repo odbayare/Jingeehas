@@ -120,10 +120,13 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
   const collectEvent = (eventName, eventId, assessmentId) => collect({ httpMethod: "POST", headers: { origin: "http://localhost:4178", host: "localhost:4178", "user-agent": "Safari" }, body: JSON.stringify({ eventName, eventId, assessmentId, context: browserContext }) });
   assert.equal((await collectEvent("landing_viewed", "33333333-3333-4333-8333-333333333333")).statusCode, 202);
   assert.equal((await collectEvent("landing_viewed", "44444444-4444-4444-8444-444444444444")).statusCode, 202);
+  assert.equal((await collectEvent("payment_preparation_viewed", "77777777-7777-4777-8777-777777777777")).statusCode, 202);
+  assert.equal((await collectEvent("payment_preparation_viewed", "88888888-8888-4888-8888-888888888888")).statusCode, 202);
   assert.equal((await collectEvent("paywall_viewed", "55555555-5555-4555-8555-555555555555", "track-assessment")).statusCode, 202);
   assert.equal((await collectEvent("paywall_viewed", "66666666-6666-4666-8666-666666666666", "track-assessment")).statusCode, 202);
   const tracked = await trackingDatabase.find("analytics_events", {});
   assert.equal(tracked.filter(row => row.eventName === "landing_viewed").length, 1, "landing refresh remains idempotent per visitor and day");
+  assert.equal(tracked.filter(row => row.eventName === "payment_preparation_viewed").length, 1, "payment preparation render is idempotent per public session");
   assert.equal(tracked.filter(row => row.eventName === "paywall_viewed").length, 1, "payment preparation refresh remains idempotent per assessment");
   assert.equal((await trackingDatabase.find("payments", {})).length, 0, "payment-section tracking requires no QPay invoice");
   setDatabaseForTests(database);
