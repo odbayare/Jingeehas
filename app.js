@@ -10,6 +10,7 @@ const PAYMENT_COPY = Object.freeze({
   create_failed_confirmed: "Өмнөх оролдлогоор нэхэмжлэл үүсээгүй нь баталгаажсан. Шинэ оролдлогыг дэмжлэгээр зөвшөөрүүлнэ үү.",
   pending: "QPay төлбөрөө хийсний дараа тест автоматаар нээгдэнэ.",
   checking: "Төлбөрийг шалгаж байна…",
+  paid_but_not_unlocked: "Төлбөр баталгаажсан. Тест нээх эрхийг серверээс дахин шалгана уу.",
   paidBeforeTest: "Төлбөр баталгаажлаа. Тест нээгдлээ.",
   paidAfterAssessment: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ."
 });
@@ -24,7 +25,8 @@ function createState() {
     answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
-      analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null, coverage: null, loading: false, error: "" } }, ownerPreview: false, busy: false, slowSave: false };
+      analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null, coverage: null, loading: false, error: "",
+        questionProgress: { summary: null, questions: [], expanded: false, showAll: false } } }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
 let testComingSoonOverride = null;
@@ -53,6 +55,7 @@ function analyticsIdentity(now = Date.now()) {
     deviceClass: width < 768 ? "mobile" : width < 1024 ? "tablet" : "desktop" };
 }
 const trackedPageEvents = new Set();
+let lastTrackedQuestionKey = "";
 function trackEvent(eventName, assessmentId = "", dedupeKey = "") {
   if (typeof fetch === "undefined" || typeof window === "undefined") return;
   const key = dedupeKey || `${eventName}:${assessmentId}`; if (trackedPageEvents.has(key)) return; trackedPageEvents.add(key);
@@ -60,6 +63,15 @@ function trackEvent(eventName, assessmentId = "", dedupeKey = "") {
     headers: { "content-type": "application/json" }, body: JSON.stringify({ eventId: browserUuid(), eventName, assessmentId: assessmentId || undefined, context: analyticsIdentity() }) })
     .then(response => { if (!response.ok) console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: response.status })); })
     .catch(() => console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: "network_error" })));
+}
+function trackRenderedQuestion() {
+  if (typeof fetch === "undefined" || typeof window === "undefined" || !state.assessmentId) return;
+  const question = questionApi.visibleQuestions(state.answers, state.questionnaireVersion)[state.questionIndex]; if (!question) return;
+  const key = `${state.assessmentId}:${state.questionnaireVersion}:${question.id}`; if (key === lastTrackedQuestionKey) return; lastTrackedQuestionKey = key;
+  fetch("/.netlify/functions/weight-question-progress", { method: "POST", credentials: "same-origin", keepalive: true,
+    headers: { "content-type": "application/json" }, body: JSON.stringify({ assessmentId: state.assessmentId, questionId: question.id }) })
+    .then(response => { if (!response.ok) { if (lastTrackedQuestionKey === key) lastTrackedQuestionKey = ""; console.warn(JSON.stringify({ event: "question_progress_delivery_failed", status: response.status })); } })
+    .catch(() => { if (lastTrackedQuestionKey === key) lastTrackedQuestionKey = ""; console.warn(JSON.stringify({ event: "question_progress_delivery_failed", status: "network_error" })); });
 }
 
 const ROUTES = Object.freeze({
@@ -312,6 +324,38 @@ function analyticsTotals(days = []) { return days.reduce((total, day) => ({ uniq
   { uniqueVisitors: 0, landingViews: 0, assessmentsStarted: 0, assessmentsCompleted: 0, paywallViews: 0, invoicesCreated: 0, paymentsConfirmed: 0, reportsOpened: 0, revenueMnt: 0 }); }
 function rate(numerator, denominator) { return denominator ? `${(100 * numerator / denominator).toFixed(1)}%` : "—"; }
 function comparison(current, prior) { if (!Number.isFinite(Number(prior)) || Number(prior) === 0) return "—"; const change = 100 * (Number(current) - Number(prior)) / Number(prior); return Number.isFinite(change) ? `Өмнөх хугацаанаас ${change >= 0 ? "+" : ""}${change.toFixed(1)}%` : "—"; }
+function safeRate(value) { return value != null && Number.isFinite(Number(value)) ? `${(Number(value) * 100).toFixed(1)}%` : "—"; }
+function compactNumber(value) { const number = Number(value || 0); return Number.isInteger(number) ? String(number) : number.toFixed(1); }
+function questionProgressWarning(covered) {
+  if (Number(covered) < 10) return "Түүвэр бага тул уналтын үзүүлэлтийг урьдчилсан дохио гэж үзнэ.";
+  if (Number(covered) < 30) return "Түүвэр нэмэгдэж байна. Гол уналтын цэгүүдийг ажиглана.";
+  return "";
+}
+function renderQuestionRows(rows) {
+  return rows.map(row => `<tr><td>${escapeHtml(row.sectionLabel || row.sectionKey || "—")}</td><td><code>${escapeHtml(row.questionId)}</code>${row.versionBadge ? ` <span class="question-version-badge">${escapeHtml(row.versionBadge)}</span>` : ""} — ${escapeHtml(row.analyticsLabel || row.questionId)}</td><td>${Number(row.reachedCount || 0)}</td><td>${Number(row.answeredCount || 0)}</td><td>${Number(row.stoppedCount || 0)}</td><td>${row.reachedCount ? safeRate(Number(row.stoppedCount || 0) / Number(row.reachedCount)) : "—"}</td></tr>`).join("");
+}
+function formatAnalyticsDate(value) {
+  if (!value) return "";
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(value));
+  const byType = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${byType.year}.${byType.month}.${byType.day}`;
+}
+function renderQuestionProgressAnalytics() {
+  const progress = state.admin.analytics.questionProgress || { summary: null, questions: [], expanded: false, showAll: false }; const summary = progress.summary || {};
+  const cohort = Number(summary.cohortStarted || 0); const covered = Number(summary.coveredAssessments || 0); const completed = Number(summary.completedCount || 0);
+  const questions = progress.questions || []; const topFive = questions.filter(row => Number(row.stoppedCount || 0) > 0).slice(0, 5); const warning = questionProgressWarning(covered);
+  const started = summary.instrumentationStartedAt ? formatAnalyticsDate(summary.instrumentationStartedAt) : "бүртгэл үүссэн өдрөөс";
+  const table = rows => `<div class="table-scroll question-progress-table" tabindex="0"><table><thead><tr><th>Үе шат</th><th>Асуулт</th><th>Хүрсэн</th><th>Хариулсан</th><th>Энд зогссон</th><th>Уналтын хувь</th></tr></thead><tbody>${renderQuestionRows(rows)}</tbody></table></div>`;
+  return `<section class="question-progress-card${progress.expanded ? " is-expanded" : ""}" aria-labelledby="question-progress-title"><h3 id="question-progress-title">Тестийн явц ба уналт</h3>
+    <div class="question-progress-summary"><article><span>Явц бүртгэгдсэн</span><strong>${covered} / ${cohort} үнэлгээ</strong></article><article><span>Дундаж хүрсэн асуулт</span><strong>${compactNumber(summary.averageQuestionsReached)}</strong></article><article><span>Дуусгасан</span><strong>${completed} / ${cohort} буюу ${cohort ? safeRate(completed / cohort) : "—"}</strong></article><article><span>Хамгийн олон зогссон цэг</span><strong>${summary.topStopLabel ? `${escapeHtml(summary.topStopLabel)} — ${Number(summary.topStopCount || 0)} хүн` : "Одоогоор бүртгэгдээгүй"}</strong></article></div>
+    <p class="question-progress-coverage">Нийт эхэлсэн: ${cohort}. Явцтай: ${covered}. Хамралт: ${cohort ? safeRate(covered / cohort) : "—"}.</p>
+    <button class="button compact secondary question-progress-toggle" type="button" data-action="toggle-question-progress" aria-expanded="${progress.expanded}" aria-controls="question-progress-details">Асуултын явцыг дэлгэрэнгүй харах</button>
+    ${progress.expanded ? `<div id="question-progress-details">${topFive.length ? `<h4>Хамгийн их уналттай цэгүүд</h4>${table(topFive)}` : `<p>24 цагаас хуучин зогсолт одоогоор бүртгэгдээгүй байна.</p>`}
+      <p>Сүүлийн 24 цагт идэвхтэй байгаа тестийг зогссон гэж тооцоогүй.</p>${warning ? `<p class="analytics-comparison-note">${escapeHtml(warning)}</p>` : ""}
+      <p class="analytics-coverage">Асуултын явцын нарийвчилсан бүртгэл ${escapeHtml(started)}-ээс эхэлсэн. Өмнөх хариултуудыг зөвхөн хадгалагдсан бодит хариултаар нөхөн тооцов.</p>
+      <button class="button compact secondary question-progress-toggle" type="button" data-action="toggle-all-questions" aria-expanded="${progress.showAll}" aria-controls="question-progress-all">Бүх асуултыг харах</button>
+      ${progress.showAll ? `<div id="question-progress-all"><h4>Бүх бүртгэгдсэн асуулт</h4>${table(questions)}</div>` : ""}</div>` : ""}</section>`;
+}
 function hasAnalyticsData(summary) { return summary && ["uniqueVisitors", "assessmentsStarted", "assessmentsCompleted", "paywallViews", "invoicesCreated", "paymentsConfirmed"].some(key => Number(summary[key] || 0) > 0); }
 function analyticsCoverageCopy(coverage) {
   if (!coverage?.visitorTrackingStartedAt) return "";
@@ -332,6 +376,7 @@ function renderAdminAnalytics() {
     ${!priorAvailable ? `<p class="analytics-comparison-note">Сонгосон хугацааг өмнөх ижил хугацаатай харьцуулах боломжгүй байна.</p>` : ""}
     <div class="metric-grid analytics-metrics">${card("Зочилсон хүн", total.uniqueVisitors, `Төлбөрийн хэсэгт хүрсэн хувь: ${rate(total.paywallViews, total.uniqueVisitors)}`, "uniqueVisitors")}${card("Төлбөрийн хэсэг", total.paywallViews, `Нэхэмжлэл үүсгэсэн хувь: ${sequentialRate(total.invoicesCreated, total.paywallViews)}`, "paywallViews")}${card("Нэхэмжлэл", total.invoicesCreated, `Төлбөр төлсөн хувь: ${sequentialRate(total.paymentsConfirmed, total.invoicesCreated)}`, "invoicesCreated")}${card("Төлбөр", total.paymentsConfirmed, `Тест эхлүүлсэн хувь: ${sequentialRate(total.assessmentsStarted, total.paymentsConfirmed)}`, "paymentsConfirmed")}${card("Тест эхлүүлсэн", total.assessmentsStarted, `Тест дуусгасан хувь: ${sequentialRate(total.assessmentsCompleted, total.assessmentsStarted)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted, `Тайлан нээсэн хувь: ${sequentialRate(total.reportsOpened || 0, total.assessmentsCompleted)}`, "assessmentsCompleted")}${card("Тайлан нээсэн", total.reportsOpened || 0, `Зочиноос төлбөр: ${rate(total.paymentsConfirmed, total.uniqueVisitors)}`, "reportsOpened")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
     <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value], index) => `<li><span>${label}</span><strong>${value}</strong>${index ? `<small>${sequentialRate(value, stages[index - 1][1])}</small>` : ""}</li>`).join("")}</ol>
+    ${renderQuestionProgressAnalytics()}
     <p class="analytics-daily-note">Өдөр тутмын зочны тоо нь тухайн өдрийн давтагдаагүй зочдыг харуулна.</p>
     <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Зочин</th><th>Эхэлсэн</th><th>Эхлэх хувь</th><th>Дууссан</th><th>Дуусгах хувь</th><th>Төлбөрийн хэсэг</th><th>Хүрсэн хувь</th><th>Нэхэмжлэл</th><th>Нэхэмжлэл үүсгэсэн хувь</th><th>Төлбөр</th><th>Төлбөр төлсөн хувь</th><th>Зочиноос төлбөр</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${day.uniqueVisitors}</td><td>${day.assessmentsStarted}</td><td>${rate(day.assessmentsStarted, day.uniqueVisitors)}</td><td>${day.assessmentsCompleted}</td><td>${rate(day.assessmentsCompleted, day.assessmentsStarted)}</td><td>${day.paywallViews}</td><td>${rate(day.paywallViews, day.assessmentsCompleted)}</td><td>${day.invoicesCreated}</td><td>${rate(day.invoicesCreated, day.paywallViews)}</td><td>${day.paymentsConfirmed}</td><td>${rate(day.paymentsConfirmed, day.invoicesCreated)}</td><td>${rate(day.paymentsConfirmed, day.uniqueVisitors)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
 }
@@ -458,7 +503,21 @@ async function checkPayment() {
   if (state.busy || !state.payment?.paymentId) return;
   state.busy = true;
   setPaymentStatus("checking"); render();
-  try { state.payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: state.payment.paymentId }) }); if (state.payment.status === "paid") { state.assessmentStatus = state.commercialFlowVersion === "prepaid_v2" ? "paid_ready" : state.assessmentStatus; state.questionsAuthorized = state.commercialFlowVersion === "prepaid_v2"; state.busy = false; navigate(state.payment.nextRoute || (state.commercialFlowVersion === "prepaid_v2" ? "/assessment/questions" : "/report")); return; } }
+  try {
+    state.payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: state.payment.paymentId }) });
+    if (state.payment.status === "paid") {
+      if (state.commercialFlowVersion === "prepaid_v2") {
+        state.assessmentStatus = "paid_ready";
+        try {
+          const access = await api("/.netlify/functions/weight-assessment-questions", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
+          state.assessmentStatus = access.status; state.startedAt = access.startedAt || state.startedAt; state.questionsAuthorized = true;
+        } catch {
+          setPaymentStatus("paid_but_not_unlocked"); state.questionsAuthorized = false; state.busy = false; render(); return;
+        }
+      }
+      state.busy = false; navigate(state.payment.nextRoute || (state.commercialFlowVersion === "prepaid_v2" ? "/assessment/questions" : "/report")); return;
+    }
+  }
   catch { setPaymentStatus("check_error"); } finally { state.busy = false; } render();
 }
 function schedulePaymentPolling() {
@@ -551,11 +610,13 @@ async function loadAdminAnalytics(preset = state.admin.analytics.preset, custom 
   const length = Math.floor((Date.parse(`${selected.endDate}T00:00:00Z`) - Date.parse(`${selected.startDate}T00:00:00Z`)) / 86400000) + 1;
   const priorEnd = shiftDay(selected.startDate, -1); const priorStart = shiftDay(priorEnd, -(length - 1));
   try {
-    const [current, prior] = await Promise.all([
+    const [current, prior, questionProgress] = await Promise.all([
       api(`/.netlify/functions/admin-analytics-daily?startDate=${selected.startDate}&endDate=${selected.endDate}`, { method: "GET" }),
-      api(`/.netlify/functions/admin-analytics-daily?startDate=${priorStart}&endDate=${priorEnd}`, { method: "GET" })
+      api(`/.netlify/functions/admin-analytics-daily?startDate=${priorStart}&endDate=${priorEnd}`, { method: "GET" }),
+      api(`/.netlify/functions/admin-question-progress?startDate=${selected.startDate}&endDate=${selected.endDate}`, { method: "GET" })
     ]);
     analytics.days = current.days || []; analytics.priorDays = prior.days || []; analytics.summary = current.summary || null; analytics.priorSummary = prior.summary || null; analytics.coverage = current.coverage || null;
+    analytics.questionProgress.summary = questionProgress.summary || null; analytics.questionProgress.questions = questionProgress.questions || [];
   } catch { analytics.error = "Өдөр тутмын үзүүлэлтийг ачаалж чадсангүй."; }
   analytics.loading = false;
 }
@@ -644,6 +705,8 @@ function bind(root) {
   root.querySelector("#admin-login-form")?.addEventListener("submit", event => { event.preventDefault(); adminLoginSubmit(event.currentTarget).catch(() => { state.admin.error = "Нэвтрэх мэдээлэл буруу байна."; render(); }); });
   root.querySelector("#admin-advisor-form")?.addEventListener("submit", event => { event.preventDefault(); adminAdvisorSubmit(event.currentTarget).catch(() => { state.admin.error = "Зөвлөх үүсгэж чадсангүй."; render(); }); });
   root.querySelector("#analytics-filter-form")?.addEventListener("submit", event => { event.preventDefault(); const input = formObject(event.currentTarget); loadAdminAnalytics(input.preset, input).then(() => render()).catch(() => { state.admin.analytics.error = "Хугацааг шалгана уу."; render(); }); });
+  root.querySelector('[data-action="toggle-question-progress"]')?.addEventListener("click", () => { const progress = state.admin.analytics.questionProgress; progress.expanded = !progress.expanded; if (!progress.expanded) progress.showAll = false; render({ focus: false }); });
+  root.querySelector('[data-action="toggle-all-questions"]')?.addEventListener("click", () => { const progress = state.admin.analytics.questionProgress; progress.showAll = !progress.showAll; render({ focus: false }); });
   root.querySelector('[data-action="start-owner-preview"]')?.addEventListener("click", () => startOwnerPreview().catch(() => { state.admin.error = "Бодит тестийн эрх нээж чадсангүй."; render(); }));
   root.querySelector('[data-action="revoke-owner-preview"]')?.addEventListener("click", () => revokeOwnerPreview().catch(() => { state.admin.error = "Туршилтын эрхийг цуцалж чадсангүй."; render(); }));
   root.querySelectorAll("[data-regenerate-report]").forEach(button => button.addEventListener("click", () => regenerateAdminReport(button.dataset.regenerateReport).catch(() => { state.busy = false; state.admin.error = "Тайлангийн шинэ хувилбарыг үүсгэж чадсангүй."; render(); })));
@@ -665,6 +728,7 @@ function render(options = {}) {
   const route = routeName(window.location.pathname);
   if (route === "landing") trackEvent("landing_viewed", "", "landing_viewed:page-load");
   if (route === "payment" || route === "assessmentContact") trackEvent("paywall_viewed", state.assessmentId || undefined);
+  if (route === "questions" && state.questionsAuthorized && state.assessmentId) trackRenderedQuestion();
   const heading = document.getElementById("page-title"); if (options.focus !== false && heading) heading.focus();
   schedulePaymentPolling();
   return root.innerHTML;
@@ -675,4 +739,5 @@ if (typeof window !== "undefined") { window.addEventListener("popstate", async (
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,
-    analyticsRange, analyticsTotals, rate, comparison, hasAnalyticsData, analyticsCoverageCopy, renderAdminAnalytics } };
+    analyticsRange, analyticsTotals, rate, safeRate, comparison, hasAnalyticsData, analyticsCoverageCopy, questionProgressWarning, formatAnalyticsDate,
+    renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics } };

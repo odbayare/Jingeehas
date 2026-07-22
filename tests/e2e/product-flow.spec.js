@@ -97,6 +97,25 @@ test("owner daily funnel dashboard is readable at 375px", async ({ page, context
   await expect(page.locator(".table-scroll")).toHaveCSS("overflow-x", "auto");
 });
 
+test("question progress card stays compact and expands in two levels", async ({ page, context }) => {
+  await context.addCookies([{ name: "jingeehas_admin", value: "admin-e2e", domain: "127.0.0.1", path: "/" }]);
+  for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]) {
+    await page.setViewportSize({ width, height }); await page.goto("/admin?e2e=1");
+    const card = page.locator(".question-progress-card"); await expect(card).toBeVisible();
+    const detailsToggle = card.getByRole("button", { name: "Асуултын явцыг дэлгэрэнгүй харах" });
+    await expect(detailsToggle).toHaveAttribute("aria-expanded", "false"); await expect(card.locator("table")).toHaveCount(0);
+    if (width === 1440) expect(await card.evaluate(element => element.getBoundingClientRect().height)).toBeLessThanOrEqual(260);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+    await detailsToggle.click(); await expect(detailsToggle).toHaveAttribute("aria-expanded", "true");
+    await expect(card.getByRole("heading", { name: "Хамгийн их уналттай цэгүүд" })).toBeVisible();
+    await expect(card.locator("tbody").first().locator("tr")).toHaveCount(5);
+    const allToggle = card.getByRole("button", { name: "Бүх асуултыг харах" }); await expect(allToggle).toHaveAttribute("aria-expanded", "false");
+    await allToggle.click(); await expect(allToggle).toHaveAttribute("aria-expanded", "true"); await expect(card.locator("tbody").nth(1).locator("tr")).toHaveCount(8);
+    await expect(card.locator(".question-progress-table").last()).toHaveCSS("overflow-x", "auto");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  }
+});
+
 test("detailed methodology route returns its conservative evidence disclosure", async ({ page, request }) => {
   const response = await request.get("/methodology");
   expect(response.status()).toBe(200);
@@ -128,6 +147,11 @@ test("authenticated owner preview starts through the server gate without QPay", 
   const afterPreview = await (await request.get("/__test/stats")).json();
   expect(afterPreview.qpayCreate).toBe(beforePreview.qpayCreate);
   expect(afterPreview.paymentRows).toBe(beforePreview.paymentRows);
+  expect(afterPreview.questionProgressRows).toBeGreaterThan(beforePreview.questionProgressRows);
+  const ownerFirstQuestionRows = afterPreview.questionProgressRows;
+  await page.reload();
+  await expect(page.locator('[data-question="Q-AGE"]')).toBeVisible();
+  expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(ownerFirstQuestionRows);
 });
 
 test("assessment starts with the short free safety gate", async ({ page, request }) => {
@@ -143,12 +167,19 @@ test("paid-first checkout creates one invoice and completion opens the full repo
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
   await expect(page.getByText("Имэйл хаягаа зөв оруулна уу.")).toBeVisible();
   await page.locator("#contact-email").fill("paid@example.com");
+  const beforePreparation = await (await request.get("/__test/stats")).json();
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).evaluate(button => { button.click(); button.click(); });
   await expect(page).toHaveURL(/\/assessment\/payment$/);
   await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toBeVisible();
+  expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(beforePreparation.questionProgressRows);
   const beforeCompletion = await (await request.get("/__test/stats")).json();
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
+  await expect.poll(async () => (await (await request.get("/__test/stats")).json()).questionProgressRows).toBeGreaterThan(beforePreparation.questionProgressRows);
+  const firstQuestionRows = (await (await request.get("/__test/stats")).json()).questionProgressRows;
+  await page.goto("/assessment/questions?e2e=1"); await expect(page).toHaveURL(/\/assessment\/questions\?e2e=1$/);
+  await expect(page.locator('[data-question="Q-AGE"]')).toBeVisible();
+  expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(firstQuestionRows);
   await completeQuestionnaire(page);
   await expect(page.getByRole("heading", { name: "Бүрэн тайлан" })).toBeVisible();
   await expect(page.getByText("QPay нэхэмжлэл", { exact: true })).toHaveCount(0);

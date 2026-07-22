@@ -147,5 +147,49 @@ class MemoryDatabaseAdapter {
         prepaidFlowCount: assessments.filter(row => row.commercialFlowVersion === "prepaid_v2").length,
         mixedFlow: assessments.some(row => row.commercialFlowVersion === "prepaid_v2") && assessments.some(row => row.commercialFlowVersion !== "prepaid_v2") } };
   }
+  async recordQuestionProgress(input) {
+    const assessment = await this.get("assessments", input.assessmentId);
+    if (!assessment || assessment.questionnaireVersion !== input.questionnaireVersion) {
+      throw Object.assign(new Error("Question progress version mismatch"), { code: "invalid_questionnaire_version" });
+    }
+    const id = `${input.assessmentId}:${input.questionnaireVersion}:${input.questionId}`;
+    const existing = await this.get("assessment_question_progress", id);
+    const viewedAt = input.viewedAt;
+    return this.upsert("assessment_question_progress", id, { assessmentId: input.assessmentId, questionnaireVersion: input.questionnaireVersion,
+      questionId: input.questionId, sectionKey: input.sectionKey || null, questionOrder: input.questionOrder || null, branchDepth: input.branchDepth || 0,
+      firstViewedAt: existing?.firstViewedAt || viewedAt, lastViewedAt: viewedAt,
+      answeredAt: existing?.answeredAt || (input.answered ? viewedAt : null), source: existing?.source || input.source || "live",
+      createdAt: existing?.createdAt || viewedAt, updatedAt: viewedAt });
+  }
+  async getQuestionProgressAnalytics(startDate, endDate, now = new Date()) {
+    const day = value => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
+    const events = [...this.table("analytics_events").values()];
+    const excluded = new Set(events.filter(row => row.assessmentId && (row.isAdmin || row.isOwnerPreview || row.isTest)).map(row => row.assessmentId));
+    for (const row of this.table("assessment_sessions").values()) if (row.source === "owner") excluded.add(row.assessmentId);
+    const cohort = [...this.table("assessments").values()].filter(row => { if (excluded.has(row.id)) return false;
+      const started = row.commercialFlowVersion === "prepaid_v2" ? row.startedAt : (row.startedAt || row.createdAt);
+      return started && day(started) >= startDate && day(started) <= endDate; });
+    const cohortIds = new Set(cohort.map(row => row.id));
+    const progress = [...this.table("assessment_question_progress").values()].filter(row => cohortIds.has(row.assessmentId));
+    const byAssessment = new Map();
+    for (const row of progress) { const rows = byAssessment.get(row.assessmentId) || []; rows.push(row); byAssessment.set(row.assessmentId, rows); }
+    const cutoff = new Date(new Date(now).getTime() - 86400000);
+    const states = new Map(cohort.map(assessment => { const rows = (byAssessment.get(assessment.id) || []).filter(row => row.source === "live");
+      const last = [...rows].sort((a, b) => String(b.lastViewedAt).localeCompare(String(a.lastViewedAt)) || Number(b.questionOrder || 0) - Number(a.questionOrder || 0))[0] || null;
+      const activity = new Date([assessment.updatedAt, ...rows.map(row => row.lastViewedAt)].filter(Boolean).sort().at(-1) || assessment.createdAt);
+      return [assessment.id, { last, stopped: assessment.status !== "complete" && last && activity < cutoff, active: assessment.status !== "complete" && last && activity >= cutoff }]; }));
+    const keys = new Map();
+    for (const row of progress) { const key = `${row.questionnaireVersion}:${row.questionId}`; const item = keys.get(key) || { questionId: row.questionId, questionnaireVersion: row.questionnaireVersion,
+      sectionKey: row.sectionKey, questionOrder: row.questionOrder, reached: new Set(), answered: new Set(), stopped: new Set(), active: new Set() };
+      item.reached.add(row.assessmentId); if (row.answeredAt) item.answered.add(row.assessmentId);
+      const state = states.get(row.assessmentId); if (state?.last?.id === row.id && state.stopped) item.stopped.add(row.assessmentId); if (state?.last?.id === row.id && state.active) item.active.add(row.assessmentId); keys.set(key, item); }
+    const questions = [...keys.values()].map(item => ({ questionId: item.questionId, questionnaireVersion: item.questionnaireVersion, sectionKey: item.sectionKey,
+      questionOrder: item.questionOrder, reachedCount: item.reached.size, answeredCount: item.answered.size, stoppedCount: item.stopped.size, activeCount: item.active.size }));
+    const covered = byAssessment.size; const completed = cohort.filter(row => row.status === "complete").length;
+    return { summary: { cohortStarted: cohort.length, coveredAssessments: covered, coverageRate: cohort.length ? covered / cohort.length : 0,
+      averageQuestionsReached: covered ? progress.length / covered : 0, completedCount: completed, completionRate: cohort.length ? completed / cohort.length : 0,
+      activeInProgressCount: [...states.values()].filter(item => item.active).length,
+      instrumentationStartedAt: progress.map(row => row.createdAt).sort()[0] || null }, questions };
+  }
 }
 module.exports = { MemoryDatabaseAdapter };

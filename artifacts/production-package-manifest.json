@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "e1e90c428d3997c692b83a69a413e69b655693b9cce3f5943c6b35cab958f196"
+      "sha256": "019a95f184efbcc6c678710b66b4d7079606186e863167a30ce1e6158e640b13"
     },
     {
       "file": "assets/favicon.svg",
@@ -45,7 +45,7 @@
     },
     {
       "file": "styles.css",
-      "sha256": "2c1b214484211e9e25b6f78858832a90773bb94d3854e4715249de0d25348ee5"
+      "sha256": "8414549447eb6c5eabe278c77cc929d5f3b9edc31ad6f9274f1d8eb6d7c03287"
     }
   ],
   "serverFunctions": [
@@ -57,6 +57,7 @@
     "admin-preview-revoke",
     "admin-preview-start",
     "admin-preview-status",
+    "admin-question-progress",
     "admin-regenerate-report-version",
     "admin-report-preview",
     "admin-report-regeneration-candidates",
@@ -79,6 +80,7 @@
     "weight-assessment-save",
     "weight-data-deletion-request",
     "weight-entitlements",
+    "weight-question-progress",
     "weight-recovery-confirm",
     "weight-recovery-contact-save",
     "weight-recovery-request",
