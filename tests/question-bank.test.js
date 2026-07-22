@@ -55,7 +55,7 @@ assert.equal(app.PRODUCT.amount, 9900);
 const appSource = require("node:fs").readFileSync(require.resolve("../app.js"), "utf8");
 assert(appSource.includes('if (route === "landing") trackEvent("landing_viewed"'), "landing analytics event remains wired");
 assert(appSource.includes('trackEvent("landing_cta_clicked")'), "landing CTA uses canonical idempotent event");
-assert(appSource.includes('if (route === "assessmentContact") trackEvent("payment_preparation_viewed"'), "payment preparation analytics event remains wired before invoice creation");
+assert(appSource.includes('if (["assessmentStart", "assessmentContact"].includes(route)) trackEvent("payment_preparation_viewed"'), "payment preparation analytics event remains wired before invoice creation");
 assert(appSource.includes('["text", "number"].includes(input.type)'), "number answers update on input without waiting for blur");
 assert(!landing.includes("Үе 1"));
 app._test.setState({ questionsAuthorized: true });

@@ -759,7 +759,7 @@ function render(options = {}) {
   root.innerHTML = renderForPath(window.location.pathname); bind(root);
   const route = routeName(window.location.pathname);
   if (route === "landing") trackEvent("landing_viewed", "", "landing_viewed:page-load");
-  if (route === "assessmentContact") trackEvent("payment_preparation_viewed", "", "payment_preparation_viewed:page-load");
+  if (["assessmentStart", "assessmentContact"].includes(route)) trackEvent("payment_preparation_viewed", "", "payment_preparation_viewed:page-load");
   if (route === "payment") trackEvent("paywall_viewed", state.assessmentId || undefined);
   if (route === "questions" && state.questionsAuthorized && state.assessmentId) trackRenderedQuestion();
   const heading = document.getElementById("page-title"); if (options.focus !== false && heading) heading.focus();
