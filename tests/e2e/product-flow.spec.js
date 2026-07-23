@@ -66,6 +66,10 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1280, 900],
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
     await expect(page.locator(".landing-microcopy").first()).toBeVisible();
+    await expect(page.locator(".landing-microcopy")).toHaveCount(4);
+    expect(await page.locator(".landing-microcopy").evaluateAll(nodes => nodes.every(node => node.textContent.trim() === "Тест бөглөх хугацаа 10 орчим мин · Дэлгэрэнгүй хувийн тайлан · 9,900₮"))).toBe(true);
+    expect(await page.locator("body").innerText()).not.toContain("40 орчим асуулт");
+    expect(await page.locator("body").innerText()).not.toContain("10–15 минут");
     await expect(page.locator(".hero-visual")).toBeVisible();
     await expect(page.locator(".hero-art")).toBeVisible();
     expect(await page.locator(".hero-art").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
