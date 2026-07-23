@@ -46,6 +46,8 @@ assert(!landing.includes("гол дайсан"));
 assert((landing.match(/хэв маяг/g) || []).length <= 3);
 assert(landing.includes('href="/assessment/start"'));
 assert(landing.includes("Онош биш. Өөрийгөө танин мэдэх үнэлгээ."));
+for (const step of ["01</strong> Асуултад хариулна", "02</strong> Давтагддаг хэв маягаа олно", "03</strong> Дэлгэрэнгүй тайлангаа авна", "04</strong> Жин хасахад өөрт тохирох арга барилаа ойлгоно"]) assert(landing.includes(step), `hero step missing: ${step}`);
+assert.equal((landing.match(/Жин хасахад өөрт тохирох арга барилаа ойлгоно/g) || []).length, 1);
 assert(landing.includes("support@jingeehas.fit"));
 assert((landing.match(/data-primary-cta/g) || []).length >= 4);
 assert(!/<section class="hero"[^>]*>[\s\S]*?<h1[^>]*>Илүүдэл жингээс салах тест үнэлгээ<\/h1>/.test(landing));

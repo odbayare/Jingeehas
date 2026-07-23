@@ -46,12 +46,16 @@ async function completeQuestionnaire(page) {
   await expect(page).toHaveURL(/\/report(?:\?e2e=1)?$/);
 }
 
-for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]) {
+for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1280, 900], [1440, 900]]) {
   test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" })).toBeVisible();
-    await expect(page.locator(".hero-steps p")).toHaveCount(3);
+    await expect(page.locator(".hero-steps p")).toHaveCount(4);
+    await expect(page.locator(".hero-steps p").nth(0)).toHaveText(/01\s+Асуултад хариулна/);
+    await expect(page.locator(".hero-steps p").nth(1)).toHaveText(/02\s+Давтагддаг хэв маягаа олно/);
+    await expect(page.locator(".hero-steps p").nth(2)).toHaveText(/03\s+Дэлгэрэнгүй тайлангаа авна/);
+    await expect(page.locator(".hero-steps p").nth(3)).toHaveText(/04\s+Жин хасахад өөрт тохирох арга барилаа ойлгоно/);
     await expect(page.locator(".hero-steps")).toBeVisible();
     const cta = page.getByRole("link", { name: "Тестээ авах — 9,900₮" }).first();
     await expect(cta).toBeVisible();
