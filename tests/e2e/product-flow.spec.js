@@ -75,6 +75,9 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1280, 900],
     expect(await page.locator("body").innerText()).not.toContain("10–15 минут");
     await expect(page.locator(".hero-visual")).toBeVisible();
     await expect(page.locator(".hero-art")).toBeVisible();
+    const mirrorTitles = ["«Даваа гарагаас» мөчлөг", "Хөл аяндаа л", "Өдөр нь чаддаг, орой нь чаддаггүй", "Хүний дэргэд байхдаа өөр", "Хассан жин буцаад л нэмэгдчихдэг", "Толь хэцүү болсон"];
+    for (const title of mirrorTitles) await expect(page.getByRole("heading", { name: title, exact: true })).toHaveCount(1);
+    for (const oldCopy of ["Гар аяндаа", "Өдөр нь болдог, орой нь болдоггүй", "Хүнтэй байхдаа өөр", "Хассан жин буцаад ирдэг"]) await expect(page.getByText(oldCopy, { exact: true })).toHaveCount(0);
     expect(await page.locator(".hero-art").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
     expect(await page.locator(".hero-steps").evaluate(element => { const art = element.previousElementSibling.getBoundingClientRect(); const card = element.getBoundingClientRect(); return card.top >= art.bottom; })).toBe(true);
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
