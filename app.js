@@ -94,6 +94,7 @@ function renderLanding() {
   const primary = `Тест өгөх — ${PRODUCT.displayPrice}`;
   return `<div class="page landing-page">${navigation()}<main>
     <section class="hero landing-hero" aria-labelledby="page-title"><div class="hero-copy">
+      <p class="hero-eyebrow">Жин хасахад саад болж буй сэтгэлзүйн шалтгааны тест</p>
       <h1 id="page-title" tabindex="-1">Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?</h1>
       <p class="hero-lead approved-copy">Хүн бүрд жин хасалтыг нь эхнээс нь эвддэг өөрийн гэсэн зуршил байдаг. Энэ тест таных юу болохыг олж харахад тусална.</p>
       <p class="landing-microcopy">${micro} · ${PRODUCT.displayPrice}</p>

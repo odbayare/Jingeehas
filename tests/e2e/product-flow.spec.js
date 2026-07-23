@@ -50,6 +50,7 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1280, 900],
   test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto("/");
+    await expect(page.getByText("Жин хасахад саад болж буй сэтгэлзүйн шалтгааны тест", { exact: true })).toHaveCount(1);
     await expect(page.getByRole("heading", { name: "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" })).toBeVisible();
     await expect(page.locator(".hero-steps p")).toHaveCount(4);
     await expect(page.locator(".hero-steps p").nth(0)).toHaveText(/01\s+Асуултад хариулна/);

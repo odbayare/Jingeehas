@@ -48,6 +48,8 @@ assert(!landing.includes("гол дайсан"));
 assert((landing.match(/хэв маяг/g) || []).length <= 3);
 assert(landing.includes('href="/assessment/start"'));
 assert(landing.includes("Онош биш. Өөрийгөө танин мэдэх үнэлгээ."));
+assert.equal((landing.match(/Жин хасахад саад болж буй сэтгэлзүйн шалтгааны тест/g) || []).length, 1);
+assert(landing.includes("Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?"));
 for (const step of ["01</strong> Асуултад хариулна", "02</strong> Давтагддаг хэв маягаа олно", "03</strong> Дэлгэрэнгүй тайлангаа авна", "04</strong> Жин хасахад өөрт тохирох арга барилаа ойлгоно"]) assert(landing.includes(step), `hero step missing: ${step}`);
 assert.equal((landing.match(/Жин хасахад өөрт тохирох арга барилаа ойлгоно/g) || []).length, 1);
 assert(landing.includes("support@jingeehas.fit"));
