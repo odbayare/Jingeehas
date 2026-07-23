@@ -11,7 +11,8 @@ const landing = app.renderForPath("/");
 const methodology = app.renderForPath("/methodology");
 
 assert.equal(app.routeName("/methodology"), "methodology");
-assert(landing.includes("Яагаад хоол, дасгал дангаараа хангалтгүй байдаг вэ?"));
+assert(landing.includes("Яагаад хоолны дэглэм барих, дасгал хөдөлгөөн хийх дангаараа хангалтгүй байдаг вэ?"));
+assert(!landing.includes("Яагаад хоол, дасгал дангаараа хангалтгүй байдаг вэ?"));
 for (const pillar of ["Аюулгүй байдлын дохио", "Хоолны зан үйлийн судалгаа", "Сэтгэл хөдлөлийн хооллолт", "Нойр ба амьдралын хэмнэл"]) assert(landing.includes(pillar), pillar);
 assert(!landing.includes("TFEQ, DEBQ, AEBQ, EEQ, BEDS-7, SCOFF, WEL-SF, STOP-Bang, PHQ-9, IPAQ, IWQOL-Lite"));
 assert(landing.includes("Мэргэжлийн тусламж хэрэгтэйг илтгэх дохио хариултаас илэрвэл"));

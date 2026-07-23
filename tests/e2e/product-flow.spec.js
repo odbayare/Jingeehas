@@ -78,7 +78,7 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1280, 900],
 test("methodology trust content stacks without mobile overflow", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Яагаад хоол, дасгал дангаараа хангалтгүй байдаг вэ?" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Яагаад хоолны дэглэм барих, дасгал хөдөлгөөн хийх дангаараа хангалтгүй байдаг вэ?" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Аюулгүй байдлын дохио" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Сэтгэл хөдлөлийн хооллолт" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Нойр ба амьдралын хэмнэл" })).toBeVisible();
