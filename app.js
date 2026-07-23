@@ -91,7 +91,7 @@ function renderLanding() {
   const count = questionApi?.MAX_ROUTED_QUESTION_COUNT || 40;
   const questionCountCopy = `${count} орчим асуулт`;
   const micro = `${questionCountCopy} · ${VERIFIED_LANDING_DURATION} · Дэлгэрэнгүй хувийн тайлан`;
-  const primary = `Тестээ авах — ${PRODUCT.displayPrice}`;
+  const primary = `Тест өгөх — ${PRODUCT.displayPrice}`;
   return `<div class="page landing-page">${navigation()}<main>
     <section class="hero landing-hero" aria-labelledby="page-title"><div class="hero-copy">
       <h1 id="page-title" tabindex="-1">Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?</h1>

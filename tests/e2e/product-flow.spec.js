@@ -57,7 +57,11 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1280, 900],
     await expect(page.locator(".hero-steps p").nth(2)).toHaveText(/03\s+Дэлгэрэнгүй тайлангаа авна/);
     await expect(page.locator(".hero-steps p").nth(3)).toHaveText(/04\s+Жин хасахад өөрт тохирох арга барилаа ойлгоно/);
     await expect(page.locator(".hero-steps")).toBeVisible();
-    const cta = page.getByRole("link", { name: "Тестээ авах — 9,900₮" }).first();
+    const ctas = page.getByRole("link", { name: "Тест өгөх — 9,900₮" });
+    await expect(ctas).toHaveCount(4);
+    await expect(page.locator('a[data-primary-cta]')).toHaveCount(4);
+    await expect(page.locator('a[data-primary-cta]')).toHaveAttribute("href", "/assessment/start");
+    const cta = ctas.first();
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
     await expect(page.locator(".landing-microcopy").first()).toBeVisible();

@@ -24,7 +24,8 @@ assert(landing.includes("Хүн бүрд жин хасалтыг нь эхнээ
 assert(!landing.includes("Энэ тест таных юу болохыг олж өгнө."));
 assert(landing.includes("40 орчим асуулт"));
 assert.equal((landing.match(/10–15 минут/g) || []).length, 3);
-assert(landing.includes("Тестээ авах — 9,900₮"));
+assert((landing.match(/Тест өгөх — 9,900₮/g) || []).length >= 4);
+assert(!landing.includes("Тестээ авах — 9,900₮"));
 assert(landing.includes("Та эдгээрийг өөр дээрээ анзаарч байсан уу?"));
 for (const card of ["“Даваа гарагаас” гэдэг мөчлөг", "Гар аяндаа", "Өдөр нь болдог, орой нь болдоггүй", "Хүнтэй байхдаа өөр", "Хассан жин буцаад ирдэг", "Толь хэцүү болсон"]) assert(landing.includes(card), card);
 assert(landing.includes("Гурван сар зүтгэж хассан таван килограмм"));
