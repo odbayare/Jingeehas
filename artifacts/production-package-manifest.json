@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "bd15e5da3fedb39220adb49f06d47b0b1f31b01c14866dcc625c6398e9b84f36"
+      "sha256": "64a7027516d7117022c835cdd4b986ac674257c67d8f9fb7ce3402feb7d674a0"
     },
     {
       "file": "assets/favicon.svg",
@@ -45,7 +45,7 @@
     },
     {
       "file": "styles.css",
-      "sha256": "58e4936d2b9d6053d84abae41386b99868191eb16dd5a708fc6124a95955338c"
+      "sha256": "d37f07fd05252c0e9272bf39acf8eb258436a11a37441eed97b272cbaea0882e"
     }
   ],
   "serverFunctions": [
@@ -84,6 +84,7 @@
     "weight-recovery-confirm",
     "weight-recovery-contact-save",
     "weight-recovery-request",
+    "weight-report-email-save",
     "weight-safety-gate",
     "weight-session-start",
     "weight-session-state"

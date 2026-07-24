@@ -22,7 +22,7 @@
     },
     {
       "file": "netlify/functions/_lib/analytics.js",
-      "sha256": "e429922a00efdce8510e280f77a40f24af9a76b6edea41208a643b063657d8a1"
+      "sha256": "47114c46f6765b8d819ffea8f42a67a83bb79893ff943a0e74784a98884de3dc"
     },
     {
       "file": "netlify/functions/_lib/answer-rules.js",
@@ -30,7 +30,7 @@
     },
     {
       "file": "netlify/functions/_lib/assessment.js",
-      "sha256": "93ac8212ac062ddb79a595aec73c8042d99914b0ff0d7084ccd90fa91f69758c"
+      "sha256": "d1df37751e82d94e708f28e8eff9d8f04a243837282900d6dda57db649b0e4f5"
     },
     {
       "file": "netlify/functions/_lib/auth.js",
@@ -54,7 +54,7 @@
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "f8f8cd9a00abb4179525ebda2c2fc0b13c64072d93e908213b4a04a2c2d66e87"
+      "sha256": "7c5143a5583688ad9f00174bb495be92fa59f709078088f5cc427529bf2d14e2"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -74,7 +74,7 @@
     },
     {
       "file": "netlify/functions/_lib/recovery.js",
-      "sha256": "60a78d270997e28ab6985c878d3ee55cb9792061a0daa9eaa4becf7c35a3d765"
+      "sha256": "f4ea182745bf427cda65b6407820e8ca1f4cfabcd63e84b6849ef7ac672601ed"
     },
     {
       "file": "netlify/functions/_lib/report-copy.js",
@@ -114,7 +114,7 @@
     },
     {
       "file": "netlify/functions/_lib/store.js",
-      "sha256": "b14ce48e027053a89b26eee0ad1109b9f1d132156ecee58bcc7c05cc9da6fe77"
+      "sha256": "7a037bc92b8f38683d7fa2229eb54462ec1eea88e56b6d7af79935dc2f39aacf"
     },
     {
       "file": "netlify/functions/admin-advisor-create.js",
@@ -126,7 +126,7 @@
     },
     {
       "file": "netlify/functions/admin-analytics-daily.js",
-      "sha256": "3f8728e8d2ce6c42da01e45b965e1ba848644cbecb629fe794ec0efd39e1bcc4"
+      "sha256": "25deb0bfdc66f4472dd57c3e548e7fa9616be5600c394b63e718c5656902e9ad"
     },
     {
       "file": "netlify/functions/admin-login.js",
@@ -257,6 +257,10 @@
       "sha256": "315cb0925bf2c554044c78eaa1df69c9c54c53971792447f01659611831aadbe"
     },
     {
+      "file": "netlify/functions/weight-report-email-save.js",
+      "sha256": "0b76d8cbaa7a3f7ef0e611feeab810216783ec29e1eaf25d1a8892f5ceb9f7dc"
+    },
+    {
       "file": "netlify/functions/weight-safety-gate.js",
       "sha256": "c797cbe12485160c53e2af01e4c223d7f222a537752804e55e23009031836f51"
     },
@@ -286,7 +290,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "bd15e5da3fedb39220adb49f06d47b0b1f31b01c14866dcc625c6398e9b84f36"
+      "sha256": "64a7027516d7117022c835cdd4b986ac674257c67d8f9fb7ce3402feb7d674a0"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -314,7 +318,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "58e4936d2b9d6053d84abae41386b99868191eb16dd5a708fc6124a95955338c"
+      "sha256": "d37f07fd05252c0e9272bf39acf8eb258436a11a37441eed97b272cbaea0882e"
     }
   ],
   "functionNames": [
@@ -353,6 +357,7 @@
     "weight-recovery-confirm",
     "weight-recovery-contact-save",
     "weight-recovery-request",
+    "weight-report-email-save",
     "weight-safety-gate",
     "weight-session-start",
     "weight-session-state"

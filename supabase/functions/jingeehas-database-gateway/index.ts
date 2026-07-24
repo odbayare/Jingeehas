@@ -55,7 +55,7 @@ function normalizeOperation(operation: Record<string, unknown>): Record<string, 
   // shapes without changing established custom RPC contracts such as recovery.
   const reportVersionActions = new Set([
     "get_active_report_snapshot", "list_report_snapshot_versions", "get_report_snapshot_version",
-    "create_report_snapshot_version", "activate_report_snapshot_version", "insert_analytics_event", "find_analytics_events", "get_daily_funnel_analytics",
+    "create_report_snapshot_version", "activate_report_snapshot_version", "insert_analytics_event", "find_analytics_events", "get_daily_funnel_analytics", "get_landing_cutover_hourly_analytics",
     "record_question_progress", "get_question_progress_analytics",
   ]);
   const normalized = reportVersionActions.has(String(operation.action || ""))

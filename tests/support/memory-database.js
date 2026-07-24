@@ -118,14 +118,16 @@ class MemoryDatabaseAdapter {
     const inRange = value => value && day(value) >= startDate && day(value) <= endDate;
     const assessmentById = new Map(assessments.map(row => [row.id, row]));
     const paymentById = new Map(payments.map(row => [row.id, row]));
-    const firstLanding = new Map(); const firstSection = new Map(); const firstReport = new Map();
+    const firstLanding = new Map(); const firstLandingCta = new Map(); const firstSection = new Map(); const firstReport = new Map();
     for (const event of rows.sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
       if (event.eventName === "landing_viewed" && event.visitorIdHash && !firstLanding.has(event.visitorIdHash)) firstLanding.set(event.visitorIdHash, event);
+      if (event.eventName === "landing_cta_clicked" && event.sessionIdHash && !firstLandingCta.has(event.sessionIdHash)) firstLandingCta.set(event.sessionIdHash, event);
       if (event.eventName === "paywall_viewed" && event.assessmentId && assessmentById.has(event.assessmentId) && !firstSection.has(event.assessmentId)) firstSection.set(event.assessmentId, event);
       if (event.eventName === "report_opened" && event.assessmentId && assessmentById.has(event.assessmentId) && !firstReport.has(event.assessmentId)) firstReport.set(event.assessmentId, event);
     }
     const paid = entitlements.map(entitlement => ({ entitlement, payment: paymentById.get(entitlement.paymentId) })).filter(item => item.payment);
     const firstLandingEntries = [...firstLanding.values()].filter(row => inRange(row.occurredAt) && new Date(row.occurredAt) >= cutover);
+    const firstLandingCtaEntries = [...firstLandingCta.values()].filter(row => inRange(row.occurredAt) && new Date(row.occurredAt) >= cutover);
     const flow = assessment => assessment?.commercialFlowVersion === "prepaid_v2" ? "prepaid_v2" : "legacy_postpaid_v1";
     const totalsForFlow = wanted => {
       const scopedAssessments = assessments.filter(row => flow(row) === wanted); const ids = new Set(scopedAssessments.map(row => row.id));
@@ -190,13 +192,27 @@ class MemoryDatabaseAdapter {
     const flowState = legacyPresent && prepaidAssessmentPresent ? "mixed"
       : legacyPresent && prepaidVisitorPresent ? "legacy_with_prepaid_visitors"
         : legacyPresent ? "legacy_only" : prepaidAssessmentPresent ? "prepaid_only" : prepaidVisitorPresent ? "prepaid_visitors_only" : "empty";
+    const localHour = value => { const date = new Date(value); const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", hourCycle: "h23" }).formatToParts(date); const byType = Object.fromEntries(parts.map(part => [part.type, part.value])); return `${byType.year}-${byType.month}-${byType.day} ${byType.hour}:00`; };
+    const hourlyKeys = new Set();
+    for (const row of firstLandingEntries) hourlyKeys.add(localHour(row.occurredAt));
+    for (const row of firstLandingCtaEntries) hourlyKeys.add(localHour(row.occurredAt));
+    for (const row of rows.filter(row => row.eventName === "payment_preparation_viewed" && row.sessionIdHash)) hourlyKeys.add(localHour(row.occurredAt));
+    const hourly = [...hourlyKeys].sort().map(hour => ({ hour,
+      newVisitors: firstLandingEntries.filter(row => localHour(row.occurredAt) === hour).length,
+      ctaClicks: firstLandingCtaEntries.filter(row => localHour(row.occurredAt) === hour).length,
+      paymentPreparationViews: new Set(rows.filter(row => row.eventName === "payment_preparation_viewed" && row.sessionIdHash && inRange(row.occurredAt) && localHour(row.occurredAt) === hour).map(row => row.sessionIdHash)).size }));
     return { days: output, summary: allFlows, allFlows,
-      currentFlow: { eligibleVisitors: firstLandingEntries.length, ...prepaid }, legacyFlow: legacy, conversions,
+      currentFlow: { eligibleVisitors: firstLandingEntries.length, landingCtaClicks: firstLandingCtaEntries.length, paymentPreparationViews: rows.filter(row => row.eventName === "payment_preparation_viewed" && row.sessionIdHash && inRange(row.occurredAt)).length, ...prepaid }, legacyFlow: legacy, conversions,
+      landingCutoverHourly: { hours: hourly, totals: { newVisitors: firstLandingEntries.length, ctaClicks: firstLandingCtaEntries.length, paymentPreparationViews: rows.filter(row => row.eventName === "payment_preparation_viewed" && row.sessionIdHash && inRange(row.occurredAt)).length }, cutoverAt: cutover.toISOString() },
       coverage: { paidFirstCutoverAt: cutover.toISOString(), rangeStartsBeforeCutover: new Date(`${startDate}T00:00:00+08:00`) < cutover,
         rangeEndsAfterCutover: rangeEnd > cutover, allMeasuredVisitors: allFlows.uniqueVisitors, paidFirstEligibleVisitors: firstLandingEntries.length,
         legacyActivityPresent: legacyPresent, prepaidActivityPresent: prepaidAssessmentPresent,
         prepaidAssessmentActivityPresent: prepaidAssessmentPresent, prepaidVisitorActivityPresent: prepaidVisitorPresent, flowState,
         visitorTrackingStartedAt: visitorTracking, paymentSectionTrackingStartedAt: sectionTracking } };
+  }
+  async getLandingCutoverHourlyAnalytics(startDate, endDate) {
+    const aggregate = await this.getDailyFunnelAnalytics(startDate, endDate);
+    return aggregate.landingCutoverHourly;
   }
   async recordQuestionProgress(input) {
     const assessment = await this.get("assessments", input.assessmentId);

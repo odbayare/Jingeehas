@@ -4,13 +4,8 @@ test.setTimeout(120000);
 
 async function completeEligibleGate(page, suffix = "") {
   await page.goto(`/assessment/start?e2e=1${suffix}`);
-  await page.locator('input[name="age"]').fill("30");
-  await page.locator('input[name="selfHarm"][value="Үгүй"]').check();
-  await page.locator('input[name="acuteMedical"][value="Аль нь ч үгүй"]').check();
-  await page.locator('input[name="compensatoryBehavior"][value="Үгүй"]').check();
-  await page.locator('input[name="medicalSuitability"][value="Үргэлжлүүлэхэд тохиромжтой"]').check();
-  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
-  await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.locator("#contact-form")).toBeVisible();
+  await expect(page.locator("#contact-email")).toHaveCount(0);
 }
 
 async function completeQuestionnaire(page) {
@@ -52,22 +47,41 @@ async function completeQuestionnaire(page) {
   await expect(page).toHaveURL(/\/report(?:\?e2e=1)?$/);
 }
 
-for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]) {
+for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1280, 900], [1440, 900]]) {
   test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto("/");
+    await expect(page.getByText("Жин хасахад саад болж буй сэтгэлзүйн шалтгааны тест", { exact: true })).toHaveCount(1);
     await expect(page.getByRole("heading", { name: "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" })).toBeVisible();
-    const questions = page.locator(".hero-question");
-    await expect(questions).toHaveCount(3);
-    await expect(page.locator(".hero-highlight")).toBeVisible();
-    const cta = page.getByRole("link", { name: "Сэтгэлзүйн хэв маягаа тодорхойлох" });
+    await expect(page.locator(".hero-steps p")).toHaveCount(4);
+    await expect(page.locator(".hero-steps p").nth(0)).toHaveText(/01\s+Асуултад хариулна/);
+    await expect(page.locator(".hero-steps p").nth(1)).toHaveText(/02\s+Давтагддаг хэв маягаа олно/);
+    await expect(page.locator(".hero-steps p").nth(2)).toHaveText(/03\s+Дэлгэрэнгүй тайлангаа авна/);
+    await expect(page.locator(".hero-steps p").nth(3)).toHaveText(/04\s+Жин хасахад өөрт тохирох арга барилаа ойлгоно/);
+    await expect(page.locator(".hero-steps")).toBeVisible();
+    const ctas = page.getByRole("link", { name: "Тест өгөх — 9,900₮" });
+    await expect(ctas).toHaveCount(4);
+    await expect(page.locator('a[data-primary-cta]')).toHaveCount(4);
+    expect(await page.locator('a[data-primary-cta]').evaluateAll(nodes => nodes.every(node => node.getAttribute("href") === "/assessment/start"))).toBe(true);
+    const cta = ctas.first();
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
-    await expect(page.locator(".hero-note")).toBeVisible();
+    await expect(page.locator(".landing-microcopy").first()).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Тайлангийн жишээ", exact: true })).toHaveCount(1);
+    await expect(page.getByRole("heading", { name: "Таны тайлан ийм бүтэцтэй байна", exact: true })).toHaveCount(0);
+    await expect(page.getByText("Доорх нь нэргүй жишээ. Энэ нь таны үр дүн биш; тайлангийн нарийвчлал, бүтэц, хэлбэрийг урьдчилж харуулж байна.", { exact: true })).toHaveCount(1);
+    await expect(page.locator(".landing-microcopy")).toHaveCount(4);
+    expect(await page.locator(".landing-microcopy").evaluateAll(nodes => nodes.every(node => node.textContent.trim() === "Тест бөглөх хугацаа 10 орчим мин · Дэлгэрэнгүй хувийн тайлан · 9,900₮"))).toBe(true);
+    expect(await page.locator("body").innerText()).not.toContain("40 орчим асуулт");
+    expect(await page.locator("body").innerText()).not.toContain("10–15 минут");
     await expect(page.locator(".hero-visual")).toBeVisible();
-    expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
+    await expect(page.locator(".hero-art")).toBeVisible();
+    const mirrorTitles = ["«Даваа гарагаас» мөчлөг", "Хөл аяндаа л", "Өдөр нь чаддаг, орой нь чаддаггүй", "Хүний дэргэд байхдаа өөр", "Хассан жин буцаад л нэмэгдчихдэг", "Толь хэцүү болсон"];
+    for (const title of mirrorTitles) await expect(page.getByRole("heading", { name: title, exact: true })).toHaveCount(1);
+    for (const oldCopy of ["Гар аяндаа", "Өдөр нь болдог, орой нь болдоггүй", "Хүнтэй байхдаа өөр", "Хассан жин буцаад ирдэг"]) await expect(page.getByText(oldCopy, { exact: true })).toHaveCount(0);
+    expect(await page.locator(".hero-art").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
+    expect(await page.locator(".hero-steps").evaluate(element => { const art = element.previousElementSibling.getBoundingClientRect(); const card = element.getBoundingClientRect(); return card.top >= art.bottom; })).toBe(true);
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
-    await expect(page.locator(".hero")).not.toContainText("9,900₮");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     expect(await cta.evaluate(element => element.getBoundingClientRect().width <= window.innerWidth)).toBe(true);
   });
@@ -76,10 +90,10 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]
 test("methodology trust content stacks without mobile overflow", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 800 });
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Арга зүй ба судалгааны үндэслэл" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Яагаад хоолны дэглэм барих, дасгал хөдөлгөөн хийх дангаараа хангалтгүй байдаг вэ?" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Аюулгүй байдлын дохио" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Сэтгэлзүй ба зан үйлийн хэв маяг" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Өдөр тутмын саад ба орчны нөлөө" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Сэтгэл хөдлөлийн хооллолт" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Нойр ба амьдралын хэмнэл" })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 });
 
@@ -94,7 +108,9 @@ test("owner daily funnel dashboard is readable at 375px", async ({ page, context
   await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
-  await expect(page.locator(".table-scroll")).toHaveCSS("overflow-x", "auto");
+  const dailyTable = page.locator(".analytics-daily-note + .table-scroll");
+  expect(await dailyTable.count()).toBe(1);
+  await expect(dailyTable).toHaveCSS("overflow-x", "auto");
 });
 
 test("question progress card stays compact and expands in two levels", async ({ page, context }) => {
@@ -143,10 +159,7 @@ test("authenticated owner preview starts through the server gate without QPay", 
   await page.getByRole("button", { name: "Нэвтрэх" }).click();
   await page.getByRole("button", { name: "Бодит тестийг шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах" })).toBeVisible();
-  await completeEligibleGate(page);
   const beforePreview = await (await request.get("/__test/stats")).json();
-  await page.locator("#contact-email").fill("owner-preview@example.com");
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
   const afterPreview = await (await request.get("/__test/stats")).json();
@@ -159,19 +172,16 @@ test("authenticated owner preview starts through the server gate without QPay", 
   expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(ownerFirstQuestionRows);
 });
 
-test("assessment starts with the short free safety gate", async ({ page, request }) => {
+test("assessment starts with payment preparation and no pre-assessment screen", async ({ page, request }) => {
   await page.goto("/assessment/start?e2e=1");
-  await expect(page.locator("#safety-form")).toBeVisible();
+  await expect(page.locator("#contact-form")).toBeVisible();
+  await expect(page.locator("#safety-form")).toHaveCount(0);
   expect((await (await request.get("/__test/stats")).json()).qpayCreate).toBe(0);
 });
 
 test("paid-first checkout creates one invoice and completion opens the full report", async ({ page, request }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await completeEligibleGate(page);
-  await page.locator("#contact-email").fill("invalid");
-  await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
-  await expect(page.getByText("Имэйл хаягаа зөв оруулна уу.")).toBeVisible();
-  await page.locator("#contact-email").fill("paid@example.com");
   const beforePreparation = await (await request.get("/__test/stats")).json();
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).evaluate(button => { button.click(); button.click(); });
   await expect(page).toHaveURL(/\/assessment\/payment$/);
@@ -195,7 +205,6 @@ test("paid-first checkout creates one invoice and completion opens the full repo
 
 test("question transition gives immediate feedback and ignores duplicate submit", async ({ page, request }) => {
   await completeEligibleGate(page);
-  await page.locator("#contact-email").fill("transition@example.com");
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
@@ -225,7 +234,6 @@ test("recovery succeeds in a new browser context", async ({ browser }) => {
 test("invitation token is removed and consent decline is explicit", async ({ page }) => {
   await completeEligibleGate(page, "&invite=invite-e2e");
   expect(page.url()).not.toContain("invite=");
-  await page.locator("#contact-email").fill("client@example.com");
   await expect(page.getByRole("heading", { name: "Зөвлөхийн урилга ирсэн байна" })).toBeVisible();
   await expect(page.getByText("Асуулт бүрийн түүхий хариултыг зөвлөхөд харуулахгүй.")).toBeVisible();
   await page.getByLabel("Бүрэн тайлангаа хуваалцахгүй.").check();
