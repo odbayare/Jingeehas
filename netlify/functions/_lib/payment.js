@@ -48,8 +48,10 @@ async function validateInvoiceRequest(database, sessionId, input) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
   const validStatus = isPrepaid(assessment) ? assessment.status === "payment_pending" : assessment.status === "complete";
   if (!validStatus || assessment.safetyRoute) throw Object.assign(new Error("Assessment is not eligible for payment"), { statusCode: 409, code: "assessment_incomplete" });
-  const recoveryContacts = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });
-  if (!recoveryContacts.length) throw Object.assign(new Error("Recovery contact required"), { statusCode: 400, code: "recovery_contact_required" });
+  if (!isPrepaid(assessment)) {
+    const recoveryContacts = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });
+    if (!recoveryContacts.length) throw Object.assign(new Error("Recovery contact required"), { statusCode: 400, code: "recovery_contact_required" });
+  }
   if ((await database.find("entitlements", { assessmentId: assessment.id, status: "active" })).length) {
     throw Object.assign(new Error("Assessment is already paid"), { statusCode: 409, code: "already_entitled" });
   }

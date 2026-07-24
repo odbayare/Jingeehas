@@ -4,7 +4,8 @@ test.setTimeout(120000);
 
 async function completeEligibleGate(page, suffix = "") {
   await page.goto(`/assessment/start?e2e=1${suffix}`);
-  await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.locator("#contact-form")).toBeVisible();
+  await expect(page.locator("#contact-email")).toHaveCount(0);
 }
 
 async function completeQuestionnaire(page) {
@@ -158,9 +159,7 @@ test("authenticated owner preview starts through the server gate without QPay", 
   await page.getByRole("button", { name: "Нэвтрэх" }).click();
   await page.getByRole("button", { name: "Бодит тестийг шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.locator("#contact-email")).toBeVisible();
   const beforePreview = await (await request.get("/__test/stats")).json();
-  await page.locator("#contact-email").fill("owner-preview@example.com");
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
   const afterPreview = await (await request.get("/__test/stats")).json();
@@ -183,10 +182,6 @@ test("assessment starts with payment preparation and no pre-assessment screen", 
 test("paid-first checkout creates one invoice and completion opens the full report", async ({ page, request }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await completeEligibleGate(page);
-  await page.locator("#contact-email").fill("invalid");
-  await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
-  await expect(page.getByText("Имэйл хаягаа зөв оруулна уу.")).toBeVisible();
-  await page.locator("#contact-email").fill("paid@example.com");
   const beforePreparation = await (await request.get("/__test/stats")).json();
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).evaluate(button => { button.click(); button.click(); });
   await expect(page).toHaveURL(/\/assessment\/payment$/);
@@ -210,7 +205,6 @@ test("paid-first checkout creates one invoice and completion opens the full repo
 
 test("question transition gives immediate feedback and ignores duplicate submit", async ({ page, request }) => {
   await completeEligibleGate(page);
-  await page.locator("#contact-email").fill("transition@example.com");
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
@@ -240,7 +234,6 @@ test("recovery succeeds in a new browser context", async ({ browser }) => {
 test("invitation token is removed and consent decline is explicit", async ({ page }) => {
   await completeEligibleGate(page, "&invite=invite-e2e");
   expect(page.url()).not.toContain("invite=");
-  await page.locator("#contact-email").fill("client@example.com");
   await expect(page.getByRole("heading", { name: "Зөвлөхийн урилга ирсэн байна" })).toBeVisible();
   await expect(page.getByText("Асуулт бүрийн түүхий хариултыг зөвлөхөд харуулахгүй.")).toBeVisible();
   await page.getByLabel("Бүрэн тайлангаа хуваалцахгүй.").check();

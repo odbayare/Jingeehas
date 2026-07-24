@@ -23,7 +23,7 @@ const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-
 
 function createState() {
   return { contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
-    answers: {}, questionIndex: 0, validationError: "", report: null, recovery: { recoveryId: "", message: "", error: "" },
+    answers: {}, questionIndex: 0, validationError: "", report: null, reportEmail: { dismissed: false, saving: false, saved: false, error: "", message: "" }, checkoutError: "", recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
       analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
@@ -170,11 +170,10 @@ function safetyGuidance(result) {
 function renderAssessmentContact() {
   return `<div class="page">${navigation()}<main class="content-card checkout-preparation"><p class="eyebrow">Нэг удаагийн төлбөр</p><h1 id="page-title" tabindex="-1">Тест үнэлгээ болон хувийн тайлангаа авах</h1>
     <p><strong>Тест үнэлгээ болон бүрэн хувийн тайлан</strong></p><p class="price">${PRODUCT.displayPrice} — нэг удаагийн төлбөр</p>
-    <ul><li>Бүрэн тест үнэлгээ</li><li>Дэлгэрэнгүй хувийн тайлан</li><li>Тайлангаа хадгалж, дахин нээх боломж</li></ul>
-    <form id="contact-form" novalidate><h2>Имэйлээр эрхээ хадгалах</h2><label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email" required></label>
-    <p class="muted">Имэйл хаягийг төлбөр, тестийн явц болон тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана.</p><p>Таны мэдээлэл бусад хэрэглэгчид харагдахгүй.</p>
+    <ul><li>Бүрэн тест үнэлгээ</li><li>Дэлгэрэнгүй хувийн тайлан</li><li>Тайлангаа энэ төхөөрөмж дээр хадгалж, дахин нээх боломж</li></ul>
+    <form id="contact-form" novalidate><p class="muted">Тест болон тайлан энэ төхөөрөмжийн браузерт хадгалагдана. Тайлангаа дараа нь өөр төхөөрөмжөөс нээх бол дууссаны дараа имэйлээ хадгалж болно.</p>
     ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд тест үнэлгээг санал болгосон байна.</p><fieldset><legend>Тайлан хуваалцах сонголт</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Бүрэн тайлангаа зөвлөхтэй хуваалцана.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Асуулт бүрийн түүхий хариултыг зөвлөхөд харуулахгүй.</p></section>` : ""}
-    <p id="contact-error" class="error" role="alert" aria-live="assertive"></p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Бэлтгэж байна…" : "QPay-аар төлөөд тестээ эхлүүлэх"}</button>
+    <p id="contact-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.checkoutError || "")}</p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Бэлтгэж байна…" : state.checkoutError ? "Дахин оролдох" : "QPay-аар төлөөд тестээ эхлүүлэх"}</button>
     <p>Төлбөр баталгаажсаны дараа тест шууд нээгдэнэ.</p><p><a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/support" data-route>Төлбөрийн тусламж</a></p></form></main>${footer()}</div>`;
 }
 function renderAssessmentCompleted() {
@@ -274,7 +273,13 @@ function renderMultiFactorReport(full) {
   const visibleSections = buildReportSections(full).filter(section => section.visible);
   return `${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(new Date(full.reportDate).toLocaleDateString("mn-MN"))}</time></header>
     ${visibleSections.map((section, index) => `<section class="report-section" data-report-section="${escapeAttribute(section.id)}"><h2>${index + 1}. ${escapeHtml(section.heading)}</h2>${section.paragraphs.join("")}</section>`).join("")}
-    <button class="button print-hide" type="button" data-action="print-report">Хэвлэх эсвэл PDF-ээр хадгалах</button></main>${footer()}`;
+    ${renderReportEmailSection()}<button class="button print-hide" type="button" data-action="print-report">Хэвлэх эсвэл PDF-ээр хадгалах</button></main>${footer()}`;
+}
+function renderReportEmailSection() {
+  const email = state.reportEmail || {};
+  if (email.dismissed) return "";
+  if (email.saved) return `<section class="report-email print-hide" aria-live="polite"><h2>Тайлангаа имэйлээр авах</h2><p>Имэйл хадгалагдлаа. Та тайлангаа энэ имэйлээр дараа нь сэргээж нээх боломжтой.</p></section>`;
+  return `<section class="report-email print-hide"><h2>Тайлангаа имэйлээр авах</h2><p>Тайлангаа дараа нь өөр төхөөрөмжөөс дахин нээх бол имэйл хаягаа хадгалж болно.</p><form id="report-email-form" novalidate><label class="field" for="report-email"><span>Имэйл хаяг</span><input id="report-email" name="email" type="email" autocomplete="email" required></label><p class="error" role="alert">${escapeHtml(email.error || "")}</p><button class="button" type="submit" ${email.saving ? "disabled" : ""}>${email.saving ? "Хадгалж байна…" : "Тайлангаа имэйлээр авах"}</button><button class="button secondary" type="button" data-action="skip-report-email">Одоо хэрэггүй</button></form></section>`;
 }
 function renderReport() {
   const report = state.report;
@@ -286,6 +291,7 @@ function renderReport() {
   return `<div class="page report-page">${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(new Date(full.reportDate).toLocaleDateString("mn-MN"))}</time></header>
     <p class="coverage">${escapeHtml(full.coverage)}</p>${full.sections.map(section => `<section class="report-section"><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.body)}</p></section>`).join("")}
     ${full.experiment ? `<section class="report-section"><h2>Хэрэгжүүлж үзэх нэг өөрчлөлт</h2><dl><dt>Өөрчлөх нэг зүйл</dt><dd>${escapeHtml(full.experiment.variable)}</dd><dt>Юу хийх вэ?</dt><dd>${escapeHtml(full.experiment.action)}</dd><dt>Юуг ажиглах вэ?</dt><dd>${escapeHtml(full.experiment.observe)}</dd><dt>Юуг өөрчлөхгүй хэвээр үлдээх вэ?</dt><dd>${escapeHtml(full.experiment.keepConstant)}</dd></dl></section>` : ""}
+    ${renderReportEmailSection()}
     <button class="button print-hide" type="button" data-action="print-report">Хэвлэх эсвэл PDF-ээр хадгалах</button></main>${footer()}</div>`;
 }
 function renderRecovery() {
@@ -471,6 +477,17 @@ async function api(path, options = {}) {
 }
 async function ensureSession() { return api("/.netlify/functions/weight-session-start", { method: "POST", body: "{}" }); }
 function formObject(form) { const data = new FormData(form); return Object.fromEntries(data.entries()); }
+async function saveReportEmail(form) {
+  const input = formObject(form);
+  state.reportEmail = { ...state.reportEmail, saving: true, error: "" }; render({ focus: false });
+  try {
+    const result = await api("/.netlify/functions/weight-report-email-save", { method: "POST", body: JSON.stringify({ email: input.email, assessmentId: state.assessmentId }) });
+    state.reportEmail = { ...state.reportEmail, saving: false, saved: true, message: result.message || "Имэйл хадгалагдлаа. Та тайлангаа энэ имэйлээр дараа нь сэргээж нээх боломжтой." };
+  } catch {
+    state.reportEmail = { ...state.reportEmail, saving: false, error: "Имэйлийг одоогоор хадгалж чадсангүй. Түр хүлээгээд дахин оролдоно уу." };
+  }
+  render({ focus: false });
+}
 function contactValidation(input) {
   if (input.email && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(String(input.email).trim())) return "Имэйл хаягаа зөв оруулна уу.";
   if (!String(input.email || "").trim()) return "Имэйл хаягаа оруулна уу.";
@@ -482,12 +499,10 @@ function loadAdminReportPreviewAssessment(storage = typeof sessionStorage === "u
 function clearAdminReportPreviewAssessment(storage = typeof sessionStorage === "undefined" ? null : sessionStorage) { storage?.removeItem(ADMIN_REPORT_PREVIEW_STORAGE_KEY); }
 
 async function submitContact(form) {
-  const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
-  state.busy = true; render();
+  const input = formObject(form);
+  state.checkoutError = ""; state.busy = true; render();
   await ensureSession();
   if (state.inviteToken) { state.invitation = await api("/.netlify/functions/advisor-invite-resolve", { method: "POST", body: JSON.stringify({ inviteToken: state.inviteToken }) }); state.inviteToken = ""; render(); }
-  const contact = await api("/.netlify/functions/weight-recovery-contact-save", { method: "POST", body: JSON.stringify(input) });
-  state.contactGroupId = contact.contactGroupId;
   let coachClientId = null;
   if (state.invitation) {
     if (!input.consent) throw new Error("Тайлан хуваалцах сонголтоо хийнэ үү.");
@@ -495,7 +510,7 @@ async function submitContact(form) {
     if (input.consent === "yes") coachClientId = consent.coachClientId;
   }
   const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ prepaid: true,
-    recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity(), ...(coachClientId ? { coachClientId } : {}) }) });
+    analyticsContext: analyticsIdentity(), ...(coachClientId ? { coachClientId } : {}) }) });
   state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.commercialFlowVersion = assessment.commercialFlowVersion;
   state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion;
   if (assessment.previewBypass) {
@@ -504,7 +519,7 @@ async function submitContact(form) {
     state.busy = false; navigate("/assessment/questions"); return;
   }
   try { state.payment = await api("/.netlify/functions/qpay-create-invoice", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) }); }
-  catch (requestError) { const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(requestError?.body?.error); setPaymentStatus(ambiguous ? "create_unknown" : "create_error"); }
+  catch (requestError) { const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(requestError?.body?.error); setPaymentStatus(ambiguous ? "create_unknown" : "create_error"); state.checkoutError = "Төлбөрийн хэсгийг одоогоор нээж чадсангүй. Төлбөр хийгдээгүй. Түр хүлээгээд дахин оролдоно уу."; }
   state.busy = false; navigate("/assessment/payment");
 }
 async function submitConsent(form) {
@@ -725,7 +740,9 @@ async function restoreServerState() {
 function bind(root) {
   root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); if (window.location.pathname === "/" && link.hasAttribute("data-primary-cta")) trackEvent("landing_cta_clicked"); navigate(link.getAttribute("href")); }));
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(["text", "number"].includes(input.type) || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
-  root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
+  root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; state.checkoutError = error?.message === "Тайлан хуваалцах сонголтоо хийнэ үү." ? error.message : "Төлбөрийн хэсгийг одоогоор нээж чадсангүй. Төлбөр хийгдээгүй. Түр хүлээгээд дахин оролдоно уу."; render(); }); });
+  root.querySelector("#report-email-form")?.addEventListener("submit", event => { event.preventDefault(); saveReportEmail(event.currentTarget); });
+  root.querySelector('[data-action="skip-report-email"]')?.addEventListener("click", () => { state.reportEmail = { ...state.reportEmail, dismissed: true }; render({ focus: false }); });
   root.querySelector("#consent-form")?.addEventListener("submit", event => { event.preventDefault(); submitConsent(event.currentTarget).catch(() => { state.validationError = "Сонголтыг хадгалж чадсангүй."; render(); }); });
   root.querySelector("#question-form")?.addEventListener("submit", event => { event.preventDefault(); nextQuestion(); });
   root.querySelector("#recovery-request-form")?.addEventListener("submit", event => { event.preventDefault(); requestRecovery(event.currentTarget).catch(error => { state.recovery.error = error?.body?.error === "recovery_unavailable" || error.message === "recovery_unavailable" ? "Сэргээх кодыг одоогоор илгээж чадсангүй. Түр хүлээгээд дахин оролдоно уу." : "Сэргээх хүсэлтийг одоогоор боловсруулах боломжгүй байна."; render(); }); });

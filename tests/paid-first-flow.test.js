@@ -44,12 +44,19 @@ const { nextRoute } = require("../netlify/functions/_lib/commercial-flow.js");
 
   const prep = app.renderForPath("/assessment/contact");
   for (const copy of ["Тест үнэлгээ болон хувийн тайлангаа авах", "Тест үнэлгээ болон бүрэн хувийн тайлан", "9,900₮", "QPay-аар төлөөд тестээ эхлүүлэх"]) assert(prep.includes(copy), copy);
+  assert(!prep.includes("contact-email"), "public checkout does not request email before payment");
+  assert(prep.includes("Тест болон тайлан энэ төхөөрөмжийн браузерт хадгалагдана."));
   app._test.setState({ commercialFlowVersion: "prepaid_v2", assessmentStatus: "complete", report: { fullReport: {} } });
   assert(!app.renderForPath("/assessment/completed").includes("Бүрэн тайлангийн үнэ"));
   app._test.setState({ questionsAuthorized: false });
   assert(!app.renderForPath("/assessment/questions").includes("Q-AGE"), "question UI fails closed before server authorization");
   assert(!String(app.renderForPath).includes("create-invoice"), "report route has no second payment control");
   assert.equal(app.PRODUCT.amount, 9900);
+
+  await database.insert("sessions", { id: "ws-no-contact", tokenHash: "hash", createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + 3600000).toISOString(), revokedAt: null });
+  const noContactAssessment = await createAssessment(database, "ws-no-contact", { prepaid: true }, now);
+  const noContactInvoice = await createInvoice(database, provider, "ws-no-contact", { assessmentId: noContactAssessment.id }, now);
+  assert.equal(noContactInvoice.amount, 9900, "prepaid invoice does not require a recovery contact");
 
   await database.insert("sessions", { id: "ws-legacy", tokenHash: "hash", createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + 3600000).toISOString(), revokedAt: null });
   const legacy = await createAssessment(database, "ws-legacy", {}, now);

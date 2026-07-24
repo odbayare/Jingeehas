@@ -54,7 +54,7 @@
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "0b2663b9b176e6b7e194d36c317214e0e0cffe61ebd3fe98142106abca2e1fbf"
+      "sha256": "7c5143a5583688ad9f00174bb495be92fa59f709078088f5cc427529bf2d14e2"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -74,7 +74,7 @@
     },
     {
       "file": "netlify/functions/_lib/recovery.js",
-      "sha256": "60a78d270997e28ab6985c878d3ee55cb9792061a0daa9eaa4becf7c35a3d765"
+      "sha256": "f4ea182745bf427cda65b6407820e8ca1f4cfabcd63e84b6849ef7ac672601ed"
     },
     {
       "file": "netlify/functions/_lib/report-copy.js",
@@ -257,6 +257,10 @@
       "sha256": "315cb0925bf2c554044c78eaa1df69c9c54c53971792447f01659611831aadbe"
     },
     {
+      "file": "netlify/functions/weight-report-email-save.js",
+      "sha256": "0b76d8cbaa7a3f7ef0e611feeab810216783ec29e1eaf25d1a8892f5ceb9f7dc"
+    },
+    {
       "file": "netlify/functions/weight-safety-gate.js",
       "sha256": "c797cbe12485160c53e2af01e4c223d7f222a537752804e55e23009031836f51"
     },
@@ -286,7 +290,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "af2318c46b6a8b1cf997c9927c93b7ca019c3fbe0b7ef799f1bc3f2c08419b5f"
+      "sha256": "64a7027516d7117022c835cdd4b986ac674257c67d8f9fb7ce3402feb7d674a0"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -353,6 +357,7 @@
     "weight-recovery-confirm",
     "weight-recovery-contact-save",
     "weight-recovery-request",
+    "weight-report-email-save",
     "weight-safety-gate",
     "weight-session-start",
     "weight-session-state"
