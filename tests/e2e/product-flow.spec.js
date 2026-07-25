@@ -108,7 +108,8 @@ test("owner daily funnel dashboard is readable at 375px", async ({ page, context
   await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
   expect(overflow).toBeLessThanOrEqual(1);
-  await expect(page.getByText("Шууд төлбөрийн бэлтгэлд орсон", { exact: true })).toBeVisible();
+  await expect(page.getByText("Төлбөр эхлүүлэхийн оношилгоо", { exact: true })).toBeVisible();
+  await expect(page.getByText("Өдрийн задаргаа", { exact: true })).toBeVisible();
   const dailyTable = page.locator(".analytics-dashboard > .table-scroll").last();
   expect(await dailyTable.count()).toBe(1);
   await expect(dailyTable).toHaveCSS("overflow-x", "auto");

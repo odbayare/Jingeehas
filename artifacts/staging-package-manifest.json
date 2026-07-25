@@ -22,7 +22,7 @@
     },
     {
       "file": "netlify/functions/_lib/analytics.js",
-      "sha256": "47114c46f6765b8d819ffea8f42a67a83bb79893ff943a0e74784a98884de3dc"
+      "sha256": "b664e06293a9d20a27d69fd60e79fb68a88849f4cfaa2cf41aa019ee5088c9d1"
     },
     {
       "file": "netlify/functions/_lib/answer-rules.js",
@@ -210,7 +210,7 @@
     },
     {
       "file": "netlify/functions/qpay-create-invoice.js",
-      "sha256": "7c213ec7620916580e4907d64d251514a5c2674cb30e5f2f3fc0f3013bbebc85"
+      "sha256": "702976fcc9197a4808378610bf88a438b0669b273602aa4eb92d158f4ceaca29"
     },
     {
       "file": "netlify/functions/weight-assessment-complete.js",
@@ -218,7 +218,7 @@
     },
     {
       "file": "netlify/functions/weight-assessment-create.js",
-      "sha256": "ca4de38bb2c5c6e38bc5d3018ba81476cec4acc445fbff0a4185460c36c53f96"
+      "sha256": "a1e8ba32090b86daeb9d42d6d06e85732245a567416f7755bb7916d2cab84f27"
     },
     {
       "file": "netlify/functions/weight-assessment-questions.js",
@@ -290,7 +290,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "c24e3f6fc75d43a3bba6c866b20aff2ca03fec296bcaf13d1515b0911a7d9b3a"
+      "sha256": "cb979d2697d5a5bae0f13f9b3aa3db2b746f6bc43845617a39cd8bd0dde53940"
     },
     {
       "file": "site/assets/favicon.svg",

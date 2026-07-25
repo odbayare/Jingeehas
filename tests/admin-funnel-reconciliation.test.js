@@ -5,17 +5,19 @@ const path = require("node:path");
 
 const root = path.join(__dirname, "..");
 const migrationDir = path.join(root, "supabase", "migrations");
-const migration = fs.readFileSync(path.join(migrationDir, "20260725153009_admin_paid_first_funnel_analytics.sql"), "utf8");
+const migration = fs.readFileSync(path.join(migrationDir, "20260725162225_instrument_checkout_submission_and_diagnostics.sql"), "utf8");
 const gateway = fs.readFileSync(path.join(root, "supabase/functions/jingeehas-database-gateway/index.ts"), "utf8");
 const endpoint = fs.readFileSync(path.join(root, "netlify/functions/admin-analytics-daily.js"), "utf8");
 const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
 
-for (const field of ["cta_sessions", "preparation_sessions", "cta_to_preparation_sessions", "direct_preparation_sessions", "expired_unpaid_invoices", "revenue_mnt"]) assert(migration.includes(field), field);
+for (const field of ["cta_sessions", "preparation_sessions", "cta_to_preparation_sessions", "direct_preparation_sessions", "payment_cta_sessions", "assessment_shells_created", "assessment_shell_create_failures", "invoice_create_attempts", "invoice_create_failures", "expired_unpaid_invoices", "revenue_mnt"]) assert(migration.includes(field), field);
 assert.match(migration, /session_id_hash/);
 assert.match(migration, /not e\.is_admin and not e\.is_owner_preview and not e\.is_test/);
 assert.match(gateway, /get_admin_paid_first_funnel_analytics/);
 assert.match(endpoint, /getAdminPaidFirstFunnelAnalytics/);
-assert.match(app, /Шууд төлбөрийн бэлтгэлд орсон/);
+assert.match(app, /Төлбөр эхлүүлэхийн оношилгоо/);
+assert(!app.includes("Нүүр хуудасны эхний хөрвөлт"));
+assert.match(app, /Өдрийн задаргаа/);
 assert.match(app, /Төлбөр-эхэнд урсгалын бодит төлөв/);
 assert.match(app, /data-action="toggle-admin-hourly"/);
 assert.match(app, /slice\(-24\)\.reverse\(\)/);

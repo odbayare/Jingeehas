@@ -104,7 +104,8 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
     priorCurrentFlow: null, legacyFlow: aggregate.legacyFlow, conversions: aggregate.conversions, coverage: aggregate.coverage, paidFirstFunnel: { landing: { eligibleVisitors: 5, ctaSessions: 4, preparationSessions: 4, ctaToPreparationSessions: 4, directPreparationSessions: 0 }, operational: { paymentPendingAssessments: 0, activePendingInvoices: 0, expiredUnpaidInvoices: 0, confirmedPayments: 1, activeEntitlements: 1, revenueMnt: 9900 }, daily: [{ date: "2026-07-22", newVisitors: 5, ctaSessions: 4, preparationSessions: 4, invoicesCreated: 2, paymentsConfirmed: 1, assessmentsStarted: 3, assessmentsCompleted: 2, reportsOpened: 1, revenueMnt: 9900 }] }, loading: false } } });
   const dashboard = app._test.renderAdminAnalytics();
   assert(dashboard.includes("CTA → төлбөрийн бэлтгэл")); assert(!dashboard.includes("900.0%"));
-  assert(dashboard.includes("Шууд төлбөрийн бэлтгэлд орсон")); assert(dashboard.includes("Хугацаа дууссан, төлөгдөөгүй"));
+  assert(!dashboard.includes("Нүүр хуудасны эхний хөрвөлт")); assert(dashboard.includes("Төлбөр эхлүүлэхийн оношилгоо")); assert(dashboard.includes("Хугацаа дууссан, төлөгдөөгүй"));
+  assert(dashboard.includes("Өдрийн задаргаа")); assert(dashboard.includes("2026.07.22"));
   assert(dashboard.includes("Цагийн дэлгэрэнгүй")); assert(dashboard.includes("Төлбөрийн бэлтгэл нь хэрэглэгч үнэ болон авах зүйлсээ харсан үе."));
   const headers = ["Огноо", "Шинэ зочин", "CTA", "Төлбөрийн бэлтгэл", "Нэхэмжлэл", "Төлбөр", "Тест эхлүүлсэн", "Тест дуусгасан", "Тайлан", "Орлого"];
   let offset = -1; for (const header of headers) { const next = dashboard.indexOf(`<th>${header}</th>`); assert(next > offset, `daily header order: ${header}`); offset = next; }

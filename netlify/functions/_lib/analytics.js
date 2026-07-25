@@ -4,8 +4,8 @@ const crypto = require("node:crypto");
 const { cookies } = require("./http.js");
 const { PREVIEW_COOKIE_NAME } = require("./preview.js");
 
-const BROWSER_EVENTS = new Set(["landing_viewed", "landing_cta_clicked", "start_cta_clicked", "payment_preparation_viewed", "paywall_viewed", "recovery_requested"]);
-const SERVER_EVENTS = new Set(["assessment_started", "assessment_completed", "invoice_created", "payment_confirmed", "invoice_create_failed", "payment_check_started", "payment_check_failed", "recovery_succeeded", "report_opened"]);
+const BROWSER_EVENTS = new Set(["landing_viewed", "landing_cta_clicked", "start_cta_clicked", "payment_preparation_viewed", "payment_cta_clicked", "paywall_viewed", "recovery_requested"]);
+const SERVER_EVENTS = new Set(["assessment_started", "assessment_completed", "assessment_shell_created", "assessment_shell_create_failed", "invoice_create_started", "invoice_created", "payment_confirmed", "invoice_create_failed", "payment_check_started", "payment_check_failed", "recovery_succeeded", "report_opened"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SAFE_ID = /^[A-Za-z0-9_-]{3,100}$/;
 const BOT_USER_AGENT = /(?:facebookexternalhit|facebot|googlebot|bingbot|duckduckbot|yandexbot|baiduspider|slurp|crawler|spider|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|uptimerobot|pingdom|headlesschrome|playwright|puppeteer|lighthouse|\bbot\b|curl\/|wget\/)/i;
@@ -68,7 +68,15 @@ function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now
   if (name === "payment_preparation_viewed" && context.sessionIdHash) return `payment_preparation_viewed:${context.sessionIdHash}`;
   if (["paywall_viewed", "report_opened"].includes(name) && assessmentId) return `${name}:${assessmentId}`;
   if (["landing_cta_clicked", "start_cta_clicked"].includes(name) && context.sessionIdHash) return `landing_cta_clicked:${context.sessionIdHash}`;
+  if (name === "payment_cta_clicked" && context.sessionIdHash) return `payment_cta_clicked:${context.sessionIdHash}`;
   return null;
+}
+function safeFailureCategory(error) {
+  const code = String(error?.code || "").toLowerCase();
+  if (["session_expired", "session_unavailable", "invalid_session"].includes(code)) return "session_unavailable";
+  if (["invalid_request", "validation_failed", "invalid_email", "invalid_context", "assessment_incomplete"].includes(code) || Number(error?.statusCode) === 400) return "validation_failed";
+  if (["database_error", "database_unavailable", "db_unavailable", "conflict"].includes(code) || Number(error?.statusCode) === 503) return "database_unavailable";
+  return "server_error";
 }
 function eventRow(name, context = {}, values = {}, options = {}) {
   const eventId = UUID.test(String(options.eventId || "")) ? options.eventId : crypto.randomUUID();
@@ -100,4 +108,4 @@ async function assessmentContext(database, assessmentId) {
 
 module.exports = { BROWSER_EVENTS, SERVER_EVENTS, UUID, analyticsPepper, hashAnonymous, cleanText, cleanHost, attribution, clientContext,
   flagsFromEvent, isKnownBotRequest, browserOriginAllowed, localAnalyticsDay, browserEventIdempotencyKey,
-  eventRow, recordEvent, recordEventSafe, assessmentContext };
+  eventRow, recordEvent, recordEventSafe, assessmentContext, safeFailureCategory };
