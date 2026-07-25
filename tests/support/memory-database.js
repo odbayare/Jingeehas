@@ -214,6 +214,16 @@ class MemoryDatabaseAdapter {
     const aggregate = await this.getDailyFunnelAnalytics(startDate, endDate);
     return aggregate.landingCutoverHourly;
   }
+  async getAdminPaidFirstFunnelAnalytics(startDate, endDate) {
+    const aggregate = await this.getDailyFunnelAnalytics(startDate, endDate);
+    const rows = [...this.table("analytics_events").values()].filter(row => !row.isAdmin && !row.isOwnerPreview && !row.isTest);
+    const inRange = value => value && String(value).slice(0, 10) >= startDate && String(value).slice(0, 10) <= endDate;
+    const sessions = name => new Set(rows.filter(row => row.eventName === name && row.sessionIdHash && inRange(row.occurredAt)).map(row => row.sessionIdHash));
+    const cta = sessions("landing_cta_clicked"); const preparation = sessions("payment_preparation_viewed");
+    const daily = (aggregate.days || []).map(day => ({ date: day.date, newVisitors: day.uniqueVisitors, ctaSessions: 0, preparationSessions: 0, invoicesCreated: day.invoicesCreated, paymentsConfirmed: day.paymentsConfirmed, assessmentsStarted: day.assessmentsStarted, assessmentsCompleted: day.assessmentsCompleted, reportsOpened: day.reportsOpened, revenueMnt: day.revenueMnt }));
+    for (const day of daily) { day.ctaSessions = new Set(rows.filter(row => row.eventName === "landing_cta_clicked" && row.sessionIdHash && inRange(row.occurredAt) && String(row.occurredAt).slice(0, 10) === day.date).map(row => row.sessionIdHash)).size; day.preparationSessions = new Set(rows.filter(row => row.eventName === "payment_preparation_viewed" && row.sessionIdHash && inRange(row.occurredAt) && String(row.occurredAt).slice(0, 10) === day.date).map(row => row.sessionIdHash)).size; }
+    return { landing: { eligibleVisitors: aggregate.currentFlow?.eligibleVisitors || 0, ctaSessions: cta.size, preparationSessions: preparation.size, ctaToPreparationSessions: [...cta].filter(id => preparation.has(id)).length, directPreparationSessions: [...preparation].filter(id => !cta.has(id)).length }, operational: { paymentPendingAssessments: 0, activePendingInvoices: 0, expiredUnpaidInvoices: 0, confirmedPayments: aggregate.currentFlow?.paymentsConfirmed || 0, activeEntitlements: aggregate.currentFlow?.paymentsConfirmed || 0, revenueMnt: aggregate.currentFlow?.revenueMnt || 0 }, daily };
+  }
   async recordQuestionProgress(input) {
     const assessment = await this.get("assessments", input.assessmentId);
     if (!assessment || assessment.questionnaireVersion !== input.questionnaireVersion) {

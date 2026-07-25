@@ -1,6 +1,6 @@
 # Paid-first assessment flow migration
 
-Migration: `20260721143352_add_paid_first_assessment_flow.sql`.
+Migration: `20260721152722_add_paid_first_assessment_flow.sql`.
 
 The migration is additive. It adds `commercial_flow_version` and `started_at` to the private `jingeehas.assessments` table, classifies all existing rows as `legacy_postpaid_v1`, expands the status constraint for prepaid states, and adds lookup indexes. New prepaid rows are assigned by the server as `prepaid_v2`; the browser cannot select a flow version or paid state.
 

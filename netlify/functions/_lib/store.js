@@ -48,6 +48,9 @@ class RestDatabaseAdapter {
   getLandingCutoverHourlyAnalytics(startDate, endDate) {
     return this.request({ action: "get_landing_cutover_hourly_analytics", startDate, endDate });
   }
+  getAdminPaidFirstFunnelAnalytics(startDate, endDate) {
+    return this.request({ action: "get_admin_paid_first_funnel_analytics", startDate, endDate });
+  }
   recordQuestionProgress(input) { return this.request({ action: "record_question_progress", ...input }); }
   getQuestionProgressAnalytics(startDate, endDate, now = new Date()) {
     return this.request({ action: "get_question_progress_analytics", startDate, endDate, now: now.toISOString() });

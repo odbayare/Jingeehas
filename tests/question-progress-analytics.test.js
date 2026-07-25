@@ -202,10 +202,10 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
   const tableSql = /create table if not exists jingeehas\.assessment_question_progress[\s\S]*?\n\);/.exec(migration)[0];
   for (const prohibited of ["value jsonb", "email", "phone", "ip_address", "user_agent", "payment"]) assert(!tableSql.includes(prohibited), prohibited);
   assert(!/canonical_answer_backfill[\s\S]*assessment_answers[\s\S]*(lead|lag|next)/i.test(migration), "backfill does not fabricate unanswered or next-question views");
-  const integrationMigration = fs.readFileSync(path.join(root, "supabase/migrations/20260721165021_integrate_question_progress_paid_first.sql"), "utf8");
+  const integrationMigration = fs.readFileSync(path.join(root, "supabase/migrations/20260721165943_integrate_question_progress_paid_first.sql"), "utf8");
   for (const rule of ["commercial_flow_version = 'prepaid_v2' then a.started_at", "JH_QUESTION_PROGRESS_VERSION_MISMATCH",
     "revoke all on function jingeehas.get_question_progress_analytics(date, date, timestamptz) from public, anon, authenticated"]) assert(integrationMigration.includes(rule), rule);
-  const denominatorMigration = fs.readFileSync(path.join(root, "supabase/migrations/20260722015052_fix_question_dropoff_denominator_and_active_reporting.sql"), "utf8");
+  const denominatorMigration = fs.readFileSync(path.join(root, "supabase/migrations/20260722020016_fix_question_dropoff_denominator_and_active_reporting.sql"), "utf8");
   for (const rule of ["total_reached_count", "total_answered_count", "live_reached_count", "backfill_reached_count",
     "active_at_question_count", "confirmed_stopped_count", "dropoff_eligible_count", "confirmed_dropoff_rate",
     "greatest(live_reached_count - active_at_question_count, 0)", "source = 'canonical_answer_backfill'",

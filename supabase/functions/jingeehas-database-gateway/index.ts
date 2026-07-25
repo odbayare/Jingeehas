@@ -55,7 +55,7 @@ function normalizeOperation(operation: Record<string, unknown>): Record<string, 
   // shapes without changing established custom RPC contracts such as recovery.
   const reportVersionActions = new Set([
     "get_active_report_snapshot", "list_report_snapshot_versions", "get_report_snapshot_version",
-    "create_report_snapshot_version", "activate_report_snapshot_version", "insert_analytics_event", "find_analytics_events", "get_daily_funnel_analytics", "get_landing_cutover_hourly_analytics",
+    "create_report_snapshot_version", "activate_report_snapshot_version", "insert_analytics_event", "find_analytics_events", "get_daily_funnel_analytics", "get_landing_cutover_hourly_analytics", "get_admin_paid_first_funnel_analytics",
     "record_question_progress", "get_question_progress_analytics",
   ]);
   const normalized = reportVersionActions.has(String(operation.action || ""))
@@ -76,6 +76,9 @@ function normalizeResult(result: unknown): unknown {
   if (!result || typeof result !== "object") return result;
   const record = result as Record<string, unknown>;
   if ("current_flow" in record && "legacy_flow" in record && "conversions" in record && "coverage" in record) {
+    return deepCamelKeys(record);
+  }
+  if ("landing" in record && "operational" in record && "daily" in record) {
     return deepCamelKeys(record);
   }
   if (Array.isArray(record.days)) {
