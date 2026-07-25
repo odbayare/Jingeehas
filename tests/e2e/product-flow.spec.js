@@ -205,18 +205,20 @@ test("paid-first checkout creates one invoice and completion opens the full repo
   expect(afterCompletion.paymentRows).toBe(beforeCompletion.paymentRows);
 });
 
-test("question transition gives immediate feedback and ignores duplicate submit", async ({ page, request }) => {
+test("question transition is optimistic while background save is delayed", async ({ page, request }) => {
   await completeEligibleGate(page);
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
+  await page.goto("/assessment/questions?e2e=1&delaySave=1");
+  await expect(page.locator('[data-question="Q-AGE"]')).toBeVisible();
   await page.locator('[data-question="Q-AGE"]').fill("30");
   await page.locator('[data-question="Q-AGE"]').dispatchEvent("change");
   const before = (await (await request.get("/__test/stats")).json()).assessmentSave;
-  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).evaluate(button => { button.click(); button.click(); });
-  await expect(page.getByRole("button", { name: "Хадгалж байна..." })).toBeDisabled();
-  await expect(page.getByRole("status")).toContainText("Хадгалж байна...");
-  await page.waitForFunction(() => document.querySelector("[data-question]")?.dataset.question === "Q-SEX");
+  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
+  await expect(page.locator('[data-question="Q-SEX"]').first()).toBeVisible({ timeout: 500 });
+  await expect(page.getByRole("status")).toContainText("Хадгалж байна");
+  await expect(page.getByRole("status")).toContainText("Хадгалагдлаа", { timeout: 4000 });
   const after = (await (await request.get("/__test/stats")).json()).assessmentSave;
   expect(after - before).toBe(1);
 });

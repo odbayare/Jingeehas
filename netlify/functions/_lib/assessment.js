@@ -13,7 +13,7 @@ function assessmentQuestionnaireVersion(assessment) {
 
 async function ownedAssessment(database, sessionId, assessmentId) {
   const assessment = await database.get("assessments", assessmentId);
-  const recoveredAccess = assessment ? await database.get("assessment_sessions", `${assessmentId}:${sessionId}`) : null;
+  const recoveredAccess = assessment && assessment.sessionId === sessionId ? null : assessment ? await database.get("assessment_sessions", `${assessmentId}:${sessionId}`) : null;
   if (!assessment || (assessment.sessionId !== sessionId && !recoveredAccess)) {
     throw Object.assign(new Error("Assessment not found"), { statusCode: 404, code: "assessment_not_found" });
   }
@@ -75,8 +75,8 @@ async function startAssessment(database, sessionId, assessmentId, now = new Date
   return database.update("assessments", assessment.id, { status: "in_progress", startedAt: now.toISOString(), updatedAt: now.toISOString() });
 }
 
-async function saveAssessment(database, sessionId, input = {}, now = new Date()) {
-  const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
+async function saveAssessment(database, sessionId, input = {}, now = new Date(), owned = null) {
+  const assessment = owned || await ownedAssessment(database, sessionId, input.assessmentId);
   const questionnaireVersion = assessmentQuestionnaireVersion(assessment);
   if (isPrepaid(assessment)) {
     await requirePaidAccess(database, assessment);

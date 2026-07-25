@@ -23,7 +23,7 @@ const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-
 
 function createState() {
   return { contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
-    answers: {}, questionIndex: 0, validationError: "", report: null, reportEmail: { dismissed: false, saving: false, saved: false, error: "", message: "" }, checkoutError: "", recovery: { recoveryId: "", message: "", error: "" },
+    answers: {}, questionIndex: 0, validationError: "", saveStatus: "idle", report: null, reportEmail: { dismissed: false, saving: false, saved: false, error: "", message: "" }, checkoutError: "", recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
       analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
@@ -34,6 +34,7 @@ let state = createState();
 let testComingSoonOverride = null;
 let paymentPollTimer = null;
 let paymentPollingStartedAt = 0;
+const answerSaveQueue = { pending: new Map(), inFlight: null, failed: new Map(), worker: null, paused: false, completionStarted: false };
 function isComingSoon() { return testComingSoonOverride === null ? WEIGHT_TEST_COMING_SOON_MODE : testComingSoonOverride; }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]); }
 function escapeAttribute(value) { return escapeHtml(value).replace(/`/g, "&#96;"); }
@@ -220,8 +221,8 @@ function renderQuestions() {
     <p>${state.questionIndex + 1} / ${questions.length}</p><h1 id="page-title" tabindex="-1">${escapeHtml(question.section)}</h1>
     <p class="muted">Өөрт хамгийн ойр хариултаа сонгоорой. Таны явц автоматаар хадгалагдана.</p>
     <form id="question-form" novalidate aria-busy="${state.busy ? "true" : "false"}">${renderQuestionInput(question, state.answers[question.id])}<p id="question-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.validationError)}</p>
-      <div class="save-status" role="status" aria-live="polite">${state.busy ? `<span class="spinner" aria-hidden="true"></span>${state.slowSave ? "Хариултыг хадгалж байна..." : "Хадгалж байна..."}` : ""}</div>
-      <div class="actions">${state.questionIndex > 0 ? `<button class="button secondary" type="button" data-action="previous-question" ${state.busy ? "disabled" : ""}>Буцах</button>` : ""}<button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Хадгалж байна..." : state.questionIndex === questions.length - 1 ? "Тестийг дуусгах" : "Үргэлжлүүлэх"}</button></div>
+      <div class="save-status" role="status" aria-live="polite">${state.saveStatus === "completing" ? "Хариултуудыг нэгтгэж байна..." : state.saveStatus === "saving" ? "Хадгалж байна" : state.saveStatus === "saved" ? "Хадгалагдлаа" : state.saveStatus === "failed" ? `Хадгалж чадсангүй — <button class="text-link" type="button" data-action="retry-answer-saves">дахин оролдох</button>` : ""}</div>
+      <div class="actions">${state.questionIndex > 0 ? `<button class="button secondary" type="button" data-action="previous-question">Буцах</button>` : ""}<button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Хариултуудыг нэгтгэж байна..." : state.questionIndex === questions.length - 1 ? "Тестийг дуусгах" : "Үргэлжлүүлэх"}</button></div>
     </form></main>${footer()}</div>`;
 }
 function renderReportParagraphs(values = []) { return values.filter(Boolean).map(value => `<p>${escapeHtml(value)}</p>`).join(""); }
@@ -500,7 +501,7 @@ async function submitContact(form) {
   }
   const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ prepaid: true,
     analyticsContext: analyticsIdentity(), ...(coachClientId ? { coachClientId } : {}) }) });
-  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.commercialFlowVersion = assessment.commercialFlowVersion;
+  resetAnswerSaveQueue(); state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.commercialFlowVersion = assessment.commercialFlowVersion;
   state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion;
   if (assessment.previewBypass) {
     const access = await api("/.netlify/functions/weight-assessment-questions", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
@@ -515,7 +516,7 @@ async function submitConsent(form) {
   const accepted = formObject(form).consent === "yes";
   const result = await api("/.netlify/functions/advisor-consent", { method: "POST", body: JSON.stringify({ coachClientId: state.invitation.coachClientId, consent: accepted }) });
   const assessment = await api("/.netlify/functions/weight-assessment-create", { method: "POST", body: JSON.stringify({ recoveryContactGroupId: state.contactGroupId, analyticsContext: analyticsIdentity(), ...(accepted ? { coachClientId: result.coachClientId } : {}) }) });
-  state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.invitation = null; navigate("/assessment/questions");
+  resetAnswerSaveQueue(); state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.invitation = null; navigate("/assessment/questions");
 }
 async function createInvoice() {
   if (state.busy || state.assessmentStatus !== "complete") return;
@@ -580,45 +581,88 @@ function updateAnswer(input) {
   } else state.answers[question.id] = input.value;
   if (previousValue !== state.answers[question.id] && BRANCH_PREFIXES[question.id]) {
     for (const key of Object.keys(state.answers)) {
-      if (key !== question.id && BRANCH_PREFIXES[question.id].some(prefix => key.startsWith(prefix))) delete state.answers[key];
+      if (key !== question.id && BRANCH_PREFIXES[question.id].some(prefix => key.startsWith(prefix))) {
+        delete state.answers[key]; answerSaveQueue.pending.delete(key); answerSaveQueue.failed.delete(key);
+      }
     }
   }
   state.validationError = "";
 }
+function sameAnswer(left, right) { return JSON.stringify(left) === JSON.stringify(right); }
+function resetAnswerSaveQueue() {
+  answerSaveQueue.pending.clear(); answerSaveQueue.failed.clear(); answerSaveQueue.inFlight = null; answerSaveQueue.worker = null; answerSaveQueue.paused = false; answerSaveQueue.completionStarted = false;
+  state.saveStatus = "idle";
+}
+function saveFailureMessage(error) {
+  const code = error?.body?.error;
+  if (code === "assessment_incomplete") return "Шаардлагатай өмнөх асуултын хариулт дутуу байна. Хариултаа нөхөөд дахин үргэлжлүүлнэ үү.";
+  if (["invalid_answer", "inapplicable_question"].includes(code)) return "Энэ хариултыг хадгалах боломжгүй байна. Сонголтоо шалгаад дахин оролдоно уу.";
+  if (["preview_required", "preview_expired", "session_expired"].includes(code)) return "Туршилтын эрхийн хугацаа дууссан байна. Удирдлагын хэсгээс эрхээ дахин нээнэ үү.";
+  return "Хариултыг хадгалж чадсангүй. Таны оруулсан хариулт хадгалагдсан хэвээр; дахин оролдоно уу.";
+}
+function applySaveFailure(error) {
+  const questionId = error?.body?.questionId;
+  if (questionId) {
+    const index = questionApi.visibleQuestions(state.answers, state.questionnaireVersion).findIndex(item => item.id === questionId);
+    if (index >= 0) state.questionIndex = index;
+  }
+  state.validationError = saveFailureMessage(error); state.saveStatus = "failed";
+}
+function pumpAnswerSaveQueue() {
+  if (answerSaveQueue.worker || answerSaveQueue.paused || !answerSaveQueue.pending.size || !state.assessmentId) return answerSaveQueue.worker;
+  const batch = new Map(answerSaveQueue.pending); answerSaveQueue.pending.clear(); answerSaveQueue.inFlight = batch; state.saveStatus = "saving";
+  answerSaveQueue.worker = (async () => {
+    try {
+      const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: Object.fromEntries(batch) }) });
+      for (const [questionId, value] of batch) {
+        if (answerSaveQueue.pending.has(questionId) && !sameAnswer(answerSaveQueue.pending.get(questionId), value)) continue;
+        if (!saved.savedQuestionIds?.includes(questionId)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed", questionId } });
+        answerSaveQueue.failed.delete(questionId);
+      }
+      state.saveStatus = answerSaveQueue.pending.size ? "saving" : "saved";
+    } catch (error) {
+      for (const [questionId, value] of batch) if (!answerSaveQueue.pending.has(questionId)) answerSaveQueue.pending.set(questionId, value);
+      for (const questionId of batch.keys()) answerSaveQueue.failed.set(questionId, true);
+      answerSaveQueue.paused = true; applySaveFailure(error);
+    } finally {
+      answerSaveQueue.inFlight = null; answerSaveQueue.worker = null; render({ focus: false });
+      if (answerSaveQueue.pending.size && !answerSaveQueue.paused) queueMicrotask(pumpAnswerSaveQueue);
+    }
+  })();
+  return answerSaveQueue.worker;
+}
+function enqueueAnswerSave(questionId, value) {
+  answerSaveQueue.pending.set(questionId, value); answerSaveQueue.failed.delete(questionId); answerSaveQueue.paused = false; state.saveStatus = "saving";
+  queueMicrotask(pumpAnswerSaveQueue);
+}
+async function flushAnswerSaves() {
+  answerSaveQueue.paused = false;
+  while (answerSaveQueue.pending.size || answerSaveQueue.worker) {
+    const worker = answerSaveQueue.worker || pumpAnswerSaveQueue();
+    if (worker) await worker;
+    if (answerSaveQueue.failed.size) throw Object.assign(new Error("answer_save_failed"), { body: { error: "answer_save_failed" } });
+  }
+}
+function retryAnswerSaves() { answerSaveQueue.failed.clear(); answerSaveQueue.paused = false; state.validationError = ""; state.saveStatus = "saving"; pumpAnswerSaveQueue(); render({ focus: false }); }
 async function nextQuestion() {
-  if (state.busy) return;
+  if (state.busy || answerSaveQueue.completionStarted) return;
   const questions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion); const question = questions[state.questionIndex];
   const error = questionApi.validateAnswer(question, state.answers[question.id], { answers: state.answers, version: state.questionnaireVersion });
   if (error) { state.validationError = error; render(); return; }
-  state.busy = true; state.slowSave = false; state.validationError = ""; render({ focus: false });
-  const slowTimer = setTimeout(() => { if (state.busy) { state.slowSave = true; render({ focus: false }); } }, 1000);
+  state.validationError = ""; enqueueAnswerSave(question.id, state.answers[question.id]);
+  const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
+  const currentIndex = routedQuestions.findIndex(item => item.id === question.id);
+  if (currentIndex < routedQuestions.length - 1) { state.questionIndex = currentIndex + 1; render({ focus: false }); return; }
+  answerSaveQueue.completionStarted = true; state.busy = true; state.saveStatus = "completing"; render({ focus: false });
   try {
-    const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: { [question.id]: state.answers[question.id] } }) });
-    if (!saved.savedQuestionIds?.includes(question.id)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed" } });
-    const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
-    const persistedIndex = routedQuestions.findIndex(item => item.id === question.id);
-    if (persistedIndex >= 0 && persistedIndex < routedQuestions.length - 1) {
-      state.questionIndex = persistedIndex + 1; state.validationError = ""; state.busy = false; state.slowSave = false; render(); return;
-    }
+    await flushAnswerSaves();
     const completed = await api("/.netlify/functions/weight-assessment-complete", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
-    state.assessmentStatus = completed.status; state.busy = false; state.slowSave = false;
-    if (completed.safetyRoute) { state.report = await loadReport(); navigate("/report"); return; }
-    if (state.commercialFlowVersion === "prepaid_v2") { state.report = await loadReport(); navigate("/report"); return; }
+    state.assessmentStatus = completed.status; state.busy = false;
+    if (completed.safetyRoute || state.commercialFlowVersion === "prepaid_v2") { state.report = await loadReport(); navigate("/report"); return; }
     navigate("/assessment/completed");
   } catch (requestError) {
-    const code = requestError?.body?.error;
-    if (code === "assessment_incomplete" && requestError.body.questionId) {
-      const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
-      const missingIndex = routedQuestions.findIndex(item => item.id === requestError.body.questionId);
-      if (missingIndex >= 0) state.questionIndex = missingIndex;
-      state.validationError = "Шаардлагатай өмнөх асуултын хариулт дутуу байна. Хариултаа нөхөөд дахин үргэлжлүүлнэ үү.";
-    } else if (["preview_required", "preview_expired", "session_expired"].includes(code)) {
-      state.validationError = "Туршилтын эрхийн хугацаа дууссан байна. Удирдлагын хэсгээс эрхээ дахин нээнэ үү.";
-    } else if (code === "invalid_answer" || code === "inapplicable_question") {
-      state.validationError = "Энэ хариултыг хадгалах боломжгүй байна. Сонголтоо шалгаад дахин оролдоно уу.";
-    } else state.validationError = "Хариултыг серверт баталгаажуулж чадсангүй. Таны оруулсан хариулт хадгалагдсан хэвээр; дахин оролдоно уу.";
-    state.busy = false; state.slowSave = false; render({ focus: false });
-  } finally { clearTimeout(slowTimer); }
+    answerSaveQueue.completionStarted = false; state.busy = false; applySaveFailure(requestError); render({ focus: false });
+  }
 }
 async function loadReport() { return api(`/.netlify/functions/weight-assessment-report?assessmentId=${encodeURIComponent(state.assessmentId)}`, { method: "GET" }); }
 async function requestRecovery(form) {
@@ -734,6 +778,7 @@ function bind(root) {
   root.querySelector('[data-action="skip-report-email"]')?.addEventListener("click", () => { state.reportEmail = { ...state.reportEmail, dismissed: true }; render({ focus: false }); });
   root.querySelector("#consent-form")?.addEventListener("submit", event => { event.preventDefault(); submitConsent(event.currentTarget).catch(() => { state.validationError = "Сонголтыг хадгалж чадсангүй."; render(); }); });
   root.querySelector("#question-form")?.addEventListener("submit", event => { event.preventDefault(); nextQuestion(); });
+  root.querySelector('[data-action="retry-answer-saves"]')?.addEventListener("click", retryAnswerSaves);
   root.querySelector("#recovery-request-form")?.addEventListener("submit", event => { event.preventDefault(); requestRecovery(event.currentTarget).catch(error => { state.recovery.error = error?.body?.error === "recovery_unavailable" || error.message === "recovery_unavailable" ? "Сэргээх кодыг одоогоор илгээж чадсангүй. Түр хүлээгээд дахин оролдоно уу." : "Сэргээх хүсэлтийг одоогоор боловсруулах боломжгүй байна."; render(); }); });
   root.querySelector("#recovery-confirm-form")?.addEventListener("submit", event => { event.preventDefault(); confirmRecovery(event.currentTarget).catch(() => { state.recovery.error = "Баталгаажуулах код буруу эсвэл хугацаа дууссан байна."; render(); }); });
   root.querySelector("#advisor-login-form")?.addEventListener("submit", event => { event.preventDefault(); advisorLoginSubmit(event.currentTarget).catch(() => { state.advisor.error = "Имэйл эсвэл нууц үг буруу байна."; render(); }); });
@@ -752,7 +797,7 @@ function bind(root) {
   root.querySelector('[data-action="create-invoice"]')?.addEventListener("click", createInvoice);
   root.querySelector('[data-action="continue-to-payment"]')?.addEventListener("click", continueToPayment);
   root.querySelector('[data-action="check-payment"]')?.addEventListener("click", checkPayment);
-  root.querySelector('[data-action="previous-question"]')?.addEventListener("click", () => { state.questionIndex = Math.max(0, state.questionIndex - 1); state.validationError = ""; render(); });
+  root.querySelector('[data-action="previous-question"]')?.addEventListener("click", () => { if (state.busy) return; state.questionIndex = Math.max(0, state.questionIndex - 1); state.validationError = ""; render(); });
   root.querySelector('[data-action="print-report"]')?.addEventListener("click", () => window.print());
   root.querySelector('[data-action="advisor-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/advisor-logout", { method: "POST", body: "{}" }); state.advisor = createState().advisor; navigate("/advisor/login"); });
   root.querySelector('[data-action="admin-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/admin-logout", { method: "POST", body: "{}" }); clearAdminReportPreviewAssessment(); state.admin = createState().admin; state.ownerPreview = false; render(); });
