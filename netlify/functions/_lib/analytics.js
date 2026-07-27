@@ -63,14 +63,19 @@ function idValue(value) { const text = String(value || ""); return SAFE_ID.test(
 function localAnalyticsDay(now = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
 }
-function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now = new Date()) {
+function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now = new Date(), metadata = {}) {
   if (name === "landing_viewed" && context.visitorIdHash) return `landing_viewed:${context.visitorIdHash}:${localAnalyticsDay(now)}`;
   if (name === "payment_preparation_viewed" && context.sessionIdHash) return `payment_preparation_viewed:${context.sessionIdHash}`;
   if (["paywall_viewed", "payment_page_rendered", "report_opened"].includes(name) && assessmentId) return `${name}:${assessmentId}`;
   if (["landing_cta_clicked", "start_cta_clicked"].includes(name) && context.sessionIdHash) return `landing_cta_clicked:${context.sessionIdHash}`;
   if (name === "payment_cta_clicked" && context.sessionIdHash) return `payment_cta_clicked:${context.sessionIdHash}`;
-  if (["resume_entry_shown", "resume_entry_clicked"].includes(name) && context.sessionIdHash) return `${name}:${context.sessionIdHash}`;
+  if (["resume_entry_shown", "resume_entry_clicked"].includes(name) && context.sessionIdHash) return `${name}:${context.sessionIdHash}:${metadata.stateCategory || "unknown"}`;
   return null;
+}
+function safeBrowserMetadata(name, metadata = {}) {
+  if (!["resume_entry_shown", "resume_entry_clicked"].includes(name)) return {};
+  const allowed = new Set(["payment_pending", "in_progress", "complete", "safety"]);
+  return allowed.has(metadata.stateCategory) ? { stateCategory: metadata.stateCategory } : {};
 }
 function safeFailureCategory(error) {
   const code = String(error?.code || "").toLowerCase();
@@ -93,7 +98,7 @@ function eventRow(name, context = {}, values = {}, options = {}) {
 }
 async function recordEvent(database, name, context, values, options = {}) {
   if (!BROWSER_EVENTS.has(name) && !SERVER_EVENTS.has(name)) throw new Error("Unknown analytics event");
-  try { return await database.insert("analytics_events", eventRow(name, context, values, options)); }
+  try { return await database.insert("analytics_events", eventRow(name, context, values, { ...options, metadata: safeBrowserMetadata(name, options.metadata) })); }
   catch (error) { if (error?.code === "conflict") return null; throw error; }
 }
 async function recordEventSafe(database, name, context, values, options = {}) {
@@ -113,4 +118,4 @@ async function assessmentContext(database, assessmentId) {
 
 module.exports = { BROWSER_EVENTS, SERVER_EVENTS, UUID, analyticsPepper, hashAnonymous, cleanText, cleanHost, attribution, clientContext,
   flagsFromEvent, isKnownBotRequest, browserOriginAllowed, localAnalyticsDay, browserEventIdempotencyKey,
-  eventRow, recordEvent, recordEventSafe, assessmentContext, safeFailureCategory };
+  eventRow, recordEvent, recordEventSafe, assessmentContext, safeFailureCategory, safeBrowserMetadata };

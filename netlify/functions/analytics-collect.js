@@ -3,7 +3,7 @@
 const { getDatabase } = require("./_lib/store.js");
 const { handler, response } = require("./_lib/http.js");
 const { BROWSER_EVENTS, UUID, clientContext, flagsFromEvent, isKnownBotRequest, browserOriginAllowed, hashAnonymous,
-  browserEventIdempotencyKey, recordEvent } = require("./_lib/analytics.js");
+  browserEventIdempotencyKey, recordEvent, safeBrowserMetadata } = require("./_lib/analytics.js");
 const { authenticateSession } = require("./_lib/session.js");
 
 exports.handler = handler("POST", async (event, body) => {
@@ -35,7 +35,8 @@ exports.handler = handler("POST", async (event, body) => {
   const recent = (await database.find("analytics_events", { rateKeyHash })).filter(row => new Date(row.createdAt) > new Date(Date.now() - 60_000));
   if (recent.length >= 30) throw Object.assign(new Error("Too many events"), { statusCode: 429, code: "rate_limited" });
   const now = new Date();
+  const metadata = safeBrowserMetadata(body.eventName, body.metadata || {});
   await recordEvent(database, body.eventName, context, { assessmentId, ...paymentValues }, { eventId: body.eventId, rateKeyHash,
-    idempotencyKey: browserEventIdempotencyKey(body.eventName, context, assessmentId, now), now, ...flagsFromEvent(event) });
+    metadata, idempotencyKey: browserEventIdempotencyKey(body.eventName, context, assessmentId, now, metadata), now, ...flagsFromEvent(event) });
   return response(202, { accepted: true, recorded: true });
 });
