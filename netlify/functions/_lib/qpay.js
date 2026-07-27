@@ -47,6 +47,23 @@ function safeAppLinks(urls, config) {
   });
 }
 
+function safeShortUrl(value, config) {
+  const raw = String(value || "");
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "https:" || !config.allowedHosts.includes(parsed.hostname.toLowerCase())) return null;
+    return parsed.href;
+  } catch { return null; }
+}
+
+function tokenExpiry(expiresIn, now = Date.now()) {
+  const numeric = Number(expiresIn);
+  if (!Number.isFinite(numeric) || numeric <= 0) return now + 300_000;
+  if (numeric >= 1_000_000_000_000) return numeric;
+  if (numeric >= 1_000_000_000) return numeric * 1000;
+  return now + numeric * 1000;
+}
+
 function appLinkDiagnostics(urls, config) {
   const entries = Array.isArray(urls) ? urls : [];
   const reasons = {};
@@ -78,22 +95,31 @@ class QPayClient {
   constructor(config = qpayConfig()) { this.config = config; this.cachedToken = null; }
   async token() {
     if (this.cachedToken && this.cachedToken.expiresAt > Date.now() + 60000) return this.cachedToken.value;
-    const response = await fetch(`${this.config.baseUrl}/v2/auth/token`, {
-      method: "POST", headers: { authorization: `Basic ${Buffer.from(`${this.config.clientId}:${this.config.clientSecret}`).toString("base64")}` },
-      signal: AbortSignal.timeout(8000)
+    const basic = { authorization: `Basic ${Buffer.from(`${this.config.clientId}:${this.config.clientSecret}`).toString("base64")}` };
+    let response;
+    if (this.cachedToken?.refreshToken) {
+      try {
+        response = await fetch(`${this.config.baseUrl}/v2/auth/refresh`, { method: "POST", headers: { ...basic, "content-type": "application/json" },
+          body: JSON.stringify({ refresh_token: this.cachedToken.refreshToken }), signal: AbortSignal.timeout(8000) });
+      } catch { response = null; }
+    }
+    if (!response || !response.ok) response = await fetch(`${this.config.baseUrl}/v2/auth/token`, {
+      method: "POST", headers: basic, signal: AbortSignal.timeout(8000)
     });
     if (!response.ok) throw Object.assign(new Error("QPay auth failed"), { statusCode: 502, code: "qpay_auth_error" });
     const data = await response.json();
-    this.cachedToken = { value: data.access_token, expiresAt: Date.now() + Number(data.expires_in || 300) * 1000 };
+    this.cachedToken = { value: data.access_token, refreshToken: data.refresh_token || this.cachedToken?.refreshToken || null,
+      expiresAt: tokenExpiry(data.expires_in, Date.now()) };
     return this.cachedToken.value;
   }
-  async request(path, body) {
+  async request(path, body, options = {}) {
     const token = await this.token();
+    const method = options.method || (body === undefined ? "GET" : "POST");
     let response;
     try {
       response = await fetch(`${this.config.baseUrl}${path}`, {
-        method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" },
-        body: JSON.stringify(body), signal: AbortSignal.timeout(10000)
+        method, headers: { authorization: `Bearer ${token}`, ...(method === "POST" ? { "content-type": "application/json" } : {}) },
+        ...(method === "POST" ? { body: JSON.stringify(body) } : {}), signal: AbortSignal.timeout(10000)
       });
     } catch (error) {
       const failureClass = error?.name === "TimeoutError" || error?.name === "AbortError" ? "provider_timeout" : "unknown_transport_failure";
@@ -133,15 +159,20 @@ class QPayClient {
       invoice_receiver_code: senderInvoiceNo,
       invoice_description: "Илүүдэл жингээс салах тест үнэлгээ",
       amount,
-      callback_url: `${this.config.callbackOrigin}/.netlify/functions/qpay-check-payment?senderInvoiceNo=${encodeURIComponent(senderInvoiceNo)}`
+      callback_url: `${this.config.callbackOrigin}/.netlify/functions/qpay-payment-callback`
     });
     const diagnostics = { event: "qpay_invoice_response_shape", topLevelKeys: Object.keys(data || {}).sort().slice(0, 40),
-      ...appLinkDiagnostics(data?.urls, this.config) };
+      deeplinkFieldPresent: Object.prototype.hasOwnProperty.call(data || {}, "qPay_deeplink") || Object.prototype.hasOwnProperty.call(data || {}, "qpay_deeplink"),
+      shortUrlFieldPresent: Object.prototype.hasOwnProperty.call(data || {}, "qPay_shortUrl") || Object.prototype.hasOwnProperty.call(data || {}, "qpay_short_url"),
+      ...appLinkDiagnostics(data?.qPay_deeplink ?? data?.qpay_deeplink ?? data?.urls, this.config) };
     console.info(JSON.stringify(diagnostics));
+    const deeplinks = data.qPay_deeplink ?? data.qpay_deeplink ?? data.urls ?? [];
+    const shortUrl = safeShortUrl(data.qPay_shortUrl ?? data.qpay_short_url, this.config);
     return { invoiceId: data.invoice_id, qrText: data.qr_text || "", qrImage: data.qr_image || "",
-      urls: safeAppLinks(data.urls, this.config) };
+      urls: safeAppLinks(deeplinks, this.config), shortUrl };
   }
   checkPayment(invoiceId) { return this.request("/v2/payment/check", { object_type: "INVOICE", object_id: invoiceId, offset: { page_number: 1, page_limit: 100 } }); }
+  getPayment(paymentId) { return this.request(`/v2/payment/${encodeURIComponent(paymentId)}`, undefined, { method: "GET" }); }
   async reconcileInvoice() {
     // Merchant V2 has no read operation by sender_invoice_no. Never create as a fallback.
     return { state: "unsupported" };
@@ -153,4 +184,4 @@ function getQPayProvider() {
   return sharedClient;
 }
 
-module.exports = { qpayConfig, safeAppLinks, appLinkDiagnostics, responseShape, providerError, QPayClient, getQPayProvider };
+module.exports = { qpayConfig, safeAppLinks, safeShortUrl, appLinkDiagnostics, responseShape, providerError, tokenExpiry, QPayClient, getQPayProvider };

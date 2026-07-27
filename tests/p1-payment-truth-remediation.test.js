@@ -121,11 +121,13 @@ async function prepaidContext(id) {
   assert.match(analyticsSource, /assessment_shell_created", "checkout_submitted", "assessment_started/);
   assert.match(assessmentSource, /checkout_submitted/);
   assert.match(collectSource, /Persisted invoice required/);
-  assert.match(appSource, /const delays = \[5000, 10000, 20000, 30000, 60000\]/);
+  assert.match(appSource, /setTimeout\(\(\) => \{ paymentPollTimer = null; if \(!document\.hidden\) checkPayment\(\); \}, 15000\)/);
+  assert.doesNotMatch(appSource, /const delays = \[5000, 10000, 20000, 30000, 60000\]/);
   assert(!appSource.includes("payment.urls.filter(item => /^https"));
-  assert.match(recoveryDesign, /not deployed/);
+  assert.match(recoveryDesign, /GET <callback_url>\?qpay_payment_id/);
+  assert.doesNotMatch(recoveryDesign, /not deployed/);
   assert.match(recoveryDesign, /rate-limited/);
-  assert(!fs.existsSync(path.join(root, "netlify/functions/qpay-provider-callback.js")), "unauthenticated callback is not guessed or deployed");
+  assert(fs.existsSync(path.join(root, "netlify/functions/qpay-payment-callback.js")), "dedicated GET callback is deployed");
 
   console.log("P1 payment authority and analytics truth remediation tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

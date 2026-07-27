@@ -54,7 +54,7 @@
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "1097996409f0fa6fc18179a53a802b72268a6e46671c927e21de5677408dffbc"
+      "sha256": "b9e364406ee38d4ca7c6561e878df385e77e6cc13759a56e56aaa1587fd7909e"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -62,7 +62,7 @@
     },
     {
       "file": "netlify/functions/_lib/qpay.js",
-      "sha256": "8f65c0958bcebd67880c614725323407ad0e032648c28244c01fa07815f23db5"
+      "sha256": "4ca2fec3186d26808a1a4dd03706f8b39104d9abb6a4decda3bffa33f11d6909"
     },
     {
       "file": "netlify/functions/_lib/question-analytics.js",
@@ -213,6 +213,10 @@
       "sha256": "702976fcc9197a4808378610bf88a438b0669b273602aa4eb92d158f4ceaca29"
     },
     {
+      "file": "netlify/functions/qpay-payment-callback.js",
+      "sha256": "80844dc3379e668fb0e44e4c54e9f19694ca5ea64e1bccb18b4ef2bc08d5f914"
+    },
+    {
       "file": "netlify/functions/weight-assessment-complete.js",
       "sha256": "4a6a1b96839f7cbe393725671a36980bf458dc380867ea22c3d53e4e1f2bafc4"
     },
@@ -290,7 +294,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "1e2806ba7e44e9d0fe5ccbe0010d2854fa1af23d3558d2ee9b7f1fad0398f296"
+      "sha256": "cf5bb40df13c24dedfe7521528237aa4acbb9a0a354b17a2b1ac9cb1b2a9c525"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -346,6 +350,7 @@
     "analytics-collect",
     "qpay-check-payment",
     "qpay-create-invoice",
+    "qpay-payment-callback",
     "weight-assessment-complete",
     "weight-assessment-create",
     "weight-assessment-questions",

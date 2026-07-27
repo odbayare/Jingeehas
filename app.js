@@ -36,6 +36,7 @@ let testComingSoonOverride = null;
 let paymentPollTimer = null;
 let paymentPollingStartedAt = 0;
 let paymentPollAttempt = 0;
+let paymentFallbackScheduledFor = "";
 const answerSaveQueue = { pending: new Map(), inFlight: null, failed: new Map(), worker: null, paused: false, completionStarted: false };
 function isComingSoon() { return testComingSoonOverride === null ? WEIGHT_TEST_COMING_SOON_MODE : testComingSoonOverride; }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]); }
@@ -208,6 +209,7 @@ function renderPayment() {
         <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
         ${payment.status !== "paid" && payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
         ${payment.status !== "paid" && links.length ? `<ul class="payment-app-links">${links.map(item => `<li><a class="button secondary" href="${escapeAttribute(item.link || item.url)}" rel="noopener noreferrer">${escapeHtml(item.name || item.description || "Банкны апп")}</a></li>`).join("")}</ul>` : ""}
+        ${payment.status !== "paid" && payment.shortUrl ? `<p><a class="button secondary" href="${escapeAttribute(payment.shortUrl)}" rel="noopener noreferrer">QPay төлбөрийн холбоос</a></p>` : ""}
         ${qrOnly ? `<div class="qr-only-help"><p><strong>Энэ утсан дээр банкны аппын холбоос харагдахгүй байна.</strong></p>
           ${payment.qrImage ? `<p><a class="button secondary" href="data:image/png;base64,${escapeAttribute(payment.qrImage)}" download="jingeehas-qpay-qr.png">QR кодыг хадгалах</a></p>` : ""}
           <p>QR кодын зургийг хадгалах эсвэл дэлгэцийн зураг аваад банкны аппын QR зураг уншуулах хэсгээс сонгоно уу. Мөн энэ хуудсыг өөр төхөөрөмж дээр нээгээд утасныхаа банкны апп-аар QR кодыг уншуулж болно.</p>
@@ -570,14 +572,11 @@ async function checkPayment() {
 }
 function schedulePaymentPolling() {
   if (typeof window === "undefined") return;
-  if (paymentPollTimer) { clearTimeout(paymentPollTimer); paymentPollTimer = null; }
   const payment = state.payment || {};
   if (routeName(window.location.pathname) !== "payment" || !["pending", "check_error"].includes(payment.status) || !payment.paymentId) return;
-  if (!paymentPollingStartedAt) paymentPollingStartedAt = Date.now();
-  if (Date.now() - paymentPollingStartedAt > 15 * 60 * 1000) return;
-  const delays = [5000, 10000, 20000, 30000, 60000];
-  const delay = document.hidden ? 60000 : delays[Math.min(paymentPollAttempt, delays.length - 1)];
-  paymentPollTimer = setTimeout(() => { if (!document.hidden) checkPayment(); else schedulePaymentPolling(); }, delay);
+  if (paymentFallbackScheduledFor === payment.paymentId || paymentPollTimer) return;
+  paymentFallbackScheduledFor = payment.paymentId;
+  paymentPollTimer = setTimeout(() => { paymentPollTimer = null; if (!document.hidden) checkPayment(); }, 15000);
 }
 function updateAnswer(input) {
   const question = questionApi.questionById(input.dataset.question); if (!question) return;

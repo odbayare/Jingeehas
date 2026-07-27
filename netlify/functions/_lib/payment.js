@@ -39,7 +39,7 @@ function publicPayment(payment) {
   return {
     paymentId: payment.id, assessmentId: payment.assessmentId, productCode: payment.productCode,
     amount: payment.amount, status: payment.status, invoiceId: payment.invoiceId || null,
-    expiresAt: payment.expiresAt || null, qrText: payment.qrText || "", qrImage: payment.qrImage || "",
+    expiresAt: payment.expiresAt || null, qrText: payment.qrText || "", qrImage: payment.qrImage || "", shortUrl: payment.shortUrl || null,
     urls: payment.urls || [], entitlement: payment.entitlement || null, nextRoute: payment.nextRoute || null
   };
 }
@@ -67,7 +67,7 @@ async function createInvoiceAttempt(database, provider, sessionId, assessment, n
   const timestamp = now.toISOString();
   await database.insert("payments", { id, sessionId, assessmentId: assessment.id, productCode: PRODUCT.code,
     amount: PRODUCT.amount, status: "creating", senderInvoiceNo, invoiceId: null, expiresAt,
-    qrText: "", qrImage: "", urls: [], requestFingerprint: requestFingerprint(sessionId, assessment.id),
+    qrText: "", qrImage: "", shortUrl: null, urls: [], requestFingerprint: requestFingerprint(sessionId, assessment.id),
     reconciliationStatus: "not_required", replacementForPaymentId,
     createdAt: timestamp, updatedAt: timestamp, paidAt: null });
   try {
@@ -78,7 +78,7 @@ async function createInvoiceAttempt(database, provider, sessionId, assessment, n
       requestReachedProvider: true, createOutcomeUnknown: true
     });
     const pending = await database.update("payments", id, { status: "pending", invoiceId: invoice.invoiceId,
-      qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), urls: invoice.urls || [],
+      qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), shortUrl: invoice.shortUrl || null, urls: invoice.urls || [],
       reconciliationStatus: "not_required", updatedAt: timestamp });
     return { ...publicPayment(pending), reused: false };
   } catch (error) {
@@ -122,7 +122,7 @@ async function reconcileInvoiceCreation(database, provider, sessionId, input = {
     const invoice = result.invoice;
     if (invoice.amount != null && Number(invoice.amount) !== payment.amount) throw Object.assign(new Error("Reconciled invoice amount mismatch"), { statusCode: 409, code: "invoice_mismatch" });
     return publicPayment(await database.update("payments", payment.id, { status: "pending", invoiceId: invoice.invoiceId,
-      qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), urls: invoice.urls || [],
+      qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), shortUrl: invoice.shortUrl || null, urls: invoice.urls || [],
       expiresAt: invoice.expiresAt || payment.expiresAt, reconciliationStatus: "existing_invoice_recovered", updatedAt: now.toISOString() }));
   }
   if (result?.state === "absent") {
@@ -238,6 +238,32 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
   }
 }
 
+function callbackPaymentShape(result) {
+  if (!result || Array.isArray(result) || typeof result !== "object") return null;
+  return result.payment && typeof result.payment === "object" ? result.payment : result.data && typeof result.data === "object" ? result.data : result;
+}
+
+async function confirmCallbackPayment(database, provider, providerPaymentId, now = new Date()) {
+  const result = callbackPaymentShape(await provider.getPayment(providerPaymentId));
+  const paymentId = String(result?.payment_id || "").trim();
+  const paymentStatus = String(result?.payment_status || result?.status || "").toUpperCase();
+  const amount = Number(result?.payment_amount ?? result?.amount);
+  const currency = String(result?.payment_currency || result?.currency || "").toUpperCase();
+  const objectType = String(result?.object_type || "").toUpperCase();
+  const objectId = String(result?.object_id || "").trim();
+  if (paymentId !== providerPaymentId || paymentStatus !== "PAID" || amount !== PRODUCT.amount || currency !== "MNT" || objectType !== "INVOICE" || !objectId) return null;
+  const candidates = (await database.find("payments", { invoiceId: objectId })).filter(payment => payment.productCode === PRODUCT.code && payment.amount === PRODUCT.amount);
+  if (candidates.length !== 1) return null;
+  const payment = candidates[0];
+  const duplicates = await database.find("payments", { providerPaymentId });
+  if (duplicates.some(row => row.id !== payment.id)) return null;
+  const confirmed = payment.providerPaymentId === providerPaymentId && payment.status === "paid"
+    ? payment
+    : await database.update("payments", payment.id, { status: "checking", paidAt: payment.paidAt || now.toISOString(), providerPaymentId, reconciliationStatus: "not_required", updatedAt: now.toISOString() });
+  const granted = await grantEntitlement(database, confirmed, payment.sessionId, now);
+  return publicPayment({ ...granted, entitlement: true });
+}
+
 module.exports = { ACTIVE, AMBIGUOUS_CREATE, SAFE_SENDER_INVOICE_MAX_LENGTH, senderInvoiceNumber, requestFingerprint,
   providerFailureEvidence, publicPayment, createInvoice, reconcileInvoiceCreation, createReplacementInvoice,
-  confirmedProviderPayment, grantEntitlement, checkPayment };
+  confirmedProviderPayment, grantEntitlement, checkPayment, callbackPaymentShape, confirmCallbackPayment };

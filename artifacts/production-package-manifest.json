@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "1e2806ba7e44e9d0fe5ccbe0010d2854fa1af23d3558d2ee9b7f1fad0398f296"
+      "sha256": "cf5bb40df13c24dedfe7521528237aa4acbb9a0a354b17a2b1ac9cb1b2a9c525"
     },
     {
       "file": "assets/favicon.svg",
@@ -73,6 +73,7 @@
     "analytics-collect",
     "qpay-check-payment",
     "qpay-create-invoice",
+    "qpay-payment-callback",
     "weight-assessment-complete",
     "weight-assessment-create",
     "weight-assessment-questions",
