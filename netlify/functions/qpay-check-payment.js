@@ -14,12 +14,16 @@ exports.handler = handler("POST", async (event, body) => {
   const session = await authenticateSession(database, event);
   const existing = await database.get("payments", body.paymentId);
   const context = existing ? await assessmentContext(database, existing.assessmentId) : {};
-  if (existing?.sessionId === session.id) await recordEventSafe(database, "payment_check_started", context,
+  const recoveredLink = existing && existing.sessionId !== session.id
+    ? (await database.find("assessment_sessions", { assessmentId: existing.assessmentId, sessionId: session.id })).find(row => row.source === "recovery" || row.source === "owner")
+    : null;
+  const authorized = existing && (existing.sessionId === session.id || recoveredLink);
+  if (authorized) await recordEventSafe(database, "payment_check_started", context,
     { assessmentId: existing.assessmentId, invoiceId: existing.invoiceId, paymentId: existing.id }, { ...flagsFromEvent(event) });
   let payment;
   try { payment = await checkPayment(database, getQPayProvider(), session.id, body); }
   catch (error) {
-    if (existing?.sessionId === session.id) await recordEventSafe(database, "payment_check_failed", context,
+    if (authorized) await recordEventSafe(database, "payment_check_failed", context,
       { assessmentId: existing.assessmentId, invoiceId: existing.invoiceId, paymentId: existing.id },
       { metadata: { errorCode: String(error?.code || "payment_check_failed").slice(0, 80) }, ...flagsFromEvent(event) });
     throw error;

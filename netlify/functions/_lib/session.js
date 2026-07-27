@@ -11,13 +11,17 @@ function sessionCookie(value, maxAge = SESSION_SECONDS) {
 }
 
 async function createSession(database, now = new Date()) {
+  const prepared = prepareSession(now);
+  await database.insert("sessions", prepared.row);
+  return prepared.public;
+}
+
+function prepareSession(now = new Date()) {
   const id = randomId("ws_");
   const secret = randomToken();
   const expiresAt = new Date(now.getTime() + SESSION_SECONDS * 1000).toISOString();
-  await database.insert("sessions", {
-    id, tokenHash: hashToken(secret), createdAt: now.toISOString(), expiresAt, revokedAt: null
-  });
-  return { session: { id, expiresAt }, cookie: sessionCookie(`${id}.${secret}`) };
+  const row = { id, tokenHash: hashToken(secret), createdAt: now.toISOString(), expiresAt, revokedAt: null };
+  return { row, public: { session: { id, expiresAt }, cookie: sessionCookie(`${id}.${secret}`) } };
 }
 
 async function authenticateSession(database, event, required = true, now = new Date()) {
@@ -31,4 +35,4 @@ async function authenticateSession(database, event, required = true, now = new D
   return valid ? session : null;
 }
 
-module.exports = { COOKIE_NAME, createSession, authenticateSession, sessionCookie };
+module.exports = { COOKIE_NAME, createSession, prepareSession, authenticateSession, sessionCookie };

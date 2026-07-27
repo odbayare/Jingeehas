@@ -216,7 +216,7 @@ function renderPayment() {
           <p>Төлбөрөө давтан хийхээс өмнө доорх “Төлбөр шалгах” товчийг дарна уу.</p>
           <p>Төлбөрийн төлөвөө эхлээд шалгана уу. Төлөгдөөгүй хэвээр бол үндсэн TDB апп эсвэл өөр дэмжигдсэн банкны апп ашиглана уу.</p></div>` : ""}
         ${payment.status !== "paid" && payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа (Улаанбаатар): <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(expiresLocal)}</time></p>` : ""}
-        ${payment.status !== "paid" && payment.handoff ? `<section class="payment-handoff" aria-labelledby="handoff-title"><h2 id="handoff-title">Өөр браузер эсвэл төхөөрөмж дээр үргэлжлүүлэх</h2><p>Facebook/Instagram browser хаагдсан ч энэ холбоос эсвэл кодоор төлбөрийн хуудсаа сэргээж болно. Код нь банкны нууц үг биш тул бусдад дамжуулахгүй байна уу.</p><p><a class="button secondary" href="${escapeAttribute(payment.handoff.link)}" target="_blank" rel="noopener noreferrer">Safari/Chrome-д нээх</a></p><p><button class="button secondary" type="button" data-action="copy-handoff-link">Сэргээх холбоос хуулах</button> <button class="button secondary" type="button" data-action="copy-handoff-code">Сэргээх код хуулах</button></p><p class="muted" role="status">Кодын хугацаа: ${escapeHtml(expiresLocal)}</p></section>` : ""}
+        ${payment.status !== "paid" && payment.handoff ? `<section class="payment-handoff" aria-labelledby="handoff-title"><h2 id="handoff-title">Өөр браузер эсвэл төхөөрөмж дээр үргэлжлүүлэх</h2><p>Холбоосыг шинэ браузерт нээж болно. Аппын доторх браузер хаалттай байвал цэсээр холбоосыг хуулж шинэ браузерт оруулна уу.</p><p><a class="button secondary" href="${escapeAttribute(payment.handoff.link)}" target="_blank" rel="noopener noreferrer">Шинэ браузерт нээх</a></p><p><button class="button secondary" type="button" data-action="copy-handoff-link">Сэргээх холбоос хуулах</button> <button class="button secondary" type="button" data-action="copy-handoff-code">Сэргээх код хуулах</button></p><p class="muted" role="status">${escapeHtml(state.handoffMessage || `Кодын хугацаа: ${expiresLocal}`)}</p></section>` : ""}
         ${["pending", "check_error", "expired", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">Төлбөр шалгах</button>` : payment.status === "paid" ? (prepaid ? `<p class="notice">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>` : `<p class="notice">Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.</p><a class="button" href="/report" data-route>Бүрэн тайлан харах</a>`) : !paymentReady || createBlocked || prepaid ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
       </section></main>${footer()}</div>`;
 }
@@ -461,7 +461,7 @@ function renderForPath(pathname) {
   if (route === "assessmentContact") return renderAssessmentContact();
   if (route === "assessmentCompleted") return renderAssessmentCompleted();
   if (route === "payment") return renderPayment();
-  if (route === "handoffRecover") return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Тайлангаа сэргээж байна</h1><p role="status">${escapeHtml(state.handoffMessage || "Сэргээх холбоосыг шалгаж байна…")}</p></main>${footer()}</div>`;
+  if (route === "handoffRecover") return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Тайлангаа сэргээж байна</h1><p role="status">${escapeHtml(state.handoffMessage || "Сэргээх холбоосыг шалгаж байна…")}</p><form id="handoff-code-form" novalidate><label class="field"><span>Сэргээх код</span><input name="code" autocomplete="one-time-code" inputmode="text" maxlength="512" required></label><button class="button" type="submit">Сэргээх</button></form></main>${footer()}</div>`;
   if (route === "questions") return state.questionsAuthorized ? renderQuestions() : `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөрийн эрхийг шалгаж байна</h1><p role="status">Тест нээх эрхийг серверээс баталгаажуулж байна…</p></main>${footer()}</div>`;
   if (route === "report") return renderReport();
   if (route === "recovery") return renderRecovery();
@@ -709,6 +709,16 @@ async function redeemHandoff() {
     navigate(result.nextRoute || "/assessment/payment", { replace: true }); await restoreServerState(); render({ focus: false });
   } catch { state.handoffToken = ""; state.handoffMessage = "Сэргээх холбоос хүчингүй эсвэл хугацаа дууссан байна."; render({ focus: false }); }
 }
+async function redeemHandoffCode(form) {
+  const code = String(formObject(form).code || "").trim();
+  if (!code) return;
+  state.handoffMessage = "Сэргээх кодыг шалгаж байна…"; render({ focus: false });
+  try {
+    const result = await api("/.netlify/functions/weight-access-handoff-redeem", { method: "POST", body: JSON.stringify({ code }) });
+    if (result.status !== "ok") { state.handoffMessage = result.message || "Сэргээх холбоос хүчингүй эсвэл хугацаа дууссан байна."; render({ focus: false }); return; }
+    navigate(result.nextRoute || "/assessment/payment", { replace: true }); await restoreServerState(); render({ focus: false });
+  } catch { state.handoffMessage = "Сэргээх холбоос хүчингүй эсвэл хугацаа дууссан байна."; render({ focus: false }); }
+}
 async function advisorLoginSubmit(form) { const result = await api("/.netlify/functions/advisor-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.profile = result; state.advisor.temporaryPasswordChange = result.forcePasswordChange; if (result.forcePasswordChange) render(); else { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); } }
 async function advisorPasswordSubmit(form) { await api("/.netlify/functions/advisor-password-change", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.temporaryPasswordChange = false; state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); }
 async function advisorInviteSubmit(form) { const result = await api("/.netlify/functions/advisor-client-invite", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.dashboard = { ...state.advisor.dashboard, inviteToken: result.inviteToken }; render(); }
@@ -814,6 +824,7 @@ function bind(root) {
   root.querySelector('[data-action="retry-answer-saves"]')?.addEventListener("click", retryAnswerSaves);
   root.querySelector("#recovery-request-form")?.addEventListener("submit", event => { event.preventDefault(); requestRecovery(event.currentTarget).catch(error => { state.recovery.error = error?.body?.error === "recovery_unavailable" || error.message === "recovery_unavailable" ? "Сэргээх кодыг одоогоор илгээж чадсангүй. Түр хүлээгээд дахин оролдоно уу." : "Сэргээх хүсэлтийг одоогоор боловсруулах боломжгүй байна."; render(); }); });
   root.querySelector("#recovery-confirm-form")?.addEventListener("submit", event => { event.preventDefault(); confirmRecovery(event.currentTarget).catch(() => { state.recovery.error = "Баталгаажуулах код буруу эсвэл хугацаа дууссан байна."; render(); }); });
+  root.querySelector("#handoff-code-form")?.addEventListener("submit", event => { event.preventDefault(); redeemHandoffCode(event.currentTarget); });
   root.querySelector("#advisor-login-form")?.addEventListener("submit", event => { event.preventDefault(); advisorLoginSubmit(event.currentTarget).catch(() => { state.advisor.error = "Имэйл эсвэл нууц үг буруу байна."; render(); }); });
   root.querySelector("#advisor-password-form")?.addEventListener("submit", event => { event.preventDefault(); advisorPasswordSubmit(event.currentTarget).catch(() => { state.advisor.error = "Нууц үгийг сольж чадсангүй."; render(); }); });
   root.querySelector("#advisor-invite-form")?.addEventListener("submit", event => { event.preventDefault(); advisorInviteSubmit(event.currentTarget).catch(() => { state.advisor.error = "Урилга үүсгэж чадсангүй."; render(); }); });

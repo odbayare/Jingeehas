@@ -2,7 +2,7 @@
 
 const { randomId, randomToken, hashToken } = require("./crypto.js");
 const { encryptContact, decryptContact } = require("./recovery.js");
-const { createSession } = require("./session.js");
+const { prepareSession } = require("./session.js");
 const { nextRoute } = require("./commercial-flow.js");
 const { boundedHash, consumeRate, sourceIp } = require("./qpay-callback.js");
 
@@ -36,26 +36,30 @@ async function handoffForPayment(database, payment) {
   return existing ? publicHandoff(existing, decryptContact(existing.encryptedToken), decryptContact(existing.encryptedCode)) : null;
 }
 
-async function redeemAccessHandoff(database, token, event, now = new Date()) {
-  const normalized = String(token || "").trim();
-  const tokenHash = /^[A-Za-z0-9_-]{20,512}$/.test(normalized) ? hashToken(normalized) : "";
-  const ipHash = boundedHash(sourceIp(event));
-  if (!tokenHash) return INVALID_HANDOFF;
-  const [tokenRate, ipRate] = await Promise.all([
-    consumeRate(database, boundedHash(normalized), "handoff_token", 5, now),
-    consumeRate(database, ipHash, "handoff_ip", 20, now)
-  ]);
+async function redeemAccessHandoff(database, tokenOrCode, event, now = new Date(), kind = "token") {
+  const normalized = String(tokenOrCode || "").trim();
+  const tokenHash = kind === "token" && /^[A-Za-z0-9_-]{20,512}$/.test(normalized) ? hashToken(normalized) : "";
+  const codeHash = kind === "code" && /^[A-Za-z0-9_-]{12,512}$/.test(normalized) ? hashToken(normalized) : "";
+  if (!tokenHash && !codeHash) return INVALID_HANDOFF;
+  let tokenRate;
+  let ipRate;
+  try {
+    const ipHash = boundedHash(sourceIp(event));
+    [tokenRate, ipRate] = await Promise.all([
+      consumeRate(database, boundedHash(normalized), "handoff_token", 5, now),
+      consumeRate(database, ipHash, "handoff_ip", 20, now)
+    ]);
+  } catch {
+    return INVALID_HANDOFF;
+  }
   if (tokenRate.allowed === false || ipRate.allowed === false) return INVALID_HANDOFF;
-  const handoff = typeof database.consumeAccessHandoff === "function"
-    ? await database.consumeAccessHandoff(tokenHash, now)
+  const prepared = prepareSession(now);
+  const result = typeof database.redeemAccessHandoff === "function"
+    ? await database.redeemAccessHandoff({ tokenHash, codeHash, now: now.toISOString(), sessionRow: prepared.row })
     : null;
-  if (!handoff) return INVALID_HANDOFF;
-  const created = await createSession(database, now);
-  await database.upsert("assessment_sessions", `${handoff.assessmentId}:${created.session.id}`, {
-    id: `${handoff.assessmentId}:${created.session.id}`, assessmentId: handoff.assessmentId, sessionId: created.session.id, source: "recovery", createdAt: now.toISOString()
-  });
-  const assessment = await database.get("assessments", handoff.assessmentId);
-  return { status: "ok", assessmentId: handoff.assessmentId, nextRoute: await nextRoute(database, assessment), cookie: created.cookie };
+  if (!result) return INVALID_HANDOFF;
+  const assessment = await database.get("assessments", result.assessmentId);
+  return { status: "ok", assessmentId: result.assessmentId, nextRoute: await nextRoute(database, assessment), cookie: prepared.public.cookie };
 }
 
 module.exports = { HANDOFF_TTL_MS, INVALID_HANDOFF, publicHandoff, issueAccessHandoff, handoffForPayment, redeemAccessHandoff };

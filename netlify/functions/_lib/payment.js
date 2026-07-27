@@ -190,7 +190,10 @@ async function grantEntitlement(database, payment, sessionId, now) {
 
 async function checkPayment(database, provider, sessionId, input = {}, now = new Date()) {
   const payment = await database.get("payments", input.paymentId);
-  if (!payment || payment.sessionId !== sessionId) throw Object.assign(new Error("Payment not found"), { statusCode: 404, code: "payment_not_found" });
+  const recoveredLink = payment && payment.sessionId !== sessionId
+    ? (await database.find("assessment_sessions", { assessmentId: payment.assessmentId, sessionId })).find(row => row.source === "recovery" || row.source === "owner")
+    : null;
+  if (!payment || (payment.sessionId !== sessionId && !recoveredLink)) throw Object.assign(new Error("Payment not found"), { statusCode: 404, code: "payment_not_found" });
   if (payment.productCode !== PRODUCT.code || payment.amount !== PRODUCT.amount) throw Object.assign(new Error("Payment mismatch"), { statusCode: 409, code: "payment_mismatch" });
   if (payment.status === "paid" || payment.status === "paid_but_not_unlocked") {
     try { return publicPayment({ ...(await grantEntitlement(database, payment, sessionId, now)), entitlement: true }); }

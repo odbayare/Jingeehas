@@ -61,6 +61,7 @@ class RestDatabaseAdapter {
   createAccessHandoff(input) { return this.request({ action: "create_access_handoff", payload: input }); }
   async getAccessHandoffByPayment(paymentId) { const row = await this.request({ action: "get_access_handoff_by_payment", paymentId }); return row && row.id ? row : null; }
   async consumeAccessHandoff(tokenHash, now = new Date()) { const row = await this.request({ action: "consume_access_handoff", tokenHash, now: now.toISOString() }); return row && row.id ? row : null; }
+  async redeemAccessHandoff(input) { return this.request({ action: "redeem_access_handoff", payload: input }); }
 }
 
 let testDatabase = null;

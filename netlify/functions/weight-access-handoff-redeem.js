@@ -7,7 +7,8 @@ const { assessmentContext, flagsFromEvent, recordEventSafe } = require("./_lib/a
 
 exports.handler = handler("POST", async (event, body) => {
   const database = getDatabase();
-  const result = await redeemAccessHandoff(database, body.token, event, new Date());
+  const kind = body.token ? "token" : "code";
+  const result = await redeemAccessHandoff(database, body.token || body.code, event, new Date(), kind);
   if (result.status !== "ok") return response(200, INVALID_HANDOFF);
   await recordEventSafe(database, "recovery_succeeded", await assessmentContext(database, result.assessmentId), { assessmentId: result.assessmentId }, {
     idempotencyKey: `handoff_redeemed:${result.assessmentId}:${event.requestContext?.requestId || "request"}`, ...flagsFromEvent(event)

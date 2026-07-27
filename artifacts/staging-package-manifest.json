@@ -50,7 +50,7 @@
     },
     {
       "file": "netlify/functions/_lib/handoff.js",
-      "sha256": "f34447f160760f93e77ab4d76ba87e87744d6cca9cde827fee06274dbdcfba57"
+      "sha256": "b55ed21e7891bc5aae16241cf05d0c7babd5e0f3a5ec097869ad52697159931f"
     },
     {
       "file": "netlify/functions/_lib/http.js",
@@ -58,7 +58,7 @@
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "be76fd47ca42744d319323a0f589b505e567dcc63b5ee07518c71e96fbd4a297"
+      "sha256": "1b49c96e4562747a12eaaf2fa012e2303697328ebd425dfee3fae8752232f9cc"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -66,7 +66,7 @@
     },
     {
       "file": "netlify/functions/_lib/qpay-callback.js",
-      "sha256": "cbbe588fa8af0f519b380f873838e723449844301c1d5be9b3978ad17a8db32b"
+      "sha256": "230e829a452136d9a4b1e86e825300596cdd6e52c114f0beb770dedfd79cc442"
     },
     {
       "file": "netlify/functions/_lib/qpay.js",
@@ -118,11 +118,11 @@
     },
     {
       "file": "netlify/functions/_lib/session.js",
-      "sha256": "41ac015e397bb36e5eb920c025bf6582d730f3a105aa75f1087f3ca092d6fa21"
+      "sha256": "03367e2077e2452b7994e340c9b9b5d29090fd429ac69e4e236bc0653e0217d9"
     },
     {
       "file": "netlify/functions/_lib/store.js",
-      "sha256": "71dfe0b977bdaff8091a9e74e3d1b471a59411bf71d4b36d198e601003eb9de9"
+      "sha256": "e7ef726e0893b0b549d47b2c51671ecc4b354d082c617ed3792f81b6d6f8071a"
     },
     {
       "file": "netlify/functions/admin-access-handoff-lookup.js",
@@ -218,7 +218,7 @@
     },
     {
       "file": "netlify/functions/qpay-check-payment.js",
-      "sha256": "2eb21fa979eaa1ac80360a9857e324cfcb237740a908583cdd84eff63d0bf5d5"
+      "sha256": "b30b358d3c7401b7f80badb704182aeac39965981e080501f773d4b609224f10"
     },
     {
       "file": "netlify/functions/qpay-create-invoice.js",
@@ -230,7 +230,7 @@
     },
     {
       "file": "netlify/functions/weight-access-handoff-redeem.js",
-      "sha256": "08b76cb37cd67174bfbfc30029f71182868c736f60068d6caea754e243f8a660"
+      "sha256": "8eae5216c238aaa9976efd495b5ab2edc98042718d8979aee55fb06d88419918"
     },
     {
       "file": "netlify/functions/weight-assessment-complete.js",
@@ -310,7 +310,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "0d94530885c3168ae43c74fdd609dd97f84cc98b4e091f9d5929a9396d9f6def"
+      "sha256": "f8696d90840f5bb6a725545234b478781b5771a7cd4d45b9a5e8cbee11e3c0bb"
     },
     {
       "file": "site/assets/favicon.svg",

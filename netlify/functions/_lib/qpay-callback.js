@@ -7,8 +7,10 @@ const PAYMENT_LIMIT = 3;
 const IP_LIMIT = 20;
 
 function ratePepper(env = process.env) {
-  const value = String(env.QPAY_CALLBACK_RATE_LIMIT_PEPPER || env.RECOVERY_HASH_PEPPER || "");
-  return value.length >= 32 ? value : "jingeehas-qpay-callback-test-pepper";
+  const value = String(env.QPAY_CALLBACK_RATE_LIMIT_PEPPER || "");
+  if (value.length >= 32) return value;
+  if (env.NODE_ENV === "test") return "jingeehas-qpay-callback-test-pepper";
+  throw new Error("QPAY_CALLBACK_RATE_LIMIT_PEPPER is not configured");
 }
 
 function boundedHash(value, env = process.env) {
@@ -16,8 +18,11 @@ function boundedHash(value, env = process.env) {
 }
 
 function sourceIp(event = {}) {
-  const forwarded = event.headers?.["x-forwarded-for"] || event.headers?.["X-Forwarded-For"] || "";
-  return String(forwarded).split(",")[0].trim().slice(0, 128) || String(event.headers?.["client-ip"] || "unknown").slice(0, 128);
+  const netlify = event.headers?.["x-nf-client-connection-ip"] || event.headers?.["X-Nf-Client-Connection-Ip"];
+  if (netlify) return String(netlify).slice(0, 128);
+  const platform = event.headers?.["client-ip"] || event.headers?.["Client-Ip"];
+  if (platform) return String(platform).slice(0, 128);
+  return "unknown";
 }
 
 async function consumeRate(database, keyHash, keyKind, limit, now = new Date()) {

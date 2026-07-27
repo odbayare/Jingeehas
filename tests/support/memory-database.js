@@ -80,6 +80,17 @@ class MemoryDatabaseAdapter {
     const row = (await this.find("access_handoffs", { tokenHash })).find(item => !item.redeemedAt && new Date(item.expiresAt) > new Date(now));
     if (!row) return null; return this.update("access_handoffs", row.id, { redeemedAt: new Date(now).toISOString(), updatedAt: new Date(now).toISOString() });
   }
+  async redeemAccessHandoff(input) {
+    const handoff = [...this.table("access_handoffs").values()].find(row => !row.redeemedAt && new Date(row.expiresAt) > new Date(input.now) && ((input.tokenHash && row.tokenHash === input.tokenHash) || (input.codeHash && row.codeHash === input.codeHash)));
+    if (!handoff) return null;
+    const session = { ...input.sessionRow };
+    this.table("sessions").set(session.id, session);
+    const link = { id: `${handoff.assessmentId}:${session.id}`, assessmentId: handoff.assessmentId, sessionId: session.id, source: "recovery", createdAt: input.now };
+    this.table("assessment_sessions").set(link.id, link);
+    const redeemed = { ...handoff, redeemedAt: input.now, updatedAt: input.now };
+    this.table("access_handoffs").set(handoff.id, redeemed);
+    return { handoff: redeemed, session: { id: session.id, expiresAt: session.expiresAt }, assessmentId: handoff.assessmentId };
+  }
   async createReportSnapshotVersion(input) {
     const rows = this.table("report_snapshot_versions");
     const existing = [...rows.values()].find(row => row.assessmentId === input.assessmentId && row.operationKey === input.operationKey);
