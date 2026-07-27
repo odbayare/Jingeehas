@@ -12,7 +12,7 @@ const { autoLinkedLongestMethod } = require("../../../questions.js");
 // The owner-approved neutral V3 acceptance is the only regeneration reason
 // exposed by the admin flow for this release. Keeping it explicit prevents a
 // generic regeneration request from bypassing the accepted report contract.
-const GENERATION_REASON = "neutral_v3_owner_acceptance";
+const GENERATION_REASON = "neutral_v3_latest_prepaid_owner_acceptance";
 
 function checksum(payload) {
   return nodeCrypto.createHash("sha256").update(JSON.stringify(payload)).digest("hex");
@@ -35,10 +35,15 @@ async function listRegenerationCandidates(database, event) {
     if (!legacy || !entitlement) continue;
     const active = await resolveReportSnapshot(database, assessment.id);
     const versions = await database.listReportSnapshotVersions(assessment.id);
+    const paidPayment = (await database.find("payments", { assessmentId: assessment.id, status: "paid" }))
+      .find(payment => Number(payment.amount) === 9900) || null;
     candidates.push({
       assessmentId: assessment.id,
       completedAt: assessment.completedAt,
       reportMode: assessment.reportMode,
+      commercialFlowVersion: assessment.commercialFlowVersion || "legacy_postpaid_v1",
+      paymentState: paidPayment && entitlement ? "paid_entitled" : "not_paid_entitled",
+      currentReportEngine: active?.snapshotMetadata?.reportEngineVersion || active?.fullReport?.version || "legacy",
       legacyPreserved: true,
       activeSnapshotId: active?.snapshotMetadata?.source === "versioned" ? active.snapshotMetadata.snapshotId : null,
       activeVersionNumber: active?.snapshotMetadata?.source === "versioned" ? active.snapshotMetadata.versionNumber : null,
@@ -47,6 +52,7 @@ async function listRegenerationCandidates(database, event) {
       acceptedEngineActive: active?.snapshotMetadata?.reportEngineVersion === REPORT_VERSION
     });
   }
+  candidates.sort((left, right) => String(right.completedAt || "").localeCompare(String(left.completedAt || "")));
   return { reportEngineVersion: REPORT_VERSION, reportSchemaVersion: REPORT_SCHEMA_VERSION, generationReason: GENERATION_REASON, candidates };
 }
 
