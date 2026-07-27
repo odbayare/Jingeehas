@@ -49,6 +49,8 @@ async function completeQuestionnaire(page) {
 
 for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1280, 900], [1440, 900]]) {
   test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
+    await page.context().clearCookies();
+    await page.route("**/.netlify/functions/weight-session-state", route => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ assessment: null, payment: null, answers: {}, report: null, nextRoute: "/assessment/start" }) }));
     await page.setViewportSize({ width, height });
     await page.goto("/");
     await expect(page.getByText("Жин хасахад саад болж буй сэтгэлзүйн шалтгааны тест", { exact: true })).toHaveCount(1);
