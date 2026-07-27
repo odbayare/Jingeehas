@@ -29,6 +29,7 @@ const tests = [
   "tests/p1-payment-truth-remediation.test.js",
   "tests/optimistic-answer-save.test.js",
   "tests/cta-aggregate-boundary.test.js",
+  "tests/already-paid-checkout.test.js",
   "tests/qpay-callback.test.js",
   "tests/qpay-refresh-handoff.test.js",
   "tests/question-progress-analytics.test.js",

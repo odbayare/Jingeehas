@@ -198,6 +198,7 @@ function renderPayment() {
   const prepaid = state.commercialFlowVersion === "prepaid_v2";
   const paymentReady = prepaid ? state.assessmentStatus === "payment_pending" : state.assessmentStatus === "complete";
   const links = Array.isArray(payment.urls) ? payment.urls : [];
+  const hasRenderablePayment = Boolean(payment.invoiceId && (payment.qrImage || payment.qrText || payment.shortUrl || links.some(item => item && (item.link || item.url))));
   const qrOnly = payment.status !== "paid" && payment.invoiceId && (payment.qrImage || payment.qrText) && links.length === 0;
   const expiresLocal = payment.expiresAt ? new Intl.DateTimeFormat("mn-MN", {
     timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit"
@@ -206,7 +207,8 @@ function renderPayment() {
       <p>${prepaid ? "Тест үнэлгээ болон бүрэн хувийн тайлан" : "Жин хасалтад тань нөлөөлж буй сэтгэлзүйн шалтгаан, хэв маяг болон танд тохирох өөрчлөлтийн чиглэлийг агуулсан бүрэн тайлангаа нээнэ үү."}</p>
       <section aria-labelledby="payment-title"><h2 id="payment-title">QPay нэхэмжлэл</h2><p class="price">Үнэ: ${PRODUCT.displayPrice}</p>
         ${prepaid ? `<p class="notice">QPay төлбөрөө хийсний дараа тест автоматаар нээгдэнэ.</p>` : paymentReady ? "" : `<p class="notice">QPay төлбөрийн товч тест үнэлгээг бүрэн дуусгасны дараа нээгдэнэ.</p>`}
-        <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
+        <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy || (payment.status === "create_error" ? "QPay төлбөрийн мэдээллийг үүсгэж чадсангүй." : ""))}</p>
+        ${payment.status !== "paid" && !hasRenderablePayment && payment.status !== "idle" && payment.status !== "creating" ? `<div class="payment-empty-state" role="alert"><p>Төлбөрийн мэдээлэл бүрэн үүсээгүй байна. Дахин оролдох эсвэл үндсэн хуудас руу буцна уу.</p><p><a class="button secondary" href="/" data-route>Нүүр хуудас руу буцах</a></p>${paymentReady ? `<button class="button" type="button" data-action="create-invoice">QR код дахин үүсгэх</button>` : ""}</div>` : ""}
         ${payment.status !== "paid" && payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
         ${payment.status !== "paid" && links.length ? `<ul class="payment-app-links">${links.map(item => `<li><a class="button secondary" href="${escapeAttribute(item.link || item.url)}" rel="noopener noreferrer">${escapeHtml(item.name || item.description || "Банкны апп")}</a></li>`).join("")}</ul>` : ""}
         ${payment.status !== "paid" && payment.shortUrl ? `<p><a class="button secondary" href="${escapeAttribute(payment.shortUrl)}" rel="noopener noreferrer">QPay төлбөрийн холбоос</a></p>` : ""}
@@ -526,7 +528,10 @@ async function submitContact(form) {
     state.busy = false; navigate("/assessment/questions"); return;
   }
   try { state.payment = await api("/.netlify/functions/qpay-create-invoice", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) }); }
-  catch (requestError) { const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(requestError?.body?.error); setPaymentStatus(ambiguous ? "create_unknown" : "create_error"); state.checkoutError = "Төлбөрийн хэсгийг одоогоор нээж чадсангүй. Төлбөр хийгдээгүй. Түр хүлээгээд дахин оролдоно уу."; }
+  catch (requestError) {
+    if (requestError?.body?.nextRoute) { await restoreServerState(); state.busy = false; navigate(requestError.body.nextRoute, { replace: true }); return; }
+    const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(requestError?.body?.error); setPaymentStatus(ambiguous ? "create_unknown" : "create_error"); state.checkoutError = "Төлбөрийн хэсгийг одоогоор нээж чадсангүй. Төлбөр хийгдээгүй. Түр хүлээгээд дахин оролдоно уу.";
+  }
   state.busy = false; navigate("/assessment/payment");
 }
 async function submitConsent(form) {
@@ -536,11 +541,13 @@ async function submitConsent(form) {
   resetAnswerSaveQueue(); state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.invitation = null; navigate("/assessment/questions");
 }
 async function createInvoice() {
-  if (state.busy || state.assessmentStatus !== "complete") return;
+  const canCreate = state.commercialFlowVersion === "prepaid_v2" ? state.assessmentStatus === "payment_pending" : state.assessmentStatus === "complete";
+  if (state.busy || !canCreate) return;
   state.busy = true;
   setPaymentStatus("creating"); render();
   try { state.payment = await api("/.netlify/functions/qpay-create-invoice", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId, productCode: PRODUCT.code, amount: PRODUCT.amount }) }); }
   catch (error) {
+    if (error?.body?.nextRoute) { await restoreServerState(); state.busy = false; navigate(error.body.nextRoute, { replace: true }); return; }
     const ambiguous = ["invoice_create_unknown", "invoice_reconciliation_required", "replacement_authorization_required"].includes(error?.body?.error);
     setPaymentStatus(ambiguous ? "create_unknown" : "create_error");
   } finally { state.busy = false; } render();
