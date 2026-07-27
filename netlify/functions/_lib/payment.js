@@ -81,7 +81,12 @@ async function createInvoiceAttempt(database, provider, sessionId, assessment, n
     const pending = await database.update("payments", id, { status: "pending", invoiceId: invoice.invoiceId,
       qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), shortUrl: invoice.shortUrl || null, urls: invoice.urls || [],
       reconciliationStatus: "not_required", updatedAt: timestamp });
-    return { ...publicPayment(pending), handoff: isPrepaid(assessment) ? await issueAccessHandoff(database, pending, now) : null, reused: false };
+    let handoff = null;
+    if (isPrepaid(assessment)) {
+      try { handoff = await issueAccessHandoff(database, pending, now); }
+      catch { console.warn(JSON.stringify({ event: "recovery_setup_failed", category: "handoff_issue_failed" })); }
+    }
+    return { ...publicPayment(pending), handoff, reused: false };
   } catch (error) {
     const evidence = providerFailureEvidence(error, senderInvoiceNo, timestamp);
     console.error(JSON.stringify(evidence));
@@ -106,7 +111,11 @@ async function createInvoice(database, provider, sessionId, input = {}, now = ne
     });
   }
   const active = payments.find(payment => ACTIVE.has(payment.status) && payment.expiresAt && new Date(payment.expiresAt) > now && (payment.status === "creating" || payment.invoiceId));
-  if (active) return { ...publicPayment(active), handoff: isPrepaid(assessment) ? await issueAccessHandoff(database, active, now) : null, reused: true };
+  if (active) {
+    let handoff = null;
+    if (isPrepaid(assessment)) { try { handoff = await issueAccessHandoff(database, active, now); } catch { console.warn(JSON.stringify({ event: "recovery_setup_failed", category: "handoff_issue_failed" })); } }
+    return { ...publicPayment(active), handoff, reused: true };
+  }
   for (const stale of payments.filter(payment => ACTIVE.has(payment.status))) await database.update("payments", stale.id, { status: "expired", updatedAt: now.toISOString() });
   return createInvoiceAttempt(database, provider, sessionId, assessment, now);
 }
