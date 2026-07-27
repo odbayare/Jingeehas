@@ -1,0 +1,16 @@
+"use strict";
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const app = fs.readFileSync("app.js", "utf8");
+const state = fs.readFileSync("netlify/functions/weight-session-state.js", "utf8");
+assert(app.includes("Таны өмнөх тест"));
+assert(app.includes("Төлбөрөө үргэлжлүүлэх"));
+assert(app.includes("Тестээ үргэлжлүүлэх"));
+assert(app.includes("Тайлангаа харах"));
+assert(app.includes("Өөр төхөөрөмжөөс сэргээх"));
+assert(app.includes("resume_entry_shown"));
+assert(app.includes("resume_entry_clicked"));
+assert(state.includes("authenticateSession(database, event, false)"));
+assert(!app.includes("assessmentId</h2>"));
+assert(!app.includes("paymentId</h2>"));
+console.log("customer resume entry tests passed");

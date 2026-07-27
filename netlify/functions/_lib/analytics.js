@@ -4,7 +4,7 @@ const crypto = require("node:crypto");
 const { cookies } = require("./http.js");
 const { PREVIEW_COOKIE_NAME } = require("./preview.js");
 
-const BROWSER_EVENTS = new Set(["landing_viewed", "landing_cta_clicked", "start_cta_clicked", "payment_preparation_viewed", "payment_cta_clicked", "paywall_viewed", "payment_page_rendered", "recovery_requested"]);
+const BROWSER_EVENTS = new Set(["landing_viewed", "landing_cta_clicked", "start_cta_clicked", "payment_preparation_viewed", "payment_cta_clicked", "paywall_viewed", "payment_page_rendered", "recovery_requested", "resume_entry_shown", "resume_entry_clicked"]);
 const SERVER_EVENTS = new Set(["assessment_started", "assessment_completed", "checkout_submitted", "assessment_shell_created", "assessment_shell_create_failed", "invoice_create_started", "invoice_created", "payment_confirmed", "invoice_create_failed", "payment_check_started", "payment_check_failed", "recovery_succeeded", "report_opened"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SAFE_ID = /^[A-Za-z0-9_-]{3,100}$/;
@@ -69,6 +69,7 @@ function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now
   if (["paywall_viewed", "payment_page_rendered", "report_opened"].includes(name) && assessmentId) return `${name}:${assessmentId}`;
   if (["landing_cta_clicked", "start_cta_clicked"].includes(name) && context.sessionIdHash) return `landing_cta_clicked:${context.sessionIdHash}`;
   if (name === "payment_cta_clicked" && context.sessionIdHash) return `payment_cta_clicked:${context.sessionIdHash}`;
+  if (["resume_entry_shown", "resume_entry_clicked"].includes(name) && context.sessionIdHash) return `${name}:${context.sessionIdHash}`;
   return null;
 }
 function safeFailureCategory(error) {

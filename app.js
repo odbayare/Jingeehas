@@ -24,7 +24,7 @@ const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-
 
 function createState() {
   return { contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
-    answers: {}, questionIndex: 0, validationError: "", saveStatus: "idle", report: null, reportEmail: { dismissed: false, saving: false, saved: false, error: "", message: "" }, checkoutError: "", recovery: { recoveryId: "", message: "", error: "" }, handoffToken: "", handoffMessage: "",
+    answers: {}, questionIndex: 0, validationError: "", saveStatus: "idle", report: null, reportEmail: { dismissed: false, saving: false, saved: false, error: "", message: "" }, checkoutError: "", recovery: { recoveryId: "", message: "", error: "" }, handoffToken: "", handoffMessage: "", landingResume: null,
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
       analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
@@ -71,6 +71,18 @@ function trackEvent(eventName, assessmentId = "", dedupeKey = "", values = {}) {
     .then(response => { if (!response.ok) console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: response.status })); })
     .catch(() => console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: "network_error" })));
 }
+async function resolveLandingSession() {
+  if (typeof window === "undefined" || routeName(window.location.pathname) !== "landing") return;
+  try {
+    const result = await api("/.netlify/functions/weight-session-state", { method: "GET" });
+    if (result.assessment) {
+      state.landingResume = { assessment: result.assessment, payment: result.payment, nextRoute: result.nextRoute };
+      const category = resumeState()?.category;
+      if (category) trackEvent("resume_entry_shown", "", `resume_entry_shown:${category}`, { metadata: { stateCategory: category } });
+      render({ focus: false });
+    }
+  } catch { /* a failed lookup leaves the ordinary new-test landing usable */ }
+}
 function trackRenderedQuestion() {
   if (typeof fetch === "undefined" || typeof window === "undefined" || !state.assessmentId) return;
   const question = questionApi.visibleQuestions(state.answers, state.questionnaireVersion)[state.questionIndex]; if (!question) return;
@@ -89,19 +101,23 @@ const ROUTES = Object.freeze({
 });
 const OWNER_PREVIEW_ROUTES = new Set(["assessmentStart", "assessmentContact", "assessmentCompleted", "payment", "questions", "report", "recovery", "dataDeletion"]);
 function routeName(pathname) { return ROUTES[String(pathname || "/").replace(/\/+$/, "") || "/"] || "notFound"; }
-function navigation() { return `<nav class="site-nav" aria-label="Үндсэн цэс"><a href="/" data-route>Нүүр</a><a href="/about" data-route>Тестийн тухай</a><a href="/recovery" data-route>Тайлан сэргээх</a></nav>`; }
+function resumeState() { const resume = state.landingResume; if (!resume?.assessment) return null; if (resume.assessment.safetyRoute) return { category: "safety", label: "Тестээ үргэлжлүүлэх", route: resume.nextRoute || "/report", copy: "Таны өмнөх тест", detail: "Аюулгүй байдлын зөвлөмж тань бэлэн байна." }; if (resume.assessment.status === "payment_pending") return { category: "payment_pending", label: resume.payment?.invoiceId ? "Төлбөрөө үргэлжлүүлэх" : "Төлбөрийн хэсэг рүү орох", route: "/assessment/payment", copy: "Таны өмнөх тест", detail: "Таны төлбөрийн үйл явц дуусаагүй байна." }; if (resume.assessment.status === "complete") return { category: "complete", label: "Тайлангаа харах", route: "/report", copy: "Таны өмнөх тест", detail: "Таны тайлан бэлэн байна." }; return { category: "in_progress", label: "Тестээ үргэлжлүүлэх", route: "/assessment/questions", copy: "Таны өмнөх тест", detail: "Таны тест хадгалагдсан байна. Үргэлжлүүлэн бөглөж болно." }; }
+function navigation() { const resume = resumeState(); return `<nav class="site-nav" aria-label="Үндсэн цэс"><a href="/" data-route>Нүүр</a><a href="/about" data-route>Тестийн тухай</a><a href="/recovery" data-route>Тайлан сэргээх</a>${resume ? `<a href="${escapeAttribute(resume.route)}" data-route data-resume-nav>${escapeHtml(resume.label)}</a>` : ""}</nav>`; }
 function footer() { return `<footer class="site-footer"><p>${PRODUCT.name}</p><nav aria-label="Арга зүй, хууль, тусламжийн холбоос"><a href="/methodology" data-route>Арга зүй</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/support" data-route>Төлбөрийн тусламж</a> · <a href="/data-deletion" data-route>Өгөгдөл устгах хүсэлт</a></nav><p>Дэмжлэг: ${supportContactLink()}</p></footer>`; }
 
 function renderLanding() {
   const landingMicrocopy = `${VERIFIED_LANDING_DURATION} · Дэлгэрэнгүй хувийн тайлан · ${PRODUCT.displayPrice}`;
-  const primary = `Тест өгөх — ${PRODUCT.displayPrice}`;
+  const resume = resumeState();
+  const primary = resume ? resume.label : `Тест өгөх — ${PRODUCT.displayPrice}`;
+  const primaryRoute = resume ? resume.route : "/assessment/start";
   return `<div class="page landing-page">${navigation()}<main>
     <section class="hero landing-hero" aria-labelledby="page-title"><div class="hero-copy">
       <p class="hero-eyebrow">Жин хасахад саад болж буй сэтгэлзүйн шалтгааны тест</p>
       <h1 id="page-title" tabindex="-1">Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?</h1>
       <p class="hero-lead approved-copy">Хүн бүрд жин хасалтыг нь эхнээс нь эвддэг өөрийн гэсэн зуршил байдаг. Энэ тест таных юу болохыг олж харахад тусална.</p>
       <p class="landing-microcopy">${landingMicrocopy}</p>
-      <div class="hero-actions"><a class="button primary-cta" href="/assessment/start" data-route data-primary-cta>${primary}</a><a class="text-link" href="#sample-report">Жишээ тайлан үзэх</a></div>
+      ${resume ? `<section class="resume-card" aria-label="${escapeAttribute(resume.copy)}"><h2>${escapeHtml(resume.copy)}</h2><p>${escapeHtml(resume.detail)}</p><a class="button primary-cta" href="${escapeAttribute(primaryRoute)}" data-route data-resume-cta>${escapeHtml(primary)}</a><p><a class="text-link" href="/assessment/recover" data-route>Өөр төхөөрөмжөөс сэргээх</a></p></section>` : ""}
+      <div class="hero-actions"><a class="button primary-cta" href="${escapeAttribute(primaryRoute)}" data-route data-primary-cta>${escapeHtml(primary)}</a><a class="text-link" href="#sample-report">Жишээ тайлан үзэх</a></div>
     </div><div class="hero-visual" aria-hidden="true"><div class="hero-art"></div><div class="hero-steps"><p><strong>01</strong> Асуултад хариулна</p><p><strong>02</strong> Давтагддаг хэв маягаа олно</p><p><strong>03</strong> Дэлгэрэнгүй тайлангаа авна</p><p><strong>04</strong> Жин хасахад өөрт тохирох арга барилаа ойлгоно</p><small>Онош биш. Өөрийгөө танин мэдэх үнэлгээ.</small></div></div></section>
     <section class="trust-columns" aria-label="Үнэлгээний давуу тал"><article><h2>Нууцлал хамгаалагдсан</h2><p>Таны хариулт бусад хэрэглэгчид харагдахгүй. Мэдээлэл боловсруулах нөхцөлийг <a href="/privacy" data-route>Нууцлалын бодлогоос</a> үзнэ үү.</p></article><article><h2>Судалгаанд суурилсан</h2><p>Хоолны зан үйл, сэтгэл хөдлөл, нойрыг үнэлдэг олон улсын арга зүйг баримталсан.</p></article><article><h2>${VERIFIED_LANDING_DURATION}</h2><p>Нэг суултаар дуусгаад дэлгэрэнгүй тайлангаа авна.</p></article></section>
     <section class="mirror-section" aria-labelledby="mirror-title"><p class="eyebrow">Танд танил байж болох мөчлөгүүд</p><h2 id="mirror-title">Та эдгээрийг өөр дээрээ анзаарч байсан уу?</h2><div class="mirror-grid">
@@ -822,6 +838,7 @@ async function restoreServerState() {
 
 function bind(root) {
   root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); if (window.location.pathname === "/" && link.hasAttribute("data-primary-cta")) trackEvent("landing_cta_clicked"); navigate(link.getAttribute("href")); }));
+  root.querySelectorAll("[data-resume-cta], [data-resume-nav]").forEach(link => link.addEventListener("click", () => { const category = resumeState()?.category; if (category) trackEvent("resume_entry_clicked", "", `resume_entry_clicked:${category}`, { metadata: { stateCategory: category } }); }));
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(["text", "number"].includes(input.type) || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; state.checkoutError = error?.message === "Тайлан хуваалцах сонголтоо хийнэ үү." ? error.message : "Төлбөрийн хэсгийг одоогоор нээж чадсангүй. Төлбөр хийгдээгүй. Түр хүлээгээд дахин оролдоно уу."; render(); }); });
   root.querySelector("#report-email-form")?.addEventListener("submit", event => { event.preventDefault(); saveReportEmail(event.currentTarget); });
@@ -887,7 +904,7 @@ if (typeof window !== "undefined") {
     if (event.persisted && routeName(window.location.pathname) === "payment" &&
         ["pending", "check_error", "expired"].includes(state.payment?.status)) checkPayment();
   });
-  window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); captureHandoffToken(); if (state.handoffToken) await redeemHandoff(); else { await restoreServerState(); render({ focus: false }); } });
+  window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); captureHandoffToken(); if (state.handoffToken) await redeemHandoff(); else { await restoreServerState(); render({ focus: false }); if (routeName(window.location.pathname) === "landing") resolveLandingSession(); } });
 }
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,

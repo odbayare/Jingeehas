@@ -9,7 +9,8 @@ const { hasPaidAccess, nextRoute } = require("./_lib/commercial-flow.js");
 const { handoffForPayment } = require("./_lib/handoff.js");
 
 exports.handler = handler("GET", async event => {
-  const database = getDatabase(); await authenticateOwnerPreview(database, event); const session = await authenticateSession(database, event);
+  const database = getDatabase(); await authenticateOwnerPreview(database, event); const session = await authenticateSession(database, event, false);
+  if (!session) return response(200, { assessment: null, payment: null, answers: {}, report: null, nextRoute: "/assessment/start" });
   const direct = await database.find("assessments", { sessionId: session.id });
   const recovered = await database.find("assessment_sessions", { sessionId: session.id });
   for (const access of recovered) { const assessment = await database.get("assessments", access.assessmentId); if (assessment) direct.push(assessment); }
