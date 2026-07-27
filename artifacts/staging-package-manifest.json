@@ -58,7 +58,7 @@
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "1b49c96e4562747a12eaaf2fa012e2303697328ebd425dfee3fae8752232f9cc"
+      "sha256": "b00d024b5884d09b54ddefd4b007854fb788d235e899a5720e41f8387b783572"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
