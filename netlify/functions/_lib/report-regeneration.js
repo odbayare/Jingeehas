@@ -9,7 +9,10 @@ const { validateReportForActivation } = require("./report-validation.js");
 const { assessmentQuestionnaireVersion } = require("./assessment.js");
 const { autoLinkedLongestMethod } = require("../../../questions.js");
 
-const GENERATION_REASON = "owner_approved_regeneration";
+// The owner-approved neutral V3 acceptance is the only regeneration reason
+// exposed by the admin flow for this release. Keeping it explicit prevents a
+// generic regeneration request from bypassing the accepted report contract.
+const GENERATION_REASON = "neutral_v3_owner_acceptance";
 
 function checksum(payload) {
   return nodeCrypto.createHash("sha256").update(JSON.stringify(payload)).digest("hex");

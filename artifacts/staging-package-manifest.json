@@ -94,7 +94,7 @@
     },
     {
       "file": "netlify/functions/_lib/report-regeneration.js",
-      "sha256": "a38c9cb370f9224eae731cf3fbaa374b99f4de71270a50c41849deae4ea2aaab"
+      "sha256": "2ed1a1dd7196f30ee2c9aacff6d2cd6b9445cadf42827534851cb4f2aca1ce99"
     },
     {
       "file": "netlify/functions/_lib/report-signals.js",
