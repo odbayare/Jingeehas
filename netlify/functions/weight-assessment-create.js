@@ -6,6 +6,7 @@ const { createAssessment } = require("./_lib/assessment.js");
 const { authenticateOwnerPreview, authenticateOwnerPreviewStrict, PREVIEW_COOKIE_NAME } = require("./_lib/preview.js");
 const { cookies } = require("./_lib/http.js");
 const { clientContext, flagsFromEvent, recordEventSafe, safeFailureCategory } = require("./_lib/analytics.js");
+const { hashToken } = require("./_lib/crypto.js");
 
 exports.handler = handler("POST", async (event, body) => {
   const database = getDatabase();
@@ -13,7 +14,12 @@ exports.handler = handler("POST", async (event, body) => {
   let previewBypass = false;
   if (cookies(event)[PREVIEW_COOKIE_NAME]) { await authenticateOwnerPreviewStrict(database, event); previewBypass = true; }
   const session = await authenticateSession(database, event);
-  const context = clientContext(body.analyticsContext || {});
+  const browserContext = clientContext(body.analyticsContext || {});
+  const context = browserContext.sessionIdHash ? browserContext : { ...browserContext, sessionIdHash: hashToken(`checkout:${session.id}`) };
+  const checkoutFlags = flagsFromEvent(event);
+  await recordEventSafe(database, "checkout_submitted", context, {}, {
+    idempotencyKey: `checkout_submitted:${context.sessionIdHash}`, ...checkoutFlags
+  });
   let assessment;
   try {
     assessment = await createAssessment(database, session.id, body);
@@ -34,11 +40,11 @@ exports.handler = handler("POST", async (event, body) => {
     idempotencyKey: `assessment_started:${assessment.id}`, ...flagsFromEvent(event)
   });
   else {
+    await recordEventSafe(database, "checkout_submitted", context, { assessmentId: assessment.id }, {
+      idempotencyKey: `checkout_submitted_assessment:${assessment.id}`, ...checkoutFlags
+    });
     await recordEventSafe(database, "assessment_shell_created", context, { assessmentId: assessment.id }, {
       idempotencyKey: `assessment_shell_created:${assessment.id}`, ...flagsFromEvent(event)
-    });
-    await recordEventSafe(database, "paywall_viewed", context, { assessmentId: assessment.id }, {
-      idempotencyKey: `paywall_viewed:${assessment.id}`, ...flagsFromEvent(event)
     });
   }
   return response(201, { assessmentId: assessment.id, status: assessment.status, commercialFlowVersion: assessment.commercialFlowVersion,

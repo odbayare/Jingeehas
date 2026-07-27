@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "41f01546ecc7441007b6c143ba2ac3f074b42fafa47eb932c0a1e8982be9dd2e"
+      "sha256": "1e2806ba7e44e9d0fe5ccbe0010d2854fa1af23d3558d2ee9b7f1fad0398f296"
     },
     {
       "file": "assets/favicon.svg",
@@ -45,7 +45,7 @@
     },
     {
       "file": "styles.css",
-      "sha256": "d37f07fd05252c0e9272bf39acf8eb258436a11a37441eed97b272cbaea0882e"
+      "sha256": "085ea5745565aa623d7901173e11210124f9b9d574b269da55e7c6c0d3ee1264"
     }
   ],
   "serverFunctions": [

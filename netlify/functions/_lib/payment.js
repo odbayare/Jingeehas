@@ -147,10 +147,26 @@ async function createReplacementInvoice(database, provider, sessionId, input = {
 
 function confirmedProviderPayment(result, expectedAmount) {
   const rows = Array.isArray(result?.rows) ? result.rows : Array.isArray(result?.payments) ? result.payments : [];
-  return rows.find(row => String(row.payment_status || row.status || "").toUpperCase() === "PAID" && Number(row.payment_amount || row.amount) === expectedAmount) || null;
+  return rows.find(row => {
+    const providerPaymentId = String(row.payment_id || row.id || "").trim();
+    return String(row.payment_status || row.status || "").toUpperCase() === "PAID" &&
+      Number(row.payment_amount || row.amount) === expectedAmount && providerPaymentId.length > 0;
+  }) || null;
 }
 
 async function grantEntitlement(database, payment, sessionId, now) {
+  const providerPaymentId = String(payment.providerPaymentId || "").trim();
+  if (payment.amount !== PRODUCT.amount || !payment.invoiceId || !providerPaymentId) {
+    throw Object.assign(new Error("Payment authority requires reconciliation"), {
+      statusCode: 409, code: "payment_reconciliation_required"
+    });
+  }
+  const duplicates = await database.find("payments", { providerPaymentId });
+  if (duplicates.some(row => row.id !== payment.id)) {
+    throw Object.assign(new Error("Provider payment is already associated"), {
+      statusCode: 409, code: "duplicate_provider_payment"
+    });
+  }
   const entitlementId = `${payment.assessmentId}:${PRODUCT.code}`;
   await database.upsert("entitlements", entitlementId, { sessionId, assessmentId: payment.assessmentId,
     paymentId: payment.id, productCode: PRODUCT.code, status: "active", grantedAt: now.toISOString() });
@@ -177,10 +193,11 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
   if (payment.productCode !== PRODUCT.code || payment.amount !== PRODUCT.amount) throw Object.assign(new Error("Payment mismatch"), { statusCode: 409, code: "payment_mismatch" });
   if (payment.status === "paid" || payment.status === "paid_but_not_unlocked") {
     try { return publicPayment({ ...(await grantEntitlement(database, payment, sessionId, now)), entitlement: true }); }
-    catch { return publicPayment(await database.update("payments", payment.id, { status: "paid_but_not_unlocked", updatedAt: now.toISOString() })); }
-  }
-  if (payment.expiresAt && new Date(payment.expiresAt) <= now) {
-    return publicPayment(await database.update("payments", payment.id, { status: "expired", updatedAt: now.toISOString() }));
+    catch {
+      return publicPayment(await database.update("payments", payment.id, {
+        status: "paid_but_not_unlocked", reconciliationStatus: "required", updatedAt: now.toISOString()
+      }));
+    }
   }
   if (!payment.invoiceId) throw Object.assign(new Error("Invoice missing"), { statusCode: 409, code: "invoice_missing" });
   await database.update("payments", payment.id, { status: "checking", updatedAt: now.toISOString() });
@@ -188,14 +205,36 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
   try { providerResult = await provider.checkPayment(payment.invoiceId); }
   catch { return publicPayment(await database.update("payments", payment.id, { status: "check_error", updatedAt: now.toISOString() })); }
   const paidRow = confirmedProviderPayment(providerResult, PRODUCT.amount);
-  if (!paidRow) return publicPayment(await database.update("payments", payment.id, { status: "pending", updatedAt: now.toISOString() }));
+  if (!paidRow) {
+    const providerRows = Array.isArray(providerResult?.rows) ? providerResult.rows :
+      Array.isArray(providerResult?.payments) ? providerResult.payments : [];
+    const paidWithoutAuthority = providerRows.some(row =>
+      String(row.payment_status || row.status || "").toUpperCase() === "PAID" &&
+      Number(row.payment_amount || row.amount) === PRODUCT.amount);
+    if (paidWithoutAuthority) {
+      return publicPayment(await database.update("payments", payment.id, {
+        status: "paid_but_not_unlocked", reconciliationStatus: "required", updatedAt: now.toISOString()
+      }));
+    }
+    const status = payment.expiresAt && new Date(payment.expiresAt) <= now ? "expired" : "pending";
+    return publicPayment(await database.update("payments", payment.id, { status, updatedAt: now.toISOString() }));
+  }
 
+  const providerPaymentId = String(paidRow.payment_id || paidRow.id || "").trim();
+  const duplicates = await database.find("payments", { providerPaymentId });
+  if (duplicates.some(row => row.id !== payment.id)) {
+    return publicPayment(await database.update("payments", payment.id, {
+      status: "paid_but_not_unlocked", reconciliationStatus: "required", updatedAt: now.toISOString()
+    }));
+  }
   const confirmed = await database.update("payments", payment.id, { status: "checking", paidAt: now.toISOString(), updatedAt: now.toISOString(),
-    providerPaymentId: String(paidRow.payment_id || paidRow.id || "") });
+    providerPaymentId, reconciliationStatus: "not_required" });
   try {
     return publicPayment({ ...(await grantEntitlement(database, confirmed, sessionId, now)), entitlement: true });
-  } catch {
-    return publicPayment(await database.update("payments", payment.id, { status: "paid_but_not_unlocked", updatedAt: now.toISOString() }));
+  } catch (error) {
+    return publicPayment(await database.update("payments", payment.id, {
+      status: "paid_but_not_unlocked", reconciliationStatus: "required", updatedAt: now.toISOString()
+    }));
   }
 }
 

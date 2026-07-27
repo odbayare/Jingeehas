@@ -96,8 +96,12 @@ function credential(value) { return String(value).split(";")[0]; }
   const prepaidCreate = () => create(event("POST", { prepaid: true, safetyCheckId: "sc-prepaid-contract", recoveryContactGroupId: "rcg-prepaid-contract", analyticsContext }, prepaidCookie));
   const prepaidCreated = JSON.parse((await prepaidCreate()).body); assert.equal(prepaidCreated.commercialFlowVersion, "prepaid_v2");
   assert.equal((await prepaidCreate()).statusCode, 201, "assessment shell creation is idempotent");
-  const paymentSectionEvents = await database.find("analytics_events", { assessmentId: prepaidCreated.assessmentId, eventName: "paywall_viewed" });
-  assert.equal(paymentSectionEvents.length, 1, "prepaid shell records one assessment-linked payment-section event before invoice creation");
-  assert.equal((await database.find("payments", { assessmentId: prepaidCreated.assessmentId })).length, 0, "payment-section tracking creates no QPay invoice");
+  const shellEvents = await database.find("analytics_events", { assessmentId: prepaidCreated.assessmentId, eventName: "assessment_shell_created" });
+  const checkoutEvents = await database.find("analytics_events", { assessmentId: prepaidCreated.assessmentId, eventName: "checkout_submitted" });
+  const renderedEvents = await database.find("analytics_events", { assessmentId: prepaidCreated.assessmentId, eventName: "payment_page_rendered" });
+  assert.equal(shellEvents.length, 1, "prepaid shell creation is recorded once");
+  assert.equal(checkoutEvents.length, 1, "server checkout submission is assessment-linked");
+  assert.equal(renderedEvents.length, 0, "shell creation is not mislabeled as a rendered QPay page");
+  assert.equal((await database.find("payments", { assessmentId: prepaidCreated.assessmentId })).length, 0, "checkout tracking creates no QPay invoice");
   console.log("assessment API contract tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

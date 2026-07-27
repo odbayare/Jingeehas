@@ -12,6 +12,7 @@ const PAYMENT_COPY = Object.freeze({
   pending: "QPay төлбөрөө хийсний дараа тест автоматаар нээгдэнэ.",
   checking: "Төлбөрийг шалгаж байна…",
   paid_but_not_unlocked: "Төлбөр баталгаажсан. Тест нээх эрхийг серверээс дахин шалгана уу.",
+  expired: "Нэхэмжлэлийн хугацаа дууссан байна. Хэрэв хугацаа дуусах үед төлсөн бол төлөвийг дахин шалгана уу.",
   paidBeforeTest: "Төлбөр баталгаажлаа. Тест нээгдлээ.",
   paidAfterAssessment: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ."
 });
@@ -34,6 +35,7 @@ let state = createState();
 let testComingSoonOverride = null;
 let paymentPollTimer = null;
 let paymentPollingStartedAt = 0;
+let paymentPollAttempt = 0;
 const answerSaveQueue = { pending: new Map(), inFlight: null, failed: new Map(), worker: null, paused: false, completionStarted: false };
 function isComingSoon() { return testComingSoonOverride === null ? WEIGHT_TEST_COMING_SOON_MODE : testComingSoonOverride; }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]); }
@@ -59,11 +61,12 @@ function analyticsIdentity(now = Date.now()) {
 }
 const trackedPageEvents = new Set();
 let lastTrackedQuestionKey = "";
-function trackEvent(eventName, assessmentId = "", dedupeKey = "") {
+function trackEvent(eventName, assessmentId = "", dedupeKey = "", values = {}) {
   if (typeof fetch === "undefined" || typeof window === "undefined") return;
   const key = dedupeKey || `${eventName}:${assessmentId}`; if (trackedPageEvents.has(key)) return; trackedPageEvents.add(key);
   fetch("/.netlify/functions/analytics-collect", { method: "POST", credentials: "same-origin", keepalive: true,
-    headers: { "content-type": "application/json" }, body: JSON.stringify({ eventId: browserUuid(), eventName, assessmentId: assessmentId || undefined, context: analyticsIdentity() }) })
+    headers: { "content-type": "application/json" }, body: JSON.stringify({ eventId: browserUuid(), eventName,
+      assessmentId: assessmentId || undefined, paymentId: values.paymentId || undefined, context: analyticsIdentity() }) })
     .then(response => { if (!response.ok) console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: response.status })); })
     .catch(() => console.warn(JSON.stringify({ event: "analytics_delivery_failed", eventName, status: "network_error" })));
 }
@@ -193,15 +196,25 @@ function renderPayment() {
   const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
   const prepaid = state.commercialFlowVersion === "prepaid_v2";
   const paymentReady = prepaid ? state.assessmentStatus === "payment_pending" : state.assessmentStatus === "complete";
+  const links = Array.isArray(payment.urls) ? payment.urls : [];
+  const qrOnly = payment.status !== "paid" && payment.invoiceId && (payment.qrImage || payment.qrText) && links.length === 0;
+  const expiresLocal = payment.expiresAt ? new Intl.DateTimeFormat("mn-MN", {
+    timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit"
+  }).format(new Date(payment.expiresAt)) : "";
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">${prepaid ? "Төлбөрөө баталгаажуулж байна" : "Бүрэн тайлангаа нээх"}</h1>
       <p>${prepaid ? "Тест үнэлгээ болон бүрэн хувийн тайлан" : "Жин хасалтад тань нөлөөлж буй сэтгэлзүйн шалтгаан, хэв маяг болон танд тохирох өөрчлөлтийн чиглэлийг агуулсан бүрэн тайлангаа нээнэ үү."}</p>
       <section aria-labelledby="payment-title"><h2 id="payment-title">QPay нэхэмжлэл</h2><p class="price">Үнэ: ${PRODUCT.displayPrice}</p>
         ${prepaid ? `<p class="notice">QPay төлбөрөө хийсний дараа тест автоматаар нээгдэнэ.</p>` : paymentReady ? "" : `<p class="notice">QPay төлбөрийн товч тест үнэлгээг бүрэн дуусгасны дараа нээгдэнэ.</p>`}
         <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
         ${payment.status !== "paid" && payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
-        ${payment.status !== "paid" && Array.isArray(payment.urls) && payment.urls.length ? `<ul class="payment-app-links">${payment.urls.filter(item => /^https:\/\//.test(String(item.link || item.url || ""))).map(item => `<li><a class="button secondary" href="${escapeAttribute(item.link || item.url)}" rel="noopener">${escapeHtml(item.name || item.description || "Банкны апп")}</a></li>`).join("")}</ul>` : ""}
-        ${payment.status !== "paid" && payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа: <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(new Date(payment.expiresAt).toLocaleString("mn-MN"))}</time></p>` : ""}
-        ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">Төлбөр шалгах</button>` : payment.status === "paid" ? (prepaid ? `<p class="notice">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>` : `<p class="notice">Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.</p><a class="button" href="/report" data-route>Бүрэн тайлан харах</a>`) : !paymentReady || createBlocked || prepaid ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
+        ${payment.status !== "paid" && links.length ? `<ul class="payment-app-links">${links.map(item => `<li><a class="button secondary" href="${escapeAttribute(item.link || item.url)}" rel="noopener noreferrer">${escapeHtml(item.name || item.description || "Банкны апп")}</a></li>`).join("")}</ul>` : ""}
+        ${qrOnly ? `<div class="qr-only-help"><p><strong>Энэ утсан дээр банкны аппын холбоос харагдахгүй байна.</strong></p>
+          ${payment.qrImage ? `<p><a class="button secondary" href="data:image/png;base64,${escapeAttribute(payment.qrImage)}" download="jingeehas-qpay-qr.png">QR кодыг хадгалах</a></p>` : ""}
+          <p>QR кодын зургийг хадгалах эсвэл дэлгэцийн зураг аваад банкны аппын QR зураг уншуулах хэсгээс сонгоно уу. Мөн энэ хуудсыг өөр төхөөрөмж дээр нээгээд утасныхаа банкны апп-аар QR кодыг уншуулж болно.</p>
+          <p>Төлбөрөө давтан хийхээс өмнө доорх “Төлбөр шалгах” товчийг дарна уу.</p>
+          <p>Төлбөрийн төлөвөө эхлээд шалгана уу. Төлөгдөөгүй хэвээр бол үндсэн TDB апп эсвэл өөр дэмжигдсэн банкны апп ашиглана уу.</p></div>` : ""}
+        ${payment.status !== "paid" && payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа (Улаанбаатар): <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(expiresLocal)}</time></p>` : ""}
+        ${["pending", "check_error", "expired", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">Төлбөр шалгах</button>` : payment.status === "paid" ? (prepaid ? `<p class="notice">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>` : `<p class="notice">Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.</p><a class="button" href="/report" data-route>Бүрэн тайлан харах</a>`) : !paymentReady || createBlocked || prepaid ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
       </section></main>${footer()}</div>`;
 }
 function renderQuestionInput(question, value) {
@@ -402,13 +415,13 @@ function renderAdminAnalytics() {
   const analytics = state.admin.analytics; const data = analytics.paidFirstFunnel || {}; const landing = data.landing || {}; const checkout = data.checkout || {}; const operational = data.operational || {};
   const daily = Array.isArray(data.daily) ? data.daily : []; const hourly = analytics.landingCutoverHourly || { hours: [], totals: {} }; const rows = (hourly.hours || []).filter(row => Number(row.newVisitors ?? row.new_visitors ?? 0) || Number(row.ctaClicks ?? row.cta_clicks ?? 0) || Number(row.paymentPreparationViews ?? row.payment_preparation_views ?? 0)).slice(-24).reverse();
   const pct = (n, d) => Number(d) > 0 ? safeRate(Math.min(1, Number(n || 0) / Number(d))) : "—";
-  const funnel = [["Шинэ зочин", landing.eligibleVisitors], ["CTA дарсан", landing.ctaSessions], ["Төлбөрийн бэлтгэл", landing.preparationSessions], ["Нэхэмжлэл", daily.reduce((n, row) => n + Number(row.invoicesCreated || 0), 0)], ["Төлбөр", daily.reduce((n, row) => n + Number(row.paymentsConfirmed || 0), 0)], ["Тест эхлүүлсэн", daily.reduce((n, row) => n + Number(row.assessmentsStarted || 0), 0)], ["Тест дуусгасан", daily.reduce((n, row) => n + Number(row.assessmentsCompleted || 0), 0)], ["Тайлан", daily.reduce((n, row) => n + Number(row.reportsOpened || 0), 0)], ["Орлого", money(daily.reduce((n, row) => n + Number(row.revenueMnt || 0), 0))]];
+  const funnel = [["Landing CTA", landing.ctaSessions], ["Payment preparation", landing.preparationSessions], ["Server checkout submitted", checkout.serverCheckoutSubmissions], ["Assessment shell", checkout.assessmentShellsCreated], ["Invoice created", checkout.invoicesCreated], ["Payment page rendered", checkout.paymentPageRenders], ["Payment confirmed", operational.confirmedPayments], ["Entitlement", operational.activeEntitlements], ["Test started", daily.reduce((n, row) => n + Number(row.assessmentsStarted || 0), 0)]];
   const conversion = (label, n, d) => `<article><h3>${label}</h3><p class="metric-value">${pct(n, d)}</p></article>`;
   return `<section class="analytics-dashboard" aria-labelledby="analytics-title"><h2 id="analytics-title">Өдөр тутмын үзүүлэлт</h2><p><strong>Одоогийн урсгал: Төлбөр эхэнд</strong></p><p>Цагийн бүс: Улаанбаатар</p>
     <form id="analytics-filter-form" class="analytics-filters"><label><span>Хугацаа</span><select name="preset"><option value="today"${analytics.preset === "today" ? " selected" : ""}>Өнөөдөр</option><option value="yesterday"${analytics.preset === "yesterday" ? " selected" : ""}>Өчигдөр</option><option value="last7"${analytics.preset === "last7" ? " selected" : ""}>Сүүлийн 7 хоног</option><option value="last30"${analytics.preset === "last30" ? " selected" : ""}>Сүүлийн 30 хоног</option><option value="thisMonth"${analytics.preset === "thisMonth" ? " selected" : ""}>Энэ сар</option><option value="previousMonth"${analytics.preset === "previousMonth" ? " selected" : ""}>Өмнөх сар</option><option value="custom"${analytics.preset === "custom" ? " selected" : ""}>Өөр хугацаа</option></select></label><label><span>Эхлэх өдөр</span><input type="date" name="startDate" value="${escapeAttribute(analytics.startDate)}"></label><label><span>Дуусах өдөр</span><input type="date" name="endDate" value="${escapeAttribute(analytics.endDate)}"></label><button class="button compact" type="submit">Харах</button></form>
     ${analytics.loading ? `<p role="status">Үзүүлэлтийг ачаалж байна…</p>` : ""}${analytics.error ? `<p class="error">${escapeHtml(analytics.error)}</p>` : ""}
-    <section class="landing-micro-funnel" aria-labelledby="paid-first-funnel-title"><h3 id="paid-first-funnel-title">Төлбөр-эхэнд урсгал</h3><ol class="funnel-visual" aria-label="Төлбөр-эхэнд урсгал">${funnel.map(([label, value]) => `<li><span>${label}</span><strong>${value ?? 0}</strong></li>`).join("")}</ol><div class="metric-grid analytics-metrics">${conversion("Зочин → CTA", landing.ctaSessions, landing.eligibleVisitors)}${conversion("CTA → төлбөрийн бэлтгэл", landing.ctaToPreparationSessions, landing.ctaSessions)}${conversion("Төлбөрийн бэлтгэл → нэхэмжлэл", funnel[3][1], landing.preparationSessions)}${conversion("Нэхэмжлэл → төлбөр", funnel[4][1], funnel[3][1])}${conversion("Төлбөр → тест эхлүүлсэн", funnel[5][1], funnel[4][1])}${conversion("Эхлүүлсэн → дуусгасан", funnel[6][1], funnel[5][1])}</div></section>
-    <section class="landing-micro-funnel" aria-labelledby="checkout-diagnostics-title"><h3 id="checkout-diagnostics-title">Төлбөр эхлүүлэхийн оношилгоо</h3><div class="metric-grid analytics-metrics"><article><h3>Бэлтгэлд хүрсэн</h3><p class="metric-value">${Number(checkout.preparationSessions || 0)}</p></article><article><h3>Төлбөрийн CTA</h3><p class="metric-value">${Number(checkout.paymentCtaSessions || 0)}</p></article><article><h3>Бэлтгэл → төлбөрийн CTA</h3><p class="metric-value">${pct(checkout.preparationToPaymentCtaSessions, checkout.preparationSessions)}</p></article><article><h3>Үнэлгээний shell үүссэн</h3><p class="metric-value">${Number(checkout.assessmentShellsCreated || 0)}</p></article><article><h3>Shell үүсгэх алдаа</h3><p class="metric-value">${Number(checkout.assessmentShellCreateFailures || 0)}</p></article><article><h3>Нэхэмжлэл үүсгэх оролдлого</h3><p class="metric-value">${Number(checkout.invoiceCreateAttempts || 0)}</p></article><article><h3>Нэхэмжлэл үүссэн</h3><p class="metric-value">${Number(checkout.invoicesCreated || 0)}</p></article><article><h3>Нэхэмжлэл үүсгэх алдаа</h3><p class="metric-value">${Number(checkout.invoiceCreateFailures || 0)}</p></article></div></section>
+    <section class="landing-micro-funnel" aria-labelledby="paid-first-funnel-title"><h3 id="paid-first-funnel-title">Төлбөр-эхэнд урсгал</h3><ol class="funnel-visual" aria-label="Төлбөр-эхэнд урсгал">${funnel.map(([label, value]) => `<li><span>${label}</span><strong>${value ?? 0}</strong></li>`).join("")}</ol><div class="metric-grid analytics-metrics">${conversion("Зочин → CTA", landing.ctaSessions, landing.eligibleVisitors)}${conversion("CTA → төлбөрийн бэлтгэл", landing.ctaToPreparationSessions, landing.ctaSessions)}${conversion("Бэлтгэл → сервер checkout", checkout.serverCheckoutSubmissions, landing.preparationSessions)}${conversion("Checkout → shell", checkout.assessmentShellsCreated, checkout.serverCheckoutSubmissions)}${conversion("Shell → нэхэмжлэл", checkout.invoicesCreated, checkout.assessmentShellsCreated)}${conversion("Нэхэмжлэл → бодит төлбөрийн хуудас", checkout.paymentPageRenders, checkout.invoicesCreated)}${conversion("Төлбөр → эрх", operational.activeEntitlements, operational.confirmedPayments)}</div></section>
+    <section class="landing-micro-funnel" aria-labelledby="checkout-diagnostics-title"><h3 id="checkout-diagnostics-title">Төлбөр эхлүүлэхийн оношилгоо</h3><div class="metric-grid analytics-metrics"><article><h3>Бэлтгэлд хүрсэн</h3><p class="metric-value">${Number(checkout.preparationSessions || 0)}</p></article><article><h3>Browser payment CTA</h3><p class="metric-value">${Number(checkout.paymentCtaSessions || 0)}</p></article><article><h3>Server checkout submitted</h3><p class="metric-value">${Number(checkout.serverCheckoutSubmissions || 0)}</p></article><article><h3>Browser event delivery gap</h3><p class="metric-value">${Number(checkout.browserEventDeliveryGaps || 0)}</p></article><article><h3>Assessment shell</h3><p class="metric-value">${Number(checkout.assessmentShellsCreated || 0)}</p></article><article><h3>Shell үүсгэх алдаа</h3><p class="metric-value">${Number(checkout.assessmentShellCreateFailures || 0)}</p></article><article><h3>Нэхэмжлэл үүсгэх оролдлого</h3><p class="metric-value">${Number(checkout.invoiceCreateAttempts || 0)}</p></article><article><h3>Нэхэмжлэл үүссэн</h3><p class="metric-value">${Number(checkout.invoicesCreated || 0)}</p></article><article><h3>Payment page rendered</h3><p class="metric-value">${Number(checkout.paymentPageRenders || 0)}</p></article><article><h3>Нэхэмжлэл үүсгэх алдаа</h3><p class="metric-value">${Number(checkout.invoiceCreateFailures || 0)}</p></article></div></section>
     <section class="landing-micro-funnel" aria-labelledby="operational-payment-title"><h3 id="operational-payment-title">Төлбөр-эхэнд урсгалын бодит төлөв</h3><div class="metric-grid analytics-metrics"><article><h3>Төлбөр хүлээж буй тест</h3><p class="metric-value">${Number(operational.paymentPendingAssessments || 0)}</p></article><article><h3>Идэвхтэй нэхэмжлэл</h3><p class="metric-value">${Number(operational.activePendingInvoices || 0)}</p></article><article><h3>Хугацаа дууссан, төлөгдөөгүй</h3><p class="metric-value">${Number(operational.expiredUnpaidInvoices || 0)}</p></article><article><h3>Баталгаажсан төлбөр</h3><p class="metric-value">${Number(operational.confirmedPayments || 0)}</p></article><article><h3>Идэвхтэй эрх</h3><p class="metric-value">${Number(operational.activeEntitlements || 0)}</p></article><article><h3>Орлого</h3><p class="metric-value">${money(operational.revenueMnt)}</p></article></div></section>
     <section class="landing-micro-funnel" aria-labelledby="landing-cutover-hourly-title"><h3 id="landing-cutover-hourly-title">Цагийн дэлгэрэнгүй</h3><p class="analytics-hourly-note">Төлбөрийн бэлтгэл нь хэрэглэгч үнэ болон авах зүйлсээ харсан үе.</p><button class="button compact secondary" type="button" data-action="toggle-admin-hourly" aria-expanded="${analytics.hourlyExpanded === true}">Цагийн дэлгэрэнгүй харах</button>${analytics.hourlyExpanded === true ? `<div class="table-scroll" tabindex="0"><table><thead><tr><th>Цаг</th><th>Шинэ зочин</th><th>CTA</th><th>Төлбөрийн бэлтгэл</th></tr></thead><tbody>${rows.map(row => `<tr><td>${escapeHtml(row.hour || "—")}</td><td>${Number(row.newVisitors ?? row.new_visitors ?? 0)}</td><td>${Number(row.ctaClicks ?? row.cta_clicks ?? 0)}</td><td>${Number(row.paymentPreparationViews ?? row.payment_preparation_views ?? 0)}</td></tr>`).join("")}</tbody></table></div>` : ""}</section>
     <h3 class="analytics-daily-heading">Өдрийн задаргаа</h3><div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Шинэ зочин</th><th>CTA</th><th>Төлбөрийн бэлтгэл</th><th>Нэхэмжлэл</th><th>Төлбөр</th><th>Тест эхлүүлсэн</th><th>Тест дуусгасан</th><th>Тайлан</th><th>Орлого</th></tr></thead><tbody>${daily.map(day => `<tr><td>${escapeHtml(formatAnalyticsDate(day.date))}</td><td>${Number(day.newVisitors || day.new_visitors || 0)}</td><td>${Number(day.ctaSessions || day.cta_sessions || 0)}</td><td>${Number(day.preparationSessions || day.preparation_sessions || 0)}</td><td>${Number(day.invoicesCreated || day.invoices_created || 0)}</td><td>${Number(day.paymentsConfirmed || day.payments_confirmed || 0)}</td><td>${Number(day.assessmentsStarted || day.assessments_started || 0)}</td><td>${Number(day.assessmentsCompleted || day.assessments_completed || 0)}</td><td>${Number(day.reportsOpened || day.reports_opened || 0)}</td><td>${money(day.revenueMnt || day.revenue_mnt)}</td></tr>`).join("")}</tbody></table></div>${renderQuestionProgressAnalytics()}</section>`;
@@ -539,6 +552,7 @@ async function checkPayment() {
   setPaymentStatus("checking"); render();
   try {
     state.payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: state.payment.paymentId }) });
+    paymentPollAttempt += 1;
     if (state.payment.status === "paid") {
       if (state.commercialFlowVersion === "prepaid_v2") {
         state.assessmentStatus = "paid_ready";
@@ -560,9 +574,10 @@ function schedulePaymentPolling() {
   const payment = state.payment || {};
   if (routeName(window.location.pathname) !== "payment" || !["pending", "check_error"].includes(payment.status) || !payment.paymentId) return;
   if (!paymentPollingStartedAt) paymentPollingStartedAt = Date.now();
-  const expired = payment.expiresAt && Date.parse(payment.expiresAt) <= Date.now();
-  if (expired || Date.now() - paymentPollingStartedAt > 15 * 60 * 1000) return;
-  paymentPollTimer = setTimeout(() => { if (!document.hidden) checkPayment(); else schedulePaymentPolling(); }, document.hidden ? 12000 : 4000);
+  if (Date.now() - paymentPollingStartedAt > 15 * 60 * 1000) return;
+  const delays = [5000, 10000, 20000, 30000, 60000];
+  const delay = document.hidden ? 60000 : delays[Math.min(paymentPollAttempt, delays.length - 1)];
+  paymentPollTimer = setTimeout(() => { if (!document.hidden) checkPayment(); else schedulePaymentPolling(); }, delay);
 }
 function updateAnswer(input) {
   const question = questionApi.questionById(input.dataset.question); if (!question) return;
@@ -811,7 +826,11 @@ function render(options = {}) {
   const route = routeName(window.location.pathname);
   if (route === "landing") trackEvent("landing_viewed", "", "landing_viewed:page-load");
   if (["assessmentStart", "assessmentContact"].includes(route)) trackEvent("payment_preparation_viewed", "", "payment_preparation_viewed:page-load");
-  if (route === "payment") trackEvent("paywall_viewed", state.assessmentId || undefined);
+  if (route === "payment" && state.payment?.invoiceId &&
+      (state.payment.qrImage || state.payment.qrText || (Array.isArray(state.payment.urls) && state.payment.urls.length))) {
+    trackEvent("payment_page_rendered", state.assessmentId || undefined, `payment_page_rendered:${state.assessmentId}`,
+      { paymentId: state.payment.paymentId });
+  }
   if (route === "questions" && state.questionsAuthorized && state.assessmentId) trackRenderedQuestion();
   const heading = document.getElementById("page-title"); if (options.focus !== false && heading) heading.focus();
   schedulePaymentPolling();
@@ -819,7 +838,18 @@ function render(options = {}) {
 }
 function navigate(pathname, options = {}) { if (typeof window === "undefined") return; window.history[options.replace ? "replaceState" : "pushState"]({}, "", pathname); render(); }
 function captureInviteToken() { if (typeof window === "undefined") return; const url = new URL(window.location.href); const token = url.searchParams.get("invite"); if (!token) return; state.inviteToken = token; url.searchParams.delete("invite"); window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`); }
-if (typeof window !== "undefined") { window.addEventListener("popstate", async () => { await restoreServerState(); render(); }); window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); await restoreServerState(); render({ focus: false }); }); }
+if (typeof window !== "undefined") {
+  window.addEventListener("popstate", async () => { await restoreServerState(); render(); });
+  window.addEventListener("visibilitychange", () => {
+    if (!document.hidden && routeName(window.location.pathname) === "payment" &&
+        ["pending", "check_error", "expired"].includes(state.payment?.status)) checkPayment();
+  });
+  window.addEventListener("pageshow", event => {
+    if (event.persisted && routeName(window.location.pathname) === "payment" &&
+        ["pending", "check_error", "expired"].includes(state.payment?.status)) checkPayment();
+  });
+  window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); await restoreServerState(); render({ focus: false }); });
+}
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,

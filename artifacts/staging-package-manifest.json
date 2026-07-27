@@ -22,7 +22,7 @@
     },
     {
       "file": "netlify/functions/_lib/analytics.js",
-      "sha256": "b664e06293a9d20a27d69fd60e79fb68a88849f4cfaa2cf41aa019ee5088c9d1"
+      "sha256": "e90832dd71a459a781ad5da13b6796f83301b1f4dd2922f779b3a1381e7a3061"
     },
     {
       "file": "netlify/functions/_lib/answer-rules.js",
@@ -54,7 +54,7 @@
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "7c5143a5583688ad9f00174bb495be92fa59f709078088f5cc427529bf2d14e2"
+      "sha256": "66cf9d07400f0d3187ed2de2d3d52b297c1b51e6d03245f3188d514647ca700f"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -62,7 +62,7 @@
     },
     {
       "file": "netlify/functions/_lib/qpay.js",
-      "sha256": "d1276dc7cddc99e487ac5d46f9998f03bb4782ff5cb7144691151a63bae28d43"
+      "sha256": "8f65c0958bcebd67880c614725323407ad0e032648c28244c01fa07815f23db5"
     },
     {
       "file": "netlify/functions/_lib/question-analytics.js",
@@ -202,7 +202,7 @@
     },
     {
       "file": "netlify/functions/analytics-collect.js",
-      "sha256": "b4e919211cf0c8936c6f5370e1bb8be5af786bced7d3d94731a2b3147d281092"
+      "sha256": "10da302387bdfdd941f85f76321b6a7b0d6b20d73222f9ee3aa954950019561b"
     },
     {
       "file": "netlify/functions/qpay-check-payment.js",
@@ -218,7 +218,7 @@
     },
     {
       "file": "netlify/functions/weight-assessment-create.js",
-      "sha256": "a1e8ba32090b86daeb9d42d6d06e85732245a567416f7755bb7916d2cab84f27"
+      "sha256": "2cbdfef3ef580d1adc52be4f7a8b8b72612274dfcc8c0090b77c5f9163290e23"
     },
     {
       "file": "netlify/functions/weight-assessment-questions.js",
@@ -290,7 +290,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "41f01546ecc7441007b6c143ba2ac3f074b42fafa47eb932c0a1e8982be9dd2e"
+      "sha256": "1e2806ba7e44e9d0fe5ccbe0010d2854fa1af23d3558d2ee9b7f1fad0398f296"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -318,7 +318,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "d37f07fd05252c0e9272bf39acf8eb258436a11a37441eed97b272cbaea0882e"
+      "sha256": "085ea5745565aa623d7901173e11210124f9b9d574b269da55e7c6c0d3ee1264"
     }
   ],
   "functionNames": [

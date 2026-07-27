@@ -47,6 +47,33 @@ function safeAppLinks(urls, config) {
   });
 }
 
+function appLinkDiagnostics(urls, config) {
+  const entries = Array.isArray(urls) ? urls : [];
+  const reasons = {};
+  const shapes = [];
+  let accepted = 0;
+  for (const item of entries) {
+    const entry = item && typeof item === "object" ? item : {};
+    const raw = String(entry.link || entry.url || "");
+    try {
+      const parsed = new URL(raw);
+      const scheme = parsed.protocol.slice(0, -1).toLowerCase();
+      const hostname = parsed.hostname.toLowerCase() || null;
+      const allowed = scheme === "https" ? config.allowedHosts.includes(hostname) :
+        !["http", "javascript", "data", "file"].includes(scheme) && config.allowedSchemes.includes(scheme);
+      if (allowed) accepted += 1;
+      else reasons[scheme === "http" ? "insecure_http" : "not_allowlisted"] = (reasons[scheme === "http" ? "insecure_http" : "not_allowlisted"] || 0) + 1;
+      shapes.push({ keys: Object.keys(entry).sort().slice(0, 20), scheme, hostname, accepted: allowed });
+    } catch {
+      reasons.invalid_url = (reasons.invalid_url || 0) + 1;
+      shapes.push({ keys: Object.keys(entry).sort().slice(0, 20), scheme: null, hostname: null, accepted: false });
+    }
+  }
+  return { urlCount: entries.length, acceptedCount: accepted, rejectedCount: entries.length - accepted,
+    rejectionReasons: reasons, entries: shapes };
+}
+
+let sharedClient = null;
 class QPayClient {
   constructor(config = qpayConfig()) { this.config = config; this.cachedToken = null; }
   async token() {
@@ -108,6 +135,9 @@ class QPayClient {
       amount,
       callback_url: `${this.config.callbackOrigin}/.netlify/functions/qpay-check-payment?senderInvoiceNo=${encodeURIComponent(senderInvoiceNo)}`
     });
+    const diagnostics = { event: "qpay_invoice_response_shape", topLevelKeys: Object.keys(data || {}).sort().slice(0, 40),
+      ...appLinkDiagnostics(data?.urls, this.config) };
+    console.info(JSON.stringify(diagnostics));
     return { invoiceId: data.invoice_id, qrText: data.qr_text || "", qrImage: data.qr_image || "",
       urls: safeAppLinks(data.urls, this.config) };
   }
@@ -118,6 +148,9 @@ class QPayClient {
   }
 }
 
-function getQPayProvider() { return new QPayClient(); }
+function getQPayProvider() {
+  if (!sharedClient) sharedClient = new QPayClient();
+  return sharedClient;
+}
 
-module.exports = { qpayConfig, safeAppLinks, responseShape, providerError, QPayClient, getQPayProvider };
+module.exports = { qpayConfig, safeAppLinks, appLinkDiagnostics, responseShape, providerError, QPayClient, getQPayProvider };
