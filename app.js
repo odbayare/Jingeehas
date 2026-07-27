@@ -282,13 +282,20 @@ function buildReportSections(full) {
     const neutral = full.neutralResult;
     const strengths = neutral.strengths?.length ? neutral.strengths : [neutral.strengthsFallback].filter(Boolean);
     const absent = neutral.notStronglySupported?.length ? neutral.notStronglySupported : [neutral.notStronglySupportedFallback].filter(Boolean);
+    const body = neutral.bodyGoalContext;
+    const bodyParagraph = body ? `<dl><dt>Нас</dt><dd>${body.age}</dd><dt>Өндөр</dt><dd>${body.heightCm} см</dd><dt>Одоогийн жин</dt><dd>${body.currentWeightKg} кг</dd><dt>Зорилтот жин</dt><dd>${body.targetWeightKg} кг</dd><dt>Зөрүү</dt><dd>${body.differenceKg} кг</dd><dt>BMI</dt><dd>${body.bmi} (зорилтот жинд ${body.targetBmi})</dd></dl><p>${escapeHtml(body.disclaimer)}</p>` : "";
+    const contextual = neutral.contextualFactors || full.contextualFactors || [];
+    const previous = neutral.previousAttemptAnalysis || full.previousAttemptAnalysis;
     return [
-      { id: "overview", heading: "Ерөнхий зураг", paragraphs: [renderReportParagraphs(neutral.overview)], visible: neutral.overview?.length > 0 },
-      { id: "not-strongly-supported", heading: "Ямар нийтлэг саад хүчтэй илрээгүй вэ?", paragraphs: [renderReportParagraphs(absent)], visible: absent.length > 0 },
-      { id: "strengths", heading: "Танд байгаа давуу тал", paragraphs: [renderReportParagraphs(strengths)], visible: strengths.length > 0 },
-      { id: "limits", heading: "Энэ асуумжаар юуг дүгнэж болохгүй вэ?", paragraphs: [renderReportParagraphs(neutral.limits)], visible: neutral.limits?.length > 0 },
-      { id: "observation", heading: "Дараагийн хугацаанд юу ажиглаж болох вэ?", paragraphs: [`<dl><dt>Туршиж буй нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.variable)}</dd><dt>Ажиглах нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.action)}</dd><dt>Юуг өөрчлөхгүй вэ?</dt><dd>${escapeHtml(neutral.observation?.keepConstant)}</dd><dt>Дараагийн шийдвэрийн дүрэм</dt><dd>${escapeHtml(neutral.observation?.decisionRule)}</dd></dl>`], visible: Boolean(neutral.observation?.variable && neutral.observation?.action && neutral.observation?.decisionRule) },
-      { id: "professional", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", paragraphs: [renderReportParagraphs([neutral.professionalScope])], visible: Boolean(neutral.professionalScope) }
+      { id: "overview", heading: "Таны гол дүгнэлт", paragraphs: [renderReportParagraphs(neutral.overview)], visible: neutral.overview?.length > 0 },
+      { id: "body-goal", heading: "Таны биеийн болон зорилгын суурь зураг", paragraphs: [bodyParagraph], visible: Boolean(bodyParagraph) },
+      { id: "not-strongly-supported", heading: "Гол саад болж харагдаагүй зүйлс", paragraphs: [renderReportParagraphs(absent)], visible: absent.length > 0 },
+      { id: "context", heading: "Одоогоор илүү чухал харагдаж буй нөхцөл", paragraphs: [(contextual.map(item => `<article><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.summary || item.explanation])}</article>`).join(""))], visible: contextual.length > 0 },
+      { id: "previous", heading: "Өмнөх оролдлогоос харагдсан хэлхээ", paragraphs: [previous ? renderReportParagraphs(previous.paragraphs || []) : ""], visible: Boolean(previous) },
+      { id: "strengths", heading: "Танд байгаа бодит давуу тал", paragraphs: [renderReportParagraphs(strengths)], visible: strengths.length > 0 },
+      { id: "observation", heading: "Эхний ажиглалт, туршилт", paragraphs: [`<dl><dt>Туршиж буй нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.variable)}</dd><dt>Ажиглах нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.action)}</dd><dt>Юуг өөрчлөхгүй вэ?</dt><dd>${escapeHtml(neutral.observation?.keepConstant)}</dd><dt>Дараагийн шийдвэрийн дүрэм</dt><dd>${escapeHtml(neutral.observation?.decisionRule)}</dd></dl>`], visible: Boolean(neutral.observation?.variable && neutral.observation?.action && neutral.observation?.decisionRule) },
+      { id: "professional", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", paragraphs: [renderReportParagraphs([neutral.professionalScope])], visible: Boolean(neutral.professionalScope) },
+      { id: "limits", heading: "Энэ тайлангийн хязгаар", paragraphs: [renderReportParagraphs(neutral.limits)], visible: neutral.limits?.length > 0 }
     ];
   }
   const major = full.influencingPatterns || [];
@@ -312,15 +319,20 @@ function buildReportSections(full) {
 
 function renderMultiFactorReport(full) {
   const visibleSections = buildReportSections(full).filter(section => section.visible);
-  return `${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(new Date(full.reportDate).toLocaleDateString("mn-MN"))}</time></header>
+  return `${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(reportDateUB(full.reportDate))}</time></header>
     ${visibleSections.map((section, index) => `<section class="report-section" data-report-section="${escapeAttribute(section.id)}"><h2>${index + 1}. ${escapeHtml(section.heading)}</h2>${section.paragraphs.join("")}</section>`).join("")}
     ${renderReportEmailSection()}<button class="button print-hide" type="button" data-action="print-report">Хэвлэх эсвэл PDF-ээр хадгалах</button></main>${footer()}`;
+}
+function reportDateUB(value) {
+  const parts = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).formatToParts(new Date(value));
+  const map = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return `${map.year}.${map.month}.${map.day}`;
 }
 function renderReportEmailSection() {
   const email = state.reportEmail || {};
   if (email.dismissed) return "";
-  if (email.saved) return `<section class="report-email print-hide" aria-live="polite"><h2>Тайлангаа имэйлээр авах</h2><p>Имэйл хадгалагдлаа. Та тайлангаа энэ имэйлээр дараа нь сэргээж нээх боломжтой.</p></section>`;
-  return `<section class="report-email print-hide"><h2>Тайлангаа имэйлээр авах</h2><p>Тайлангаа дараа нь өөр төхөөрөмжөөс дахин нээх бол имэйл хаягаа хадгалж болно.</p><form id="report-email-form" novalidate><label class="field" for="report-email"><span>Имэйл хаяг</span><input id="report-email" name="email" type="email" autocomplete="email" required></label><p class="error" role="alert">${escapeHtml(email.error || "")}</p><button class="button" type="submit" ${email.saving ? "disabled" : ""}>${email.saving ? "Хадгалж байна…" : "Тайлангаа имэйлээр авах"}</button><button class="button secondary" type="button" data-action="skip-report-email">Одоо хэрэггүй</button></form></section>`;
+  if (email.saved) return `<section class="report-email print-hide" aria-live="polite"><h2>Тайлангаа дараа сэргээх имэйлээ хадгалах</h2><p>Имэйл хадгалагдлаа. Та тайлангаа энэ имэйлээр дараа нь сэргээж нээх боломжтой.</p></section>`;
+  return `<section class="report-email print-hide"><h2>Тайлангаа дараа сэргээх имэйлээ хадгалах</h2><p>Тайлангаа дараа нь өөр төхөөрөмжөөс дахин нээх бол имэйл хаягаа хадгалж болно.</p><form id="report-email-form" novalidate><label class="field" for="report-email"><span>Имэйл хаяг</span><input id="report-email" name="email" type="email" autocomplete="email" required></label><p class="error" role="alert">${escapeHtml(email.error || "")}</p><button class="button" type="submit" ${email.saving ? "disabled" : ""}>${email.saving ? "Хадгалж байна…" : "Тайлангаа дараа сэргээх имэйлээ хадгалах"}</button><button class="button secondary" type="button" data-action="skip-report-email">Одоо хэрэггүй</button></form></section>`;
 }
 function renderReport() {
   const report = state.report;
@@ -329,7 +341,7 @@ function renderReport() {
   if (!report.fullReport) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Эхний зураглал</h1><p>${escapeHtml(report.initialView?.coverage || "")}</p><p>Бүрэн тайлан нээх эрх серверээс баталгаажаагүй байна.</p></main>${footer()}</div>`;
   const full = report.fullReport;
   if (Array.isArray(full.influencingPatterns)) return `<div class="page report-page">${renderMultiFactorReport(full)}</div>`;
-  return `<div class="page report-page">${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(new Date(full.reportDate).toLocaleDateString("mn-MN"))}</time></header>
+  return `<div class="page report-page">${navigation()}<main id="report-content" class="report-content"><header class="report-header"><p>${escapeHtml(full.productName)}</p><h1 id="page-title" tabindex="-1">Бүрэн тайлан</h1><time datetime="${escapeAttribute(full.reportDate)}">${escapeHtml(reportDateUB(full.reportDate))}</time></header>
     <p class="coverage">${escapeHtml(full.coverage)}</p>${full.sections.map(section => `<section class="report-section"><h2>${escapeHtml(section.title)}</h2><p>${escapeHtml(section.body)}</p></section>`).join("")}
     ${full.experiment ? `<section class="report-section"><h2>Хэрэгжүүлж үзэх нэг өөрчлөлт</h2><dl><dt>Өөрчлөх нэг зүйл</dt><dd>${escapeHtml(full.experiment.variable)}</dd><dt>Юу хийх вэ?</dt><dd>${escapeHtml(full.experiment.action)}</dd><dt>Юуг ажиглах вэ?</dt><dd>${escapeHtml(full.experiment.observe)}</dd><dt>Юуг өөрчлөхгүй хэвээр үлдээх вэ?</dt><dd>${escapeHtml(full.experiment.keepConstant)}</dd></dl></section>` : ""}
     ${renderReportEmailSection()}
@@ -916,4 +928,4 @@ if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAY
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,
     analyticsRange, analyticsTotals, rate, safeRate, comparison, conversionDisplay, hasAnalyticsData, analyticsCoverageCopy, analyticsFlowStateCopy, questionProgressWarning, formatAnalyticsDate, formatAnalyticsDateTime,
-    renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics } };
+    renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics, reportDateUB } };

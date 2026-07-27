@@ -144,10 +144,10 @@ const neutralReport = publicReport(buildFullReport(buildEvidence([
 ])));
 app._test.setState({ ownerPreview: true, report: { fullReport: neutralReport } });
 const renderedNeutralReport = app.renderForPath("/report");
-assert(renderedNeutralReport.includes("Ямар нийтлэг саад хүчтэй илрээгүй вэ?"));
-assert(renderedNeutralReport.includes("Дараагийн хугацаанд юу ажиглаж болох вэ?"));
+assert(renderedNeutralReport.includes("Гол саад болж харагдаагүй зүйлс"));
+assert(renderedNeutralReport.includes("Эхний ажиглалт, туршилт"));
 assert(renderedNeutralReport.includes("нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах"));
-assert(renderedNeutralReport.includes("Энэ асуумжаар юуг дүгнэж болохгүй вэ?"));
+assert(renderedNeutralReport.includes("Энэ тайлангийн хязгаар"));
 assert(!renderedNeutralReport.includes("Тайланг хэрхэн ашиглах вэ?"), "redundant generic neutral report-use section remains");
 
 function assertSequentialSections(report, name) {

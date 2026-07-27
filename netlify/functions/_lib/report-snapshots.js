@@ -1,6 +1,6 @@
 "use strict";
 
-const REPORT_SCHEMA_VERSION = "jingeehas-report-snapshot-v1";
+const REPORT_SCHEMA_VERSION = "jingeehas-report-snapshot-v2";
 
 function reportPayload({ reportMode, safetyRoute = null, safetyProvenance = null, initialView = {}, fullReport = null }) {
   return { reportMode, safetyRoute, safetyProvenance, initialView, fullReport };
