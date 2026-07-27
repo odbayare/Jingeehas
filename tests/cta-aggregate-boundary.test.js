@@ -1,0 +1,10 @@
+"use strict";
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const migration = fs.readFileSync("supabase/migrations/20260727073400_repair_cta_boundary_aggregate_definitions.sql", "utf8");
+assert.equal((migration.match(/create or replace function jingeehas\.(get_admin_paid_first_funnel_analytics|get_landing_cutover_hourly_analytics)/g) || []).length, 2);
+assert(migration.includes("cta_event_allowed(event_name, occurred_at)"));
+assert(!migration.includes("event_name in ('landing_cta_clicked','start_cta_clicked')"));
+assert(migration.includes("CTA boundary missing from admin aggregate"));
+assert(migration.includes("CTA boundary missing from hourly aggregate"));
+console.log("CTA aggregate boundary migration tests passed");
