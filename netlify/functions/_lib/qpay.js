@@ -64,6 +64,24 @@ function tokenExpiry(expiresIn, now = Date.now()) {
   return now + numeric * 1000;
 }
 
+function boundedToken(value, field = "token") {
+  const token = String(value || "").trim();
+  if (!token || token.length > 4096 || /[\u0000-\u001f\u007f]/.test(token)) {
+    throw Object.assign(new Error(`QPay ${field} response is invalid`), { statusCode: 502, code: "qpay_auth_error" });
+  }
+  return token;
+}
+
+function parsedTokenExpiry(value, now = Date.now()) {
+  const numeric = Number(value);
+  if (!Number.isFinite(numeric) || numeric <= 0 || numeric > 9_999_999_999_999) {
+    throw Object.assign(new Error("QPay token expiry is invalid"), { statusCode: 502, code: "qpay_auth_error" });
+  }
+  const expiresAt = tokenExpiry(numeric, now);
+  if (expiresAt <= now + 1000) throw Object.assign(new Error("QPay token expiry is invalid"), { statusCode: 502, code: "qpay_auth_error" });
+  return expiresAt;
+}
+
 function appLinkDiagnostics(urls, config) {
   const entries = Array.isArray(urls) ? urls : [];
   const reasons = {};
@@ -99,17 +117,25 @@ class QPayClient {
     let response;
     if (this.cachedToken?.refreshToken) {
       try {
-        response = await fetch(`${this.config.baseUrl}/v2/auth/refresh`, { method: "POST", headers: { ...basic, "content-type": "application/json" },
-          body: JSON.stringify({ refresh_token: this.cachedToken.refreshToken }), signal: AbortSignal.timeout(8000) });
-      } catch { response = null; }
+        response = await fetch(`${this.config.baseUrl}/v2/auth/refresh`, { method: "POST", headers: { authorization: `Bearer ${this.cachedToken.refreshToken}` }, signal: AbortSignal.timeout(8000) });
+        if (response?.ok) {
+          const data = await response.json();
+          const value = boundedToken(data.access_token, "access token");
+          const refreshToken = data.refresh_token == null ? null : boundedToken(data.refresh_token, "refresh token");
+          this.cachedToken = { value, refreshToken, expiresAt: parsedTokenExpiry(data.expires_in, Date.now()) };
+          return value;
+        }
+      } catch { /* fall through to one fresh Basic-auth request */ }
     }
-    if (!response || !response.ok) response = await fetch(`${this.config.baseUrl}/v2/auth/token`, {
+    this.cachedToken = null;
+    response = await fetch(`${this.config.baseUrl}/v2/auth/token`, {
       method: "POST", headers: basic, signal: AbortSignal.timeout(8000)
     });
     if (!response.ok) throw Object.assign(new Error("QPay auth failed"), { statusCode: 502, code: "qpay_auth_error" });
     const data = await response.json();
-    this.cachedToken = { value: data.access_token, refreshToken: data.refresh_token || this.cachedToken?.refreshToken || null,
-      expiresAt: tokenExpiry(data.expires_in, Date.now()) };
+    const value = boundedToken(data.access_token, "access token");
+    const refreshToken = data.refresh_token == null ? null : boundedToken(data.refresh_token, "refresh token");
+    this.cachedToken = { value, refreshToken, expiresAt: parsedTokenExpiry(data.expires_in, Date.now()) };
     return this.cachedToken.value;
   }
   async request(path, body, options = {}) {
@@ -184,4 +210,4 @@ function getQPayProvider() {
   return sharedClient;
 }
 
-module.exports = { qpayConfig, safeAppLinks, safeShortUrl, appLinkDiagnostics, responseShape, providerError, tokenExpiry, QPayClient, getQPayProvider };
+module.exports = { qpayConfig, safeAppLinks, safeShortUrl, appLinkDiagnostics, responseShape, providerError, tokenExpiry, parsedTokenExpiry, QPayClient, getQPayProvider };

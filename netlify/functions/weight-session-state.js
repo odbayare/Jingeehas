@@ -6,6 +6,7 @@ const { reportForSession } = require("./_lib/assessment.js");
 const { publicPayment } = require("./_lib/payment.js");
 const { authenticateOwnerPreview } = require("./_lib/preview.js");
 const { hasPaidAccess, nextRoute } = require("./_lib/commercial-flow.js");
+const { handoffForPayment } = require("./_lib/handoff.js");
 
 exports.handler = handler("GET", async event => {
   const database = getDatabase(); await authenticateOwnerPreview(database, event); const session = await authenticateSession(database, event);
@@ -20,8 +21,10 @@ exports.handler = handler("GET", async event => {
   const answers = (assessment.status === "draft" || (assessment.commercialFlowVersion === "prepaid_v2" && paid && ["paid_ready", "in_progress"].includes(assessment.status)))
     ? Object.fromEntries((await database.find("assessment_answers", { assessmentId: assessment.id })).map(row => [row.questionId, row.value])) : {};
   let report = null; if (assessment.status === "complete") report = await reportForSession(database, session.id, assessment.id);
+  const publicPaymentValue = payment ? publicPayment(payment) : null;
+  if (publicPaymentValue && payment?.status !== "paid" && assessment.commercialFlowVersion === "prepaid_v2") publicPaymentValue.handoff = await handoffForPayment(database, publicPaymentValue);
   return response(200, { assessment: { assessmentId: assessment.id, status: assessment.status, safetyRoute: assessment.safetyRoute,
     commercialFlowVersion: assessment.commercialFlowVersion || "legacy_postpaid_v1", startedAt: assessment.startedAt || null,
     questionnaireVersion: assessment.questionnaireVersion || require("../../questions.js").LEGACY_QUESTIONNAIRE_VERSION },
-    nextRoute: await nextRoute(database, assessment), payment: payment ? publicPayment(payment) : null, answers, report });
+    nextRoute: await nextRoute(database, assessment), payment: publicPaymentValue, answers, report });
 });

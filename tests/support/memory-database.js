@@ -67,6 +67,19 @@ class MemoryDatabaseAdapter {
       .sort((left, right) => right.versionNumber - left.versionNumber));
   }
   async getReportSnapshotVersion(snapshotId) { return this.get("report_snapshot_versions", snapshotId); }
+  async consumeQpayCallbackRateLimit(keyHash, keyKind, limit, now = new Date()) {
+    const bucket = Math.floor(new Date(now).getTime() / (5 * 60 * 1000)); const id = `${keyKind}:${keyHash}:${bucket}`;
+    const existing = await this.get("qpay_callback_rate_limits", id); const count = Number(existing?.lookupCount || 0) + 1;
+    if (existing) await this.update("qpay_callback_rate_limits", id, { lookupCount: count });
+    else await this.insert("qpay_callback_rate_limits", { id, keyHash, keyKind, windowStart: new Date(bucket * 5 * 60 * 1000).toISOString(), lookupCount: 1, expiresAt: new Date((bucket + 1) * 5 * 60 * 1000).toISOString(), createdAt: new Date(now).toISOString() });
+    return { allowed: count <= limit, count };
+  }
+  async createAccessHandoff(input) { return this.insert("access_handoffs", input); }
+  async getAccessHandoffByPayment(paymentId) { return (await this.find("access_handoffs", { paymentId }))[0] || null; }
+  async consumeAccessHandoff(tokenHash, now = new Date()) {
+    const row = (await this.find("access_handoffs", { tokenHash })).find(item => !item.redeemedAt && new Date(item.expiresAt) > new Date(now));
+    if (!row) return null; return this.update("access_handoffs", row.id, { redeemedAt: new Date(now).toISOString(), updatedAt: new Date(now).toISOString() });
+  }
   async createReportSnapshotVersion(input) {
     const rows = this.table("report_snapshot_versions");
     const existing = [...rows.values()].find(row => row.assessmentId === input.assessmentId && row.operationKey === input.operationKey);

@@ -19,7 +19,7 @@ const analyticsSource = fs.readFileSync(path.join(root, "netlify/functions/_lib/
 const assessmentSource = fs.readFileSync(path.join(root, "netlify/functions/weight-assessment-create.js"), "utf8");
 const collectSource = fs.readFileSync(path.join(root, "netlify/functions/analytics-collect.js"), "utf8");
 const appSource = fs.readFileSync(path.join(root, "app.js"), "utf8");
-const recoveryDesign = fs.readFileSync(path.join(root, "docs/QPAY_BROWSER_INDEPENDENT_RECOVERY_BLOCKED_DESIGN.md"), "utf8");
+const recoveryDesign = fs.readFileSync(path.join(root, "docs/QPAY_BROWSER_INDEPENDENT_RECOVERY_DESIGN.md"), "utf8");
 
 async function prepaidContext(id) {
   const database = new MemoryDatabaseAdapter();

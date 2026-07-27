@@ -4,6 +4,7 @@ const { getDatabase } = require("./_lib/store.js");
 const { getQPayProvider } = require("./_lib/qpay.js");
 const { confirmCallbackPayment } = require("./_lib/payment.js");
 const { assessmentContext, flagsFromEvent, recordEventSafe } = require("./_lib/analytics.js");
+const { allowProviderLookup } = require("./_lib/qpay-callback.js");
 const CALLBACK_PAYMENT_ID = /^[A-Za-z0-9][A-Za-z0-9_-]{0,99}$/;
 
 function successResponse() {
@@ -16,6 +17,11 @@ exports.handler = async event => {
   if (!CALLBACK_PAYMENT_ID.test(providerPaymentId)) return successResponse();
   try {
     const database = getDatabase();
+    const lookup = await allowProviderLookup(database, providerPaymentId, event, new Date());
+    if (!lookup.allowed) {
+      if (!lookup.fastPath) console.info(JSON.stringify({ event: "qpay_callback_unverified", category: "rate_limited" }));
+      return successResponse();
+    }
     const payment = await confirmCallbackPayment(database, getQPayProvider(), providerPaymentId, new Date());
     if (payment?.status === "paid") {
       const context = await assessmentContext(database, payment.assessmentId);

@@ -55,6 +55,12 @@ class RestDatabaseAdapter {
   getQuestionProgressAnalytics(startDate, endDate, now = new Date()) {
     return this.request({ action: "get_question_progress_analytics", startDate, endDate, now: now.toISOString() });
   }
+  consumeQpayCallbackRateLimit(keyHash, keyKind, limit, now = new Date()) {
+    return this.request({ action: "consume_qpay_callback_rate_limit", keyHash, keyKind, limit, now: now.toISOString() });
+  }
+  createAccessHandoff(input) { return this.request({ action: "create_access_handoff", payload: input }); }
+  async getAccessHandoffByPayment(paymentId) { const row = await this.request({ action: "get_access_handoff_by_payment", paymentId }); return row && row.id ? row : null; }
+  async consumeAccessHandoff(tokenHash, now = new Date()) { const row = await this.request({ action: "consume_access_handoff", tokenHash, now: now.toISOString() }); return row && row.id ? row : null; }
 }
 
 let testDatabase = null;

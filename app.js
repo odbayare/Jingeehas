@@ -24,7 +24,7 @@ const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-
 
 function createState() {
   return { contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
-    answers: {}, questionIndex: 0, validationError: "", saveStatus: "idle", report: null, reportEmail: { dismissed: false, saving: false, saved: false, error: "", message: "" }, checkoutError: "", recovery: { recoveryId: "", message: "", error: "" },
+    answers: {}, questionIndex: 0, validationError: "", saveStatus: "idle", report: null, reportEmail: { dismissed: false, saving: false, saved: false, error: "", message: "" }, checkoutError: "", recovery: { recoveryId: "", message: "", error: "" }, handoffToken: "", handoffMessage: "",
     inviteToken: "", invitation: null, advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
       analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
@@ -83,7 +83,7 @@ function trackRenderedQuestion() {
 
 const ROUTES = Object.freeze({
   "/": "landing", "/about": "about", "/methodology": "methodology", "/assessment/start": "assessmentStart", "/assessment/contact": "assessmentContact",
-  "/assessment/questions": "questions", "/assessment/completed": "assessmentCompleted", "/assessment/payment": "payment", "/report": "report", "/recovery": "recovery"
+  "/assessment/questions": "questions", "/assessment/completed": "assessmentCompleted", "/assessment/payment": "payment", "/assessment/recover": "handoffRecover", "/report": "report", "/recovery": "recovery"
   , "/advisor/login": "advisorLogin", "/advisor/dashboard": "advisorDashboard", "/admin": "admin",
   "/privacy": "privacy", "/terms": "terms", "/support": "support", "/data-deletion": "dataDeletion"
 });
@@ -216,6 +216,7 @@ function renderPayment() {
           <p>Төлбөрөө давтан хийхээс өмнө доорх “Төлбөр шалгах” товчийг дарна уу.</p>
           <p>Төлбөрийн төлөвөө эхлээд шалгана уу. Төлөгдөөгүй хэвээр бол үндсэн TDB апп эсвэл өөр дэмжигдсэн банкны апп ашиглана уу.</p></div>` : ""}
         ${payment.status !== "paid" && payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа (Улаанбаатар): <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(expiresLocal)}</time></p>` : ""}
+        ${payment.status !== "paid" && payment.handoff ? `<section class="payment-handoff" aria-labelledby="handoff-title"><h2 id="handoff-title">Өөр браузер эсвэл төхөөрөмж дээр үргэлжлүүлэх</h2><p>Facebook/Instagram browser хаагдсан ч энэ холбоос эсвэл кодоор төлбөрийн хуудсаа сэргээж болно. Код нь банкны нууц үг биш тул бусдад дамжуулахгүй байна уу.</p><p><a class="button secondary" href="${escapeAttribute(payment.handoff.link)}" target="_blank" rel="noopener noreferrer">Safari/Chrome-д нээх</a></p><p><button class="button secondary" type="button" data-action="copy-handoff-link">Сэргээх холбоос хуулах</button> <button class="button secondary" type="button" data-action="copy-handoff-code">Сэргээх код хуулах</button></p><p class="muted" role="status">Кодын хугацаа: ${escapeHtml(expiresLocal)}</p></section>` : ""}
         ${["pending", "check_error", "expired", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">Төлбөр шалгах</button>` : payment.status === "paid" ? (prepaid ? `<p class="notice">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>` : `<p class="notice">Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.</p><a class="button" href="/report" data-route>Бүрэн тайлан харах</a>`) : !paymentReady || createBlocked || prepaid ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
       </section></main>${footer()}</div>`;
 }
@@ -460,6 +461,7 @@ function renderForPath(pathname) {
   if (route === "assessmentContact") return renderAssessmentContact();
   if (route === "assessmentCompleted") return renderAssessmentCompleted();
   if (route === "payment") return renderPayment();
+  if (route === "handoffRecover") return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Тайлангаа сэргээж байна</h1><p role="status">${escapeHtml(state.handoffMessage || "Сэргээх холбоосыг шалгаж байна…")}</p></main>${footer()}</div>`;
   if (route === "questions") return state.questionsAuthorized ? renderQuestions() : `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Төлбөрийн эрхийг шалгаж байна</h1><p role="status">Тест нээх эрхийг серверээс баталгаажуулж байна…</p></main>${footer()}</div>`;
   if (route === "report") return renderReport();
   if (route === "recovery") return renderRecovery();
@@ -690,6 +692,23 @@ async function confirmRecovery(form) {
   const result = await api("/.netlify/functions/weight-recovery-confirm", { method: "POST", body: JSON.stringify({ recoveryId: state.recovery.recoveryId, code: input.code }) });
   state.assessmentId = result.assessmentId; navigate(result.nextRoute || "/report"); await restoreServerState(); render();
 }
+async function copyHandoff(field) {
+  const value = state.payment?.handoff?.[field] || "";
+  if (!value) return;
+  try { await navigator.clipboard.writeText(value); state.handoffMessage = "Сэргээх мэдээллийг хууллаа."; }
+  catch { state.handoffMessage = "Хуулах боломжгүй байна. Холбоос эсвэл кодыг гараар сонгон хуулна уу."; }
+  render({ focus: false });
+}
+async function redeemHandoff() {
+  if (!state.handoffToken) { state.handoffMessage = "Сэргээх холбоос хүчингүй байна."; return; }
+  state.handoffMessage = "Сэргээх холбоосыг шалгаж байна…"; render({ focus: false });
+  try {
+    const result = await api("/.netlify/functions/weight-access-handoff-redeem", { method: "POST", body: JSON.stringify({ token: state.handoffToken }) });
+    state.handoffToken = "";
+    if (result.status !== "ok") { state.handoffMessage = result.message || "Сэргээх холбоос хүчингүй эсвэл хугацаа дууссан байна."; render({ focus: false }); return; }
+    navigate(result.nextRoute || "/assessment/payment", { replace: true }); await restoreServerState(); render({ focus: false });
+  } catch { state.handoffToken = ""; state.handoffMessage = "Сэргээх холбоос хүчингүй эсвэл хугацаа дууссан байна."; render({ focus: false }); }
+}
 async function advisorLoginSubmit(form) { const result = await api("/.netlify/functions/advisor-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.profile = result; state.advisor.temporaryPasswordChange = result.forcePasswordChange; if (result.forcePasswordChange) render(); else { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); } }
 async function advisorPasswordSubmit(form) { await api("/.netlify/functions/advisor-password-change", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.temporaryPasswordChange = false; state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); }
 async function advisorInviteSubmit(form) { const result = await api("/.netlify/functions/advisor-client-invite", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.dashboard = { ...state.advisor.dashboard, inviteToken: result.inviteToken }; render(); }
@@ -811,6 +830,8 @@ function bind(root) {
   root.querySelector('[data-action="create-invoice"]')?.addEventListener("click", createInvoice);
   root.querySelector('[data-action="continue-to-payment"]')?.addEventListener("click", continueToPayment);
   root.querySelector('[data-action="check-payment"]')?.addEventListener("click", checkPayment);
+  root.querySelector('[data-action="copy-handoff-link"]')?.addEventListener("click", () => copyHandoff("link"));
+  root.querySelector('[data-action="copy-handoff-code"]')?.addEventListener("click", () => copyHandoff("code"));
   root.querySelector('[data-action="previous-question"]')?.addEventListener("click", () => { if (state.busy) return; state.questionIndex = Math.max(0, state.questionIndex - 1); state.validationError = ""; render(); });
   root.querySelector('[data-action="print-report"]')?.addEventListener("click", () => window.print());
   root.querySelector('[data-action="advisor-logout"]')?.addEventListener("click", async () => { await api("/.netlify/functions/advisor-logout", { method: "POST", body: "{}" }); state.advisor = createState().advisor; navigate("/advisor/login"); });
@@ -837,6 +858,7 @@ function render(options = {}) {
 }
 function navigate(pathname, options = {}) { if (typeof window === "undefined") return; window.history[options.replace ? "replaceState" : "pushState"]({}, "", pathname); render(); }
 function captureInviteToken() { if (typeof window === "undefined") return; const url = new URL(window.location.href); const token = url.searchParams.get("invite"); if (!token) return; state.inviteToken = token; url.searchParams.delete("invite"); window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`); }
+function captureHandoffToken() { if (typeof window === "undefined" || window.location.pathname !== "/assessment/recover") return; const hash = String(window.location.hash || ""); const match = hash.match(/^#token=([^&]+)$/); window.history.replaceState({}, "", "/assessment/recover"); if (match) state.handoffToken = decodeURIComponent(match[1]).slice(0, 512); }
 if (typeof window !== "undefined") {
   window.addEventListener("popstate", async () => { await restoreServerState(); render(); });
   window.addEventListener("visibilitychange", () => {
@@ -847,7 +869,7 @@ if (typeof window !== "undefined") {
     if (event.persisted && routeName(window.location.pathname) === "payment" &&
         ["pending", "check_error", "expired"].includes(state.payment?.status)) checkPayment();
   });
-  window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); await restoreServerState(); render({ focus: false }); });
+  window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); captureHandoffToken(); if (state.handoffToken) await redeemHandoff(); else { await restoreServerState(); render({ focus: false }); } });
 }
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,

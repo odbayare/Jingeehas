@@ -17,7 +17,7 @@
     },
     {
       "file": "app.js",
-      "sha256": "cf5bb40df13c24dedfe7521528237aa4acbb9a0a354b17a2b1ac9cb1b2a9c525"
+      "sha256": "0d94530885c3168ae43c74fdd609dd97f84cc98b4e091f9d5929a9396d9f6def"
     },
     {
       "file": "assets/favicon.svg",
@@ -49,6 +49,7 @@
     }
   ],
   "serverFunctions": [
+    "admin-access-handoff-lookup",
     "admin-advisor-create",
     "admin-advisor-update",
     "admin-analytics-daily",
@@ -74,6 +75,7 @@
     "qpay-check-payment",
     "qpay-create-invoice",
     "qpay-payment-callback",
+    "weight-access-handoff-redeem",
     "weight-assessment-complete",
     "weight-assessment-create",
     "weight-assessment-questions",

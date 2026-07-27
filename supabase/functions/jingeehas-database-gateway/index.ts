@@ -56,7 +56,7 @@ function normalizeOperation(operation: Record<string, unknown>): Record<string, 
   const reportVersionActions = new Set([
     "get_active_report_snapshot", "list_report_snapshot_versions", "get_report_snapshot_version",
     "create_report_snapshot_version", "activate_report_snapshot_version", "insert_analytics_event", "find_analytics_events", "get_daily_funnel_analytics", "get_landing_cutover_hourly_analytics", "get_admin_paid_first_funnel_analytics",
-    "record_question_progress", "get_question_progress_analytics",
+    "record_question_progress", "get_question_progress_analytics", "consume_qpay_callback_rate_limit", "create_access_handoff", "get_access_handoff_by_payment", "consume_access_handoff",
   ]);
   const normalized = reportVersionActions.has(String(operation.action || ""))
     ? mapRecordKeys(operation, snakeKey) as Record<string, unknown>
@@ -127,14 +127,24 @@ Deno.serve(async (request: Request) => {
   if (!supabaseUrl || !serviceRoleKey) return json(503, { error: "gateway_unavailable" });
 
   try {
-    const rpcResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/jingeehas_execute_request`, {
+    const action = String((operation as Record<string, unknown>).action || "");
+    const directRpc = action === "consume_qpay_callback_rate_limit" ? "jingeehas_consume_qpay_callback_rate_limit"
+      : action === "create_access_handoff" ? "jingeehas_create_access_handoff"
+        : action === "get_access_handoff_by_payment" ? "jingeehas_get_access_handoff_by_payment"
+          : action === "consume_access_handoff" ? "jingeehas_consume_access_handoff" : "";
+    const requestBody = action === "consume_qpay_callback_rate_limit"
+      ? { p_key_hash: (operation as Record<string, unknown>).keyHash, p_key_kind: (operation as Record<string, unknown>).keyKind, p_limit: (operation as Record<string, unknown>).limit, p_now: (operation as Record<string, unknown>).now }
+      : action === "create_access_handoff" ? { p_payload: mapRecordKeys((operation as Record<string, unknown>).payload, snakeKey) }
+        : action === "get_access_handoff_by_payment" ? { p_payment_id: (operation as Record<string, unknown>).paymentId }
+          : action === "consume_access_handoff" ? { p_token_hash: (operation as Record<string, unknown>).tokenHash, p_now: (operation as Record<string, unknown>).now } : null;
+    const rpcResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/${directRpc || "jingeehas_execute_request"}`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${serviceRoleKey}`,
         apikey: serviceRoleKey,
         "content-type": "application/json",
       },
-      body: JSON.stringify({ request: normalizeOperation(operation as Record<string, unknown>) }),
+      body: JSON.stringify(directRpc ? requestBody : { request: normalizeOperation(operation as Record<string, unknown>) }),
       signal: AbortSignal.timeout(7000),
     });
     if (!rpcResponse.ok) return json(rpcResponse.status === 409 ? 409 : rpcResponse.status === 404 ? 404 : 503, { error: "database_error" });

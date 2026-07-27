@@ -6,6 +6,7 @@ const { authenticateSession } = require("./_lib/session.js");
 const { checkPayment } = require("./_lib/payment.js");
 const { authenticateOwnerPreview } = require("./_lib/preview.js");
 const { assessmentContext, flagsFromEvent, recordEventSafe } = require("./_lib/analytics.js");
+const { handoffForPayment } = require("./_lib/handoff.js");
 
 exports.handler = handler("POST", async (event, body) => {
   const database = getDatabase();
@@ -28,5 +29,6 @@ exports.handler = handler("POST", async (event, body) => {
   if (payment.status === "paid") await recordEventSafe(database, "payment_confirmed", await assessmentContext(database, payment.assessmentId),
     { assessmentId: payment.assessmentId, invoiceId: payment.invoiceId, paymentId: payment.paymentId, amountMnt: payment.amount },
     { idempotencyKey: `payment_confirmed:${payment.paymentId}`, ...flagsFromEvent(event) });
+  if (payment.status !== "paid" && payment.paymentId) payment.handoff = await handoffForPayment(database, payment);
   return response(200, payment);
 });

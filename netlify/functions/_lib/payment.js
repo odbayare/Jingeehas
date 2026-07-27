@@ -4,6 +4,7 @@ const { PRODUCT } = require("./config.js");
 const { randomId, hashToken } = require("./crypto.js");
 const { ownedAssessment } = require("./assessment.js");
 const { isPrepaid } = require("./commercial-flow.js");
+const { issueAccessHandoff } = require("./handoff.js");
 
 const ACTIVE = new Set(["creating", "create_unknown", "reconciling", "pending", "checking", "check_error"]);
 const AMBIGUOUS_CREATE = new Set(["create_error", "create_unknown", "reconciling"]);
@@ -80,7 +81,7 @@ async function createInvoiceAttempt(database, provider, sessionId, assessment, n
     const pending = await database.update("payments", id, { status: "pending", invoiceId: invoice.invoiceId,
       qrText: String(invoice.qrText || ""), qrImage: String(invoice.qrImage || ""), shortUrl: invoice.shortUrl || null, urls: invoice.urls || [],
       reconciliationStatus: "not_required", updatedAt: timestamp });
-    return { ...publicPayment(pending), reused: false };
+    return { ...publicPayment(pending), handoff: isPrepaid(assessment) ? await issueAccessHandoff(database, pending, now) : null, reused: false };
   } catch (error) {
     const evidence = providerFailureEvidence(error, senderInvoiceNo, timestamp);
     console.error(JSON.stringify(evidence));
@@ -105,7 +106,7 @@ async function createInvoice(database, provider, sessionId, input = {}, now = ne
     });
   }
   const active = payments.find(payment => ACTIVE.has(payment.status) && payment.expiresAt && new Date(payment.expiresAt) > now && (payment.status === "creating" || payment.invoiceId));
-  if (active) return { ...publicPayment(active), reused: true };
+  if (active) return { ...publicPayment(active), handoff: isPrepaid(assessment) ? await issueAccessHandoff(database, active, now) : null, reused: true };
   for (const stale of payments.filter(payment => ACTIVE.has(payment.status))) await database.update("payments", stale.id, { status: "expired", updatedAt: now.toISOString() });
   return createInvoiceAttempt(database, provider, sessionId, assessment, now);
 }

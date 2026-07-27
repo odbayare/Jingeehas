@@ -42,11 +42,15 @@
     },
     {
       "file": "netlify/functions/_lib/config.js",
-      "sha256": "0697409c54bfec564f6a6a41c7a2ed8aa17c5c3f96a40a30f12df2b36eed45af"
+      "sha256": "85f84672a7eb4b542b12bdc92b7eb7c64d8668162775dc348582e7ee597a8830"
     },
     {
       "file": "netlify/functions/_lib/crypto.js",
       "sha256": "ad4251b8575b9da7ce807df0c3cef22853a80b314e6b883cb09b945053a1bd6b"
+    },
+    {
+      "file": "netlify/functions/_lib/handoff.js",
+      "sha256": "f34447f160760f93e77ab4d76ba87e87744d6cca9cde827fee06274dbdcfba57"
     },
     {
       "file": "netlify/functions/_lib/http.js",
@@ -54,15 +58,19 @@
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "b9e364406ee38d4ca7c6561e878df385e77e6cc13759a56e56aaa1587fd7909e"
+      "sha256": "f2e2c52c58194e8cde42688c6bc8f23f43b72d56dfa3cfb77a29e60395a51192"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
       "sha256": "8f64434b11f3c95aedcc0b11798852d32846862df9c660942fa8d9163d4e93f8"
     },
     {
+      "file": "netlify/functions/_lib/qpay-callback.js",
+      "sha256": "cbbe588fa8af0f519b380f873838e723449844301c1d5be9b3978ad17a8db32b"
+    },
+    {
       "file": "netlify/functions/_lib/qpay.js",
-      "sha256": "4ca2fec3186d26808a1a4dd03706f8b39104d9abb6a4decda3bffa33f11d6909"
+      "sha256": "123b0091c82d48c4ff978360a9ef9fcc7e078cfbdd318d59981bb0e810fe92f1"
     },
     {
       "file": "netlify/functions/_lib/question-analytics.js",
@@ -114,7 +122,11 @@
     },
     {
       "file": "netlify/functions/_lib/store.js",
-      "sha256": "649a5297bb8e57df458e8eec1c795d068372c58ea33a2362a9ff02b3fbc1a416"
+      "sha256": "71dfe0b977bdaff8091a9e74e3d1b471a59411bf71d4b36d198e601003eb9de9"
+    },
+    {
+      "file": "netlify/functions/admin-access-handoff-lookup.js",
+      "sha256": "c3b3c58c58908891bd961b3ee7fc08e2ac2c67bed7e665526a40977ff45bf0b2"
     },
     {
       "file": "netlify/functions/admin-advisor-create.js",
@@ -206,7 +218,7 @@
     },
     {
       "file": "netlify/functions/qpay-check-payment.js",
-      "sha256": "57fb3f936de7a8c394f9d85684ff2ba8d6987bcc0eb65c108959cedfa184edb1"
+      "sha256": "2eb21fa979eaa1ac80360a9857e324cfcb237740a908583cdd84eff63d0bf5d5"
     },
     {
       "file": "netlify/functions/qpay-create-invoice.js",
@@ -214,7 +226,11 @@
     },
     {
       "file": "netlify/functions/qpay-payment-callback.js",
-      "sha256": "80844dc3379e668fb0e44e4c54e9f19694ca5ea64e1bccb18b4ef2bc08d5f914"
+      "sha256": "68001d346392cecc0142a5712bb724e208269b70e9f3dae4a9b96d4a697f9630"
+    },
+    {
+      "file": "netlify/functions/weight-access-handoff-redeem.js",
+      "sha256": "08b76cb37cd67174bfbfc30029f71182868c736f60068d6caea754e243f8a660"
     },
     {
       "file": "netlify/functions/weight-assessment-complete.js",
@@ -274,7 +290,7 @@
     },
     {
       "file": "netlify/functions/weight-session-state.js",
-      "sha256": "47b101452dff6f6bcd38e4470afd5b0d8b46ede00fbd1f92e44a321a43444b33"
+      "sha256": "a3154fbd3b565c0ec5ff511552e23c2473ced2395380c64937ca1db48cd2c694"
     },
     {
       "file": "netlify.toml",
@@ -294,7 +310,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "cf5bb40df13c24dedfe7521528237aa4acbb9a0a354b17a2b1ac9cb1b2a9c525"
+      "sha256": "0d94530885c3168ae43c74fdd609dd97f84cc98b4e091f9d5929a9396d9f6def"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -326,6 +342,7 @@
     }
   ],
   "functionNames": [
+    "admin-access-handoff-lookup",
     "admin-advisor-create",
     "admin-advisor-update",
     "admin-analytics-daily",
@@ -351,6 +368,7 @@
     "qpay-check-payment",
     "qpay-create-invoice",
     "qpay-payment-callback",
+    "weight-access-handoff-redeem",
     "weight-assessment-complete",
     "weight-assessment-create",
     "weight-assessment-questions",
