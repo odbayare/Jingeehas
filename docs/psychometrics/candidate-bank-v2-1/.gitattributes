@@ -1,0 +1,6 @@
+*.csv text eol=crlf
+second-pass-expert-outputs/*.csv text eol=lf
+second-pass-persona-outputs/*.csv text eol=lf
+SECOND_PASS_ITEM_ADJUDICATION_V2_1.csv text eol=lf
+AI_SECOND_PASS_EXPERT_RAW_V2_1.csv binary
+AI_SECOND_PASS_PERSONA_RAW_V2_1.csv binary

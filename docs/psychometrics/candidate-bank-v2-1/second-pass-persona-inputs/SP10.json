@@ -1,0 +1,213 @@
+{
+  "status": [
+    "AI-REVISED CANDIDATE ITEM BANK ONLY",
+    "NOT HUMAN-REVIEWED",
+    "NOT PSYCHOMETRICALLY VALIDATED",
+    "NOT A CLINICAL OR PSYCHOLOGICAL DIAGNOSIS",
+    "NOT READY FOR PRODUCTION PSYCHOMETRIC CLAIMS"
+  ],
+  "persona_run_id": "SPR-SP10",
+  "persona_code": "SP10",
+  "model_family": "GPT-5.6",
+  "model_variant": "gpt-5.6-sol",
+  "synthetic_persona": {
+    "age_band": "35–44",
+    "gender": "man",
+    "setting": "provincial_center",
+    "education_reading_comfort": "university_high_comfort",
+    "work_pattern": "public_sector_regular",
+    "caregiving_load": "moderate_caregiving",
+    "digital_literacy": "medium",
+    "prior_weight_loss_attempt": "one_attempt",
+    "schedule_pressure": "moderate",
+    "cost_pressure": "low",
+    "movement_context": "recreational_movement",
+    "emotional_eating_tendency": "none",
+    "body_image_concern": "low",
+    "prior_strict_diet_experience": "none",
+    "adversarial_lens": "no_emotional_eating_social_desirability_check"
+  },
+  "blinding": {
+    "construct_visible": false,
+    "scoring_direction_visible": false,
+    "revision_status_visible": false,
+    "original_wording_visible": false,
+    "expert_results_visible": false,
+    "other_persona_output_visible": false
+  },
+  "contract": {
+    "observable_summary_only": true,
+    "output_columns": [
+      "persona_run_id",
+      "persona_code",
+      "block_order",
+      "blinded_item_id",
+      "paraphrase_mn",
+      "example_situation_mn",
+      "recall_period_usable",
+      "selected_response",
+      "response_options_fit",
+      "ambiguous_word_or_phrase",
+      "asks_more_than_one_thing",
+      "judgmental_or_shaming",
+      "socially_desirable_answer_obvious",
+      "missing_not_applicable_option",
+      "response_confidence_1_5",
+      "observable_decision_summary",
+      "synthetic_review_only",
+      "status_label"
+    ]
+  },
+  "items": [
+    {
+      "block_order": 1,
+      "blinded_item_id": "B028",
+      "item_text": "Идэж байхдаа зогсоох эсвэл үргэлжлүүлэхээ удирдахад хэцүү байсан.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale_id": "frequency_14d_opportunity_0_4_na",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж",
+        "Ийм нөхцөл тохиолдоогүй"
+      ]
+    },
+    {
+      "block_order": 2,
+      "blinded_item_id": "B008",
+      "item_text": "Төлөвлөснөөс өөр идсэн ч дараагийн хоолондоо хэвийн хооллолтдоо орсон.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale_id": "frequency_14d_opportunity_0_4_na",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж",
+        "Ийм нөхцөл тохиолдоогүй"
+      ]
+    },
+    {
+      "block_order": 3,
+      "blinded_item_id": "B031",
+      "item_text": "Өлсөлт хэт хүчтэй болохоос өмнө өлсөж байгаагаа анзаарсан.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale_id": "frequency_14d_opportunity_0_4_na",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж",
+        "Ийм нөхцөл тохиолдоогүй"
+      ]
+    },
+    {
+      "block_order": 4,
+      "blinded_item_id": "B037",
+      "item_text": "Төлөвлөснөөс өөр идсэний дараа дараагийн хоолондоо эргэн орж чадна гэдэгтээ хэр итгэлтэй вэ?",
+      "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+      "response_scale_id": "confidence_0_4_na",
+      "response_options": [
+        "Огт итгэлгүй",
+        "Бага зэрэг итгэлтэй",
+        "Дунд зэрэг итгэлтэй",
+        "Их итгэлтэй",
+        "Маш их итгэлтэй",
+        "Ийм нөхцөл тохиолдоогүй"
+      ]
+    },
+    {
+      "block_order": 5,
+      "blinded_item_id": "B019",
+      "item_text": "Завгүй өдөр хэрэглэхээр хооллолтын төлөвлөгөөнийхөө энгийн хувилбарыг урьдчилж бэлдсэн.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale_id": "frequency_14d_opportunity_0_4_na",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж",
+        "Ийм нөхцөл тохиолдоогүй"
+      ]
+    },
+    {
+      "block_order": 6,
+      "blinded_item_id": "B021",
+      "item_text": "Стресстэй өдөр хоолны төлөвлөгөөгөө дагаж чадна гэдэгтээ хэр итгэлтэй вэ?",
+      "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+      "response_scale_id": "confidence_0_4_na",
+      "response_options": [
+        "Огт итгэлгүй",
+        "Бага зэрэг итгэлтэй",
+        "Дунд зэрэг итгэлтэй",
+        "Их итгэлтэй",
+        "Маш их итгэлтэй",
+        "Ийм нөхцөл тохиолдоогүй"
+      ]
+    },
+    {
+      "block_order": 7,
+      "blinded_item_id": "B033",
+      "item_text": "Тодорхой газар болоход бодолгүйгээр идэх зүйл рүү гараа сунгасан.",
+      "recall_period": "Ерөнхийдөө",
+      "response_scale_id": "typicality_0_4_na",
+      "response_options": [
+        "Огт тохирохгүй",
+        "Бага зэрэг тохирно",
+        "Дунд зэрэг тохирно",
+        "Ихэнхдээ тохирно",
+        "Бүрэн тохирно",
+        "Ийм давтагддаг нөхцөл байхгүй"
+      ]
+    },
+    {
+      "block_order": 8,
+      "blinded_item_id": "B005",
+      "item_text": "Хоол харсан үед анхаарлаа өөр зүйлд буцааж чадсан.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale_id": "frequency_14d_opportunity_0_4_na",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж",
+        "Ийм нөхцөл тохиолдоогүй"
+      ]
+    },
+    {
+      "block_order": 9,
+      "blinded_item_id": "B034",
+      "item_text": "Тогтмол хийдэг нэг зүйл дуусмагц юм идэх үйлдэл өөрөө эхэлдэг.",
+      "recall_period": "Ерөнхийдөө",
+      "response_scale_id": "typicality_0_4_na",
+      "response_options": [
+        "Огт тохирохгүй",
+        "Бага зэрэг тохирно",
+        "Дунд зэрэг тохирно",
+        "Ихэнхдээ тохирно",
+        "Бүрэн тохирно",
+        "Ийм давтагддаг нөхцөл байхгүй"
+      ]
+    },
+    {
+      "block_order": 10,
+      "blinded_item_id": "B007",
+      "item_text": "Таагүй мэдрэмж төрөхөд хоол идэхээс өөр аргаар өөрийгөө тайвшруулсан.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale_id": "frequency_14d_opportunity_0_4_na",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж",
+        "Ийм нөхцөл тохиолдоогүй"
+      ]
+    }
+  ]
+}
