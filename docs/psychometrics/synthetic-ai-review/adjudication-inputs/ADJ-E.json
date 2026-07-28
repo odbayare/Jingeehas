@@ -1,0 +1,68 @@
+{
+  "status": [
+    "SYNTHETIC AI REVIEW ONLY",
+    "NOT HUMAN EXPERT REVIEW",
+    "NOT HUMAN COGNITIVE INTERVIEW DATA",
+    "NOT PSYCHOMETRIC VALIDATION",
+    "NOT SUITABLE FOR EFA, CFA, RELIABILITY, NORMS OR CUT-OFFS",
+    "NOT READY FOR PRODUCTION PSYCHOMETRIC CLAIMS"
+  ],
+  "adjudicator_id": "ADJ-E",
+  "adjudicator_lens": "ethics_safety",
+  "model_family": "GPT-5.6",
+  "model_variant": "gpt-5.6-sol",
+  "allowed_inputs": [
+    "../AI_EXPERT_REVIEW_RAW_V2.csv",
+    "../AI_COGNITIVE_SIMULATION_RAW_V2.csv",
+    "../../../ITEM_SPECIFICATION_BANK_V2.csv",
+    "../AI_PANEL_PROMPTS_V2.md"
+  ],
+  "raw_files_immutable": true,
+  "output_columns": [
+    "adjudicator_id",
+    "adjudicator_lens",
+    "item_key",
+    "expert_role_agreement",
+    "persona_interpretation_agreement",
+    "dominant_misunderstanding",
+    "response_scale_mismatch",
+    "recall_period_mismatch",
+    "social_desirability_concern",
+    "shame_concern",
+    "construct_overlap_concern",
+    "reverse_item_concern",
+    "proposed_disposition",
+    "revision_priority",
+    "candidate_revised_wording",
+    "unresolved_scientific_decision",
+    "observable_synthesis",
+    "synthetic_review_only"
+  ],
+  "controlled_values": {
+    "agreement": [
+      "high",
+      "moderate",
+      "low"
+    ],
+    "concern_or_mismatch": [
+      "none",
+      "low",
+      "moderate",
+      "high"
+    ],
+    "disposition": [
+      "retain",
+      "minor_rewrite",
+      "major_rewrite",
+      "remove",
+      "hold"
+    ],
+    "revision_priority": [
+      "none",
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ]
+  }
+}

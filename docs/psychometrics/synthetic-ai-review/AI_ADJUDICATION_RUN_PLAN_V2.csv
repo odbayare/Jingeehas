@@ -1,0 +1,5 @@
+adjudicator_id,adjudicator_lens,model_family,model_variant,input_file,output_file,synthetic_review_only
+ADJ-P,psychometric,GPT-5.6,gpt-5.6-sol,adjudication-inputs/ADJ-P.json,adjudication-outputs/ADJ-P.csv,true
+ADJ-MN,mongolian_language,GPT-5.6,gpt-5.6-terra,adjudication-inputs/ADJ-MN.json,adjudication-outputs/ADJ-MN.csv,true
+ADJ-E,ethics_safety,GPT-5.6,gpt-5.6-sol,adjudication-inputs/ADJ-E.json,adjudication-outputs/ADJ-E.csv,true
+ADJ-S,synthesis,GPT-5.6,gpt-5.6-terra,adjudication-inputs/ADJ-S.json,adjudication-outputs/ADJ-S.csv,true
