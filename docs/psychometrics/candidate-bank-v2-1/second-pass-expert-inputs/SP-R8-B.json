@@ -1,0 +1,839 @@
+{
+  "status": [
+    "AI-REVISED CANDIDATE ITEM BANK ONLY",
+    "NOT HUMAN-REVIEWED",
+    "NOT PSYCHOMETRICALLY VALIDATED",
+    "NOT A CLINICAL OR PSYCHOLOGICAL DIAGNOSIS",
+    "NOT READY FOR PRODUCTION PSYCHOMETRIC CLAIMS"
+  ],
+  "run": {
+    "review_run_id": "SP-R8-B",
+    "role_id": "R8",
+    "role_name": "measurement_data_science",
+    "model_family": "GPT-5.6",
+    "model_variant": "gpt-5.6-sol",
+    "prompt_variant": "boundary-v2-1",
+    "block_order_hash": "ecc1cd85681f89b1a6b5e52a7f49c2d8cf84a9cfb34a9ccf20fcae8710a4143a"
+  },
+  "blinding": {
+    "original_disposition_visible": false,
+    "revision_status_visible": false,
+    "revision_rationale_visible": false,
+    "original_wording_visible": false,
+    "first_panel_output_visible": false,
+    "other_run_output_visible": false
+  },
+  "contract": {
+    "ratings": "integers 1-4",
+    "risk_values": [
+      "none",
+      "low",
+      "moderate",
+      "high"
+    ],
+    "gate_values": [
+      "pass",
+      "revise",
+      "hold"
+    ],
+    "observable_rationale_only": true,
+    "output_columns": [
+      "review_run_id",
+      "role_id",
+      "role_name",
+      "model_family",
+      "model_variant",
+      "prompt_variant",
+      "block_id",
+      "item_order_index",
+      "blinded_item_id",
+      "intended_meaning_retention",
+      "clarity",
+      "single_construct_purity",
+      "response_scale_suitability",
+      "recall_period_suitability",
+      "mongolian_appropriateness",
+      "safety_acceptability",
+      "construct_overlap_risk",
+      "shame_judgment_risk",
+      "social_desirability_risk",
+      "suggested_gate",
+      "observable_rationale",
+      "synthetic_review_only",
+      "status_label"
+    ]
+  },
+  "blocks": [
+    {
+      "block_id": "block_1",
+      "items": [
+        {
+          "item_order_index": 1,
+          "blinded_item_id": "B003",
+          "construct": "emotional_eating",
+          "facet": "affect_tolerance",
+          "item_text": "Таагүй мэдрэмж төрөхөд идэхийн оронд мэдрэмжээ хэсэг хугацаанд тэсвэрлэсэн.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 2,
+          "blinded_item_id": "B042",
+          "construct": "habit_automaticity",
+          "facet": "sequence",
+          "item_text": "Өдөр бүр давтагддаг нэг үйлдлийнхээ дараа бодолгүйгээр юм иддэг.",
+          "recall_period": "Ерөнхийдөө",
+          "response_scale_id": "typicality_0_4_na",
+          "response_options": [
+            "Огт тохирохгүй",
+            "Бага зэрэг тохирно",
+            "Дунд зэрэг тохирно",
+            "Ихэнхдээ тохирно",
+            "Бүрэн тохирно",
+            "Ийм давтагддаг нөхцөл байхгүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 3,
+          "blinded_item_id": "B010",
+          "construct": "body_image_avoidance",
+          "facet": "participation_despite_discomfort",
+          "item_text": "Биеийнхээ талаар тавгүй байсан ч хийхийг хүссэн зүйлдээ оролцсон.",
+          "recall_period": "Сүүлийн 30 хоног",
+          "response_scale_id": "frequency_30d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 4,
+          "blinded_item_id": "B017",
+          "construct": "restrictive_rebound",
+          "facet": "dichotomous_evaluation",
+          "item_text": "Төлөвлөгөөгөө яг дагаагүй өдрөө бүтэлгүйтсэн гэж үзсэн.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 5,
+          "blinded_item_id": "B006",
+          "construct": "eating_self_efficacy",
+          "facet": "fatigue",
+          "item_text": "Ядарсан үедээ хийхээр сонгосон хооллолтын нэг энгийн алхмыг хийж чадна гэдэгтээ хэр итгэлтэй вэ?",
+          "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+          "response_scale_id": "confidence_0_4_na",
+          "response_options": [
+            "Огт итгэлгүй",
+            "Бага зэрэг итгэлтэй",
+            "Дунд зэрэг итгэлтэй",
+            "Их итгэлтэй",
+            "Маш их итгэлтэй",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 6,
+          "blinded_item_id": "B033",
+          "construct": "habit_automaticity",
+          "facet": "automatic_start",
+          "item_text": "Тодорхой газар болоход бодолгүйгээр идэх зүйл рүү гараа сунгасан.",
+          "recall_period": "Ерөнхийдөө",
+          "response_scale_id": "typicality_0_4_na",
+          "response_options": [
+            "Огт тохирохгүй",
+            "Бага зэрэг тохирно",
+            "Дунд зэрэг тохирно",
+            "Ихэнхдээ тохирно",
+            "Бүрэн тохирно",
+            "Ийм давтагддаг нөхцөл байхгүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 7,
+          "blinded_item_id": "B037",
+          "construct": "eating_self_efficacy",
+          "facet": "recovery",
+          "item_text": "Төлөвлөснөөс өөр идсэний дараа дараагийн хоолондоо эргэн орж чадна гэдэгтээ хэр итгэлтэй вэ?",
+          "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+          "response_scale_id": "confidence_0_4_na",
+          "response_options": [
+            "Огт итгэлгүй",
+            "Бага зэрэг итгэлтэй",
+            "Дунд зэрэг итгэлтэй",
+            "Их итгэлтэй",
+            "Маш их итгэлтэй",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 8,
+          "blinded_item_id": "B021",
+          "construct": "eating_self_efficacy",
+          "facet": "stress",
+          "item_text": "Стресстэй өдөр хоолны төлөвлөгөөгөө дагаж чадна гэдэгтээ хэр итгэлтэй вэ?",
+          "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+          "response_scale_id": "confidence_0_4_na",
+          "response_options": [
+            "Огт итгэлгүй",
+            "Бага зэрэг итгэлтэй",
+            "Дунд зэрэг итгэлтэй",
+            "Их итгэлтэй",
+            "Маш их итгэлтэй",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 9,
+          "blinded_item_id": "B004",
+          "construct": "uncontrolled_eating",
+          "facet": "pause_capacity",
+          "item_text": "Идэж байхдаа үргэлжлүүлэх эсэхээ бодохоор түр зогсож чадсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 10,
+          "blinded_item_id": "B019",
+          "construct": "implementation_maintenance_friction",
+          "facet": "minimum_version",
+          "item_text": "Завгүй өдөр хэрэглэхээр хооллолтын төлөвлөгөөнийхөө энгийн хувилбарыг урьдчилж бэлдсэн.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 11,
+          "blinded_item_id": "B036",
+          "construct": "external_cue_reactivity",
+          "facet": "digital_cue",
+          "item_text": "Хоолны сурталчилгаа харсны дараа хоолны тухай бодол үргэлжилсэн.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 12,
+          "blinded_item_id": "B025",
+          "construct": "habit_automaticity",
+          "facet": "low_deliberation",
+          "item_text": "Зууш авахдаа идэх хүсэлтэй эсэхээ бодолгүй сонгосон.",
+          "recall_period": "Ерөнхийдөө",
+          "response_scale_id": "typicality_0_4_na",
+          "response_options": [
+            "Огт тохирохгүй",
+            "Бага зэрэг тохирно",
+            "Дунд зэрэг тохирно",
+            "Ихэнхдээ тохирно",
+            "Бүрэн тохирно",
+            "Ийм давтагддаг нөхцөл байхгүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 13,
+          "blinded_item_id": "B040",
+          "construct": "habit_automaticity",
+          "facet": "deliberate_choice",
+          "item_text": "Давтагддаг нөхцөлд идэхээсээ өмнө сонголтоо бодож хийсэн.",
+          "recall_period": "Ерөнхийдөө",
+          "response_scale_id": "typicality_0_4_na",
+          "response_options": [
+            "Огт тохирохгүй",
+            "Бага зэрэг тохирно",
+            "Дунд зэрэг тохирно",
+            "Ихэнхдээ тохирно",
+            "Бүрэн тохирно",
+            "Ийм давтагддаг нөхцөл байхгүй"
+          ],
+          "sensitive": "false"
+        }
+      ]
+    },
+    {
+      "block_id": "block_2",
+      "items": [
+        {
+          "item_order_index": 1,
+          "blinded_item_id": "B034",
+          "construct": "habit_automaticity",
+          "facet": "sequence",
+          "item_text": "Тогтмол хийдэг нэг зүйл дуусмагц юм идэх үйлдэл өөрөө эхэлдэг.",
+          "recall_period": "Ерөнхийдөө",
+          "response_scale_id": "typicality_0_4_na",
+          "response_options": [
+            "Огт тохирохгүй",
+            "Бага зэрэг тохирно",
+            "Дунд зэрэг тохирно",
+            "Ихэнхдээ тохирно",
+            "Бүрэн тохирно",
+            "Ийм давтагддаг нөхцөл байхгүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 2,
+          "blinded_item_id": "B039",
+          "construct": "eating_self_efficacy",
+          "facet": "cues",
+          "item_text": "Идэх зүйл ойрхон байсан ч идэх эсэхээ сонгож чадна гэдэгтээ хэр итгэлтэй вэ?",
+          "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+          "response_scale_id": "confidence_0_4_na",
+          "response_options": [
+            "Огт итгэлгүй",
+            "Бага зэрэг итгэлтэй",
+            "Дунд зэрэг итгэлтэй",
+            "Их итгэлтэй",
+            "Маш их итгэлтэй",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 3,
+          "blinded_item_id": "B024",
+          "construct": "restrictive_rebound",
+          "facet": "rebound",
+          "item_text": "Нэг удаа төлөвлөснөөс өөр идсэний дараа дараагийн хоолондоо төлөвлөгөөгөө үргэлжлүүлээгүй.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 4,
+          "blinded_item_id": "B027",
+          "construct": "external_cue_reactivity",
+          "facet": "smell_cue",
+          "item_text": "Хоолны үнэрээс болж идэхээр шийдсэн.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 5,
+          "blinded_item_id": "B023",
+          "construct": "habit_automaticity",
+          "facet": "context_trigger",
+          "item_text": "Танил орчинд байхдаа бодолгүйгээр идэж эхэлсэн.",
+          "recall_period": "Ерөнхийдөө",
+          "response_scale_id": "typicality_0_4_na",
+          "response_options": [
+            "Огт тохирохгүй",
+            "Бага зэрэг тохирно",
+            "Дунд зэрэг тохирно",
+            "Ихэнхдээ тохирно",
+            "Бүрэн тохирно",
+            "Ийм давтагддаг нөхцөл байхгүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 6,
+          "blinded_item_id": "B030",
+          "construct": "implementation_maintenance_friction",
+          "facet": "resumption",
+          "item_text": "Нэг удаа төлөвлөгөөгөө алгассан ч дараагийн удаа эргэн үргэлжлүүлсэн.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 7,
+          "blinded_item_id": "B009",
+          "construct": "response_quality",
+          "facet": "semantic_consistency",
+          "item_text": "Эдгээр асуултад хариулахдаа өмнөх хариулттайгаа адил сонголт хийх ёстой мэт санагдсан.",
+          "recall_period": "Одоогийн асуулгын үеэр",
+          "response_scale_id": "agreement_research_0_4_na",
+          "response_options": [
+            "Огт санал нийлэхгүй",
+            "Бага зэрэг санал нийлнэ",
+            "Дунд зэрэг санал нийлнэ",
+            "Ихэнхдээ санал нийлнэ",
+            "Бүрэн санал нийлнэ",
+            "Хариулах боломжгүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 8,
+          "blinded_item_id": "B041",
+          "construct": "hunger_satiety_awareness",
+          "facet": "signal_use",
+          "item_text": "Өлсөж эхэлснээ анзаарсан ч идэж эхлэх эсэхээ шийдэхэд хэцүү байсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 9,
+          "blinded_item_id": "B032",
+          "construct": "eating_self_efficacy",
+          "facet": "fatigue",
+          "item_text": "Ядарсан үедээ хооллолтын төлөвлөгөөгөө бүрэн биш ч хэсэгчлэн хэрэгжүүлж чадна гэдэгтээ хэр итгэлтэй вэ?",
+          "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+          "response_scale_id": "confidence_0_4_na",
+          "response_options": [
+            "Огт итгэлгүй",
+            "Бага зэрэг итгэлтэй",
+            "Дунд зэрэг итгэлтэй",
+            "Их итгэлтэй",
+            "Маш их итгэлтэй",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 10,
+          "blinded_item_id": "B029",
+          "construct": "body_image_avoidance",
+          "facet": "social_participation",
+          "item_text": "Биеийн төрхдөө санаа зовсноос хүмүүсийн дунд хийх үйл ажиллагаанаас зайлсхийсэн.",
+          "recall_period": "Сүүлийн 30 хоног",
+          "response_scale_id": "frequency_30d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 11,
+          "blinded_item_id": "B035",
+          "construct": "implementation_maintenance_friction",
+          "facet": "minimum_version",
+          "item_text": "Завгүй болсон үедээ урьдчилан сонгосон энгийн хоолны хувилбараа ашигласан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 12,
+          "blinded_item_id": "B005",
+          "construct": "external_cue_reactivity",
+          "facet": "disengagement",
+          "item_text": "Хоол харсан үед анхаарлаа өөр зүйлд буцааж чадсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 13,
+          "blinded_item_id": "B014",
+          "construct": "emotional_eating",
+          "facet": "frustration",
+          "item_text": "Уурласан эсвэл бухимдсаны дараа юм идсэн.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 14,
+          "blinded_item_id": "B022",
+          "construct": "eating_self_efficacy",
+          "facet": "social",
+          "item_text": "Бусадтай хамт хооллох үед өөрийн сонголтоо хийж чадна гэдэгтээ хэр итгэлтэй вэ?",
+          "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+          "response_scale_id": "confidence_0_4_na",
+          "response_options": [
+            "Огт итгэлгүй",
+            "Бага зэрэг итгэлтэй",
+            "Дунд зэрэг итгэлтэй",
+            "Их итгэлтэй",
+            "Маш их итгэлтэй",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 15,
+          "blinded_item_id": "B038",
+          "construct": "hunger_satiety_awareness",
+          "facet": "comfortable_fullness",
+          "item_text": "Идэж байхдаа таатайгаар цадсан мөчөө анзаарсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        }
+      ]
+    },
+    {
+      "block_id": "block_3",
+      "items": [
+        {
+          "item_order_index": 1,
+          "blinded_item_id": "B015",
+          "construct": "response_quality",
+          "facet": "semantic_consistency",
+          "item_text": "Асуултууд хоорондоо хэт төстэй санагдсан.",
+          "recall_period": "Одоогийн асуулгын үеэр",
+          "response_scale_id": "agreement_research_0_4_na",
+          "response_options": [
+            "Огт санал нийлэхгүй",
+            "Бага зэрэг санал нийлнэ",
+            "Дунд зэрэг санал нийлнэ",
+            "Ихэнхдээ санал нийлнэ",
+            "Бүрэн санал нийлнэ",
+            "Хариулах боломжгүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 2,
+          "blinded_item_id": "B016",
+          "construct": "hunger_satiety_awareness",
+          "facet": "signal_use",
+          "item_text": "Цадсанаа анзаарсан ч идэхээ зогсоох эсэхээ шийдэхэд хэцүү байсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 3,
+          "blinded_item_id": "B028",
+          "construct": "uncontrolled_eating",
+          "facet": "subjective_control",
+          "item_text": "Идэж байхдаа зогсоох эсвэл үргэлжлүүлэхээ удирдахад хэцүү байсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 4,
+          "blinded_item_id": "B013",
+          "construct": "habit_automaticity",
+          "facet": "awareness_lag",
+          "item_text": "Идэж эхэлснээ хэсэг хугацааны дараа анзаарсан.",
+          "recall_period": "Ерөнхийдөө",
+          "response_scale_id": "typicality_0_4_na",
+          "response_options": [
+            "Огт тохирохгүй",
+            "Бага зэрэг тохирно",
+            "Дунд зэрэг тохирно",
+            "Ихэнхдээ тохирно",
+            "Бүрэн тохирно",
+            "Ийм давтагддаг нөхцөл байхгүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 5,
+          "blinded_item_id": "B001",
+          "construct": "hunger_satiety_awareness",
+          "facet": "late_hunger",
+          "item_text": "Өлссөнөө маш их сульдсаны дараа л анзаарсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 6,
+          "blinded_item_id": "B012",
+          "construct": "restrictive_rebound",
+          "facet": "rebound",
+          "item_text": "Төлөвлөснөөс өөр идсэний дараа тэр өдрийн хоолны төлөвлөгөөгөө орхисон.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 7,
+          "blinded_item_id": "B026",
+          "construct": "eating_self_efficacy",
+          "facet": "time_pressure",
+          "item_text": "Зав багатай үед хоолны тохирох сонголт хийж чадна гэдэгтээ хэр итгэлтэй вэ?",
+          "recall_period": "Нөхцөлийг төсөөлөн хариулна",
+          "response_scale_id": "confidence_0_4_na",
+          "response_options": [
+            "Огт итгэлгүй",
+            "Бага зэрэг итгэлтэй",
+            "Дунд зэрэг итгэлтэй",
+            "Их итгэлтэй",
+            "Маш их итгэлтэй",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 8,
+          "blinded_item_id": "B002",
+          "construct": "emotional_eating",
+          "facet": "sadness",
+          "item_text": "Гунигтай үед хоол идэхээр хэсэг зуур тайвширсан мэт санагдсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 9,
+          "blinded_item_id": "B008",
+          "construct": "restrictive_rebound",
+          "facet": "flexible_return",
+          "item_text": "Төлөвлөснөөс өөр идсэн ч дараагийн хоолондоо хэвийн хооллолтдоо орсон.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 10,
+          "blinded_item_id": "B031",
+          "construct": "hunger_satiety_awareness",
+          "facet": "early_hunger",
+          "item_text": "Өлсөлт хэт хүчтэй болохоос өмнө өлсөж байгаагаа анзаарсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 11,
+          "blinded_item_id": "B020",
+          "construct": "implementation_maintenance_friction",
+          "facet": "setup_burden",
+          "item_text": "Олон бэлтгэл шаардлагатай байсан тул төлөвлөснөө хойшлуулсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "false"
+        },
+        {
+          "item_order_index": 12,
+          "blinded_item_id": "B011",
+          "construct": "restrictive_rebound",
+          "facet": "rigid_rules",
+          "item_text": "Хоолны дүрмээс багахан зөрөхөд бүх зүйл бүтэлгүйтсэн мэт санагдсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 13,
+          "blinded_item_id": "B018",
+          "construct": "uncontrolled_eating",
+          "facet": "intended_amount",
+          "item_text": "Эхэндээ иднэ гэж бодсоноосоо илүү идсэн.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        },
+        {
+          "item_order_index": 14,
+          "blinded_item_id": "B007",
+          "construct": "emotional_eating",
+          "facet": "affect_tolerance",
+          "item_text": "Таагүй мэдрэмж төрөхөд хоол идэхээс өөр аргаар өөрийгөө тайвшруулсан.",
+          "recall_period": "Сүүлийн 14 хоног",
+          "response_scale_id": "frequency_14d_opportunity_0_4_na",
+          "response_options": [
+            "Огт байгаагүй",
+            "Ховор",
+            "Заримдаа",
+            "Олон удаа",
+            "Бараг үргэлж",
+            "Ийм нөхцөл тохиолдоогүй"
+          ],
+          "sensitive": "true"
+        }
+      ]
+    }
+  ]
+}

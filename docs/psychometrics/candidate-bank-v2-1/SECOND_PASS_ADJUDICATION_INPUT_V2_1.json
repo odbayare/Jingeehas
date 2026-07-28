@@ -1,0 +1,68 @@
+{
+  "status": [
+    "AI-REVISED CANDIDATE ITEM BANK ONLY",
+    "NOT HUMAN-REVIEWED",
+    "NOT PSYCHOMETRICALLY VALIDATED",
+    "NOT A CLINICAL OR PSYCHOLOGICAL DIAGNOSIS",
+    "NOT READY FOR PRODUCTION PSYCHOMETRIC CLAIMS"
+  ],
+  "adjudication_id": "SP-ADJ-S",
+  "model_family": "GPT-5.6",
+  "model_variant": "gpt-5.6-sol",
+  "allowed_inputs": [
+    "AI_SECOND_PASS_EXPERT_RAW_V2_1.csv",
+    "AI_SECOND_PASS_PERSONA_RAW_V2_1.csv",
+    "ITEM_SPECIFICATION_BANK_V2_1.csv",
+    "SECOND_PASS_BLIND_ITEM_MAP_V2_1.csv",
+    "../synthetic-ai-review/AI_ITEM_TRIAGE_SUMMARY_V2.csv"
+  ],
+  "raw_files_immutable": true,
+  "decision_rules": {
+    "construct_preserved": "true only when intended-meaning retention and single-construct purity are supported across expert-role runs and persona paraphrases do not show systematic construct shift",
+    "no_major_safety_concern": "false when a recurring major safety, shame, or judgment concern remains",
+    "no_systematic_misinterpretation": "true only when no recurring wrong paraphrase is present; classify each of four paraphrases against the stated primary construct and candidate wording",
+    "scale_usable": "true only when at least three of four personas find options fitting and expert evidence does not show a recurring mismatch",
+    "recall_usable": "true only when at least three of four personas find recall usable and expert evidence does not show a recurring mismatch",
+    "shame_not_increased": "compare the revised persona flag count with the source item's first-panel count; true when it does not increase and no major expert safety concern appears",
+    "overlap_not_increased": "compare second-pass expert moderate/high overlap count with the first-panel expert_moderate_or_high value, accounting for 16 versus 24 runs; true when the proportion does not materially increase",
+    "second_pass_gate": "pass only when all seven required gates are true; otherwise revise or hold",
+    "ab_selection": "do not select on style; apply the same gates independently to A and B"
+  },
+  "output_columns": [
+    "adjudication_id",
+    "blinded_item_id",
+    "revised_item_key",
+    "source_item_key",
+    "construct",
+    "expert_pass_count",
+    "expert_revise_count",
+    "expert_hold_count",
+    "persona_exposure_count",
+    "persona_correct_paraphrase_count",
+    "persona_misinterpretation_count",
+    "response_scale_mismatch_count",
+    "recall_problem_count",
+    "judgment_flag_count",
+    "social_desirability_flag_count",
+    "expert_moderate_high_overlap_count",
+    "construct_preserved",
+    "no_major_safety_concern",
+    "no_systematic_misinterpretation",
+    "scale_usable",
+    "recall_usable",
+    "shame_not_increased",
+    "overlap_not_increased",
+    "second_pass_gate",
+    "adjudication_rationale",
+    "remaining_issue",
+    "synthetic_review_only",
+    "status_label"
+  ],
+  "controlled_values": {
+    "booleans": ["true", "false"],
+    "second_pass_gate": ["pass", "revise", "hold"],
+    "counts": "non-negative integers; expert gate counts sum to 16; persona correct plus misinterpretation sums to 4",
+    "synthetic_review_only": "true",
+    "status_label": "status array joined exactly with ' | '"
+  }
+}
