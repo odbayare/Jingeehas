@@ -1,0 +1,253 @@
+{
+  "status": [
+    "SYNTHETIC AI REVIEW ONLY",
+    "NOT HUMAN EXPERT REVIEW",
+    "NOT HUMAN COGNITIVE INTERVIEW DATA",
+    "NOT PSYCHOMETRIC VALIDATION",
+    "NOT SUITABLE FOR EFA, CFA, RELIABILITY, NORMS OR CUT-OFFS",
+    "NOT READY FOR PRODUCTION PSYCHOMETRIC CLAIMS"
+  ],
+  "persona_code": "P21",
+  "synthetic_persona": {
+    "age_band": "65+",
+    "gender": "woman",
+    "setting": "Ulaanbaatar",
+    "education_reading_comfort": "secondary_medium_comfort",
+    "work_pattern": "retired",
+    "caregiving_load": "moderate_grandchild_care",
+    "digital_literacy": "medium",
+    "prior_weight_loss_attempt": "one_attempt",
+    "schedule_pressure": "low",
+    "cost_pressure": "moderate",
+    "movement_context": "regular_walking",
+    "emotional_eating_tendency": "none",
+    "body_image_concern": "moderate",
+    "prior_strict_diet_experience": "none",
+    "adversarial_lens": "body_concern_without_diet_history"
+  },
+  "blinding": {
+    "construct_visible": false,
+    "facet_visible": false,
+    "scoring_direction_visible": false,
+    "reverse_status_visible": false,
+    "disposition_visible": false,
+    "expert_outputs_visible": false,
+    "report_interpretation_visible": false
+  },
+  "output_columns": [
+    "persona_code",
+    "block_order",
+    "item_key",
+    "paraphrase_mn",
+    "example_situation_mn",
+    "recall_period_usable",
+    "selected_response",
+    "response_options_fit",
+    "ambiguous_word_or_phrase",
+    "asks_more_than_one_thing",
+    "judgmental_or_shaming",
+    "socially_desirable_answer_obvious",
+    "missing_not_applicable_option",
+    "response_confidence_1_5",
+    "observable_decision_summary",
+    "synthetic_review_only"
+  ],
+  "items": [
+    {
+      "block_order": 1,
+      "item_key": "RR02",
+      "item_text": "Зарим хоолыг өөртөө бүрэн хориглох дүрэм тогтоосон.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 2,
+      "item_key": "HS03",
+      "item_text": "Өлссөнөө бие их сульдсаны дараа л анзаарсан.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 3,
+      "item_key": "BI06",
+      "item_text": "Биеийнхээ талаар тавгүй байсан ч хүссэн үйл ажиллагаандаа оролцсон.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 4,
+      "item_key": "AC01",
+      "item_text": "Энэ мөрөнд хариултын чанарыг шалгахын тулд «Заримдаа»-г сонгоно уу.",
+      "recall_period": "Одоогийн асуулт",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 5,
+      "item_key": "IM01",
+      "item_text": "Юуг яг хэзээ хийх нь тодорхойгүйгээс төлөвлөгөөгөө эхлүүлээгүй.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 6,
+      "item_key": "EE06",
+      "item_text": "Таагүй мэдрэмжээ хоол идэлгүй өнгөрөөж чадсан.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 7,
+      "item_key": "HS06",
+      "item_text": "Биеийн дохио тодорхой байсан ч хэзээ эхлэх эсвэл зогсохоо шийдэхэд ашиглаж чадаагүй.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 8,
+      "item_key": "HA06",
+      "item_text": "Давтагддаг нөхцөлд идэхээсээ өмнө сонголтоо зориуд хийсэн.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 9,
+      "item_key": "EC04",
+      "item_text": "Хоолны апп эсвэл сурталчилгаа харсны дараа хоол бодогдсоор байсан.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 10,
+      "item_key": "BI01",
+      "item_text": "Биеийн төрхөөсөө санаа зовж зураг авахуулахаас зайлсхийсэн.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 11,
+      "item_key": "UC05",
+      "item_text": "Багахан иднэ гэж эхэлсэн ч үргэлжлүүлээд идсэн.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    },
+    {
+      "block_order": 12,
+      "item_key": "SE04",
+      "item_text": "Идэх зүйл ойрхон байсан ч идэх эсэхээ бодож сонгож чадна гэдэгтээ хэр итгэлтэй байсан бэ?",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 confidence",
+      "response_options": [
+        "Огт итгэлгүй",
+        "Бага зэрэг итгэлтэй",
+        "Дунд зэрэг итгэлтэй",
+        "Их итгэлтэй",
+        "Маш их итгэлтэй"
+      ]
+    },
+    {
+      "block_order": 13,
+      "item_key": "SE01",
+      "item_text": "Стресстэй өдөр өөрийн сонгосон уян хатан хоолны төлөвлөгөөг хэрэгжүүлж чадна гэдэгтээ хэр итгэлтэй байсан бэ?",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 confidence",
+      "response_options": [
+        "Огт итгэлгүй",
+        "Бага зэрэг итгэлтэй",
+        "Дунд зэрэг итгэлтэй",
+        "Их итгэлтэй",
+        "Маш их итгэлтэй"
+      ]
+    },
+    {
+      "block_order": 14,
+      "item_key": "RR05",
+      "item_text": "Төлөвлөгөөнөөс хазайсныхаа дараа маргааш нь дүрмээ улам чангалсан.",
+      "recall_period": "Сүүлийн 14 хоног",
+      "response_scale": "0–4 frequency",
+      "response_options": [
+        "Огт байгаагүй",
+        "Ховор",
+        "Заримдаа",
+        "Олон удаа",
+        "Бараг үргэлж"
+      ]
+    }
+  ]
+}

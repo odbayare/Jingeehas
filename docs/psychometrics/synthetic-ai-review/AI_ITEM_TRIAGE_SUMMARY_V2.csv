@@ -1,0 +1,57 @@
+item_key,construct,expert_mean_relevance,expert_rating_range,expert_disposition_mode,expert_disagreement_count,persona_exposure_count,persona_correct_paraphrase_count,persona_misinterpretation_count,response_scale_mismatch_count,recall_problem_count,judgment_flag_count,social_desirability_flag_count,reverse_confusion_count,overlap_flags,proposed_disposition,revision_priority,unresolved_decision,synthetic_review_only
+EE01,emotional_eating,4.00,4-4,retain,3,6,6,0,0,0,2,2,0,expert_moderate_or_high=15/24;synthesis=moderate,retain,none,Whether stress needs a specified threshold,true
+EE02,emotional_eating,3.62,3-4,minor_rewrite,14,6,5,1,0,0,0,4,0,expert_moderate_or_high=23/24;synthesis=moderate,minor_rewrite,medium,Whether relief or coping motive is intended,true
+EE03,emotional_eating,4.00,4-4,retain,11,6,6,0,0,0,2,2,0,expert_moderate_or_high=22/24;synthesis=moderate,retain,none,Whether behavioral substitution is part of the facet,true
+EE04,emotional_eating,4.00,4-4,retain,0,6,6,0,0,0,0,0,0,expert_moderate_or_high=11/24;synthesis=low,retain,none,Whether loneliness wording needs contextual anchoring,true
+EE05,emotional_eating,3.92,3-4,minor_rewrite,8,6,5,1,0,0,0,2,0,expert_moderate_or_high=20/24;synthesis=moderate,minor_rewrite,medium,Whether anger and frustration should remain combined,true
+EE06,emotional_eating,3.42,3-4,minor_rewrite,15,6,5,1,0,0,0,6,0,expert_moderate_or_high=24/24;synthesis=high,major_rewrite,high,Whether this is affect tolerance or eating restraint,true
+EC01,external_cue_reactivity,4.00,4-4,retain,0,6,6,0,0,0,0,0,0,expert_moderate_or_high=17/24;synthesis=moderate,retain,none,Whether visual cue response should distinguish desire from eating,true
+EC02,external_cue_reactivity,4.00,4-4,retain,8,6,6,0,0,0,0,0,0,expert_moderate_or_high=15/24;synthesis=moderate,minor_rewrite,low,Whether attention capture is required in addition to decision,true
+EC03,external_cue_reactivity,4.00,4-4,retain,3,6,6,0,0,0,0,3,0,expert_moderate_or_high=20/24;synthesis=moderate,retain,none,Whether unplanned eating is sufficiently defined,true
+EC04,external_cue_reactivity,4.00,4-4,retain,8,6,4,2,3,0,0,1,0,expert_moderate_or_high=17/24;synthesis=moderate,minor_rewrite,medium,Whether digital app exposure belongs in the same item as advertising,true
+EC05,external_cue_reactivity,3.71,3-4,retain,9,6,6,0,0,0,0,2,0,expert_moderate_or_high=23/24;synthesis=high,retain,low,Whether the intended facet is attention disruption or food preoccupation,true
+EC06,external_cue_reactivity,3.92,3-4,retain,11,6,5,1,0,0,0,6,0,expert_moderate_or_high=19/24;synthesis=moderate,minor_rewrite,medium,Whether both cue types are needed for the facet,true
+UC01,uncontrolled_eating,4.00,4-4,retain,2,6,6,0,0,0,2,3,0,expert_moderate_or_high=11/24;synthesis=low,retain,none,Whether stopping difficulty requires an amount threshold,true
+UC02,uncontrolled_eating,3.75,3-4,retain,10,6,5,1,0,0,0,3,0,expert_moderate_or_high=20/24;synthesis=moderate,minor_rewrite,low,Whether an intended amount should be specified,true
+UC03,uncontrolled_eating,3.92,3-4,retain,5,6,6,0,0,0,2,3,0,expert_moderate_or_high=23/24;synthesis=moderate,retain,none,Whether satiety awareness and continuation should be separated,true
+UC04,uncontrolled_eating,4.00,4-4,retain,9,6,5,1,0,0,4,2,0,expert_moderate_or_high=19/24;synthesis=moderate,minor_rewrite,medium,Whether subjective control language is acceptable at this severity,true
+UC05,uncontrolled_eating,3.96,3-4,retain,6,6,6,0,0,0,1,3,0,expert_moderate_or_high=16/24;synthesis=moderate,retain,low,Whether a small intended amount needs definition,true
+UC06,uncontrolled_eating,3.75,3-4,retain,9,6,5,1,0,0,0,5,0,expert_moderate_or_high=20/24;synthesis=moderate,minor_rewrite,medium,Whether pause capacity should be separated from deliberation,true
+RR01,restrictive_rebound,4.00,4-4,retain,5,6,5,1,2,0,2,3,0,expert_moderate_or_high=17/24;synthesis=moderate,minor_rewrite,medium,Whether respondents without food rules require a non-applicable path,true
+RR02,restrictive_rebound,3.92,3-4,retain,4,6,6,0,0,0,2,3,0,expert_moderate_or_high=11/24;synthesis=low,retain,none,Whether prohibition is distinguished from ordinary preference,true
+RR03,restrictive_rebound,4.00,4-4,retain,4,6,5,1,1,0,6,5,0,expert_moderate_or_high=11/24;synthesis=low,minor_rewrite,medium,Whether evaluative rigidity is intended rather than plan adherence,true
+RR04,restrictive_rebound,3.96,3-4,minor_rewrite,12,6,3,3,2,1,5,2,0,expert_moderate_or_high=22/24;synthesis=high,major_rewrite,high,Whether the item should measure rebound sequence or loss of control,true
+RR05,restrictive_rebound,4.00,4-4,retain,2,6,5,1,0,0,3,4,0,expert_moderate_or_high=13/24;synthesis=moderate,retain,low,Whether next-day tightening is the desired rebound behavior,true
+RR06,restrictive_rebound,3.92,3-4,retain,10,6,4,2,3,0,0,4,3,expert_moderate_or_high=17/24;synthesis=moderate,minor_rewrite,medium,Whether this positive item needs a non-applicable response,true
+HS01,hunger_satiety_awareness,4.00,4-4,retain,6,6,5,1,1,0,0,5,1,expert_moderate_or_high=8/24;synthesis=low,minor_rewrite,low,Whether general bodily signals are intended beyond hunger,true
+HS02,hunger_satiety_awareness,4.00,4-4,retain,3,6,5,1,0,0,0,6,0,expert_moderate_or_high=20/24;synthesis=moderate,retain,low,Whether desire-hunger discrimination is the intended capability,true
+HS03,hunger_satiety_awareness,3.88,3-4,retain,8,6,5,1,0,0,0,1,0,expert_moderate_or_high=16/24;synthesis=moderate,minor_rewrite,low,Whether fatigue is an intended hunger cue,true
+HS04,hunger_satiety_awareness,4.00,4-4,retain,8,6,5,1,0,0,0,5,0,expert_moderate_or_high=4/24;synthesis=low,minor_rewrite,low,Whether comfortable fullness can be standardized in wording,true
+HS05,hunger_satiety_awareness,4.00,4-4,retain,1,6,6,0,0,0,0,0,0,expert_moderate_or_high=5/24;synthesis=low,retain,none,Whether uncertainty about fullness needs contextual detail,true
+HS06,hunger_satiety_awareness,4.00,4-4,minor_rewrite,12,6,3,3,3,0,1,2,0,expert_moderate_or_high=24/24;synthesis=high,major_rewrite,high,Whether starting and stopping should be separate items,true
+SE01,eating_self_efficacy,4.00,4-4,minor_rewrite,7,6,4,2,3,0,0,6,0,expert_moderate_or_high=17/24;synthesis=moderate,minor_rewrite,high,Whether self-efficacy should use current confidence rather than 14-day recall,true
+SE02,eating_self_efficacy,4.00,4-4,minor_rewrite,12,6,5,1,1,0,0,5,0,expert_moderate_or_high=15/24;synthesis=moderate,minor_rewrite,medium,Whether current confidence can replace recalled confidence,true
+SE03,eating_self_efficacy,4.00,4-4,retain,6,6,5,1,0,0,0,6,0,expert_moderate_or_high=17/24;synthesis=moderate,minor_rewrite,medium,Whether calmness is part of the self-efficacy facet,true
+SE04,eating_self_efficacy,4.00,4-4,retain,7,6,5,1,0,0,0,6,0,expert_moderate_or_high=20/24;synthesis=moderate,minor_rewrite,medium,Whether deliberation is distinct from self-efficacy,true
+SE05,eating_self_efficacy,4.00,4-4,retain,12,6,4,2,4,1,0,4,0,expert_moderate_or_high=18/24;synthesis=moderate,minor_rewrite,high,Whether respondents without a plan require a non-applicable path,true
+SE06,eating_self_efficacy,3.62,2-4,minor_rewrite,12,6,4,2,2,0,0,6,0,expert_moderate_or_high=20/24;synthesis=moderate,major_rewrite,high,Whether a minimum version can be specified without changing the facet,true
+HA01,habit_automaticity,4.00,4-4,retain,6,6,5,1,0,0,0,2,0,expert_moderate_or_high=15/24;synthesis=moderate,minor_rewrite,low,Whether time and place should be separate cue contexts,true
+HA02,habit_automaticity,4.00,4-4,minor_rewrite,8,6,3,3,2,0,0,0,0,expert_moderate_or_high=18/24;synthesis=moderate,major_rewrite,high,Whether the preceding action must be named,true
+HA03,habit_automaticity,3.92,3-4,retain,9,6,5,1,0,0,0,1,0,expert_moderate_or_high=9/24;synthesis=moderate,minor_rewrite,medium,Whether delayed awareness needs a time reference,true
+HA04,habit_automaticity,4.00,4-4,minor_rewrite,12,6,5,1,0,0,0,1,0,expert_moderate_or_high=14/24;synthesis=moderate,minor_rewrite,medium,Whether context-triggered eating should name the context,true
+HA05,habit_automaticity,3.92,3-4,retain,6,6,5,1,1,0,0,2,0,expert_moderate_or_high=19/24;synthesis=moderate,minor_rewrite,low,Whether desire checking is distinct from automatic choice,true
+HA06,habit_automaticity,3.88,3-4,retain,10,6,5,1,1,0,0,6,1,expert_moderate_or_high=14/24;synthesis=moderate,minor_rewrite,medium,Whether deliberate choice should be scored as a reverse habit item,true
+BI01,body_image_avoidance,4.00,4-4,retain,2,6,5,1,1,0,4,3,0,expert_moderate_or_high=3/24;synthesis=low,retain,low,Whether the item needs a non-applicable option for no photo occasions,true
+BI02,body_image_avoidance,4.00,4-4,retain,2,6,5,1,0,0,4,3,0,expert_moderate_or_high=2/24;synthesis=low,retain,low,Whether mirror exposure needs contextual specificity,true
+BI03,body_image_avoidance,4.00,4-4,retain,3,6,6,0,0,0,3,3,0,expert_moderate_or_high=3/24;synthesis=low,retain,none,Whether clothing-choice avoidance requires a non-applicable option,true
+BI04,body_image_avoidance,4.00,4-4,retain,7,6,5,1,0,0,5,2,0,expert_moderate_or_high=8/24;synthesis=moderate,minor_rewrite,medium,Whether social participation should be specified,true
+BI05,body_image_avoidance,3.96,3-4,retain,4,6,5,1,1,0,4,4,0,expert_moderate_or_high=13/24;synthesis=moderate,retain,low,Whether the item should distinguish body concern from physical limitation,true
+BI06,body_image_avoidance,3.92,3-4,retain,8,6,4,2,2,0,0,5,2,expert_moderate_or_high=12/24;synthesis=moderate,minor_rewrite,medium,Whether a non-applicable option is needed when either condition is absent,true
+IM01,implementation_maintenance_friction,4.00,4-4,retain,3,6,5,1,0,0,0,2,0,expert_moderate_or_high=6/24;synthesis=low,retain,low,Whether the plan context should be named,true
+IM02,implementation_maintenance_friction,3.96,3-4,retain,6,6,5,1,2,0,0,1,0,expert_moderate_or_high=8/24;synthesis=low,minor_rewrite,low,Whether preparation needs a concrete context,true
+IM03,implementation_maintenance_friction,3.62,3-4,minor_rewrite,12,6,3,3,3,0,0,5,3,expert_moderate_or_high=18/24;synthesis=moderate,major_rewrite,high,Whether a concrete minimum version can be defined across respondents,true
+IM04,implementation_maintenance_friction,4.00,4-4,retain,5,6,5,1,1,0,1,3,0,expert_moderate_or_high=11/24;synthesis=low,retain,low,Whether plan non-applicability should be addressed,true
+IM05,implementation_maintenance_friction,4.00,4-4,retain,4,6,5,1,2,1,0,5,2,expert_moderate_or_high=12/24;synthesis=moderate,minor_rewrite,medium,Whether non-applicability is needed when no plan exists,true
+IM06,implementation_maintenance_friction,3.96,3-4,retain,5,6,5,1,3,0,0,4,0,expert_moderate_or_high=6/24;synthesis=low,retain,low,Whether the item needs an action context,true
+AC01,response_quality,3.88,1-4,retain,11,6,5,1,1,1,0,1,0,expert_moderate_or_high=1/24;synthesis=none,hold,high,Whether this check should be outside the scored item bank,true
+AC02,response_quality,3.17,2-4,major_rewrite,15,6,4,2,1,0,0,0,0,expert_moderate_or_high=17/24;synthesis=moderate,major_rewrite,high,Whether this item is a response-quality check or substantive perception,true
