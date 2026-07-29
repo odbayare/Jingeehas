@@ -86,6 +86,34 @@ function routeName(pathname) { return ROUTES[String(pathname || "/").replace(/\/
 function navigation() { return `<nav class="site-nav" aria-label="Үндсэн цэс"><a href="/" data-route>Нүүр</a><a href="/about" data-route>Тестийн тухай</a><a href="/recovery" data-route>Тайлан сэргээх</a></nav>`; }
 function footer() { return `<footer class="site-footer"><p>${PRODUCT.name}</p><nav aria-label="Арга зүй, хууль, тусламжийн холбоос"><a href="/methodology" data-route>Арга зүй</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/support" data-route>Төлбөрийн тусламж</a> · <a href="/data-deletion" data-route>Өгөгдөл устгах хүсэлт</a></nav><p>Дэмжлэг: ${supportContactLink()}</p></footer>`; }
 
+function scientificMethodologyBox() {
+  return `<section class="scientific-methods-box" aria-labelledby="scientific-methods-title">
+    <p class="eyebrow">Шинжлэх ухааны суурь</p>
+    <h3 id="scientific-methods-title">Ашигласан шинжлэх ухааны аргачлалууд</h3>
+    <p class="scientific-methods-intro">Weight Test-ийн бүтэц, хэмжээс болон үр дүнгийн тайлбарыг боловсруулахдаа идэх зан үйл, сэтгэлзүйн хүчин зүйлсийг судалдаг олон улсын аргачлал, онолын хүрээг харгалзан үзсэн.</p>
+    <ul class="scientific-method-names" aria-label="Харгалзан үзсэн зургаан аргачлал">
+      <li>Биопсихосоциал загвар</li>
+      <li>Dutch Eating Behavior Questionnaire <span class="method-acronym">— DEBQ</span></li>
+      <li>Three-Factor Eating Questionnaire <span class="method-acronym">— TFEQ</span></li>
+      <li>Binge Eating Scale <span class="method-acronym">— BES</span></li>
+      <li>Night Eating Questionnaire <span class="method-acronym">— NEQ</span></li>
+      <li>Когнитив-зан үйлийн функциональ шинжилгээ</li>
+    </ul>
+    <button class="button secondary scientific-methods-toggle" type="button" data-action="toggle-scientific-methods" aria-expanded="true" aria-controls="scientific-methods-details" hidden>Аргачлал бүрийн тайлбарыг хаах</button>
+    <div id="scientific-methods-details" class="scientific-methods-details">
+      <div class="scientific-methods-grid">
+        <article><h4>Биопсихосоциал загвар</h4><p>Жинтэй холбоотой асуудлыг зөвхөн хооллолт, дасгал хөдөлгөөнөөр тайлбарлахгүйгээр бие махбод, сэтгэлзүй, зан үйл, амьдралын хэв маяг болон орчны харилцан нөлөөллөөр авч үздэг.</p></article>
+        <article><h4>Dutch Eating Behavior Questionnaire <span class="method-acronym">— DEBQ</span></h4><p>Сэтгэл хөдлөлөөр идэх, гаднын өдөөлтөд хариу үйлдэл үзүүлж идэх, хооллолтоо хэт хязгаарлах хэв маягийг судалдаг.</p></article>
+        <article><h4>Three-Factor Eating Questionnaire <span class="method-acronym">— TFEQ</span></h4><p>Хооллолтын танин мэдэхүйн хяналт, хяналт алдсан хооллолт, өлсгөлөн болон идэх хүчтэй хүслийг судалдаг.</p></article>
+        <article><h4>Binge Eating Scale <span class="method-acronym">— BES</span></h4><p>Хяналтгүй болон хэтрүүлэн идэх үеийн зан үйл, хяналт алдсан мэдрэмж, гэмшил, ичгүүр зэрэг сэтгэлзүйн шинжийг судалдаг.</p></article>
+        <article><h4>Night Eating Questionnaire <span class="method-acronym">— NEQ</span></h4><p>Орой болон шөнийн хооллолт, өглөөний хоолны дуршил, нойр болон хооллолтын хэмнэлийн холбоог судалдаг.</p></article>
+        <article><h4>Когнитив-зан үйлийн функциональ шинжилгээ</h4><p>Өдөөгч нөхцөл, бодол, сэтгэл хөдлөл, идэх зан үйл болон түүний үр дагаврын хоорондын давтагддаг холбоог тодорхойлдог.</p></article>
+      </div>
+      <p class="scientific-methods-disclaimer"><strong>Анхаарах нь:</strong> Weight Test нь дээрх асуумжуудын шууд орчуулга биш бөгөөд сэтгэлзүйн болон эмнэлзүйн онош тавихгүй. Эдгээр аргачлалд судлагддаг шинжлэх ухааны концепцуудыг ашиглан жин хасахад саад болж болзошгүй сэтгэлзүйн болон идэх зан үйлийн хэв маягийг танихад тусална.</p>
+    </div>
+  </section>`;
+}
+
 function renderLanding() {
   return `<div class="page landing-page">${navigation()}<main><section class="hero" aria-labelledby="page-title"><div class="hero-copy">
     <p class="eyebrow">Жин хасахад саад болж буй шалтгаанаа тань</p>
@@ -117,6 +145,7 @@ function renderLanding() {
         <p class="methodology-limitation">Энэхүү тест үнэлгээ нь эмнэлгийн онош тавихгүй, хооллолтын эмгэгийг оношлохгүй бөгөөд эмч, сэтгэлзүйч, хоолзүйчийн үнэлгээг орлохгүй. Энэ нь таны жингийн менежментэд нөлөөлж болзошгүй хэв маягийг таньж ойлгох, аль чиглэлээс эхэлж ажиллахаа тодорхойлоход зориулсан мэдээллийн хэрэгсэл юм.</p>
         <a class="button secondary" href="/methodology" data-route>Арга зүйг дэлгэрэнгүй унших</a>
       </div>
+      ${scientificMethodologyBox()}
     </section></main>${footer()}</div>`;
 }
 function renderAbout() {
@@ -739,6 +768,20 @@ async function restoreServerState() {
 function bind(root) {
   root.querySelector("#safety-form")?.addEventListener("submit", event => { event.preventDefault(); submitSafety(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("safety-error"); if (node) node.textContent = error.message; }); });
   root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); if (window.location.pathname === "/" && link.getAttribute("href") === "/assessment/start") trackEvent("start_cta_clicked", "", `start_cta_clicked:${Date.now()}`); navigate(link.getAttribute("href")); }));
+  const scientificMethodsToggle = root.querySelector('[data-action="toggle-scientific-methods"]');
+  const scientificMethodsDetails = root.querySelector("#scientific-methods-details");
+  if (scientificMethodsToggle && scientificMethodsDetails) {
+    scientificMethodsToggle.hidden = false;
+    scientificMethodsDetails.hidden = true;
+    scientificMethodsToggle.setAttribute("aria-expanded", "false");
+    scientificMethodsToggle.textContent = "Аргачлал бүрийн тайлбарыг харах";
+    scientificMethodsToggle.addEventListener("click", () => {
+      const expanded = scientificMethodsToggle.getAttribute("aria-expanded") === "true";
+      scientificMethodsToggle.setAttribute("aria-expanded", String(!expanded));
+      scientificMethodsToggle.textContent = expanded ? "Аргачлал бүрийн тайлбарыг харах" : "Аргачлал бүрийн тайлбарыг хаах";
+      scientificMethodsDetails.hidden = expanded;
+    });
+  }
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(["text", "number"].includes(input.type) || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
   root.querySelector("#consent-form")?.addEventListener("submit", event => { event.preventDefault(); submitConsent(event.currentTarget).catch(() => { state.validationError = "Сонголтыг хадгалж чадсангүй."; render(); }); });
