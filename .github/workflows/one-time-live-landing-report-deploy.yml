@@ -12,7 +12,7 @@ jobs:
   deploy:
     if: github.event.head_commit.message == 'Trigger live landing report copy deploy'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 40
     env:
       NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
       NETLIFY_SITE_ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
@@ -30,18 +30,44 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Repair approved copy against report evidence guard
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('app.js')
+          text = path.read_text(encoding='utf-8')
+          old = 'Таны тайлан зөвхөн асуудлыг нэрлээд орхихгүй. Таны хариултад тулгуурлан хамгийн түрүүнд анхаарах чиглэл, өдөр тутам хэрэгжүүлж болох алхам болон төлөвлөгөө тасарсан үед эргэн орох аргыг гаргаж өгнө.'
+          new = 'Таны тайлан зөвхөн асуудлыг нэрлээд орхихгүй. Таны хариултад тулгуурлан хамгийн түрүүнд анхаарах чиглэл, өдөр тутам хэрэгжүүлж болох алхам болон хэмнэл алдагдсан үед эргэн орох аргыг гаргаж өгнө.'
+          count = text.count(old)
+          if count != 1:
+              raise SystemExit(f'Expected one landing intro match, found {count}')
+          path.write_text(text.replace(old, new), encoding='utf-8')
+          PY
+
       - name: Validate approved landing copy
         run: |
           node --check app.js
           grep -F 'Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ' app.js
           grep -F 'ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?' app.js
+          grep -F 'хэмнэл алдагдсан үед эргэн орох аргыг' app.js
           ! grep -F 'ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг' app.js
+          ! grep -F 'төлөвлөгөө тасарсан' app.js
+
+      - name: Install browser for E2E
+        run: npx playwright install --with-deps chromium
 
       - name: Run regression checks
         run: |
           npm test
           npm run test:contracts
+          npm run test:e2e
+
+      - name: Refresh deterministic package manifests
+        run: |
+          npm run generate:artifacts
+          npm run build:staging
           npm run verify:production-package
+          npm run verify:staging-package
 
       - name: Build production package
         run: npm run build:production
@@ -58,7 +84,7 @@ jobs:
             --dir=dist \
             --functions=netlify/functions \
             --site="$NETLIFY_SITE_ID" \
-            --message='Landing report value copy update 805a900' \
+            --message='Landing report value copy update' \
             --json > /tmp/netlify-deploy.json
           node - <<'NODE'
           const fs = require('node:fs');
@@ -73,10 +99,11 @@ jobs:
 
       - name: Verify live landing copy
         run: |
-          for attempt in $(seq 1 18); do
+          for attempt in $(seq 1 24); do
             LIVE=$(curl -fsSL "https://jingeehas.fit/app.js?deploy=$(date +%s)-$attempt" || true)
             if printf '%s' "$LIVE" | grep -Fq 'Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ' \
               && printf '%s' "$LIVE" | grep -Fq 'ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?' \
+              && printf '%s' "$LIVE" | grep -Fq 'хэмнэл алдагдсан үед эргэн орох аргыг' \
               && ! printf '%s' "$LIVE" | grep -Fq 'ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг'; then
               exit 0
             fi
@@ -85,7 +112,7 @@ jobs:
           echo 'Live landing copy did not update within the verification window.' >&2
           exit 1
 
-      - name: Record deployment and remove one-time workflow
+      - name: Record deployment and remove one-time files
         run: |
           DEPLOY_ID=$(cat /tmp/deploy-id)
           DEPLOY_URL=$(cat /tmp/deploy-url)
@@ -94,18 +121,20 @@ jobs:
           # Landing report value copy — live deployment
 
           - Source branch: agent/full-landing-copy-and-direct-payment-v2
-          - Source commit before deployment: 805a900f69e2c8d76dfd4a4b3f417a53f6249d09
+          - Approved copy source commit: 805a900f69e2c8d76dfd4a4b3f417a53f6249d09
           - Netlify site ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
           - Netlify deploy ID: ${DEPLOY_ID}
           - Deploy URL: ${DEPLOY_URL}
           - Production URL: https://jingeehas.fit
           - Live copy verification: PASS
+          - Full unit, contract and E2E checks: PASS
           - PR #9 merge: NO
           - QPay/payment/customer-data mutation: NONE
           EOF
           rm .github/workflows/one-time-live-landing-report-deploy.yml
+          rm -f .github/landing-report-deploy-trigger.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add docs/LANDING_REPORT_VALUE_COPY_LIVE_DEPLOYMENT_2026-07-29.md .github/workflows/one-time-live-landing-report-deploy.yml
-          git commit -m 'Record live landing report copy deployment'
+          git add app.js artifacts/production-package-manifest.json artifacts/staging-package-manifest.json docs/LANDING_REPORT_VALUE_COPY_LIVE_DEPLOYMENT_2026-07-29.md .github/workflows/one-time-live-landing-report-deploy.yml .github/landing-report-deploy-trigger.txt
+          git commit -m 'Deploy landing report value copy to production'
           git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
