@@ -1,1 +1,1 @@
-Commit the finalized landing report value copy and updated regression expectations before certification.
+Commit the landing-page E2E expectations for the approved report value copy.
