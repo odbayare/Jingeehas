@@ -1,4 +1,4 @@
-name: Commit finalized landing report source
+name: Finalize landing E2E expectations
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   finalize:
-    if: github.event.head_commit.message == 'Commit finalized landing source'
+    if: github.event.head_commit.message == 'Commit landing E2E expectations'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -27,52 +27,30 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Patch approved landing copy and regression expectations
+      - name: Update E2E expectations to approved landing copy
         run: |
           python - <<'PY'
           from pathlib import Path
-
-          app = Path('app.js')
-          text = app.read_text(encoding='utf-8')
-          old = 'Таны тайлан зөвхөн асуудлыг нэрлээд орхихгүй. Таны хариултад тулгуурлан хамгийн түрүүнд анхаарах чиглэл, өдөр тутам хэрэгжүүлж болох алхам болон төлөвлөгөө тасарсан үед эргэн орох аргыг гаргаж өгнө.'
-          new = 'Таны тайлан зөвхөн асуудлыг нэрлээд орхихгүй. Таны хариултад тулгуурлан хамгийн түрүүнд анхаарах чиглэл, өдөр тутам хэрэгжүүлж болох алхам болон хэмнэл алдагдсан үед эргэн орох аргыг гаргаж өгнө.'
-          if text.count(old) != 1:
-              raise SystemExit(f'Expected one landing intro match, found {text.count(old)}')
-          app.write_text(text.replace(old, new), encoding='utf-8')
-
-          test = Path('tests/question-bank.test.js')
-          source = test.read_text(encoding='utf-8')
+          path = Path('tests/e2e/product-flow.spec.js')
+          text = path.read_text(encoding='utf-8')
           replacements = {
-              'assert(landing.includes("Нэргүй жишээ"));': 'assert(landing.includes("Таны хувийн тайлан"));',
-              'assert.equal((landing.match(/Тайлангийн жишээ/g) || []).length, 1);': 'assert.equal((landing.match(/Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ/g) || []).length, 1);',
-              'assert(landing.includes("Доорх нь нэргүй жишээ. Энэ нь таны үр дүн биш; тайлангийн нарийвчлал, бүтэц, хэлбэрийг урьдчилж харуулж байна."));': 'assert(landing.includes("хэмнэл алдагдсан үед эргэн орох аргыг"));',
-              'assert(landing.includes("өлссөндөө гэхээсээ илүү ачааллаа буулгах гэж иддэг бололтой"));': 'assert(landing.includes("ЯАЖ ЗОХИЦУУЛАХ ВЭ?"));',
-              'assert(landing.includes("Юу саад болоод байгаагаа мэдчихвэл ажил хөнгөрдөг"));': 'assert(landing.includes("Юу саад болж байгааг ойлгоод, яаж зохицуулахаа мэдвэл ажил хөнгөрдөг"));'
+              'await expect(page.getByRole("heading", { name: "Тайлангийн жишээ", exact: true })).toHaveCount(1);': 'await expect(page.getByRole("heading", { name: "Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ", exact: true })).toHaveCount(1);',
+              'await expect(page.getByText("Доорх нь нэргүй жишээ. Энэ нь таны үр дүн биш; тайлангийн нарийвчлал, бүтэц, хэлбэрийг урьдчилж харуулж байна.", { exact: true })).toHaveCount(1);': 'await expect(page.getByText(/хэмнэл алдагдсан үед эргэн орох аргыг/)).toHaveCount(1);'
           }
-          for old_line, new_line in replacements.items():
-              count = source.count(old_line)
+          for old, new in replacements.items():
+              count = text.count(old)
               if count != 1:
-                  raise SystemExit(f'Expected one assertion match, found {count}: {old_line}')
-              source = source.replace(old_line, new_line)
-          picture = 'assert(landing.includes("зураг өөрөө гарч ирдэг"));'
-          if source.count(picture) != 2:
-              raise SystemExit(f'Expected two legacy picture assertions, found {source.count(picture)}')
-          source = source.replace(picture, 'assert(landing.includes("ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?"));', 1)
-          source = source.replace(picture, 'assert(!landing.includes("ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг"));', 1)
-          test.write_text(source, encoding='utf-8')
+                  raise SystemExit(f'Expected one E2E assertion match, found {count}: {old}')
+              text = text.replace(old, new)
+          path.write_text(text, encoding='utf-8')
           PY
 
-      - name: Refresh deterministic package manifests
-        run: |
-          npm run generate:artifacts
-          npm run build:staging
-
-      - name: Commit finalized source before certification
+      - name: Commit E2E expectation update
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add app.js tests/question-bank.test.js artifacts/production-package-manifest.json artifacts/staging-package-manifest.json
-          git commit -m 'Finalize landing report value copy source'
+          git add tests/e2e/product-flow.spec.js
+          git commit -m 'Align landing E2E with report value copy'
           git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
 
       - name: Validate JavaScript
@@ -100,6 +78,8 @@ jobs:
         run: |
           rm .github/workflows/one-time-live-landing-report-deploy.yml
           rm .github/landing-report-deploy-trigger.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add .github/workflows/one-time-live-landing-report-deploy.yml .github/landing-report-deploy-trigger.txt
           git commit -m 'Remove temporary landing finalization automation'
           git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
