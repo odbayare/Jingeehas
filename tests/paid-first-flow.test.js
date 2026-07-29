@@ -6,7 +6,6 @@ process.env.RECOVERY_HASH_PEPPER = "paid-first-test-recovery-pepper-1234567890";
 const assert = require("node:assert/strict");
 const app = require("../app.js");
 const { MemoryDatabaseAdapter } = require("./support/memory-database.js");
-const { saveSafetyCheck } = require("../netlify/functions/_lib/safety.js");
 const { saveRecoveryContacts } = require("../netlify/functions/_lib/recovery.js");
 const { createAssessment, saveAssessment, completeAssessment, reportForSession } = require("../netlify/functions/_lib/assessment.js");
 const { createInvoice, checkPayment } = require("../netlify/functions/_lib/payment.js");
@@ -15,15 +14,12 @@ const { nextRoute } = require("../netlify/functions/_lib/commercial-flow.js");
 (async () => {
   const database = new MemoryDatabaseAdapter(); const now = new Date("2026-07-21T08:00:00Z");
   await database.insert("sessions", { id: "ws-prepaid", tokenHash: "hash", createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + 3600000).toISOString(), revokedAt: null });
-  const blocked = await saveSafetyCheck(database, "ws-prepaid", { age: 30, selfHarm: "Одоо идэвхтэй бодогдож байна", acuteMedical: ["Аль нь ч үгүй"] }, now);
-  assert.notEqual(blocked.route, "eligible");
-  assert.equal((await database.find("payments", {})).length, 0, "blocked safety route creates no invoice");
-
-  const safety = await saveSafetyCheck(database, "ws-prepaid", { age: 30, selfHarm: "Үгүй", acuteMedical: ["Аль нь ч үгүй"], compensatoryBehavior: "Үгүй", medicalSuitability: "Үргэлжлүүлэхэд тохиромжтой" }, now);
   const contact = await saveRecoveryContacts(database, "ws-prepaid", { email: "paid-first@example.com" }, now);
-  const assessment = await createAssessment(database, "ws-prepaid", { prepaid: true, safetyCheckId: safety.safetyCheckId, recoveryContactGroupId: contact.contactGroupId }, now);
+  const assessment = await createAssessment(database, "ws-prepaid", { prepaid: true, recoveryContactGroupId: contact.contactGroupId }, now);
   assert.equal(assessment.commercialFlowVersion, "prepaid_v2");
   assert.equal(assessment.status, "payment_pending"); assert.equal(assessment.startedAt, null);
+  const placeholder = await database.get("safety_checks", assessment.safetyCheckId);
+  assert.deepEqual(placeholder.result, { route: "pending_assessment", mode: "pending", category: "assessment_safety_questions" });
   assert.equal(await nextRoute(database, assessment), "/assessment/payment");
   await assert.rejects(() => saveAssessment(database, "ws-prepaid", { assessmentId: assessment.id, answers: { "Q-AGE": 30 } }, now), error => error.code === "payment_required");
   await assert.rejects(() => completeAssessment(database, "ws-prepaid", { assessmentId: assessment.id }, now), error => error.code === "payment_required");
@@ -42,7 +38,7 @@ const { nextRoute } = require("../netlify/functions/_lib/commercial-flow.js");
   const refreshed = await saveAssessment(database, "ws-prepaid", { assessmentId: assessment.id, answers: { "Q-AGE": 31 } }, new Date(now.getTime() + 3000));
   assert.equal(refreshed.startedAt, started.startedAt, "started_at is immutable after first persisted answer");
 
-  const prep = app.renderForPath("/assessment/contact");
+  const prep = app.renderForPath("/assessment/start");
   for (const copy of ["Тест үнэлгээгээ эхлүүлэх", "Тест үнэлгээ болон бүрэн хувийн тайлан", "9,900₮", "QPay-аар төлөөд тестээ эхлүүлэх"]) assert(prep.includes(copy), copy);
   app._test.setState({ commercialFlowVersion: "prepaid_v2", assessmentStatus: "complete", report: { fullReport: {} } });
   assert(!app.renderForPath("/assessment/completed").includes("Бүрэн тайлангийн үнэ"));

@@ -27,9 +27,6 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
   }
   if (safetyCheck && safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Commercial assessment is not suitable"), { statusCode: 409, code: "safety_route_required" });
   const requestedFlow = input.prepaid === true ? PREPAID_FLOW : LEGACY_FLOW;
-  if (requestedFlow === PREPAID_FLOW && !safetyCheck) {
-    throw Object.assign(new Error("Safety check required"), { statusCode: 409, code: "safety_check_required" });
-  }
   if (!safetyCheck) {
     safetyCheck = await database.insert("safety_checks", { id: randomId("sc_"), sessionId,
       result: { route: "pending_assessment", mode: "pending", category: "assessment_safety_questions" }, createdAt: now.toISOString() });
