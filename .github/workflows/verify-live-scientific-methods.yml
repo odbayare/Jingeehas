@@ -1,0 +1,33 @@
+name: Verify live scientific methods box
+
+on:
+  push:
+    branches:
+      - agent/full-landing-copy-and-direct-payment-v2
+
+permissions:
+  contents: read
+
+jobs:
+  verify-live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Wait for production asset and verify content
+        shell: bash
+        run: |
+          set -euo pipefail
+          asset='https://jingeehas.fit/assets/landing-scientific-methods.js'
+          page='https://jingeehas.fit/'
+          for attempt in $(seq 1 36); do
+            if curl --fail --silent --show-error --max-time 20 "$asset" -o /tmp/methods.js \
+              && grep -Fq 'Ашигласан шинжлэх ухааны аргачлалууд' /tmp/methods.js \
+              && curl --fail --silent --show-error --max-time 20 "$page" -o /tmp/index.html \
+              && grep -Fq '/assets/landing-scientific-methods.js' /tmp/index.html; then
+              echo "Live scientific methods asset verified on attempt $attempt"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo 'Live scientific methods asset was not observed within the verification window.' >&2
+          exit 1
