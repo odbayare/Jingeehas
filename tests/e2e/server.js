@@ -6,8 +6,10 @@ const { evaluateSafetyGate, ROUTE_COPY } = require("../../netlify/functions/_lib
 const questions = require("../../questions.js");
 const cohort = require("../fixtures/virtual-cohort-v2.js");
 const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/functions/_lib/report.js");
-const { instrument: pilotInstrument, registry: pilotScales, buildPilotReport } = require("../../netlify/functions/_lib/pilot-v2-engine.js");
+const { instrument: pilotInstrument, registry: pilotScales, contextRegistry: pilotContextRegistry,
+  safetyRegistry: pilotSafetyRegistry, VERSION_FIELDS: pilotVersions, buildPilotReport } = require("../../netlify/functions/_lib/pilot-v2-engine.js");
 const root = path.resolve(__dirname, "../..");
+const PILOT_E2E_AUTH = "Pilot aaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbb";
 const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0, sessionStart: 0, analyticsCollect: 0, questionProgressRows: 0 };
 const recordedQuestionProgress = new Set();
 const questionProgressRows = Array.from({ length: 8 }, (_, index) => {
@@ -27,6 +29,7 @@ const questionProgressRows = Array.from({ length: 8 }, (_, index) => {
 });
 let assessmentStatus = "payment_pending";
 let pilotState = null;
+const pilotEventKeys = new Set();
 const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
 const cohortReports = Object.fromEntries(cohort.filter(profile => ["VU-03", "VU-06"].includes(profile.id)).map(profile => {
   const linkedLongestMethod = profile.answers["Q-METHOD-LONGEST"] || questions.autoLinkedLongestMethod(profile.answers);
@@ -40,18 +43,23 @@ function selectedReport(request) {
 function json(response, status, body, headers = {}) { response.writeHead(status, { "content-type": "application/json", ...headers }); response.end(JSON.stringify(body)); }
 function readBody(request) { return new Promise(resolve => { let raw = ""; request.on("data", chunk => { raw += chunk; }); request.on("end", () => { try { resolve(JSON.parse(raw || "{}")); } catch { resolve({}); } }); }); }
 const endpoints = {
-  "pilot-v2-access": async (_body, response, request) => String(request.headers.authorization || "") === "Pilot e2e" ? json(response, 200, { authorized: true, accessKind: "invite" }) : json(response, 401, { error: "pilot_access_denied" }),
-  "pilot-v2-instrument": async (_body, response, request) => String(request.headers.authorization || "") === "Pilot e2e" ? json(response, 200, { instrument: pilotInstrument, scales: pilotScales }) : json(response, 401, { error: "pilot_access_denied" }),
+  "pilot-v2-access": async (_body, response, request) => String(request.headers.authorization || "") === PILOT_E2E_AUTH ? json(response, 200, { authorized: true, accessKind: "invite" }) : json(response, 401, { error: "pilot_access_denied" }),
+  "pilot-v2-instrument": async (_body, response, request) => String(request.headers.authorization || "") === PILOT_E2E_AUTH ? json(response, 200, { instrument: pilotInstrument, scales: pilotScales, contextRegistry: pilotContextRegistry, safetyRegistry: pilotSafetyRegistry }) : json(response, 401, { error: "pilot_access_denied" }),
   "pilot-v2-assessment": async (body, response, request) => {
-    if (String(request.headers.authorization || "") !== "Pilot e2e") return json(response, 401, { error: "pilot_access_denied" });
-    if (body.action === "start") { pilotState = { id: "pv2-e2e", status: "in_progress", answers: {}, report: null }; return json(response, 201, { assessmentId: pilotState.id, status: pilotState.status }); }
+    if (String(request.headers.authorization || "") !== PILOT_E2E_AUTH) return json(response, 401, { error: "pilot_access_denied" });
+    if (body.action === "start") { pilotState = { id: "pv2-e2e", status: "in_progress", ...pilotVersions, answers: {}, contextResponses: {}, safetyResponses: {}, lastCompletedSection: null, report: null }; return json(response, 201, { assessmentId: pilotState.id, status: pilotState.status }); }
     if (!pilotState || body.assessmentId !== pilotState.id) return json(response, 404, { error: "pilot_assessment_not_found" });
-    if (body.action === "save") { pilotState.answers = { ...pilotState.answers, ...body.answers }; return json(response, 200, { assessmentId: pilotState.id, savedItemKeys: Object.keys(body.answers || {}) }); }
-    if (body.action === "complete") { pilotState.status = "complete"; pilotState.report = buildPilotReport({ answers: pilotState.answers, context: body.context, safety: body.safety }); return json(response, 200, { assessmentId: pilotState.id, report: pilotState.report }); }
-    if (body.action === "load") return json(response, 200, pilotState);
+    if (body.action === "save") { pilotState.answers = { ...pilotState.answers, ...body.answers }; pilotState.contextResponses = { ...pilotState.contextResponses, ...body.contextResponses }; pilotState.safetyResponses = { ...pilotState.safetyResponses, ...body.safetyResponses }; pilotState.lastCompletedSection = body.lastCompletedSection; return json(response, 200, { assessmentId: pilotState.id, lastCompletedSection: pilotState.lastCompletedSection, savedItemKeys: Object.keys(body.answers || {}) }); }
+    if (body.action === "complete") { pilotState.status = "complete"; pilotState.report = buildPilotReport({ answers: pilotState.answers, contextResponses: pilotState.contextResponses, safetyResponses: pilotState.safetyResponses }); return json(response, 200, { assessmentId: pilotState.id, report: pilotState.report }); }
+    if (body.action === "load") return json(response, 200, { ...pilotState, assessmentId: pilotState.id });
     return json(response, 400, { error: "invalid_pilot_action" });
   },
-  "pilot-v2-event": async (_body, response, request) => String(request.headers.authorization || "") === "Pilot e2e" ? json(response, 202, { accepted: true }) : json(response, 401, { error: "pilot_access_denied" }),
+  "pilot-v2-event": async (body, response, request) => {
+    if (String(request.headers.authorization || "") !== PILOT_E2E_AUTH) return json(response, 401, { error: "pilot_access_denied" });
+    const key = `${body.assessmentId || ""}:${body.eventName}:${body.section || ""}`;
+    const recorded = !pilotEventKeys.has(key); pilotEventKeys.add(key);
+    return json(response, 202, { accepted: true, recorded });
+  },
   "analytics-collect": async (_body, response) => { stats.analyticsCollect += 1; json(response, 202, { accepted: true, recorded: true }); },
   "admin-login": async (_body, response) => json(response, 200, { adminId: "owner-e2e", owner: true }, { "set-cookie": "jingeehas_admin=admin-e2e; Path=/; HttpOnly; Secure; SameSite=Strict" }),
   "admin-session-state": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") ? json(response, 200, { authenticated: true, owner: true }) : json(response, 401, { error: "unauthorized" }),
@@ -100,6 +108,7 @@ const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
 http.createServer(async (request, response) => {
   const url = new URL(request.url, "http://127.0.0.1:4178");
   if (url.pathname === "/__test/stats") return json(response, 200, stats);
+  if (url.pathname === "/__test/pilot-events") return json(response, 200, { keys: [...pilotEventKeys] });
   if (url.pathname === "/__test/select-report" && cohortReports[url.searchParams.get("id")]) {
     response.writeHead(302, { location: "/report?e2e=1", "set-cookie": `jingeehas_cohort=${url.searchParams.get("id")}; Path=/; HttpOnly; SameSite=Lax` });
     return response.end();

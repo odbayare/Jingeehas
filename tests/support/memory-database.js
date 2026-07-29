@@ -96,7 +96,12 @@ class MemoryDatabaseAdapter {
     const row = this.pilotV2Assessments.get(assessmentId);
     return row?.accessSubjectHash === accessSubjectHash ? copy(row) : null;
   }
-  async recordPilotV2Event(payload) { this.pilotV2Events.push(copy(payload)); return { accepted: true }; }
+  async recordPilotV2Event(payload) {
+    const duplicate = this.pilotV2Events.some(row => row.accessSubjectHash === payload.accessSubjectHash
+      && row.assessmentId === payload.assessmentId && row.eventName === payload.eventName && row.section === payload.section);
+    if (!duplicate) this.pilotV2Events.push(copy(payload));
+    return { accepted: true, recorded: !duplicate };
+  }
   async createReportSnapshotVersion(input) {
     const rows = this.table("report_snapshot_versions");
     const existing = [...rows.values()].find(row => row.assessmentId === input.assessmentId && row.operationKey === input.operationKey);

@@ -7,5 +7,6 @@ exports.handler = handler("POST", async (event, body) => {
   const access = await authorizePilot(getDatabase(), event);
   if (access.kind !== "admin" || !access.owner) throw Object.assign(new Error("Forbidden"), { statusCode: 403, code: "owner_required" });
   const expiresAt = new Date(Date.now() + Math.min(Math.max(Number(body.expiresInHours || 24), 1), 168) * 3600000);
-  return response(201, { token: createInvite({ expiresAt, inviteId: crypto.randomUUID() }), expiresAt: expiresAt.toISOString() });
+  const token = createInvite({ expiresAt, inviteId: crypto.randomUUID() });
+  return response(201, { token, inviteUrl: `/pilot-v2#pilot_invite=${encodeURIComponent(token)}`, expiresAt: expiresAt.toISOString() });
 });

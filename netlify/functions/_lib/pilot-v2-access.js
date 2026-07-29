@@ -5,15 +5,20 @@ const { authenticateRole, ADMIN_SESSION } = require("./auth.js");
 const { safeEqual } = require("./crypto.js");
 
 const AUDIENCE = "jingeehas-ai-pilot-v2.1";
-function secret(env = process.env) {
+function signingSecret(env = process.env) {
   const value = String(env.PILOT_V2_INVITE_SECRET || "");
   if (value.length < 32) throw Object.assign(new Error("Pilot access is unavailable"), { statusCode: 503, code: "pilot_unavailable" });
+  return value;
+}
+function subjectPepper(env = process.env) {
+  const value = String(env.PILOT_V2_SUBJECT_HASH_PEPPER || "");
+  if (value.length < 32) throw Object.assign(new Error("Pilot subject hashing is unavailable"), { statusCode: 503, code: "pilot_unavailable" });
   return value;
 }
 function encode(value) { return Buffer.from(JSON.stringify(value)).toString("base64url"); }
 function signPayload(payload, env = process.env) {
   const body = encode(payload);
-  return `${body}.${crypto.createHmac("sha256", secret(env)).update(body).digest("base64url")}`;
+  return `${body}.${crypto.createHmac("sha256", signingSecret(env)).update(body).digest("base64url")}`;
 }
 function createInvite({ expiresAt, inviteId }, env = process.env) {
   const exp = Math.floor(new Date(expiresAt).getTime() / 1000);
@@ -25,7 +30,7 @@ function createInvite({ expiresAt, inviteId }, env = process.env) {
 function verifyInvite(token, env = process.env, now = new Date()) {
   const [body, signature, extra] = String(token || "").split(".");
   if (!body || !signature || extra) throw Object.assign(new Error("Unauthorized"), { statusCode: 401, code: "pilot_access_denied" });
-  const expected = crypto.createHmac("sha256", secret(env)).update(body).digest("base64url");
+  const expected = crypto.createHmac("sha256", signingSecret(env)).update(body).digest("base64url");
   if (!safeEqual(signature, expected)) throw Object.assign(new Error("Unauthorized"), { statusCode: 401, code: "pilot_access_denied" });
   let payload; try { payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8")); } catch { payload = null; }
   if (!payload || payload.aud !== AUDIENCE || !payload.jti || Number(payload.exp) <= Math.floor(now.getTime() / 1000)) {
@@ -34,7 +39,7 @@ function verifyInvite(token, env = process.env, now = new Date()) {
   return payload;
 }
 function subjectHash(kind, id, env = process.env) {
-  return crypto.createHmac("sha256", secret(env)).update(`${kind}:${id}`).digest("hex");
+  return crypto.createHmac("sha256", subjectPepper(env)).update(`${kind}:${id}`).digest("hex");
 }
 async function authorizePilot(database, event, env = process.env) {
   try {

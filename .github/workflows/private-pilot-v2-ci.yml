@@ -1,0 +1,36 @@
+name: Private pilot V2.1 current-head CI
+
+on:
+  push:
+    branches:
+      - agent/psychometric-v2-1-private-pilot-20260728
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Syntax checks
+        run: |
+          find pilot-v2 netlify/functions tests tools -type f \( -name '*.js' -o -name '*.mjs' \) -print0 |
+            xargs -0 -n1 node --check
+      - run: npm test
+      - run: npm run test:contracts
+      - run: npm run test:e2e
+      - run: npm run verify:production-package
+      - run: npm run verify:staging-package
+      - run: npm run verify:database-gateway-auth
+      - run: git diff --check
+      - run: git diff --exit-code
+      - run: test -z "$(git status --porcelain)"

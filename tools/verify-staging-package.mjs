@@ -39,7 +39,7 @@ for (const forbidden of ["mockBackend", "internalTest", "localStorage", "oneTime
 if (actualFiles.some(file => /(?:^|\/)(?:tests?|fixtures?|docs?|audit)(?:\/|$)/i.test(file))) failures.push("test, fixture, documentation, or audit material included");
 const forbiddenName = String(process.env.CROSS_PROJECT_FORBIDDEN_TOKEN || "").trim();
 if (forbiddenName && packageText.toLowerCase().includes(forbiddenName.toLowerCase())) failures.push("cross-project name found in staging package");
-const secretNames = ["JINGEEHAS_DATABASE_API_KEY", "QPAY_CLIENT_SECRET", "RECOVERY_ENCRYPTION_KEY", "RECOVERY_HASH_PEPPER", "RECOVERY_DELIVERY_API_KEY", "PILOT_V2_INVITE_SECRET"];
+const secretNames = ["JINGEEHAS_DATABASE_API_KEY", "QPAY_CLIENT_SECRET", "RECOVERY_ENCRYPTION_KEY", "RECOVERY_HASH_PEPPER", "RECOVERY_DELIVERY_API_KEY", "PILOT_V2_INVITE_SECRET", "PILOT_V2_SUBJECT_HASH_PEPPER"];
 for (const name of secretNames) { const value = String(process.env[name] || ""); if (value.length >= 12 && packageText.includes(value)) failures.push(`secret value embedded from ${name}`); }
 const stagedQPay = require(path.join(staging, "netlify", "functions", "_lib", "qpay.js"));
 const safe = stagedQPay.safeAppLinks([{ name: "bad", link: "javascript:alert(1)" }, { name: "data", link: "data:text/plain,x" }, { name: "good", link: "bankapp://pay/1" }], { allowedSchemes: ["bankapp"], allowedHosts: [] });
