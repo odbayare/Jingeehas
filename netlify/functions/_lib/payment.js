@@ -48,8 +48,6 @@ async function validateInvoiceRequest(database, sessionId, input) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
   const validStatus = isPrepaid(assessment) ? assessment.status === "payment_pending" : assessment.status === "complete";
   if (!validStatus || assessment.safetyRoute) throw Object.assign(new Error("Assessment is not eligible for payment"), { statusCode: 409, code: "assessment_incomplete" });
-  const safetyCheck = await database.get("safety_checks", assessment.safetyCheckId);
-  if (!safetyCheck || safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Payment blocked by safety route"), { statusCode: 409, code: "safety_route_required" });
   const recoveryContacts = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });
   if (!recoveryContacts.length) throw Object.assign(new Error("Recovery contact required"), { statusCode: 400, code: "recovery_contact_required" });
   if ((await database.find("entitlements", { assessmentId: assessment.id, status: "active" })).length) {

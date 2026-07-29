@@ -4,12 +4,6 @@ test.setTimeout(120000);
 
 async function completeEligibleGate(page, suffix = "") {
   await page.goto(`/assessment/start?e2e=1${suffix}`);
-  await page.locator('input[name="age"]').fill("30");
-  await page.locator('input[name="selfHarm"][value="Үгүй"]').check();
-  await page.locator('input[name="acuteMedical"][value="Аль нь ч үгүй"]').check();
-  await page.locator('input[name="compensatoryBehavior"][value="Үгүй"]').check();
-  await page.locator('input[name="medicalSuitability"][value="Үргэлжлүүлэхэд тохиромжтой"]').check();
-  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
   await expect(page.locator("#contact-email")).toBeVisible();
 }
 
@@ -143,8 +137,7 @@ test("authenticated owner preview starts through the server gate without QPay", 
   await page.getByRole("button", { name: "Нэвтрэх" }).click();
   await page.getByRole("button", { name: "Бодит тестийг шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах" })).toBeVisible();
-  await completeEligibleGate(page);
+  await expect(page.locator("#contact-email")).toBeVisible();
   const beforePreview = await (await request.get("/__test/stats")).json();
   await page.locator("#contact-email").fill("owner-preview@example.com");
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
@@ -159,9 +152,10 @@ test("authenticated owner preview starts through the server gate without QPay", 
   expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(ownerFirstQuestionRows);
 });
 
-test("assessment starts with the short free safety gate", async ({ page, request }) => {
+test("assessment starts with payment preparation and no pre-assessment screen", async ({ page, request }) => {
   await page.goto("/assessment/start?e2e=1");
-  await expect(page.locator("#safety-form")).toBeVisible();
+  await expect(page.locator("#contact-form")).toBeVisible();
+  await expect(page.locator("#safety-form")).toHaveCount(0);
   expect((await (await request.get("/__test/stats")).json()).qpayCreate).toBe(0);
 });
 
