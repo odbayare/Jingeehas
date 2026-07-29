@@ -52,17 +52,37 @@ async function completeQuestionnaire(page) {
   await expect(page).toHaveURL(/\/report(?:\?e2e=1)?$/);
 }
 
-for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]) {
+for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], [1440, 900]]) {
   test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto("/");
     await expect(page.getByRole("heading", { name: "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" })).toBeVisible();
     const questions = page.locator(".hero-question");
     await expect(questions).toHaveCount(3);
-    await expect(page.locator(".hero-highlight")).toBeVisible();
-    const cta = page.getByRole("link", { name: "Сэтгэлзүйн хэв маягаа тодорхойлох" });
+    const highlight = page.locator(".hero-highlight");
+    const lead = page.locator(".hero-lead");
+    await expect(highlight).toContainText("Жин хасахад зөвхөн хоол, дасгал биш — таны сэтгэлзүйн хэв маяг, далд зуршил хүчтэй нөлөөлдөг.");
+    await expect(lead).toHaveText("Өөрт тань саад болж буй сэтгэлзүйн шалтгааныг эхлээд ойлгож чадвал жин хасах арга барилаа илүү бодитой, өөртөө тохирсон, тогтвортой сонгоход хялбар болно.");
+    const highlightStyles = await highlight.locator("p").evaluate(element => {
+      const styles = getComputedStyle(element);
+      return { color: styles.color, fontSize: parseFloat(styles.fontSize), fontWeight: Number(styles.fontWeight), lineHeight: parseFloat(styles.lineHeight) / parseFloat(styles.fontSize) };
+    });
+    const leadStyles = await lead.evaluate(element => {
+      const styles = getComputedStyle(element);
+      return { color: styles.color, fontSize: parseFloat(styles.fontSize), fontWeight: Number(styles.fontWeight), lineHeight: parseFloat(styles.lineHeight) / parseFloat(styles.fontSize) };
+    });
+    expect(highlightStyles.color).toBe("rgb(23, 67, 49)");
+    expect(highlightStyles.fontSize).toBeGreaterThanOrEqual(width >= 1024 ? 19 : 17);
+    expect(highlightStyles.fontWeight).toBe(800);
+    expect(highlightStyles.lineHeight).toBeGreaterThanOrEqual(1.45);
+    expect(leadStyles.color).toBe("rgb(32, 49, 38)");
+    expect(leadStyles.fontSize).toBeGreaterThanOrEqual(width >= 1024 ? 17 : 16);
+    expect(leadStyles.fontWeight).toBeGreaterThanOrEqual(550);
+    expect(leadStyles.lineHeight).toBeGreaterThanOrEqual(1.59);
+    const cta = page.getByRole("link", { name: "Тестээ эхлүүлэх" });
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
+    expect(await cta.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
     await expect(page.locator(".hero-note")).toBeVisible();
     await expect(page.locator(".hero-visual")).toBeVisible();
     expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
@@ -73,13 +93,26 @@ for (const [width, height] of [[375, 812], [390, 844], [768, 1024], [1440, 900]]
   });
 }
 
-test("methodology trust content stacks without mobile overflow", async ({ page }) => {
-  await page.setViewportSize({ width: 375, height: 800 });
+test("landing CTA retains SPA routing and analytics tracking", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { name: "Арга зүй ба судалгааны үндэслэл" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Аюулгүй байдлын дохио" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Сэтгэлзүй ба зан үйлийн хэв маяг" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Өдөр тутмын саад ба орчны нөлөө" })).toBeVisible();
+  const trackingRequest = page.waitForRequest(request => {
+    if (!request.url().endsWith("/.netlify/functions/analytics-collect") || request.method() !== "POST") return false;
+    try { return JSON.parse(request.postData() || "{}").eventName === "start_cta_clicked"; } catch { return false; }
+  });
+  await page.getByRole("link", { name: "Тестээ эхлүүлэх" }).click();
+  await trackingRequest;
+  await expect(page).toHaveURL(/\/assessment\/start$/);
+  await expect(page.getByRole("heading", { name: "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах" })).toBeVisible();
+});
+
+test("landing retains only the scientific methodology box", async ({ page }) => {
+  await page.setViewportSize({ width: 375, height: 812 });
+  await page.goto("/");
+  for (const removed of ["Үнэлгээний зарчим", "Арга зүй ба судалгааны үндэслэл", "Аюулгүй байдлын дохио", "Сэтгэлзүй ба зан үйлийн хэв маяг", "Өдөр тутмын саад ба орчны нөлөө", "Судалж харьцуулсан арга зүй:", "Тайлан хэрхэн гардаг вэ?", "Арга зүйг дэлгэрэнгүй унших"]) {
+    await expect(page.getByText(removed, { exact: true })).toHaveCount(0);
+  }
+  await expect(page.getByRole("heading", { name: "Ашигласан шинжлэх ухааны аргачлалууд" })).toBeVisible();
+  await expect(page.locator(".scientific-methods-box")).toHaveCount(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 });
 
@@ -106,7 +139,7 @@ test("scientific methodology box is responsive and keyboard accessible", async (
     await expect(details).toBeVisible();
     await expect(box.getByText("Weight Test нь дээрх асуумжуудын шууд орчуулга биш", { exact: false })).toBeVisible();
     await expect(box.locator(".scientific-methods-grid article")).toHaveCount(6);
-    expect(await box.locator(".scientific-methods-grid h4").evaluateAll(nodes => nodes.every(node => {
+    expect(await box.locator(".scientific-methods-grid h3").evaluateAll(nodes => nodes.every(node => {
       const rect = node.getBoundingClientRect();
       return rect.left >= 0 && rect.right <= window.innerWidth + 1;
     }))).toBe(true);
@@ -116,7 +149,7 @@ test("scientific methodology box is responsive and keyboard accessible", async (
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await expect(toggle).toHaveText("Аргачлал бүрийн тайлбарыг харах");
     await expect(details).toBeHidden();
-    const cta = page.getByRole("link", { name: "Сэтгэлзүйн хэв маягаа тодорхойлох" });
+    const cta = page.getByRole("link", { name: "Тестээ эхлүүлэх" });
     await expect(cta).toHaveAttribute("href", "/assessment/start");
   }
 });

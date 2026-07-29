@@ -11,11 +11,8 @@ const landing = app.renderForPath("/");
 const methodology = app.renderForPath("/methodology");
 
 assert.equal(app.routeName("/methodology"), "methodology");
-assert(landing.includes("Арга зүй ба судалгааны үндэслэл"));
-for (const pillar of ["Аюулгүй байдлын дохио", "Сэтгэлзүй ба зан үйлийн хэв маяг", "Өдөр тутмын саад ба орчны нөлөө"]) assert(landing.includes(pillar), pillar);
-assert(landing.includes("Арга зүйн судалгаанд TFEQ, DEBQ, AEBQ, EEQ, BEDS-7, SCOFF, WEL-SF, STOP-Bang, PHQ-9, IPAQ, IWQOL-Lite"));
-assert(landing.includes("Энэхүү тест үнэлгээ нь эмнэлгийн онош тавихгүй"));
-assert(landing.includes('href="/methodology"'));
+for (const removed of ["Үнэлгээний зарчим", "Арга зүй ба судалгааны үндэслэл", "Үнэлгээ нь нэг асуулт эсвэл нэг нийт оноогоор дүгнэхгүй", "Аюулгүй байдлын дохио", "Сэтгэлзүй ба зан үйлийн хэв маяг", "Өдөр тутмын саад ба орчны нөлөө", "Судалж харьцуулсан арга зүй:", "Эдгээр хэрэгслийг нэг багц болгон шууд хуулбарлаагүй", "Тайлан хэрхэн гардаг вэ?", "Арга зүйг дэлгэрэнгүй унших"]) assert(!landing.includes(removed), removed);
+assert(methodology.includes("Арга зүй ба судалгааны үндэслэл"));
 
 const scientificBoxTitle = "Ашигласан шинжлэх ухааны аргачлалууд";
 const scientificIntro = "Weight Test-ийн бүтэц, хэмжээс болон үр дүнгийн тайлбарыг боловсруулахдаа идэх зан үйл, сэтгэлзүйн хүчин зүйлсийг судалдаг олон улсын аргачлал, онолын хүрээг харгалзан үзсэн.";
@@ -24,8 +21,9 @@ assert(landing.includes(scientificBoxTitle));
 assert(landing.includes(scientificIntro));
 assert(landing.includes(scientificDisclaimer));
 for (const method of ["Биопсихосоциал загвар", "Dutch Eating Behavior Questionnaire", "DEBQ", "Three-Factor Eating Questionnaire", "TFEQ", "Binge Eating Scale", "BES", "Night Eating Questionnaire", "NEQ", "Когнитив-зан үйлийн функциональ шинжилгээ"]) assert(landing.includes(method), method);
-assert(landing.indexOf('id="methodology-title"') < landing.indexOf('id="scientific-methods-title"'));
 assert(landing.indexOf('id="scientific-methods-title"') < landing.indexOf("</main>"));
+assert.equal((landing.match(/class="scientific-methods-box"/g) || []).length, 1);
+assert(landing.includes('<h2 id="scientific-methods-title">'));
 assert(landing.includes('type="button" data-action="toggle-scientific-methods" aria-expanded="true" aria-controls="scientific-methods-details" hidden'));
 assert(landing.includes('<div id="scientific-methods-details" class="scientific-methods-details">'));
 
@@ -39,8 +37,9 @@ for (const forbidden of ["Шинжлэх ухаанаар батлагдсан W
 assert(!/turn\d+(?:view|search|fetch|open)\d+/i.test(source));
 assert(source.includes("const WEIGHT_TEST_COMING_SOON_MODE = false;"));
 assert(styles.includes(":focus-visible"));
-assert(styles.includes(".methodology-pillars { grid-template-columns: 1fr; }"));
 assert(styles.includes(".scientific-method-names, .scientific-methods-grid { grid-template-columns: 1fr; }"));
+assert(styles.includes("color: var(--primary-dark); font-size: clamp(1.1rem, 1.5vw, 1.3rem); font-weight: 800; line-height: 1.5"));
+assert(styles.includes("color: var(--text); font-size: clamp(1.05rem, 1.25vw, 1.18rem); font-weight: 600; line-height: 1.65"));
 assert(landing.indexOf("<h1") < landing.indexOf("<h2"));
 assert(methodology.indexOf("<h1") < methodology.indexOf("<h2"));
 
