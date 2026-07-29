@@ -7,27 +7,40 @@ on:
 
 permissions:
   contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   verify-live:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - name: Wait for production asset and verify content
+      - name: Wait for production asset and report result
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          set -euo pipefail
+          set -uo pipefail
           asset='https://jingeehas.fit/assets/landing-scientific-methods.js'
           page='https://jingeehas.fit/'
+          verified='false'
+          verified_attempt=''
           for attempt in $(seq 1 36); do
             if curl --fail --silent --show-error --max-time 20 "$asset" -o /tmp/methods.js \
               && grep -Fq 'Ашигласан шинжлэх ухааны аргачлалууд' /tmp/methods.js \
               && curl --fail --silent --show-error --max-time 20 "$page" -o /tmp/index.html \
               && grep -Fq '/assets/landing-scientific-methods.js' /tmp/index.html; then
-              echo "Live scientific methods asset verified on attempt $attempt"
-              exit 0
+              verified='true'
+              verified_attempt="$attempt"
+              break
             fi
             sleep 5
           done
+          if [[ "$verified" == 'true' ]]; then
+            gh pr comment 9 --repo "$GITHUB_REPOSITORY" --body "LIVE_METHODS_VERIFY_PASS — production index and scientific-methods asset verified for source commit \`$GITHUB_SHA\` on attempt $verified_attempt."
+            echo "Live scientific methods asset verified on attempt $verified_attempt"
+            exit 0
+          fi
+          gh pr comment 9 --repo "$GITHUB_REPOSITORY" --body "LIVE_METHODS_VERIFY_FAIL — production index or scientific-methods asset was not observed for source commit \`$GITHUB_SHA\` within the verification window."
           echo 'Live scientific methods asset was not observed within the verification window.' >&2
           exit 1
