@@ -7,7 +7,9 @@ const questions = require("../../questions.js");
 const cohort = require("../fixtures/virtual-cohort-v2.js");
 const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/functions/_lib/report.js");
 const { instrument: pilotInstrument, registry: pilotScales, contextRegistry: pilotContextRegistry,
-  safetyRegistry: pilotSafetyRegistry, VERSION_FIELDS: pilotVersions, buildPilotReport } = require("../../netlify/functions/_lib/pilot-v2-engine.js");
+  safetyRegistry: pilotSafetyRegistry, displayLabels: pilotDisplayLabels, VERSION_FIELDS: pilotVersions,
+  deriveSafetyRoute, buildPilotReport } = require("../../netlify/functions/_lib/pilot-v2-engine.js");
+const pilotAcknowledgment = require("../../pilot-v2/acknowledgment.js");
 const root = path.resolve(__dirname, "../..");
 const PILOT_E2E_AUTH = "Pilot aaaaaaaaaaaaaaaaaaaa.bbbbbbbbbbbbbbbbbbbb";
 const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0, sessionStart: 0, analyticsCollect: 0, questionProgressRows: 0 };
@@ -44,12 +46,26 @@ function json(response, status, body, headers = {}) { response.writeHead(status,
 function readBody(request) { return new Promise(resolve => { let raw = ""; request.on("data", chunk => { raw += chunk; }); request.on("end", () => { try { resolve(JSON.parse(raw || "{}")); } catch { resolve({}); } }); }); }
 const endpoints = {
   "pilot-v2-access": async (_body, response, request) => String(request.headers.authorization || "") === PILOT_E2E_AUTH ? json(response, 200, { authorized: true, accessKind: "invite" }) : json(response, 401, { error: "pilot_access_denied" }),
-  "pilot-v2-instrument": async (_body, response, request) => String(request.headers.authorization || "") === PILOT_E2E_AUTH ? json(response, 200, { instrument: pilotInstrument, scales: pilotScales, contextRegistry: pilotContextRegistry, safetyRegistry: pilotSafetyRegistry }) : json(response, 401, { error: "pilot_access_denied" }),
+  "pilot-v2-instrument": async (_body, response, request) => String(request.headers.authorization || "") === PILOT_E2E_AUTH ? json(response, 200, { instrument: pilotInstrument, scales: pilotScales, contextRegistry: pilotContextRegistry, safetyRegistry: pilotSafetyRegistry, displayLabels: pilotDisplayLabels, acknowledgment: pilotAcknowledgment }) : json(response, 401, { error: "pilot_access_denied" }),
   "pilot-v2-assessment": async (body, response, request) => {
     if (String(request.headers.authorization || "") !== PILOT_E2E_AUTH) return json(response, 401, { error: "pilot_access_denied" });
-    if (body.action === "start") { pilotState = { id: "pv2-e2e", status: "in_progress", ...pilotVersions, answers: {}, contextResponses: {}, safetyResponses: {}, lastCompletedSection: null, report: null }; return json(response, 201, { assessmentId: pilotState.id, status: pilotState.status }); }
+    if (body.action === "start") {
+      if (body.acknowledged !== true || body.acknowledgmentVersion !== pilotAcknowledgment.version) return json(response, 400, { error: "pilot_acknowledgment_required" });
+      pilotState = { id: "pv2-e2e", status: "in_progress", ...pilotVersions, acknowledgmentVersion: pilotAcknowledgment.version,
+        acknowledgedAt: new Date().toISOString(), answers: {}, contextResponses: {}, safetyResponses: {}, lastCompletedSection: null, report: null };
+      return json(response, 201, { assessmentId: pilotState.id, status: pilotState.status });
+    }
     if (!pilotState || body.assessmentId !== pilotState.id) return json(response, 404, { error: "pilot_assessment_not_found" });
-    if (body.action === "save") { pilotState.answers = { ...pilotState.answers, ...body.answers }; pilotState.contextResponses = { ...pilotState.contextResponses, ...body.contextResponses }; pilotState.safetyResponses = { ...pilotState.safetyResponses, ...body.safetyResponses }; pilotState.lastCompletedSection = body.lastCompletedSection; return json(response, 200, { assessmentId: pilotState.id, lastCompletedSection: pilotState.lastCompletedSection, savedItemKeys: Object.keys(body.answers || {}) }); }
+    if (body.action === "save") {
+      pilotState.answers = { ...pilotState.answers, ...body.answers }; pilotState.contextResponses = { ...pilotState.contextResponses, ...body.contextResponses };
+      pilotState.safetyResponses = { ...pilotState.safetyResponses, ...body.safetyResponses }; pilotState.lastCompletedSection = body.lastCompletedSection;
+      const safetyRoute = deriveSafetyRoute(pilotState.safetyResponses);
+      if (body.lastCompletedSection === "safety" && safetyRoute) {
+        pilotState.status = "complete"; pilotState.report = buildPilotReport({ answers: {}, contextResponses: {}, safetyResponses: pilotState.safetyResponses });
+      }
+      return json(response, 200, { assessmentId: pilotState.id, status: pilotState.status, safetyRoute,
+        nextRoute: safetyRoute ? "/pilot-v2/report" : null, lastCompletedSection: pilotState.lastCompletedSection, savedItemKeys: Object.keys(body.answers || {}) });
+    }
     if (body.action === "complete") { pilotState.status = "complete"; pilotState.report = buildPilotReport({ answers: pilotState.answers, contextResponses: pilotState.contextResponses, safetyResponses: pilotState.safetyResponses }); return json(response, 200, { assessmentId: pilotState.id, report: pilotState.report }); }
     if (body.action === "load") return json(response, 200, { ...pilotState, assessmentId: pilotState.id });
     return json(response, 400, { error: "invalid_pilot_action" });

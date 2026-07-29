@@ -12,6 +12,8 @@ create table jingeehas_pilot.assessments (
   report_version text not null check (report_version = 'jingeehas-ai-pilot-report-v2.1'),
   pilot_status_label text not null,
   generated_at timestamptz not null,
+  acknowledgment_version text not null,
+  acknowledged_at timestamptz not null,
   updated_at timestamptz,
   completed_at timestamptz,
   last_completed_section text,
@@ -51,8 +53,12 @@ create table jingeehas_pilot.lifecycle_events (
   check (category is null or length(category) <= 40),
   check (section is null or length(section) <= 40)
 );
-create unique index pilot_v2_event_idempotency_idx on jingeehas_pilot.lifecycle_events
-  (access_subject_hash, coalesce(assessment_id,''), event_name, coalesce(section,''));
+create unique index pilot_v2_lifecycle_idempotency_idx on jingeehas_pilot.lifecycle_events
+  (access_subject_hash, coalesce(assessment_id,''), event_name, coalesce(section,''))
+  where event_name <> 'error_category';
+create unique index pilot_v2_error_idempotency_idx on jingeehas_pilot.lifecycle_events
+  (access_subject_hash, coalesce(assessment_id,''), category)
+  where event_name = 'error_category';
 alter table jingeehas_pilot.assessments enable row level security;
 alter table jingeehas_pilot.answers enable row level security;
 alter table jingeehas_pilot.context_responses enable row level security;
@@ -67,8 +73,8 @@ create or replace function public.jingeehas_save_pilot_v2_assessment(p_payload j
 returns jsonb language plpgsql security definer set search_path = pg_catalog, public, jingeehas_pilot as $$
 declare a jingeehas_pilot.assessments; pair record;
 begin
-  insert into jingeehas_pilot.assessments(id,access_subject_hash,status,instrument_version,item_bank_hash,scoring_version,report_version,pilot_status_label,generated_at,updated_at,completed_at,last_completed_section,report)
-  values (p_payload->>'id',p_payload->>'access_subject_hash',p_payload->>'status',p_payload->>'instrument_version',p_payload->>'item_bank_hash',p_payload->>'scoring_version',p_payload->>'report_version',p_payload->>'pilot_status_label',(p_payload->>'generated_at')::timestamptz,nullif(p_payload->>'updated_at','')::timestamptz,nullif(p_payload->>'completed_at','')::timestamptz,nullif(p_payload->>'last_completed_section',''),p_payload->'report')
+  insert into jingeehas_pilot.assessments(id,access_subject_hash,status,instrument_version,item_bank_hash,scoring_version,report_version,pilot_status_label,generated_at,acknowledgment_version,acknowledged_at,updated_at,completed_at,last_completed_section,report)
+  values (p_payload->>'id',p_payload->>'access_subject_hash',p_payload->>'status',p_payload->>'instrument_version',p_payload->>'item_bank_hash',p_payload->>'scoring_version',p_payload->>'report_version',p_payload->>'pilot_status_label',(p_payload->>'generated_at')::timestamptz,p_payload->>'acknowledgment_version',(p_payload->>'acknowledged_at')::timestamptz,nullif(p_payload->>'updated_at','')::timestamptz,nullif(p_payload->>'completed_at','')::timestamptz,nullif(p_payload->>'last_completed_section',''),p_payload->'report')
   on conflict(id) do update set status=excluded.status,updated_at=excluded.updated_at,completed_at=excluded.completed_at,last_completed_section=excluded.last_completed_section,report=excluded.report
   where jingeehas_pilot.assessments.access_subject_hash=excluded.access_subject_hash
   returning * into a;

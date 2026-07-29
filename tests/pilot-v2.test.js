@@ -52,7 +52,7 @@ const report = buildPilotReport({ answers: fixtures.mixedProfile, contextRespons
 assert.equal(report.interactions.enabled, false);
 assert(report.sections.context.facts.length >= 5);
 assert.deepEqual(buildPilotReport({ answers: fixtures.mixedProfile, contextResponses, safetyResponses: safeResponses }).sections.profile.constructs,
-  buildPilotReport({ answers: fixtures.mixedProfile, contextResponses: {}, safetyResponses: unsafeResponses }).sections.profile.constructs);
+  buildPilotReport({ answers: fixtures.mixedProfile, contextResponses: {}, safetyResponses: safeResponses }).sections.profile.constructs);
 assert(report.sections.profile.constructs.find(item => item.key === "eating_self_efficacy").nativeScore === base.constructs.eating_self_efficacy.nativeScore);
 assert(report.sections.endorsed.items.every(item => typeof item.barrierBurdenScore === "number"));
 assert(report.sections.strengths.items.every(item => engine.CONSTRUCTS[item.construct].orientation === "capability"));
@@ -71,7 +71,28 @@ const routed = buildPilotReport({ answers: fixtures.mixedProfile, contextRespons
 assert.equal(routed.safetyRoute, true);
 assert.equal(routed.sections.endorsed.items.length, 0);
 assert.equal(routed.sections.strengths.items.length, 0);
-assert.match(routed.sections.startingDirection.body, /Аюулгүй/);
+assert.equal(routed.sections.profile.constructs.length, 0);
+assert.equal(routed.sections.details.items.length, 0);
+assert.equal(routed.sections.startingDirection.suppressed, true);
+assert.equal(routed.sections.startingDirection.body, "");
+const guidanceByDomain = safetyRegistry.items.map(item => {
+  const responses = { ...safeResponses, [item.itemKey]: "present" };
+  return buildPilotReport({ safetyResponses: responses }).sections.safety.guidance[0];
+});
+assert.equal(new Set(guidanceByDomain.map(item => item.category)).size, 3);
+assert.equal(new Set(guidanceByDomain.map(item => item.body)).size, 3);
+assert.equal(engine.safetyConfig.reviewStatus, "pending_human_approval");
+assert.equal(engine.safetyConfig.contacts.length, 0);
+assert.equal(engine.displayLabels.orientations.barrier, "Саадын чиглэл");
+assert.equal(engine.displayLabels.orientations.capability, "Дэмжих чадварын чиглэл");
+assert.equal(engine.displayLabels.dataStatuses.complete, "Бүрэн хариулсан");
+assert.equal(engine.displayLabels.dataStatuses.partial_scorable, "Хэсэгчлэн бүрдсэн");
+assert.equal(engine.displayLabels.dataStatuses.insufficient_data, "Хангалттай хариултгүй");
+for (const [key, label] of Object.entries(engine.displayLabels.constructs)) {
+  assert.notEqual(label.name, key);
+  assert.match(label.name, /[А-Яа-яӨөҮү]/);
+}
+for (const label of Object.values(engine.displayLabels.sections)) assert.match(label, /[А-Яа-яӨөҮү]/);
 
 const engineText = fs.readFileSync(path.join(__dirname, "../netlify/functions/_lib/pilot-v2-engine.js"), "utf8");
 for (const forbidden of ["+1", "+2", "+3", "mandatory anchor", "regex-derived", ">= 50", "< 50"]) assert.equal(engineText.toLowerCase().includes(forbidden), false);
@@ -103,4 +124,9 @@ assert(clientSource.includes("location.hash"));
 assert.equal(clientSource.includes('get("pilot_invite")') && clientSource.includes("location.search"), true);
 assert.equal(clientSource.includes("searchParams.get(\"pilot_invite\")"), false);
 assert(clientSource.indexOf("history.replaceState") < clientSource.indexOf('api("pilot-v2-access")'));
+const acknowledgment = require("../pilot-v2/acknowledgment.js");
+assert(acknowledgment.statements.some(item => item.includes("сайн дурын")));
+assert(acknowledgment.statements.some(item => item.includes("хүссэн үедээ зогсоож")));
+assert(acknowledgment.statements.some(item => item.includes("устгуулах")));
+assert(acknowledgment.statements.some(item => item.includes("психометрийн судалгаанд ашиглах зөвшөөрөл биш")));
 console.log("pilot-v2.test.js passed");

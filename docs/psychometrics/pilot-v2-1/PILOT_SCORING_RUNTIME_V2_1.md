@@ -22,7 +22,9 @@ For a scorable construct:
 
 Six-item constructs need five valid items; five-item constructs need four. Restrictive rebound contains four items and needs all four. Status is `complete`, `partial_scorable`, or `insufficient_data`.
 
-The research-quality item is never scored. Six bounded context items and three minimum safety-domain items live in separate versioned registries and tables. The server validates their response codes. Only stored safety codes can derive `safetyRoute`; client semantic flags have no authority. Context and safety cannot change a subscale. Safety stops ranking, strengths, and starting-direction interpretation. Interactions are disabled.
+The research-quality item is never scored. Six bounded context items and three minimum safety-domain items live in separate versioned registries and tables. The server validates their response codes. Only stored safety codes can derive `safetyRoute`; client semantic flags have no authority. The pre-check runs before profile items. A route suppresses profile scores, ranking, strengths, details, and starting-direction interpretation and selects distinct self-harm, urgent-physical-symptom, or compensatory-behavior guidance. Context and safety cannot change a subscale. Interactions are disabled.
+
+One immutable Mongolian display registry maps construct names, orientations, data statuses, section headings, score terms, and technical labels. Internal keys remain machine fields and are not rendered to pilot users.
 
 ## Scale registry
 

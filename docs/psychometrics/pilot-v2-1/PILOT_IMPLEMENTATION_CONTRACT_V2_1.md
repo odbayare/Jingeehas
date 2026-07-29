@@ -8,6 +8,8 @@ This is an **AI-designed and AI-pretested software pilot**. It has not been huma
 
 The pilot uses `/pilot-v2`, `/pilot-v2/questions`, and `/pilot-v2/report`. No public navigation, signup, payment entitlement, QPay, Meta event, revenue attribution, or public sitemap route is permitted. The server releases the instrument and assessment state only to an active owner/admin session or an HMAC-signed invite with an expiry of at most seven days. Invite entry uses only `/pilot-v2#pilot_invite=…`; the fragment is shape-checked, moved to `sessionStorage`, and removed before an API request. Query-token entry is unsupported. Signing and persistent subject hashing require separate 32-character secrets. The HTML gate is `noindex, nofollow, noarchive`; it contains no item bank.
 
+Human invite issuance is disabled while the centralized Mongolia safety-contact configuration is `pending_human_approval`. Owner and synthetic review remain available. Before assessment creation, the client must acknowledge the versioned private-pilot scope. The server stores only acknowledgment version and timestamp; this is explicitly not consent to psychometric research use.
+
 ## Immutable provenance
 
 - Instrument: `jingeehas-ai-pilot-v2.1`
@@ -23,7 +25,9 @@ The central V2.1 registry is the runtime label/value authority required by this 
 
 `jingeehas_pilot.assessments`, `jingeehas_pilot.answers`, `jingeehas_pilot.context_responses`, `jingeehas_pilot.safety_responses`, and `jingeehas_pilot.lifecycle_events` are separate from V1, payments, validation research, and commercial analytics. The migration is forward-only source material and is not applied by this change. Lifecycle events accept only start, idempotent section reach, completion, report-open, and bounded error categories; they contain no answer, item text, score, safety answer, context, or report body.
 
-All load, save, and complete operations compare the stored instrument, bank hash, scoring, and report versions with the active runtime. A mismatch returns `pilot_version_mismatch` and never rescores old answers. Each construct, research-quality, context, and safety section saves independently and resumes after its last completed section.
+The server verifies assessment ownership with `assessmentId + accessSubjectHash` before storing any lifecycle event. Ordinary events are unique by subject, assessment, event, and section. Error events are independently unique by subject, assessment, and error category, allowing distinct bounded failures to coexist.
+
+All load, save, and complete operations compare the stored instrument, bank hash, scoring, and report versions with the active runtime. A mismatch returns `pilot_version_mismatch` and never rescores old answers. The safety pre-check is the first saved section. A routing response immediately stops the ordinary questionnaire and creates only domain-specific safety guidance. Otherwise, each construct, research-quality, and context section saves independently and resumes after its last completed section.
 
 ## Release boundary
 

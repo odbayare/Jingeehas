@@ -4,17 +4,19 @@ const instrument = require("../../../pilot-v2/generated/instrument-v2.1.json");
 const { registry, score: responseScore } = require("../../../pilot-v2/scale-registry.js");
 const contextRegistry = require("../../../pilot-v2/context-registry.js");
 const safetyRegistry = require("../../../pilot-v2/safety-registry.js");
+const displayLabels = require("../../../pilot-v2/display-labels.js");
+const safetyConfig = require("./pilot-v2-safety-config.js");
 
 const CONSTRUCTS = Object.freeze({
-  emotional_eating: Object.freeze({ name: "Сэтгэл хөдлөлтэй холбоотой идэлт", measures: "Сэтгэл хөдлөлтэй холбоотой идэх хандлагын дэмжлэг.", orientation: "barrier" }),
-  external_cue_reactivity: Object.freeze({ name: "Гадаад өдөөлтийн нөлөө", measures: "Харагдах, үнэртэх зэрэг гадаад дохионы нөлөө.", orientation: "barrier" }),
-  uncontrolled_eating: Object.freeze({ name: "Хяналт алдагдсан мэт идэлт", measures: "Идэх явцыг зогсоох, хэмжээг барихад мэдрэгдсэн бэрхшээл.", orientation: "barrier" }),
-  eating_self_efficacy: Object.freeze({ name: "Хооллолтын өөртөө итгэх итгэл", measures: "Нөхцөл бүрд хооллолтын сонголтоо удирдах итгэл.", orientation: "capability" }),
-  hunger_satiety_awareness: Object.freeze({ name: "Өлсгөлөн, цадалтын мэдрэмж", measures: "Биеийн өлсгөлөн, цадалтын дохиог анзаарах чадвар.", orientation: "capability" }),
-  habit_automaticity: Object.freeze({ name: "Дадлын автомат байдал", measures: "Хооллох үйлдэл бодолгүй, автоматаар өрнөх хандлага.", orientation: "barrier" }),
-  body_image_avoidance: Object.freeze({ name: "Биеийн дүр төрхөөс зайлсхийх", measures: "Биеийн дүр төрхтэй холбоотой зайлсхийх хандлага.", orientation: "barrier" }),
-  implementation_maintenance_friction: Object.freeze({ name: "Төлөвлөгөөг хэрэгжүүлэх саад", measures: "Санааг бодит үйлдэл болгон үргэлжлүүлэхэд мэдрэгдсэн саад.", orientation: "barrier" }),
-  restrictive_rebound: Object.freeze({ name: "Хэт хязгаарлалтын буцалт", measures: "Хэт хязгаарласны дараах буцаж идэх хандлага.", orientation: "barrier" })
+  emotional_eating: Object.freeze({ ...displayLabels.constructs.emotional_eating, orientation: "barrier" }),
+  external_cue_reactivity: Object.freeze({ ...displayLabels.constructs.external_cue_reactivity, orientation: "barrier" }),
+  uncontrolled_eating: Object.freeze({ ...displayLabels.constructs.uncontrolled_eating, orientation: "barrier" }),
+  eating_self_efficacy: Object.freeze({ ...displayLabels.constructs.eating_self_efficacy, orientation: "capability" }),
+  hunger_satiety_awareness: Object.freeze({ ...displayLabels.constructs.hunger_satiety_awareness, orientation: "capability" }),
+  habit_automaticity: Object.freeze({ ...displayLabels.constructs.habit_automaticity, orientation: "barrier" }),
+  body_image_avoidance: Object.freeze({ ...displayLabels.constructs.body_image_avoidance, orientation: "barrier" }),
+  implementation_maintenance_friction: Object.freeze({ ...displayLabels.constructs.implementation_maintenance_friction, orientation: "barrier" }),
+  restrictive_rebound: Object.freeze({ ...displayLabels.constructs.restrictive_rebound, orientation: "barrier" })
 });
 const ORDER = Object.freeze(Object.keys(CONSTRUCTS));
 const SECTION_KEYS = Object.freeze([...ORDER, "research_quality", "context", "safety"]);
@@ -35,9 +37,7 @@ function nativeItemScore(item, numeric) {
   return directionMatchesNative ? numeric : 4 - numeric;
 }
 function scoreMeaning(construct) {
-  return construct.orientation === "capability"
-    ? `Илүү том nativeScore нь ${construct.name.toLowerCase()} илүү хүчтэй дэмжигдсэнийг заана.`
-    : `Илүү том nativeScore нь ${construct.name.toLowerCase()} илүү хүчтэй дэмжигдсэнийг заана.`;
+  return `Илүү том дүрслэх оноо нь ${construct.name.toLowerCase()} илүү хүчтэй дэмжигдсэнийг заана.`;
 }
 function scorePilot(answers = {}) {
   const buckets = Object.fromEntries(ORDER.map(key => [key, []]));
@@ -80,6 +80,12 @@ function deriveSafetyRoute(responses = {}) {
   }
   return false;
 }
+function deriveSafetyGuidance(responses = {}) {
+  return safetyRegistry.items.flatMap(item => {
+    const selected = item.options.find(option => option.code === responses[item.itemKey]);
+    return selected?.routesToSafety && safetyConfig.guidance[item.domain] ? [safetyConfig.guidance[item.domain]] : [];
+  });
+}
 function deriveContextFacts(responses = {}) {
   return contextRegistry.items.map(item => item.options.find(option => option.code === responses[item.itemKey])?.fact).filter(Boolean);
 }
@@ -117,7 +123,7 @@ function assertVersionLock(assessment) {
 function describeConstruct(item, safetyRoute) {
   if (item.nativeScore === null) return "Энэ чиглэлд хангалттай хариулт бүрдээгүй.";
   if (safetyRoute) return "Аюулгүй байдлын чиглүүлэг шаардлагатай тул ердийн тайлбарыг зогсоов.";
-  return `Таны aggregate nativeScore ${item.nativeScore}. ${item.scoreMeaning} Энэ нь зөвхөн таны pilot профайлын дүрслэл бөгөөд ангилал биш.`;
+  return `Таны тухайн чиглэлийн дүрслэх оноо ${item.nativeScore}. ${item.scoreMeaning} Энэ нь зөвхөн таны pilot профайлын дүрслэл бөгөөд ангилал биш.`;
 }
 function barrierLabel(item) {
   if (item.key === "eating_self_efficacy") return "Хооллолтоо зохицуулах итгэл сул дэмжигдсэн";
@@ -128,6 +134,7 @@ function buildPilotReport({ answers = {}, contextResponses = {}, safetyResponses
   const scored = scorePilot(answers);
   const valid = Object.values(scored.constructs).filter(item => item.nativeScore !== null);
   const safetyRoute = deriveSafetyRoute(safetyResponses);
+  const safetyGuidance = deriveSafetyGuidance(safetyResponses);
   const barriers = [...valid].sort((a, b) => b.barrierBurdenScore - a.barrierBurdenScore).slice(0, 2)
     .map(item => ({ construct: item.key, constructOrientation: item.constructOrientation,
       label: barrierLabel(item), barrierBurdenScore: item.barrierBurdenScore }));
@@ -148,15 +155,16 @@ function buildPilotReport({ answers = {}, contextResponses = {}, safetyResponses
     safetyRoute,
     sections: {
       howToRead: { title: "1. Туршилтын үр дүнг хэрхэн унших вэ?", body: DISCLAIMER },
-      profile: { title: "2. Таны 9 хэмжээст профайл", constructs: Object.values(scored.constructs), disclaimer: DISCLAIMER },
+      profile: { title: "2. Таны 9 хэмжээст профайл", constructs: safetyRoute ? [] : Object.values(scored.constructs), disclaimer: DISCLAIMER },
       endorsed: { title: "3. Харьцангуй илүү дэмжигдсэн саадын чиглэл", label: "Таны pilot профайл дотор харьцангуй илүү дэмжигдсэн саадын чиглэл", items: safetyRoute ? [] : barriers },
-      strengths: { title: "4. Танд дэмжлэг болж болох чадварын чиглэлүүд", preliminary: "Саад ба чадварын хэмжээсүүдийг тусад нь эрэмбэлэв. Cross-construct metric equivalence тогтоогдоогүй.", items: safetyRoute ? [] : capabilities },
-      details: { title: "5. Хэмжээс тус бүрийн тайлбар", items: details },
+      strengths: { title: "4. Танд дэмжлэг болж болох чадварын чиглэлүүд", preliminary: "Саад ба чадварын хэмжээсүүдийг тусад нь авч үзсэн. Хэмжээсүүд ижил баталгаажсан хэмжүүртэй эсэх тогтоогдоогүй.", items: safetyRoute ? [] : capabilities },
+      details: { title: "5. Хэмжээс тус бүрийн тайлбар", items: safetyRoute ? [] : details },
       context: { title: "6. Нэмэлт нөхцөл", label: "Нэмэлт нөхцөл", facts: deriveContextFacts(contextResponses), scoringEffect: "Нэмэлт нөхцөл профайлын оноонд нөлөөлөөгүй." },
-      startingDirection: { title: "7. Ажиглаж болох эхний чиглэл", body: safetyRoute ? "Аюулгүй байдлын чиглүүлгийг эхэлж дагана уу." : barriers[0] ? `${barriers[0].label} чиглэл ямар үед тодордгийг шүүмжлэлгүй ажиглан тэмдэглэж болно.` : "Хангалттай мэдээлэл бүрдвэл нэг чиглэлийг ажиглалтаас эхэлж болно." },
-      safety: { title: "8. Аюулгүй байдал, мэргэжлийн тусламж", routed: safetyRoute, body: safetyRoute ? "Яаралтай аюулгүй байдлын дэмжлэг хэрэгтэй байж болзошгүй. Ойрын итгэлтэй хүн болон зохих мэргэжлийн тусламжтай шууд холбогдоно уу. Энэ нь онош биш." : "Энэ тайлан эмч, сэтгэлзүйч, хоолзүйчийн үнэлгээг орлохгүй." },
+      startingDirection: { title: "7. Ажиглаж болох эхний чиглэл", suppressed: safetyRoute, body: safetyRoute ? "" : barriers[0] ? `${barriers[0].label} чиглэл ямар үед тодордгийг шүүмжлэлгүй ажиглан тэмдэглэж болно.` : "Хангалттай мэдээлэл бүрдвэл нэг чиглэлийг ажиглалтаас эхэлж болно." },
+      safety: { title: "8. Аюулгүй байдал, мэргэжлийн тусламж", routed: safetyRoute, guidance: safetyGuidance,
+        body: safetyRoute ? "" : "Энэ тайлан эмч, сэтгэлзүйч, хоолзүйчийн үнэлгээг орлохгүй." },
       limits: { title: "9. Энэ pilot үр дүнгийн хязгаар", body: "Хүнээр психометрийн баталгаажуулалт хийгдээгүй; хүн амын норм тогтоогдоогүй; клиникийн болон сэтгэлзүйн онош биш." },
-      provenance: { title: "10. Хувилбар, provenance", ...VERSION_FIELDS, itemBankSha256: instrument.itemBankSha256,
+      provenance: { title: displayLabels.technical.heading, ...VERSION_FIELDS, itemBankSha256: instrument.itemBankSha256,
         contextVersion: contextRegistry.version, safetyVersion: safetyRegistry.version, pilotStatusLabel: instrument.pilotStatusLabel, generatedAt }
     },
     interactions: { enabled: false, statement: "Хэмжээсүүдийн хоорондын холбоог энэ pilot хувилбарт тайлбарлахгүй." },
@@ -169,9 +177,9 @@ function buildPilotReport({ answers = {}, contextResponses = {}, safetyResponses
   return report;
 }
 
-module.exports = { instrument, registry, contextRegistry, safetyRegistry, CONSTRUCTS, ORDER, DISCLAIMER, VERSION_FIELDS,
+module.exports = { instrument, registry, contextRegistry, safetyRegistry, displayLabels, safetyConfig, CONSTRUCTS, ORDER, DISCLAIMER, VERSION_FIELDS,
   SECTION_KEYS,
-  scorePilot, evaluateResponseQuality, deriveSafetyRoute, deriveContextFacts, validateProfileResponses,
+  scorePilot, evaluateResponseQuality, deriveSafetyRoute, deriveSafetyGuidance, deriveContextFacts, validateProfileResponses,
   validateContextResponses: responses => validateRegistryResponses(responses, contextRegistry),
   validateSafetyResponses: responses => validateRegistryResponses(responses, safetyRegistry),
   assertVersionLock, buildPilotReport };

@@ -16,6 +16,8 @@ The instrument is AI-designed and AI-pretested. It is not human-reviewed, psycho
 - The research-quality response affects no profile score.
 - Private lifecycle analytics cannot support psychometric validation.
 - Invite signing and persistent subject hashing use separate secrets; neither token nor subject hash is analytics data.
+- Mongolia emergency contacts and service references remain pending authoritative human approval, so human invite issuance is disabled.
+- The participation acknowledgment is operational pilot acknowledgment only and is not consent to use responses as psychometric validation research.
 - Mongolian clinical, ethics, language, target-user, accessibility, privacy, and psychometric human review remain required before any broader pilot or claim.
 
 No production migration, deployment, public navigation change, payment integration, advertising, or merge is included.

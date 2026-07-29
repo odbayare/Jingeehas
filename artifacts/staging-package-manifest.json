@@ -66,7 +66,11 @@
     },
     {
       "file": "netlify/functions/_lib/pilot-v2-engine.js",
-      "sha256": "17fab898938a72f819f16334d45059d310508227e8093a5ccb2c0807acb1bd49"
+      "sha256": "fc1f0c70c4ab7ee197317f10eabe905a8cdef47eb0acb5195f9effb71cf3fd8a"
+    },
+    {
+      "file": "netlify/functions/_lib/pilot-v2-safety-config.js",
+      "sha256": "9694a798aafa5d94b516c77ada6cb4a95d07288e618cf2fc14dd5e9a5cfd5e13"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -230,19 +234,19 @@
     },
     {
       "file": "netlify/functions/pilot-v2-assessment.js",
-      "sha256": "6886ceb657b60122869bc5393d7b20eccfbcfe7a9bc99dcabdfbc89d0d96af7f"
+      "sha256": "5a1463f69f7a96069640469d407b0048f29f442f491ab4744135cf6177c435e9"
     },
     {
       "file": "netlify/functions/pilot-v2-event.js",
-      "sha256": "b2763ace4cd3a1d3aca3aeefa94985da6560a4d0609f8522c0e801770a177f2b"
+      "sha256": "b2fda2d8dcecb4831bb369bd295b999dff06149efb2636495a2795ea55174a02"
     },
     {
       "file": "netlify/functions/pilot-v2-instrument.js",
-      "sha256": "52d7b7f2b23fff8b9c13a8c019eb92c45bf386ed3bfdffcb3c6e24fa44319d49"
+      "sha256": "752fbf4e26c51f9611033d1a5b1eee8a8777abe9ff135b6491b795c8856bb672"
     },
     {
       "file": "netlify/functions/pilot-v2-invite-create.js",
-      "sha256": "17c06860e25438fbeca985a00ddc3fc8686d87b2c82cfb368d752a835ed24154"
+      "sha256": "b7b8eb8111429bda673d7834136359f1fec138295ea51679377d5a04e118336c"
     },
     {
       "file": "netlify/functions/qpay-check-payment.js",
@@ -361,8 +365,16 @@
       "sha256": "1b2e1bbfe06b90b3cdb51bd066cda8e2d1ff354afa41031f9b12395da21971e5"
     },
     {
+      "file": "site/pilot-v2/acknowledgment.js",
+      "sha256": "cc53f81bd190d3bff0aadbb58f177c395ebbb22137b8d8cd2c3ac56da41ff867"
+    },
+    {
       "file": "site/pilot-v2/context-registry.js",
       "sha256": "096a3bd4cf3c4c339a0222e8562393d1e74d0faf7408d0370ed70afa1cc6c871"
+    },
+    {
+      "file": "site/pilot-v2/display-labels.js",
+      "sha256": "32137e95118c675cbbf3c5ea8d62f7bf0a7d475430b1ee21d794fd9b952e6229"
     },
     {
       "file": "site/pilot-v2/generated/instrument-v2.1.json",
@@ -378,7 +390,7 @@
     },
     {
       "file": "site/pilot-v2/pilot-v2.js",
-      "sha256": "86956bb73f9fb7a33ad0c1993997ac1426034747585aedf20a67571c2029cd2b"
+      "sha256": "7b2cf1ec8b7e05e7a4539cd7a8b0dd5bb59354ca2729f095303766d580eb5128"
     },
     {
       "file": "site/pilot-v2/safety-registry.js",

@@ -4,6 +4,7 @@
   const exactCopy = "AI-аар боловсруулж, AI симуляцаар урьдчилан шалгасан туршилтын өөрийгөө үнэлэх асуумж.";
   const limitations = ["Хүнээр психометрийн баталгаажуулалт хийгдээгүй.", "Хүн амын норм тогтоогдоогүй.", "Клиникийн болон сэтгэлзүйн онош биш.", "Эмч, сэтгэлзүйч, хоолзүйчийн үнэлгээг орлохгүй.", "Үр дүн нь pilot profile score.", "Өндөр/дунд/бага гэсэн баталгаажсан ангилал биш."];
   const state = { instrument: null, scales: null, contextRegistry: null, safetyRegistry: null, sections: [],
+    displayLabels: null, acknowledgment: null,
     assessmentId: sessionStorage.getItem("pilot_v2_assessment") || "", answers: {}, contextResponses: {}, safetyResponses: {}, currentIndex: 0 };
 
   function consumeInviteFragment() {
@@ -61,18 +62,22 @@
   async function loadInstrument() {
     if (!state.instrument) {
       const data = await api("pilot-v2-instrument");
-      Object.assign(state, { instrument: data.instrument, scales: data.scales, contextRegistry: data.contextRegistry, safetyRegistry: data.safetyRegistry });
+      Object.assign(state, { instrument: data.instrument, scales: data.scales, contextRegistry: data.contextRegistry,
+        safetyRegistry: data.safetyRegistry, displayLabels: data.displayLabels, acknowledgment: data.acknowledgment });
       const constructs = [...new Set(data.instrument.items.filter(item => item.pilotRole === "scored_core_candidate").map(item => item.construct))];
-      state.sections = constructs.map(key => ({ key, type: "profile", title: data.instrument.items.find(item => item.construct === key).construct, items: data.instrument.items.filter(item => item.construct === key) }))
-        .concat({ key: "research_quality", type: "profile", title: "Судалгааны чанарын асуулт", items: data.instrument.items.filter(item => item.pilotRole === "non_scored_research_quality") },
-          { key: "context", type: "context", title: "Нэмэлт нөхцөл", items: data.contextRegistry.items },
-          { key: "safety", type: "safety", title: "Аюулгүй байдлын тусдаа шалгалт", items: data.safetyRegistry.items });
+      state.sections = [{ key: "safety", type: "safety", title: data.displayLabels.sections.safety, items: data.safetyRegistry.items }]
+        .concat(constructs.map(key => ({ key, type: "profile", title: data.displayLabels.constructs[key].name, items: data.instrument.items.filter(item => item.construct === key) })),
+          { key: "research_quality", type: "profile", title: data.displayLabels.sections.research_quality, items: data.instrument.items.filter(item => item.pilotRole === "non_scored_research_quality") },
+          { key: "context", type: "context", title: data.displayLabels.sections.context, items: data.contextRegistry.items });
     }
   }
   async function start() {
     try {
       if (!state.assessmentId) {
-        const data = await api("pilot-v2-assessment", "POST", { action: "start" });
+        const checkbox = document.getElementById("pilot-acknowledgment");
+        const message = document.getElementById("acknowledgment-state");
+        if (!checkbox?.checked) { if (message) message.textContent = "Үргэлжлүүлэхийн өмнө танилцсанаа баталгаажуулна уу."; return; }
+        const data = await api("pilot-v2-assessment", "POST", { action: "start", acknowledged: true, acknowledgmentVersion: state.acknowledgment.version });
         state.assessmentId = data.assessmentId; sessionStorage.setItem("pilot_v2_assessment", state.assessmentId);
         api("pilot-v2-event", "POST", { eventName: "pilot_started", assessmentId: state.assessmentId }).catch(() => {});
       }
@@ -80,7 +85,8 @@
     } catch (error) { showError(error, start, "network_failure"); }
   }
   function landing() {
-    root.innerHTML = `<section class="card">${intro()}<h1>Туршилтын профайл үүсгэх</h1><p>49 candidate item, тусдаа нэмэлт нөхцөл болон аюулгүй байдлын модулиас бүрдэх software pilot. Хариу нь хүний validation evidence болохгүй.</p><div class="actions"><button id="start-pilot">${state.assessmentId ? "Үргэлжлүүлэх" : "Эхлэх"}</button></div></section>`;
+    const acknowledgment = state.acknowledgment;
+    root.innerHTML = `<section class="card">${intro()}<h1>${acknowledgment.title}</h1><ul>${acknowledgment.statements.map(statement => `<li>${statement}</li>`).join("")}</ul>${state.assessmentId ? "" : '<label class="option"><input id="pilot-acknowledgment" type="checkbox"><span>Дээрх мэдээлэлтэй танилцаж, сайн дураар үргэлжлүүлэхээ баталгаажуулж байна.</span></label><p id="acknowledgment-state" role="status"></p>'}<div class="actions"><button id="start-pilot">${state.assessmentId ? "Үргэлжлүүлэх" : "Танилцаж, эхлэх"}</button></div></section>`;
     document.getElementById("start-pilot").addEventListener("click", start);
   }
   function selectedFor(section, itemKey) {
@@ -119,11 +125,16 @@
       answers: section.type === "profile" ? values : {}, contextResponses: section.type === "context" ? values : {},
       safetyResponses: section.type === "safety" ? values : {} };
     try {
-      await api("pilot-v2-assessment", "POST", payload);
+      const saved = await api("pilot-v2-assessment", "POST", payload);
       if (section.type === "profile") Object.assign(state.answers, values);
       if (section.type === "context") Object.assign(state.contextResponses, values);
       if (section.type === "safety") Object.assign(state.safetyResponses, values);
-      saveState.textContent = "Хадгалагдлаа."; state.currentIndex += 1; renderSection();
+      saveState.textContent = "Хадгалагдлаа.";
+      if (saved.safetyRoute) {
+        api("pilot-v2-event", "POST", { eventName: "pilot_completed", assessmentId: state.assessmentId }).catch(() => {});
+        return location.assign("/pilot-v2/report");
+      }
+      state.currentIndex += 1; renderSection();
     } catch (error) {
       saveState.textContent = "Хадгалж чадсангүй. Дахин оролдоно уу."; submit.disabled = false;
       emitError(error, "save_failure");
@@ -152,12 +163,15 @@
   const safeText = value => String(value == null ? "" : value).replace(/[&<>"']/g, char => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]));
   function renderReport(report) {
     const p = report.sections;
-    const safetyFirst = report.safetyRoute ? `<div class="safety"><h2>${safeText(p.safety.title)}</h2><p>${safeText(p.safety.body)}</p></div>` : "";
-    root.innerHTML = `<section class="card ${report.safetyRoute ? "safety-report" : ""}">${intro()}<h1>${safeText(report.title)}</h1>${safetyFirst}<h2>${safeText(p.howToRead.title)}</h2><p>${safeText(p.howToRead.body)}</p><h2>${safeText(p.profile.title)}</h2>${p.profile.constructs.map(item => `<div class="bar-row"><strong class="bar-name">${safeText(item.name)}</strong><progress max="100" value="${item.nativeScore == null ? 0 : item.nativeScore}">${item.nativeScore == null ? 0 : item.nativeScore}</progress><span>${item.nativeScore == null ? "—" : `${item.nativeScore}`}</span><small class="status">${item.validItems}/${item.totalItems} · ${safeText(item.dataStatus)} · ${safeText(item.constructOrientation)}</small></div>`).join("")}<p class="muted">${safeText(p.profile.disclaimer)}</p>
+    const labels = state.displayLabels;
+    const safetyFirst = report.safetyRoute ? `<div class="safety"><h2>${safeText(p.safety.title)}</h2>${p.safety.guidance.map(item => `<article><h3>${safeText(item.heading)}</h3><p>${safeText(item.body)}</p></article>`).join("")}</div>` : "";
+    const ordinary = report.safetyRoute ? "" : `<h2>${safeText(p.profile.title)}</h2>${p.profile.constructs.map(item => `<div class="bar-row"><strong class="bar-name">${safeText(item.name)}</strong><progress max="100" value="${item.nativeScore == null ? 0 : item.nativeScore}">${item.nativeScore == null ? 0 : item.nativeScore}</progress><span>${item.nativeScore == null ? "—" : `${item.nativeScore}`}</span><small class="status">${item.validItems}/${item.totalItems} · ${safeText(labels.dataStatuses[item.dataStatus])} · ${safeText(labels.orientations[item.constructOrientation])}</small></div>`).join("")}<p class="muted">${safeText(p.profile.disclaimer)}</p>
     <h2>${safeText(p.endorsed.title)}</h2><p>${safeText(p.endorsed.label)}</p>${p.endorsed.items.length ? `<ul>${p.endorsed.items.map(item => `<li>${safeText(item.label)}</li>`).join("")}</ul>` : "<p>Энэ хэсгийн ердийн тайлбарыг үзүүлэхгүй.</p>"}
     <h2>${safeText(p.strengths.title)}</h2><p>${safeText(p.strengths.preliminary)}</p>${p.strengths.items.length ? `<ul>${p.strengths.items.map(item => `<li>${safeText(item.label)} — ${safeText(item.wording)}</li>`).join("")}</ul>` : "<p>Энэ хэсгийн ердийн тайлбарыг үзүүлэхгүй.</p>"}
-    <h2>${safeText(p.details.title)}</h2>${p.details.items.map(item => `<article class="detail"><h3>${safeText(item.name)}</h3><p>${safeText(item.measures)}</p><p><strong>${item.nativeScore == null ? "—" : item.nativeScore}</strong> · ${item.validItems}/${item.totalItems} · ${safeText(item.dataStatus)}</p><p>${safeText(item.scoreMeaning)}</p><p>${safeText(item.interpretation)}</p><p><em>${safeText(item.reflectionQuestion)}</em></p></article>`).join("")}
-    <h2>${safeText(p.context.title)}</h2>${p.context.facts.length ? `<ul>${p.context.facts.map(fact => `<li>${safeText(fact)}</li>`).join("")}</ul>` : "<p>Нэмэлт нөхцөл тэмдэглээгүй.</p>"}<p>${safeText(p.context.scoringEffect)}</p><h2>${safeText(p.startingDirection.title)}</h2><p>${safeText(p.startingDirection.body)}</p>${report.safetyRoute ? "" : `<h2>${safeText(p.safety.title)}</h2><p>${safeText(p.safety.body)}</p>`}<h2>${safeText(p.limits.title)}</h2><p>${safeText(p.limits.body)}</p><p>${safeText(report.interactions.statement)}</p><h2>${safeText(p.provenance.title)}</h2><dl><dt>Instrument</dt><dd>${safeText(p.provenance.instrumentVersion)}</dd><dt>Scoring</dt><dd>${safeText(p.provenance.scoringVersion)}</dd><dt>Report</dt><dd>${safeText(p.provenance.reportVersion)}</dd><dt>Item-bank SHA-256</dt><dd>${safeText(p.provenance.itemBankHash)}</dd><dt>Generated</dt><dd>${safeText(p.provenance.generatedAt)}</dd></dl></section>`;
+    <h2>${safeText(p.details.title)}</h2>${p.details.items.map(item => `<article class="detail"><h3>${safeText(item.name)}</h3><p>${safeText(item.measures)}</p><p><strong>${item.nativeScore == null ? "—" : item.nativeScore}</strong> · ${item.validItems}/${item.totalItems} · ${safeText(labels.dataStatuses[item.dataStatus])}</p><p>${safeText(item.scoreMeaning)}</p><p>${safeText(item.interpretation)}</p><p><em>${safeText(item.reflectionQuestion)}</em></p></article>`).join("")}
+    <h2>${safeText(p.context.title)}</h2>${p.context.facts.length ? `<ul>${p.context.facts.map(fact => `<li>${safeText(fact)}</li>`).join("")}</ul>` : "<p>Нэмэлт нөхцөл тэмдэглээгүй.</p>"}<p>${safeText(p.context.scoringEffect)}</p><h2>${safeText(p.startingDirection.title)}</h2><p>${safeText(p.startingDirection.body)}</p><h2>${safeText(p.safety.title)}</h2><p>${safeText(p.safety.body)}</p>`;
+    const technical = `<details><summary>${safeText(labels.technical.heading)}</summary><dl><dt>${safeText(labels.technical.instrumentVersion)}</dt><dd>${safeText(p.provenance.instrumentVersion)}</dd><dt>${safeText(labels.technical.scoringVersion)}</dt><dd>${safeText(p.provenance.scoringVersion)}</dd><dt>${safeText(labels.technical.reportVersion)}</dt><dd>${safeText(p.provenance.reportVersion)}</dd><dt>${safeText(labels.technical.itemBankHash)}</dt><dd>${safeText(p.provenance.itemBankHash)}</dd><dt>${safeText(labels.technical.generatedAt)}</dt><dd>${safeText(p.provenance.generatedAt)}</dd></dl></details>`;
+    root.innerHTML = `<section class="card ${report.safetyRoute ? "safety-report" : ""}">${intro()}<h1>${safeText(report.title)}</h1>${safetyFirst}<h2>${safeText(p.howToRead.title)}</h2><p>${safeText(p.howToRead.body)}</p>${ordinary}<h2>${safeText(p.limits.title)}</h2><p>${safeText(p.limits.body)}</p><p>${safeText(report.interactions.statement)}</p>${technical}</section>`;
   }
   async function report() {
     try {
@@ -171,6 +185,7 @@
   async function boot() {
     try {
       await api("pilot-v2-access");
+      await loadInstrument();
       if (location.pathname.endsWith("/questions")) await questions();
       else if (location.pathname.endsWith("/report")) await report();
       else landing();

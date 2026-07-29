@@ -22,4 +22,4 @@ Barrier candidates use only `barrierBurdenScore`; a capability-derived burden is
 
 Collected bounded context is rendered as concise facts under “Нэмэлт нөхцөл.” Raw profile, context, and safety responses are omitted. When stored safety codes route to safety, guidance appears first and ranking, strengths, and starting-direction interpretation stop.
 
-Provenance renders the immutable instrument, bank hash, scoring version, report version, pilot status, and generated timestamp.
+The collapsed “Хувилбарын техникийн мэдээлэл” section renders the immutable instrument, bank hash, scoring version, report version, pilot status, and generated timestamp with Mongolian labels. Internal construct, orientation, and data-status keys are not customer-facing.

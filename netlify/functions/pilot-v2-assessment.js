@@ -4,13 +4,15 @@ const { getDatabase } = require("./_lib/store.js");
 const { handler, response } = require("./_lib/http.js");
 const { authorizePilot } = require("./_lib/pilot-v2-access.js");
 const { instrument, contextRegistry, safetyRegistry, SECTION_KEYS, VERSION_FIELDS, assertVersionLock,
-  validateProfileResponses, validateContextResponses, validateSafetyResponses, buildPilotReport } = require("./_lib/pilot-v2-engine.js");
+  validateProfileResponses, validateContextResponses, validateSafetyResponses, deriveSafetyRoute, buildPilotReport } = require("./_lib/pilot-v2-engine.js");
+const acknowledgment = require("../../pilot-v2/acknowledgment.js");
 
 function publicState(row) {
   return {
     assessmentId: row.id, status: row.status, answers: row.answers || {},
     contextResponses: row.contextResponses || {}, safetyResponses: row.safetyResponses || {},
     lastCompletedSection: row.lastCompletedSection || null, report: row.report || null,
+    safetyRoute: row.report?.safetyRoute === true,
     provenance: { instrumentVersion: row.instrumentVersion, itemBankHash: row.itemBankHash,
       scoringVersion: row.scoringVersion, reportVersion: row.reportVersion, generatedAt: row.generatedAt }
   };
@@ -22,10 +24,14 @@ exports.handler = handler("POST", async (event, body) => {
   const now = new Date().toISOString();
   const action = String(body.action || "");
   if (action === "start") {
+    if (body.acknowledged !== true || body.acknowledgmentVersion !== acknowledgment.version) {
+      throw Object.assign(new Error("Pilot acknowledgment is required"), { statusCode: 400, code: "pilot_acknowledgment_required" });
+    }
     const assessment = {
       id: `pv2_${crypto.randomUUID()}`, accessSubjectHash: access.subjectHash, status: "in_progress",
       ...VERSION_FIELDS, pilotStatusLabel: instrument.pilotStatusLabel, generatedAt: now,
-      answers: {}, contextResponses: {}, safetyResponses: {}, lastCompletedSection: null, report: null
+      answers: {}, contextResponses: {}, safetyResponses: {}, lastCompletedSection: null, report: null,
+      acknowledgmentVersion: acknowledgment.version, acknowledgedAt: now
     };
     await database.savePilotV2Assessment(assessment);
     return response(201, { assessmentId: assessment.id, status: assessment.status, provenance: {
@@ -45,12 +51,18 @@ exports.handler = handler("POST", async (event, body) => {
     const safetyResponses = validateSafetyResponses(body.safetyResponses || {});
     const lastCompletedSection = String(body.lastCompletedSection || "");
     if (!SECTION_KEYS.includes(lastCompletedSection)) throw Object.assign(new Error("Invalid pilot section"), { statusCode: 400, code: "invalid_pilot_section" });
-    const updated = { ...current, answers: { ...(current.answers || {}), ...answers },
+    let updated = { ...current, answers: { ...(current.answers || {}), ...answers },
       contextResponses: { ...(current.contextResponses || {}), ...contextResponses },
       safetyResponses: { ...(current.safetyResponses || {}), ...safetyResponses },
       lastCompletedSection, updatedAt: now };
+    const safetyRoute = deriveSafetyRoute(updated.safetyResponses);
+    if (lastCompletedSection === "safety" && safetyRoute) {
+      updated = { ...updated, status: "complete", completedAt: now,
+        report: buildPilotReport({ answers: {}, contextResponses: {}, safetyResponses: updated.safetyResponses, generatedAt: now }) };
+    }
     await database.savePilotV2Assessment(updated);
     return response(200, { assessmentId, status: updated.status, lastCompletedSection,
+      safetyRoute, nextRoute: safetyRoute ? "/pilot-v2/report" : null,
       savedItemKeys: Object.keys(answers), savedContextKeys: Object.keys(contextResponses), savedSafetyKeys: Object.keys(safetyResponses) });
   }
   if (action === "complete") {

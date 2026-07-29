@@ -98,7 +98,8 @@ class MemoryDatabaseAdapter {
   }
   async recordPilotV2Event(payload) {
     const duplicate = this.pilotV2Events.some(row => row.accessSubjectHash === payload.accessSubjectHash
-      && row.assessmentId === payload.assessmentId && row.eventName === payload.eventName && row.section === payload.section);
+      && row.assessmentId === payload.assessmentId && row.eventName === payload.eventName
+      && (payload.eventName === "error_category" ? row.category === payload.category : row.section === payload.section));
     if (!duplicate) this.pilotV2Events.push(copy(payload));
     return { accepted: true, recorded: !duplicate };
   }
