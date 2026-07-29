@@ -30,7 +30,9 @@ assert(landing.includes("Эмнэлгийн онош тавихгүй. Таны 
 assert.equal((landing.match(/class="hero-question"/g) || []).length, 3);
 assert(!/<section class="hero"[^>]*>[\s\S]*?<h1[^>]*>Илүүдэл жингээс салах тест үнэлгээ<\/h1>/.test(landing));
 assert(!landing.includes("Үнэ: 9,900₮"));
-assert(!/<section class="hero"[\s\S]*?9,900₮[\s\S]*?<\/section>/.test(landing));
+const landingHero = /<section class="hero"[^>]*>[\s\S]*?<\/section>/.exec(landing)?.[0] || "";
+assert(landingHero);
+assert(!landingHero.includes("9,900₮"));
 assert.equal(app.PRODUCT.amount, 9900);
 const appSource = require("node:fs").readFileSync(require.resolve("../app.js"), "utf8");
 assert(appSource.includes('if (route === "landing") trackEvent("landing_viewed"'), "landing analytics event remains wired");

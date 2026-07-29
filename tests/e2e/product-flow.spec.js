@@ -103,6 +103,53 @@ test("landing CTA retains SPA routing and analytics tracking", async ({ page }) 
   await expect(page.locator("#contact-email")).toBeVisible();
 });
 
+test("natural Mongolian report preview is complete, ordered, and responsive", async ({ page }) => {
+  const lead = "Таны өгсөн хариултуудыг нэгтгэж, жин хасахад тань юу хамгийн их саад болж байгааг, тэр нь өдөр тутмын амьдралд тань хэрхэн илэрдгийг, юунаас эхэлбэл илүү бодитойг тайлбарлана.";
+  const labels = ["ТАНД ХАМГИЙН ИХ СААД БОЛЖ БУЙ ЗҮЙЛ", "ЭНЭ НЬ ӨДӨР ТУТМЫН АМЬДРАЛД ХЭРХЭН ИЛЭРДЭГ ВЭ?", "ЮУНААС ЭХЭЛЭХ ВЭ?", "ДЭГЛЭМЭЭ БАРЬЖ ЧАДААГҮЙ ҮЕД ЯАХ ВЭ?", "ӨӨРТӨӨ ТОХИРСОН АРГА БАРИЛАА ХЭРХЭН СОНГОХ ВЭ?"];
+  const bodies = [
+    "Сэтгэл хөдлөл, хэт хатуу дэглэм, ядаргаа, орчны нөлөө, цагийн хуваарь зэрэг хүчин зүйлээс аль нь таны жин хасах оролдлогод хамгийн их нөлөөлж байгааг тодорхойлно.",
+    "Та ямар үед хоолны хяналтаа алдах хандлагатай байдаг, ямар нөхцөлд дэглэмээ барихад хэцүү болдог, өмнөх оролдлогууд яагаад тогтвортой үргэлжлээгүйг таны хариулттай холбон тайлбарлана.",
+    "Бүхнийг зэрэг өөрчлөхийг шаардахгүй. Танд хамгийн түрүүнд анхаарах шаардлагатай, өдөр тутамдаа хэрэгжүүлж болох цөөн алхмыг санал болгоно.",
+    "Дэглэмээ барьж чадаагүй нэг өдрөөс болж бүхнээ орхихгүйгээр дараагийн хоол, дараагийн өдрөөсөө хэрхэн хэвийн үргэлжлүүлэхийг тайлбарлана.",
+    "Нойр, ажил, гэр бүл, хөдөлгөөн, санхүүгийн боломж болон өдөр тутмын хуваарьтайгаа нийцүүлэн жин хасах арга барилаа хэрхэн сонгохыг ойлгоно."
+  ];
+  const banned = ["нэг удаа хазайх", "хазайсны дараа", "хэмнэлдээ эргэн орох", "гол саадтай ажиллах", "бодит аргуудыг авна", "танд тохирох орчин", "төлөвлөгөө тасарвал"];
+  for (const [width, height] of [[375, 812], [390, 844], [430, 900], [1440, 900]]) {
+    await page.setViewportSize({ width, height });
+    await page.goto("/");
+    const preview = page.locator("#sample-report");
+    await expect(preview).toHaveCount(1);
+    await expect(preview.getByText("Таны авах тайлан", { exact: true })).toBeVisible();
+    await expect(preview.getByRole("heading", { name: "Таны тайлан ямар байх вэ?" })).toBeVisible();
+    await expect(preview.locator(".report-preview-lead")).toHaveText(lead);
+    await expect(preview.locator(".report-preview-item")).toHaveCount(5);
+    for (const label of labels) await expect(preview.getByText(label, { exact: true })).toBeVisible();
+    for (const body of bodies) await expect(preview.getByText(body, { exact: true })).toBeVisible();
+    for (const phrase of banned) await expect(preview.getByText(phrase, { exact: false })).toHaveCount(0);
+    await expect(preview.locator(".section-close")).toContainText("10 орчим минутын тест");
+    await expect(preview.locator(".section-close")).toContainText("9,900₮");
+    await expect(preview.getByText("Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш.", { exact: true })).toBeVisible();
+    const layout = await preview.evaluate(element => {
+      const card = element.querySelector(".sample-report-card").getBoundingClientRect();
+      const labelRects = [...element.querySelectorAll(".sample-kicker")].map(label => {
+        const rect = label.getBoundingClientRect();
+        return { left: rect.left, right: rect.right, fontSize: parseFloat(getComputedStyle(label).fontSize) };
+      });
+      const heading = element.querySelector("h2").getBoundingClientRect();
+      const leadBox = element.querySelector(".report-preview-lead").getBoundingClientRect();
+      return { card: { left: card.left, right: card.right }, labelRects, headingWidth: heading.width, leadWidth: leadBox.width, overflow: document.documentElement.scrollWidth - document.documentElement.clientWidth };
+    });
+    expect(layout.overflow).toBeLessThanOrEqual(1);
+    expect(layout.card.left).toBeGreaterThanOrEqual(0);
+    expect(layout.card.right).toBeLessThanOrEqual(width + 1);
+    expect(layout.headingWidth).toBeLessThanOrEqual(width);
+    expect(layout.leadWidth).toBeLessThanOrEqual(width);
+    expect(layout.labelRects.every(rect => rect.left >= 0 && rect.right <= width + 1 && rect.fontSize >= 12.8)).toBe(true);
+  }
+  const order = await page.locator(".landing-page").evaluate(element => [...element.querySelectorAll(".hero, #sample-report, .methodology-summary, .scientific-methods-box, .site-footer")].map(node => node.matches(".hero") ? "hero" : node.id || node.classList[0]));
+  expect(order).toEqual(["hero", "sample-report", "methodology-summary", "scientific-methods-box", "site-footer"]);
+});
+
 test("landing restores trust content before the retained scientific methodology box", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");

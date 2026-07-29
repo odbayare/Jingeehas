@@ -89,6 +89,18 @@ dd { margin: 0 0 0.8rem; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 0.75rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; white-space: normal; }
 .site-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); }
+.sample-report { margin: 0 0 clamp(2.5rem, 8vw, 6rem); scroll-margin-top: 1rem; }
+.sample-report h2 { max-width: 18ch; margin: 0.35rem 0 1rem; font-size: clamp(2rem, 4.6vw, 3.35rem); }
+.report-preview-lead { max-width: 72ch; margin: 0 0 1.5rem; color: var(--text); font-size: clamp(1.05rem, 1.4vw, 1.2rem); font-weight: 600; line-height: 1.7; }
+.sample-report-card { max-width: 960px; border: 1px solid #b9cabc; border-radius: 1.35rem; padding: clamp(0.4rem, 1.5vw, 0.75rem) clamp(1.1rem, 3.5vw, 2.5rem); background: #f4f8f3; box-shadow: 0 16px 36px rgba(32, 49, 38, 0.08); }
+.report-preview-item { min-width: 0; padding: clamp(1rem, 2.2vw, 1.45rem) 0; }
+.report-preview-item + .report-preview-item { border-top: 1px solid rgba(35, 92, 67, 0.2); }
+.sample-report-card p:not(.sample-kicker) { max-width: 76ch; margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.7; overflow-wrap: break-word; }
+.sample-kicker { margin: 0 0 0.35rem; color: var(--primary-dark); font-size: clamp(0.8rem, 1.1vw, 0.9rem); font-weight: 850; letter-spacing: 0.055em; line-height: 1.5; overflow-wrap: anywhere; }
+.sample-kicker:first-child { margin-top: 0; }
+.section-close { max-width: 76ch; margin: 1.15rem 0 0.35rem; color: var(--primary-dark); line-height: 1.6; }
+.price-token { white-space: nowrap; }
+.sample-report > .methodology-limitation { margin: 0; }
 .methodology-summary { margin: 0 0 clamp(2rem, 7vw, 5rem); padding: clamp(1.25rem, 4vw, 3rem); border: 1px solid var(--border); border-radius: 1.5rem; background: var(--surface); box-shadow: 0 18px 45px rgba(32, 49, 38, 0.09); }
 .methodology-heading { max-width: 780px; }
 .methodology-heading h2 { margin: 0.35rem 0 1rem; font-size: clamp(1.8rem, 4vw, 2.7rem); }
@@ -170,6 +182,13 @@ code { overflow-wrap: anywhere; }
   .funnel-visual { grid-template-columns: 1fr; }
   .funnel-visual li { min-height: 70px; }
   .funnel-visual li:not(:last-child)::after { content: "↓"; right: 49%; top: auto; bottom: -0.7rem; }
+  .sample-report { margin-bottom: 2.5rem; }
+  .sample-report h2 { max-width: none; font-size: clamp(1.85rem, 8vw, 2.35rem); }
+  .report-preview-lead { margin-bottom: 1.1rem; font-size: 1rem; line-height: 1.65; }
+  .sample-report-card { border-radius: 1rem; padding: 0.25rem 1rem; }
+  .report-preview-item { padding: 1rem 0; }
+  .sample-report-card p:not(.sample-kicker) { font-size: 1rem; line-height: 1.65; }
+  .sample-kicker { font-size: 0.8rem; letter-spacing: 0.04em; }
   .methodology-pillars { grid-template-columns: 1fr; }
   .methodology-summary { padding: 1.1rem; border-radius: 1rem; }
   .scientific-method-names, .scientific-methods-grid { grid-template-columns: 1fr; }
