@@ -89,9 +89,19 @@ dd { margin: 0 0 0.8rem; }
 table { width: 100%; border-collapse: collapse; }
 th, td { padding: 0.75rem; border-bottom: 1px solid var(--border); text-align: left; vertical-align: top; white-space: normal; }
 .site-footer { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--muted); }
+.methodology-summary { margin: 0 0 clamp(2rem, 7vw, 5rem); padding: clamp(1.25rem, 4vw, 3rem); border: 1px solid var(--border); border-radius: 1.5rem; background: var(--surface); box-shadow: 0 18px 45px rgba(32, 49, 38, 0.09); }
+.methodology-heading { max-width: 780px; }
+.methodology-heading h2 { margin: 0.35rem 0 1rem; font-size: clamp(1.8rem, 4vw, 2.7rem); }
+.methodology-principle { border-left: 4px solid var(--primary); padding-left: 1rem; font-weight: 700; }
+.methodology-pillars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+.methodology-pillars article { min-width: 0; border: 1px solid var(--border); border-radius: 1rem; padding: 1rem; background: #fff; }
+.methodology-pillars h3, .methodology-disclosure h3 { margin: 0 0 0.65rem; font-size: 1.05rem; }
+.methodology-pillars p { margin-bottom: 0; }
+.methodology-disclosure { max-width: 900px; }
+.methodology-limitation { color: var(--muted); }
 .scientific-methods-box { margin: clamp(1rem, 4vw, 2.5rem) 0 clamp(2rem, 7vw, 5rem); border: 1px solid #b9cabc; border-radius: 1.5rem; padding: clamp(1.25rem, 4vw, 3rem); background: #f4f8f3; box-shadow: 0 18px 45px rgba(32, 49, 38, 0.09); }
 .scientific-methods-box > .eyebrow { margin: 0 0 0.25rem; }
-.scientific-methods-box > h2 { margin: 0 0 0.75rem; font-size: clamp(1.5rem, 3vw, 2rem); }
+.scientific-methods-box > h3 { margin: 0 0 0.75rem; font-size: clamp(1.5rem, 3vw, 2rem); }
 .scientific-methods-intro { max-width: 76ch; margin: 0 0 1rem; }
 .scientific-method-names { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.65rem 1rem; margin: 1rem 0 1.25rem; padding: 0; list-style: none; }
 .scientific-method-names li { min-width: 0; border-left: 3px solid var(--primary); padding: 0.45rem 0 0.45rem 0.75rem; font-weight: 750; line-height: 1.4; overflow-wrap: break-word; }
@@ -101,7 +111,7 @@ th, td { padding: 0.75rem; border-bottom: 1px solid var(--border); text-align: l
 .scientific-methods-details { margin-top: 1.25rem; }
 .scientific-methods-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
 .scientific-methods-grid article { min-width: 0; border: 1px solid var(--border); border-radius: 1rem; padding: 1rem; background: #fff; overflow-wrap: break-word; }
-.scientific-methods-grid h3 { margin: 0 0 0.55rem; color: var(--primary-dark); font-size: 1rem; line-height: 1.4; }
+.scientific-methods-grid h4 { margin: 0 0 0.55rem; color: var(--primary-dark); font-size: 1rem; line-height: 1.4; }
 .scientific-methods-grid p { margin: 0; }
 .scientific-methods-disclaimer { margin: 1.25rem 0 0; border-left: 4px solid var(--primary); padding: 0.85rem 1rem; background: #e8f2e9; color: var(--text); }
 .methodology-page section { margin-top: 2rem; padding-top: 0.25rem; border-top: 1px solid var(--border); }
@@ -160,6 +170,8 @@ code { overflow-wrap: anywhere; }
   .funnel-visual { grid-template-columns: 1fr; }
   .funnel-visual li { min-height: 70px; }
   .funnel-visual li:not(:last-child)::after { content: "↓"; right: 49%; top: auto; bottom: -0.7rem; }
+  .methodology-pillars { grid-template-columns: 1fr; }
+  .methodology-summary { padding: 1.1rem; border-radius: 1rem; }
   .scientific-method-names, .scientific-methods-grid { grid-template-columns: 1fr; }
   .scientific-methods-box { margin-top: 1.25rem; padding: 1.1rem; border-radius: 1rem; }
   .actions .button { flex: 1 1 100%; }

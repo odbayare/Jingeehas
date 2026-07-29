@@ -11,7 +11,9 @@ const landing = app.renderForPath("/");
 const methodology = app.renderForPath("/methodology");
 
 assert.equal(app.routeName("/methodology"), "methodology");
-for (const removed of ["Үнэлгээний зарчим", "Арга зүй ба судалгааны үндэслэл", "Үнэлгээ нь нэг асуулт эсвэл нэг нийт оноогоор дүгнэхгүй", "Аюулгүй байдлын дохио", "Сэтгэлзүй ба зан үйлийн хэв маяг", "Өдөр тутмын саад ба орчны нөлөө", "Судалж харьцуулсан арга зүй:", "Эдгээр хэрэгслийг нэг багц болгон шууд хуулбарлаагүй", "Тайлан хэрхэн гардаг вэ?", "Арга зүйг дэлгэрэнгүй унших"]) assert(!landing.includes(removed), removed);
+for (const restored of ["Үнэлгээний зарчим", "Арга зүй ба судалгааны үндэслэл", "Үнэлгээ нь нэг асуулт эсвэл нэг нийт оноогоор дүгнэхгүй", "Аюулгүй байдлын дохио", "үндсэн тестийн явцад танина", "Сэтгэлзүй ба зан үйлийн хэв маяг", "Өдөр тутмын саад ба орчны нөлөө", "Судалж харьцуулсан арга зүй:", "Эдгээр хэрэгслийг нэг багц болгон шууд хуулбарлаагүй", "Тайлан хэрхэн гардаг вэ?", "Арга зүйг дэлгэрэнгүй унших"]) assert(landing.includes(restored), restored);
+assert(!landing.includes("анхаарах шинж байгаа эсэхийг эхэлж шалгана"));
+assert(landing.includes('<a class="button secondary" href="/methodology" data-route>Арга зүйг дэлгэрэнгүй унших</a>'));
 assert(methodology.includes("Арга зүй ба судалгааны үндэслэл"));
 
 const scientificBoxTitle = "Ашигласан шинжлэх ухааны аргачлалууд";
@@ -23,7 +25,9 @@ assert(landing.includes(scientificDisclaimer));
 for (const method of ["Биопсихосоциал загвар", "Dutch Eating Behavior Questionnaire", "DEBQ", "Three-Factor Eating Questionnaire", "TFEQ", "Binge Eating Scale", "BES", "Night Eating Questionnaire", "NEQ", "Когнитив-зан үйлийн функциональ шинжилгээ"]) assert(landing.includes(method), method);
 assert(landing.indexOf('id="scientific-methods-title"') < landing.indexOf("</main>"));
 assert.equal((landing.match(/class="scientific-methods-box"/g) || []).length, 1);
-assert(landing.includes('<h2 id="scientific-methods-title">'));
+assert(landing.includes('<h2 id="methodology-title">'));
+assert(landing.includes('<h3 id="scientific-methods-title">'));
+assert.equal((landing.match(/<article><h4>/g) || []).length, 6);
 assert(landing.includes('type="button" data-action="toggle-scientific-methods" aria-expanded="true" aria-controls="scientific-methods-details" hidden'));
 assert(landing.includes('<div id="scientific-methods-details" class="scientific-methods-details">'));
 
