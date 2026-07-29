@@ -6,6 +6,7 @@
     "test": "node tests/run-all.js",
     "test:contracts": "node tests/contracts/run.js",
     "test:e2e": "playwright test",
+    "build:pilot-v2": "node tools/build-pilot-v2-instrument.mjs",
     "build:production": "node tools/build-production.mjs",
     "build:staging": "node tools/build-staging.mjs",
     "generate:artifacts": "node tools/generate-production-manifest.mjs",

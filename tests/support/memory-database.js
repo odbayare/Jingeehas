@@ -3,7 +3,7 @@ const { TABLES } = require("../../netlify/functions/_lib/config.js");
 function copy(value) { return value == null ? value : JSON.parse(JSON.stringify(value)); }
 
 class MemoryDatabaseAdapter {
-  constructor() { this.tables = Object.fromEntries(TABLES.map(table => [table, new Map()])); this.activationLocks = new Map(); }
+  constructor() { this.tables = Object.fromEntries(TABLES.map(table => [table, new Map()])); this.activationLocks = new Map(); this.pilotV2Assessments = new Map(); this.pilotV2Events = []; }
   table(name) { if (!this.tables[name]) throw new Error(`Unknown table: ${name}`); return this.tables[name]; }
   async get(table, id) { return copy(this.table(table).get(id) || null); }
   async find(table, filters = {}) { return copy([...this.table(table).values()].filter(row => Object.entries(filters).every(([key, value]) => row[key] === value))); }
@@ -90,6 +90,18 @@ class MemoryDatabaseAdapter {
     const redeemed = { ...handoff, redeemedAt: input.now, updatedAt: input.now };
     this.table("access_handoffs").set(handoff.id, redeemed);
     return { handoff: redeemed, session: { id: session.id, expiresAt: session.expiresAt }, assessmentId: handoff.assessmentId };
+  }
+  async savePilotV2Assessment(payload) { this.pilotV2Assessments.set(payload.id, copy(payload)); return copy(payload); }
+  async getPilotV2Assessment(assessmentId, accessSubjectHash) {
+    const row = this.pilotV2Assessments.get(assessmentId);
+    return row?.accessSubjectHash === accessSubjectHash ? copy(row) : null;
+  }
+  async recordPilotV2Event(payload) {
+    const duplicate = this.pilotV2Events.some(row => row.accessSubjectHash === payload.accessSubjectHash
+      && row.assessmentId === payload.assessmentId && row.eventName === payload.eventName
+      && (payload.eventName === "error_category" ? row.category === payload.category : row.section === payload.section));
+    if (!duplicate) this.pilotV2Events.push(copy(payload));
+    return { accepted: true, recorded: !duplicate };
   }
   async createReportSnapshotVersion(input) {
     const rows = this.table("report_snapshot_versions");

@@ -9,11 +9,11 @@
   "staticFiles": [
     {
       "file": "_headers",
-      "sha256": "c174d1500c48b608a6f77817dda418514825c27297abfbdfc487415d98a22950"
+      "sha256": "ffd7f794d84f442ceb591cbd66093f30e43f26c286171cb05130470439b19c30"
     },
     {
       "file": "_redirects",
-      "sha256": "6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef"
+      "sha256": "6d20a4cb1d8142ca47c80909e5a2c05dc01300069c415aee3677f94981ebb4d1"
     },
     {
       "file": "app.js",
@@ -72,6 +72,11 @@
     "advisor-password-change",
     "advisor-report",
     "analytics-collect",
+    "pilot-v2-access",
+    "pilot-v2-assessment",
+    "pilot-v2-event",
+    "pilot-v2-instrument",
+    "pilot-v2-invite-create",
     "qpay-check-payment",
     "qpay-create-invoice",
     "qpay-payment-callback",

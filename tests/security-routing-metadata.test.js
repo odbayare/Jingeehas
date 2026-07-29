@@ -9,7 +9,8 @@ const headers = fs.readFileSync(path.join(root, "_headers"), "utf8");
 for (const header of ["Content-Security-Policy", "Referrer-Policy", "X-Content-Type-Options", "X-Frame-Options", "Permissions-Policy", "Strict-Transport-Security"]) assert(headers.includes(header));
 assert(headers.includes("frame-ancestors 'none'"));
 assert(!headers.includes("unsafe-inline"));
-assert.equal(fs.readFileSync(path.join(root, "_redirects"), "utf8").trim(), "/* /index.html 200");
+const redirects = fs.readFileSync(path.join(root, "_redirects"), "utf8").trim().split(/\r?\n/);
+assert.deepEqual(redirects, ["/pilot-v2 /pilot-v2/index.html 200", "/pilot-v2/questions /pilot-v2/index.html 200", "/pilot-v2/report /pilot-v2/index.html 200", "/* /index.html 200"]);
 
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 for (const metadata of ["canonical", "og:image", "twitter:image", "favicon.svg", "social-preview.png"]) assert(html.includes(metadata));

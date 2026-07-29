@@ -10,7 +10,7 @@
   "files": [
     {
       "file": "configuration.json",
-      "sha256": "2bd9a8611ddacad1d2619b6f7b3fc3db33ddc59896c95900687f4dea9f204cfc"
+      "sha256": "db0672b3408c91d81d794adb419c6d1a1d762e0c7dc44423c52eb86bbd13054f"
     },
     {
       "file": "netlify/functions/_lib/admin.js",
@@ -59,6 +59,18 @@
     {
       "file": "netlify/functions/_lib/payment.js",
       "sha256": "b00d024b5884d09b54ddefd4b007854fb788d235e899a5720e41f8387b783572"
+    },
+    {
+      "file": "netlify/functions/_lib/pilot-v2-access.js",
+      "sha256": "06c1aa8dac008e4b8ff744a9f7442a66e9b985eda284c3aef42367dda7e7f915"
+    },
+    {
+      "file": "netlify/functions/_lib/pilot-v2-engine.js",
+      "sha256": "fc1f0c70c4ab7ee197317f10eabe905a8cdef47eb0acb5195f9effb71cf3fd8a"
+    },
+    {
+      "file": "netlify/functions/_lib/pilot-v2-safety-config.js",
+      "sha256": "9694a798aafa5d94b516c77ada6cb4a95d07288e618cf2fc14dd5e9a5cfd5e13"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -122,7 +134,7 @@
     },
     {
       "file": "netlify/functions/_lib/store.js",
-      "sha256": "e7ef726e0893b0b549d47b2c51671ecc4b354d082c617ed3792f81b6d6f8071a"
+      "sha256": "07a2dd04e69d354b793e5f9ead0c3bdb16c6878286a01d365b06f92f3224ad3e"
     },
     {
       "file": "netlify/functions/admin-access-handoff-lookup.js",
@@ -217,6 +229,26 @@
       "sha256": "369c30eab02a251930a632e29c441d3e6240e3f1f8e47852458dcb3bed903968"
     },
     {
+      "file": "netlify/functions/pilot-v2-access.js",
+      "sha256": "f2e7be0bf41636c9d682d47337cebad7b834f76781da27f3e99559002cb462cc"
+    },
+    {
+      "file": "netlify/functions/pilot-v2-assessment.js",
+      "sha256": "5a1463f69f7a96069640469d407b0048f29f442f491ab4744135cf6177c435e9"
+    },
+    {
+      "file": "netlify/functions/pilot-v2-event.js",
+      "sha256": "b2fda2d8dcecb4831bb369bd295b999dff06149efb2636495a2795ea55174a02"
+    },
+    {
+      "file": "netlify/functions/pilot-v2-instrument.js",
+      "sha256": "752fbf4e26c51f9611033d1a5b1eee8a8777abe9ff135b6491b795c8856bb672"
+    },
+    {
+      "file": "netlify/functions/pilot-v2-invite-create.js",
+      "sha256": "b7b8eb8111429bda673d7834136359f1fec138295ea51679377d5a04e118336c"
+    },
+    {
       "file": "netlify/functions/qpay-check-payment.js",
       "sha256": "b30b358d3c7401b7f80badb704182aeac39965981e080501f773d4b609224f10"
     },
@@ -302,11 +334,11 @@
     },
     {
       "file": "site/_headers",
-      "sha256": "c174d1500c48b608a6f77817dda418514825c27297abfbdfc487415d98a22950"
+      "sha256": "ffd7f794d84f442ceb591cbd66093f30e43f26c286171cb05130470439b19c30"
     },
     {
       "file": "site/_redirects",
-      "sha256": "6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef"
+      "sha256": "6d20a4cb1d8142ca47c80909e5a2c05dc01300069c415aee3677f94981ebb4d1"
     },
     {
       "file": "site/app.js",
@@ -331,6 +363,42 @@
     {
       "file": "site/index.html",
       "sha256": "1b2e1bbfe06b90b3cdb51bd066cda8e2d1ff354afa41031f9b12395da21971e5"
+    },
+    {
+      "file": "site/pilot-v2/acknowledgment.js",
+      "sha256": "cc53f81bd190d3bff0aadbb58f177c395ebbb22137b8d8cd2c3ac56da41ff867"
+    },
+    {
+      "file": "site/pilot-v2/context-registry.js",
+      "sha256": "096a3bd4cf3c4c339a0222e8562393d1e74d0faf7408d0370ed70afa1cc6c871"
+    },
+    {
+      "file": "site/pilot-v2/display-labels.js",
+      "sha256": "32137e95118c675cbbf3c5ea8d62f7bf0a7d475430b1ee21d794fd9b952e6229"
+    },
+    {
+      "file": "site/pilot-v2/generated/instrument-v2.1.json",
+      "sha256": "c89112157ad557200f29c9508b54ae2e5caf8e69c69182de981b7270f0e51eb0"
+    },
+    {
+      "file": "site/pilot-v2/index.html",
+      "sha256": "7af852ac59dcd4deaa0f5520f00af3f309ba1b3ee4af77a65a21465f256895ca"
+    },
+    {
+      "file": "site/pilot-v2/pilot-v2.css",
+      "sha256": "637aee3d41a97a8f7529f6ddc63b95fb9930d1ac3463d0606be8f2d4c71ba62c"
+    },
+    {
+      "file": "site/pilot-v2/pilot-v2.js",
+      "sha256": "7b2cf1ec8b7e05e7a4539cd7a8b0dd5bb59354ca2729f095303766d580eb5128"
+    },
+    {
+      "file": "site/pilot-v2/safety-registry.js",
+      "sha256": "8e9ef33d1992f949c5cb521c3ce42f8c517c91597153b0520da4135f357864fc"
+    },
+    {
+      "file": "site/pilot-v2/scale-registry.js",
+      "sha256": "cfe3a537d81ed74c0e3f5bf39aa784997725f52b6671df549062f29b9f4410b2"
     },
     {
       "file": "site/questions.js",
@@ -365,6 +433,11 @@
     "advisor-password-change",
     "advisor-report",
     "analytics-collect",
+    "pilot-v2-access",
+    "pilot-v2-assessment",
+    "pilot-v2-event",
+    "pilot-v2-instrument",
+    "pilot-v2-invite-create",
     "qpay-check-payment",
     "qpay-create-invoice",
     "qpay-payment-callback",
