@@ -1,0 +1,118 @@
+name: One-time production landing deploy
+
+on:
+  push:
+    branches:
+      - agent/full-landing-copy-and-direct-payment-v2
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    if: github.event.head_commit.message == 'Deploy approved landing copy to production'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/full-landing-copy-and-direct-payment-v2
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate approved landing source
+        run: |
+          node --check app.js
+          grep -F 'Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ' app.js
+          grep -F 'ЯАЖ ЗОХИЦУУЛАХ ВЭ?' app.js
+          grep -F 'ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?' app.js
+          grep -F 'хэмнэл алдагдсан үед эргэн орох аргыг' app.js
+          ! grep -F 'ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг' app.js
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run release validation
+        run: |
+          npm test
+          npm run test:contracts
+          npm run test:e2e
+          npm run verify:production-package
+          npm run verify:staging-package
+          npm run build:production
+
+      - name: Verify private Netlify credential
+        run: |
+          test -n "$NETLIFY_AUTH_TOKEN"
+          test "$NETLIFY_SITE_ID" = 'fb4def02-8e5d-4f00-8996-8cae09ed836f'
+
+      - name: Deploy exact branch to Netlify production
+        run: |
+          npx --yes netlify-cli@latest deploy \
+            --prod \
+            --dir=dist \
+            --functions=netlify/functions \
+            --site="$NETLIFY_SITE_ID" \
+            --message='Approved landing report value copy' \
+            --json > /tmp/netlify-deploy.json
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/netlify-deploy.json', 'utf8'));
+          const deployId = data.deploy_id || data.id || '';
+          const deployUrl = data.deploy_url || data.url || '';
+          if (!deployId) throw new Error('Netlify deploy ID missing');
+          fs.writeFileSync('/tmp/deploy-id', deployId);
+          fs.writeFileSync('/tmp/deploy-url', deployUrl);
+          console.log(`Netlify deploy created: ${deployId}`);
+          NODE
+
+      - name: Verify live production copy
+        run: |
+          for attempt in $(seq 1 24); do
+            LIVE=$(curl -fsSL "https://jingeehas.fit/app.js?deploy=$(date +%s)-$attempt" || true)
+            if printf '%s' "$LIVE" | grep -Fq 'Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ' \
+              && printf '%s' "$LIVE" | grep -Fq 'ЯАЖ ЗОХИЦУУЛАХ ВЭ?' \
+              && printf '%s' "$LIVE" | grep -Fq 'ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?' \
+              && ! printf '%s' "$LIVE" | grep -Fq 'ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг'; then
+              exit 0
+            fi
+            sleep 10
+          done
+          echo 'Live production copy did not update within the verification window.' >&2
+          exit 1
+
+      - name: Record deploy and remove one-time workflow
+        run: |
+          DEPLOY_ID=$(cat /tmp/deploy-id)
+          DEPLOY_URL=$(cat /tmp/deploy-url)
+          mkdir -p docs
+          cat > docs/LANDING_REPORT_VALUE_COPY_LIVE_DEPLOYMENT_2026-07-29.md <<EOF
+          # Landing report value copy — live deployment
+
+          - Source branch: agent/full-landing-copy-and-direct-payment-v2
+          - Certified source commit: 604eedda0e2080f2ed51ca5a0c26c8dcaa5e6ae4
+          - Netlify site ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
+          - Netlify deploy ID: ${DEPLOY_ID}
+          - Deploy URL: ${DEPLOY_URL}
+          - Production URL: https://jingeehas.fit
+          - Live copy verification: PASS
+          - PR #9 merge: NO
+          - QPay/payment/customer-data mutation: NONE
+          EOF
+          rm .github/workflows/one-time-production-landing-deploy.yml
+          rm -f .github/production-landing-deploy-trigger.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/LANDING_REPORT_VALUE_COPY_LIVE_DEPLOYMENT_2026-07-29.md .github/workflows/one-time-production-landing-deploy.yml .github/production-landing-deploy-trigger.txt
+          git commit -m 'Record live landing report value deployment'
+          git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
