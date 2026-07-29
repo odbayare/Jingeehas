@@ -83,6 +83,44 @@ test("methodology trust content stacks without mobile overflow", async ({ page }
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
 });
 
+test("scientific methodology box is responsive and keyboard accessible", async ({ page }) => {
+  for (const [width, height] of [[375, 812], [390, 844], [430, 900], [1440, 900]]) {
+    await page.setViewportSize({ width, height });
+    await page.goto("/");
+    const box = page.locator(".scientific-methods-box");
+    const toggle = box.locator('button[data-action="toggle-scientific-methods"]');
+    const details = box.locator("#scientific-methods-details");
+    await expect(box.getByRole("heading", { name: "Ашигласан шинжлэх ухааны аргачлалууд" })).toBeVisible();
+    await expect(box.locator(".scientific-method-names").getByText("Dutch Eating Behavior Questionnaire — DEBQ", { exact: true })).toBeVisible();
+    await expect(toggle).toBeVisible();
+    await expect(toggle).toHaveText("Аргачлал бүрийн тайлбарыг харах");
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(details).toBeHidden();
+    expect(await toggle.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+
+    await toggle.focus();
+    await page.keyboard.press("Enter");
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await expect(toggle).toHaveText("Аргачлал бүрийн тайлбарыг хаах");
+    await expect(details).toBeVisible();
+    await expect(box.getByText("Weight Test нь дээрх асуумжуудын шууд орчуулга биш", { exact: false })).toBeVisible();
+    await expect(box.locator(".scientific-methods-grid article")).toHaveCount(6);
+    expect(await box.locator(".scientific-methods-grid h4").evaluateAll(nodes => nodes.every(node => {
+      const rect = node.getBoundingClientRect();
+      return rect.left >= 0 && rect.right <= window.innerWidth + 1;
+    }))).toBe(true);
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+
+    await page.keyboard.press("Space");
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(toggle).toHaveText("Аргачлал бүрийн тайлбарыг харах");
+    await expect(details).toBeHidden();
+    const cta = page.getByRole("link", { name: "Сэтгэлзүйн хэв маягаа тодорхойлох" });
+    await expect(cta).toHaveAttribute("href", "/assessment/start");
+  }
+});
+
 test("owner daily funnel dashboard is readable at 375px", async ({ page, context }) => {
   await context.addCookies([{ name: "jingeehas_admin", value: "admin-e2e", domain: "127.0.0.1", path: "/" }]);
   await page.setViewportSize({ width: 375, height: 812 });
