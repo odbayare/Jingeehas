@@ -325,12 +325,16 @@
       "sha256": "c8feb02e4b698f6979eed05d1623b0f77e081e834fdf54160a39b945bf528e84"
     },
     {
+      "file": "site/assets/landing-scientific-methods.js",
+      "sha256": "3c270435f0086f040fde462f8e593ee7acb7742f933e6489f47e4f3919ad6ca6"
+    },
+    {
       "file": "site/assets/social-preview.png",
       "sha256": "a5a78006bb6f0577a295c180a03779d1277c59b91529c2499ab01be6a7709694"
     },
     {
       "file": "site/index.html",
-      "sha256": "1b2e1bbfe06b90b3cdb51bd066cda8e2d1ff354afa41031f9b12395da21971e5"
+      "sha256": "8a22ed0f904ada755489a8f86e8c1f480589b4ed06898459dfdbc3c8de04dcc0"
     },
     {
       "file": "site/questions.js",
