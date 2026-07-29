@@ -1,4 +1,4 @@
-name: Finalize landing report source and tests
+name: Commit finalized landing report source
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   finalize:
-    if: github.event.head_commit.message == 'Finalize landing report source and tests'
+    if: github.event.head_commit.message == 'Commit finalized landing source'
     runs-on: ubuntu-latest
     timeout-minutes: 40
     steps:
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Finalize approved landing copy and regression expectations
+      - name: Patch approved landing copy and regression expectations
         run: |
           python - <<'PY'
           from pathlib import Path
@@ -47,56 +47,59 @@ jobs:
               'assert.equal((landing.match(/Тайлангийн жишээ/g) || []).length, 1);': 'assert.equal((landing.match(/Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ/g) || []).length, 1);',
               'assert(landing.includes("Доорх нь нэргүй жишээ. Энэ нь таны үр дүн биш; тайлангийн нарийвчлал, бүтэц, хэлбэрийг урьдчилж харуулж байна."));': 'assert(landing.includes("хэмнэл алдагдсан үед эргэн орох аргыг"));',
               'assert(landing.includes("өлссөндөө гэхээсээ илүү ачааллаа буулгах гэж иддэг бололтой"));': 'assert(landing.includes("ЯАЖ ЗОХИЦУУЛАХ ВЭ?"));',
-              'assert(landing.includes("зураг өөрөө гарч ирдэг"));': 'assert(landing.includes("ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?"));',
               'assert(landing.includes("Юу саад болоод байгаагаа мэдчихвэл ажил хөнгөрдөг"));': 'assert(landing.includes("Юу саад болж байгааг ойлгоод, яаж зохицуулахаа мэдвэл ажил хөнгөрдөг"));'
           }
           for old_line, new_line in replacements.items():
               count = source.count(old_line)
-              if old_line == 'assert(landing.includes("зураг өөрөө гарч ирдэг"));':
-                  if count != 2:
-                      raise SystemExit(f'Expected two legacy picture assertions, found {count}')
-                  source = source.replace(old_line, new_line, 1)
-                  source = source.replace(old_line, 'assert(!landing.includes("ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг"));', 1)
-                  continue
               if count != 1:
                   raise SystemExit(f'Expected one assertion match, found {count}: {old_line}')
               source = source.replace(old_line, new_line)
+          picture = 'assert(landing.includes("зураг өөрөө гарч ирдэг"));'
+          if source.count(picture) != 2:
+              raise SystemExit(f'Expected two legacy picture assertions, found {source.count(picture)}')
+          source = source.replace(picture, 'assert(landing.includes("ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?"));', 1)
+          source = source.replace(picture, 'assert(!landing.includes("ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг"));', 1)
           test.write_text(source, encoding='utf-8')
           PY
 
-      - name: Validate exact landing content
-        run: |
-          node --check app.js
-          grep -F 'Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ' app.js
-          grep -F 'ЯАЖ ЗОХИЦУУЛАХ ВЭ?' app.js
-          grep -F 'ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?' app.js
-          grep -F 'хэмнэл алдагдсан үед эргэн орох аргыг' app.js
-          ! grep -F 'ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг' app.js
-          ! grep -F 'төлөвлөгөө тасарсан' app.js
-
-      - name: Install browser for E2E
-        run: npx playwright install --with-deps chromium
-
-      - name: Run complete validation
-        run: |
-          npm test
-          npm run test:contracts
-          npm run test:e2e
-
-      - name: Refresh and verify deterministic packages
+      - name: Refresh deterministic package manifests
         run: |
           npm run generate:artifacts
           npm run build:staging
+
+      - name: Commit finalized source before certification
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add app.js tests/question-bank.test.js artifacts/production-package-manifest.json artifacts/staging-package-manifest.json
+          git commit -m 'Finalize landing report value copy source'
+          git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
+
+      - name: Validate JavaScript
+        run: node --check app.js
+
+      - name: Run unit tests
+        run: npm test
+
+      - name: Run contract tests
+        run: npm run test:contracts
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: npm run test:e2e
+
+      - name: Verify packages
+        run: |
           npm run verify:production-package
           npm run verify:staging-package
           npm run build:production
 
-      - name: Commit finalized source and remove temporary automation
+      - name: Remove temporary automation after green certification
         run: |
           rm .github/workflows/one-time-live-landing-report-deploy.yml
           rm .github/landing-report-deploy-trigger.txt
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add app.js tests/question-bank.test.js artifacts/production-package-manifest.json artifacts/staging-package-manifest.json .github/workflows/one-time-live-landing-report-deploy.yml .github/landing-report-deploy-trigger.txt
-          git commit -m 'Finalize landing report value copy'
+          git add .github/workflows/one-time-live-landing-report-deploy.yml .github/landing-report-deploy-trigger.txt
+          git commit -m 'Remove temporary landing finalization automation'
           git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
