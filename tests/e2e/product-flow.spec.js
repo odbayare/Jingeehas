@@ -2,15 +2,12 @@
 const { test, expect } = require("@playwright/test");
 test.setTimeout(120000);
 
-async function completeEligibleGate(page, suffix = "") {
+async function openPaymentPreparation(page, suffix = "") {
   await page.goto(`/assessment/start?e2e=1${suffix}`);
-  await page.locator('input[name="age"]').fill("30");
-  await page.locator('input[name="selfHarm"][value="Үгүй"]').check();
-  await page.locator('input[name="acuteMedical"][value="Аль нь ч үгүй"]').check();
-  await page.locator('input[name="compensatoryBehavior"][value="Үгүй"]').check();
-  await page.locator('input[name="medicalSuitability"][value="Үргэлжлүүлэхэд тохиромжтой"]').check();
-  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
   await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" })).toBeVisible();
+  await expect(page.locator("#safety-form")).toHaveCount(0);
 }
 
 async function completeQuestionnaire(page) {
@@ -102,7 +99,8 @@ test("landing CTA retains SPA routing and analytics tracking", async ({ page }) 
   await page.getByRole("link", { name: "Тестээ эхлүүлэх" }).click();
   await trackingRequest;
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.locator("#contact-email")).toBeVisible();
 });
 
 test("landing retains only the scientific methodology box", async ({ page }) => {
@@ -214,8 +212,8 @@ test("authenticated owner preview starts through the server gate without QPay", 
   await page.getByRole("button", { name: "Нэвтрэх" }).click();
   await page.getByRole("button", { name: "Бодит тестийг шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах" })).toBeVisible();
-  await completeEligibleGate(page);
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.locator("#contact-email")).toBeVisible();
   const beforePreview = await (await request.get("/__test/stats")).json();
   await page.locator("#contact-email").fill("owner-preview@example.com");
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
@@ -230,15 +228,25 @@ test("authenticated owner preview starts through the server gate without QPay", 
   expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(ownerFirstQuestionRows);
 });
 
-test("assessment starts with the short free safety gate", async ({ page, request }) => {
+test("public paid-first flow has no interactive pre-payment safety gate", async ({ page, request }) => {
+  const emittedSafetyRequests = [];
+  page.on("request", outgoing => {
+    if (new URL(outgoing.url()).pathname === "/.netlify/functions/weight-safety-gate") emittedSafetyRequests.push(outgoing.url());
+  });
+  const before = await (await request.get("/__test/stats")).json();
   await page.goto("/assessment/start?e2e=1");
-  await expect(page.locator("#safety-form")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" })).toBeVisible();
+  await expect(page.locator("#safety-form")).toHaveCount(0);
+  expect(emittedSafetyRequests).toEqual([]);
+  expect((await (await request.get("/__test/stats")).json()).safetyGate).toBe(before.safetyGate);
   expect((await (await request.get("/__test/stats")).json()).qpayCreate).toBe(0);
 });
 
 test("paid-first checkout creates one invoice and completion opens the full report", async ({ page, request }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await completeEligibleGate(page);
+  await openPaymentPreparation(page);
   await page.locator("#contact-email").fill("invalid");
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
   await expect(page.getByText("Имэйл хаягаа зөв оруулна уу.")).toBeVisible();
@@ -265,7 +273,7 @@ test("paid-first checkout creates one invoice and completion opens the full repo
 });
 
 test("question transition gives immediate feedback and ignores duplicate submit", async ({ page, request }) => {
-  await completeEligibleGate(page);
+  await openPaymentPreparation(page);
   await page.locator("#contact-email").fill("transition@example.com");
   await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
@@ -294,7 +302,7 @@ test("recovery succeeds in a new browser context", async ({ browser }) => {
 });
 
 test("invitation token is removed and consent decline is explicit", async ({ page }) => {
-  await completeEligibleGate(page, "&invite=invite-e2e");
+  await openPaymentPreparation(page, "&invite=invite-e2e");
   expect(page.url()).not.toContain("invite=");
   await page.locator("#contact-email").fill("client@example.com");
   await expect(page.getByRole("heading", { name: "Зөвлөхийн урилга ирсэн байна" })).toBeVisible();
@@ -304,6 +312,25 @@ test("invitation token is removed and consent decline is explicit", async ({ pag
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
   await expect(page.getByRole("heading", { name: "Суурь мэдээлэл" })).toBeVisible();
   await expect(page.getByText(/хөнгөлөлт/i)).toHaveCount(0);
+});
+
+test("payment preparation is responsive with accessible touch targets", async ({ page }) => {
+  for (const [width, height] of [[375, 812], [390, 844], [430, 900]]) {
+    await page.setViewportSize({ width, height });
+    await openPaymentPreparation(page);
+    const email = page.locator("#contact-email");
+    const submit = page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+    expect(await email.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+    expect(await submit.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+  }
+});
+
+test("legacy assessment contact URL has no extra step", async ({ page }) => {
+  await page.goto("/assessment/contact?e2e=1");
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.locator("#safety-form")).toHaveCount(0);
 });
 
 test("advisor dashboard uses Mongolian statuses and accessible table overflow", async ({ page }) => {

@@ -90,11 +90,14 @@ function credential(value) { return String(value).split(";")[0]; }
   assert.match(safetyReport.initialView.guidance.title, /Яаралтай/);
 
   const prepaidStarted = await start(event("POST")); const prepaidCookie = credential(prepaidStarted.headers["set-cookie"]); const prepaidSession = JSON.parse(prepaidStarted.body);
-  await database.insert("safety_checks", { id: "sc-prepaid-contract", sessionId: prepaidSession.sessionId, result: { route: "eligible" }, createdAt: new Date().toISOString() });
   await database.insert("recovery_contacts", { id: "rc-prepaid-contract", sessionId: prepaidSession.sessionId, contactGroupId: "rcg-prepaid-contract", type: "email", createdAt: new Date().toISOString() });
   const analyticsContext = { visitorId: "99999999-9999-4999-8999-999999999999", sessionId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", deviceClass: "mobile" };
-  const prepaidCreate = () => create(event("POST", { prepaid: true, safetyCheckId: "sc-prepaid-contract", recoveryContactGroupId: "rcg-prepaid-contract", analyticsContext }, prepaidCookie));
+  const prepaidCreate = () => create(event("POST", { prepaid: true, recoveryContactGroupId: "rcg-prepaid-contract", analyticsContext }, prepaidCookie));
   const prepaidCreated = JSON.parse((await prepaidCreate()).body); assert.equal(prepaidCreated.commercialFlowVersion, "prepaid_v2");
+  assert.equal(prepaidCreated.status, "payment_pending");
+  const prepaidAssessment = await database.get("assessments", prepaidCreated.assessmentId);
+  const placeholder = await database.get("safety_checks", prepaidAssessment.safetyCheckId);
+  assert.deepEqual(placeholder.result, { route: "pending_assessment", mode: "pending", category: "assessment_safety_questions" });
   assert.equal((await prepaidCreate()).statusCode, 201, "assessment shell creation is idempotent");
   const paymentSectionEvents = await database.find("analytics_events", { assessmentId: prepaidCreated.assessmentId, eventName: "paywall_viewed" });
   assert.equal(paymentSectionEvents.length, 1, "prepaid shell records one assessment-linked payment-section event before invoice creation");
