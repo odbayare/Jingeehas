@@ -18,6 +18,7 @@ const requiredEnvironment = [
   "JINGEEHAS_DATABASE_API_URL", "JINGEEHAS_DATABASE_API_KEY", "QPAY_API_BASE_URL", "QPAY_CLIENT_ID", "QPAY_CLIENT_SECRET", "QPAY_INVOICE_CODE",
   "QPAY_CALLBACK_ORIGIN", "QPAY_ALLOWED_APP_SCHEMES", "QPAY_ALLOWED_HTTPS_HOSTS", "RECOVERY_ENCRYPTION_KEY", "RECOVERY_HASH_PEPPER",
   "RECOVERY_DELIVERY_API_URL", "RECOVERY_DELIVERY_API_KEY", "RECOVERY_RATE_LIMIT_STORE"
+  , "PILOT_V2_INVITE_SECRET"
 ];
 fs.writeFileSync(path.join(output, "configuration.json"), `${JSON.stringify({ schemaVersion: 1, environment: "staging", comingSoon: true, requiredEnvironment }, null, 2)}\n`);
 

@@ -62,6 +62,9 @@ class RestDatabaseAdapter {
   async getAccessHandoffByPayment(paymentId) { const row = await this.request({ action: "get_access_handoff_by_payment", paymentId }); return row && row.id ? row : null; }
   async consumeAccessHandoff(tokenHash, now = new Date()) { const row = await this.request({ action: "consume_access_handoff", tokenHash, now: now.toISOString() }); return row && row.id ? row : null; }
   async redeemAccessHandoff(input) { return this.request({ action: "redeem_access_handoff", payload: input }); }
+  savePilotV2Assessment(payload) { return this.request({ action: "save_pilot_v2_assessment", payload }); }
+  getPilotV2Assessment(assessmentId, accessSubjectHash) { return this.request({ action: "get_pilot_v2_assessment", assessmentId, accessSubjectHash }); }
+  recordPilotV2Event(payload) { return this.request({ action: "record_pilot_v2_event", payload }); }
 }
 
 let testDatabase = null;

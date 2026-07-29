@@ -35,6 +35,7 @@ const tests = [
   "tests/qpay-callback.test.js",
   "tests/qpay-refresh-handoff.test.js",
   "tests/question-progress-analytics.test.js",
+  "tests/pilot-v2.test.js",
   "tests/contracts/owner-preview.contract.test.js",
   "tests/contracts/assessment.contract.test.js",
   "tests/contracts/payment.contract.test.js",
