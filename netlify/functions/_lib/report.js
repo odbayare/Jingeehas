@@ -4,7 +4,7 @@ const { ANSWER_SIGNAL_CONTRACT, directivesFor } = require("./report-signals.js")
 const { PATTERN_PRIORITY, evaluatePatterns } = require("./report-patterns.js");
 const { PATTERN_COPY, PATTERN_PUBLIC_TITLES, CONTEXT_PUBLIC_TITLES, SENTENCE_TEMPLATES, RECOMMENDATIONS, STRATEGY_COPY, INTERACTION_COPY, PROTECTIVE_COPY, sentenceTemplateMatches } = require("./report-copy.js");
 
-const REPORT_VERSION = "jingeehas-case-formulation-v5-attribution";
+const REPORT_VERSION = "jingeehas-case-formulation-v6-neutral-v3";
 const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION } = require("../../../questions.js");
 
 function answerText(value) {
@@ -340,6 +340,14 @@ function contradictionItems(evidence, candidates) {
     return [{ signal: row.signal, text: copy }];
   });
 }
+function supportGateReason(candidate) {
+  if (!candidate || candidate.eligible || candidate.id !== "previous_attempt_sustainability") return null;
+  if (!candidate.mandatoryAnchor?.length) return "mandatory_anchor_missing";
+  if (candidate.score < candidate.threshold && candidate.questionIds?.length >= candidate.minQuestionIds && candidate.dimensions?.length >= candidate.minDimensions) return "score_below_threshold";
+  if (candidate.questionIds?.length < candidate.minQuestionIds) return "independent_question_gate";
+  if (candidate.dimensions?.length < candidate.minDimensions) return "independent_dimension_gate";
+  return "previous_attempt_outcome_gate";
+}
 
 function contextualFactors(evidence, contextualPatterns, facts, composer) {
   const items = contextualPatterns.map(candidate => ({
@@ -357,6 +365,7 @@ function contextualFactors(evidence, contextualPatterns, facts, composer) {
   if (schedule) items.push({ id: "schedule_barrier", title: "Цагийн хуваарьт багтах шаардлага", summary: schedule });
   const cost = composer.render("context_cost", "4");
   if (cost) items.push({ id: "cost_barrier", title: "Зардал тогтвортой үргэлжлүүлэхэд нөлөөлсөн нь", summary: cost });
+  if ((evidence.signals || []).some(row => row.signal === "meal_gap")) items.push({ id: "meal_gap_secondary", title: "Хоолны зайг давхар ажиглах", summary: "Хоолны зай таван цагаас уртсаж байгаа нь гол сэтгэлзүйн хэв маяг биш ч хөдөлгөөн, хуваарьтайгаа хамт ажиглах хоёрдогч нөхцөл байна." });
   const injuryImpossible = composer.render("context_injury_impossible", "4");
   const injuryDifficult = composer.render("context_injury_difficult", "4");
   if (injuryImpossible) items.push({ id: "injury_or_pain_barrier", title: "Өмнөх гэмтлийг дараагийн хөдөлгөөнд харгалзах шаардлага", summary: injuryImpossible });
@@ -599,6 +608,19 @@ function neutralObservation(subtype, composer) {
   };
 }
 
+function bodyGoalContext(evidence = {}) {
+  const answers = evidence.answerMap || {};
+  const age = Number(answers["Q-AGE"]);
+  const height = Number(answers["Q-HEIGHT"]);
+  const weight = Number(answers["Q-WEIGHT"]);
+  const target = Number(answers["Q-TARGET"]);
+  const bmi = height > 0 && weight > 0 ? Number((weight / ((height / 100) ** 2)).toFixed(1)) : null;
+  const targetBmi = height > 0 && target > 0 ? Number((target / ((height / 100) ** 2)).toFixed(1)) : null;
+  if (![age, height, weight, target].every(Number.isFinite)) return null;
+  return { age, heightCm: height, currentWeightKg: weight, targetWeightKg: target, differenceKg: Number((weight - target).toFixed(1)), bmi, targetBmi,
+    disclaimer: "BMI нь ерөнхий скрининг үзүүлэлт бөгөөд онош биш, эрүүл мэндийг бүрэн хэмждэг үзүүлэлт биш." };
+}
+
 function neutralResult(evidence, composer, strengths, contextual = [], quality = {}, professional = null) {
   const contextualTemplateIds = {
     sleep_fatigue: "neutral_context_sleep", low_movement: "neutral_context_movement",
@@ -619,6 +641,7 @@ function neutralResult(evidence, composer, strengths, contextual = [], quality =
     notStronglySupportedFallback: composer.render("neutral_absent_fallback", "neutral_absent"),
     strengths: groupedNeutralStrengths(strengths),
     strengthsFallback: composer.render("neutral_strengths_fallback", "neutral_strengths"),
+    bodyGoalContext: bodyGoalContext(evidence),
     limits: [composer.render("neutral_limits", "neutral_limits")].filter(Boolean),
     observation: neutralObservation(subtype, composer),
     professionalScope: professional || composer.render("neutral_professional_scope", "neutral_guidance")
@@ -687,6 +710,7 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
       informativeQuestionCount: quality.questionCount, unmappedQuestions: evidence.unmappedQuestions || [], factGates: facts,
       signals: (evidence.signals || []).map(row => ({ questionId: row.questionId, dimension: row.dimension, signal: row.signal, effect: row.effect, protective: row.protective === true, contextOnly: row.contextOnly === true, guidanceOnly: row.guidanceOnly === true })),
       patternEvidence: evaluated.candidates.map(candidate => ({ id: candidate.id, category: candidate.category, supported: supportedIds.has(candidate.id), score: candidate.score, threshold: candidate.threshold,
+        supportGateReason: supportGateReason(candidate),
         mandatoryAnchor: candidate.mandatoryAnchor || [], independentSupportingQuestionIds: candidate.independentSupportingQuestionIds || [],
         sharedContextualEvidence: candidate.sharedContextualEvidence || [], contradictions: candidate.contradictionEvidence || [],
         questionIds: candidate.questionIds, dimensions: candidate.dimensions })),

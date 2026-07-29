@@ -5,7 +5,8 @@ const { authenticateSession } = require("./_lib/session.js");
 const { createAssessment } = require("./_lib/assessment.js");
 const { authenticateOwnerPreview, authenticateOwnerPreviewStrict, PREVIEW_COOKIE_NAME } = require("./_lib/preview.js");
 const { cookies } = require("./_lib/http.js");
-const { clientContext, flagsFromEvent, recordEventSafe } = require("./_lib/analytics.js");
+const { clientContext, flagsFromEvent, recordEventSafe, safeFailureCategory } = require("./_lib/analytics.js");
+const { hashToken } = require("./_lib/crypto.js");
 
 exports.handler = handler("POST", async (event, body) => {
   const database = getDatabase();
@@ -13,19 +14,39 @@ exports.handler = handler("POST", async (event, body) => {
   let previewBypass = false;
   if (cookies(event)[PREVIEW_COOKIE_NAME]) { await authenticateOwnerPreviewStrict(database, event); previewBypass = true; }
   const session = await authenticateSession(database, event);
-  const assessment = await createAssessment(database, session.id, body);
+  const browserContext = clientContext(body.analyticsContext || {});
+  const context = browserContext.sessionIdHash ? browserContext : { ...browserContext, sessionIdHash: hashToken(`checkout:${session.id}`) };
+  const checkoutFlags = flagsFromEvent(event);
+  await recordEventSafe(database, "checkout_submitted", context, {}, {
+    idempotencyKey: `checkout_submitted:${context.sessionIdHash}`, ...checkoutFlags
+  });
+  let assessment;
+  try {
+    assessment = await createAssessment(database, session.id, body);
+  } catch (error) {
+    await recordEventSafe(database, "assessment_shell_create_failed", context, {}, {
+      idempotencyKey: `assessment_shell_create_failed:${context.sessionIdHash || "unknown"}`,
+      metadata: { failureCategory: safeFailureCategory(error) }, ...flagsFromEvent(event)
+    });
+    throw error;
+  }
   if (previewBypass && assessment.commercialFlowVersion === "prepaid_v2") {
     await database.upsert("assessment_sessions", `${assessment.id}:${session.id}`, { assessmentId: assessment.id, sessionId: session.id,
       source: "owner", createdAt: new Date().toISOString() });
     await database.update("assessments", assessment.id, { status: "paid_ready", updatedAt: new Date().toISOString() });
     assessment.status = "paid_ready";
   }
-  if (assessment.commercialFlowVersion !== "prepaid_v2") await recordEventSafe(database, "assessment_started", clientContext(body.analyticsContext || {}), { assessmentId: assessment.id }, {
+  if (assessment.commercialFlowVersion !== "prepaid_v2") await recordEventSafe(database, "assessment_started", context, { assessmentId: assessment.id }, {
     idempotencyKey: `assessment_started:${assessment.id}`, ...flagsFromEvent(event)
   });
-  else await recordEventSafe(database, "paywall_viewed", clientContext(body.analyticsContext || {}), { assessmentId: assessment.id }, {
-    idempotencyKey: `paywall_viewed:${assessment.id}`, ...flagsFromEvent(event)
-  });
+  else {
+    await recordEventSafe(database, "checkout_submitted", context, { assessmentId: assessment.id }, {
+      idempotencyKey: `checkout_submitted_assessment:${assessment.id}`, ...checkoutFlags
+    });
+    await recordEventSafe(database, "assessment_shell_created", context, { assessmentId: assessment.id }, {
+      idempotencyKey: `assessment_shell_created:${assessment.id}`, ...flagsFromEvent(event)
+    });
+  }
   return response(201, { assessmentId: assessment.id, status: assessment.status, commercialFlowVersion: assessment.commercialFlowVersion,
     questionnaireVersion: assessment.questionnaireVersion, previewBypass });
 });

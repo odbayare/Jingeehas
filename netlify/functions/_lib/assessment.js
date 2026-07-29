@@ -13,7 +13,7 @@ function assessmentQuestionnaireVersion(assessment) {
 
 async function ownedAssessment(database, sessionId, assessmentId) {
   const assessment = await database.get("assessments", assessmentId);
-  const recoveredAccess = assessment ? await database.get("assessment_sessions", `${assessmentId}:${sessionId}`) : null;
+  const recoveredAccess = assessment && assessment.sessionId === sessionId ? null : assessment ? await database.get("assessment_sessions", `${assessmentId}:${sessionId}`) : null;
   if (!assessment || (assessment.sessionId !== sessionId && !recoveredAccess)) {
     throw Object.assign(new Error("Assessment not found"), { statusCode: 404, code: "assessment_not_found" });
   }
@@ -27,13 +27,6 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
   }
   if (safetyCheck && safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Commercial assessment is not suitable"), { statusCode: 409, code: "safety_route_required" });
   const requestedFlow = input.prepaid === true ? PREPAID_FLOW : LEGACY_FLOW;
-  if (requestedFlow === PREPAID_FLOW && !safetyCheck) {
-    throw Object.assign(new Error("Safety check required"), { statusCode: 409, code: "safety_check_required" });
-  }
-  if (!safetyCheck) {
-    safetyCheck = await database.insert("safety_checks", { id: randomId("sc_"), sessionId,
-      result: { route: "pending_assessment", mode: "pending", category: "assessment_safety_questions" }, createdAt: now.toISOString() });
-  }
   let client = null;
   let contacts = [];
   if (input.coachClientId) {
@@ -59,7 +52,7 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
   const assessment = await database.insert("assessments", {
     id, sessionId, status: requestedFlow === PREPAID_FLOW ? "payment_pending" : "draft", commercialFlowVersion: requestedFlow,
     startedAt: null, reportMode: null, safetyRoute: null, questionnaireVersion: QUESTIONNAIRE_VERSION,
-    safetyCheckId: safetyCheck.id,
+    safetyCheckId: safetyCheck?.id || null,
     coachClientId: input.coachClientId || null, consentStatus: null,
     createdAt: now.toISOString(), updatedAt: now.toISOString(), completedAt: null
   });
@@ -82,8 +75,8 @@ async function startAssessment(database, sessionId, assessmentId, now = new Date
   return database.update("assessments", assessment.id, { status: "in_progress", startedAt: now.toISOString(), updatedAt: now.toISOString() });
 }
 
-async function saveAssessment(database, sessionId, input = {}, now = new Date()) {
-  const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
+async function saveAssessment(database, sessionId, input = {}, now = new Date(), owned = null) {
+  const assessment = owned || await ownedAssessment(database, sessionId, input.assessmentId);
   const questionnaireVersion = assessmentQuestionnaireVersion(assessment);
   if (isPrepaid(assessment)) {
     await requirePaidAccess(database, assessment);

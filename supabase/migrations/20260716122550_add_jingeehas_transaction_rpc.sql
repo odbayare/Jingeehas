@@ -1,0 +1,175 @@
+create or replace function jingeehas.execute_operation(op jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  action_name text := coalesce(op->>'action', '');
+  table_name text := coalesce(op->>'table', '');
+  record_id text := op->>'id';
+  payload jsonb;
+  filters jsonb;
+  result jsonb;
+  set_clause text;
+  allowed_tables constant text[] := array[
+    'sessions','assessment_sessions','safety_checks','assessments','assessment_answers','assessment_summaries',
+    'report_snapshots','payments','entitlements','recovery_contacts','advisor_accounts','advisor_sessions',
+    'advisor_clients','advisor_commissions','advisor_report_access_logs','admin_accounts','admin_sessions',
+    'admin_audit_logs','recovery_challenges','data_deletion_requests','schema_migrations','certification_records'
+  ];
+begin
+  if not (table_name = any(allowed_tables)) then
+    raise exception using errcode = '22023', message = 'JH_UNKNOWN_TABLE';
+  end if;
+
+  if action_name = 'get' then
+    if record_id is null or record_id = '' then
+      raise exception using errcode = '22023', message = 'JH_ID_REQUIRED';
+    end if;
+    execute format('select to_jsonb(t) from jingeehas.%I t where t.id = $1', table_name)
+      into result using record_id;
+    return result;
+
+  elsif action_name = 'find' then
+    filters := coalesce(op->'filters', '{}'::jsonb);
+    if jsonb_typeof(filters) <> 'object' then
+      raise exception using errcode = '22023', message = 'JH_FILTERS_INVALID';
+    end if;
+    execute format(
+      'select coalesce(jsonb_agg(to_jsonb(t)), ''[]''::jsonb) from jingeehas.%I t where to_jsonb(t) @> $1',
+      table_name
+    ) into result using filters;
+    return result;
+
+  elsif action_name = 'insert' then
+    payload := op->'row';
+    if payload is null or jsonb_typeof(payload) <> 'object' or coalesce(payload->>'id','') = '' then
+      raise exception using errcode = '22023', message = 'JH_ROW_INVALID';
+    end if;
+    begin
+      execute format(
+        'insert into jingeehas.%I as t select * from jsonb_populate_record(null::jingeehas.%I, $1) returning to_jsonb(t)',
+        table_name, table_name
+      ) into result using payload;
+    exception when unique_violation then
+      raise exception using errcode = '23505', message = 'JH_CONFLICT';
+    end;
+    return result;
+
+  elsif action_name = 'update' then
+    payload := coalesce(op->'patch', '{}'::jsonb) - 'id';
+    if record_id is null or record_id = '' then
+      raise exception using errcode = '22023', message = 'JH_ID_REQUIRED';
+    end if;
+    select string_agg(format('%I = (jsonb_populate_record(null::jingeehas.%I, $1)).%I', key, table_name, key), ', ')
+      into set_clause
+    from jsonb_object_keys(payload) as key
+    where exists (
+      select 1 from information_schema.columns c
+      where c.table_schema = 'jingeehas' and c.table_name = table_name and c.column_name = key and key <> 'id'
+    );
+    if set_clause is null then
+      execute format('select to_jsonb(t) from jingeehas.%I t where t.id = $1', table_name)
+        into result using record_id;
+    else
+      execute format('update jingeehas.%I as t set %s where t.id = $2 returning to_jsonb(t)', table_name, set_clause)
+        into result using payload, record_id;
+    end if;
+    if result is null then
+      raise exception using errcode = 'P0002', message = 'JH_NOT_FOUND';
+    end if;
+    return result;
+
+  elsif action_name = 'upsert' then
+    record_id := coalesce(record_id, op->'row'->>'id');
+    if record_id is null or record_id = '' then
+      raise exception using errcode = '22023', message = 'JH_ID_REQUIRED';
+    end if;
+    execute format('select to_jsonb(t) from jingeehas.%I t where t.id = $1', table_name)
+      into result using record_id;
+    if result is null then
+      payload := coalesce(op->'row', '{}'::jsonb) || jsonb_build_object('id', record_id);
+      begin
+        execute format(
+          'insert into jingeehas.%I as t select * from jsonb_populate_record(null::jingeehas.%I, $1) returning to_jsonb(t)',
+          table_name, table_name
+        ) into result using payload;
+      exception when unique_violation then
+        raise exception using errcode = '23505', message = 'JH_CONFLICT';
+      end;
+      return result;
+    end if;
+    payload := coalesce(op->'row', '{}'::jsonb) - 'id';
+    select string_agg(format('%I = (jsonb_populate_record(null::jingeehas.%I, $1)).%I', key, table_name, key), ', ')
+      into set_clause
+    from jsonb_object_keys(payload) as key
+    where exists (
+      select 1 from information_schema.columns c
+      where c.table_schema = 'jingeehas' and c.table_name = table_name and c.column_name = key and key <> 'id'
+    );
+    if set_clause is null then
+      return result;
+    end if;
+    execute format('update jingeehas.%I as t set %s where t.id = $2 returning to_jsonb(t)', table_name, set_clause)
+      into result using payload, record_id;
+    return result;
+
+  elsif action_name = 'delete' then
+    if record_id is null or record_id = '' then
+      raise exception using errcode = '22023', message = 'JH_ID_REQUIRED';
+    end if;
+    execute format('delete from jingeehas.%I where id = $1 returning true', table_name)
+      into result using record_id;
+    return jsonb_build_object('deleted', coalesce(result::boolean, false));
+  end if;
+
+  raise exception using errcode = '22023', message = 'JH_UNKNOWN_ACTION';
+end;
+$$;
+
+create or replace function public.jingeehas_transaction(operation jsonb)
+returns jsonb
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  action_name text := coalesce(operation->>'action', '');
+  op jsonb;
+  results jsonb := '[]'::jsonb;
+begin
+  if action_name = 'transaction' then
+    if jsonb_typeof(operation->'operations') <> 'array' then
+      raise exception using errcode = '22023', message = 'JH_OPERATIONS_INVALID';
+    end if;
+
+    if coalesce((operation->>'rollback')::boolean, false) then
+      begin
+        for op in select value from jsonb_array_elements(operation->'operations') loop
+          results := results || jsonb_build_array(jingeehas.execute_operation(op));
+        end loop;
+        raise exception using errcode = 'P0001', message = 'JH_FORCE_ROLLBACK';
+      exception when sqlstate 'P0001' then
+        return jsonb_build_object('rolledBack', true, 'results', results);
+      end;
+    end if;
+
+    for op in select value from jsonb_array_elements(operation->'operations') loop
+      results := results || jsonb_build_array(jingeehas.execute_operation(op));
+    end loop;
+    return jsonb_build_object('rolledBack', false, 'results', results);
+  end if;
+
+  return jingeehas.execute_operation(operation);
+end;
+$$;
+
+revoke all on function jingeehas.execute_operation(jsonb) from public, anon, authenticated;
+revoke all on function public.jingeehas_transaction(jsonb) from public, anon, authenticated;
+grant execute on function jingeehas.execute_operation(jsonb) to service_role;
+grant execute on function public.jingeehas_transaction(jsonb) to service_role;
+
+insert into jingeehas.schema_migrations(version)
+values ('2026071602_transaction_rpc')
+on conflict (version) do nothing;;

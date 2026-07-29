@@ -19,22 +19,65 @@ assert.notEqual(questions.questionById("Q-TRAVEL").id, questions.questionById("Q
 
 app._test.setComingSoon(false);
 const landing = app.renderForPath("/");
-assert(landing.includes("Жин хасахад саад болж буй шалтгаанаа тань"));
 assert(landing.includes("Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?"));
-for (const question of ["Илүүдэл жин тань таны санааг байнга зовоодог уу?", "Янз бүрийн дасгал хөдөлгөөн туршсан ч өөрчлөлт бага байна уу?", "Тураах бэлдмэл, хоолны дэглэм хэрэглэсэн ч үр дүн нь хангалтгүй эсвэл удаан тогтдоггүй юу?"]) assert(landing.includes(question), question);
-assert(landing.includes("Жин хасахад зөвхөн хоол, дасгал биш — таны сэтгэлзүйн хэв маяг, далд зуршил хүчтэй нөлөөлдөг."));
-assert(landing.includes("Өөрт тань саад болж буй сэтгэлзүйн шалтгааныг эхлээд ойлгож чадвал жин хасах арга барилаа илүү бодитой, өөртөө тохирсон, тогтвортой сонгоход хялбар болно."));
-assert(landing.includes("Сэтгэлзүйн хэв маягаа тодорхойлох"));
+assert(landing.includes("Хүн бүрд жин хасалтыг нь эхнээс нь эвддэг өөрийн гэсэн зуршил байдаг. Энэ тест таных юу болохыг олж харахад тусална."));
+assert(!landing.includes("Энэ тест таных юу болохыг олж өгнө."));
+const landingMicrocopy = "Тест бөглөх хугацаа 10 орчим мин · Дэлгэрэнгүй хувийн тайлан · 9,900₮";
+assert.equal((landing.match(/Тест бөглөх хугацаа 10 орчим мин · Дэлгэрэнгүй хувийн тайлан · 9,900₮/g) || []).length, 4);
+assert(!landing.includes("40 орчим асуулт"));
+assert(!landing.includes("10–15 минут"));
+assert(landing.includes(landingMicrocopy));
+assert((landing.match(/Тест өгөх — 9,900₮/g) || []).length >= 4);
+assert(!landing.includes("Тестээ авах — 9,900₮"));
+assert(landing.includes("Та эдгээрийг өөр дээрээ анзаарч байсан уу?"));
+const mirrorTitles = ["«Даваа гарагаас» мөчлөг", "Хөл аяндаа л", "Өдөр нь чаддаг, орой нь чаддаггүй", "Хүний дэргэд байхдаа өөр", "Хассан жин буцаад л нэмэгдчихдэг", "Толь хэцүү болсон"];
+const mirrorBodies = [
+  "«Даваа гарагаас эхэлнэ» гэж хэлж үзээгүй хүн ховор доо. Эхний хоёр гурван өдөр нь дэглэмээ сайн хэрэгжүүлнэ. Тэгээд нэг хүндхэн өдөр таарна, нэг төрсөн өдөр давхцана... нэг мэдэхэд л хуучин хэвэндээ орчихсон байдаг.",
+  "Хэцүү өдрийн орой хөл аяндаа хөргөгч рүү явчихдаг. Өлсөөгүйгээ өөрөө ч мэдэж байдаг. Гэхдээ л...",
+  "Өдөржингөө тэсэж тэсчихээд оройн цагаар тэсвэр алдаад идчихдэг. Тэгээд өөртөө уурлана. Маргааш орой нь дахиад л хуучнаараа.",
+  "Хүмүүстэй хамт байхдаа «би нэг их иддэггүй ээ» гэдэг. Харин ганцаараа үлдэхээрээ нөхчихдөг. Үүнийг нь хэн ч мэддэггүй л дээ.",
+  "Гурван сар зүтгэж зүтгэж, арай гэж хассан таван кг зун гэхэд буцаад нэмэгдчихдэг. Дээрээс нь хоёр кг дагуулчихсан.",
+  "Зурган дээрээс өөрийгөө хайхаа болиод удаж байна. Жин ч яах вэ дээ — толины өмнө зогсох нь л хэцүү болсон."
+];
+for (const card of mirrorTitles) assert.equal((landing.match(new RegExp(card, "g")) || []).length, 1, card);
+for (const body of mirrorBodies) assert(landing.includes(body), body);
+for (const oldCopy of ["“Даваа гарагаас” гэдэг мөчлөг", "“Даваа гарагаас эхэлнэ” гэж хэлээгүй хүн ховор доо", "Эхний гурван өдөр чадна", "Гар аяндаа", "Өдөр нь болдог, орой нь болдоггүй", "Хүнтэй байхдаа өөр", "Хассан жин буцаад ирдэг", "Зурагнаас өөрийгөө хайхаа больсон"]) assert(!landing.includes(oldCopy), oldCopy);
+assert(landing.includes("Энэ үнэлгээ юуг харуулах вэ?"));
+assert(landing.includes("Үнэлгээ хийлгэснээр юу мэдэж авах вэ?"));
+assert(landing.includes("Таны хувийн тайлан"));
+assert.equal((landing.match(/Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ/g) || []).length, 1);
+assert(!landing.includes("Таны тайлан ийм бүтэцтэй байна"));
+assert(landing.includes("хэмнэл алдагдсан үед эргэн орох аргыг"));
+assert(landing.includes("ЯАЖ ЗОХИЦУУЛАХ ВЭ?"));
+assert(landing.includes("ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?"));
+assert.equal((landing.match(/Яагаад хоолны дэглэм барих, дасгал хөдөлгөөн хийх дангаараа хангалтгүй байдаг вэ\?/g) || []).length, 1);
+assert(!landing.includes("Яагаад хоол, дасгал дангаараа хангалтгүй байдаг вэ?"));
+assert(landing.includes("Асуух зүйл байвал"));
+assert(landing.includes("Юу саад болж байгааг ойлгоод, яаж зохицуулахаа мэдвэл ажил хөнгөрдөг"));
+assert(!landing.includes("ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг"));
+assert(!landing.includes("зурам"));
+assert(landing.includes("Юу давтагдаад байгааг"));
+assert(landing.includes("Олон тохиолдолд өөр зүйл"));
+assert(!landing.includes("Ихэнхдээ өөр зүйл"));
+assert(landing.includes("гол саад"));
+assert(!landing.includes("гол дайсан"));
+assert((landing.match(/хэв маяг/g) || []).length <= 3);
 assert(landing.includes('href="/assessment/start"'));
-assert(landing.includes("Эмнэлгийн онош тавихгүй. Таны жин хасахад нөлөөлж буй давтагддаг хэв маяг, далд зуршлыг таньж ойлгоход тусална."));
-assert.equal((landing.match(/class="hero-question"/g) || []).length, 3);
+assert(landing.includes("Онош биш. Өөрийгөө танин мэдэх үнэлгээ."));
+assert.equal((landing.match(/Жин хасахад саад болж буй сэтгэлзүйн шалтгааны тест/g) || []).length, 1);
+assert(landing.includes("Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?"));
+for (const step of ["01</strong> Асуултад хариулна", "02</strong> Давтагддаг хэв маягаа олно", "03</strong> Дэлгэрэнгүй тайлангаа авна", "04</strong> Жин хасахад өөрт тохирох арга барилаа ойлгоно"]) assert(landing.includes(step), `hero step missing: ${step}`);
+assert.equal((landing.match(/Жин хасахад өөрт тохирох арга барилаа ойлгоно/g) || []).length, 1);
+assert(landing.includes("support@jingeehas.fit"));
+assert((landing.match(/data-primary-cta/g) || []).length >= 4);
 assert(!/<section class="hero"[^>]*>[\s\S]*?<h1[^>]*>Илүүдэл жингээс салах тест үнэлгээ<\/h1>/.test(landing));
-assert(!landing.includes("Үнэ: 9,900₮"));
-assert(!/<section class="hero"[\s\S]*?9,900₮[\s\S]*?<\/section>/.test(landing));
+assert(!landing.includes("Жин хасахад саад болж буй шалтгаанаа тань"));
+assert(landing.includes('href="#sample-report"'));
 assert.equal(app.PRODUCT.amount, 9900);
 const appSource = require("node:fs").readFileSync(require.resolve("../app.js"), "utf8");
 assert(appSource.includes('if (route === "landing") trackEvent("landing_viewed"'), "landing analytics event remains wired");
-assert(appSource.includes('if (route === "assessmentContact") trackEvent("payment_preparation_viewed"'), "payment preparation analytics event remains wired before invoice creation");
+assert(appSource.includes('trackEvent("landing_cta_clicked")'), "landing CTA uses canonical idempotent event");
+assert(appSource.includes('if (["assessmentStart", "assessmentContact"].includes(route)) trackEvent("payment_preparation_viewed"'), "payment preparation analytics event remains wired before invoice creation");
 assert(appSource.includes('["text", "number"].includes(input.type)'), "number answers update on input without waiting for blur");
 assert(!landing.includes("Үе 1"));
 app._test.setState({ questionsAuthorized: true });
@@ -101,10 +144,10 @@ const neutralReport = publicReport(buildFullReport(buildEvidence([
 ])));
 app._test.setState({ ownerPreview: true, report: { fullReport: neutralReport } });
 const renderedNeutralReport = app.renderForPath("/report");
-assert(renderedNeutralReport.includes("Ямар нийтлэг саад хүчтэй илрээгүй вэ?"));
-assert(renderedNeutralReport.includes("Дараагийн хугацаанд юу ажиглаж болох вэ?"));
+assert(renderedNeutralReport.includes("Гол саад болж харагдаагүй зүйлс"));
+assert(renderedNeutralReport.includes("Эхний ажиглалт, туршилт"));
 assert(renderedNeutralReport.includes("нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах"));
-assert(renderedNeutralReport.includes("Энэ асуумжаар юуг дүгнэж болохгүй вэ?"));
+assert(renderedNeutralReport.includes("Энэ тайлангийн хязгаар"));
 assert(!renderedNeutralReport.includes("Тайланг хэрхэн ашиглах вэ?"), "redundant generic neutral report-use section remains");
 
 function assertSequentialSections(report, name) {

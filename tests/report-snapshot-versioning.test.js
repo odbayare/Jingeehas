@@ -9,7 +9,7 @@ const { hashToken } = require("../netlify/functions/_lib/crypto.js");
 const { REPORT_VERSION } = require("../netlify/functions/_lib/report.js");
 const { REPORT_SCHEMA_VERSION, reportPayload, resolveReportSnapshot } = require("../netlify/functions/_lib/report-snapshots.js");
 const { validateReportForActivation } = require("../netlify/functions/_lib/report-validation.js");
-const { GENERATION_REASON, checksum, regenerateReportVersion, ownerAdminReport } = require("../netlify/functions/_lib/report-regeneration.js");
+const { GENERATION_REASON, checksum, listRegenerationCandidates, regenerateReportVersion, ownerAdminReport } = require("../netlify/functions/_lib/report-regeneration.js");
 const { reportForSession } = require("../netlify/functions/_lib/assessment.js");
 const fixtures = require("./fixtures/report-gold-profiles.js");
 const app = require("../app.js");
@@ -18,6 +18,7 @@ const now = new Date("2026-07-19T00:00:00.000Z");
 const assessmentId = "wa-version-test";
 const originalSessionId = "ws-version-owner";
 const recoveredSessionId = "ws-version-recovered";
+const latestPrepaidAssessmentId = "wa-version-latest-prepaid";
 const adminId = "adm-version-owner";
 const adminSessionId = "ads-version-owner";
 const adminSecret = "version-test-admin-secret";
@@ -64,6 +65,25 @@ async function seededDatabase({ includeVersion = true } = {}) {
   const legacyResolved = await resolveReportSnapshot(legacyOnly, assessmentId);
   assert.equal(legacyResolved.snapshotMetadata.source, "legacy", "legacy-only assessment must remain readable");
   assert.equal(legacyResolved.fullReport.legacyBroken, true);
+
+  const candidateDatabase = await seededDatabase();
+  await candidateDatabase.insert("assessments", { id: latestPrepaidAssessmentId, sessionId: originalSessionId,
+    commercialFlowVersion: "prepaid_v2", safetyCheckId: null, status: "complete", reportMode: "sufficient",
+    questionnaireVersion: "jingeehas-weight-v2", createdAt: "2026-07-27T08:00:00.000Z",
+    updatedAt: "2026-07-27T09:28:31.317Z", completedAt: "2026-07-27T09:28:31.317Z" });
+  await candidateDatabase.insert("report_snapshots", { id: latestPrepaidAssessmentId, assessmentId: latestPrepaidAssessmentId,
+    sessionId: originalSessionId, reportMode: "sufficient", safetyRoute: null, safetyProvenance: null,
+    initialView: { legacy: true }, fullReport: { version: "jingeehas-case-formulation-v5-attribution" }, createdAt: "2026-07-27T09:28:31.317Z" });
+  await candidateDatabase.insert("payments", { id: "wp-version-latest", sessionId: originalSessionId, assessmentId: latestPrepaidAssessmentId,
+    productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "paid", createdAt: now.toISOString(), updatedAt: now.toISOString() });
+  await candidateDatabase.insert("entitlements", { id: "we-version-latest", sessionId: originalSessionId, assessmentId: latestPrepaidAssessmentId,
+    paymentId: "wp-version-latest", productCode: "WEIGHT_TEST_ONE_TIME", status: "active", grantedAt: now.toISOString() });
+  const candidateResult = await listRegenerationCandidates(candidateDatabase, event);
+  assert.equal(candidateResult.candidates[0].assessmentId, latestPrepaidAssessmentId, "latest prepaid assessment must be first");
+  assert.equal(candidateResult.candidates[0].commercialFlowVersion, "prepaid_v2");
+  assert.equal(candidateResult.candidates[0].paymentState, "paid_entitled");
+  assert.equal(candidateResult.candidates[0].versionCount, 0, "latest prepaid target starts with no version rows");
+  assert.equal(candidateResult.candidates[1].commercialFlowVersion, "legacy_postpaid_v1");
 
   const database = await seededDatabase();
   const protectedBefore = {
@@ -135,8 +155,11 @@ async function seededDatabase({ includeVersion = true } = {}) {
   assert(!migration.includes("drop table jingeehas.report_snapshots"));
   assert(!migration.includes("alter table jingeehas.report_snapshots"));
   const regenerationSource = fs.readFileSync(path.join(__dirname, "..", "netlify", "functions", "_lib", "report-regeneration.js"), "utf8");
+  const appSource = fs.readFileSync(path.join(__dirname, "..", "app.js"), "utf8");
   assert(!/console\.(?:log|info|warn|error)/.test(regenerationSource), "report payload must not enter application logs");
   assert(!/ownerLike|ownerProfile|ownerSpecialCase/.test(regenerationSource), "owner-specific inference path is prohibited");
+  assert(appSource.includes("regenerateAdminReport(button.dataset.regenerateReport)"), "regeneration must use the explicitly clicked row target");
+  assert(!/regenerateAdminReport\(loadAdminReportPreviewAssessment/.test(appSource), "stale preview state must not select regeneration target");
   assert.equal(app.WEIGHT_TEST_COMING_SOON_MODE, false);
   console.log("versioned report snapshot and regeneration tests passed");
 })().catch(error => { console.error(error); process.exitCode = 1; });

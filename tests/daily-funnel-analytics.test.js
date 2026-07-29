@@ -101,16 +101,13 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
   assert.equal(app._test.analyticsFlowStateCopy(visitorAggregate.coverage, visitorAggregate.legacyFlow), "Төлбөр-эхэнд урсгалын шинэ зочид бүртгэгдсэн боловч дараагийн шатанд хүрсэн тест хараахан байхгүй.");
   app._test.setState({ admin: { ...app._test.getState().admin, authenticated: true, owner: true, analytics: { ...app._test.getState().admin.analytics,
     preset: "last7", startDate: "2026-07-22", endDate: "2026-07-22", days: aggregate.days, currentFlow: aggregate.currentFlow,
-    priorCurrentFlow: null, legacyFlow: aggregate.legacyFlow, conversions: aggregate.conversions, coverage: aggregate.coverage, loading: false } } });
+    priorCurrentFlow: null, legacyFlow: aggregate.legacyFlow, conversions: aggregate.conversions, coverage: aggregate.coverage, paidFirstFunnel: { landing: { eligibleVisitors: 5, ctaSessions: 4, preparationSessions: 4, ctaToPreparationSessions: 4, directPreparationSessions: 0 }, operational: { paymentPendingAssessments: 0, activePendingInvoices: 0, expiredUnpaidInvoices: 0, confirmedPayments: 1, activeEntitlements: 1, revenueMnt: 9900 }, daily: [{ date: "2026-07-22", newVisitors: 5, ctaSessions: 4, preparationSessions: 4, invoicesCreated: 2, paymentsConfirmed: 1, assessmentsStarted: 3, assessmentsCompleted: 2, reportsOpened: 1, revenueMnt: 9900 }] }, loading: false } } });
   const dashboard = app._test.renderAdminAnalytics();
-  assert(dashboard.includes("Тест эхлүүлсэн хувь: 75.0%")); assert(!dashboard.includes("900.0%"));
-  assert(dashboard.includes("Legacy тест эхлүүлсэн: 9")); assert(dashboard.includes("Legacy төлбөр: 1"));
-  assert(dashboard.includes("Сонгосон хугацаанд хэмжигдсэн нийт зочин: 5"));
-  assert(dashboard.includes("Төлбөр-эхэнд урсгалын шинэ зочин"));
-  assert(dashboard.includes("Хуучин урсгалын бодит бүртгэл"));
-  assert(dashboard.includes("Доорх хүснэгт төлбөр-эхэнд урсгалын үзүүлэлтийг өдрөөр харуулна."));
-  assert(dashboard.includes("Сонгосон хугацаанд хуучин болон төлбөр-эхэнд урсгалын бүртгэл хоёулаа байна. Урсгал хоорондын тоог хольж хувь тооцоогүй."));
-  const headers = ["Огноо", "Шинэ зочин", "Төлбөрийн хэсэг", "Хүрсэн хувь", "Нэхэмжлэл", "Нэхэмжлэл үүсгэсэн хувь", "Төлбөр", "Төлбөр төлсөн хувь", "Тест эхлүүлсэн", "Тест эхлүүлсэн хувь", "Тест дуусгасан", "Дуусгасан хувь", "Тайлан нээсэн", "Тайлан нээсэн хувь", "Орлого"];
+  assert(dashboard.includes("CTA → төлбөрийн бэлтгэл")); assert(!dashboard.includes("900.0%"));
+  assert(!dashboard.includes("Нүүр хуудасны эхний хөрвөлт")); assert(dashboard.includes("Төлбөр эхлүүлэхийн оношилгоо")); assert(dashboard.includes("Хугацаа дууссан, төлөгдөөгүй"));
+  assert(dashboard.includes("Өдрийн задаргаа")); assert(dashboard.includes("2026.07.22"));
+  assert(dashboard.includes("Цагийн дэлгэрэнгүй")); assert(dashboard.includes("Төлбөрийн бэлтгэл нь хэрэглэгч үнэ болон авах зүйлсээ харсан үе."));
+  const headers = ["Огноо", "Шинэ зочин", "CTA", "Төлбөрийн бэлтгэл", "Нэхэмжлэл", "Төлбөр", "Тест эхлүүлсэн", "Тест дуусгасан", "Тайлан", "Орлого"];
   let offset = -1; for (const header of headers) { const next = dashboard.indexOf(`<th>${header}</th>`); assert(next > offset, `daily header order: ${header}`); offset = next; }
   assert(!/(NaN|Infinity|null|undefined|legacy_postpaid_v1|prepaid_v2)/.test(dashboard));
 
@@ -128,6 +125,8 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
   assert.equal(tracked.filter(row => row.eventName === "landing_viewed").length, 1, "landing refresh remains idempotent per visitor and day");
   assert.equal(tracked.filter(row => row.eventName === "payment_preparation_viewed").length, 1, "payment preparation render is idempotent per public session");
   assert.equal(tracked.filter(row => row.eventName === "paywall_viewed").length, 1, "payment preparation refresh remains idempotent per assessment");
+  const trackedHourly = await trackingDatabase.getDailyFunnelAnalytics("2026-07-22", "2026-07-22");
+  assert.equal(trackedHourly.landingCutoverHourly.totals.ctaClicks, 0, "test localhost traffic is excluded from commercial hourly totals");
   assert.equal((await trackingDatabase.find("payments", {})).length, 0, "payment-section tracking requires no QPay invoice");
   setDatabaseForTests(database);
 
@@ -147,12 +146,19 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
   assert(!source.includes("Math.min(100"), "rates are not clamped");
   assert(!source.includes("rate(total.assessmentsStarted, total.paymentsConfirmed)"), "frontend does not recompute payment-to-start from totals");
   assert(!source.includes("rate(day.paywallViews, day.assessmentsCompleted)"), "daily table does not divide paywall by completed");
-  const migration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260722041203_repair_flow_aware_funnel_cohort_analytics.sql"), "utf8");
+  const migration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260722042433_repair_flow_aware_funnel_cohort_analytics.sql"), "utf8");
   for (const expected of ["2026-07-21T16:17:45.493Z", "commercial_flow_version = 'prepaid_v2'", "a.started_at >= e.granted_at", "revoke all on function", "Asia/Ulaanbaatar"]) assert(migration.includes(expected), expected);
   assert(!migration.includes("updated_at"), "flow presence never uses updated_at");
-  const clarityMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260722075053_clarify_funnel_visitor_coverage.sql"), "utf8");
-  for (const expected of ["all_measured_visitors", "paid_first_eligible_visitors", "prepaid_assessment_activity_present", "prepaid_visitor_activity_present", "legacy_with_prepaid_visitors", "revoke all on function"]) assert(clarityMigration.includes(expected), expected);
-  const preparationMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260722081512_allow_payment_preparation_analytics_event.sql"), "utf8");
-  for (const expected of ["analytics_events_event_name_check", "payment_preparation_viewed", "schema_migrations"]) assert(preparationMigration.includes(expected), expected);
+  const adminMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260725153009_admin_paid_first_funnel_analytics.sql"), "utf8");
+  for (const expected of ["cta_to_preparation_sessions", "direct_preparation_sessions", "expired_unpaid_invoices", "security definer", "Asia/Ulaanbaatar", "revoke all on function"]) assert(adminMigration.includes(expected), expected);
+  const hotfixMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260724170700_repair_paid_first_schema_contracts.sql"), "utf8");
+  for (const expected of ["analytics_events_event_name_check", "landing_cta_clicked", "payment_preparation_viewed", "schema_migrations"]) assert(hotfixMigration.includes(expected), expected);
+  const hourlyMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260722160603_landing_cutover_hourly_visibility.sql"), "utf8");
+  assert(hourlyMigration.includes("get_landing_cutover_hourly_analytics"));
+  assert(!hourlyMigration.includes("get_daily_funnel_analytics_v1"));
+  assert(!hourlyMigration.includes("get_daily_funnel_analytics("));
+  assert(hourlyMigration.includes("revoke all on function jingeehas.get_landing_cutover_hourly_analytics"));
+  const hourlyRouteMigration = fs.readFileSync(path.join(__dirname, "../supabase/migrations/20260722160610_route_landing_hourly_rpc.sql"), "utf8");
+  assert(hourlyRouteMigration.includes("get_landing_cutover_hourly_analytics"));
   console.log("flow-aware daily funnel analytics tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

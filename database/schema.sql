@@ -122,7 +122,7 @@ create index report_snapshot_versions_legacy_source_idx on report_snapshot_versi
 create table analytics_events (
   id uuid primary key,
   event_id uuid not null unique,
-  event_name text not null check (event_name in ('landing_viewed','start_cta_clicked','assessment_started','assessment_completed','paywall_viewed','invoice_created','payment_confirmed','invoice_create_failed','payment_check_started','payment_check_failed','recovery_requested','recovery_succeeded','report_opened')),
+  event_name text not null check (event_name in ('landing_viewed','landing_cta_clicked','start_cta_clicked','payment_preparation_viewed','payment_cta_clicked','checkout_submitted','assessment_shell_created','assessment_shell_create_failed','invoice_create_started','invoice_created','invoice_create_failed','paywall_viewed','payment_page_rendered','payment_check_started','payment_check_failed','payment_confirmed','assessment_started','assessment_completed','recovery_requested','recovery_succeeded','report_opened')),
   occurred_at timestamptz not null,
   visitor_id_hash text check (visitor_id_hash is null or visitor_id_hash ~ '^[a-f0-9]{64}$'),
   session_id_hash text check (session_id_hash is null or session_id_hash ~ '^[a-f0-9]{64}$'),
@@ -169,6 +169,8 @@ create table payments (
   check (updated_at >= created_at),
   check (paid_at is null or paid_at >= created_at)
 );
+create unique index payments_provider_payment_id_authority_uidx on payments (provider_payment_id)
+where provider_payment_id is not null and btrim(provider_payment_id) <> '';
 
 create table entitlements (
   id text primary key,

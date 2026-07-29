@@ -4,8 +4,8 @@ const crypto = require("node:crypto");
 const { cookies } = require("./http.js");
 const { PREVIEW_COOKIE_NAME } = require("./preview.js");
 
-const BROWSER_EVENTS = new Set(["landing_viewed", "start_cta_clicked", "payment_preparation_viewed", "paywall_viewed", "recovery_requested"]);
-const SERVER_EVENTS = new Set(["assessment_started", "assessment_completed", "invoice_created", "payment_confirmed", "invoice_create_failed", "payment_check_started", "payment_check_failed", "recovery_succeeded", "report_opened"]);
+const BROWSER_EVENTS = new Set(["landing_viewed", "landing_cta_clicked", "start_cta_clicked", "payment_preparation_viewed", "payment_cta_clicked", "paywall_viewed", "payment_page_rendered", "recovery_requested", "resume_entry_shown", "resume_entry_clicked"]);
+const SERVER_EVENTS = new Set(["assessment_started", "assessment_completed", "checkout_submitted", "assessment_shell_created", "assessment_shell_create_failed", "invoice_create_started", "invoice_created", "payment_confirmed", "invoice_create_failed", "payment_check_started", "payment_check_failed", "recovery_succeeded", "report_opened"]);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SAFE_ID = /^[A-Za-z0-9_-]{3,100}$/;
 const BOT_USER_AGENT = /(?:facebookexternalhit|facebot|googlebot|bingbot|duckduckbot|yandexbot|baiduspider|slurp|crawler|spider|twitterbot|linkedinbot|slackbot|discordbot|telegrambot|whatsapp|uptimerobot|pingdom|headlesschrome|playwright|puppeteer|lighthouse|\bbot\b|curl\/|wget\/)/i;
@@ -63,12 +63,26 @@ function idValue(value) { const text = String(value || ""); return SAFE_ID.test(
 function localAnalyticsDay(now = new Date()) {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
 }
-function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now = new Date()) {
+function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now = new Date(), metadata = {}) {
   if (name === "landing_viewed" && context.visitorIdHash) return `landing_viewed:${context.visitorIdHash}:${localAnalyticsDay(now)}`;
   if (name === "payment_preparation_viewed" && context.sessionIdHash) return `payment_preparation_viewed:${context.sessionIdHash}`;
-  if (["paywall_viewed", "report_opened"].includes(name) && assessmentId) return `${name}:${assessmentId}`;
-  if (name === "start_cta_clicked" && context.sessionIdHash) return `start_cta_clicked:${context.sessionIdHash}`;
+  if (["paywall_viewed", "payment_page_rendered", "report_opened"].includes(name) && assessmentId) return `${name}:${assessmentId}`;
+  if (["landing_cta_clicked", "start_cta_clicked"].includes(name) && context.sessionIdHash) return `landing_cta_clicked:${context.sessionIdHash}`;
+  if (name === "payment_cta_clicked" && context.sessionIdHash) return `payment_cta_clicked:${context.sessionIdHash}`;
+  if (["resume_entry_shown", "resume_entry_clicked"].includes(name) && context.sessionIdHash) return `${name}:${context.sessionIdHash}:${metadata.stateCategory || "unknown"}`;
   return null;
+}
+function safeBrowserMetadata(name, metadata = {}) {
+  if (!["resume_entry_shown", "resume_entry_clicked"].includes(name)) return {};
+  const allowed = new Set(["payment_pending", "in_progress", "complete", "safety"]);
+  return allowed.has(metadata.stateCategory) ? { stateCategory: metadata.stateCategory } : {};
+}
+function safeFailureCategory(error) {
+  const code = String(error?.code || "").toLowerCase();
+  if (["session_expired", "session_unavailable", "invalid_session"].includes(code)) return "session_unavailable";
+  if (["invalid_request", "validation_failed", "invalid_email", "invalid_context", "assessment_incomplete"].includes(code) || Number(error?.statusCode) === 400) return "validation_failed";
+  if (["database_error", "database_unavailable", "db_unavailable", "conflict"].includes(code) || Number(error?.statusCode) === 503) return "database_unavailable";
+  return "server_error";
 }
 function eventRow(name, context = {}, values = {}, options = {}) {
   const eventId = UUID.test(String(options.eventId || "")) ? options.eventId : crypto.randomUUID();
@@ -84,7 +98,7 @@ function eventRow(name, context = {}, values = {}, options = {}) {
 }
 async function recordEvent(database, name, context, values, options = {}) {
   if (!BROWSER_EVENTS.has(name) && !SERVER_EVENTS.has(name)) throw new Error("Unknown analytics event");
-  try { return await database.insert("analytics_events", eventRow(name, context, values, options)); }
+  try { return await database.insert("analytics_events", eventRow(name, context, values, { ...options, metadata: safeBrowserMetadata(name, options.metadata) })); }
   catch (error) { if (error?.code === "conflict") return null; throw error; }
 }
 async function recordEventSafe(database, name, context, values, options = {}) {
@@ -92,12 +106,16 @@ async function recordEventSafe(database, name, context, values, options = {}) {
   catch (error) { console.warn(JSON.stringify({ event: "analytics_write_failed", eventName: name, code: error?.code || "unknown" })); return null; }
 }
 async function assessmentContext(database, assessmentId) {
-  const rows = await database.find("analytics_events", { assessmentId, eventName: "assessment_started" });
-  const row = rows.sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))[0];
+  let row = null;
+  for (const eventName of ["assessment_shell_created", "checkout_submitted", "assessment_started"]) {
+    const rows = await database.find("analytics_events", { assessmentId, eventName });
+    row = rows.sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))[0] || null;
+    if (row) break;
+  }
   return row ? { visitorIdHash: row.visitorIdHash, sessionIdHash: row.sessionIdHash, utmSource: row.utmSource, utmMedium: row.utmMedium,
     utmCampaign: row.utmCampaign, utmContent: row.utmContent, utmTerm: row.utmTerm, referrerHost: row.referrerHost, deviceClass: row.deviceClass } : {};
 }
 
 module.exports = { BROWSER_EVENTS, SERVER_EVENTS, UUID, analyticsPepper, hashAnonymous, cleanText, cleanHost, attribution, clientContext,
   flagsFromEvent, isKnownBotRequest, browserOriginAllowed, localAnalyticsDay, browserEventIdempotencyKey,
-  eventRow, recordEvent, recordEventSafe, assessmentContext };
+  eventRow, recordEvent, recordEventSafe, assessmentContext, safeFailureCategory, safeBrowserMetadata };

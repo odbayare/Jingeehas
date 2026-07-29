@@ -68,6 +68,26 @@ async function saveRecoveryContacts(database, sessionId, input, now = new Date()
   return { contactGroupId };
 }
 
+async function saveEntitledReportEmail(database, sessionId, assessment, input, now = new Date()) {
+  const email = normalizeEmail(input?.email);
+  if (!email) throw Object.assign(new Error(EMAIL_ERROR), { statusCode: 400, code: "invalid_email", publicMessage: EMAIL_ERROR });
+  const entitlements = await database.find("entitlements", { assessmentId: assessment.id, status: "active" });
+  const entitlement = entitlements[0];
+  if (!entitlement) throw Object.assign(new Error("Payment required"), { statusCode: 402, code: "payment_required" });
+  const payment = entitlement.paymentId ? await database.get("payments", entitlement.paymentId) : null;
+  const hash = contactHash("email", email);
+  const existing = (await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id, type: "email", contactHash: hash }))[0];
+  if (existing) return { contact: existing, email, entitlement, payment, alreadySaved: true };
+  const linked = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });
+  const contactGroupId = linked[0]?.contactGroupId || randomId("rcg_");
+  const contact = await database.insert("recovery_contacts", {
+    id: randomId("rc_"), contactGroupId, sessionId, assessmentId: assessment.id,
+    paymentId: payment?.id || entitlement.paymentId || null, entitlementId: entitlement.id,
+    type: "email", contactHash: hash, encryptedContact: encryptContact(email), verifiedAt: null, createdAt: now.toISOString()
+  });
+  return { contact, email, entitlement, payment, alreadySaved: false };
+}
+
 class RecoveryDeliveryClient {
   constructor(env = process.env) {
     this.url = String(env.RECOVERY_DELIVERY_API_URL || "");
@@ -183,5 +203,5 @@ async function confirmRecovery(database, input, now = new Date()) {
 }
 
 module.exports = { PHONE_ERROR, EMAIL_ERROR, EMAIL_ONLY_ERROR, RECOVERY_SUBJECT, GENERIC_RECOVERY_MESSAGE, normalizePhone, normalizeEmail,
-  validateContacts, encryptContact, decryptContact, contactHash, saveRecoveryContacts, RecoveryDeliveryClient, getRecoveryDelivery,
+  validateContacts, encryptContact, decryptContact, contactHash, saveRecoveryContacts, saveEntitledReportEmail, RecoveryDeliveryClient, getRecoveryDelivery,
   recoveryEmail, requestRecovery, confirmRecovery };
