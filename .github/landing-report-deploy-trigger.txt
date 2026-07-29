@@ -1,1 +1,1 @@
-Finalize the approved landing report value copy, regression expectations, and deterministic package manifests.
+Commit the finalized landing report value copy and updated regression expectations before certification.
