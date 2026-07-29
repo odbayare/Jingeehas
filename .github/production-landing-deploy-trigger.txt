@@ -1,4 +1,0 @@
-Approved one-time production landing copy deployment trigger.
-Source PR: #9
-Source branch: agent/full-landing-copy-and-direct-payment-v2
-Requested: 2026-07-29 Asia/Ulaanbaatar
