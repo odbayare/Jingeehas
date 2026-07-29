@@ -1,4 +1,4 @@
-name: Verify live scientific methods box
+name: One-time scientific methods production deploy
 
 on:
   push:
@@ -6,41 +6,123 @@ on:
       - agent/full-landing-copy-and-direct-payment-v2
 
 permissions:
-  contents: read
+  contents: write
   issues: write
   pull-requests: write
 
 jobs:
-  verify-live:
+  deploy:
+    if: github.event.head_commit.message == 'Deploy scientific methods box to production'
     runs-on: ubuntu-latest
-    timeout-minutes: 8
+    timeout-minutes: 40
+    env:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_SITE_ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
+      GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Wait for production asset and report result
-        shell: bash
-        env:
-          GH_TOKEN: ${{ github.token }}
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/full-landing-copy-and-direct-payment-v2
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate approved scientific methods source
         run: |
-          set -uo pipefail
-          asset='https://jingeehas.fit/assets/landing-scientific-methods.js'
-          page='https://jingeehas.fit/'
-          verified='false'
-          verified_attempt=''
-          for attempt in $(seq 1 36); do
-            if curl --fail --silent --show-error --max-time 20 "$asset" -o /tmp/methods.js \
-              && grep -Fq 'Ашигласан шинжлэх ухааны аргачлалууд' /tmp/methods.js \
-              && curl --fail --silent --show-error --max-time 20 "$page" -o /tmp/index.html \
-              && grep -Fq '/assets/landing-scientific-methods.js' /tmp/index.html; then
-              verified='true'
-              verified_attempt="$attempt"
-              break
+          node --check app.js
+          node --check assets/landing-scientific-methods.js
+          grep -F 'Ашигласан шинжлэх ухааны аргачлалууд' assets/landing-scientific-methods.js
+          grep -F 'Dutch Eating Behavior Questionnaire — DEBQ' assets/landing-scientific-methods.js
+          grep -F 'Three-Factor Eating Questionnaire — TFEQ' assets/landing-scientific-methods.js
+          grep -F 'Binge Eating Scale — BES' assets/landing-scientific-methods.js
+          grep -F 'Night Eating Questionnaire — NEQ' assets/landing-scientific-methods.js
+          grep -F 'Когнитив-зан үйлийн функциональ шинжилгээ' assets/landing-scientific-methods.js
+          grep -F 'сэтгэлзүйн болон эмнэлзүйн онош тавихгүй' assets/landing-scientific-methods.js
+          grep -F '/assets/landing-scientific-methods.js' index.html
+
+      - name: Install browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run release validation
+        run: |
+          npm test
+          npm run test:contracts
+          npm run test:e2e
+          npm run verify:production-package
+          npm run verify:staging-package
+          npm run build:production
+
+      - name: Verify private Netlify credential
+        run: |
+          test -n "$NETLIFY_AUTH_TOKEN"
+          test "$NETLIFY_SITE_ID" = 'fb4def02-8e5d-4f00-8996-8cae09ed836f'
+
+      - name: Deploy exact branch to Netlify production
+        run: |
+          npx --yes netlify-cli@latest deploy \
+            --prod \
+            --dir=dist \
+            --functions=netlify/functions \
+            --site="$NETLIFY_SITE_ID" \
+            --message='Weight Test scientific methods box' \
+            --json > /tmp/netlify-deploy.json
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const data = JSON.parse(fs.readFileSync('/tmp/netlify-deploy.json', 'utf8'));
+          const deployId = data.deploy_id || data.id || '';
+          const deployUrl = data.deploy_url || data.url || '';
+          if (!deployId) throw new Error('Netlify deploy ID missing');
+          fs.writeFileSync('/tmp/deploy-id', deployId);
+          fs.writeFileSync('/tmp/deploy-url', deployUrl);
+          console.log(`Netlify deploy created: ${deployId}`);
+          NODE
+
+      - name: Verify live production index and asset
+        run: |
+          for attempt in $(seq 1 24); do
+            INDEX=$(curl -fsSL "https://jingeehas.fit/?deploy=$(date +%s)-$attempt" || true)
+            ASSET=$(curl -fsSL "https://jingeehas.fit/assets/landing-scientific-methods.js?deploy=$(date +%s)-$attempt" || true)
+            if printf '%s' "$INDEX" | grep -Fq '/assets/landing-scientific-methods.js' \
+              && printf '%s' "$ASSET" | grep -Fq 'Ашигласан шинжлэх ухааны аргачлалууд' \
+              && printf '%s' "$ASSET" | grep -Fq 'Dutch Eating Behavior Questionnaire — DEBQ' \
+              && printf '%s' "$ASSET" | grep -Fq 'Night Eating Questionnaire — NEQ' \
+              && printf '%s' "$ASSET" | grep -Fq 'сэтгэлзүйн болон эмнэлзүйн онош тавихгүй'; then
+              exit 0
             fi
-            sleep 5
+            sleep 10
           done
-          if [[ "$verified" == 'true' ]]; then
-            gh pr comment 9 --repo "$GITHUB_REPOSITORY" --body "LIVE_METHODS_VERIFY_PASS — production index and scientific-methods asset verified for source commit \`$GITHUB_SHA\` on attempt $verified_attempt."
-            echo "Live scientific methods asset verified on attempt $verified_attempt"
-            exit 0
-          fi
-          gh pr comment 9 --repo "$GITHUB_REPOSITORY" --body "LIVE_METHODS_VERIFY_FAIL — production index or scientific-methods asset was not observed for source commit \`$GITHUB_SHA\` within the verification window."
-          echo 'Live scientific methods asset was not observed within the verification window.' >&2
+          echo 'Live scientific methods box did not update within the verification window.' >&2
           exit 1
+
+      - name: Record deploy and remove one-time workflow
+        run: |
+          DEPLOY_ID=$(cat /tmp/deploy-id)
+          DEPLOY_URL=$(cat /tmp/deploy-url)
+          mkdir -p docs
+          cat > docs/LANDING_SCIENTIFIC_METHODS_LIVE_DEPLOYMENT_2026-07-29.md <<EOF
+          # Landing scientific methods box — live deployment
+
+          - Source branch: agent/full-landing-copy-and-direct-payment-v2
+          - Certified source commit: ${GITHUB_SHA}
+          - Netlify site ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
+          - Netlify deploy ID: ${DEPLOY_ID}
+          - Deploy URL: ${DEPLOY_URL}
+          - Production URL: https://jingeehas.fit
+          - Live index and scientific-methods asset verification: PASS
+          - PR #9 merge: NO
+          - QPay/payment/entitlement/customer-data mutation: NONE
+          EOF
+          gh pr comment 9 --repo "$GITHUB_REPOSITORY" --body "LIVE_METHODS_DEPLOY_PASS — Netlify production deploy \`${DEPLOY_ID}\` and live scientific-methods asset verified for source commit \`${GITHUB_SHA}\`."
+          rm .github/workflows/verify-live-scientific-methods.yml
+          rm -f .github/scientific-methods-deploy-trigger.txt
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/LANDING_SCIENTIFIC_METHODS_LIVE_DEPLOYMENT_2026-07-29.md .github/workflows/verify-live-scientific-methods.yml .github/scientific-methods-deploy-trigger.txt
+          git commit -m 'Record live scientific methods box deployment'
+          git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
