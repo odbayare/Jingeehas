@@ -103,15 +103,23 @@ test("landing CTA retains SPA routing and analytics tracking", async ({ page }) 
   await expect(page.locator("#contact-email")).toBeVisible();
 });
 
-test("landing retains only the scientific methodology box", async ({ page }) => {
+test("landing restores trust content before the retained scientific methodology box", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 812 });
   await page.goto("/");
-  for (const removed of ["Үнэлгээний зарчим", "Арга зүй ба судалгааны үндэслэл", "Аюулгүй байдлын дохио", "Сэтгэлзүй ба зан үйлийн хэв маяг", "Өдөр тутмын саад ба орчны нөлөө", "Судалж харьцуулсан арга зүй:", "Тайлан хэрхэн гардаг вэ?", "Арга зүйг дэлгэрэнгүй унших"]) {
-    await expect(page.getByText(removed, { exact: true })).toHaveCount(0);
+  for (const restored of ["Үнэлгээний зарчим", "Арга зүй ба судалгааны үндэслэл", "Аюулгүй байдлын дохио", "Сэтгэлзүй ба зан үйлийн хэв маяг", "Өдөр тутмын саад ба орчны нөлөө", "Судалж харьцуулсан арга зүй:", "Тайлан хэрхэн гардаг вэ?", "Арга зүйг дэлгэрэнгүй унших"]) {
+    await expect(page.getByText(restored, { exact: true })).toBeVisible();
   }
+  await expect(page.getByText("үндсэн тестийн явцад танина", { exact: false })).toBeVisible();
+  await expect(page.getByText("анхаарах шинж байгаа эсэхийг эхэлж шалгана", { exact: false })).toHaveCount(0);
+  await expect(page.getByRole("link", { name: "Арга зүйг дэлгэрэнгүй унших" })).toHaveAttribute("href", "/methodology");
   await expect(page.getByRole("heading", { name: "Ашигласан шинжлэх ухааны аргачлалууд" })).toBeVisible();
   await expect(page.locator(".scientific-methods-box")).toHaveCount(1);
+  expect((await page.locator(".methodology-pillars").evaluate(element => getComputedStyle(element).gridTemplateColumns)).split(" ").length).toBe(1);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto("/");
+  expect((await page.locator(".methodology-pillars").evaluate(element => getComputedStyle(element).gridTemplateColumns)).split(" ").length).toBe(3);
+  expect((await page.locator(".scientific-method-names").evaluate(element => getComputedStyle(element).gridTemplateColumns)).split(" ").length).toBe(2);
 });
 
 test("scientific methodology box is responsive and keyboard accessible", async ({ page }) => {
@@ -137,7 +145,7 @@ test("scientific methodology box is responsive and keyboard accessible", async (
     await expect(details).toBeVisible();
     await expect(box.getByText("Weight Test нь дээрх асуумжуудын шууд орчуулга биш", { exact: false })).toBeVisible();
     await expect(box.locator(".scientific-methods-grid article")).toHaveCount(6);
-    expect(await box.locator(".scientific-methods-grid h3").evaluateAll(nodes => nodes.every(node => {
+    expect(await box.locator(".scientific-methods-grid h4").evaluateAll(nodes => nodes.every(node => {
       const rect = node.getBoundingClientRect();
       return rect.left >= 0 && rect.right <= window.innerWidth + 1;
     }))).toBe(true);
