@@ -1,4 +1,4 @@
-name: One-time live landing report deploy
+name: Finalize landing report source and tests
 
 on:
   push:
@@ -9,13 +9,10 @@ permissions:
   contents: write
 
 jobs:
-  deploy:
-    if: github.event.head_commit.message == 'Trigger live landing report copy deploy'
+  finalize:
+    if: github.event.head_commit.message == 'Finalize landing report source and tests'
     runs-on: ubuntu-latest
     timeout-minutes: 40
-    env:
-      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      NETLIFY_SITE_ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
     steps:
       - uses: actions/checkout@v4
         with:
@@ -30,24 +27,48 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Repair approved copy against report evidence guard
+      - name: Finalize approved landing copy and regression expectations
         run: |
           python - <<'PY'
           from pathlib import Path
-          path = Path('app.js')
-          text = path.read_text(encoding='utf-8')
+
+          app = Path('app.js')
+          text = app.read_text(encoding='utf-8')
           old = 'Таны тайлан зөвхөн асуудлыг нэрлээд орхихгүй. Таны хариултад тулгуурлан хамгийн түрүүнд анхаарах чиглэл, өдөр тутам хэрэгжүүлж болох алхам болон төлөвлөгөө тасарсан үед эргэн орох аргыг гаргаж өгнө.'
           new = 'Таны тайлан зөвхөн асуудлыг нэрлээд орхихгүй. Таны хариултад тулгуурлан хамгийн түрүүнд анхаарах чиглэл, өдөр тутам хэрэгжүүлж болох алхам болон хэмнэл алдагдсан үед эргэн орох аргыг гаргаж өгнө.'
-          count = text.count(old)
-          if count != 1:
-              raise SystemExit(f'Expected one landing intro match, found {count}')
-          path.write_text(text.replace(old, new), encoding='utf-8')
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected one landing intro match, found {text.count(old)}')
+          app.write_text(text.replace(old, new), encoding='utf-8')
+
+          test = Path('tests/question-bank.test.js')
+          source = test.read_text(encoding='utf-8')
+          replacements = {
+              'assert(landing.includes("Нэргүй жишээ"));': 'assert(landing.includes("Таны хувийн тайлан"));',
+              'assert.equal((landing.match(/Тайлангийн жишээ/g) || []).length, 1);': 'assert.equal((landing.match(/Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ/g) || []).length, 1);',
+              'assert(landing.includes("Доорх нь нэргүй жишээ. Энэ нь таны үр дүн биш; тайлангийн нарийвчлал, бүтэц, хэлбэрийг урьдчилж харуулж байна."));': 'assert(landing.includes("хэмнэл алдагдсан үед эргэн орох аргыг"));',
+              'assert(landing.includes("өлссөндөө гэхээсээ илүү ачааллаа буулгах гэж иддэг бололтой"));': 'assert(landing.includes("ЯАЖ ЗОХИЦУУЛАХ ВЭ?"));',
+              'assert(landing.includes("зураг өөрөө гарч ирдэг"));': 'assert(landing.includes("ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?"));',
+              'assert(landing.includes("Юу саад болоод байгаагаа мэдчихвэл ажил хөнгөрдөг"));': 'assert(landing.includes("Юу саад болж байгааг ойлгоод, яаж зохицуулахаа мэдвэл ажил хөнгөрдөг"));'
+          }
+          for old_line, new_line in replacements.items():
+              count = source.count(old_line)
+              if old_line == 'assert(landing.includes("зураг өөрөө гарч ирдэг"));':
+                  if count != 2:
+                      raise SystemExit(f'Expected two legacy picture assertions, found {count}')
+                  source = source.replace(old_line, new_line, 1)
+                  source = source.replace(old_line, 'assert(!landing.includes("ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг"));', 1)
+                  continue
+              if count != 1:
+                  raise SystemExit(f'Expected one assertion match, found {count}: {old_line}')
+              source = source.replace(old_line, new_line)
+          test.write_text(source, encoding='utf-8')
           PY
 
-      - name: Validate approved landing copy
+      - name: Validate exact landing content
         run: |
           node --check app.js
           grep -F 'Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ' app.js
+          grep -F 'ЯАЖ ЗОХИЦУУЛАХ ВЭ?' app.js
           grep -F 'ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?' app.js
           grep -F 'хэмнэл алдагдсан үед эргэн орох аргыг' app.js
           ! grep -F 'ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг' app.js
@@ -56,85 +77,26 @@ jobs:
       - name: Install browser for E2E
         run: npx playwright install --with-deps chromium
 
-      - name: Run regression checks
+      - name: Run complete validation
         run: |
           npm test
           npm run test:contracts
           npm run test:e2e
 
-      - name: Refresh deterministic package manifests
+      - name: Refresh and verify deterministic packages
         run: |
           npm run generate:artifacts
           npm run build:staging
           npm run verify:production-package
           npm run verify:staging-package
+          npm run build:production
 
-      - name: Build production package
-        run: npm run build:production
-
-      - name: Verify Netlify deployment credentials
+      - name: Commit finalized source and remove temporary automation
         run: |
-          test -n "$NETLIFY_AUTH_TOKEN"
-          test "$NETLIFY_SITE_ID" = 'fb4def02-8e5d-4f00-8996-8cae09ed836f'
-
-      - name: Deploy approved branch to Netlify production
-        run: |
-          npx --yes netlify-cli@latest deploy \
-            --prod \
-            --dir=dist \
-            --functions=netlify/functions \
-            --site="$NETLIFY_SITE_ID" \
-            --message='Landing report value copy update' \
-            --json > /tmp/netlify-deploy.json
-          node - <<'NODE'
-          const fs = require('node:fs');
-          const data = JSON.parse(fs.readFileSync('/tmp/netlify-deploy.json', 'utf8'));
-          const deployId = data.deploy_id || data.id || '';
-          const deployUrl = data.deploy_url || data.url || '';
-          if (!deployId) throw new Error('Netlify deploy ID missing');
-          fs.writeFileSync('/tmp/deploy-id', deployId);
-          fs.writeFileSync('/tmp/deploy-url', deployUrl);
-          console.log(`Netlify deploy created: ${deployId}`);
-          NODE
-
-      - name: Verify live landing copy
-        run: |
-          for attempt in $(seq 1 24); do
-            LIVE=$(curl -fsSL "https://jingeehas.fit/app.js?deploy=$(date +%s)-$attempt" || true)
-            if printf '%s' "$LIVE" | grep -Fq 'Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ' \
-              && printf '%s' "$LIVE" | grep -Fq 'ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?' \
-              && printf '%s' "$LIVE" | grep -Fq 'хэмнэл алдагдсан үед эргэн орох аргыг' \
-              && ! printf '%s' "$LIVE" | grep -Fq 'ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг'; then
-              exit 0
-            fi
-            sleep 10
-          done
-          echo 'Live landing copy did not update within the verification window.' >&2
-          exit 1
-
-      - name: Record deployment and remove one-time files
-        run: |
-          DEPLOY_ID=$(cat /tmp/deploy-id)
-          DEPLOY_URL=$(cat /tmp/deploy-url)
-          mkdir -p docs
-          cat > docs/LANDING_REPORT_VALUE_COPY_LIVE_DEPLOYMENT_2026-07-29.md <<EOF
-          # Landing report value copy — live deployment
-
-          - Source branch: agent/full-landing-copy-and-direct-payment-v2
-          - Approved copy source commit: 805a900f69e2c8d76dfd4a4b3f417a53f6249d09
-          - Netlify site ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
-          - Netlify deploy ID: ${DEPLOY_ID}
-          - Deploy URL: ${DEPLOY_URL}
-          - Production URL: https://jingeehas.fit
-          - Live copy verification: PASS
-          - Full unit, contract and E2E checks: PASS
-          - PR #9 merge: NO
-          - QPay/payment/customer-data mutation: NONE
-          EOF
           rm .github/workflows/one-time-live-landing-report-deploy.yml
-          rm -f .github/landing-report-deploy-trigger.txt
+          rm .github/landing-report-deploy-trigger.txt
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add app.js artifacts/production-package-manifest.json artifacts/staging-package-manifest.json docs/LANDING_REPORT_VALUE_COPY_LIVE_DEPLOYMENT_2026-07-29.md .github/workflows/one-time-live-landing-report-deploy.yml .github/landing-report-deploy-trigger.txt
-          git commit -m 'Deploy landing report value copy to production'
+          git add app.js tests/question-bank.test.js artifacts/production-package-manifest.json artifacts/staging-package-manifest.json .github/workflows/one-time-live-landing-report-deploy.yml .github/landing-report-deploy-trigger.txt
+          git commit -m 'Finalize landing report value copy'
           git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
