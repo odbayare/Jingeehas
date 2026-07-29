@@ -1,1 +1,0 @@
-Commit the landing-page E2E expectations for the approved report value copy.
