@@ -1,0 +1,66 @@
+name: One-time landing report copy update
+
+on:
+  push:
+    branches:
+      - agent/full-landing-copy-and-direct-payment-v2
+
+permissions:
+  contents: write
+
+jobs:
+  update-copy:
+    if: github.event.head_commit.message == 'Trigger landing report copy update'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/full-landing-copy-and-direct-payment-v2
+          fetch-depth: 0
+
+      - name: Replace landing report value section
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          path = Path('app.js')
+          text = path.read_text(encoding='utf-8')
+
+          replacements = {
+              '<a class="text-link" href="#sample-report">Жишээ тайлан үзэх</a>':
+              '<a class="text-link" href="#sample-report">Тайлангаас юу авахыг үзэх</a>',
+
+              '''    <section id="sample-report" class="sample-report" aria-labelledby="sample-title"><p class="eyebrow">Нэргүй жишээ</p><h2 id="sample-title">Тайлангийн жишээ</h2><p class="muted">Доорх нь нэргүй жишээ. Энэ нь таны үр дүн биш; тайлангийн нарийвчлал, бүтэц, хэлбэрийг урьдчилж харуулж байна.</p><div class="sample-report-card"><p class="sample-kicker">ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг</p><p>Таны хариултаас харахад та өлссөндөө гэхээсээ илүү ачааллаа буулгах гэж иддэг бололтой. Ялангуяа хүнд өдрийн орой энэ нь хамгийн тод илэрдэг.</p><p class="sample-kicker">АМЬДРАЛ ДЭЭР</p><p>Өдөржин дэглэмээ барьж гүрийсэн хэрнээ орой болоход тэсвэр алддаг. Ажлын өдрүүдээр дэглэмээ барьсан мөртлөө амралтын өдөр сахилга батаа алдаж магад. Энэ тэнцвэргүй хэлхээ таны жин хасахад нөлөөлж буй гол саад байж магад. Гэхдээ тэвчээрийн дутагдалтай байна гэж дүгнэх үндэслэл биш.</p><p class="sample-kicker">ЭХНИЙ АЛХАМ</p><p>Эхний долоо хоногт юу ч хасах гэж яарах хэрэггүй. Ганцхан зүйл тэмдэглээд үз: хэзээ, ямар мэдрэмжтэй үедээ идэв. Ингээд харахад зураг өөрөө гарч ирдэг.</p></div><p class="section-close">Таны хариултад харагдсан давтагддаг зүйл, өдөөгч, мөчлөгийг ойлгоход зориулсан хувийн эргэцүүлэл өгнө.</p></section>''':
+              '''    <section id="sample-report" class="sample-report" aria-labelledby="sample-title"><p class="eyebrow">Таны хувийн тайлан</p><h2 id="sample-title">Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ</h2><p class="muted">Таны тайлан зөвхөн асуудлыг нэрлээд орхихгүй. Таны хариултад тулгуурлан хамгийн түрүүнд анхаарах чиглэл, өдөр тутам хэрэгжүүлж болох алхам болон төлөвлөгөө тасарсан үед эргэн орох аргыг гаргаж өгнө.</p><div class="sample-report-card"><p class="sample-kicker">ТАНЫ ГОЛ СААД</p><p>Сэтгэл хөдлөл, хэт хатуу дэглэм, орчны нөлөө, ядаргаа, цагийн хуваарь эсвэл өөр хүчин зүйлээс аль нь танд хамгийн их нөлөөлж байгааг харна.</p><p class="sample-kicker">ЯАЖ ЗОХИЦУУЛАХ ВЭ?</p><p>Таны гол саадтай ажиллахад тохирох бодит аргуудыг авна. Жишээлбэл, стрессийн үед идэх хүслийг удирдах, орчны өдөөлтийг багасгах, эсвэл хэт хатуу дэглэмийг уян хатан болгох арга.</p><p class="sample-kicker">ӨДӨР ТУТАМ ХИЙХ ЭХНИЙ АЛХАМ</p><p>Бүх амьдралаа нэг дор өөрчлөх биш, ойрын хугацаанд хэрэгжүүлж болох цөөн, тодорхой алхмыг авна.</p><p class="sample-kicker">ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?</p><p>Нэг удаа хазайсны дараа бүхнийг орхихгүйгээр дараагийн хоол, дараагийн өдөртөө яаж эргэн орох хувилбарыг харна.</p><p class="sample-kicker">ТАНД ТОХИРОХ ОРЧИН</p><p>Нойр, ажил, гэр бүл, хөдөлгөөн, зардал болон өдөр тутмын хуваарьт тань нийцэхүйц байдлаар төлөвлөгөөгөө хэрхэн хялбарчлахыг ойлгоно.</p></div><p class="section-close"><strong>10 орчим минутын тест · Хувийн тайлан · Хэрэгжүүлэх эхний алхмууд · 9,900₮</strong></p><p class="muted">Тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш.</p></section>''',
+
+              '''    <section class="cta-banner" aria-label="Дараагийн оролдлого"><p>Дараагийн оролдлогоо өмнөхөөсөө өөр эхлүүлье.</p><p>Эхлээд юу саад болоод байгаагаа мэдэж аваарай.</p><p class="landing-microcopy">${landingMicrocopy}</p><a class="button primary-cta" ${landingCtaAttributes(cta)}>${primary}</a></section>''':
+              '''    <section class="cta-banner" aria-label="Дараагийн оролдлого"><p>Дараагийн оролдлогоо өмнөхөөсөө өөр эхлүүлье.</p><p>Юу саад болоод байгааг мэдээд зогсохгүй, яаж зохицуулахаа ойлгоорой.</p><p class="landing-microcopy">${landingMicrocopy}</p><a class="button primary-cta" ${landingCtaAttributes(cta)}>${primary}</a></section>''',
+
+              '''    <section class="closing-section" aria-labelledby="closing-title"><h2 id="closing-title">Юу саад болоод байгаагаа мэдчихвэл ажил хөнгөрдөг</h2><p>Олон оролдлого бүтээгүй нь та чадваргүйдээ биш. Юу таныг унагаад байгааг хараагүй явсных. Тэрийг нэг харчихвал дараагийн оролдлого огт өөр эхэлдэг.</p><p class="methodology-principle">Өөртэйгөө тэмцэхээсээ өмнө өөрийгөө нэг сонсоод үзье.</p><a class="button primary-cta" ${landingCtaAttributes(cta)}>${primary}</a><p class="landing-microcopy">${landingMicrocopy}</p></section>''':
+              '''    <section class="closing-section" aria-labelledby="closing-title"><h2 id="closing-title">Юу саад болж байгааг ойлгоод, яаж зохицуулахаа мэдвэл ажил хөнгөрдөг</h2><p>Олон оролдлого бүтээгүй нь та чадваргүйдээ биш. Танд тохироогүй аргаар өөрийгөө хүчлэхэд хэцүү байсан хэрэг. Гол саадаа таньж, түүнд тохирсон эхний алхмаа олбол дараагийн оролдлого илүү бодитой эхэлнэ.</p><p class="methodology-principle">Өөртэйгөө тэмцэхээсээ өмнө өөртөө тохирох аргаа олъё.</p><a class="button primary-cta" ${landingCtaAttributes(cta)}>${primary}</a><p class="landing-microcopy">${landingMicrocopy}</p></section>'''
+          }
+
+          for old, new in replacements.items():
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'Expected exactly one match, found {count}: {old[:80]}')
+              text = text.replace(old, new)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Validate JavaScript and landing copy
+        run: |
+          node --check app.js
+          grep -F "Жин хасахад юу саад болж байгааг төдийгүй, яаж зохицуулахаа мэднэ" app.js
+          grep -F "ТӨЛӨВЛӨГӨӨ ТАСАРВАЛ ЯАХ ВЭ?" app.js
+          ! grep -F "ГОЛ ЗУРШИЛ — Стрессээ хоолоор дардаг" app.js
+
+      - name: Commit the landing update and remove this one-time workflow
+        run: |
+          rm .github/workflows/landing-report-copy-update.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js .github/workflows/landing-report-copy-update.yml
+          git commit -m "Update landing report value section"
+          git push origin HEAD:agent/full-landing-copy-and-direct-payment-v2
