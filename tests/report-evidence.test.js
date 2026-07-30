@@ -351,8 +351,9 @@ for (const [index, report] of tenReports.entries()) {
   assert(!/арга тасар|төлөвлөгөө тасар|дэглэм тасар/i.test(text), `${tenProfiles[index].name}: incorrect stop idiom leaked`);
   for (const phrase of forbiddenPublicTerms) assert(!text.includes(phrase), `${tenProfiles[index].name}: forbidden copy ${phrase}`);
   assert((text.match(/байж болно/g) || []).length <= 3, `${tenProfiles[index].name}: excessive hedge copy`);
-  const pendingPublicPlan = report.influencingPatterns.some(pattern => pattern.title === "Өмнөх аргын үр дүнг хадгалах төлөвлөгөө дутсан нь") && !report.prioritizedStartingAction;
-  assert.equal(report.influencingPatterns.length ? 1 : 0, report.prioritizedStartingAction || pendingPublicPlan ? 1 : 0, `${tenProfiles[index].name}: exactly one first-action decision when patterns exist`);
+  assert.equal(report.managementModules.length > 0, true, `${tenProfiles[index].name}: every report needs an actionable management direction`);
+  assert.equal(report.initialActions.length, 3, `${tenProfiles[index].name}: exactly three initial actions required`);
+  assert(report.fallbackPlan, `${tenProfiles[index].name}: fallback plan required`);
 }
 function sentenceSet(report) { return new Set(substantiveSentences(report)); }
 function jaccard(left, right) {

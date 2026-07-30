@@ -10,7 +10,7 @@ const { calculateAssessmentSafety } = require("../netlify/functions/_lib/safety.
 (async () => {
   app._test.setComingSoon(false);
   const start = app.renderForPath("/assessment/start");
-  for (const expected of ["Тест үнэлгээгээ эхлүүлэх", 'id="contact-email"', "QPay-аар төлөөд тестээ эхлүүлэх", "9,900₮"]) assert(start.includes(expected), expected);
+  for (const expected of ["Тест үнэлгээ болон бүрэн тайлангаа нээх", 'id="contact-email"', "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх", "Төлбөр нэг удаагийн. Төлбөр баталгаажсаны дараа тест нээгдэнэ."]) assert(start.includes(expected), expected);
   for (const removed of ['id="safety-form"', "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт", "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах"]) assert(!start.includes(removed), removed);
   assert.equal(app.renderForPath("/assessment/contact"), start, "legacy contact route has no extra step");
   const appSource = fs.readFileSync(require.resolve("../app.js"), "utf8");

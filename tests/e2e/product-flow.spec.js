@@ -4,9 +4,9 @@ test.setTimeout(120000);
 
 async function openPaymentPreparation(page, suffix = "") {
   await page.goto(`/assessment/start?e2e=1${suffix}`);
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
   await expect(page.locator("#contact-email")).toBeVisible();
-  await expect(page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" })).toBeVisible();
   await expect(page.locator("#safety-form")).toHaveCount(0);
 }
 
@@ -99,7 +99,7 @@ test("landing CTA retains SPA routing and analytics tracking", async ({ page }) 
   await page.getByRole("link", { name: "Тестээ эхлүүлэх" }).click();
   await trackingRequest;
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
   await expect(page.locator("#contact-email")).toBeVisible();
 });
 
@@ -267,11 +267,11 @@ test("authenticated owner preview starts through the server gate without QPay", 
   await page.getByRole("button", { name: "Нэвтрэх" }).click();
   await page.getByRole("button", { name: "Бодит тестийг шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
   await expect(page.locator("#contact-email")).toBeVisible();
   const beforePreview = await (await request.get("/__test/stats")).json();
   await page.locator("#contact-email").fill("owner-preview@example.com");
-  await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
+  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
   const afterPreview = await (await request.get("/__test/stats")).json();
   expect(afterPreview.qpayCreate).toBe(beforePreview.qpayCreate);
@@ -290,9 +290,9 @@ test("public paid-first flow has no interactive pre-payment safety gate", async 
   });
   const before = await (await request.get("/__test/stats")).json();
   await page.goto("/assessment/start?e2e=1");
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
   await expect(page.locator("#contact-email")).toBeVisible();
-  await expect(page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" })).toBeVisible();
   await expect(page.locator("#safety-form")).toHaveCount(0);
   expect(emittedSafetyRequests).toEqual([]);
   expect((await (await request.get("/__test/stats")).json()).safetyGate).toBe(before.safetyGate);
@@ -303,11 +303,11 @@ test("paid-first checkout creates one invoice and completion opens the full repo
   await page.setViewportSize({ width: 390, height: 844 });
   await openPaymentPreparation(page);
   await page.locator("#contact-email").fill("invalid");
-  await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
+  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).click();
   await expect(page.getByText("Имэйл хаягаа зөв оруулна уу.")).toBeVisible();
   await page.locator("#contact-email").fill("paid@example.com");
   const beforePreparation = await (await request.get("/__test/stats")).json();
-  await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).evaluate(button => { button.click(); button.click(); });
+  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).evaluate(button => { button.click(); button.click(); });
   await expect(page).toHaveURL(/\/assessment\/payment$/);
   await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toBeVisible();
   expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(beforePreparation.questionProgressRows);
@@ -330,7 +330,7 @@ test("paid-first checkout creates one invoice and completion opens the full repo
 test("question transition gives immediate feedback and ignores duplicate submit", async ({ page, request }) => {
   await openPaymentPreparation(page);
   await page.locator("#contact-email").fill("transition@example.com");
-  await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
+  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).click();
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
   await page.locator('[data-question="Q-AGE"]').fill("30");
@@ -363,7 +363,7 @@ test("invitation token is removed and consent decline is explicit", async ({ pag
   await expect(page.getByRole("heading", { name: "Зөвлөхийн урилга ирсэн байна" })).toBeVisible();
   await expect(page.getByText("Асуулт бүрийн түүхий хариултыг зөвлөхөд харуулахгүй.")).toBeVisible();
   await page.getByLabel("Бүрэн тайлангаа хуваалцахгүй.").check();
-  await page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" }).click();
+  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).click();
   await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
   await expect(page.getByRole("heading", { name: "Суурь мэдээлэл" })).toBeVisible();
   await expect(page.getByText(/хөнгөлөлт/i)).toHaveCount(0);
@@ -374,7 +374,7 @@ test("payment preparation is responsive with accessible touch targets", async ({
     await page.setViewportSize({ width, height });
     await openPaymentPreparation(page);
     const email = page.locator("#contact-email");
-    const submit = page.getByRole("button", { name: "QPay-аар төлөөд тестээ эхлүүлэх" });
+    const submit = page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" });
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
     expect(await email.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
     expect(await submit.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
@@ -383,7 +383,7 @@ test("payment preparation is responsive with accessible touch targets", async ({
 
 test("legacy assessment contact URL has no extra step", async ({ page }) => {
   await page.goto("/assessment/contact?e2e=1");
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээгээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
   await expect(page.locator("#contact-email")).toBeVisible();
   await expect(page.locator("#safety-form")).toHaveCount(0);
 });
@@ -415,7 +415,11 @@ for (const id of ["VU-03", "VU-06"]) {
     await page.setViewportSize({ width: 375, height: 800 });
     await page.goto(`/__test/select-report?id=${id}`);
     await expect(page.getByRole("heading", { name: "Бүрэн тайлан" })).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Эхний туршилт" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "ТӨЛӨВЛӨСНӨӨРӨӨ ЯВЖ ЧАДААГҮЙ ҮЕД" })).toBeVisible();
+    await expect(page.locator(".initial-action-list li")).toHaveCount(3);
+    await expect(page.locator(".management-module").first()).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     const paragraphSentenceCounts = await page.locator("#report-content p").evaluateAll(paragraphs => paragraphs.map(paragraph => paragraph.textContent.split(/[.!?](?:\s|$)/u).filter(Boolean).length));
     expect(Math.max(...paragraphSentenceCounts)).toBeLessThanOrEqual(3);
@@ -423,7 +427,7 @@ for (const id of ["VU-03", "VU-06"]) {
     expect(sectionCount).toBeGreaterThanOrEqual(8);
     await page.emulateMedia({ media: "print" });
     await expect(page.locator("#report-content")).toBeVisible();
-    await expect(page.getByRole("heading", { name: "Эхний туршилт" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ" })).toBeVisible();
     await expect(page.getByRole("button", { name: "Хэвлэх эсвэл PDF-ээр хадгалах" })).toBeHidden();
     expect(await page.locator("#report-content .report-section").count()).toBe(sectionCount);
   });
