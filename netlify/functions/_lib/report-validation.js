@@ -5,7 +5,8 @@ const { REPORT_VERSION, publicReport } = require("./report.js");
 const PROHIBITED_PUBLIC_TERMS = Object.freeze([
   "OWNER REVIEW REQUIRED", "OWNER APPROVED", "Candidate A", "Candidate B", "review status",
   "templateId", "signalId", "questionId", "evidence-gate", "debug", "QA note",
-  "арга тасрах", "арга тасарсан", "арга тасарсны"
+  "арга тасрах", "арга тасарсан", "арга тасарсны", "нэг удаа хазайх", "хэмнэлдээ эргэн орох",
+  "зорилгодоо заавал хүрнэ", "жин хасах нь амар болно"
 ]);
 
 function substantiveSentences(value) {
@@ -31,6 +32,23 @@ function validateReportForActivation(fullReport) {
     ? [fullReport.neutralResult.overview, fullReport.neutralResult.limits, fullReport.neutralResult.observation]
     : [fullReport?.overallPicture, fullReport?.influencingPatterns, fullReport?.additionalPatternActions, fullReport?.prioritizedStartingAction];
   if (required.some(value => value == null || (Array.isArray(value) && value.length === 0))) errors.push("empty_required_section");
+  const modules = fullReport?.managementModules || [];
+  if (!modules.length) errors.push("management_modules_missing");
+  for (const [index, module] of modules.entries()) {
+    for (const field of ["title", "evidenceLink", "observe", "prepare", "inMoment", "avoidRigidDemand", "professionalHelp"]) {
+      if (!String(module?.[field] || "").trim()) errors.push(`management_module_${index}_missing:${field}`);
+    }
+  }
+  const supportedPatternCount = (fullReport?.internalEvidenceMap?.patternEvidence || []).filter(item => item.supported).length;
+  if (supportedPatternCount && modules.length !== supportedPatternCount) errors.push("supported_pattern_management_coverage");
+  if (supportedPatternCount >= 2 && (!fullReport?.interactionSummary?.length || !fullReport?.combinedManagementPlan)) errors.push("combined_guidance_missing");
+  if (!Array.isArray(fullReport?.initialActions) || fullReport.initialActions.length !== 3) errors.push("initial_actions_must_equal_three");
+  else for (const [index, action] of fullReport.initialActions.entries()) {
+    if (!String(action?.action || "").trim() || !String(action?.patternTitle || "").trim()) errors.push(`initial_action_${index}_not_attributed`);
+  }
+  for (const field of ["introduction", "resume", "softenRule", "recheckTrigger", "fitDailyLife"]) {
+    if (!String(fullReport?.fallbackPlan?.[field] || "").trim()) errors.push(`fallback_plan_missing:${field}`);
+  }
   const sentences = substantiveSentences(publicPayload);
   if (sentences.length !== new Set(sentences).size) errors.push("duplicate_substantive_paragraph");
   return { valid: errors.length === 0, errors, publicPayload };

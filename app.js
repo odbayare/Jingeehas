@@ -15,6 +15,15 @@ const PAYMENT_COPY = Object.freeze({
   paidAfterAssessment: "Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ."
 });
 const PAYMENT_STATES = new Set(["idle", "creating", "create_unknown", "reconciling", "pending", "checking", "paid", "create_error", "create_failed_confirmed", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
+const LOCKED_REPORT_TITLES = Object.freeze([
+  "Танд нөлөөлж буй бусад хэв маяг",
+  "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа",
+  "Ямар нөхцөлд бэрхшээл илүү хүчтэй болдог",
+  "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?",
+  "Өдөр тутам хэрэгжүүлж эхлэх алхмууд",
+  "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?",
+  "Өөртөө илүү тохирсон жин хасах арга барил"
+]);
 const ADMIN_REPORT_PREVIEW_STORAGE_KEY = "jingeehas_admin_report_preview_assessment";
 const questionApi = typeof require === "function" ? require("./questions.js") : window.JingeehasQuestions;
 const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй", "Одоогоор ямар нэг арга хэрэглээгүй", "Ямар нэг арга хэрэглэж үзээгүй", "Мэргэжлийн дэмжлэг аваагүй", "Тодорхой саад байгаагүй"]);
@@ -213,24 +222,33 @@ function safetyGuidance(result) {
     <a class="button danger" href="tel:103">${escapeHtml(guidance.action || "Тусламж авах")}</a></main>${footer()}</div>`;
 }
 function renderAssessmentContact() {
-  return `<div class="page">${navigation()}<main class="content-card checkout-preparation"><h1 id="page-title" tabindex="-1">Тест үнэлгээгээ эхлүүлэх</h1>
-    <p><strong>Тест үнэлгээ болон бүрэн хувийн тайлан</strong></p><p class="price">${PRODUCT.displayPrice}</p>
-    <ul><li>Жин хасахад саад болж буй сэтгэлзүйн хэв маяг, далд зуршлаа тодорхойлно.</li><li>Таны хариултад тулгуурласан бүрэн хувийн тайлан авна.</li><li>Явц автоматаар хадгалагдах тул завсарласан ч үргэлжлүүлж болно.</li></ul>
+  return `<div class="page">${navigation()}<main class="content-card checkout-preparation"><h1 id="page-title" tabindex="-1">Тест үнэлгээ болон бүрэн тайлангаа нээх</h1>
+    <p>Тестийн хариултад тулгуурлан жин хасахад тань нөлөөлж буй сэтгэлзүйн болон зан үйлийн хэв маягийг тайлбарлана.</p>
+    <p>Бүрэн тайланд эдгээр хэв маяг ямар нөхцөлд илэрдэг, хоорондоо хэрхэн уялддаг болон нөлөөг нь хэрхэн удирдаж болох талаар тодорхой зөвлөмж багтана.</p>
+    <ul><li>Танд нөлөөлж буй хэв маягууд</li><li>Хэв маягуудын хоорондын уялдаа</li><li>Ямар үед илүү хүчтэй илэрдэг</li><li>Нөлөөг нь хэрхэн удирдах арга</li><li>Эхэлж хэрэгжүүлэх 3 алхам</li><li>Төлөвлөснөөрөө явж чадаагүй үед үргэлжлүүлэх арга</li></ul>
+    <p class="price">${PRODUCT.displayPrice}</p>
     <form id="contact-form" novalidate><label class="field" for="contact-email"><span>Имэйл</span><input id="contact-email" name="email" type="email" autocomplete="email" required></label>
     <p class="muted">Имэйл хаягийг төлбөр, тестийн явц болон тайлангаа өөр төхөөрөмжөөс сэргээхэд ашиглана.</p>
     ${state.invitation ? `<section class="invite-card"><h2>Зөвлөхийн урилга ирсэн байна</h2><p>${escapeHtml(state.invitation.advisorName || "Зөвлөх")} танд тест үнэлгээг санал болгосон байна.</p><fieldset><legend>Тайлан хуваалцах сонголт</legend><label class="option-label"><input type="radio" name="consent" value="yes" required><span>Бүрэн тайлангаа зөвлөхтэй хуваалцана.</span></label><label class="option-label"><input type="radio" name="consent" value="no" required><span>Бүрэн тайлангаа хуваалцахгүй.</span></label></fieldset><p>Асуулт бүрийн түүхий хариултыг зөвлөхөд харуулахгүй.</p></section>` : ""}
-    <p id="contact-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.invitationError)}</p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Бэлтгэж байна…" : "QPay-аар төлөөд тестээ эхлүүлэх"}</button>
-    <p>Төлбөр баталгаажсаны дараа тест шууд нээгдэнэ.</p><p><a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/support" data-route>Төлбөрийн тусламж</a></p></form></main>${footer()}</div>`;
+    <p id="contact-error" class="error" role="alert" aria-live="assertive">${escapeHtml(state.invitationError)}</p><button class="button" type="submit" ${state.busy ? "disabled" : ""}>${state.busy ? "Бэлтгэж байна…" : `QPay-аар ${PRODUCT.displayPrice} төлөөд тестээ эхлүүлэх`}</button>
+    <p>Төлбөр нэг удаагийн. Төлбөр баталгаажсаны дараа тест нээгдэнэ.</p><p><a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/support" data-route>Төлбөрийн тусламж</a></p></form></main>${footer()}</div>`;
+}
+function renderLegacyPostResultPaywall() {
+  const completed = state.assessmentStatus === "complete";
+  return `<div class="page">${navigation()}<main class="content-card completion-card report-paywall"><p class="eyebrow">Бүрэн тайлан</p><h1 id="page-title" tabindex="-1">Өөрт тань юу саад болж байгааг мэдээд зогсохгүй, хэрхэн удирдахаа ойлгоорой</h1>
+    <p>Таны эхний үр дүн хамгийн тод ажиглагдсан нэг хэв маягийг харууллаа.</p>
+    <p>Бүрэн тайланд танд нөлөөлж буй бусад хэв маяг, тэдгээрийн хоорондын уялдаа, ямар нөхцөлд илүү хүчтэй болдог болон нөлөөг нь хэрхэн багасгаж болохыг дэлгэрэнгүй тайлбарлана.</p>
+    <p>Мөн өдөр тутам хэрэгжүүлж болох алхмууд, хэцүү үед ашиглах аргууд болон төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх талаар таны хариултад тулгуурласан зөвлөмж өгнө.</p>
+    <section class="locked-report-preview" aria-labelledby="locked-report-title"><h2 id="locked-report-title">Бүрэн тайланд нээгдэх хэсгүүд</h2>
+      <ol>${LOCKED_REPORT_TITLES.map(title => `<li><span class="lock-mark" aria-hidden="true">🔒</span><span>${escapeHtml(title)}</span></li>`).join("")}</ol>
+    </section>
+    <p class="paywall-closing">Ингэснээр та жин хасахад тань юу саад болж байгааг таамгаар биш, өөрийн хариултад тулгуурлан ойлгож, тухайн бэрхшээлүүдийн нөлөөг удирдах боломжтой болно.</p>
+    ${completed ? `<button class="button paywall-primary-cta" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "Үргэлжлүүлж байна..." : `Бүрэн тайлангаа нээх — ${PRODUCT.displayPrice}`}</button>` : `<p class="notice">Тест үнэлгээг бүрэн дуусгасны дараа тайлангийн төлбөр рүү үргэлжлүүлнэ.</p>`}
+    <p class="muted paywall-note">Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ.</p></main>${footer()}</div>`;
 }
 function renderAssessmentCompleted() {
   if (state.commercialFlowVersion === "prepaid_v2") return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тест дууслаа. Таны тайланг боловсруулж байна.</h1><p role="status">Бүрэн тайланг ачаалж байна…</p></main>${footer()}</div>`;
-  const completed = state.assessmentStatus === "complete";
-  return `<div class="page">${navigation()}<main class="content-card completion-card"><p class="completion-mark" aria-hidden="true">✓</p><h1 id="page-title" tabindex="-1">Таны хариултуудыг цуглуулж дууслаа</h1>
-    <p>Таны өгсөн хариултуудад үндэслэн жин хасахад тань нөлөөлж буй сэтгэлзүйн хэв маяг, далд зуршил болон тогтвортой өөрчлөлт хийхэд саад болж буй хүчин зүйлсийг нэгтгэн тайлан боловсруулна.</p>
-    <p>Дэлгэрэнгүй тайландаа та:</p><ul><li>жин хасалтад саад болж буй гол сэтгэлзүйн шалтгаанууд;</li><li>хооллолт, сэтгэл хөдлөл, зуршлын холбоо;</li><li>өмнөх оролдлогууд яагаад тогтвортой үргэлжлээгүй байж болох шалтгаан;</li><li>танд илүү тохирох өөрчлөлтийн чиглэл</li></ul><p>зэргийг харна.</p>
-    <p class="price">Бүрэн тайлангийн үнэ: ${PRODUCT.displayPrice}</p>
-    ${completed ? `<button class="button" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "Үргэлжлүүлж байна..." : "Дэлгэрэнгүй тайлангаа авах"}</button>` : `<p class="notice">Тест үнэлгээг бүрэн дуусгасны дараа тайлангийн төлбөр рүү үргэлжлүүлнэ.</p>`}
-    <p class="muted">Төлбөр төлсний дараа тайлан тань шууд нээгдэнэ.</p></main>${footer()}</div>`;
+  return renderLegacyPostResultPaywall();
 }
 function renderPayment() {
   const payment = state.payment || { status: "idle" };
@@ -282,36 +300,93 @@ function renderPlanDetails(plan) {
   return visibleFields.length ? `<dl>${visibleFields.map(([label, value]) => `<dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd>`).join("")}</dl>` : "";
 }
 
-function buildReportSections(full) {
+function renderPatternArticles(full) {
+  const major = full.influencingPatterns || [];
+  const compact = major.length >= 3;
+  const majorArticles = major.map(pattern => `<article class="report-pattern"><h3>${escapeHtml(pattern.title)}</h3>${renderReportParagraphs(pattern.paragraphs || (compact ? [pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty] : [pattern.explanation, pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty]))}</article>`);
+  const contextualArticles = (full.contextualFactors || []).filter(item => item.isPattern).map(item => `<article class="report-pattern"><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.explanation, item.evidenceSummary, item.effectOnWeightLoss, item.uncertainty])}</article>`);
+  return [...majorArticles, ...contextualArticles].join("");
+}
+
+function renderResultOverview(full) {
   if (full.neutralResult) {
     const neutral = full.neutralResult;
     const strengths = neutral.strengths?.length ? neutral.strengths : [neutral.strengthsFallback].filter(Boolean);
     const absent = neutral.notStronglySupported?.length ? neutral.notStronglySupported : [neutral.notStronglySupportedFallback].filter(Boolean);
-    return [
-      { id: "overview", heading: "Ерөнхий зураг", paragraphs: [renderReportParagraphs(neutral.overview)], visible: neutral.overview?.length > 0 },
-      { id: "not-strongly-supported", heading: "Ямар нийтлэг саад хүчтэй илрээгүй вэ?", paragraphs: [renderReportParagraphs(absent)], visible: absent.length > 0 },
-      { id: "strengths", heading: "Танд байгаа давуу тал", paragraphs: [renderReportParagraphs(strengths)], visible: strengths.length > 0 },
-      { id: "limits", heading: "Энэ асуумжаар юуг дүгнэж болохгүй вэ?", paragraphs: [renderReportParagraphs(neutral.limits)], visible: neutral.limits?.length > 0 },
-      { id: "observation", heading: "Дараагийн хугацаанд юу ажиглаж болох вэ?", paragraphs: [`<dl><dt>Туршиж буй нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.variable)}</dd><dt>Ажиглах нэг зүйл</dt><dd>${escapeHtml(neutral.observation?.action)}</dd><dt>Юуг өөрчлөхгүй вэ?</dt><dd>${escapeHtml(neutral.observation?.keepConstant)}</dd><dt>Дараагийн шийдвэрийн дүрэм</dt><dd>${escapeHtml(neutral.observation?.decisionRule)}</dd></dl>`], visible: Boolean(neutral.observation?.variable && neutral.observation?.action && neutral.observation?.decisionRule) },
-      { id: "professional", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", paragraphs: [renderReportParagraphs([neutral.professionalScope])], visible: Boolean(neutral.professionalScope) }
-    ];
+    return `${renderReportParagraphs(neutral.overview)}
+      ${absent.length ? `<h3>Хүчтэй ажиглагдаагүй нийтлэг саад</h3>${renderReportParagraphs(absent)}` : ""}
+      ${strengths.length ? `<h3>Хамгаалах буюу давуу тал болж буй хариултууд</h3>${renderReportParagraphs(strengths)}` : ""}
+      ${neutral.limits?.length ? `<h3>Энэ асуумжаар юуг дүгнэж болохгүй вэ?</h3>${renderReportParagraphs(neutral.limits)}` : ""}
+      ${neutral.observation ? `<h3>Дараагийн хугацаанд юу ажиглаж болох вэ?</h3><dl><dt>Туршиж буй нэг зүйл</dt><dd>${escapeHtml(neutral.observation.variable)}</dd><dt>Ажиглах нэг зүйл</dt><dd>${escapeHtml(neutral.observation.action)}</dd><dt>Юуг өөрчлөхгүй вэ?</dt><dd>${escapeHtml(neutral.observation.keepConstant)}</dd><dt>Дараагийн шийдвэрийн дүрэм</dt><dd>${escapeHtml(neutral.observation.decisionRule)}</dd></dl>` : ""}`;
   }
-  const major = full.influencingPatterns || [];
-  const compactMultiPattern = major.length >= 3;
-  const actions = (full.additionalPatternActions || []).filter(item => item?.action && (item.patternTitle || item.patternId));
-  const patternHeading = major.length <= 1 ? "Жин хасалтад нөлөөлж буй гол хэв маяг" : "Жин хасалтад нөлөөлж буй гол хэв маягууд";
-  const interactionHeading = major.length === 1 ? "Гол хэв маяг өдөр тутмын нөхцөлтэй хэрхэн холбогдож байна вэ?" : "Эдгээр хэв маяг хэрхэн хоорондоо холбогдож байна вэ?";
+  const allPatterns = [
+    ...(full.influencingPatterns || []).map(item => ({ title: item.title })),
+    ...(full.contextualFactors || []).filter(item => item.isPattern).map(item => ({ title: item.title }))
+  ];
+  const primary = allPatterns[0];
+  const supporting = allPatterns.slice(1);
+  const dailyContexts = (full.contextualFactors || []).filter(item => !item.isPattern);
+  const strengths = [full.protectiveSectionSummary, ...(!full.protectiveSectionSummary ? (full.protectiveFactors || []).map(item => item.text) : []), ...(full.contradictions || []).map(item => item.text)].filter(Boolean);
+  return `${renderReportParagraphs(Array.isArray(full.overallPicture) ? full.overallPicture : [full.overallPicture])}
+    <dl class="result-overview">
+      <dt>Хамгийн тод ажиглагдсан хэв маяг</dt><dd>${escapeHtml(primary?.title || "Нэг хэв маягийг дангаар нь гол гэж хатуу дүгнээгүй.")}</dd>
+      <dt>Дагалдах хэв маягууд</dt><dd>${escapeHtml(supporting.length ? supporting.map(item => item.title).join(" · ") : "Нэмэлт дагалдах хэв маяг хүчтэй дэмжигдээгүй.")}</dd>
+      <dt>Нөлөөлж буй өдөр тутмын нөхцөл</dt><dd>${escapeHtml(dailyContexts.length ? dailyContexts.map(item => item.title).join(" · ") : "Хариултаар тусдаа нэрлэх нэмэлт нөхцөл илрээгүй.")}</dd>
+      <dt>Хамгаалах буюу давуу тал болж буй хариултууд</dt><dd>${escapeHtml(strengths.length ? strengths.join(" ") : "Хүчтэй давуу тал зохиож нэмээгүй; зөвлөмжийг дэмжигдсэн хариултаар хязгаарлав.")}</dd>
+    </dl>`;
+}
+
+function renderManagementModules(modules = []) {
+  return modules.map(module => `<article class="management-module"><h3>${escapeHtml(module.title)}</h3><p class="management-evidence-link">${escapeHtml(module.evidenceLink)}</p>
+    <dl><dt>Юуг анзаарах вэ?</dt><dd>${escapeHtml(module.observe)}</dd>
+      <dt>Урьдчилан юу бэлдэх вэ?</dt><dd>${escapeHtml(module.prepare)}</dd>
+      <dt>Тухайн үед юу хийж болох вэ?</dt><dd>${escapeHtml(module.inMoment)}</dd>
+      <dt>Юуг хэт хатуу шаардахгүй байх вэ?</dt><dd>${escapeHtml(module.avoidRigidDemand)}</dd>
+      <dt>Хэзээ мэргэжлийн тусламж авах вэ?</dt><dd>${escapeHtml(module.professionalHelp)}</dd></dl></article>`).join("");
+}
+
+function renderCombinedPlan(plan) {
+  if (!plan) return "";
+  return `<dl class="combined-management-plan"><dt>Эхэлж аль хэв маягийн нөлөөг багасгах вэ?</dt><dd>${escapeHtml(plan.startWith)}</dd>
+    <dt>Яагаад үүнээс эхлэх вэ?</dt><dd>${escapeHtml(plan.why)}</dd>
+    <dt>Дараагийн алхам юу вэ?</dt><dd>${escapeHtml(plan.nextStep)}</dd>
+    <dt>Хоёр хэв маягийг хамтад нь удирдах ямар арга тохирох вэ?</dt><dd>${escapeHtml(plan.combinedAction)}</dd></dl>`;
+}
+
+function renderInitialActions(full) {
+  const actions = full.initialActions || [];
+  const primary = full.prioritizedStartingAction && !full.planDecisionPending && !full.prioritizedStartingAction.planDecisionPending
+    ? `<div class="primary-management-direction"><h3>Эхлэх үндсэн чиглэл</h3>${renderReportParagraphs([full.prioritizedStartingAction.action, full.prioritizedStartingAction.priorityReason || full.prioritizedStartingAction.reason])}${renderPlanDetails(full.prioritizedStartingAction.plan)}</div>`
+    : "";
+  return `${primary}<ol class="initial-action-list">${actions.map(item => `<li><strong>${escapeHtml(item.patternTitle)}</strong><span>${escapeHtml(item.action)}</span></li>`).join("")}</ol>`;
+}
+
+function renderFallbackPlan(plan) {
+  if (!plan) return "";
+  return `${renderReportParagraphs([plan.introduction])}<ul class="fallback-plan">
+    <li>${escapeHtml(plan.resume)}</li><li>${escapeHtml(plan.softenRule)}</li>
+    <li>${escapeHtml(plan.recheckTrigger)}</li><li>${escapeHtml(plan.fitDailyLife)}</li></ul>`;
+}
+
+function buildReportSections(full) {
+  const patterns = renderPatternArticles(full);
+  const interactions = (full.interactionSummary || []).map(item => `<p>${escapeHtml(item.explanation)}</p>`).join("");
+  const nonPatternContexts = (full.contextualFactors || []).filter(item => !item.isPattern).map(item => `<article><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.summary || item.explanation])}</article>`).join("");
+  const triggerContexts = (full.managementModules || []).map(module => `<article><h3>${escapeHtml(module.title)}</h3><p>${escapeHtml(module.observe)}</p></article>`).join("");
+  const previous = full.previousAttemptAnalysis ? `<article><h3>Өмнөх оролдлогын нөхцөл</h3>${renderReportParagraphs(full.previousAttemptAnalysis.paragraphs || [full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation])}</article>` : "";
+  const guidance = full.neutralResult?.professionalScope || full.professionalGuidance || full.urgentGuidance
+    ? renderReportParagraphs([full.neutralResult?.professionalScope, full.professionalGuidance, full.urgentGuidance])
+    : "";
   return [
-    { id: "overview", heading: "Таны хариултаас харагдсан ерөнхий зураг", paragraphs: [renderReportParagraphs(Array.isArray(full.overallPicture) ? full.overallPicture : [full.overallPicture])], visible: Boolean(full.overallPicture) },
-    { id: "patterns", heading: patternHeading, paragraphs: [major.map(pattern => `<article><h3>${escapeHtml(pattern.title)}</h3>${renderReportParagraphs(pattern.paragraphs || (compactMultiPattern ? [pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty] : [pattern.explanation, pattern.evidenceSummary, pattern.effectOnWeightLoss, pattern.uncertainty]))}</article>`).join("")], visible: major.length > 0 },
-    { id: "interactions", heading: interactionHeading, paragraphs: [(full.interactionSummary || []).map(item => `<p>${escapeHtml(item.explanation)}</p>`).join("")], visible: (full.interactionSummary || []).length > 0 },
-    { id: "context", heading: "Нэмэлт нөлөөлөгч нөхцөл", paragraphs: [(full.contextualFactors || []).map(item => `<article><h3>${escapeHtml(item.title)}</h3>${renderReportParagraphs([item.summary || item.explanation, ...(item.summary ? [] : [item.evidenceSummary, item.effectOnWeightLoss])])}</article>`).join("")], visible: (full.contextualFactors || []).length > 0 },
-    { id: "previous", heading: "Өмнөх оролдлого яагаад үргэлжлээгүй байж болох вэ?", paragraphs: [full.previousAttemptAnalysis ? renderReportParagraphs(full.previousAttemptAnalysis.paragraphs || [full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation]) : ""], visible: Boolean(full.previousAttemptAnalysis) },
-    { id: "strengths", heading: "Танд байгаа давуу тал", paragraphs: [renderReportParagraphs([full.protectiveSectionSummary, ...(!full.protectiveSectionSummary ? (full.protectiveFactors || []).map(item => item.text) : []), ...(full.contradictions || []).map(item => item.text)])], visible: Boolean(full.protectiveSectionSummary || (full.protectiveFactors || []).length || (full.contradictions || []).length) },
-    { id: "direction", heading: "Танд илүү тохирох өөрчлөлтийн чиглэл", paragraphs: [actions.map(item => `<article><h3>${escapeHtml(item.patternTitle || major.find(pattern => pattern.id === item.patternId)?.title || "Өөрчлөлтийн чиглэл")}</h3>${renderReportParagraphs(compactMultiPattern ? [item.action] : [item.action, item.reason])}</article>`).join("")], visible: actions.length > 0 },
-    { id: "experiment", heading: "Эхний туршилт", paragraphs: [full.prioritizedStartingAction && !full.planDecisionPending && !full.prioritizedStartingAction.planDecisionPending ? `${renderReportParagraphs(compactMultiPattern ? [full.prioritizedStartingAction.action, full.prioritizedStartingAction.priorityReason || full.prioritizedStartingAction.reason] : [full.prioritizedStartingAction.action, full.prioritizedStartingAction.reason, full.prioritizedStartingAction.priorityReason])}${renderPlanDetails(full.prioritizedStartingAction.plan)}` : ""], visible: Boolean(full.prioritizedStartingAction && !full.planDecisionPending && !full.prioritizedStartingAction.planDecisionPending) },
-    { id: "avoid", heading: "Одоогоор юуг зэрэг өөрчлөхгүй байх вэ?", paragraphs: [renderReportParagraphs([full.avoidForNow])], visible: Boolean(full.avoidForNow) },
-    { id: "guidance", heading: "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", paragraphs: [renderReportParagraphs([full.professionalGuidance, full.urgentGuidance])], visible: Boolean(full.professionalGuidance || full.urgentGuidance) }
+    { id: "overview", heading: "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [renderResultOverview(full)], visible: true },
+    { id: "patterns", heading: "ТАНД НӨЛӨӨЛЖ БУЙ ХЭВ МАЯГУУД", paragraphs: [patterns], visible: Boolean(patterns) },
+    { id: "interactions", heading: "ХЭВ МАЯГУУДЫН УЯЛДАА", paragraphs: [interactions], visible: Boolean(interactions && (full.managementModules || []).length >= 2) },
+    { id: "context", heading: "ЯМАР ҮЕД ИЛҮҮ ХҮЧТЭЙ БОЛДОГ ВЭ?", paragraphs: [`${triggerContexts}${nonPatternContexts}${previous}`], visible: Boolean(triggerContexts || nonPatternContexts || previous) },
+    { id: "management", heading: "ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?", paragraphs: [renderManagementModules(full.managementModules)], visible: (full.managementModules || []).length > 0 },
+    { id: "combined-management", heading: "НЭГДСЭН УДИРДАХ ДАРААЛАЛ", paragraphs: [renderCombinedPlan(full.combinedManagementPlan)], visible: Boolean(full.combinedManagementPlan) },
+    { id: "initial-actions", heading: "ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ", paragraphs: [renderInitialActions(full)], visible: (full.initialActions || []).length === 3 },
+    { id: "fallback", heading: "ТӨЛӨВЛӨСНӨӨРӨӨ ЯВЖ ЧАДААГҮЙ ҮЕД", paragraphs: [renderFallbackPlan(full.fallbackPlan)], visible: Boolean(full.fallbackPlan) },
+    { id: "guidance", heading: "ХЭЗЭЭ МЭРГЭЖЛИЙН ХҮНТЭЙ ЗӨВЛӨЛДӨХ ВЭ?", paragraphs: [guidance], visible: Boolean(guidance) }
   ];
 }
 

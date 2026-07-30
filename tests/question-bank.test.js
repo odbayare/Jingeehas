@@ -43,19 +43,21 @@ assert(!landing.includes("Үе 1"));
 app._test.setState({ questionsAuthorized: true });
 assert(!app.renderForPath("/assessment/questions").includes("эхний хэв маяг"));
 assert(app.renderForPath("/assessment/questions").includes("Таны явц автоматаар хадгалагдана."));
-app._test.setState({ ownerPreview: true, assessmentStatus: "complete", assessmentId: "test-assessment" });
+app._test.setState({ ownerPreview: true, commercialFlowVersion: "legacy_postpaid_v1", assessmentStatus: "complete", assessmentId: "test-assessment" });
 const completion = app.renderForPath("/assessment/completed");
-assert(completion.includes("Таны хариултуудыг цуглуулж дууслаа"));
-assert(completion.includes("Дэлгэрэнгүй тайлангаа авах"));
-assert(completion.includes("Бүрэн тайлангийн үнэ: 9,900₮"));
+assert(completion.includes("Өөрт тань юу саад болж байгааг мэдээд зогсохгүй, хэрхэн удирдахаа ойлгоорой"));
+assert(completion.includes("Таны эхний үр дүн хамгийн тод ажиглагдсан нэг хэв маягийг харууллаа."));
+assert(completion.includes("Бүрэн тайлангаа нээх — 9,900₮"));
+for (const lockedTitle of ["Танд нөлөөлж буй бусад хэв маяг", "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа", "Ямар нөхцөлд бэрхшээл илүү хүчтэй болдог", "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?", "Өдөр тутам хэрэгжүүлж эхлэх алхмууд", "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?", "Өөртөө илүү тохирсон жин хасах арга барил"]) assert(completion.includes(lockedTitle));
+assert(!completion.includes("Бүрэн тайлангийн үнэ:"));
 assert(!completion.includes("QPay нэхэмжлэл үүсгэх"));
 assert(!completion.includes("Төлбөр ба тайлан сэргээх мэдээлэл"));
 assert(!completion.includes("test-assessment"));
-app._test.setState({ ownerPreview: true, assessmentStatus: "complete", assessmentId: "test-assessment", busy: true });
+app._test.setState({ ownerPreview: true, commercialFlowVersion: "legacy_postpaid_v1", assessmentStatus: "complete", assessmentId: "test-assessment", busy: true });
 const transitioningCompletion = app.renderForPath("/assessment/completed");
 assert(transitioningCompletion.includes("Үргэлжлүүлж байна..."));
 assert(transitioningCompletion.includes("disabled"));
-app._test.setState({ ownerPreview: true, assessmentStatus: "complete", assessmentId: "test-assessment" });
+app._test.setState({ ownerPreview: true, commercialFlowVersion: "legacy_postpaid_v1", assessmentStatus: "complete", assessmentId: "test-assessment" });
 const paymentPage = app.renderForPath("/assessment/payment");
 assert(paymentPage.includes("Бүрэн тайлангаа нээх"));
 assert(paymentPage.includes("Үнэ: 9,900₮"));
@@ -79,12 +81,14 @@ const multiFactorReport = publicReport(buildFullReport(buildEvidence([
 ])));
 app._test.setState({ ownerPreview: true, report: { fullReport: multiFactorReport } });
 const renderedReport = app.renderForPath("/report");
-assert(renderedReport.includes("Жин хасалтад нөлөөлж буй гол хэв маяг"));
-assert(!renderedReport.includes("Жин хасалтад нөлөөлж буй гол хэв маягууд"));
-assert(renderedReport.includes("Гол хэв маяг өдөр тутмын нөхцөлтэй хэрхэн холбогдож байна вэ?"));
+assert(renderedReport.includes("ТАНЫ ҮР ДҮНГИЙН ТОЙМ"));
+assert(renderedReport.includes("ТАНД НӨЛӨӨЛЖ БУЙ ХЭВ МАЯГУУД"));
+assert(renderedReport.includes("ХЭВ МАЯГУУДЫН УЯЛДАА"));
 assert(renderedReport.includes("Сэтгэл хөдлөл ихсэх үед хоол руу татагдах хэв маяг"));
 assert(renderedReport.includes("Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл"));
-assert(renderedReport.includes("Танд илүү тохирох өөрчлөлтийн чиглэл"));
+assert(renderedReport.includes("ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?"));
+assert(renderedReport.includes("ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ"));
+assert(renderedReport.includes("ТӨЛӨВЛӨСНӨӨРӨӨ ЯВЖ ЧАДААГҮЙ ҮЕД"));
 assert(!/Q-[A-Z]|S1-|MC-/.test(renderedReport));
 for (const phrase of ["арга тасрах", "арга тасарсан", "арга тасарсны", "төлөвлөгөө тасрах", "дэглэм тасрах", "шилжилтийн саад", "үр дүнгээ хадгалах шилжилт", "залгамж хувилбар", "Зангуу", "Доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "аюулгүй хувилбар"]) assert(!renderedReport.includes(phrase), `forbidden report copy: ${phrase}`);
 
@@ -96,7 +100,7 @@ const pluralReport = publicReport(buildFullReport(buildEvidence([
 ])));
 app._test.setState({ ownerPreview: true, report: { fullReport: pluralReport } });
 const renderedPluralReport = app.renderForPath("/report");
-assert(renderedPluralReport.includes("Жин хасалтад нөлөөлж буй гол хэв маягууд"));
+assert(renderedPluralReport.includes("НЭГДСЭН УДИРДАХ ДАРААЛАЛ"));
 const neutralReport = publicReport(buildFullReport(buildEvidence([
   { questionId: "Q-EMOTION", value: "Хариулахгүй" },
   { questionId: "Q-SATIETY", value: "Хариулахгүй" },
@@ -104,7 +108,7 @@ const neutralReport = publicReport(buildFullReport(buildEvidence([
 ])));
 app._test.setState({ ownerPreview: true, report: { fullReport: neutralReport } });
 const renderedNeutralReport = app.renderForPath("/report");
-assert(renderedNeutralReport.includes("Ямар нийтлэг саад хүчтэй илрээгүй вэ?"));
+assert(renderedNeutralReport.includes("Хүчтэй ажиглагдаагүй нийтлэг саад"));
 assert(renderedNeutralReport.includes("Дараагийн хугацаанд юу ажиглаж болох вэ?"));
 assert(renderedNeutralReport.includes("нэг давтагддаг хооллох мөчийг өөрчлөлтгүйгээр ажиглах"));
 assert(renderedNeutralReport.includes("Энэ асуумжаар юуг дүгнэж болохгүй вэ?"));

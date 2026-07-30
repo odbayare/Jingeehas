@@ -4,8 +4,173 @@ const { ANSWER_SIGNAL_CONTRACT, directivesFor } = require("./report-signals.js")
 const { PATTERN_PRIORITY, evaluatePatterns } = require("./report-patterns.js");
 const { PATTERN_COPY, PATTERN_PUBLIC_TITLES, CONTEXT_PUBLIC_TITLES, SENTENCE_TEMPLATES, RECOMMENDATIONS, STRATEGY_COPY, INTERACTION_COPY, PROTECTIVE_COPY, sentenceTemplateMatches } = require("./report-copy.js");
 
-const REPORT_VERSION = "jingeehas-case-formulation-v5-attribution";
+const REPORT_VERSION = "jingeehas-case-formulation-v6-actionable-management";
 const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION } = require("../../../questions.js");
+
+const PATTERN_MANAGEMENT_MODULES = Object.freeze({
+  emotional_regulation: Object.freeze({
+    observe: "Өлсгөлөн хүчтэй биш мөртлөө стресс, уур, уйтгар эсвэл ядаргааны дараа идэх хүсэл нэмэгдэж буй мөчийг анзаараарай.",
+    prepare: "Тэр мэдрэмж хүчтэй болох үед хоолноос өмнө хийж болох нэг богино үйлдлийг урьдчилан сонгоорой.",
+    inMoment: "Идэхийн өмнө түр зогсоод биеийн өлсгөлөн болон сэтгэл хөдлөлийн өдөөлтийн аль нь илүү хүчтэй байгааг нэрлээрэй.",
+    avoidRigidDemand: "Идэх хүслийг бүрэн дарах эсвэл өөрийгөө буруутгахыг шаардахгүй; идсэн бол дараагийн хоолноос хэвийн үргэлжлүүлээрэй.",
+    professionalHelp: "Сэтгэл хөдлөлтэй холбоотой идэх байдал ойр ойрхон давтагдаж, хяналтаа алдаж байгаа мэт санагдвал сэтгэлзүйч эсвэл хоолзүйчтэй зөвлөлдөөрэй.",
+    initialActions: Object.freeze([
+      "Идэх хүсэл хамгийн их нэмэгддэг нэг мэдрэмж болон тухайн мөчийг тэмдэглэ.",
+      "Тэр мөчид хоолноос өмнө хийж болох нэг богино үйлдлийг сонго.",
+      "Идсэн тохиолдолд дараагийн хоолноос хэвийн үргэлжлүүлэх дүрмээ бич."
+    ]),
+    fallback: Object.freeze({
+      resume: "Төлөвлөснөөсөө өөрөөр хооллосон бол дараагийн хоолноос ердийн сонголтоо үргэлжлүүл.",
+      soften: "Өөрийгөө шийтгэх, хоол алгасах эсвэл нэмэлт хатуу хориг тавихгүй бай.",
+      recheck: "Тухайн үед ямар мэдрэмж идэх хүслийг нэмэгдүүлснийг дахин тэмдэглэ.",
+      fit: "Сонгосон богино үйлдэл бодит нөхцөлд багтаагүй бол илүү хялбар нэг үйлдлээр солиорой."
+    })
+  }),
+  environmental_cues: Object.freeze({
+    observe: "Хоол харагдах, үнэртэх, хүргэлтийн апп нээх эсвэл бусдыг идэж байгааг харах үед өлсөөгүй ч хүсэл төрж буй эсэхийг анзаараарай.",
+    prepare: "Өдөр бүр хамгийн их нөлөөлдөг нэг орчны дохионы харагдах байдал эсвэл хүртээмжийг багасгаарай.",
+    inMoment: "Орчны дохио гарсан үед эхлээд биеийн өлсгөлөн байгаа эсэхийг шалгаад дараагийн сонголтоо хийгээрэй.",
+    avoidRigidDemand: "Гэр, ажил болон бусад бүх орчноо нэг дор өөрчлөхийг шаардахгүй; нэг давтагддаг дохионоос эхлээрэй.",
+    professionalHelp: "Орчны дохиотой холбоотой идэх байдал байнга хяналтгүй мэт санагдаж, өдөр тутмын амьдралд хүндрэл үүсгэвэл мэргэжлийн хүнтэй зөвлөлдөөрэй.",
+    initialActions: Object.freeze([
+      "Өлсөөгүй үед идэх хүсэл төрүүлдэг нэг орчны дохиог сонго.",
+      "Тэр дохионы харагдах байдал эсвэл хүртээмжийг нэг аргаар багасга.",
+      "Дохио дахин гарсан үед биеийн өлсгөлөн байгаа эсэхээ эхэлж шалга."
+    ]),
+    fallback: Object.freeze({
+      resume: "Орчны дохионы нөлөөгөөр идсэн бол дараагийн хоолноос ердийн хуваариа үргэлжлүүл.",
+      soften: "Бүх амттан, апп эсвэл хамт хооллох нөхцөлийг бүрэн хориглох дүрэм нэмэхгүй бай.",
+      recheck: "Яг аль дохио болон ямар байршилд хүсэл хамгийн хүчтэй байсныг тэмдэглэ.",
+      fit: "Сонгосон өөрчлөлт хэрэгжээгүй бол бүх орчноо бус, зөвхөн нэг дохионы байрлал эсвэл мэдэгдлийг өөрчил."
+    })
+  }),
+  irregular_meals_late_hunger: Object.freeze({
+    observe: "Хоол хоорондын зай хэт урт болж, өлсөлт маш хүчтэй болсон хойно анзаарагддаг өдөр, цагийг тэмдэглээрэй.",
+    prepare: "Өдөрт бодитоор барьж болох нэг тогтвортой хооллох цаг болон завгүй үед бэлэн байлгах нэг энгийн сонголтыг урьдчилан тогтоогоорой.",
+    inMoment: "Хэт өлсөхөөс өмнө сонгосон цагтаа идэх боломжтой эсэхээ шалгаж, боломжгүй бол бэлдсэн энгийн сонголтоо ашиглаарай.",
+    avoidRigidDemand: "Бүх хоолны цагийг нэг дор төгс болгохгүй; эхлээд нэг давтагддаг цагийг тогтворжуулаарай.",
+    professionalHelp: "Хоолны хэмнэл удаан хугацаанд алдагдаж, толгой эргэх, ухаан балартах зэрэг шинж илэрвэл эмчтэй зөвлөлдөөрэй.",
+    initialActions: Object.freeze([
+      "Хоолны зай хамгийн урт болдог нэг өдрийг тэмдэглэ.",
+      "Тэр өдөр барьж болох нэг хооллох цагийг сонго.",
+      "Завгүй үед ашиглах нэг энгийн хоолны сонголтыг урьдчилан бэлд."
+    ]),
+    fallback: Object.freeze({
+      resume: "Сонгосон цагаа барьж чадаагүй бол дараагийн хоолноос ердийн хуваариа үргэлжлүүл.",
+      soften: "Алгассан хоолыг нөхөх гэж дараагийн хоолоо хэт хязгаарлахгүй бай.",
+      recheck: "Хоолны зай яагаад уртассаныг цаг, ажил эсвэл бэлтгэлтэй холбоотой эсэхээр нь тэмдэглэ.",
+      fit: "Сонгосон цаг багтахгүй байвал тухайн өдрийн хуваарьт багтах өөр нэг тогтвортой цаг сонго."
+    })
+  }),
+  hunger_satiety: Object.freeze({
+    observe: "Хоол эхлэхийн өмнөх өлсгөлөн болон идэж байх үеийн цадалтын мэдрэмжийг цагт нь анзаарч байгаа эсэхээ шалгаарай.",
+    prepare: "Хэмжээгээ тохируулахад хамгийн хэцүү нэг хоолыг сонгож, хоолны дунд түр зогсох сануулга бэлдээрэй.",
+    inMoment: "Хоолны дунд богино хугацаанд зогсоод цадалтын мэдрэмж болон идэх хурдаа шалгаарай.",
+    avoidRigidDemand: "Өлсгөлөн, цадалтыг яг тоогоор үнэлэх эсвэл хоол бүрийг удаан идэхийг шаардахгүй; нэг хоолноос эхлээрэй.",
+    professionalHelp: "Өлсөх, цадах дохио байнга мэдрэгдэхгүй эсвэл идэх хэмжээг хянахад тогтмол хүндрэлтэй байвал эмч эсвэл хоолзүйчтэй зөвлөлдөөрэй.",
+    initialActions: Object.freeze([
+      "Хэмжээгээ тохируулахад хамгийн хэцүү нэг хоолыг сонго.",
+      "Тэр хоолны өмнөх өлсгөлөнг нэг өгүүлбэрээр тэмдэглэ.",
+      "Хоолны дунд нэг удаа зогсож цадалтын мэдрэмжээ шалга."
+    ]),
+    fallback: Object.freeze({
+      resume: "Төлөвлөснөөс их идсэн бол дараагийн хоолноос ердийн хэмнэлээ үргэлжлүүл.",
+      soften: "Дараагийн хоолоо алгасах эсвэл хэмжээг нь шийтгэл болгон хэт багасгахгүй бай.",
+      recheck: "Хоолны өмнөх өлсгөлөн, идэх хурд хоёрын аль нь нөлөөлснийг тэмдэглэ.",
+      fit: "Хоолны дунд зогсох боломжгүй байсан бол дараагийн удаа хоол эхлэхийн өмнө өлсгөлөнгөө шалга."
+    })
+  }),
+  sleep_fatigue: Object.freeze({
+    observe: "Ядаргаа хамгийн ихэсдэг цаг болон тэр үед хоолны сонголт, идэх хүсэл хэрхэн өөрчлөгдөж байгааг анзаараарай.",
+    prepare: "Ядарсан үед шийдвэр гаргах ачааллыг багасгах нэг хялбар хоолны сонголт болон унтахын өмнөх нэг тогтмол үйлдлийг урьдчилан бэлдээрэй.",
+    inMoment: "Ядарсан үед төвөгтэй шинэ дүрэм барихын оронд урьдчилан сонгосон хялбар хувилбараа ашиглаарай.",
+    avoidRigidDemand: "Хэт ядарсан өдөр төгс хооллолт, өндөр ачааллын хөдөлгөөн эсвэл олон шинэ дадлыг зэрэг шаардахгүй бай.",
+    professionalHelp: "Нойрны асуудал удаан үргэлжилж, өдөр тутмын үйл ажиллагаанд нөлөөлж байвал эмчтэй зөвлөлдөөрэй.",
+    initialActions: Object.freeze([
+      "Ядаргаа хамгийн ихэсдэг нэг цагийг тэмдэглэ.",
+      "Тэр үед ашиглах бэлтгэл бага шаарддаг нэг хоолны сонголт бэлд.",
+      "Унтахын өмнө давтаж болох нэг тогтмол үйлдлийг сонго."
+    ]),
+    fallback: Object.freeze({
+      resume: "Ядарсан өдөр төлөвлөгөө хэрэгжээгүй бол дараагийн боломжтой өдрөөс ердийн хувилбараа үргэлжлүүл.",
+      soften: "Нойр дутууг нөхөх гэж хоол, хөдөлгөөний хатуу дүрэм нэмэхгүй бай.",
+      recheck: "Ядаргаа ихэссэн цаг болон тухайн үеийн хоолны сонголтыг тэмдэглэ.",
+      fit: "Үндсэн хувилбар ядарсан өдөр багтаагүй бол бэлтгэл бага шаарддаг богино хувилбараар солиорой."
+    })
+  }),
+  restrictive_rebound: Object.freeze({
+    observe: "Хамгийн их дарамт үүсгэдэг хатуу дүрэм болон түүнийг нэг удаа мөрдөж чадаагүй үед бүх төлөвлөгөөгөө орхих бодол төрж буй эсэхийг анзаараарай.",
+    prepare: "Хамгийн дарамттай нэг бүрэн хоригийг өдөр тутам хэрэгжиж болох илүү уян хувилбараар урьдчилан солиорой.",
+    inMoment: "Дүрмээ мөрдөж чадаагүй үед бүхнийг дууссан гэж үзэхийн оронд дараагийн хоолноос хийх ердийн нэг үйлдлээ сонгоорой.",
+    avoidRigidDemand: "Нэг өдрийн сонголтыг нөхөх гэж мацаг барих, хэт дасгал хийх эсвэл нэмэлт хориг тавихгүй бай.",
+    professionalHelp: "Хоолны хатуу дүрэм, нөхөн үйлдэл эсвэл өөрийгөө буруутгах байдал давтагдвал эмч эсвэл сэтгэлзүйчтэй зөвлөлдөөрэй.",
+    initialActions: Object.freeze([
+      "Хамгийн их дарамт үүсгэдэг нэг хатуу дүрмийг бич.",
+      "Тэр дүрмийг өдөр тутам хэрэгжих илүү уян нэг хувилбараар соль.",
+      "Дүрмээ барьж чадаагүй үед дараагийн хоолноос хийх нэг үйлдлээ урьдчилан тогтоо."
+    ]),
+    fallback: Object.freeze({
+      resume: "Дүрмээ мөрдөж чадаагүй бол дараагийн хоолноос сонгосон уян хувилбараа үргэлжлүүл.",
+      soften: "Нөхөн мацаг, хэт дасгал эсвэл нэмэлт хориг хэрэглэхгүй бай.",
+      recheck: "Ямар хатуу дүрэм бүхнийг орхих бодлыг өдөөсөн болохыг тэмдэглэ.",
+      fit: "Уян хувилбар мөн хэрэгжихгүй байвал шаардлагыг дахин багасгаж, хамгийн багадаа хийж чадах хувилбар сонго."
+    })
+  }),
+  plan_daily_life_mismatch: Object.freeze({
+    observe: "Одоогийн төлөвлөгөө таны хариултад дурдсан бодит өдөр тутмын нөхцөлд яг хаана багтахгүй байгааг анзаараарай.",
+    prepare: "Завгүй эсвэл боломж хязгаарлагдмал өдөр ч хийж чадах хамгийн бага нэг хувилбарыг урьдчилан сонгоорой.",
+    inMoment: "Үндсэн төлөвлөгөө тухайн өдөр багтахгүй бол бэлдсэн хамгийн бага хувилбараа ашиглаарай.",
+    avoidRigidDemand: "Амьдралаа төлөвлөгөөнд хүчээр тааруулахгүй; төлөвлөгөөний хэмжээг бодит боломждоо тааруулаарай.",
+    professionalHelp: "Эрүүл мэндийн нөхцөл төлөвлөгөөгөө өөрчлөхөд нөлөөлж байвал тохирох мэргэжлийн зөвлөгөө аваарай.",
+    initialActions: Object.freeze([
+      "Төлөвлөгөө хамгийн их багтдаггүй нэг бодит нөхцөлийг нэрлэ.",
+      "Тэр нөхцөлд ч хийж чадах хамгийн бага нэг хувилбарыг сонго.",
+      "Завгүй өдөр үндсэн хувилбараас хамгийн бага хувилбар руу шилжих дүрмээ бич."
+    ]),
+    fallback: Object.freeze({
+      resume: "Үндсэн төлөвлөгөө багтаагүй бол дараагийн боломжтой мөчөөс хамгийн бага хувилбараа үргэлжлүүл.",
+      soften: "Алгассан ажлыг нөхөх гэж дараагийн өдрийн ачааллыг нэмэхгүй бай.",
+      recheck: "Тухайн өдөр ямар бодит нөхцөл саад болсныг тэмдэглэ.",
+      fit: "Хамгийн бага хувилбар мөн багтахгүй бол хугацаа эсвэл бэлтгэлийн шаардлагын нэгийг дахин багасга."
+    })
+  }),
+  low_movement: Object.freeze({
+    observe: "Өдөрт удаан суудаг үе болон богино хөдөлгөөн бодитоор багтаж болох тогтвортой мөчийг анзаараарай.",
+    prepare: "Алхалт, шат эсвэл богино хөдөлгөөнөөс өдөр тутмын нэг үйл явдлын дараа хийж болох хувилбарыг сонгоорой.",
+    inMoment: "Сонгосон мөч ирэхэд тусгай дасгал шаардахгүйгээр бэлдсэн богино хөдөлгөөнөө хийгээрэй.",
+    avoidRigidDemand: "Шууд өндөр ачааллын дасгал эсвэл урт хугацааны шинэ төлөвлөгөө эхлүүлэхийг шаардахгүй бай.",
+    professionalHelp: "Хөдөлгөөн хийх үед биеийн таагүй мэдрэмж эсвэл хязгаарлалт илэрвэл хөдөлгөөний төрлөө сонгохын өмнө мэргэжлийн хүнтэй зөвлөлдөөрэй.",
+    initialActions: Object.freeze([
+      "Богино хөдөлгөөн багтаж болох өдөр тутмын нэг тогтвортой мөчийг сонго.",
+      "Тэр мөчид хийх нэг эвтэйхэн хөдөлгөөнийг сонго.",
+      "Хөдөлгөөн хийсний дараа биед хэр эвтэйхэн байсныг тэмдэглэ."
+    ]),
+    fallback: Object.freeze({
+      resume: "Сонгосон мөчийг алгассан бол дараагийн тогтмол мөчөөс хөдөлгөөнөө үргэлжлүүл.",
+      soften: "Алгассан хөдөлгөөнийг давхар нөхөх эсвэл ачааллаа огцом нэмэхгүй бай.",
+      recheck: "Хөдөлгөөнд цаг, орчин эсвэл биеийн мэдрэмжийн аль нь саад болсныг тэмдэглэ.",
+      fit: "Үндсэн хөдөлгөөн багтаагүй бол хугацаа болон ачааллыг нь багасгасан хувилбар сонго."
+    })
+  }),
+  previous_attempt_sustainability: Object.freeze({
+    observe: "Өмнөх арга яагаад зогссон болон үр дүн гарсны дараа орлуулах хувилбар бэлэн байсан эсэхийг ялгаж хараарай.",
+    prepare: "Үндсэн арга боломжгүй болох үед хэрэглэх өдөр тутам хадгалж болох хамгийн бага хувилбарыг урьдчилан бэлдээрэй.",
+    inMoment: "Өмнөх аргыг үргэлжлүүлэх боломжгүй нөхцөл дахин гарвал бүхнийг зогсоохын оронд бэлдсэн хамгийн бага хувилбартаа шилжээрэй.",
+    avoidRigidDemand: "Өмнөх хатуу аргыг бүхэлд нь давтах эсвэл алгассан хугацааг нөхөхийг шаардахгүй бай.",
+    professionalHelp: "Өмнөх аргыг дахин хэрэглэхэд эрүүл мэндийн санаа зовнил байгаа бол эхлэхийн өмнө тохирох мэргэжлийн зөвлөгөө аваарай.",
+    initialActions: Object.freeze([
+      "Өмнөх арга зогссон нэг гол шалтгааныг бич.",
+      "Тэр нөхцөл дахин гарахад хийж чадах хамгийн бага нэг хувилбарыг сонго.",
+      "Алгассан хугацааг нөхөхгүйгээр дараагийн боломжит мөчөөс үргэлжлүүлэх дүрмээ бич."
+    ]),
+    fallback: Object.freeze({
+      resume: "Үндсэн арга боломжгүй болсон бол дараагийн боломжит мөчөөс бэлдсэн хамгийн бага хувилбараа үргэлжлүүл.",
+      soften: "Өмнөх аргыг яг хуучнаар нь давтах эсвэл алгассан хугацааг давхар нөхөхгүй бай.",
+      recheck: "Өмнөх арга үргэлжлээгүй үед ямар бодит нөхцөл болон орлуулах хувилбарын дутагдал нөлөөлснийг тэмдэглэ.",
+      fit: "Бэлдсэн хувилбар мөн хэрэгжээгүй бол амьдралд багтах хэмжээнд нь дахин жижигрүүл."
+    })
+  })
+});
 
 function answerText(value) {
   return Array.isArray(value) ? value.join(", ") : String(value ?? "").trim();
@@ -341,14 +506,24 @@ function contradictionItems(evidence, candidates) {
   });
 }
 
-function contextualFactors(evidence, contextualPatterns, facts, composer) {
-  const items = contextualPatterns.map(candidate => ({
-    id: candidate.id,
-    title: CONTEXT_PUBLIC_TITLES[candidate.id] || candidate.title,
-    summary: `${candidate.id === "low_movement" ? movementEvidenceNarrative(composer, "4") : composer.render(PATTERN_EVIDENCE_TEMPLATES[candidate.id], "4")} ${candidate.id === "low_movement" && facts.commonEatingBarriersProtected
+function contextualFactors(evidence, contextualPatterns, facts, composer, patternById = new Map()) {
+  const items = contextualPatterns.map(candidate => {
+    const pattern = patternById.get(candidate.id);
+    const evidenceSummary = pattern?.evidenceSummary || (candidate.id === "low_movement" ? movementEvidenceNarrative(composer, "4") : composer.render(PATTERN_EVIDENCE_TEMPLATES[candidate.id], "4"));
+    const effectOnWeightLoss = candidate.id === "low_movement" && facts.commonEatingBarriersProtected
       ? composer.recordRule("context_low_movement_protective_eating", { requiredPatterns: ["low_movement"], requiredProtectiveSignals: ["emotional_eating", "environmental_cue_reactivity", "hunger_recognition_difficulty", "satiety_difficulty", "portion_difficulty"] }, "Хооллолттой холбоотой нийтлэг саад хүчтэй илрээгүй боловч өдөр тутмын хөдөлгөөн бага байх нь зорилгод хүрэх хурдад нөлөөлж болно.", "4")
-      : PATTERN_COPY[candidate.id].effectOnWeightLoss}`
-  }));
+      : pattern?.effectOnWeightLoss || PATTERN_COPY[candidate.id].effectOnWeightLoss;
+    return {
+      id: candidate.id,
+      isPattern: true,
+      title: pattern?.title || CONTEXT_PUBLIC_TITLES[candidate.id] || candidate.title,
+      explanation: pattern?.explanation || null,
+      evidenceSummary,
+      effectOnWeightLoss,
+      uncertainty: pattern?.uncertainty || null,
+      summary: `${evidenceSummary} ${effectOnWeightLoss}`
+    };
+  });
   const foodDiscomfort = composer.render("context_food_discomfort", "4");
   if (foodDiscomfort) items.push({ id: "food_discomfort_context", title: "Хоолны дараах биеийн мэдрэмж", summary: foodDiscomfort });
   const alcoholFoodChange = composer.render("context_alcohol_food_change", "4");
@@ -428,6 +603,139 @@ function recommendationFor(candidate, facts, composer) {
     recommendationId: "build_maintenance_bridge",
     action: `${baseAction} ${fitSentences.join(" ")}`.trim(),
     reason: composer.recordRule("strategy_previous_attempt_reason", gate, "Орлуулах төлөвлөгөө нь үндсэн хувилбар, нөхцөл хүндрэхэд хийх богино хувилбар, алгассан өдрийн дараа хэвийн үргэлжлүүлэх дүрэм гэсэн гурван хэсэгтэй байна.", "7")
+  };
+}
+
+function managementModule(candidate, pattern, facts) {
+  const copy = PATTERN_MANAGEMENT_MODULES[candidate.id];
+  if (!copy || !pattern) return null;
+  const selectedCues = candidate.id === "environmental_cues" ? facts.environmentalCues || [] : [];
+  const cueLabel = selectedCues.length
+    ? naturalList(selectedCues.map((cue, index) => index === 0 ? cue : `${cue.charAt(0).toLowerCase()}${cue.slice(1)}`))
+    : null;
+  const observe = cueLabel ? `${cueLabel} үед өлсөөгүй ч идэх хүсэл төрж буй эсэхийг анзаараарай.` : copy.observe;
+  const prepare = candidate.id === "environmental_cues" && selectedCues.length ? environmentalCueCopy(facts).strategy : copy.prepare;
+  return {
+    patternId: candidate.id,
+    title: pattern.title,
+    evidenceLink: "Доорх зөвлөмжийг энэ хэв маягийг дэмжсэн, дээр тайлбарласан хариултын нөхцөлтэй холбож хэрэглэнэ.",
+    observe,
+    prepare,
+    inMoment: copy.inMoment,
+    avoidRigidDemand: copy.avoidRigidDemand,
+    professionalHelp: copy.professionalHelp
+  };
+}
+
+function interactionFallback(supported, patternById) {
+  if (supported.length < 2) return null;
+  const [left, right] = supported;
+  const leftPattern = patternById.get(left.id);
+  const rightPattern = patternById.get(right.id);
+  if (!leftPattern || !rightPattern) return null;
+  return {
+    id: `observed_${left.id}_${right.id}`,
+    patternIds: [left.id, right.id],
+    explanation: `${leftPattern.title} болон ${rightPattern.title} таны хариултаар хоёулаа дэмжигдсэн. Эдгээр нь нэг нөхцөлд давхцаж байгаа эсэхийг ажигласнаар аль нөлөөг эхэлж багасгах нь илүү бодитойг ялгаж болно.`
+  };
+}
+
+function combinedManagementAction(primaryId, secondaryId) {
+  const pair = new Set([primaryId, secondaryId]);
+  if (pair.has("sleep_fatigue") && pair.has("emotional_regulation")) {
+    return "Эхлээд оройн ядаргаа ихэсдэг цагийг тогтооно. Тэр үед идэх хүслээ зөвхөн тэвчих гэж оролдохын оронд оройн хоол, амралт болон унтахын өмнөх нэг үйлдлээ урьдчилан бэлдэнэ.";
+  }
+  if (pair.has("restrictive_rebound") && pair.has("plan_daily_life_mismatch")) {
+    return "Хэт хатуу дүрэм нэмэхээс өмнө өдөр тутам бодитоор хэрэгжүүлж болох хамгийн бага хувилбарыг сонгож, үндсэн төлөвлөгөө багтаагүй үед тэр хувилбартаа шилжинэ.";
+  }
+  if (pair.has("irregular_meals_late_hunger") && pair.has("hunger_satiety")) {
+    return "Эхлээд хоол хоорондын зайг хэт урт болгодог нэг өдрийг сонгож, тогтвортой нэг хооллох цаг бэлдэнэ. Дараа нь тэр хоолны дунд цадалтын мэдрэмжээ нэг удаа шалгана.";
+  }
+  if (pair.has("environmental_cues") && pair.has("emotional_regulation")) {
+    return "Идэх хүсэл нэмэгдсэн мөчид эхлээд тухайн орчны дохиог, дараа нь тэр үеийн мэдрэмжийг нэрлэж тэмдэглэнэ. Ингэснээр орчны өөрчлөлт эсвэл сэтгэл хөдлөлийн богино завсарлагаас алийг нь түрүүлж хэрэглэхээ ялгана.";
+  }
+  if (pair.has("previous_attempt_sustainability") && pair.has("low_movement")) {
+    return "Өмнөх хөдөлгөөний аргыг бүхэлд нь сэргээхээс өмнө өдөр тутмын нэг тогтвортой мөчид багтах богино хөдөлгөөнийг сонгож, үндсэн хувилбар боломжгүй өдөр хэрэглэх жижиг хувилбарыг хамт бэлдэнэ.";
+  }
+  return "Эхний хэв маягийн өдөөгч нөхцөлийг ажиглахдаа дараагийн хэв маягтай холбоотой хүндрэл мөн давхцаж байгаа эсэхийг тэмдэглэнэ. Нэг удаад нэг бэлтгэсэн үйлдэл хэрэглэж, аль өөрчлөлт бодит амьдралд илүү тохирч байгааг тусад нь ажиглана.";
+}
+
+function combinedManagementPlan(prioritized, supported, modules) {
+  if (!prioritized || supported.length < 2 || modules.length < 2) return null;
+  const primary = modules.find(item => item.patternId === prioritized.id) || modules[0];
+  const secondary = modules.find(item => item.patternId !== primary.patternId);
+  if (!secondary) return null;
+  return {
+    startWith: `${primary.title}: ${primary.observe}`,
+    why: "Энэ чиглэл нь таны хариултад хамгийн тод, эхэлж ажиглах боломжтой нөхцөлтэй холбоотой тул бусад бүх зүйлийг зэрэг өөрчлөхөөс өмнө үүнээс эхэлнэ.",
+    nextStep: `${secondary.title}: ${secondary.prepare}`,
+    combinedAction: combinedManagementAction(primary.patternId, secondary.patternId)
+  };
+}
+
+function firstActionPlan(prioritized, supported, patternById) {
+  const primary = prioritized || supported[0];
+  if (!primary) return [];
+  const secondary = supported.find(item => item.id !== primary.id);
+  const primaryCopy = PATTERN_MANAGEMENT_MODULES[primary.id];
+  const secondaryCopy = secondary ? PATTERN_MANAGEMENT_MODULES[secondary.id] : null;
+  if (!primaryCopy) return [];
+  const primaryTitle = patternById.get(primary.id)?.title || primary.title;
+  const secondaryTitle = secondary ? patternById.get(secondary.id)?.title || secondary.title : primaryTitle;
+  const actions = [
+    { patternId: primary.id, patternTitle: primaryTitle, action: primaryCopy.initialActions[0] },
+    { patternId: primary.id, patternTitle: primaryTitle, action: primaryCopy.initialActions[1] },
+    {
+      patternId: secondary?.id || primary.id,
+      patternTitle: secondaryTitle,
+      action: secondaryCopy?.initialActions[0] || primaryCopy.initialActions[2]
+    }
+  ];
+  return actions.map((item, index) => ({ ...item, order: index + 1 }));
+}
+
+function fallbackPlan(prioritized, supported, patternById) {
+  const primary = prioritized || supported[0];
+  if (!primary) return null;
+  const copy = PATTERN_MANAGEMENT_MODULES[primary.id];
+  if (!copy) return null;
+  return {
+    patternId: primary.id,
+    patternTitle: patternById.get(primary.id)?.title || primary.title,
+    introduction: "Жин хасах төлөвлөгөө өдөр бүр яг ижил хэрэгжихгүй байж болно. Нэг өдөр төлөвлөснөөсөө өөр хооллосон нь бүх оролдлого бүтэлгүйтсэн гэсэн үг биш.",
+    resume: copy.fallback.resume,
+    softenRule: copy.fallback.soften,
+    recheckTrigger: copy.fallback.recheck,
+    fitDailyLife: copy.fallback.fit
+  };
+}
+
+function neutralActionablePlan(neutral) {
+  const observation = neutral?.observation;
+  if (!observation) return null;
+  return {
+    managementModule: {
+      title: "Одоо ажиллаж буй хэмнэлээ хадгалах чиглэл",
+      evidenceLink: "Хүчтэй саад дэмжигдээгүй тул шинэ асуудал зохиохгүйгээр одоо ажиллаж буй нөхцөлөө ажиглана.",
+      observe: "Сонгосон ажиглалтаа хийхдээ ямар нөхцөл дэмжсэн эсвэл саад болсныг нэг өгүүлбэрээр тэмдэглээрэй.",
+      prepare: `Ажиглах зүйлээ урьдчилан сонго: ${observation.variable}`,
+      inMoment: "Сонгосон мөч ирэхэд шинэ хориг нэмэхгүйгээр зөвхөн ажиглалтаа тэмдэглэ.",
+      avoidRigidDemand: "Одоо сайн ажиллаж буй хоол, хөдөлгөөн эсвэл өдөр тутмын дадлыг зориуд зэрэг өөрчлөхгүй бай.",
+      professionalHelp: "Санаа зовоосон эрүүл мэндийн шинж эсвэл өдөр тутмын үйл ажиллагаанд нөлөөлөх өөрчлөлт гарвал мэргэжлийн хүнтэй зөвлөлдөөрэй."
+    },
+    firstActions: [
+      { order: 1, patternTitle: "Одоо ажиллаж буй хэмнэл", action: `Ажиглах нэг зүйлээ сонго: ${observation.variable}` },
+      { order: 2, patternTitle: "Одоо ажиллаж буй хэмнэл", action: "Сонгосон мөчид нэг ажиглалт хийж, нөлөөлсөн нөхцөлийг тэмдэглэ." },
+      { order: 3, patternTitle: "Дараагийн шийдвэр", action: "Тэмдэглэлээ эргэн хараад одоогийн хэмнэлээ хадгалах эсэхээ нэг удаа шийд." }
+    ],
+    fallbackPlan: {
+      patternTitle: "Одоо ажиллаж буй хэмнэл",
+      introduction: "Ажиглалт өдөр бүр яг ижил хэрэгжихгүй байж болно. Нэг удаа тэмдэглэж чадаагүй нь бүх ажиглалт хэрэггүй болсон гэсэн үг биш.",
+      resume: "Алгассан ажиглалтыг нөхөхгүйгээр дараагийн сонгосон мөчөөс үргэлжлүүл.",
+      softenRule: "Шинэ хориг эсвэл шаардлагагүй засах дүрэм нэмэхгүй бай.",
+      recheckTrigger: "Ажиглалтад ямар бодит нөхцөл саад болсныг нэг өгүүлбэрээр тэмдэглэ.",
+      fitDailyLife: "Сонгосон мөч тохирохгүй байвал ажиглах зүйлээ бус, хийх мөчийг нэг удаа солиорой."
+    }
   };
 }
 
@@ -639,6 +947,10 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
     patternIds: rule.patterns,
     explanation: composer.recordRule(`interaction_${rule.id}`, { requiredPatterns: rule.patterns, requiredSignals: rule.requiredSignals || [] }, INTERACTION_COPY[rule.id], "3")
   }));
+  if (evaluated.supported.length >= 2 && interactions.length === 0) {
+    const fallbackInteraction = interactionFallback(evaluated.supported, patternById);
+    if (fallbackInteraction) interactions.push(fallbackInteraction);
+  }
   for (const interaction of interactions) for (const id of interaction.patternIds) {
     const pattern = patternById.get(id);
     pattern.interactionsWith = [...new Set([...pattern.interactionsWith, ...interaction.patternIds.filter(other => other !== id)])];
@@ -646,10 +958,12 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
   const sleepCandidate = evaluated.supported.find(item => item.id === "sleep_fatigue");
   const prioritized = sleepCandidate && facts.schedule
     ? sleepCandidate
-    : evaluated.influencingPatterns.slice().sort((left, right) => (PATTERN_PRIORITY[right.id] || 0) - (PATTERN_PRIORITY[left.id] || 0) || right.score - left.score)[0] || null;
+    : evaluated.influencingPatterns.slice().sort((left, right) => (PATTERN_PRIORITY[right.id] || 0) - (PATTERN_PRIORITY[left.id] || 0) || right.score - left.score)[0]
+      || evaluated.supported.slice().sort((left, right) => (PATTERN_PRIORITY[right.id] || 0) - (PATTERN_PRIORITY[left.id] || 0) || right.score - left.score)[0]
+      || null;
   const supportedIds = new Set(evaluated.supported.map(item => item.id));
   const previous = previousAttemptAnalysis(evidence, facts, composer);
-  const contextual = contextualFactors(evidence, evaluated.contextualPatterns, facts, composer);
+  const contextual = contextualFactors(evidence, evaluated.contextualPatterns, facts, composer, patternById);
   const strengths = strengthItems(evidence, composer, facts);
   const protectiveSection = [composer.render("strength_body", "6"), composer.render("strength_common_barriers", "6"), composer.render("strength_adherence_success", "6")].filter(Boolean).join(" ") || null;
   const additionalPatternActions = evaluated.influencingPatterns.map(candidate => ({ patternId: candidate.id, patternTitle: PATTERN_PUBLIC_TITLES[candidate.id] || candidate.title, ...recommendationFor(candidate, facts, composer) }));
@@ -660,6 +974,11 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
   const urgent = composer.render("guidance_urgent_blood_pressure", "10");
   const neutral = influencingPatterns.length ? null : neutralResult(evidence, composer, strengths, contextual, quality, professional);
   const overview = neutral ? null : overallPicture(evaluated, composer);
+  const managementModules = evaluated.supported.map(candidate => managementModule(candidate, patternById.get(candidate.id), facts)).filter(Boolean);
+  const combinedPlan = combinedManagementPlan(prioritized, evaluated.supported, managementModules);
+  const initialActions = firstActionPlan(prioritized, evaluated.supported, patternById);
+  const planFallback = fallbackPlan(prioritized, evaluated.supported, patternById);
+  const neutralPlan = managementModules.length ? null : neutralActionablePlan(neutral);
   const avoidForNow = influencingPatterns.length
     ? composer.recordRule("avoid_simultaneous_changes", { requiredPatterns: evaluated.influencingPatterns.map(item => item.id) }, "Эхний туршилтын хугацаанд хоолны шинэ хатуу хориг болон олон шинэ дүрмийг зэрэг нэмэхгүй. Сонгосон нэг алхам өдөр тутмын амьдралд багтаж байгаа эсэхийг эхэлж ажиглана.", "9")
     : null;
@@ -672,6 +991,10 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
     protectiveSectionSummary: protectiveSection, protectiveFactors: strengths, contradictions: contradictionItems(evidence, evaluated.candidates),
     previousAttemptAnalysis: previous, interactionSummary: interactions,
     prioritizedStartingAction: firstAction, additionalPatternActions,
+    managementModules: neutralPlan ? [neutralPlan.managementModule] : managementModules,
+    combinedManagementPlan: combinedPlan,
+    initialActions: neutralPlan ? neutralPlan.firstActions : initialActions,
+    fallbackPlan: neutralPlan ? neutralPlan.fallbackPlan : planFallback,
     planDecisionPending,
     planAppendices: planDecisionPending ? {
       recommendedCandidate: startDecision.recommendedCandidate,

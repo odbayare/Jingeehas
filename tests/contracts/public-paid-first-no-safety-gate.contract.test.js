@@ -12,7 +12,7 @@ const { calculateAssessmentSafety } = require("../../netlify/functions/_lib/safe
   app._test.setComingSoon(false);
   const start = app.renderForPath("/assessment/start");
   const legacy = app.renderForPath("/assessment/contact");
-  for (const expected of ["Тест үнэлгээгээ эхлүүлэх", 'id="contact-email"', "QPay-аар төлөөд тестээ эхлүүлэх"]) assert(start.includes(expected), expected);
+  for (const expected of ["Тест үнэлгээ болон бүрэн тайлангаа нээх", 'id="contact-email"', "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх"]) assert(start.includes(expected), expected);
   for (const forbidden of ['id="safety-form"', "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт", "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах"]) assert(!start.includes(forbidden), forbidden);
   assert.equal(legacy, start);
 
