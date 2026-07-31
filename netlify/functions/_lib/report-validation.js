@@ -1,6 +1,7 @@
 "use strict";
 
 const { REPORT_VERSION, publicReport } = require("./report.js");
+const { deliverablePatterns, deliverableInteractions } = require("./initial-result.js");
 
 const PROHIBITED_PUBLIC_TERMS = Object.freeze([
   "OWNER REVIEW REQUIRED", "OWNER APPROVED", "Candidate A", "Candidate B", "review status",
@@ -35,13 +36,23 @@ function validateReportForActivation(fullReport) {
   const modules = fullReport?.managementModules || [];
   if (!modules.length) errors.push("management_modules_missing");
   for (const [index, module] of modules.entries()) {
-    for (const field of ["title", "evidenceLink", "observe", "prepare", "inMoment", "avoidRigidDemand", "professionalHelp"]) {
+    for (const field of ["title", "evidenceLink", "observe", "triggerRecognition", "prepare", "inMoment", "avoidRigidDemand", "resume", "professionalHelp"]) {
       if (!String(module?.[field] || "").trim()) errors.push(`management_module_${index}_missing:${field}`);
     }
   }
   const supportedPatternCount = (fullReport?.internalEvidenceMap?.patternEvidence || []).filter(item => item.supported).length;
   if (supportedPatternCount && modules.length !== supportedPatternCount) errors.push("supported_pattern_management_coverage");
-  if (supportedPatternCount >= 2 && (!fullReport?.interactionSummary?.length || !fullReport?.combinedManagementPlan)) errors.push("combined_guidance_missing");
+  const renderedPatternCount = [
+    ...(fullReport?.influencingPatterns || []),
+    ...(fullReport?.contextualFactors || []).filter(item => item?.isPattern)
+  ].reduce((ids, pattern) => ids.add(pattern?.id), new Set()).size;
+  if (deliverablePatterns(fullReport).length !== renderedPatternCount) errors.push("counted_pattern_delivery_gap");
+  const renderedInteractionCount = (fullReport?.interactionSummary || []).length;
+  if (deliverableInteractions(fullReport).length !== renderedInteractionCount) errors.push("counted_interaction_delivery_gap");
+  const difficultMoment = fullReport?.difficultMomentPlan;
+  for (const field of ["notice", "inMoment", "reduceTrigger", "resume"]) {
+    if (!String(difficultMoment?.[field] || "").trim()) errors.push(`difficult_moment_plan_missing:${field}`);
+  }
   if (!Array.isArray(fullReport?.initialActions) || fullReport.initialActions.length !== 3) errors.push("initial_actions_must_equal_three");
   else for (const [index, action] of fullReport.initialActions.entries()) {
     if (!String(action?.action || "").trim() || !String(action?.patternTitle || "").trim()) errors.push(`initial_action_${index}_not_attributed`);

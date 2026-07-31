@@ -1,21 +1,20 @@
 "use strict";
 
-const INITIAL_RESULT_SCHEMA_VERSION = "jingeehas-initial-result-v1";
+const INITIAL_RESULT_SCHEMA_VERSION = "jingeehas-initial-result-v2-count-only";
+const LEGACY_INITIAL_RESULT_SCHEMA_VERSION = "jingeehas-initial-result-v1";
 const LOCKED_REPORT_TITLES = Object.freeze([
-  "Танд нөлөөлж буй бусад хэв маяг",
-  "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа",
-  "Ямар нөхцөлд илүү хүчтэй болдог",
-  "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?",
+  "Танд нөлөөлж буй хэв маягууд",
+  "Хэв маягуудын уялдаа холбоо",
+  "Ямар үед илүү хүчтэй болдог",
+  "Сэтгэлзүйн хэв маягаа хэрхэн удирдах вэ?",
+  "Хэцүү үеийг хэрхэн даван туулах вэ?",
   "Эхэлж хэрэгжүүлэх 3 алхам",
-  "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?",
-  "Өөртөө илүү тохирсон жин хасах арга барил"
+  "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
 ]);
-const NEUTRAL_SUMMARY = "Таны хариултад хэд хэдэн хүчин зүйл зэрэг нөлөөлж байгаа зураглал харагдлаа. Бүрэн тайланд эдгээр хүчин зүйл хоорондоо хэрхэн уялдаж байгааг, юунд эхэлж анхаарах нь илүү тохиромжтойг дэлгэрүүлнэ.";
 
-function shortSentences(values = []) {
-  const text = values.filter(Boolean).map(value => String(value).trim()).filter(Boolean).join(" ");
-  const sentences = text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map(value => value.trim()).filter(Boolean) || [];
-  return sentences.slice(0, 3).join(" ").slice(0, 900);
+function hasText(value) {
+  if (Array.isArray(value)) return value.some(hasText);
+  return String(value || "").trim().length > 0;
 }
 
 function supportedPatterns(fullReport = {}) {
@@ -25,65 +24,95 @@ function supportedPatterns(fullReport = {}) {
   ];
 }
 
+function deliverablePatterns(fullReport = {}) {
+  const modules = Array.isArray(fullReport.managementModules) ? fullReport.managementModules : [];
+  const seen = new Set();
+  return supportedPatterns(fullReport).filter(pattern => {
+    const key = String(pattern?.id || pattern?.title || "").trim();
+    if (!key || seen.has(key)) return false;
+    const module = modules.find(item => String(item?.patternId || "") === String(pattern?.id || ""));
+    const delivered = hasText(pattern?.title)
+      && hasText(pattern?.evidenceSummary || pattern?.paragraphs || pattern?.explanation)
+      && hasText(pattern?.effectOnWeightLoss)
+      && module
+      && hasText(module.observe)
+      && hasText(module.prepare)
+      && hasText(module.inMoment);
+    if (delivered) seen.add(key);
+    return Boolean(delivered);
+  });
+}
+
+function planPairKey(plan = {}) {
+  const ids = Array.isArray(plan.patternIds) ? [...new Set(plan.patternIds.map(String))] : [];
+  return ids.length === 2 ? ids.sort().join("::") : "";
+}
+
+function deliverableInteractions(fullReport = {}, patterns = deliverablePatterns(fullReport)) {
+  const patternIds = new Set(patterns.map(pattern => String(pattern.id || "")));
+  const plans = [
+    fullReport.combinedManagementPlan,
+    ...(Array.isArray(fullReport.additionalInteractionManagementPlans) ? fullReport.additionalInteractionManagementPlans : [])
+  ].filter(Boolean);
+  const planPairs = new Set(plans.filter(plan => ["startWith", "why", "nextStep", "combinedAction"].every(field => hasText(plan[field]))).map(planPairKey).filter(Boolean));
+  const seen = new Set();
+  return (Array.isArray(fullReport.interactionSummary) ? fullReport.interactionSummary : []).filter(interaction => {
+    if (String(interaction?.id || "").startsWith("observed_")) return false;
+    const ids = Array.isArray(interaction?.patternIds) ? [...new Set(interaction.patternIds.map(String))] : [];
+    const key = ids.length === 2 ? ids.sort().join("::") : "";
+    if (!key || seen.has(key) || !hasText(interaction?.explanation) || !ids.every(id => patternIds.has(id)) || !planPairs.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
 function buildInitialResult(fullReport = {}) {
-  const patterns = supportedPatterns(fullReport);
-  if (fullReport.neutralResult || !patterns.length) {
-    return {
-      schemaVersion: INITIAL_RESULT_SCHEMA_VERSION,
-      mode: "neutral",
-      primaryPattern: null,
-      summary: NEUTRAL_SUMMARY,
-      additionalPatternCount: 0,
-      lockedSections: [...LOCKED_REPORT_TITLES]
-    };
-  }
-  const primary = patterns[0];
-  const summary = shortSentences([primary.evidenceSummary, primary.effectOnWeightLoss, primary.uncertainty]);
+  const patterns = deliverablePatterns(fullReport);
+  const neutral = Boolean(fullReport.neutralResult) || patterns.length === 0;
   return {
     schemaVersion: INITIAL_RESULT_SCHEMA_VERSION,
-    mode: "pattern",
-    primaryPattern: {
-      title: String(primary.title || "").trim().slice(0, 180),
-      summary: summary || "Таны хэд хэдэн хариултад энэ хэв маяг давтагдан ажиглагдлаа. Энэ нь таныг бүхэлд нь тодорхойлохгүй бөгөөд бүрэн тайланд бусад хүчин зүйлтэй хэрхэн уялдаж байгааг дэлгэрүүлнэ."
-    },
-    additionalPatternCount: Math.max(0, patterns.length - 1),
+    mode: neutral ? "neutral" : "summary",
+    patternCount: neutral ? 0 : patterns.length,
+    interactionCount: neutral ? 0 : deliverableInteractions(fullReport, patterns).length,
     lockedSections: [...LOCKED_REPORT_TITLES]
   };
 }
 
-function publicInitialResult(initialView = {}) {
-  if (initialView.schemaVersion !== INITIAL_RESULT_SCHEMA_VERSION) return null;
-  const lockedSections = Array.isArray(initialView.lockedSections)
-    ? initialView.lockedSections.filter(title => LOCKED_REPORT_TITLES.includes(title))
-    : [];
-  if (lockedSections.length !== LOCKED_REPORT_TITLES.length) return null;
-  if (initialView.mode === "neutral") {
-    return {
-      mode: "neutral",
-      primaryPattern: null,
-      summary: String(initialView.summary || NEUTRAL_SUMMARY).slice(0, 900),
-      additionalPatternCount: 0,
-      lockedSections: [...LOCKED_REPORT_TITLES]
-    };
-  }
-  if (initialView.mode !== "pattern" || !initialView.primaryPattern?.title || !initialView.primaryPattern?.summary) return null;
+function validLockedSections(initialView = {}) {
+  return Array.isArray(initialView.lockedSections)
+    && initialView.lockedSections.length === LOCKED_REPORT_TITLES.length
+    && LOCKED_REPORT_TITLES.every((title, index) => initialView.lockedSections[index] === title);
+}
+
+function publicInitialResult(initialView = {}, fullReport = null) {
+  let projected = initialView?.schemaVersion === LEGACY_INITIAL_RESULT_SCHEMA_VERSION
+    ? buildInitialResult(fullReport || {})
+    : initialView;
+  if (projected?.schemaVersion === INITIAL_RESULT_SCHEMA_VERSION && fullReport) projected = buildInitialResult(fullReport);
+  if (projected?.schemaVersion !== INITIAL_RESULT_SCHEMA_VERSION || !validLockedSections(projected)) return null;
+  if (!["summary", "neutral"].includes(projected.mode)) return null;
+  const neutral = projected.mode === "neutral";
+  const rawPatternCount = Math.trunc(Number(projected.patternCount));
+  const rawInteractionCount = Math.trunc(Number(projected.interactionCount));
+  if (!neutral && (!Number.isInteger(rawPatternCount) || rawPatternCount < 1 || rawPatternCount > 20)) return null;
+  if (!neutral && (!Number.isInteger(rawInteractionCount) || rawInteractionCount < 0 || rawInteractionCount > 20)) return null;
+  const patternCount = neutral ? 0 : rawPatternCount;
+  const interactionCount = neutral ? 0 : rawInteractionCount;
   return {
-    mode: "pattern",
-    primaryPattern: {
-      title: String(initialView.primaryPattern.title).slice(0, 180),
-      summary: String(initialView.primaryPattern.summary).slice(0, 900)
-    },
-    additionalPatternCount: Math.max(0, Math.min(20, Number(initialView.additionalPatternCount) || 0)),
+    mode: neutral ? "neutral" : "summary",
+    patternCount,
+    interactionCount,
     lockedSections: [...LOCKED_REPORT_TITLES]
   };
 }
 
 module.exports = {
   INITIAL_RESULT_SCHEMA_VERSION,
+  LEGACY_INITIAL_RESULT_SCHEMA_VERSION,
   LOCKED_REPORT_TITLES,
-  NEUTRAL_SUMMARY,
-  shortSentences,
   supportedPatterns,
+  deliverablePatterns,
+  deliverableInteractions,
   buildInitialResult,
   publicInitialResult
 };

@@ -54,33 +54,30 @@ function resetFlowState() {
   flowMode = "pattern";
 }
 const initialResult = {
-  mode: "pattern",
-  primaryPattern: {
-    title: "Сэтгэл хөдлөлтэй холбоотой хооллох хандлага",
-    summary: "Таны хэд хэдэн хариултад сэтгэл хөдлөл болон хооллох сонголтын холбоо давтагдан ажиглагдлаа. Энэ нь таныг бүхэлд нь тодорхойлохгүй."
-  },
-  additionalPatternCount: 2,
+  mode: "summary",
+  patternCount: 3,
+  interactionCount: 1,
   lockedSections: [
-    "Танд нөлөөлж буй бусад хэв маяг",
-    "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа",
-    "Ямар нөхцөлд илүү хүчтэй болдог",
-    "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?",
+    "Танд нөлөөлж буй хэв маягууд",
+    "Хэв маягуудын уялдаа холбоо",
+    "Ямар үед илүү хүчтэй болдог",
+    "Сэтгэлзүйн хэв маягаа хэрхэн удирдах вэ?",
+    "Хэцүү үеийг хэрхэн даван туулах вэ?",
     "Эхэлж хэрэгжүүлэх 3 алхам",
-    "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?",
-    "Өөртөө илүү тохирсон жин хасах арга барил"
+    "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
   ],
   price: 9900,
   currency: "MNT"
 };
 const neutralInitialResult = {
   mode: "neutral",
-  primaryPattern: null,
-  summary: "Таны хариултад хэд хэдэн хүчин зүйл зэрэг нөлөөлж байгаа зураглал харагдлаа. Бүрэн тайланд эдгээр хүчин зүйл хоорондоо хэрхэн уялдаж байгааг, юунд эхэлж анхаарах нь илүү тохиромжтойг дэлгэрүүлнэ.",
-  additionalPatternCount: 0,
+  patternCount: 0,
+  interactionCount: 0,
   lockedSections: initialResult.lockedSections,
   price: 9900,
   currency: "MNT"
 };
+const singleInitialResult = { ...initialResult, patternCount: 1, interactionCount: 0 };
 const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
 const cohortReports = Object.fromEntries(cohort.filter(profile => ["VU-03", "VU-06"].includes(profile.id)).map(profile => {
   const linkedLongestMethod = profile.answers["Q-METHOD-LONGEST"] || questions.autoLinkedLongestMethod(profile.answers);
@@ -203,7 +200,7 @@ const endpoints = {
     if (!assessmentExists || assessmentStatus !== "complete") return json(response, 409, { error: "assessment_incomplete" });
     if (flowMode === "safety") return json(response, 409, { error: "safety_route" });
     stats.initialResult += 1;
-    json(response, 200, flowMode === "neutral" ? neutralInitialResult : initialResult);
+    json(response, 200, flowMode === "neutral" ? neutralInitialResult : flowMode === "single" ? singleInitialResult : initialResult);
   },
   "weight-result-email-save": async (_body, response) => {
     if (!assessmentExists || assessmentStatus !== "complete") return json(response, 409, { error: "assessment_incomplete" });
@@ -224,7 +221,7 @@ const endpoints = {
         entitled: false
       });
     }
-    const visibleInitial = flowMode === "neutral" ? neutralInitialResult : initialResult;
+    const visibleInitial = flowMode === "neutral" ? neutralInitialResult : flowMode === "single" ? singleInitialResult : initialResult;
     json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: visibleInitial, fullReport: hasAccess ? selectedReport(request) : null, entitled: hasAccess });
   },
   "weight-session-state": async (_body, response, request) => {
@@ -258,7 +255,7 @@ const endpoints = {
       report: nextRoute === "/report"
         ? flowMode === "safety"
           ? { assessmentId, reportMode: "safety", safetyRoute: "professional_support", initialView: { guidance: { title: "Мэргэжлийн хүнтэй ярилцахыг зөвлөж байна", body: "Таны хариултад мэргэжлийн хүнтэй ярилцах шаардлагатай байж болох дохио ажиглагдлаа.", action: "Тусламж авах" } }, fullReport: null, entitled: false }
-          : { assessmentId, reportMode: "sufficient", safetyRoute: null, initialView: flowMode === "neutral" ? neutralInitialResult : initialResult, fullReport: selectedReport(request), entitled: true }
+          : { assessmentId, reportMode: "sufficient", safetyRoute: null, initialView: flowMode === "neutral" ? neutralInitialResult : flowMode === "single" ? singleInitialResult : initialResult, fullReport: selectedReport(request), entitled: true }
         : null
     });
   },
@@ -283,9 +280,16 @@ http.createServer(async (request, response) => {
   const url = new URL(request.url, "http://127.0.0.1:4178");
   if (url.pathname === "/__test/stats") return json(response, 200, stats);
   if (url.pathname === "/__test/reset") { resetFlowState(); return json(response, 200, { reset: true }); }
+  if (url.pathname === "/__test/result") {
+    assessmentExists = true;
+    assessmentStatus = "complete";
+    flowMode = ["pattern", "single", "neutral"].includes(url.searchParams.get("mode")) ? url.searchParams.get("mode") : "pattern";
+    response.writeHead(302, { location: "/assessment/result?e2e=1", "set-cookie": "jingeehas_session=e2e; Path=/; HttpOnly; SameSite=Lax" });
+    return response.end();
+  }
   if (url.pathname === "/__test/mode") {
     const mode = url.searchParams.get("value");
-    if (!["pattern", "neutral", "safety"].includes(mode)) return json(response, 400, { error: "invalid_mode" });
+    if (!["pattern", "single", "neutral", "safety"].includes(mode)) return json(response, 400, { error: "invalid_mode" });
     flowMode = mode;
     return json(response, 200, { mode });
   }
