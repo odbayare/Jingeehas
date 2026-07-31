@@ -16,9 +16,9 @@ for (const metadata of ["canonical", "og:image", "twitter:image", "favicon.svg",
 assert(fs.statSync(path.join(root, "assets", "social-preview.png")).size > 10000);
 assert.equal(fs.readFileSync(path.join(root, "assets", "social-preview.png")).subarray(1, 4).toString(), "PNG");
 
-for (const route of ["/", "/methodology", "/assessment/start", "/assessment/contact", "/assessment/questions", "/assessment/completed", "/assessment/payment", "/report", "/recovery", "/advisor/login", "/advisor/dashboard", "/admin", "/privacy", "/terms", "/support", "/data-deletion"]) assert.notEqual(app.routeName(route), "notFound", route);
+for (const route of ["/", "/methodology", "/assessment/start", "/assessment/contact", "/assessment/questions", "/assessment/result", "/assessment/completed", "/assessment/payment", "/report", "/recovery", "/advisor/login", "/advisor/dashboard", "/admin", "/privacy", "/terms", "/support", "/data-deletion"]) assert.notEqual(app.routeName(route), "notFound", route);
 app._test.setComingSoon(false);
-assert(app.renderForPath("/privacy").includes("нууцлагдсан зочин болон сессийн танигчаар өдрийн нийлбэр үзүүлэлт хэмжинэ"));
+assert(app.renderForPath("/privacy").includes("нууцлагдсан зочин, сесс болон урсгалын танигчаар өдрийн нийлбэр үзүүлэлт хэмжинэ"));
 assert(app.renderForPath("/privacy").includes("түүхий IP хаяг хадгалахгүй"));
 assert(app.renderForPath("/terms").includes("9,900₮"));
 assert(app.renderForPath("/support").includes("Төлбөр шалгах"));

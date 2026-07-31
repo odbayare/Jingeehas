@@ -17,7 +17,9 @@ exports.handler = handler("GET", async event => {
   const payments = await database.find("payments", { assessmentId: assessment.id });
   const payment = payments.sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0] || null;
   const paid = await hasPaidAccess(database, assessment);
-  const answers = (assessment.status === "draft" || (assessment.commercialFlowVersion === "prepaid_v2" && paid && ["paid_ready", "in_progress"].includes(assessment.status)))
+  const answers = (assessment.commercialFlowVersion === "prepaid_v2"
+    ? paid && ["paid_ready", "in_progress"].includes(assessment.status)
+    : ["draft", "in_progress"].includes(assessment.status))
     ? Object.fromEntries((await database.find("assessment_answers", { assessmentId: assessment.id })).map(row => [row.questionId, row.value])) : {};
   let report = null; if (assessment.status === "complete") report = await reportForSession(database, session.id, assessment.id);
   return response(200, { assessment: { assessmentId: assessment.id, status: assessment.status, safetyRoute: assessment.safetyRoute,

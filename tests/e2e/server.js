@@ -7,7 +7,20 @@ const questions = require("../../questions.js");
 const cohort = require("../fixtures/virtual-cohort-v2.js");
 const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/functions/_lib/report.js");
 const root = path.resolve(__dirname, "../..");
-const stats = { qpayCreate: 0, qpayCheck: 0, assessmentSave: 0, paymentRows: 0, sessionStart: 0, safetyGate: 0, analyticsCollect: 0, questionProgressRows: 0 };
+const stats = {
+  qpayCreate: 0,
+  qpayCheck: 0,
+  assessmentCreate: 0,
+  assessmentSave: 0,
+  assessmentComplete: 0,
+  initialResult: 0,
+  resultEmailSave: 0,
+  paymentRows: 0,
+  sessionStart: 0,
+  safetyGate: 0,
+  analyticsCollect: 0,
+  questionProgressRows: 0
+};
 const recordedQuestionProgress = new Set();
 const questionProgressRows = Array.from({ length: 8 }, (_, index) => {
   const activeAtQuestionCount = index === 7 ? 1 : 0;
@@ -24,7 +37,50 @@ const questionProgressRows = Array.from({ length: 8 }, (_, index) => {
     activeCount: activeAtQuestionCount, stoppedCount: confirmedStoppedCount,
     dropoffRate: dropoffEligibleCount ? confirmedStoppedCount / dropoffEligibleCount : null };
 });
-let assessmentStatus = "payment_pending";
+let assessmentExists = false;
+let assessmentStatus = "";
+let paymentStatus = "";
+let entitled = false;
+let savedAnswers = {};
+let flowMode = "pattern";
+function resetFlowState() {
+  for (const key of Object.keys(stats)) stats[key] = 0;
+  recordedQuestionProgress.clear();
+  assessmentExists = false;
+  assessmentStatus = "";
+  paymentStatus = "";
+  entitled = false;
+  savedAnswers = {};
+  flowMode = "pattern";
+}
+const initialResult = {
+  mode: "pattern",
+  primaryPattern: {
+    title: "Сэтгэл хөдлөлтэй холбоотой хооллох хандлага",
+    summary: "Таны хэд хэдэн хариултад сэтгэл хөдлөл болон хооллох сонголтын холбоо давтагдан ажиглагдлаа. Энэ нь таныг бүхэлд нь тодорхойлохгүй."
+  },
+  additionalPatternCount: 2,
+  lockedSections: [
+    "Танд нөлөөлж буй бусад хэв маяг",
+    "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа",
+    "Ямар нөхцөлд илүү хүчтэй болдог",
+    "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?",
+    "Эхэлж хэрэгжүүлэх 3 алхам",
+    "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?",
+    "Өөртөө илүү тохирсон жин хасах арга барил"
+  ],
+  price: 9900,
+  currency: "MNT"
+};
+const neutralInitialResult = {
+  mode: "neutral",
+  primaryPattern: null,
+  summary: "Таны хариултад хэд хэдэн хүчин зүйл зэрэг нөлөөлж байгаа зураглал харагдлаа. Бүрэн тайланд эдгээр хүчин зүйл хоорондоо хэрхэн уялдаж байгааг, юунд эхэлж анхаарах нь илүү тохиромжтойг дэлгэрүүлнэ.",
+  additionalPatternCount: 0,
+  lockedSections: initialResult.lockedSections,
+  price: 9900,
+  currency: "MNT"
+};
 const fullReport = { productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: "2026-07-16T00:00:00.000Z", mode: "sufficient", coverage: "Тайлбарын үндэслэл: 8 өөр асуултын хариулт", sections: [{ title: "1. Таны хамгийн тод ажиглагдсан хэв маяг", body: "Хооллох хэмнэлтэй холбоотой ажиглалт давтагдсан байна." }], experiment: { variable: "хооллох хэмнэл", action: "Нэг сонголтоо урьдчилж тогтооно.", observe: "Өлсөх мэдрэмжээ ажиглана.", keepConstant: "Бусад зүйлээ өөрчлөхгүй." } };
 const cohortReports = Object.fromEntries(cohort.filter(profile => ["VU-03", "VU-06"].includes(profile.id)).map(profile => {
   const linkedLongestMethod = profile.answers["Q-METHOD-LONGEST"] || questions.autoLinkedLongestMethod(profile.answers);
@@ -42,14 +98,48 @@ const endpoints = {
   "admin-login": async (_body, response) => json(response, 200, { adminId: "owner-e2e", owner: true }, { "set-cookie": "jingeehas_admin=admin-e2e; Path=/; HttpOnly; Secure; SameSite=Strict" }),
   "admin-session-state": async (_body, response, request) => String(request.headers.cookie || "").includes("jingeehas_admin=admin-e2e") ? json(response, 200, { authenticated: true, owner: true }) : json(response, 401, { error: "unauthorized" }),
   "admin-report-regeneration-candidates": async (_body, response) => json(response, 200, { candidates: [], reportEngineVersion: "test", reportSchemaVersion: "test", generationReason: "test" }),
-  "admin-analytics-daily": async (_body, response) => json(response, 200, { timeZone: "Asia/Ulaanbaatar",
-    days: [{ date: "2026-07-19", uniqueVisitors: 10, paymentSectionViews: 6, invoicesCreated: 4, paymentsConfirmed: 3, assessmentsStarted: 3, assessmentsCompleted: 2, reportsOpened: 2, revenueMnt: 29700 }],
-    summary: { uniqueVisitors: 10, paymentSectionViews: 6, invoicesCreated: 4, paymentsConfirmed: 3, assessmentsStarted: 3, assessmentsCompleted: 2, reportsOpened: 2, revenueMnt: 29700 },
-    allFlows: { uniqueVisitors: 10, paymentSectionViews: 6, invoicesCreated: 4, paymentsConfirmed: 3, assessmentsStarted: 3, assessmentsCompleted: 2, reportsOpened: 2, revenueMnt: 29700 },
-    currentFlow: { eligibleVisitors: 10, paymentSectionViews: 6, invoicesCreated: 4, paymentsConfirmed: 3, assessmentsStarted: 3, assessmentsCompleted: 2, reportsOpened: 2, revenueMnt: 29700 },
-    legacyFlow: { paymentSectionViews: 0, invoicesCreated: 0, paymentsConfirmed: 0, assessmentsStarted: 0, assessmentsCompleted: 0, reportsOpened: 0, revenueMnt: 0 },
-    conversions: { visitorToPaymentSection: { entryCount: 10, convertedCount: 6, rate: .6, status: "available", reason: null }, paymentSectionToInvoice: { entryCount: 6, convertedCount: 4, rate: 4 / 6, status: "available", reason: null }, invoiceToPayment: { entryCount: 4, convertedCount: 3, rate: .75, status: "available", reason: null }, paymentToStart: { entryCount: 3, convertedCount: 3, rate: 1, status: "available", reason: null }, startToComplete: { entryCount: 3, convertedCount: 2, rate: 2 / 3, status: "available", reason: null }, completeToReportOpen: { entryCount: 2, convertedCount: 2, rate: 1, status: "available", reason: null } },
-    coverage: { paidFirstCutoverAt: "2026-07-21T16:17:45.493Z", rangeStartsBeforeCutover: true, rangeEndsAfterCutover: false, allMeasuredVisitors: 10, paidFirstEligibleVisitors: 10, legacyActivityPresent: false, prepaidActivityPresent: true, prepaidAssessmentActivityPresent: true, prepaidVisitorActivityPresent: true, flowState: "prepaid_only", visitorTrackingStartedAt: "2026-07-19T00:00:00.000Z", paymentSectionTrackingStartedAt: "2026-07-19T00:00:00.000Z" } }),
+  "admin-analytics-daily": async (_body, response) => {
+    const conversion = (entryCount, convertedCount) => ({ entryCount, convertedCount, rate: entryCount ? convertedCount / entryCount : null, status: entryCount ? "available" : "unavailable", reason: entryCount ? null : "zero_denominator" });
+    const currentFlow = {
+      eligibleVisitors: 10,
+      assessmentsStarted: 8,
+      assessmentsCompleted: 6,
+      initialResultsViewed: 6,
+      emailsSaved: 3,
+      fullReportCtaClicks: 4,
+      invoicesCreated: 4,
+      paymentsConfirmed: 3,
+      reportsOpened: 3,
+      revenueMnt: 29700
+    };
+    json(response, 200, {
+      timeZone: "Asia/Ulaanbaatar",
+      days: [{ date: "2026-07-19", uniqueVisitors: 10, ...currentFlow }],
+      currentFlow,
+      priorCurrentFlow: {},
+      prepaidFlow: { assessmentsStarted: 2, assessmentsCompleted: 2, invoicesCreated: 2, paymentsConfirmed: 2, reportsOpened: 2, revenueMnt: 19800 },
+      legacyFlow: { assessmentsStarted: 0, assessmentsCompleted: 0, invoicesCreated: 0, paymentsConfirmed: 0, reportsOpened: 0, revenueMnt: 0 },
+      allFlows: { uniqueVisitors: 10 },
+      conversions: {
+        visitorToAssessmentStart: conversion(10, 8),
+        assessmentStartToComplete: conversion(8, 6),
+        completeToInitialResult: conversion(6, 6),
+        initialResultToEmail: conversion(6, 3),
+        initialResultToFullReportCta: conversion(6, 4),
+        fullReportCtaToInvoice: conversion(4, 4),
+        invoiceToPayment: conversion(4, 3),
+        paymentToFullReportOpen: conversion(3, 3)
+      },
+      coverage: {
+        freeFlowCutoverAt: "2026-07-31T00:00:00.000Z",
+        allMeasuredVisitors: 10,
+        freeFlowEligibleVisitors: 10,
+        legacyActivityPresent: false,
+        prepaidActivityPresent: true,
+        flowState: "mixed"
+      }
+    });
+  },
   "admin-question-progress": async (_body, response) => json(response, 200, { timeZone: "Asia/Ulaanbaatar", summary: { cohortStarted: 7, coveredAssessments: 6,
     coverageRate: 6 / 7, averageQuestionsReached: 18, completedCount: 2, completionRate: 2 / 7, activeInProgressCount: 1,
     liveProgressAssessments: 5, backfillOnlyAssessments: 1,
@@ -59,20 +149,127 @@ const endpoints = {
   "weight-session-start": async (_body, response) => { stats.sessionStart += 1; json(response, 201, { sessionId: "ws-e2e", resumed: false }, { "set-cookie": "jingeehas_session=e2e; Path=/; HttpOnly; SameSite=Lax" }); },
   "weight-safety-gate": async (body, response) => { stats.safetyGate += 1; const result = evaluateSafetyGate(body); json(response, 200, { safetyCheckId: "sc-e2e", ...result, guidance: result.route === "eligible" ? null : ROUTE_COPY[result.route] }); },
   "weight-recovery-contact-save": async (_body, response) => stats.sessionStart > 0 ? json(response, 201, { contactGroupId: "rcg-e2e" }) : json(response, 401, { error: "unauthorized" }),
-  "weight-assessment-create": async (_body, response, request) => { assessmentStatus = "payment_pending"; const previewBypass = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e"); json(response, 201, { assessmentId: previewBypass ? "wa-owner-e2e" : "wa-e2e", status: assessmentStatus, commercialFlowVersion: "prepaid_v2", questionnaireVersion: questions.QUESTIONNAIRE_VERSION, previewBypass }); },
-  "qpay-create-invoice": async (_body, response) => { if (!stats.paymentRows) { stats.qpayCreate += 1; stats.paymentRows += 1; } json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "pending", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [] }); },
-  "qpay-check-payment": async (_body, response) => { stats.qpayCheck += 1; assessmentStatus = "paid_ready"; json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "paid", entitlement: true, nextRoute: "/assessment/questions" }); },
+  "weight-assessment-create": async (_body, response, request) => {
+    const previewBypass = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e");
+    if (!assessmentExists) {
+      assessmentExists = true;
+      assessmentStatus = "draft";
+      stats.assessmentCreate += 1;
+    }
+    json(response, 201, {
+      assessmentId: previewBypass ? "wa-owner-e2e" : "wa-e2e",
+      status: assessmentStatus,
+      commercialFlowVersion: "free_assessment_postpaid_v1",
+      questionnaireVersion: questions.QUESTIONNAIRE_VERSION,
+      previewBypass
+    });
+  },
+  "qpay-create-invoice": async (_body, response) => {
+    if (!assessmentExists || assessmentStatus !== "complete") return json(response, 409, { error: "assessment_incomplete" });
+    if (flowMode === "safety") return json(response, 409, { error: "safety_route" });
+    if (!stats.paymentRows) {
+      stats.qpayCreate += 1;
+      stats.paymentRows += 1;
+    }
+    paymentStatus = "pending";
+    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "pending", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] });
+  },
+  "qpay-check-payment": async (_body, response) => {
+    stats.qpayCheck += 1;
+    paymentStatus = "paid";
+    entitled = true;
+    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "paid", entitlement: true, nextRoute: "/report" });
+  },
   "weight-assessment-questions": async (_body, response, request) => { assessmentStatus = "in_progress"; const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e"); json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", status: assessmentStatus, startedAt: "2026-07-21T08:00:00.000Z", questionnaireVersion: questions.QUESTIONNAIRE_VERSION }); },
-  "weight-assessment-save": async (body, response) => { stats.assessmentSave += 1; const ids = Object.keys(body.answers || {}); await new Promise(resolve => setTimeout(resolve, ids.includes("Q-AGE") ? 250 : 20)); json(response, 200, { assessmentId: "wa-e2e", status: "in_progress", savedQuestionIds: ids }); },
+  "weight-assessment-save": async (body, response) => {
+    stats.assessmentSave += 1;
+    const ids = Object.keys(body.answers || {});
+    savedAnswers = { ...savedAnswers, ...(body.answers || {}) };
+    await new Promise(resolve => setTimeout(resolve, ids.includes("Q-AGE") ? 250 : 20));
+    json(response, 200, { assessmentId: "wa-e2e", status: "in_progress", savedQuestionIds: ids });
+  },
   "weight-question-progress": async (body, response) => {
     if (assessmentStatus !== "in_progress") return json(response, 402, { error: "payment_required" });
     recordedQuestionProgress.add(`${body.assessmentId}:${body.questionId}`); stats.questionProgressRows = recordedQuestionProgress.size;
     return json(response, 200, { recorded: true, excluded: false }); },
-  "weight-assessment-complete": async (_body, response) => { assessmentStatus = "complete"; json(response, 200, { assessmentId: "wa-e2e", status: "complete", reportMode: "sufficient", safetyRoute: null }); },
-  "weight-assessment-report": async (_body, response, request) => json(response, 200, { assessmentId: "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport: selectedReport(request), entitled: true }),
-  "weight-session-state": async (_body, response, request) => { const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e"); const assessmentId = preview ? "wa-owner-e2e" : "wa-e2e"; const paid = preview || stats.qpayCheck > 0; const hasPayment = stats.paymentRows > 0; const directReport = String(request.headers.referer || "").includes("/report"); const complete = assessmentStatus === "complete" || directReport; const status = complete ? "complete" : assessmentStatus; json(response, 200, { assessment: { assessmentId, status, safetyRoute: null, commercialFlowVersion: "prepaid_v2", questionnaireVersion: questions.QUESTIONNAIRE_VERSION }, nextRoute: complete ? "/report" : paid ? "/assessment/questions" : "/assessment/payment", payment: hasPayment ? { status: paid ? "paid" : "pending", paymentId: "wp-e2e" } : null, answers: {}, report: complete ? { assessmentId, reportMode: "sufficient", safetyRoute: null, initialView: {}, fullReport: selectedReport(request), entitled: true } : null }); },
+  "weight-assessment-complete": async (_body, response, request) => {
+    stats.assessmentComplete += 1;
+    assessmentStatus = "complete";
+    const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e");
+    const safetyRoute = flowMode === "safety" ? "professional_support" : null;
+    json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", status: "complete", reportMode: safetyRoute ? "safety" : "sufficient", safetyRoute, nextRoute: preview || safetyRoute ? "/report" : "/assessment/result" });
+  },
+  "weight-assessment-initial-result": async (_body, response) => {
+    if (!assessmentExists || assessmentStatus !== "complete") return json(response, 409, { error: "assessment_incomplete" });
+    if (flowMode === "safety") return json(response, 409, { error: "safety_route" });
+    stats.initialResult += 1;
+    json(response, 200, flowMode === "neutral" ? neutralInitialResult : initialResult);
+  },
+  "weight-result-email-save": async (_body, response) => {
+    if (!assessmentExists || assessmentStatus !== "complete") return json(response, 409, { error: "assessment_incomplete" });
+    stats.resultEmailSave += 1;
+    json(response, 200, { saved: true });
+  },
+  "weight-assessment-report": async (_body, response, request) => {
+    const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e");
+    const directReport = String(request.headers.referer || "").includes("/report");
+    const hasAccess = entitled || preview || directReport;
+    if (flowMode === "safety") {
+      return json(response, 200, {
+        assessmentId: preview ? "wa-owner-e2e" : "wa-e2e",
+        reportMode: "safety",
+        safetyRoute: "professional_support",
+        initialView: { guidance: { title: "Мэргэжлийн хүнтэй ярилцахыг зөвлөж байна", body: "Таны хариултад мэргэжлийн хүнтэй ярилцах шаардлагатай байж болох дохио ажиглагдлаа.", action: "Тусламж авах" } },
+        fullReport: null,
+        entitled: false
+      });
+    }
+    const visibleInitial = flowMode === "neutral" ? neutralInitialResult : initialResult;
+    json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: visibleInitial, fullReport: hasAccess ? selectedReport(request) : null, entitled: hasAccess });
+  },
+  "weight-session-state": async (_body, response, request) => {
+    const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e");
+    const directReport = String(request.headers.referer || "").includes("/report");
+    if (!assessmentExists && !directReport) return json(response, 200, { assessment: null, nextRoute: "/assessment/start", payment: null, answers: {}, report: null });
+    if (directReport && !assessmentExists) {
+      assessmentExists = true;
+      assessmentStatus = "complete";
+      entitled = true;
+    }
+    const assessmentId = preview ? "wa-owner-e2e" : "wa-e2e";
+    const nextRoute = flowMode === "safety" && assessmentStatus === "complete"
+      ? "/report"
+      : preview && assessmentStatus === "complete"
+      ? "/report"
+      : entitled
+        ? "/report"
+        : paymentStatus === "pending"
+          ? "/assessment/payment"
+          : assessmentStatus === "complete"
+            ? "/assessment/result"
+            : ["draft", "in_progress"].includes(assessmentStatus)
+              ? "/assessment/questions"
+              : "/assessment/start";
+    json(response, 200, {
+      assessment: { assessmentId, status: assessmentStatus, safetyRoute: flowMode === "safety" ? "professional_support" : null, commercialFlowVersion: "free_assessment_postpaid_v1", questionnaireVersion: questions.QUESTIONNAIRE_VERSION },
+      nextRoute,
+      payment: paymentStatus ? { status: paymentStatus, paymentId: "wp-e2e", amount: 9900, productCode: "WEIGHT_TEST_ONE_TIME", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] } : null,
+      answers: savedAnswers,
+      report: nextRoute === "/report"
+        ? flowMode === "safety"
+          ? { assessmentId, reportMode: "safety", safetyRoute: "professional_support", initialView: { guidance: { title: "Мэргэжлийн хүнтэй ярилцахыг зөвлөж байна", body: "Таны хариултад мэргэжлийн хүнтэй ярилцах шаардлагатай байж болох дохио ажиглагдлаа.", action: "Тусламж авах" } }, fullReport: null, entitled: false }
+          : { assessmentId, reportMode: "sufficient", safetyRoute: null, initialView: flowMode === "neutral" ? neutralInitialResult : initialResult, fullReport: selectedReport(request), entitled: true }
+        : null
+    });
+  },
   "weight-recovery-request": async (_body, response) => json(response, 202, { recoveryId: "rr-e2e", message: "Хэрэв тохирох бүрэн тайлан байгаа бол баталгаажуулах код илгээгдлээ." }),
-  "weight-recovery-confirm": async (body, response) => body.code === "123456" ? (assessmentStatus = "complete", json(response, 200, { assessmentId: "wa-e2e", nextRoute: "/report", recovered: true }, { "set-cookie": "jingeehas_session=recovered; Path=/; HttpOnly" })) : json(response, 400, { error: "invalid_recovery_code" }),
+  "weight-recovery-confirm": async (body, response) => {
+    if (body.code !== "123456") return json(response, 400, { error: "invalid_recovery_code" });
+    assessmentExists = true;
+    assessmentStatus = "complete";
+    entitled = true;
+    return json(response, 200, { assessmentId: "wa-e2e", nextRoute: "/report", recovered: true }, { "set-cookie": "jingeehas_session=recovered; Path=/; HttpOnly" });
+  },
   "advisor-invite-resolve": async (_body, response) => json(response, 200, { coachClientId: "ac-e2e", coachId: "adv-e2e", advisorName: "Нараа", consentStatus: "pending" }),
   "advisor-consent": async (body, response) => json(response, 200, { coachClientId: body.coachClientId, consentStatus: body.consent ? "consent_accepted" : "consent_declined" }),
   "advisor-login": async (_body, response) => json(response, 200, { coachId: "adv-e2e", name: "Нараа", forcePasswordChange: false }, { "set-cookie": "jingeehas_advisor=e2e; Path=/; HttpOnly" }),
@@ -85,6 +282,13 @@ const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
 http.createServer(async (request, response) => {
   const url = new URL(request.url, "http://127.0.0.1:4178");
   if (url.pathname === "/__test/stats") return json(response, 200, stats);
+  if (url.pathname === "/__test/reset") { resetFlowState(); return json(response, 200, { reset: true }); }
+  if (url.pathname === "/__test/mode") {
+    const mode = url.searchParams.get("value");
+    if (!["pattern", "neutral", "safety"].includes(mode)) return json(response, 400, { error: "invalid_mode" });
+    flowMode = mode;
+    return json(response, 200, { mode });
+  }
   if (url.pathname === "/__test/select-report" && cohortReports[url.searchParams.get("id")]) {
     response.writeHead(302, { location: "/report?e2e=1", "set-cookie": `jingeehas_cohort=${url.searchParams.get("id")}; Path=/; HttpOnly; SameSite=Lax` });
     return response.end();
@@ -93,5 +297,6 @@ http.createServer(async (request, response) => {
   if (url.pathname === "/app-test.js" || url.pathname === "/app-production.js") { let source = fs.readFileSync(path.join(root, "app.js"), "utf8"); if (url.pathname === "/app-production.js") source = source.replace("const WEIGHT_TEST_COMING_SOON_MODE = false;", "const WEIGHT_TEST_COMING_SOON_MODE = true;"); response.writeHead(200, { "content-type": types[".js"] }); return response.end(source); }
   const relative = url.pathname === "/" ? "index.html" : url.pathname.slice(1); const absolute = path.join(root, relative);
   if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) { response.writeHead(200, { "content-type": types[path.extname(absolute)] || "application/octet-stream" }); return response.end(fs.readFileSync(absolute)); }
-  let html = fs.readFileSync(path.join(root, "index.html"), "utf8"); html = html.replace("app.js", url.searchParams.get("e2e") === "1" ? "app-test.js" : "app-production.js"); response.writeHead(200, { "content-type": types[".html"] }); response.end(html);
+  const e2eSession = String(request.headers.cookie || "").includes("jingeehas_session=e2e") || String(request.headers.cookie || "").includes("jingeehas_session=recovered");
+  let html = fs.readFileSync(path.join(root, "index.html"), "utf8"); html = html.replace("app.js", url.searchParams.get("e2e") === "1" || e2eSession ? "app-test.js" : "app-production.js"); response.writeHead(200, { "content-type": types[".html"] }); response.end(html);
 }).listen(4178, "127.0.0.1");

@@ -12,9 +12,11 @@ const { calculateAssessmentSafety } = require("../../netlify/functions/_lib/safe
   app._test.setComingSoon(false);
   const start = app.renderForPath("/assessment/start");
   const legacy = app.renderForPath("/assessment/contact");
-  for (const expected of ["Тест үнэлгээ болон бүрэн тайлангаа нээх", 'id="contact-email"', "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх"]) assert(start.includes(expected), expected);
-  for (const forbidden of ['id="safety-form"', "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт", "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах"]) assert(!start.includes(forbidden), forbidden);
-  assert.equal(legacy, start);
+  for (const expected of ["Тестээ эхлүүлэх", "Зөв, буруу хариулт байхгүй.", "Таны хариултаас шалтгаалан зарим асуулт нэмэгдэж болно.", ">Эхлэх</button>"]) assert(start.includes(expected), expected);
+  for (const forbidden of ['id="safety-form"', 'id="contact-email"', "QPay", "9,900₮", "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт", "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах"]) assert(!start.includes(forbidden), forbidden);
+  assert(legacy.includes("Тест үнэлгээ болон бүрэн тайлангаа нээх"));
+  assert(legacy.includes('id="contact-email"'));
+  assert(legacy.includes("QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх"));
 
   const source = fs.readFileSync(require.resolve("../../app.js"), "utf8");
   for (const forbidden of ["renderSafetyCheck", "submitSafety", "#safety-form", 'api("/.netlify/functions/weight-safety-gate"']) assert(!source.includes(forbidden), forbidden);
@@ -30,5 +32,5 @@ const { calculateAssessmentSafety } = require("../../netlify/functions/_lib/safe
 
   assert.equal(calculateAssessmentSafety({ "Q-AGE": 30, "S1-S03": "Үгүй", "S1-S04": "Одоо идэвхтэй бодогдож байна", "S1-B01": ["Аль нь ч үгүй"] }).route, "urgent_self_harm");
   app._test.resetComingSoon();
-  console.log("public paid-first flow has no interactive pre-payment safety gate");
+  console.log("public free flow starts without payment or interactive pre-payment safety gate");
 })().catch(error => { console.error(error); process.exit(1); });

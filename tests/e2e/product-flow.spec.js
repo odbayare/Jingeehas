@@ -2,43 +2,41 @@
 const { test, expect } = require("@playwright/test");
 test.setTimeout(120000);
 
-async function openPaymentPreparation(page, suffix = "") {
+test.beforeEach(async ({ request }) => {
+  await request.post("/__test/reset");
+});
+
+async function openFreeAssessment(page, suffix = "") {
   await page.goto(`/assessment/start?e2e=1${suffix}`);
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
-  await expect(page.locator("#contact-email")).toBeVisible();
-  await expect(page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тестээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByText("Зөв, буруу хариулт байхгүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоорой.", { exact: true })).toBeVisible();
+  await expect(page.getByText("Таны хариултаас шалтгаалан зарим асуулт нэмэгдэж болно.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Эхлэх" })).toBeVisible();
+  await expect(page.locator("#contact-email")).toHaveCount(0);
+  await expect(page.getByText("9,900₮", { exact: false })).toHaveCount(0);
+  await expect(page.getByText("QPay", { exact: false })).toHaveCount(0);
   await expect(page.locator("#safety-form")).toHaveCount(0);
 }
 
-async function completeQuestionnaire(page) {
-  for (let step = 0; step < 80 && new URL(page.url()).pathname === "/assessment/questions"; step += 1) {
-    const questionId = await page.locator("#question-form").evaluate(form => {
-      const inputs = [...form.querySelectorAll("input, textarea")];
-      const required = inputs.filter(input => input.required);
-      const questionId = inputs.find(input => input.dataset.question)?.dataset.question || "";
-      for (const input of inputs) {
-        if (input.type === "number") {
-          input.value = questionId === "Q-HEIGHT" ? "170" : questionId === "Q-WEIGHT" ? "80" : "30";
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-          input.dispatchEvent(new Event("change", { bubbles: true }));
-        }
-        if (input.tagName === "TEXTAREA") {
-          input.value = "Өдөр тутмын хуваарьтай нийцээгүй тул тогтвортой үргэлжлээгүй.";
-          input.dispatchEvent(new Event("input", { bubbles: true }));
-        }
-      }
-      const requiredRadio = inputs.find(input => input.type === "radio");
-      if (requiredRadio) {
-        const safe = inputs.find(input => input.type === "radio" && input.value === "Үгүй") || requiredRadio;
-        safe.checked = true; safe.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-      const requiredCheckbox = inputs.find(input => input.type === "checkbox");
-      if (requiredCheckbox) {
-        const safe = inputs.find(input => input.type === "checkbox" && input.value === "Аль нь ч үгүй") || requiredCheckbox;
-        safe.checked = true; safe.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-      return questionId;
-    });
+async function completeQuestionnaire(page, expectedPath = "/assessment/result") {
+  await expect.poll(() => new URL(page.url()).pathname).toBe("/assessment/questions");
+  for (let step = 0; step < 120 && new URL(page.url()).pathname === "/assessment/questions"; step += 1) {
+    const inputs = page.locator("#question-form [data-question]");
+    const first = inputs.first();
+    const questionId = await first.getAttribute("data-question");
+    const type = await first.getAttribute("type");
+    const tagName = await first.evaluate(element => element.tagName);
+    if (type === "number") await first.fill(questionId === "Q-HEIGHT" ? "170" : questionId === "Q-WEIGHT" ? "80" : "30");
+    else if (tagName === "TEXTAREA") await first.fill("Өдөр тутмын хуваарьтай нийцээгүй тул тогтвортой үргэлжлээгүй.");
+    else if (type === "radio") {
+      const safe = page.locator('#question-form [data-question][value="Үгүй"]');
+      if (await safe.count()) await safe.first().check();
+      else await first.check();
+    } else if (type === "checkbox") {
+      const safe = page.locator('#question-form [data-question][value="Аль нь ч үгүй"]');
+      if (await safe.count()) await safe.first().check();
+      else await first.check();
+    }
     await page.getByRole("button", { name: /Үргэлжлүүлэх|Тестийг дуусгах/ }).click();
     await page.waitForFunction(previous => {
       if (window.location.pathname !== "/assessment/questions") return true;
@@ -46,7 +44,7 @@ async function completeQuestionnaire(page) {
     }, questionId);
     if (new URL(page.url()).pathname !== "/assessment/questions") break;
   }
-  await expect(page).toHaveURL(/\/report(?:\?e2e=1)?$/);
+  await expect.poll(() => new URL(page.url()).pathname).toBe(expectedPath);
 }
 
 for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], [1440, 900]]) {
@@ -76,7 +74,7 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
     expect(leadStyles.fontSize).toBeGreaterThanOrEqual(width >= 1024 ? 17 : 16);
     expect(leadStyles.fontWeight).toBeGreaterThanOrEqual(550);
     expect(leadStyles.lineHeight).toBeGreaterThanOrEqual(1.59);
-    const cta = page.getByRole("link", { name: "Тестээ эхлүүлэх" });
+    const cta = page.getByRole("link", { name: "Тестээ үнэгүй эхлүүлэх" });
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
     expect(await cta.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
@@ -96,11 +94,11 @@ test("landing CTA retains SPA routing and analytics tracking", async ({ page }) 
     if (!request.url().endsWith("/.netlify/functions/analytics-collect") || request.method() !== "POST") return false;
     try { return JSON.parse(request.postData() || "{}").eventName === "start_cta_clicked"; } catch { return false; }
   });
-  await page.getByRole("link", { name: "Тестээ эхлүүлэх" }).click();
+  await page.getByRole("link", { name: "Тестээ үнэгүй эхлүүлэх" }).click();
   await trackingRequest;
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
-  await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тестээ эхлүүлэх" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "Эхлэх" })).toBeVisible();
 });
 
 test("natural Mongolian report preview is complete, ordered, and responsive", async ({ page }) => {
@@ -126,8 +124,7 @@ test("natural Mongolian report preview is complete, ordered, and responsive", as
     for (const label of labels) await expect(preview.getByText(label, { exact: true })).toBeVisible();
     for (const body of bodies) await expect(preview.getByText(body, { exact: true })).toBeVisible();
     for (const phrase of banned) await expect(preview.getByText(phrase, { exact: false })).toHaveCount(0);
-    await expect(preview.locator(".section-close")).toContainText("10 орчим минутын тест");
-    await expect(preview.locator(".section-close")).toContainText("9,900₮");
+    await expect(preview.locator(".section-close")).toHaveText("Үнэгүй тест · Эхний хувийн үр дүн · Бүрэн тайлан 9,900₮");
     await expect(preview.getByText("Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш.", { exact: true })).toBeVisible();
     const layout = await preview.evaluate(element => {
       const card = element.querySelector(".sample-report-card").getBoundingClientRect();
@@ -190,7 +187,8 @@ test("scientific methodology box is responsive and keyboard accessible", async (
     await expect(toggle).toHaveAttribute("aria-expanded", "true");
     await expect(toggle).toHaveText("Аргачлал бүрийн тайлбарыг хаах");
     await expect(details).toBeVisible();
-    await expect(box.getByText("Weight Test нь дээрх асуумжуудын шууд орчуулга биш", { exact: false })).toBeVisible();
+    await expect(box.getByText("Энэхүү тест үнэлгээ нь дээрх асуумжуудын шууд орчуулга биш", { exact: false })).toBeVisible();
+    await expect(box).not.toContainText("Weight Test");
     await expect(box.locator(".scientific-methods-grid article")).toHaveCount(6);
     expect(await box.locator(".scientific-methods-grid h4").evaluateAll(nodes => nodes.every(node => {
       const rect = node.getBoundingClientRect();
@@ -202,7 +200,7 @@ test("scientific methodology box is responsive and keyboard accessible", async (
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await expect(toggle).toHaveText("Аргачлал бүрийн тайлбарыг харах");
     await expect(details).toBeHidden();
-    const cta = page.getByRole("link", { name: "Тестээ эхлүүлэх" });
+    const cta = page.getByRole("link", { name: "Тестээ үнэгүй эхлүүлэх" });
     await expect(cta).toHaveAttribute("href", "/assessment/start");
   }
 });
@@ -213,7 +211,7 @@ test("owner daily funnel dashboard is readable at 375px", async ({ page, context
   await page.goto("/admin?e2e=1");
   await expect(page.getByRole("heading", { name: "Өдөр тутмын үзүүлэлт" })).toBeVisible();
   await expect(page.getByText("Цагийн бүс: Улаанбаатар")).toBeVisible();
-  await expect(page.getByText("Одоогийн урсгал: Төлбөр эхэнд", { exact: true })).toBeVisible();
+  await expect(page.getByText("Одоогийн урсгал: Үнэгүй тест → эхний хувийн үр дүн → бүрэн тайлан", { exact: true })).toBeVisible();
   await expect(page.getByText("Paywall", { exact: false })).toHaveCount(0);
   await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
@@ -267,11 +265,10 @@ test("authenticated owner preview starts through the server gate without QPay", 
   await page.getByRole("button", { name: "Нэвтрэх" }).click();
   await page.getByRole("button", { name: "Бодит тестийг шалгах" }).click();
   await expect(page).toHaveURL(/\/assessment\/start$/);
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
-  await expect(page.locator("#contact-email")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Тестээ эхлүүлэх" })).toBeVisible();
+  await expect(page.locator("#contact-email")).toHaveCount(0);
   const beforePreview = await (await request.get("/__test/stats")).json();
-  await page.locator("#contact-email").fill("owner-preview@example.com");
-  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).click();
+  await page.getByRole("button", { name: "Эхлэх" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
   const afterPreview = await (await request.get("/__test/stats")).json();
   expect(afterPreview.qpayCreate).toBe(beforePreview.qpayCreate);
@@ -283,55 +280,107 @@ test("authenticated owner preview starts through the server gate without QPay", 
   expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(ownerFirstQuestionRows);
 });
 
-test("public paid-first flow has no interactive pre-payment safety gate", async ({ page, request }) => {
+test("public free flow starts without contact, payment, or pre-payment safety requests", async ({ page, request }) => {
   const emittedSafetyRequests = [];
   page.on("request", outgoing => {
     if (new URL(outgoing.url()).pathname === "/.netlify/functions/weight-safety-gate") emittedSafetyRequests.push(outgoing.url());
   });
   const before = await (await request.get("/__test/stats")).json();
-  await page.goto("/assessment/start?e2e=1");
-  await expect(page.getByRole("heading", { name: "Тест үнэлгээ болон бүрэн тайлангаа нээх" })).toBeVisible();
-  await expect(page.locator("#contact-email")).toBeVisible();
-  await expect(page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" })).toBeVisible();
-  await expect(page.locator("#safety-form")).toHaveCount(0);
+  await openFreeAssessment(page);
+  await page.getByRole("button", { name: "Эхлэх" }).evaluate(button => { button.click(); button.click(); });
+  await expect(page).toHaveURL(/\/assessment\/questions$/);
+  await expect(page.locator('[data-question="Q-AGE"]')).toBeVisible();
   expect(emittedSafetyRequests).toEqual([]);
-  expect((await (await request.get("/__test/stats")).json()).safetyGate).toBe(before.safetyGate);
-  expect((await (await request.get("/__test/stats")).json()).qpayCreate).toBe(0);
+  const after = await (await request.get("/__test/stats")).json();
+  expect(after.safetyGate).toBe(before.safetyGate);
+  expect(after.qpayCreate).toBe(0);
+  expect(after.paymentRows).toBe(0);
+  expect(after.assessmentCreate).toBe(1);
 });
 
-test("paid-first checkout creates one invoice and completion opens the full report", async ({ page, request }) => {
+test("free completion reveals initial result before optional email and provider-confirmed full report", async ({ page, request, context }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await openPaymentPreparation(page);
-  await page.locator("#contact-email").fill("invalid");
-  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).click();
-  await expect(page.getByText("Имэйл хаягаа зөв оруулна уу.")).toBeVisible();
-  await page.locator("#contact-email").fill("paid@example.com");
-  const beforePreparation = await (await request.get("/__test/stats")).json();
-  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).evaluate(button => { button.click(); button.click(); });
-  await expect(page).toHaveURL(/\/assessment\/payment$/);
-  await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toBeVisible();
-  expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(beforePreparation.questionProgressRows);
-  const beforeCompletion = await (await request.get("/__test/stats")).json();
-  await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
+  await context.addCookies([{ name: "jingeehas_cohort", value: "VU-03", domain: "127.0.0.1", path: "/" }]);
+  await openFreeAssessment(page);
+  await page.getByRole("button", { name: "Эхлэх" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
-  await expect.poll(async () => (await (await request.get("/__test/stats")).json()).questionProgressRows).toBeGreaterThan(beforePreparation.questionProgressRows);
-  const firstQuestionRows = (await (await request.get("/__test/stats")).json()).questionProgressRows;
-  await page.goto("/assessment/questions?e2e=1"); await expect(page).toHaveURL(/\/assessment\/questions\?e2e=1$/);
-  await expect(page.locator('[data-question="Q-AGE"]')).toBeVisible();
-  expect((await (await request.get("/__test/stats")).json()).questionProgressRows).toBe(firstQuestionRows);
+  await page.locator('[data-question="Q-AGE"]').fill("30");
+  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
+  await page.waitForFunction(() => document.querySelector("[data-question]")?.dataset.question === "Q-SEX");
+  await page.reload();
+  await expect(page.locator('[data-question="Q-SEX"]').first()).toBeVisible();
   await completeQuestionnaire(page);
+  await expect(page.getByRole("heading", { name: "Хамгийн тод харагдсан хэв маяг" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Сэтгэл хөдлөлтэй холбоотой хооллох хандлага" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Үр дүнгээ хадгалах" })).toBeVisible();
+  await expect(page.locator("#result-email")).toBeVisible();
+  await expect(page.locator(".locked-report-preview li")).toHaveCount(7);
+  for (const [width, height] of [[375, 812], [390, 844], [430, 900]]) {
+    await page.setViewportSize({ width, height });
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+    expect(await page.locator("#result-email").evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+    expect(await page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" }).evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+  }
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Хамгийн тод харагдсан хэв маяг" })).toBeVisible();
+  await page.locator("#result-email").fill("invalid");
+  await page.getByRole("button", { name: "Имэйлээ хадгалах" }).click();
+  await expect(page.getByText("Имэйл хаягаа зөв оруулна уу.")).toBeVisible();
+  const beforeEmail = await (await request.get("/__test/stats")).json();
+  await page.getByRole("button", { name: "Одоо алгасах" }).click();
+  await expect(page.locator("#result-email")).toHaveCount(0);
+  expect((await (await request.get("/__test/stats")).json()).resultEmailSave).toBe(beforeEmail.resultEmailSave);
+  await page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" }).evaluate(button => { button.click(); button.click(); });
+  await expect(page).toHaveURL(/\/assessment\/payment$/);
+  await expect(page.getByRole("heading", { name: "Бүрэн тайлангаа нээх" })).toBeVisible();
+  await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Банкны апп" })).toBeVisible();
+  let stats = await (await request.get("/__test/stats")).json();
+  expect(stats.qpayCreate).toBe(1);
+  expect(stats.paymentRows).toBe(1);
+  await page.reload();
+  await expect(page.getByRole("button", { name: "Төлбөр шалгах" })).toBeVisible();
+  await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
+  await expect(page).toHaveURL(/\/report$/);
   await expect(page.getByRole("heading", { name: "Бүрэн тайлан" })).toBeVisible();
-  await expect(page.getByText("QPay нэхэмжлэл", { exact: true })).toHaveCount(0);
-  const afterCompletion = await (await request.get("/__test/stats")).json();
-  expect(afterCompletion.qpayCreate).toBe(beforeCompletion.qpayCreate);
-  expect(afterCompletion.paymentRows).toBe(beforeCompletion.paymentRows);
+  await expect(page.getByRole("heading", { name: "ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ" })).toBeVisible();
+  await expect(page.locator(".initial-action-list li")).toHaveCount(3);
+  await expect(page.getByRole("heading", { name: "ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "ТӨЛӨВЛӨСНӨӨРӨӨ ЯВЖ ЧАДААГҮЙ ҮЕД" })).toBeVisible();
+  await page.reload();
+  await expect(page.getByRole("heading", { name: "Бүрэн тайлан" })).toBeVisible();
+  stats = await (await request.get("/__test/stats")).json();
+  expect(stats.qpayCheck).toBe(1);
+});
+
+test("neutral completion does not fabricate a dominant pattern", async ({ page, request }) => {
+  await request.get("/__test/mode?value=neutral");
+  await openFreeAssessment(page);
+  await page.getByRole("button", { name: "Эхлэх" }).click();
+  await completeQuestionnaire(page);
+  await expect(page.getByRole("heading", { name: "Нэг хэв маяг бусдаасаа илт давамгай гарсангүй" })).toBeVisible();
+  await expect(page.getByText("Хамгийн тод харагдсан хэв маяг", { exact: true })).toHaveCount(0);
+  await expect(page.locator(".locked-report-preview li")).toHaveCount(7);
+  await expect(page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" })).toBeVisible();
+});
+
+test("safety completion bypasses ordinary result, paywall, and invoice creation", async ({ page, request }) => {
+  await request.get("/__test/mode?value=safety");
+  await openFreeAssessment(page);
+  await page.getByRole("button", { name: "Эхлэх" }).click();
+  await completeQuestionnaire(page, "/report");
+  await expect(page).toHaveURL(/\/report$/);
+  await expect(page.getByRole("heading", { name: "Мэргэжлийн хүнтэй ярилцахыг зөвлөж байна" })).toBeVisible();
+  await expect(page.locator(".locked-report-preview")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" })).toHaveCount(0);
+  const stats = await (await request.get("/__test/stats")).json();
+  expect(stats.qpayCreate).toBe(0);
+  expect(stats.paymentRows).toBe(0);
 });
 
 test("question transition gives immediate feedback and ignores duplicate submit", async ({ page, request }) => {
-  await openPaymentPreparation(page);
-  await page.locator("#contact-email").fill("transition@example.com");
-  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).click();
-  await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
+  await openFreeAssessment(page);
+  await page.getByRole("button", { name: "Эхлэх" }).click();
   await expect(page).toHaveURL(/\/assessment\/questions$/);
   await page.locator('[data-question="Q-AGE"]').fill("30");
   await page.locator('[data-question="Q-AGE"]').dispatchEvent("change");
@@ -357,26 +406,22 @@ test("recovery succeeds in a new browser context", async ({ browser }) => {
 });
 
 test("invitation token is removed and consent decline is explicit", async ({ page }) => {
-  await openPaymentPreparation(page, "&invite=invite-e2e");
+  await openFreeAssessment(page, "&invite=invite-e2e");
   expect(page.url()).not.toContain("invite=");
-  await page.locator("#contact-email").fill("client@example.com");
   await expect(page.getByRole("heading", { name: "Зөвлөхийн урилга ирсэн байна" })).toBeVisible();
   await expect(page.getByText("Асуулт бүрийн түүхий хариултыг зөвлөхөд харуулахгүй.")).toBeVisible();
   await page.getByLabel("Бүрэн тайлангаа хуваалцахгүй.").check();
-  await page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" }).click();
-  await page.getByRole("button", { name: "Төлбөр шалгах" }).click();
+  await page.getByRole("button", { name: "Эхлэх" }).click();
   await expect(page.getByRole("heading", { name: "Суурь мэдээлэл" })).toBeVisible();
   await expect(page.getByText(/хөнгөлөлт/i)).toHaveCount(0);
 });
 
-test("payment preparation is responsive with accessible touch targets", async ({ page }) => {
+test("free start is responsive with accessible touch targets", async ({ page }) => {
   for (const [width, height] of [[375, 812], [390, 844], [430, 900]]) {
     await page.setViewportSize({ width, height });
-    await openPaymentPreparation(page);
-    const email = page.locator("#contact-email");
-    const submit = page.getByRole("button", { name: "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх" });
+    await openFreeAssessment(page);
+    const submit = page.getByRole("button", { name: "Эхлэх" });
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
-    expect(await email.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
     expect(await submit.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
   }
 });

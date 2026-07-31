@@ -80,27 +80,26 @@ function credential(value) { return String(value).split(";")[0]; }
   const denied = await report(event("GET", null, otherCookie, { assessmentId }));
   assert.equal(denied.statusCode, 404);
 
-  const safetyCreated = await create(event("POST", { safetyCheckId }, cookie));
+  const safetyCreated = await create(event("POST", {}, otherCookie));
   const safetyAssessmentId = JSON.parse(safetyCreated.body).assessmentId;
-  await save(event("PATCH", { assessmentId: safetyAssessmentId, answers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } }, cookie));
-  const safetyCompleted = await complete(event("POST", { assessmentId: safetyAssessmentId }, cookie));
+  await save(event("PATCH", { assessmentId: safetyAssessmentId, answers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } }, otherCookie));
+  const safetyCompleted = await complete(event("POST", { assessmentId: safetyAssessmentId }, otherCookie));
   assert.equal(JSON.parse(safetyCompleted.body).safetyRoute, "urgent_self_harm");
-  const safetyReport = JSON.parse((await report(event("GET", null, cookie, { assessmentId: safetyAssessmentId }))).body);
+  const safetyReport = JSON.parse((await report(event("GET", null, otherCookie, { assessmentId: safetyAssessmentId }))).body);
   assert.equal(safetyReport.safetyRoute, "urgent_self_harm");
   assert.match(safetyReport.initialView.guidance.title, /Яаралтай/);
 
   const prepaidStarted = await start(event("POST")); const prepaidCookie = credential(prepaidStarted.headers["set-cookie"]); const prepaidSession = JSON.parse(prepaidStarted.body);
-  await database.insert("recovery_contacts", { id: "rc-prepaid-contract", sessionId: prepaidSession.sessionId, contactGroupId: "rcg-prepaid-contract", type: "email", createdAt: new Date().toISOString() });
   const analyticsContext = { visitorId: "99999999-9999-4999-8999-999999999999", sessionId: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", deviceClass: "mobile" };
-  const prepaidCreate = () => create(event("POST", { prepaid: true, recoveryContactGroupId: "rcg-prepaid-contract", analyticsContext }, prepaidCookie));
-  const prepaidCreated = JSON.parse((await prepaidCreate()).body); assert.equal(prepaidCreated.commercialFlowVersion, "prepaid_v2");
-  assert.equal(prepaidCreated.status, "payment_pending");
+  const prepaidCreate = () => create(event("POST", { prepaid: true, analyticsContext }, prepaidCookie));
+  const prepaidCreated = JSON.parse((await prepaidCreate()).body); assert.equal(prepaidCreated.commercialFlowVersion, "free_assessment_postpaid_v1");
+  assert.equal(prepaidCreated.status, "draft");
   const prepaidAssessment = await database.get("assessments", prepaidCreated.assessmentId);
   const placeholder = await database.get("safety_checks", prepaidAssessment.safetyCheckId);
   assert.deepEqual(placeholder.result, { route: "pending_assessment", mode: "pending", category: "assessment_safety_questions" });
   assert.equal((await prepaidCreate()).statusCode, 201, "assessment shell creation is idempotent");
   const paymentSectionEvents = await database.find("analytics_events", { assessmentId: prepaidCreated.assessmentId, eventName: "paywall_viewed" });
-  assert.equal(paymentSectionEvents.length, 1, "prepaid shell records one assessment-linked payment-section event before invoice creation");
-  assert.equal((await database.find("payments", { assessmentId: prepaidCreated.assessmentId })).length, 0, "payment-section tracking creates no QPay invoice");
+  assert.equal(paymentSectionEvents.length, 0, "public create cannot select the historical prepaid flow");
+  assert.equal((await database.find("payments", { assessmentId: prepaidCreated.assessmentId })).length, 0, "free shell creation creates no QPay invoice");
   console.log("assessment API contract tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

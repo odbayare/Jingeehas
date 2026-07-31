@@ -96,21 +96,29 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
     "Зочны ерөнхий хэмжилт 2026.07.19-өөс эхэлсэн. Үүнээс өмнөх зочны үзэлтийн мэдээлэл бүрэн биш байж болно.",
     "Төлбөр-эхэнд урсгал 2026.07.22-ны 00:17 цагаас эхэлсэн. Үндсэн funnel-ийн шинэ зочин нь энэ мөчөөс хойш анх орсон хэрэглэгчдийг харуулна."
   ]);
-  assert.equal(app._test.analyticsFlowStateCopy(legacyVisitorAggregate.coverage, legacyVisitorAggregate.legacyFlow), "Сонгосон хугацаанд төлбөр-эхэнд урсгалын шинэ зочид бүртгэгдсэн боловч төлбөрийн хэсэгт хүрсэн шинэ тест хараахан байхгүй. Эхэлсэн 1 тест нь хуучин төлбөрийн урсгалд хамаарна.");
-  assert.equal(app._test.analyticsFlowStateCopy(historical.coverage, historical.legacyFlow), "Сонгосон хугацааны тест болон зочны бүртгэлүүд хуучин төлбөрийн урсгалд хамаарна. Төлбөр-эхэнд урсгалын хөрвөлтийн хувь хараахан үүсээгүй.");
-  assert.equal(app._test.analyticsFlowStateCopy(visitorAggregate.coverage, visitorAggregate.legacyFlow), "Төлбөр-эхэнд урсгалын шинэ зочид бүртгэгдсэн боловч дараагийн шатанд хүрсэн тест хараахан байхгүй.");
+  assert.equal(app._test.analyticsFlowStateCopy(legacyVisitorAggregate.coverage), "Сонгосон хугацаанд төлбөр-эхэнд урсгалын шинэ зочид бүртгэгдсэн боловч дараагийн шатны бүртгэл хараахан үүсээгүй.");
+  assert.equal(app._test.analyticsFlowStateCopy(historical.coverage), "Сонгосон хугацааны бүртгэл өмнөх төлбөрийн урсгалд хамаарна.");
+  assert.equal(app._test.analyticsFlowStateCopy(visitorAggregate.coverage), "Төлбөр-эхэнд урсгалын шинэ зочид бүртгэгдсэн боловч дараагийн шатанд хүрсэн тест хараахан байхгүй.");
+  const available = (entryCount, convertedCount) => ({ entryCount, convertedCount, rate: entryCount ? convertedCount / entryCount : null, status: entryCount ? "available" : "no_denominator", reason: entryCount ? null : "no_denominator" });
+  const freeCurrent = { eligibleVisitors: 10, assessmentsStarted: 8, assessmentsCompleted: 6, initialResultsViewed: 6, emailsSaved: 2,
+    fullReportCtaClicks: 4, invoicesCreated: 4, paymentsConfirmed: 3, reportsOpened: 3, revenueMnt: 29700 };
+  const freeConversions = { visitorToAssessmentStart: available(10, 8), assessmentStartToComplete: available(8, 6),
+    completeToInitialResult: available(6, 6), initialResultToEmail: available(6, 2), initialResultToFullReportCta: available(6, 4),
+    fullReportCtaToInvoice: available(4, 4), invoiceToPayment: available(4, 3), paymentToFullReportOpen: available(3, 3) };
+  const freeDay = { date: "2026-07-22", uniqueVisitors: 10, assessmentsStarted: 8, assessmentsCompleted: 6, initialResultsViewed: 6,
+    emailsSaved: 2, fullReportCtaClicks: 4, invoicesCreated: 4, paymentsConfirmed: 3, reportsOpened: 3, revenueMnt: 29700 };
   app._test.setState({ admin: { ...app._test.getState().admin, authenticated: true, owner: true, analytics: { ...app._test.getState().admin.analytics,
-    preset: "last7", startDate: "2026-07-22", endDate: "2026-07-22", days: aggregate.days, currentFlow: aggregate.currentFlow,
-    priorCurrentFlow: null, legacyFlow: aggregate.legacyFlow, conversions: aggregate.conversions, coverage: aggregate.coverage, loading: false } } });
+    preset: "last7", startDate: "2026-07-22", endDate: "2026-07-22", days: [freeDay], currentFlow: freeCurrent,
+    priorCurrentFlow: null, prepaidFlow: aggregate.currentFlow, legacyFlow: aggregate.legacyFlow, conversions: freeConversions,
+    coverage: { freeFlowCutoverAt: "2026-07-22T00:00:00.000Z", allMeasuredVisitors: 10, freeActivityPresent: true, prepaidActivityPresent: true, legacyActivityPresent: true, flowState: "mixed" }, loading: false } } });
   const dashboard = app._test.renderAdminAnalytics();
-  assert(dashboard.includes("Тест эхлүүлсэн хувь: 75.0%")); assert(!dashboard.includes("900.0%"));
-  assert(dashboard.includes("Legacy тест эхлүүлсэн: 9")); assert(dashboard.includes("Legacy төлбөр: 1"));
-  assert(dashboard.includes("Сонгосон хугацаанд хэмжигдсэн нийт зочин: 5"));
-  assert(dashboard.includes("Төлбөр-эхэнд урсгалын шинэ зочин"));
-  assert(dashboard.includes("Хуучин урсгалын бодит бүртгэл"));
-  assert(dashboard.includes("Доорх хүснэгт төлбөр-эхэнд урсгалын үзүүлэлтийг өдрөөр харуулна."));
-  assert(dashboard.includes("Сонгосон хугацаанд хуучин болон төлбөр-эхэнд урсгалын бүртгэл хоёулаа байна. Урсгал хоорондын тоог хольж хувь тооцоогүй."));
-  const headers = ["Огноо", "Шинэ зочин", "Төлбөрийн хэсэг", "Хүрсэн хувь", "Нэхэмжлэл", "Нэхэмжлэл үүсгэсэн хувь", "Төлбөр", "Төлбөр төлсөн хувь", "Тест эхлүүлсэн", "Тест эхлүүлсэн хувь", "Тест дуусгасан", "Дуусгасан хувь", "Тайлан нээсэн", "Тайлан нээсэн хувь", "Орлого"];
+  assert(dashboard.includes("Үнэгүй тест эхлүүлсэн хувь: 80.0%")); assert(!dashboard.includes("NaN"));
+  assert(dashboard.includes("Өмнөх төлбөр-эхэнд урсгал")); assert(dashboard.includes("Legacy postpaid урсгал"));
+  assert(dashboard.includes("Сонгосон хугацаанд хэмжигдсэн нийт зочин: 10"));
+  assert(dashboard.includes("Одоогийн урсгал: Үнэгүй тест → эхний хувийн үр дүн → бүрэн тайлан"));
+  assert(dashboard.includes("Доорх хүснэгт үнэгүй тестийн урсгалын үзүүлэлтийг өдрөөр харуулна."));
+  assert(dashboard.includes("Урсгалуудын numerator, denominator-ийг хольж хувь тооцоогүй."));
+  const headers = ["Огноо", "Шинэ зочин", "Тест эхлүүлсэн", "Тест дуусгасан", "Эхний үр дүн", "Имэйл", "Бүрэн тайлангийн товч", "Нэхэмжлэл", "Төлбөр", "Бүрэн тайлан", "Орлого"];
   let offset = -1; for (const header of headers) { const next = dashboard.indexOf(`<th>${header}</th>`); assert(next > offset, `daily header order: ${header}`); offset = next; }
   assert(!/(NaN|Infinity|null|undefined|legacy_postpaid_v1|prepaid_v2)/.test(dashboard));
 

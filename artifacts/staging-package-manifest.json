@@ -22,7 +22,7 @@
     },
     {
       "file": "netlify/functions/_lib/analytics.js",
-      "sha256": "e429922a00efdce8510e280f77a40f24af9a76b6edea41208a643b063657d8a1"
+      "sha256": "d910b9afb6622d5abd9d744fa65749429e8a0697272047552fae12fb35bee63c"
     },
     {
       "file": "netlify/functions/_lib/answer-rules.js",
@@ -30,7 +30,7 @@
     },
     {
       "file": "netlify/functions/_lib/assessment.js",
-      "sha256": "e158b3bf4f6bb48694d0098a97091149e5ab92f682a8af9cb15ba0dac656589b"
+      "sha256": "c9a7922980a12c15169c97e55c8c454ae0c6a9807f6eba2f0716912f317352d2"
     },
     {
       "file": "netlify/functions/_lib/auth.js",
@@ -38,7 +38,7 @@
     },
     {
       "file": "netlify/functions/_lib/commercial-flow.js",
-      "sha256": "6dac7c8c52fd52c504ce67001bebe2cf2c1509220d107a690fea7729555545b6"
+      "sha256": "7dcc6185cb02d94b3628c911a4ce5809cc679ad20e99e1e17e76be64081a315c"
     },
     {
       "file": "netlify/functions/_lib/config.js",
@@ -53,8 +53,12 @@
       "sha256": "20c436a98d1f82ea3d01aab919360b67ca0b59e5c78ce1f8b9b2653aa7e5a9d0"
     },
     {
+      "file": "netlify/functions/_lib/initial-result.js",
+      "sha256": "f42ccaf0b2d6bcb88a239928471f7169bc67d93001f1592021ddb35f086cdadb"
+    },
+    {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "213d228e319469e0102e26d75454827d778dc2467ad40b4e96dcc3d5fcf5caf6"
+      "sha256": "d8b79b3dc358e91bcfa3f2fd342c440f771664c10f0f3d373bd91a7a243872ee"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -74,11 +78,11 @@
     },
     {
       "file": "netlify/functions/_lib/recovery.js",
-      "sha256": "60a78d270997e28ab6985c878d3ee55cb9792061a0daa9eaa4becf7c35a3d765"
+      "sha256": "0015740f9b5d01bcef7a8e93597a2f538f7be1dce6280db2a19f177498584d44"
     },
     {
       "file": "netlify/functions/_lib/report-copy.js",
-      "sha256": "93904cfdd0beea1b72041ddb727596905ed27c18466c62e762ad5f69c2136c96"
+      "sha256": "ca376d7c12dce2a9f7fdf4e4471c7fcf4cf2355f0e8900257d80bfe79c271993"
     },
     {
       "file": "netlify/functions/_lib/report-patterns.js",
@@ -102,7 +106,7 @@
     },
     {
       "file": "netlify/functions/_lib/report.js",
-      "sha256": "74c0c240181dad515f94cb539e41268b42c15501281f26bd34961fb0c51ba079"
+      "sha256": "e6b29e2834a20b0feaf8a6139917c9124dbe7550ff8e5fd159c0f15cc7862fa0"
     },
     {
       "file": "netlify/functions/_lib/safety.js",
@@ -126,7 +130,7 @@
     },
     {
       "file": "netlify/functions/admin-analytics-daily.js",
-      "sha256": "3f8728e8d2ce6c42da01e45b965e1ba848644cbecb629fe794ec0efd39e1bcc4"
+      "sha256": "678f2c7284de15a90d17e2a11cd988100811b0fce6caae080062f9d2153eefb4"
     },
     {
       "file": "netlify/functions/admin-login.js",
@@ -206,27 +210,31 @@
     },
     {
       "file": "netlify/functions/qpay-check-payment.js",
-      "sha256": "57fb3f936de7a8c394f9d85684ff2ba8d6987bcc0eb65c108959cedfa184edb1"
+      "sha256": "9bb75aaede6d53a554fbc5b42187f59bdd7770bee830030c39998564f4675f80"
     },
     {
       "file": "netlify/functions/qpay-create-invoice.js",
-      "sha256": "7c213ec7620916580e4907d64d251514a5c2674cb30e5f2f3fc0f3013bbebc85"
+      "sha256": "afe0dc370d5a1711a243ef962acd1cdf4cbe4de2bf2330aba048d068d5ec3d71"
     },
     {
       "file": "netlify/functions/weight-assessment-complete.js",
-      "sha256": "4a6a1b96839f7cbe393725671a36980bf458dc380867ea22c3d53e4e1f2bafc4"
+      "sha256": "8dff4eabbe77ef5669cf52a3c1f07e41f21644ad28459119469ff24136afd07b"
     },
     {
       "file": "netlify/functions/weight-assessment-create.js",
-      "sha256": "ca4de38bb2c5c6e38bc5d3018ba81476cec4acc445fbff0a4185460c36c53f96"
+      "sha256": "f0e251cacda5a90d49001cedfbd6d0d7ca83d947ee2c29b689ba6917f401f9e3"
+    },
+    {
+      "file": "netlify/functions/weight-assessment-initial-result.js",
+      "sha256": "7db412f29c942bb5b651c778370a0935bdcc9991921a90f6bae2ee13fdb749d7"
     },
     {
       "file": "netlify/functions/weight-assessment-questions.js",
-      "sha256": "5098394c69a29f203c5779f7aefa7a29f63efc948c4ac60851eb8385bf8a2422"
+      "sha256": "b73f74d55248b930522be8cafa9de14e1a718322ff8b60366c3f0abeb0d69921"
     },
     {
       "file": "netlify/functions/weight-assessment-report.js",
-      "sha256": "94f230033de4b4a0387248d18a9304a588131c714c16ca6792b799cd7016b5ee"
+      "sha256": "63c3e458b5c9b3f679ede5556eef0ed3ec5e1ee2fc5f04a1e8bbecab5bd1f5be"
     },
     {
       "file": "netlify/functions/weight-assessment-save.js",
@@ -257,6 +265,10 @@
       "sha256": "315cb0925bf2c554044c78eaa1df69c9c54c53971792447f01659611831aadbe"
     },
     {
+      "file": "netlify/functions/weight-result-email-save.js",
+      "sha256": "448e4b48a8929f7f7d46c356aed17af044000ac529da34579c9652c3ea10c480"
+    },
+    {
       "file": "netlify/functions/weight-safety-gate.js",
       "sha256": "c797cbe12485160c53e2af01e4c223d7f222a537752804e55e23009031836f51"
     },
@@ -266,7 +278,7 @@
     },
     {
       "file": "netlify/functions/weight-session-state.js",
-      "sha256": "47b101452dff6f6bcd38e4470afd5b0d8b46ede00fbd1f92e44a321a43444b33"
+      "sha256": "8f3f4237d9bda7de375051e979d2c79644aa80156e83776604226c27a9b215dd"
     },
     {
       "file": "netlify.toml",
@@ -286,7 +298,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "12368d2f009be801d476ea6baba6dd20f59805f094930bf246ce3e6ef0d1fc85"
+      "sha256": "689480c784127f1d9599b0fbcb9b360b9f730406a20b7a13710a60f711f480d7"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -314,7 +326,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "74bd613c2c10cc087d2500d7cf7f63f04b0bba4d5843929b1a0e5e78bc620cd5"
+      "sha256": "d7a400b839c788e664f38964cc5ded87b5d84544fb881b4f3bf9aaada4adf8cb"
     }
   ],
   "functionNames": [
@@ -344,6 +356,7 @@
     "qpay-create-invoice",
     "weight-assessment-complete",
     "weight-assessment-create",
+    "weight-assessment-initial-result",
     "weight-assessment-questions",
     "weight-assessment-report",
     "weight-assessment-save",
@@ -353,6 +366,7 @@
     "weight-recovery-confirm",
     "weight-recovery-contact-save",
     "weight-recovery-request",
+    "weight-result-email-save",
     "weight-safety-gate",
     "weight-session-start",
     "weight-session-state"
