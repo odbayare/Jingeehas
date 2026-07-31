@@ -37,28 +37,48 @@ app._test.setState({ ownerPreview: true, commercialFlowVersion: "legacy_postpaid
 const paywall = app.renderForPath("/assessment/completed");
 for (const exact of [
   "Бүрэн тайлан",
-  "Өөрт тань юу саад болж байгааг мэдээд зогсохгүй, хэрхэн удирдахаа ойлгоорой",
-  "Таны эхний үр дүн хамгийн тод ажиглагдсан нэг хэв маягийг харууллаа. Бүрэн тайланд танд нөлөөлж буй бусад хэв маяг, тэдгээрийн хоорондын уялдаа болон ямар нөхцөлд илүү хүчтэй болдгийг дэлгэрэнгүй харна.",
-  "Хамгийн чухал нь эдгээр хэв маягийн нөлөөг хэрхэн багасгаж, удирдах талаар таны хариултад тулгуурласан заавар авна. Мөн өдөр тутам хэрэгжүүлж эхлэх 3 алхам, хэцүү үед ашиглах арга болон төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэхийг тайлбарлана.",
-  "Ингэснээр та жин хасахад тань саад болж буй сэтгэлзүйн болон зан үйлийн хэв маягуудаа илүү сайн зохицуулж, зорилгодоо илүү ойлгомжтой, тогтвортой ажиллах боломжтой болно.",
+  "Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох",
+  "Ямар хэв маяг нөлөөлж байгааг мэдэх нь зөвхөн эхний алхам. Бүрэн тайлангаас эдгээр хэв маяг ямар үед хүчтэй болдог, хоорондоо хэрхэн нөлөөлдөг болон жин хасах оролдлогыг тань яаж хүндрүүлдэг байж болохыг мэдэж авна.",
+  "Мөн тухайн үед юу хийж болох, сэтгэл хөдлөл, зуршил, идэх хүсэл болон орчны нөлөөг хэрхэн удирдах талаар таны хариултад тулгуурласан тодорхой заавар авна.",
+  "Даван туулах аргаа ойлгосноор жин хасахад саад болж буй сэтгэлзүйн хэв маягаа анзаарч, удирдахад илүү хялбар болно. Ингэснээр жин хасах зорилгодоо илүү ойлгомжтой, тогтвортой ажиллах боломжтой болно.",
+  "Хэв маягуудын нэр, уялдаа холбооноос гадна тэдгээрийн нөлөөг багасгах, сэтгэл хөдлөл болон зуршлаа удирдах, хэцүү үеийг даван туулах аргуудаа авна.",
   "Бүрэн тайлангаа нээх — 9,900₮",
   "Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ."
 ]) assert(paywall.includes(exact), `paywall exact copy missing: ${exact}`);
 
 const lockedTitles = [
-  "Танд нөлөөлж буй бусад хэв маяг",
-  "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа",
-  "Ямар нөхцөлд илүү хүчтэй болдог",
-  "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?",
+  "Танд нөлөөлж буй хэв маягууд",
+  "Хэв маягуудын уялдаа холбоо",
+  "Ямар үед илүү хүчтэй болдог",
+  "Сэтгэлзүйн хэв маягаа хэрхэн удирдах вэ?",
+  "Хэцүү үеийг хэрхэн даван туулах вэ?",
   "Эхэлж хэрэгжүүлэх 3 алхам",
-  "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?",
-  "Өөртөө илүү тохирсон жин хасах арга барил"
+  "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
 ];
 for (const title of lockedTitles) assert.equal(paywall.split(title).length - 1, 1, `locked title must appear exactly once: ${title}`);
 assert.equal((paywall.match(/class="lock-mark"/g) || []).length, 7);
 for (const hiddenBody of ["Юуг анзаарах вэ?", "Урьдчилан юу бэлдэх вэ?", "Тухайн үед юу хийж болох вэ?"]) assert(!paywall.includes(hiddenBody), `full report body leaked into locked preview: ${hiddenBody}`);
 
-const requiredModuleFields = ["title", "evidenceLink", "observe", "prepare", "inMoment", "avoidRigidDemand", "professionalHelp"];
+app._test.setState({ ownerPreview: true, commercialFlowVersion: "free_assessment_postpaid_v1", assessmentStatus: "complete", assessmentId: "count-only-result", initialResult: { mode: "summary", patternCount: 4, interactionCount: 2, lockedSections: lockedTitles }, resultEmail: { saved: false, skipped: false, error: "" } });
+const countOnlyResult = app.renderForPath("/assessment/result");
+for (const exact of [
+  "Таны хариултыг нэгтгэж дууслаа",
+  "Нөлөөлөх хэв маяг",
+  "Чухал уялдаа холбоо",
+  "Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох",
+  "сэтгэлзүйн хэв маягаа анзаарч, удирдахад илүү хялбар болно",
+  "Бүрэн тайлангаа нээх — 9,900₮"
+]) assert(countOnlyResult.includes(exact), `count-only result copy missing: ${exact}`);
+for (const forbidden of ["Хамгийн тод харагдсан хэв маяг", "Сэтгэл хөдлөлөөр идэгч", "Үүнээс гадна өөр нэг хэв маяг", "actionable insight", "personalized roadmap"]) assert(!countOnlyResult.includes(forbidden), `count-only result leaked or used prohibited copy: ${forbidden}`);
+assert(countOnlyResult.indexOf("paywall-primary-cta") < countOnlyResult.indexOf("result-email-card"), "optional email must follow the primary CTA in DOM order");
+
+app._test.setState({ ownerPreview: true, commercialFlowVersion: "free_assessment_postpaid_v1", assessmentStatus: "complete", assessmentId: "neutral-result", initialResult: { mode: "neutral", patternCount: 0, interactionCount: 0, lockedSections: lockedTitles }, resultEmail: { saved: false, skipped: false, error: "" } });
+const neutralResult = app.renderForPath("/assessment/result");
+assert(neutralResult.includes("Нэг хэв маяг бусдаасаа илт давамгай гарсангүй"));
+assert(neutralResult.includes("Таны хариултад хэд хэдэн нөхцөл зэрэг нөлөөлж байгаа зураглал харагдлаа."));
+assert(!neutralResult.includes("result-count-card"), "neutral result must not render zero-count cards");
+
+const requiredModuleFields = ["title", "evidenceLink", "observe", "triggerRecognition", "prepare", "inMoment", "avoidRigidDemand", "resume", "professionalHelp"];
 const requiredFallbackFields = ["introduction", "resume", "softenRule", "recheckTrigger", "fitDailyLife"];
 const prohibitedClaims = ["зорилгодоо заавал хүрнэ", "жин хасах нь амар болно", "нэг удаа хазайх", "хэмнэлдээ эргэн орох"];
 
@@ -76,11 +96,12 @@ for (const fixture of fixtures) {
     assert(action.patternTitle && action.action, `${fixture.name}: initial action must be attributed and actionable`);
   }
   for (const field of requiredFallbackFields) assert(String(publicFull.fallbackPlan[field] || "").trim(), `${fixture.name}: fallback missing ${field}`);
-  if (supportedCount >= 2) {
-    assert(publicFull.interactionSummary.length > 0, `${fixture.name}: interaction section required`);
-    assert(publicFull.combinedManagementPlan, `${fixture.name}: combined management plan required`);
-    for (const field of ["startWith", "why", "nextStep", "combinedAction"]) assert(String(publicFull.combinedManagementPlan[field] || "").trim(), `${fixture.name}: combined plan missing ${field}`);
+  if (publicFull.interactionSummary.length) {
+    const plans = [publicFull.combinedManagementPlan, ...(publicFull.additionalInteractionManagementPlans || [])].filter(Boolean);
+    assert.equal(plans.length, publicFull.interactionSummary.length, `${fixture.name}: every rendered interaction has combined guidance`);
+    for (const plan of plans) for (const field of ["startWith", "why", "nextStep", "combinedAction"]) assert(String(plan[field] || "").trim(), `${fixture.name}: combined plan missing ${field}`);
   }
+  for (const field of ["notice", "inMoment", "reduceTrigger", "resume"]) assert(String(publicFull.difficultMomentPlan?.[field] || "").trim(), `${fixture.name}: difficult-moment plan missing ${field}`);
   const validation = validateReportForActivation(full);
   assert.equal(validation.valid, true, `${fixture.name}: activation validation failed: ${validation.errors.join(", ")}`);
   const publicText = JSON.stringify(publicFull).toLowerCase();
@@ -90,13 +111,14 @@ for (const fixture of fixtures) {
 
 const multi = publicReport(reportFor(fixtures[0].answers));
 const sectionOrder = app._test.buildReportSections(multi).filter(section => section.visible).map(section => section.id);
-assert.deepEqual(sectionOrder.slice(0, 8), [
+assert.deepEqual(sectionOrder.slice(0, 9), [
   "overview",
   "patterns",
   "interactions",
   "context",
   "management",
   "combined-management",
+  "difficult-moment",
   "initial-actions",
   "fallback"
 ]);
@@ -108,8 +130,9 @@ for (const heading of [
   "ЯМАР ҮЕД ИЛҮҮ ХҮЧТЭЙ БОЛДОГ ВЭ?",
   "ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?",
   "НЭГДСЭН УДИРДАХ ДАРААЛАЛ",
+  "Хэцүү үеийг хэрхэн даван туулах вэ?",
   "ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ",
-  "ТӨЛӨВЛӨСНӨӨРӨӨ ЯВЖ ЧАДААГҮЙ ҮЕД"
+  "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
 ]) assert(sectionHeadings.includes(heading), `full report structure missing: ${heading}`);
 
 console.log("full-report core customer value and actionable-management tests passed");

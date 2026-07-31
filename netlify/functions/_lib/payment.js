@@ -56,7 +56,7 @@ async function validateInvoiceRequest(database, sessionId, input) {
   }
   if (isFreeAssessmentPostpaid(assessment)) {
     const snapshot = await resolveReportSnapshot(database, assessment.id);
-    if (!snapshot?.fullReport || !publicInitialResult(snapshot.initialView)) {
+    if (!snapshot?.fullReport || !publicInitialResult(snapshot.initialView, snapshot.fullReport)) {
       throw Object.assign(new Error("Report snapshot required"), { statusCode: 409, code: "report_snapshot_required" });
     }
   } else {

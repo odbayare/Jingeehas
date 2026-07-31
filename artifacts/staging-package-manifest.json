@@ -30,7 +30,7 @@
     },
     {
       "file": "netlify/functions/_lib/assessment.js",
-      "sha256": "c9a7922980a12c15169c97e55c8c454ae0c6a9807f6eba2f0716912f317352d2"
+      "sha256": "6bcd64f7427610052fd255ccf5f9c5e9bf1ab73abfe0616135a638b9344a1a6b"
     },
     {
       "file": "netlify/functions/_lib/auth.js",
@@ -54,11 +54,11 @@
     },
     {
       "file": "netlify/functions/_lib/initial-result.js",
-      "sha256": "f42ccaf0b2d6bcb88a239928471f7169bc67d93001f1592021ddb35f086cdadb"
+      "sha256": "d486c9507102ce77f84b319899598d624fb00795128044f7c00fdaaae553f265"
     },
     {
       "file": "netlify/functions/_lib/payment.js",
-      "sha256": "d8b79b3dc358e91bcfa3f2fd342c440f771664c10f0f3d373bd91a7a243872ee"
+      "sha256": "b0ee5981ab1d9af2002ec6a390f6a014b8f991501528ee8891c3ce54e278ddda"
     },
     {
       "file": "netlify/functions/_lib/preview.js",
@@ -102,11 +102,11 @@
     },
     {
       "file": "netlify/functions/_lib/report-validation.js",
-      "sha256": "c9efd9033f64146114a7853b7090b628042793a7ef80549ef7e7463e0cd33538"
+      "sha256": "c1503a59e8b4d40a9b966fb12ec16587e38b8541be2a1e9bec693b79a5f7c72a"
     },
     {
       "file": "netlify/functions/_lib/report.js",
-      "sha256": "e6b29e2834a20b0feaf8a6139917c9124dbe7550ff8e5fd159c0f15cc7862fa0"
+      "sha256": "29b52bad29cfe9794375ffc9094d9f0c6d25d7d8975549f9ecff649e187c40ac"
     },
     {
       "file": "netlify/functions/_lib/safety.js",
@@ -226,7 +226,7 @@
     },
     {
       "file": "netlify/functions/weight-assessment-initial-result.js",
-      "sha256": "7db412f29c942bb5b651c778370a0935bdcc9991921a90f6bae2ee13fdb749d7"
+      "sha256": "7615e7638db4dda8f8f375f8e9142077c3e52374cabb9b4a2b054b37a4d35de9"
     },
     {
       "file": "netlify/functions/weight-assessment-questions.js",
@@ -298,7 +298,7 @@
     },
     {
       "file": "site/app.js",
-      "sha256": "689480c784127f1d9599b0fbcb9b360b9f730406a20b7a13710a60f711f480d7"
+      "sha256": "ad84afa92d8f77d58e410c01027778e7e789ea89caeea2fd6bca278be3a8d1b4"
     },
     {
       "file": "site/assets/favicon.svg",
@@ -326,7 +326,7 @@
     },
     {
       "file": "site/styles.css",
-      "sha256": "d7a400b839c788e664f38964cc5ded87b5d84544fb881b4f3bf9aaada4adf8cb"
+      "sha256": "54888151880fc755fed789eda1e401e59e8e08fdb2c8229bfac36689c73fb94f"
     }
   ],
   "functionNames": [

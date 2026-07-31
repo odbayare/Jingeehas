@@ -16,13 +16,13 @@ const PAYMENT_COPY = Object.freeze({
 });
 const PAYMENT_STATES = new Set(["idle", "creating", "create_unknown", "reconciling", "pending", "checking", "paid", "create_error", "create_failed_confirmed", "check_error", "expired", "failed", "cancelled", "paid_but_not_unlocked"]);
 const LOCKED_REPORT_TITLES = Object.freeze([
-  "Танд нөлөөлж буй бусад хэв маяг",
-  "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа",
-  "Ямар нөхцөлд илүү хүчтэй болдог",
-  "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?",
+  "Танд нөлөөлж буй хэв маягууд",
+  "Хэв маягуудын уялдаа холбоо",
+  "Ямар үед илүү хүчтэй болдог",
+  "Сэтгэлзүйн хэв маягаа хэрхэн удирдах вэ?",
+  "Хэцүү үеийг хэрхэн даван туулах вэ?",
   "Эхэлж хэрэгжүүлэх 3 алхам",
-  "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?",
-  "Өөртөө илүү тохирсон жин хасах арга барил"
+  "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
 ]);
 const ADMIN_REPORT_PREVIEW_STORAGE_KEY = "jingeehas_admin_report_preview_assessment";
 const questionApi = typeof require === "function" ? require("./questions.js") : window.JingeehasQuestions;
@@ -248,17 +248,17 @@ function renderAssessmentContact() {
 function reportPaywallContent(embedded = false) {
   const completed = state.assessmentStatus === "complete";
   const heading = embedded
-    ? `<h2 id="full-report-value-title">Өөрт тань юу саад болж байгааг мэдээд зогсохгүй, хэрхэн удирдахаа ойлгоорой</h2>`
-    : `<h1 id="page-title" tabindex="-1">Өөрт тань юу саад болж байгааг мэдээд зогсохгүй, хэрхэн удирдахаа ойлгоорой</h1>`;
+    ? `<h2 id="full-report-value-title">Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох</h2>`
+    : `<h1 id="page-title" tabindex="-1">Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох</h1>`;
   return `<section class="report-paywall" aria-labelledby="${embedded ? "full-report-value-title" : "page-title"}"><p class="eyebrow">Бүрэн тайлан</p>
     ${heading}
-    <p>Таны эхний үр дүн хамгийн тод ажиглагдсан нэг хэв маягийг харууллаа. Бүрэн тайланд танд нөлөөлж буй бусад хэв маяг, тэдгээрийн хоорондын уялдаа болон ямар нөхцөлд илүү хүчтэй болдгийг дэлгэрэнгүй харна.</p>
-    <p>Хамгийн чухал нь эдгээр хэв маягийн нөлөөг хэрхэн багасгаж, удирдах талаар таны хариултад тулгуурласан заавар авна. Мөн өдөр тутам хэрэгжүүлж эхлэх 3 алхам, хэцүү үед ашиглах арга болон төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэхийг тайлбарлана.</p>
+    <p>Ямар хэв маяг нөлөөлж байгааг мэдэх нь зөвхөн эхний алхам. Бүрэн тайлангаас эдгээр хэв маяг ямар үед хүчтэй болдог, хоорондоо хэрхэн нөлөөлдөг болон жин хасах оролдлогыг тань яаж хүндрүүлдэг байж болохыг мэдэж авна.</p>
+    <p>Мөн тухайн үед юу хийж болох, сэтгэл хөдлөл, зуршил, идэх хүсэл болон орчны нөлөөг хэрхэн удирдах талаар таны хариултад тулгуурласан тодорхой заавар авна.</p>
+    <p class="paywall-closing">Даван туулах аргаа ойлгосноор жин хасахад саад болж буй сэтгэлзүйн хэв маягаа анзаарч, удирдахад илүү хялбар болно. Ингэснээр жин хасах зорилгодоо илүү ойлгомжтой, тогтвортой ажиллах боломжтой болно.</p>
     <section class="locked-report-preview" aria-labelledby="locked-report-title"><h2 id="locked-report-title">Бүрэн тайланд нээгдэх хэсгүүд</h2>
-      <ol aria-label="Төлбөрийн дараа нээгдэх долоон хэсэг">${LOCKED_REPORT_TITLES.map(title => `<li><span class="lock-mark" aria-hidden="true">🔒</span><span>${escapeHtml(title)}</span></li>`).join("")}</ol>
+      <ol aria-label="Төлбөрийн дараа нээгдэх долоон хэсэг">${LOCKED_REPORT_TITLES.map(title => `<li><span class="lock-mark" role="img" aria-label="Түгжээтэй">🔒</span><span>${escapeHtml(title)}</span></li>`).join("")}</ol>
     </section>
-    <p class="paywall-closing">Ингэснээр та жин хасахад тань саад болж буй сэтгэлзүйн болон зан үйлийн хэв маягуудаа илүү сайн зохицуулж, зорилгодоо илүү ойлгомжтой, тогтвортой ажиллах боломжтой болно.</p>
-    <p class="muted">Бусад хэв маяг, тэдгээрийн уялдаа, нөлөөг нь удирдах арга болон эхэлж хэрэгжүүлэх алхмуудаа харна.</p>
+    <p class="muted paywall-cta-support">Хэв маягуудын нэр, уялдаа холбооноос гадна тэдгээрийн нөлөөг багасгах, сэтгэл хөдлөл болон зуршлаа удирдах, хэцүү үеийг даван туулах аргуудаа авна.</p>
     ${completed ? `<button class="button paywall-primary-cta" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "Нэхэмжлэл үүсгэж байна…" : `Бүрэн тайлангаа нээх — ${PRODUCT.displayPrice}`}</button>` : `<p class="notice">Тест үнэлгээг бүрэн дуусгасны дараа тайлангийн төлбөр рүү үргэлжлүүлнэ.</p>`}
     <p class="muted paywall-note">Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ.</p>
   </section>`;
@@ -269,16 +269,13 @@ function renderLegacyPostResultPaywall() {
 function renderInitialResult() {
   const result = state.initialResult;
   if (!result) return `<div class="page">${navigation()}<main class="content-card initial-result-loading"><h1 id="page-title" tabindex="-1">Таны хариултыг нэгтгэж байна…</h1><p role="status">Хариултуудын давтагдсан холбоог шалгаж байна.</p></main>${footer()}</div>`;
-  const additional = result.additionalPatternCount === 1
-    ? "Үүнээс гадна өөр нэг хэв маяг мөн ажиглагдсан."
-    : result.additionalPatternCount > 1 ? `Үүнээс гадна өөр ${result.additionalPatternCount} хэв маяг мөн ажиглагдсан.` : "";
   const resultBlock = result.mode === "neutral"
-    ? `<section class="initial-result-summary" aria-labelledby="page-title"><p class="eyebrow">Таны хариултаас</p><h1 id="page-title" tabindex="-1">Нэг хэв маяг бусдаасаа илт давамгай гарсангүй</h1><p>${escapeHtml(result.summary)}</p></section>`
-    : `<section class="initial-result-summary" aria-labelledby="page-title"><p class="eyebrow">Таны хариултаас</p><h1 id="page-title" tabindex="-1">Хамгийн тод харагдсан хэв маяг</h1><h2>${escapeHtml(result.primaryPattern.title)}</h2><p>${escapeHtml(result.primaryPattern.summary)}</p><p class="notice neutral-note">Энэ үр дүн таныг бүхэлд нь тодорхойлохгүй. Таны хариултаас хамгийн тод ажиглагдсан нэг хэв маягийг харуулж байна.</p>${additional ? `<p class="additional-patterns">${escapeHtml(additional)}</p>` : ""}</section>`;
+    ? `<section class="initial-result-summary" aria-labelledby="page-title"><p class="eyebrow">Таны үр дүн</p><h1 id="page-title" tabindex="-1">Нэг хэв маяг бусдаасаа илт давамгай гарсангүй</h1><p>Таны хариултад хэд хэдэн нөхцөл зэрэг нөлөөлж байгаа зураглал харагдлаа. Бүрэн тайланд эдгээр нөхцөл хэрхэн уялдаж байгааг, юунд эхэлж анхаарах нь илүү тохиромжтойг тайлбарлана.</p></section>`
+    : `<section class="initial-result-summary" aria-labelledby="page-title"><p class="eyebrow">Таны үр дүн</p><h1 id="page-title" tabindex="-1">Таны хариултыг нэгтгэж дууслаа</h1><p>Таны хариултаас жин хасах оролдлогод тань нөлөөлж байж болох дараах зураглал гарлаа.</p><div class="initial-result-counts"><article class="result-count-card"><p class="result-count-label">Нөлөөлөх хэв маяг</p><p class="result-count-value">${escapeHtml(result.patternCount)}</p><p>Тайланд эдгээр хэв маяг тус бүрийн нэр, нөлөө болон удирдах аргыг тайлбарлана.</p></article>${result.interactionCount > 0 ? `<article class="result-count-card"><p class="result-count-label">Чухал уялдаа холбоо</p><p class="result-count-value">${escapeHtml(result.interactionCount)}</p><p>Тайланд хэв маягууд хоорондоо хэрхэн нөлөөлж байгааг тайлбарлана.</p></article>` : ""}</div></section>`;
   const emailCard = state.resultEmail.skipped ? "" : `<section class="result-email-card" aria-labelledby="result-email-title"><h2 id="result-email-title">Үр дүнгээ хадгалах</h2><p>Имэйлээ хадгалбал тестийн үр дүн болон бүрэн тайлангаа өөр төхөөрөмжөөс сэргээж болно.</p>
     ${state.resultEmail.saved ? `<p class="notice" role="status">Имэйл хадгалагдлаа.</p>` : `<form id="result-email-form" novalidate><label class="field" for="result-email"><span>Имэйл</span><input id="result-email" name="email" type="email" autocomplete="email" required></label><p class="error" role="alert">${escapeHtml(state.resultEmail.error)}</p><div class="actions"><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Имэйлээ хадгалах</button><button class="button secondary" type="button" data-action="skip-result-email">Одоо алгасах</button></div></form>`}
   </section>`;
-  return `<div class="page">${navigation()}<main class="content-card result-page">${resultBlock}${emailCard}${reportPaywallContent(true)}</main>${footer()}</div>`;
+  return `<div class="page">${navigation()}<main class="content-card result-page">${resultBlock}${reportPaywallContent(true)}${emailCard}</main>${footer()}</div>`;
 }
 function renderAssessmentCompleted() {
   if (state.commercialFlowVersion === "prepaid_v2") return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тест дууслаа. Таны тайланг боловсруулж байна.</h1><p role="status">Бүрэн тайланг ачаалж байна…</p></main>${footer()}</div>`;
@@ -373,9 +370,11 @@ function renderResultOverview(full) {
 function renderManagementModules(modules = []) {
   return modules.map(module => `<article class="management-module"><h3>${escapeHtml(module.title)}</h3><p class="management-evidence-link">${escapeHtml(module.evidenceLink)}</p>
     <dl><dt>Юуг анзаарах вэ?</dt><dd>${escapeHtml(module.observe)}</dd>
+      <dt>Юунаас өдөөгдөж байгааг хэрхэн таних вэ?</dt><dd>${escapeHtml(module.triggerRecognition)}</dd>
       <dt>Урьдчилан юу бэлдэх вэ?</dt><dd>${escapeHtml(module.prepare)}</dd>
       <dt>Тухайн үед юу хийж болох вэ?</dt><dd>${escapeHtml(module.inMoment)}</dd>
       <dt>Юуг хэт хатуу шаардахгүй байх вэ?</dt><dd>${escapeHtml(module.avoidRigidDemand)}</dd>
+      <dt>Төлөвлөснөөрөө яваагүй үед хэрхэн үргэлжлүүлэх вэ?</dt><dd>${escapeHtml(module.resume)}</dd>
       <dt>Хэзээ мэргэжлийн тусламж авах вэ?</dt><dd>${escapeHtml(module.professionalHelp)}</dd></dl></article>`).join("");
 }
 
@@ -385,6 +384,20 @@ function renderCombinedPlan(plan) {
     <dt>Яагаад үүнээс эхлэх вэ?</dt><dd>${escapeHtml(plan.why)}</dd>
     <dt>Дараагийн алхам юу вэ?</dt><dd>${escapeHtml(plan.nextStep)}</dd>
     <dt>Хоёр хэв маягийг хамтад нь удирдах ямар арга тохирох вэ?</dt><dd>${escapeHtml(plan.combinedAction)}</dd></dl>`;
+}
+
+function renderCombinedPlans(full) {
+  return [full.combinedManagementPlan, ...(full.additionalInteractionManagementPlans || [])].filter(Boolean).map(renderCombinedPlan).join("");
+}
+
+function renderDifficultMomentPlan(plan) {
+  if (!plan) return "";
+  return `<ol class="difficult-moment-plan">
+    <li><strong>Юу болж байгааг анзаарах</strong><span>${escapeHtml(plan.notice)}</span></li>
+    <li><strong>Тухайн мөчид хийх нэг үйлдэл</strong><span>${escapeHtml(plan.inMoment)}</span></li>
+    <li><strong>Өдөөлтийг багасгах нэг арга</strong><span>${escapeHtml(plan.reduceTrigger)}</span>${plan.combinedAction ? `<span>${escapeHtml(plan.combinedAction)}</span>` : ""}</li>
+    <li><strong>Дараагийн хоол эсвэл өдрөөс үргэлжлүүлэх</strong><span>${escapeHtml(plan.resume)}</span></li>
+  </ol>`;
 }
 
 function renderInitialActions(full) {
@@ -417,9 +430,10 @@ function buildReportSections(full) {
     { id: "interactions", heading: "ХЭВ МАЯГУУДЫН УЯЛДАА", paragraphs: [interactions], visible: Boolean(interactions && (full.managementModules || []).length >= 2) },
     { id: "context", heading: "ЯМАР ҮЕД ИЛҮҮ ХҮЧТЭЙ БОЛДОГ ВЭ?", paragraphs: [`${triggerContexts}${nonPatternContexts}${previous}`], visible: Boolean(triggerContexts || nonPatternContexts || previous) },
     { id: "management", heading: "ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?", paragraphs: [renderManagementModules(full.managementModules)], visible: (full.managementModules || []).length > 0 },
-    { id: "combined-management", heading: "НЭГДСЭН УДИРДАХ ДАРААЛАЛ", paragraphs: [renderCombinedPlan(full.combinedManagementPlan)], visible: Boolean(full.combinedManagementPlan) },
+    { id: "combined-management", heading: "НЭГДСЭН УДИРДАХ ДАРААЛАЛ", paragraphs: [renderCombinedPlans(full)], visible: Boolean(full.combinedManagementPlan || (full.additionalInteractionManagementPlans || []).length) },
+    { id: "difficult-moment", heading: "Хэцүү үеийг хэрхэн даван туулах вэ?", paragraphs: [renderDifficultMomentPlan(full.difficultMomentPlan)], visible: Boolean(full.difficultMomentPlan) },
     { id: "initial-actions", heading: "ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ", paragraphs: [renderInitialActions(full)], visible: (full.initialActions || []).length === 3 },
-    { id: "fallback", heading: "ТӨЛӨВЛӨСНӨӨРӨӨ ЯВЖ ЧАДААГҮЙ ҮЕД", paragraphs: [renderFallbackPlan(full.fallbackPlan)], visible: Boolean(full.fallbackPlan) },
+    { id: "fallback", heading: "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?", paragraphs: [renderFallbackPlan(full.fallbackPlan)], visible: Boolean(full.fallbackPlan) },
     { id: "guidance", heading: "ХЭЗЭЭ МЭРГЭЖЛИЙН ХҮНТЭЙ ЗӨВЛӨЛДӨХ ВЭ?", paragraphs: [guidance], visible: Boolean(guidance) }
   ];
 }

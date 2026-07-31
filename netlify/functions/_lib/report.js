@@ -620,23 +620,12 @@ function managementModule(candidate, pattern, facts) {
     title: pattern.title,
     evidenceLink: "Доорх зөвлөмжийг энэ хэв маягийг дэмжсэн, дээр тайлбарласан хариултын нөхцөлтэй холбож хэрэглэнэ.",
     observe,
+    triggerRecognition: `${observe} ${pattern.title} эхлэхийн өмнө байсан газар, цаг, мэдрэмж эсвэл үйл явдлаас аль нь давтагдаж байгааг тэмдэглээрэй.`,
     prepare,
     inMoment: copy.inMoment,
     avoidRigidDemand: copy.avoidRigidDemand,
+    resume: `Төлөвлөснөөрөө яваагүй үед өөрийгөө буруутгахгүйгээр дараах байдлаар үргэлжлүүл: ${copy.fallback.resume}`,
     professionalHelp: copy.professionalHelp
-  };
-}
-
-function interactionFallback(supported, patternById) {
-  if (supported.length < 2) return null;
-  const [left, right] = supported;
-  const leftPattern = patternById.get(left.id);
-  const rightPattern = patternById.get(right.id);
-  if (!leftPattern || !rightPattern) return null;
-  return {
-    id: `observed_${left.id}_${right.id}`,
-    patternIds: [left.id, right.id],
-    explanation: `${leftPattern.title} болон ${rightPattern.title} таны хариултаар хоёулаа дэмжигдсэн. Эдгээр нь нэг нөхцөлд давхцаж байгаа эсэхийг ажигласнаар аль нөлөөг эхэлж багасгах нь илүү бодитойг ялгаж болно.`
   };
 }
 
@@ -660,16 +649,20 @@ function combinedManagementAction(primaryId, secondaryId) {
   return "Эхний хэв маягийн өдөөгч нөхцөлийг ажиглахдаа дараагийн хэв маягтай холбоотой хүндрэл мөн давхцаж байгаа эсэхийг тэмдэглэнэ. Нэг удаад нэг бэлтгэсэн үйлдэл хэрэглэж, аль өөрчлөлт бодит амьдралд илүү тохирч байгааг тусад нь ажиглана.";
 }
 
-function combinedManagementPlan(prioritized, supported, modules) {
-  if (!prioritized || supported.length < 2 || modules.length < 2) return null;
-  const primary = modules.find(item => item.patternId === prioritized.id) || modules[0];
-  const secondary = modules.find(item => item.patternId !== primary.patternId);
+function combinedManagementPlan(patternIds, prioritized, modules) {
+  const pair = Array.isArray(patternIds) ? [...new Set(patternIds)] : [];
+  if (pair.length !== 2 || modules.length < 2) return null;
+  const pairModules = pair.map(id => modules.find(item => item.patternId === id)).filter(Boolean);
+  if (pairModules.length !== 2) return null;
+  const primary = pairModules.find(item => item.patternId === prioritized?.id) || pairModules[0];
+  const secondary = pairModules.find(item => item.patternId !== primary.patternId);
   if (!secondary) return null;
   return {
+    patternIds: [primary.patternId, secondary.patternId],
     startWith: `${primary.title}: ${primary.observe}`,
-    why: "Энэ чиглэл нь таны хариултад хамгийн тод, эхэлж ажиглах боломжтой нөхцөлтэй холбоотой тул бусад бүх зүйлийг зэрэг өөрчлөхөөс өмнө үүнээс эхэлнэ.",
+    why: `${primary.title}-ийн нөхцөлийг эхэлж ажиглаад, дараа нь ${secondary.title}-тай давхцаж байгаа эсэхийг шалгавал бүх зүйлийг зэрэг өөрчлөхгүйгээр аль нөлөөнд түрүүлж анхаарахаа ялгаж болно.`,
     nextStep: `${secondary.title}: ${secondary.prepare}`,
-    combinedAction: combinedManagementAction(primary.patternId, secondary.patternId)
+    combinedAction: `${primary.title} болон ${secondary.title}: ${combinedManagementAction(primary.patternId, secondary.patternId).replace(/\.\s+/g, "; ")}`
   };
 }
 
@@ -713,14 +706,17 @@ function fallbackPlan(prioritized, supported, patternById) {
 function neutralActionablePlan(neutral) {
   const observation = neutral?.observation;
   if (!observation) return null;
+  const evidenceAnchor = String(neutral.strengths?.[0] || neutral.notStronglySupported?.[0] || neutral.strengthsFallback || neutral.overview?.at(-1) || "Одоогийн хариултаар нэг хэв маяг хүчтэй ялгараагүй байна").replace(/[.!?]$/, "");
   return {
     managementModule: {
       title: "Одоо ажиллаж буй хэмнэлээ хадгалах чиглэл",
-      evidenceLink: "Хүчтэй саад дэмжигдээгүй тул шинэ асуудал зохиохгүйгээр одоо ажиллаж буй нөхцөлөө ажиглана.",
-      observe: "Сонгосон ажиглалтаа хийхдээ ямар нөхцөл дэмжсэн эсвэл саад болсныг нэг өгүүлбэрээр тэмдэглээрэй.",
-      prepare: `Ажиглах зүйлээ урьдчилан сонго: ${observation.variable}`,
-      inMoment: "Сонгосон мөч ирэхэд шинэ хориг нэмэхгүйгээр зөвхөн ажиглалтаа тэмдэглэ.",
+      evidenceLink: `${evidenceAnchor}; шинэ асуудал зохиохгүйгээр одоо ажиллаж буй нөхцөлөө ажиглана.`,
+      observe: `${evidenceAnchor}; ${String(observation.action).replace(/[.!?]$/, "").toLowerCase()}, дараа нь ямар нөхцөл дэмжсэн эсвэл саад болсныг нэг өгүүлбэрээр тэмдэглээрэй.`,
+      triggerRecognition: `${evidenceAnchor}; ${observation.variable} дээр ажиглалт хийх мөчийн өмнө байсан газар, цаг болон үйл явдлаас аль нь давтагдаж байгааг тэмдэглээрэй.`,
+      prepare: `${evidenceAnchor}; ажиглах зүйлээ урьдчилан сонго: ${observation.variable}.`,
+      inMoment: `${evidenceAnchor}; сонгосон мөч ирэхэд шинэ хориг нэмэхгүйгээр дараах ажиглалтаа хий: ${observation.action}`,
       avoidRigidDemand: "Одоо сайн ажиллаж буй хоол, хөдөлгөөн эсвэл өдөр тутмын дадлыг зориуд зэрэг өөрчлөхгүй бай.",
+      resume: `${evidenceAnchor}; тэмдэглэж чадаагүй мөчийг нөхөх шаардлагагүй, дараагийн сонгосон мөчид ажиглалтаа үргэлжлүүлээд дараах дүрмээр шийд: ${observation.decisionRule}`,
       professionalHelp: "Санаа зовоосон эрүүл мэндийн шинж эсвэл өдөр тутмын үйл ажиллагаанд нөлөөлөх өөрчлөлт гарвал мэргэжлийн хүнтэй зөвлөлдөөрэй."
     },
     firstActions: [
@@ -736,6 +732,20 @@ function neutralActionablePlan(neutral) {
       recheckTrigger: "Ажиглалтад ямар бодит нөхцөл саад болсныг нэг өгүүлбэрээр тэмдэглэ.",
       fitDailyLife: "Сонгосон мөч тохирохгүй байвал ажиглах зүйлээ бус, хийх мөчийг нэг удаа солиорой."
     }
+  };
+}
+
+function difficultMomentPlan(modules, combinedPlan, planFallback) {
+  const primary = Array.isArray(modules) ? modules[0] : null;
+  if (!primary || !planFallback) return null;
+  return {
+    notice: `${primary.title}: ${primary.observe}`,
+    inMoment: `Тухайн мөчид: ${primary.inMoment}`,
+    reduceTrigger: `Өдөөлтийн нөлөөг багасгахын тулд урьдчилан: ${primary.prepare}`,
+    combinedAction: combinedPlan?.combinedAction
+      ? `Хоёр нөхцөл давхцвал: ${String(combinedPlan.combinedAction).replace(/\.\s+/g, "; ").replace(/\.$/, "")}.`
+      : null,
+    resume: `Дараагийн хоол эсвэл өдөрт: ${planFallback.resume}`
   };
 }
 
@@ -947,10 +957,6 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
     patternIds: rule.patterns,
     explanation: composer.recordRule(`interaction_${rule.id}`, { requiredPatterns: rule.patterns, requiredSignals: rule.requiredSignals || [] }, INTERACTION_COPY[rule.id], "3")
   }));
-  if (evaluated.supported.length >= 2 && interactions.length === 0) {
-    const fallbackInteraction = interactionFallback(evaluated.supported, patternById);
-    if (fallbackInteraction) interactions.push(fallbackInteraction);
-  }
   for (const interaction of interactions) for (const id of interaction.patternIds) {
     const pattern = patternById.get(id);
     pattern.interactionsWith = [...new Set([...pattern.interactionsWith, ...interaction.patternIds.filter(other => other !== id)])];
@@ -975,10 +981,14 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
   const neutral = influencingPatterns.length ? null : neutralResult(evidence, composer, strengths, contextual, quality, professional);
   const overview = neutral ? null : overallPicture(evaluated, composer);
   const managementModules = evaluated.supported.map(candidate => managementModule(candidate, patternById.get(candidate.id), facts)).filter(Boolean);
-  const combinedPlan = combinedManagementPlan(prioritized, evaluated.supported, managementModules);
+  const interactionPlans = interactions.map(interaction => combinedManagementPlan(interaction.patternIds, prioritized, managementModules)).filter(Boolean);
+  const combinedPlan = interactionPlans[0] || null;
   const initialActions = firstActionPlan(prioritized, evaluated.supported, patternById);
   const planFallback = fallbackPlan(prioritized, evaluated.supported, patternById);
   const neutralPlan = managementModules.length ? null : neutralActionablePlan(neutral);
+  const resolvedManagementModules = neutralPlan ? [neutralPlan.managementModule] : managementModules;
+  const resolvedFallbackPlan = neutralPlan ? neutralPlan.fallbackPlan : planFallback;
+  const difficultPlan = difficultMomentPlan(resolvedManagementModules, combinedPlan, resolvedFallbackPlan);
   const avoidForNow = influencingPatterns.length
     ? composer.recordRule("avoid_simultaneous_changes", { requiredPatterns: evaluated.influencingPatterns.map(item => item.id) }, "Эхний туршилтын хугацаанд хоолны шинэ хатуу хориг болон олон шинэ дүрмийг зэрэг нэмэхгүй. Сонгосон нэг алхам өдөр тутмын амьдралд багтаж байгаа эсэхийг эхэлж ажиглана.", "9")
     : null;
@@ -991,10 +1001,12 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
     protectiveSectionSummary: protectiveSection, protectiveFactors: strengths, contradictions: contradictionItems(evidence, evaluated.candidates),
     previousAttemptAnalysis: previous, interactionSummary: interactions,
     prioritizedStartingAction: firstAction, additionalPatternActions,
-    managementModules: neutralPlan ? [neutralPlan.managementModule] : managementModules,
+    managementModules: resolvedManagementModules,
     combinedManagementPlan: combinedPlan,
+    additionalInteractionManagementPlans: interactionPlans.slice(1),
+    difficultMomentPlan: difficultPlan,
     initialActions: neutralPlan ? neutralPlan.firstActions : initialActions,
-    fallbackPlan: neutralPlan ? neutralPlan.fallbackPlan : planFallback,
+    fallbackPlan: resolvedFallbackPlan,
     planDecisionPending,
     planAppendices: planDecisionPending ? {
       recommendedCandidate: startDecision.recommendedCandidate,

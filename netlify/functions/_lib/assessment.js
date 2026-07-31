@@ -3,6 +3,7 @@
 const { randomId } = require("./crypto.js");
 const { calculateAssessmentSafety, ROUTE_COPY } = require("./safety.js");
 const { buildEvidence, buildFullReport, publicReport } = require("./report.js");
+const { validateReportForActivation } = require("./report-validation.js");
 const { resolveReportSnapshot } = require("./report-snapshots.js");
 const { PRODUCT } = require("./config.js");
 const { buildInitialResult, publicInitialResult } = require("./initial-result.js");
@@ -187,6 +188,10 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
     : answers;
   const evidence = buildEvidence(evidenceRows, summaries, { questionnaireVersion, linkedLongestMethod });
   const fullReport = buildFullReport(evidence, now, { questionnaireVersion });
+  const reportValidation = validateReportForActivation(fullReport);
+  if (!reportValidation.valid) {
+    throw Object.assign(new Error("Report did not satisfy the paid delivery contract"), { statusCode: 500, code: "report_delivery_invalid", validationErrors: reportValidation.errors });
+  }
   const reportMode = fullReport.mode;
   const initialView = isFreeAssessmentPostpaid(assessment)
     ? buildInitialResult(fullReport)
@@ -224,7 +229,7 @@ async function initialResultForSession(database, sessionId, assessmentId) {
     throw Object.assign(new Error("Initial result not found"), { statusCode: 404, code: "initial_result_not_found" });
   }
   const snapshot = await resolveReportSnapshot(database, assessmentId);
-  const initialResult = publicInitialResult(snapshot?.initialView);
+  const initialResult = publicInitialResult(snapshot?.initialView, snapshot?.fullReport);
   if (!snapshot || !initialResult) {
     throw Object.assign(new Error("Initial result not found"), { statusCode: 404, code: "initial_result_not_found" });
   }

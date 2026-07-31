@@ -10,7 +10,7 @@ const fs = require("node:fs");
 const { setDatabaseForTests } = require("../../netlify/functions/_lib/store.js");
 const { MemoryDatabaseAdapter } = require("../support/memory-database.js");
 const { createAssessment, saveAssessment, completeAssessment, reportForSession } = require("../../netlify/functions/_lib/assessment.js");
-const { buildInitialResult } = require("../../netlify/functions/_lib/initial-result.js");
+const { INITIAL_RESULT_SCHEMA_VERSION, buildInitialResult, publicInitialResult } = require("../../netlify/functions/_lib/initial-result.js");
 const { createInvoice, checkPayment } = require("../../netlify/functions/_lib/payment.js");
 const { nextRoute } = require("../../netlify/functions/_lib/commercial-flow.js");
 
@@ -45,13 +45,19 @@ const completeAnswers = {
 (async () => {
   const evidenceDerived = buildInitialResult({
     influencingPatterns: [
-      { title: "Нэгдүгээр хэв маяг", evidenceSummary: "Нэгдүгээр ажиглалт." },
-      { title: "Хоёрдугаар хэв маяг", evidenceSummary: "Хоёрдугаар ажиглалт." },
-      { title: "Гуравдугаар хэв маяг", evidenceSummary: "Гуравдугаар ажиглалт." }
-    ]
+      { id: "one", title: "Нэгдүгээр хэв маяг", evidenceSummary: "Нэгдүгээр ажиглалт.", effectOnWeightLoss: "Нэгдүгээр нөлөө." },
+      { id: "two", title: "Хоёрдугаар хэв маяг", evidenceSummary: "Хоёрдугаар ажиглалт.", effectOnWeightLoss: "Хоёрдугаар нөлөө." },
+      { id: "one", title: "Давхардсан хэв маяг", evidenceSummary: "Давхардсан ажиглалт.", effectOnWeightLoss: "Давхардсан нөлөө." }
+    ],
+    managementModules: ["one", "two"].map(patternId => ({ patternId, observe: "Ажиглана.", prepare: "Бэлдэнэ.", inMoment: "Хийнэ." })),
+    interactionSummary: [{ id: "one_two", patternIds: ["one", "two"], explanation: "Хоёр хэв маяг нэг нь нөгөөгөө хүчтэй болгож болно." }],
+    combinedManagementPlan: { patternIds: ["one", "two"], startWith: "Нэгээс эхэлнэ.", why: "Нотолгоонд тулгуурлана.", nextStep: "Хоёрыг дараа нь ажиглана.", combinedAction: "Хамтад нь удирдана." }
   });
-  assert.equal(evidenceDerived.primaryPattern.title, "Нэгдүгээр хэв маяг");
-  assert.equal(evidenceDerived.additionalPatternCount, 2);
+  assert.equal(evidenceDerived.schemaVersion, INITIAL_RESULT_SCHEMA_VERSION);
+  assert.equal(evidenceDerived.mode, "summary");
+  assert.equal(evidenceDerived.patternCount, 2, "duplicate rendered pattern is counted once");
+  assert.equal(evidenceDerived.interactionCount, 1);
+  assert(!JSON.stringify(publicInitialResult(evidenceDerived)).includes("Нэгдүгээр хэв маяг"));
 
   const migration = fs.readFileSync(require.resolve("../../supabase/migrations/20260731024831_free_assessment_initial_result_funnel.sql"), "utf8");
   for (const expected of [
@@ -99,17 +105,34 @@ const completeAnswers = {
   assert.equal(unpaidReport.entitled, false);
   assert.equal(unpaidReport.fullReport, null);
   const initial = body(await initialResult(event("GET", null, cookie, { assessmentId: firstCreate.assessmentId })));
-  assert.deepEqual(Object.keys(initial).sort(), ["additionalPatternCount", "currency", "lockedSections", "mode", "price", "primaryPattern", "summary"].sort());
+  assert.deepEqual(Object.keys(initial).sort(), ["currency", "interactionCount", "lockedSections", "mode", "patternCount", "price"].sort());
   assert.equal(initial.mode, "neutral");
-  assert.equal(initial.primaryPattern, null);
-  assert.equal(initial.additionalPatternCount, 0);
+  assert.equal(initial.patternCount, 0);
+  assert.equal(initial.interactionCount, 0);
   assert.equal(initial.lockedSections.length, 7);
   assert.equal(initial.price, 9900);
   assert.equal(initial.currency, "MNT");
   const serializedInitial = JSON.stringify(initial);
-  for (const forbidden of ["Q-AGE", "S1-S04", "internalEvidenceMap", "threshold", "confidence", "recommendations", "fullReport", "providerPaymentId"]) {
+  for (const forbidden of ["primaryPattern", "title", "summary", "Q-AGE", "S1-S04", "internalEvidenceMap", "threshold", "confidence", "recommendations", "fullReport", "providerPaymentId"]) {
     assert(!serializedInitial.includes(forbidden), `initial result leaked ${forbidden}`);
   }
+
+  const [storedSnapshot] = await database.find("report_snapshots", { assessmentId: firstCreate.assessmentId });
+  assert.equal(storedSnapshot.initialView.schemaVersion, INITIAL_RESULT_SCHEMA_VERSION, "new completion stores V2 initial view");
+  const v2InitialView = structuredClone(storedSnapshot.initialView);
+  const legacyInitialView = {
+    schemaVersion: "jingeehas-initial-result-v1",
+    mode: "pattern",
+    primaryPattern: { title: "SERVER ONLY LEGACY TITLE", summary: "SERVER ONLY LEGACY SUMMARY" },
+    additionalPatternCount: 3,
+    lockedSections: ["legacy"]
+  };
+  await database.update("report_snapshots", storedSnapshot.id, { initialView: structuredClone(legacyInitialView) });
+  const legacyProjected = body(await initialResult(event("GET", null, cookie, { assessmentId: firstCreate.assessmentId })));
+  assert.deepEqual(Object.keys(legacyProjected).sort(), ["currency", "interactionCount", "lockedSections", "mode", "patternCount", "price"].sort());
+  assert(!JSON.stringify(legacyProjected).includes("SERVER ONLY LEGACY"), "V1 title and summary never reach the client");
+  assert.deepEqual((await database.get("report_snapshots", storedSnapshot.id)).initialView, legacyInitialView, "V1 projection performs no snapshot mutation");
+  await database.update("report_snapshots", storedSnapshot.id, { initialView: v2InitialView });
 
   const otherSession = await startSession(event("POST"));
   const otherCookie = credential(otherSession.headers["set-cookie"]);

@@ -45,10 +45,10 @@ assert(!app.renderForPath("/assessment/questions").includes("эхний хэв �
 assert(app.renderForPath("/assessment/questions").includes("Таны явц автоматаар хадгалагдана."));
 app._test.setState({ ownerPreview: true, commercialFlowVersion: "legacy_postpaid_v1", assessmentStatus: "complete", assessmentId: "test-assessment" });
 const completion = app.renderForPath("/assessment/completed");
-assert(completion.includes("Өөрт тань юу саад болж байгааг мэдээд зогсохгүй, хэрхэн удирдахаа ойлгоорой"));
-assert(completion.includes("Таны эхний үр дүн хамгийн тод ажиглагдсан нэг хэв маягийг харууллаа."));
+assert(completion.includes("Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох"));
+assert(completion.includes("Ямар хэв маяг нөлөөлж байгааг мэдэх нь зөвхөн эхний алхам."));
 assert(completion.includes("Бүрэн тайлангаа нээх — 9,900₮"));
-for (const lockedTitle of ["Танд нөлөөлж буй бусад хэв маяг", "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа", "Ямар нөхцөлд илүү хүчтэй болдог", "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?", "Эхэлж хэрэгжүүлэх 3 алхам", "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?", "Өөртөө илүү тохирсон жин хасах арга барил"]) assert(completion.includes(lockedTitle));
+for (const lockedTitle of ["Танд нөлөөлж буй хэв маягууд", "Хэв маягуудын уялдаа холбоо", "Ямар үед илүү хүчтэй болдог", "Сэтгэлзүйн хэв маягаа хэрхэн удирдах вэ?", "Хэцүү үеийг хэрхэн даван туулах вэ?", "Эхэлж хэрэгжүүлэх 3 алхам", "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"]) assert(completion.includes(lockedTitle));
 assert(!completion.includes("Бүрэн тайлангийн үнэ:"));
 assert(!completion.includes("QPay нэхэмжлэл үүсгэх"));
 assert(!completion.includes("Төлбөр ба тайлан сэргээх мэдээлэл"));
@@ -88,7 +88,8 @@ assert(renderedReport.includes("Сэтгэл хөдлөл ихсэх үед хо
 assert(renderedReport.includes("Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл"));
 assert(renderedReport.includes("ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?"));
 assert(renderedReport.includes("ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ"));
-assert(renderedReport.includes("ТӨЛӨВЛӨСНӨӨРӨӨ ЯВЖ ЧАДААГҮЙ ҮЕД"));
+assert(renderedReport.includes("Хэцүү үеийг хэрхэн даван туулах вэ?"));
+assert(renderedReport.includes("Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"));
 assert(!/Q-[A-Z]|S1-|MC-/.test(renderedReport));
 for (const phrase of ["арга тасрах", "арга тасарсан", "арга тасарсны", "төлөвлөгөө тасрах", "дэглэм тасрах", "шилжилтийн саад", "үр дүнгээ хадгалах шилжилт", "залгамж хувилбар", "Зангуу", "Доод хувилбар", "Зардлын зааг", "Биеийн дурдсан нөхцөл", "аюулгүй хувилбар"]) assert(!renderedReport.includes(phrase), `forbidden report copy: ${phrase}`);
 
