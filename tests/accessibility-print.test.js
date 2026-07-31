@@ -19,7 +19,7 @@ app._test.setComingSoon(false);
 app._test.setState({ questionIndex: 5, questionsAuthorized: true });
 const question = app.renderForPath("/assessment/questions");
 assert(question.includes('role="progressbar"'));
-assert(question.includes('aria-label="Тест бөглөх явц"'));
+assert(question.includes('aria-label="Тестийн явц"'));
 assert(question.includes("<fieldset>"));
 assert(question.includes("<legend>"));
 assert(question.includes('aria-describedby="question-error"'));

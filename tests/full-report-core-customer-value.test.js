@@ -10,7 +10,7 @@ const rows = answers => Object.entries(answers).map(([questionId, value]) => ({ 
 const reportFor = answers => buildFullReport(buildEvidence(rows(answers)), new Date("2026-07-30T00:00:00.000Z"));
 
 app._test.setState({ ownerPreview: true, commercialFlowVersion: "prepaid_v2" });
-const currentPaidFirstPaywall = app.renderForPath("/assessment/start");
+const currentPaidFirstPaywall = app.renderForPath("/assessment/contact");
 for (const exact of [
   "Тест үнэлгээ болон бүрэн тайлангаа нээх",
   "Тестийн хариултад тулгуурлан жин хасахад тань нөлөөлж буй сэтгэлзүйн болон зан үйлийн хэв маягийг тайлбарлана.",
@@ -31,17 +31,16 @@ for (const premature of [
   "Бусад хэв маяг мөн ажиглагдсан",
   "Бүрэн тайлангаас бусад хэв маягаа харна"
 ]) assert(!currentPaidFirstPaywall.includes(premature), `current paid-first paywall implies an initial result was shown: ${premature}`);
-assert.equal(app.renderForPath("/assessment/contact"), currentPaidFirstPaywall, "legacy contact URL must render the current paid-first preparation screen");
+assert(app.renderForPath("/assessment/start").includes("Тестээ эхлүүлэх"), "public start uses the free assessment introduction");
 
 app._test.setState({ ownerPreview: true, commercialFlowVersion: "legacy_postpaid_v1", assessmentStatus: "complete", assessmentId: "core-value-paywall" });
 const paywall = app.renderForPath("/assessment/completed");
 for (const exact of [
   "Бүрэн тайлан",
   "Өөрт тань юу саад болж байгааг мэдээд зогсохгүй, хэрхэн удирдахаа ойлгоорой",
-  "Таны эхний үр дүн хамгийн тод ажиглагдсан нэг хэв маягийг харууллаа.",
-  "Бүрэн тайланд танд нөлөөлж буй бусад хэв маяг, тэдгээрийн хоорондын уялдаа, ямар нөхцөлд илүү хүчтэй болдог болон нөлөөг нь хэрхэн багасгаж болохыг дэлгэрэнгүй тайлбарлана.",
-  "Мөн өдөр тутам хэрэгжүүлж болох алхмууд, хэцүү үед ашиглах аргууд болон төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх талаар таны хариултад тулгуурласан зөвлөмж өгнө.",
-  "Ингэснээр та жин хасахад тань юу саад болж байгааг таамгаар биш, өөрийн хариултад тулгуурлан ойлгож, тухайн бэрхшээлүүдийн нөлөөг удирдах боломжтой болно.",
+  "Таны эхний үр дүн хамгийн тод ажиглагдсан нэг хэв маягийг харууллаа. Бүрэн тайланд танд нөлөөлж буй бусад хэв маяг, тэдгээрийн хоорондын уялдаа болон ямар нөхцөлд илүү хүчтэй болдгийг дэлгэрэнгүй харна.",
+  "Хамгийн чухал нь эдгээр хэв маягийн нөлөөг хэрхэн багасгаж, удирдах талаар таны хариултад тулгуурласан заавар авна. Мөн өдөр тутам хэрэгжүүлж эхлэх 3 алхам, хэцүү үед ашиглах арга болон төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэхийг тайлбарлана.",
+  "Ингэснээр та жин хасахад тань саад болж буй сэтгэлзүйн болон зан үйлийн хэв маягуудаа илүү сайн зохицуулж, зорилгодоо илүү ойлгомжтой, тогтвортой ажиллах боломжтой болно.",
   "Бүрэн тайлангаа нээх — 9,900₮",
   "Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ."
 ]) assert(paywall.includes(exact), `paywall exact copy missing: ${exact}`);
@@ -49,9 +48,9 @@ for (const exact of [
 const lockedTitles = [
   "Танд нөлөөлж буй бусад хэв маяг",
   "Хэв маягууд хоорондоо хэрхэн уялдаж байгаа",
-  "Ямар нөхцөлд бэрхшээл илүү хүчтэй болдог",
+  "Ямар нөхцөлд илүү хүчтэй болдог",
   "Хэв маяг бүрийн нөлөөг хэрхэн удирдах вэ?",
-  "Өдөр тутам хэрэгжүүлж эхлэх алхмууд",
+  "Эхэлж хэрэгжүүлэх 3 алхам",
   "Төлөвлөснөөрөө явж чадаагүй үед яах вэ?",
   "Өөртөө илүү тохирсон жин хасах арга барил"
 ];

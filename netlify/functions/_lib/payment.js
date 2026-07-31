@@ -3,7 +3,9 @@
 const { PRODUCT } = require("./config.js");
 const { randomId, hashToken } = require("./crypto.js");
 const { ownedAssessment } = require("./assessment.js");
-const { isPrepaid } = require("./commercial-flow.js");
+const { publicInitialResult } = require("./initial-result.js");
+const { resolveReportSnapshot } = require("./report-snapshots.js");
+const { isFreeAssessmentPostpaid, isPrepaidFlow } = require("./commercial-flow.js");
 
 const ACTIVE = new Set(["creating", "create_unknown", "reconciling", "pending", "checking", "check_error"]);
 const AMBIGUOUS_CREATE = new Set(["create_error", "create_unknown", "reconciling"]);
@@ -46,19 +48,28 @@ function publicPayment(payment) {
 
 async function validateInvoiceRequest(database, sessionId, input) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
-  const validStatus = isPrepaid(assessment) ? assessment.status === "payment_pending" : assessment.status === "complete";
+  const validStatus = isPrepaidFlow(assessment) ? assessment.status === "payment_pending" : assessment.status === "complete";
   if (!validStatus || assessment.safetyRoute) throw Object.assign(new Error("Assessment is not eligible for payment"), { statusCode: 409, code: "assessment_incomplete" });
-  if (!isPrepaid(assessment)) {
+  if (!isPrepaidFlow(assessment)) {
     const safetyCheck = await database.get("safety_checks", assessment.safetyCheckId);
     if (!safetyCheck || safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Payment blocked by safety route"), { statusCode: 409, code: "safety_route_required" });
   }
-  const recoveryContacts = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });
-  if (!recoveryContacts.length) throw Object.assign(new Error("Recovery contact required"), { statusCode: 400, code: "recovery_contact_required" });
+  if (isFreeAssessmentPostpaid(assessment)) {
+    const snapshot = await resolveReportSnapshot(database, assessment.id);
+    if (!snapshot?.fullReport || !publicInitialResult(snapshot.initialView)) {
+      throw Object.assign(new Error("Report snapshot required"), { statusCode: 409, code: "report_snapshot_required" });
+    }
+  } else {
+    const recoveryContacts = await database.find("recovery_contacts", { sessionId, assessmentId: assessment.id });
+    if (!recoveryContacts.length) throw Object.assign(new Error("Recovery contact required"), { statusCode: 400, code: "recovery_contact_required" });
+  }
   if ((await database.find("entitlements", { assessmentId: assessment.id, status: "active" })).length) {
     throw Object.assign(new Error("Assessment is already paid"), { statusCode: 409, code: "already_entitled" });
   }
-  if (input.productCode && input.productCode !== PRODUCT.code) throw Object.assign(new Error("Invalid product"), { statusCode: 400, code: "invalid_product" });
-  if (input.amount != null && Number(input.amount) !== PRODUCT.amount) throw Object.assign(new Error("Invalid amount"), { statusCode: 400, code: "invalid_amount" });
+  if (!isFreeAssessmentPostpaid(assessment)) {
+    if (input.productCode && input.productCode !== PRODUCT.code) throw Object.assign(new Error("Invalid product"), { statusCode: 400, code: "invalid_product" });
+    if (input.amount != null && Number(input.amount) !== PRODUCT.amount) throw Object.assign(new Error("Invalid amount"), { statusCode: 400, code: "invalid_amount" });
+  }
   return assessment;
 }
 
@@ -149,7 +160,9 @@ async function createReplacementInvoice(database, provider, sessionId, input = {
 
 function confirmedProviderPayment(result, expectedAmount) {
   const rows = Array.isArray(result?.rows) ? result.rows : Array.isArray(result?.payments) ? result.payments : [];
-  return rows.find(row => String(row.payment_status || row.status || "").toUpperCase() === "PAID" && Number(row.payment_amount || row.amount) === expectedAmount) || null;
+  return rows.find(row => String(row.payment_status || row.status || "").toUpperCase() === "PAID" &&
+    Number(row.payment_amount || row.amount) === expectedAmount &&
+    String(row.payment_id || row.id || "").trim()) || null;
 }
 
 async function grantEntitlement(database, payment, sessionId, now) {
@@ -161,7 +174,7 @@ async function grantEntitlement(database, payment, sessionId, now) {
     paymentId: payment.id, entitlementId, updatedAt: now.toISOString()
   });
   const assessment = await database.get("assessments", payment.assessmentId);
-  if (isPrepaid(assessment) && assessment.status === "payment_pending") {
+  if (isPrepaidFlow(assessment) && assessment.status === "payment_pending") {
     await database.update("assessments", assessment.id, { status: "paid_ready", updatedAt: now.toISOString() });
   }
   if (assessment?.coachClientId) {
@@ -170,7 +183,7 @@ async function grantEntitlement(database, payment, sessionId, now) {
       paymentId: payment.id, amount: Number(client.commissionAmount || 4000), status: "pending", createdAt: now.toISOString() });
   }
   const paid = await database.update("payments", payment.id, { status: "paid", updatedAt: now.toISOString() });
-  return { ...paid, nextRoute: isPrepaid(assessment) ? "/assessment/questions" : "/report" };
+  return { ...paid, nextRoute: isPrepaidFlow(assessment) ? "/assessment/questions" : "/report" };
 }
 
 async function checkPayment(database, provider, sessionId, input = {}, now = new Date()) {
@@ -202,5 +215,5 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
 }
 
 module.exports = { ACTIVE, AMBIGUOUS_CREATE, SAFE_SENDER_INVOICE_MAX_LENGTH, senderInvoiceNumber, requestFingerprint,
-  providerFailureEvidence, publicPayment, createInvoice, reconcileInvoiceCreation, createReplacementInvoice,
+  providerFailureEvidence, publicPayment, validateInvoiceRequest, createInvoice, reconcileInvoiceCreation, createReplacementInvoice,
   confirmedProviderPayment, grantEntitlement, checkPayment };

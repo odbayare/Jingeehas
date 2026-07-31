@@ -22,7 +22,7 @@ const reportPreviewBodies = [
 ];
 const bannedReportPhrases = ["нэг удаа хазайх", "хазайсны дараа", "хэмнэлдээ эргэн орох", "эргэн орох арга", "гол саадтай ажиллах", "бодит аргуудыг авна", "танд тохирох орчин", "өөрчлөлтөө хялбарчлах", "төлөвлөгөө тасарвал", "хувилбарыг харна", "боломжит хувилбарыг авна", "таны journey", "зан үйлийн journey", "actionable insight", "personalized roadmap", "өөрийн хэмнэлээ дахин олох", "өөрийгөө хүчээр өөрчлөх", "бүх амьдралаа нэг дор өөрчлөх", "ойрын хугацаанд хэрэгжүүлж болох", "танд зориулсан замын зураг", "саадтайгаа ажиллах", "хэрэгжүүлэх боломжтой болгох"];
 assert.equal((landing.match(/id="sample-report"/g) || []).length, 1);
-for (const exactCopy of ["Таны авах тайлан", "Таны тайлан ямар байх вэ?", reportPreviewLead, ...reportPreviewLabels, ...reportPreviewBodies, "10 орчим минутын тест", "9,900₮", "Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш."]) assert(landing.includes(exactCopy), exactCopy);
+for (const exactCopy of ["Таны авах тайлан", "Таны тайлан ямар байх вэ?", reportPreviewLead, ...reportPreviewLabels, ...reportPreviewBodies, "Үнэгүй тест · Эхний хувийн үр дүн · Бүрэн тайлан", "9,900₮", "Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш."]) assert(landing.includes(exactCopy), exactCopy);
 for (const banned of bannedReportPhrases) {
   assert(!source.toLowerCase().includes(banned), `source: ${banned}`);
   assert(!landing.toLowerCase().includes(banned), `rendered: ${banned}`);
@@ -38,8 +38,8 @@ assert(landing.includes('<a class="button secondary" href="/methodology" data-ro
 assert(methodology.includes("Арга зүй ба судалгааны үндэслэл"));
 
 const scientificBoxTitle = "Ашигласан шинжлэх ухааны аргачлалууд";
-const scientificIntro = "Weight Test-ийн бүтэц, хэмжээс болон үр дүнгийн тайлбарыг боловсруулахдаа идэх зан үйл, сэтгэлзүйн хүчин зүйлсийг судалдаг олон улсын аргачлал, онолын хүрээг харгалзан үзсэн.";
-const scientificDisclaimer = "Weight Test нь дээрх асуумжуудын шууд орчуулга биш бөгөөд сэтгэлзүйн болон эмнэлзүйн онош тавихгүй. Эдгээр аргачлалд судлагддаг шинжлэх ухааны концепцуудыг ашиглан жин хасахад саад болж болзошгүй сэтгэлзүйн болон идэх зан үйлийн хэв маягийг танихад тусална.";
+const scientificIntro = "Энэхүү тест үнэлгээний бүтэц, хэмжээс болон үр дүнгийн тайлбарыг боловсруулахдаа идэх зан үйл, сэтгэлзүйн хүчин зүйлсийг судалдаг олон улсын аргачлал, онолын хүрээг харгалзан үзсэн.";
+const scientificDisclaimer = "Энэхүү тест үнэлгээ нь дээрх асуумжуудын шууд орчуулга биш бөгөөд сэтгэлзүйн болон эмнэлзүйн онош тавихгүй. Эдгээр аргачлалд судлагддаг ойлголтуудыг ашиглан жин хасахад саад болж болзошгүй сэтгэлзүйн болон идэх зан үйлийн хэв маягийг танихад тусална.";
 assert(landing.includes(scientificBoxTitle));
 assert(landing.includes(scientificIntro));
 assert(landing.includes(scientificDisclaimer));

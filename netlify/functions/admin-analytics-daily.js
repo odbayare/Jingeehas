@@ -16,6 +16,7 @@ exports.handler = handler("GET", async event => {
   if (days < 1 || days > 366) throw Object.assign(new Error("Date range too large"), { statusCode: 400, code: "invalid_date_range" });
   const analytics = await database.getDailyFunnelAnalytics(query.startDate, query.endDate);
   return response(200, { timeZone: "Asia/Ulaanbaatar", days: analytics.days, summary: analytics.allFlows || analytics.summary,
-    allFlows: analytics.allFlows || analytics.summary, currentFlow: analytics.currentFlow, legacyFlow: analytics.legacyFlow,
+    allFlows: analytics.allFlows || analytics.summary, currentFlow: analytics.currentFlow, prepaidFlow: analytics.prepaidFlow,
+    legacyFlow: analytics.legacyFlow,
     conversions: analytics.conversions, coverage: analytics.coverage });
 });

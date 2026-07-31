@@ -108,6 +108,77 @@ class MemoryDatabaseAdapter {
   async getDailyFunnelAnalytics(startDate, endDate) {
     const cutover = new Date("2026-07-21T16:17:45.493Z");
     const allEvents = [...this.table("analytics_events").values()];
+    if (allEvents.some(row => row.eventName === "free_assessment_started")) {
+      const day = value => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
+      const inRange = value => value && day(value) >= startDate && day(value) <= endDate;
+      const publicEvents = allEvents.filter(row => !row.isAdmin && !row.isOwnerPreview && !row.isTest);
+      const first = new Map();
+      for (const event of publicEvents.sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
+        if (event.funnelKeyHash && !first.has(`${event.eventName}:${event.funnelKeyHash}`)) first.set(`${event.eventName}:${event.funnelKeyHash}`, event);
+      }
+      const rowsFor = name => [...first.values()].filter(row => row.eventName === name && inRange(row.occurredAt));
+      const allFor = name => [...first.values()].filter(row => row.eventName === name);
+      const landings = [...new Map(publicEvents.filter(row => row.eventName === "landing_viewed" && row.visitorIdHash && inRange(row.occurredAt))
+        .map(row => [row.visitorIdHash, row])).values()];
+      const names = {
+        starts: "free_assessment_started", completes: "free_assessment_completed", results: "initial_result_viewed",
+        emails: "result_email_saved", ctas: "full_report_cta_clicked", invoices: "invoice_created",
+        payments: "payment_confirmed", reports: "full_report_opened"
+      };
+      const groups = Object.fromEntries(Object.entries(names).map(([key, name]) => [key, rowsFor(name)]));
+      const totals = { eligibleVisitors: landings.length, assessmentsStarted: groups.starts.length, assessmentsCompleted: groups.completes.length,
+        initialResultsViewed: groups.results.length, emailsSaved: groups.emails.length, fullReportCtaClicks: groups.ctas.length,
+        invoicesCreated: groups.invoices.length, paymentsConfirmed: groups.payments.length, reportsOpened: groups.reports.length,
+        revenueMnt: groups.payments.reduce((sum, row) => sum + Number(row.amountMnt || 0), 0) };
+      const conversion = (entries, converted) => ({ entryCount: entries.length, convertedCount: converted,
+        rate: entries.length ? converted / entries.length : null, status: entries.length ? "available" : "no_denominator",
+        reason: entries.length ? null : "no_denominator" });
+      const after = (entries, nextName, key = "funnelKeyHash") => entries.filter(entry => allFor(nextName)
+        .some(next => next[key] && next[key] === entry[key] && new Date(next.occurredAt) >= new Date(entry.occurredAt))).length;
+      const conversions = {
+        visitorToAssessmentStart: conversion(landings, landings.filter(landing => allFor(names.starts)
+          .some(next => next.visitorIdHash === landing.visitorIdHash && new Date(next.occurredAt) >= new Date(landing.occurredAt))).length),
+        assessmentStartToComplete: conversion(groups.starts, after(groups.starts, names.completes)),
+        completeToInitialResult: conversion(groups.completes, after(groups.completes, names.results)),
+        initialResultToEmail: conversion(groups.results, after(groups.results, names.emails)),
+        initialResultToFullReportCta: conversion(groups.results, after(groups.results, names.ctas)),
+        fullReportCtaToInvoice: conversion(groups.ctas, after(groups.ctas, names.invoices)),
+        invoiceToPayment: conversion(groups.invoices, after(groups.invoices, names.payments)),
+        paymentToFullReportOpen: conversion(groups.payments, after(groups.payments, names.reports))
+      };
+      const historical = flow => {
+        const assessments = [...this.table("assessments").values()].filter(row => row.commercialFlowVersion === flow);
+        const ids = new Set(assessments.map(row => row.id));
+        const payments = [...this.table("payments").values()].filter(row => ids.has(row.assessmentId));
+        const paidIds = new Set(payments.filter(row => row.status === "paid").map(row => row.id));
+        const entitlements = [...this.table("entitlements").values()].filter(row => row.status === "active" && paidIds.has(row.paymentId) && inRange(row.grantedAt));
+        return { assessmentsStarted: assessments.filter(row => inRange(row.startedAt || row.createdAt)).length,
+          assessmentsCompleted: assessments.filter(row => row.status === "complete" && inRange(row.completedAt)).length,
+          invoicesCreated: payments.filter(row => row.invoiceId && inRange(row.createdAt)).length,
+          paymentsConfirmed: entitlements.length,
+          revenueMnt: entitlements.reduce((sum, entitlement) => sum + Number(payments.find(row => row.id === entitlement.paymentId)?.amount || 0), 0) };
+      };
+      const output = [];
+      for (let cursor = new Date(`${startDate}T00:00:00+08:00`); cursor <= new Date(`${endDate}T00:00:00+08:00`); cursor.setUTCDate(cursor.getUTCDate() + 1)) {
+        const date = day(cursor); const onDay = rows => rows.filter(row => day(row.occurredAt) === date);
+        output.push({ date, uniqueVisitors: landings.filter(row => day(row.occurredAt) === date).length,
+          assessmentsStarted: onDay(groups.starts).length, assessmentsCompleted: onDay(groups.completes).length,
+          initialResultsViewed: onDay(groups.results).length, emailsSaved: onDay(groups.emails).length,
+          fullReportCtaClicks: onDay(groups.ctas).length, invoicesCreated: onDay(groups.invoices).length,
+          paymentsConfirmed: onDay(groups.payments).length, reportsOpened: onDay(groups.reports).length,
+          revenueMnt: onDay(groups.payments).reduce((sum, row) => sum + Number(row.amountMnt || 0), 0) });
+      }
+      const prepaidFlow = historical("prepaid_v2"); const legacyFlow = historical("legacy_postpaid_v1");
+      return { days: output, summary: totals, allFlows: { uniqueVisitors: landings.length,
+        invoicesCreated: totals.invoicesCreated + prepaidFlow.invoicesCreated + legacyFlow.invoicesCreated,
+        paymentsConfirmed: totals.paymentsConfirmed + prepaidFlow.paymentsConfirmed + legacyFlow.paymentsConfirmed,
+        revenueMnt: totals.revenueMnt + prepaidFlow.revenueMnt + legacyFlow.revenueMnt },
+        currentFlow: totals, prepaidFlow, legacyFlow, conversions,
+        coverage: { freeFlowCutoverAt: allFor(names.starts).map(row => row.occurredAt).sort()[0] || null,
+          allMeasuredVisitors: landings.length, freeActivityPresent: true,
+          prepaidActivityPresent: Object.values(prepaidFlow).some(Number), legacyActivityPresent: Object.values(legacyFlow).some(Number),
+          flowState: Object.values(prepaidFlow).some(Number) || Object.values(legacyFlow).some(Number) ? "mixed" : "free_only" } };
+    }
     const excludedAssessments = new Set(allEvents.filter(row => row.assessmentId && (row.isAdmin || row.isOwnerPreview || row.isTest)).map(row => row.assessmentId));
     for (const row of this.table("assessment_sessions").values()) if (row.source === "owner") excludedAssessments.add(row.assessmentId);
     const rows = allEvents.filter(row => !row.isAdmin && !row.isOwnerPreview && !row.isTest);

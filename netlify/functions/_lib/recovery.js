@@ -68,6 +68,27 @@ async function saveRecoveryContacts(database, sessionId, input, now = new Date()
   return { contactGroupId };
 }
 
+async function saveAssessmentRecoveryEmail(database, sessionId, assessment, input = {}, now = new Date()) {
+  const email = normalizeEmail(input.email);
+  if (!email) throw Object.assign(new Error(EMAIL_ERROR), { statusCode: 400, code: "invalid_email", publicMessage: EMAIL_ERROR });
+  const id = `rc_result_${assessment.id}`;
+  const existing = await database.get("recovery_contacts", id);
+  await database.upsert("recovery_contacts", id, {
+    contactGroupId: `rcg_result_${assessment.id}`,
+    sessionId,
+    assessmentId: assessment.id,
+    paymentId: existing?.paymentId || null,
+    entitlementId: existing?.entitlementId || null,
+    type: "email",
+    contactHash: contactHash("email", email),
+    encryptedContact: encryptContact(email),
+    verifiedAt: existing?.verifiedAt || null,
+    createdAt: existing?.createdAt || now.toISOString(),
+    updatedAt: now.toISOString()
+  });
+  return { saved: true };
+}
+
 class RecoveryDeliveryClient {
   constructor(env = process.env) {
     this.url = String(env.RECOVERY_DELIVERY_API_URL || "");
@@ -183,5 +204,5 @@ async function confirmRecovery(database, input, now = new Date()) {
 }
 
 module.exports = { PHONE_ERROR, EMAIL_ERROR, EMAIL_ONLY_ERROR, RECOVERY_SUBJECT, GENERIC_RECOVERY_MESSAGE, normalizePhone, normalizeEmail,
-  validateContacts, encryptContact, decryptContact, contactHash, saveRecoveryContacts, RecoveryDeliveryClient, getRecoveryDelivery,
+  validateContacts, encryptContact, decryptContact, contactHash, saveRecoveryContacts, saveAssessmentRecoveryEmail, RecoveryDeliveryClient, getRecoveryDelivery,
   recoveryEmail, requestRecovery, confirmRecovery };

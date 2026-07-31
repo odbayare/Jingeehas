@@ -4,7 +4,17 @@ const { randomId } = require("./crypto.js");
 const { calculateAssessmentSafety, ROUTE_COPY } = require("./safety.js");
 const { buildEvidence, buildFullReport, publicReport } = require("./report.js");
 const { resolveReportSnapshot } = require("./report-snapshots.js");
-const { LEGACY_FLOW, PREPAID_FLOW, isPrepaid, requirePaidAccess } = require("./commercial-flow.js");
+const { PRODUCT } = require("./config.js");
+const { buildInitialResult, publicInitialResult } = require("./initial-result.js");
+const {
+  LEGACY_FLOW,
+  PREPAID_FLOW,
+  FREE_POSTPAID_FLOW,
+  isFreeAssessmentPostpaid,
+  isPrepaidFlow,
+  hasPaidAccess,
+  requirePaidAccess
+} = require("./commercial-flow.js");
 const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION, questionById, visibleQuestions, autoLinkedLongestMethod, validateAnswer } = require("../../../questions.js");
 
 function assessmentQuestionnaireVersion(assessment) {
@@ -26,7 +36,7 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
     throw Object.assign(new Error("Safety check not found"), { statusCode: 400, code: "safety_check_invalid" });
   }
   if (safetyCheck && safetyCheck.result?.route !== "eligible") throw Object.assign(new Error("Commercial assessment is not suitable"), { statusCode: 409, code: "safety_route_required" });
-  const requestedFlow = input.prepaid === true ? PREPAID_FLOW : LEGACY_FLOW;
+  const requestedFlow = input.flowVersion === FREE_POSTPAID_FLOW ? FREE_POSTPAID_FLOW : input.prepaid === true ? PREPAID_FLOW : LEGACY_FLOW;
   if (!safetyCheck) {
     safetyCheck = await database.insert("safety_checks", { id: randomId("sc_"), sessionId,
       result: { route: "pending_assessment", mode: "pending", category: "assessment_safety_questions" }, createdAt: now.toISOString() });
@@ -43,9 +53,12 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
     contacts = await database.find("recovery_contacts", { sessionId, contactGroupId: input.recoveryContactGroupId });
     if (!contacts.length) throw Object.assign(new Error("Recovery contact not found"), { statusCode: 400, code: "recovery_contact_required" });
   }
-  if (requestedFlow === PREPAID_FLOW) {
-    const existing = (await database.find("assessments", { sessionId, commercialFlowVersion: PREPAID_FLOW }))
-      .filter(row => ["payment_pending", "paid_ready", "in_progress"].includes(row.status))
+  if (requestedFlow === PREPAID_FLOW || requestedFlow === FREE_POSTPAID_FLOW) {
+    const resumableStatuses = requestedFlow === PREPAID_FLOW
+      ? new Set(["payment_pending", "paid_ready", "in_progress"])
+      : new Set(["draft", "in_progress", "complete"]);
+    const existing = (await database.find("assessments", { sessionId, commercialFlowVersion: requestedFlow }))
+      .filter(row => resumableStatuses.has(row.status))
       .sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0];
     if (existing) {
       if (contacts.length) for (const contact of contacts) await database.update("recovery_contacts", contact.id, { assessmentId: existing.id });
@@ -72,19 +85,28 @@ async function createAssessment(database, sessionId, input = {}, now = new Date(
 
 async function startAssessment(database, sessionId, assessmentId, now = new Date()) {
   const assessment = await ownedAssessment(database, sessionId, assessmentId);
-  if (!isPrepaid(assessment)) return assessment;
-  await requirePaidAccess(database, assessment);
-  if (!["paid_ready", "in_progress"].includes(assessment.status)) throw Object.assign(new Error("Assessment is not ready"), { statusCode: 409, code: "assessment_not_ready" });
-  if (assessment.startedAt) return assessment;
-  return database.update("assessments", assessment.id, { status: "in_progress", startedAt: now.toISOString(), updatedAt: now.toISOString() });
+  if (isPrepaidFlow(assessment)) {
+    await requirePaidAccess(database, assessment);
+    if (!["paid_ready", "in_progress"].includes(assessment.status)) throw Object.assign(new Error("Assessment is not ready"), { statusCode: 409, code: "assessment_not_ready" });
+  } else if (isFreeAssessmentPostpaid(assessment)) {
+    if (!["draft", "in_progress"].includes(assessment.status)) throw Object.assign(new Error("Assessment is not ready"), { statusCode: 409, code: "assessment_not_ready" });
+  } else return assessment;
+  if (assessment.startedAt && assessment.status === "in_progress") return assessment;
+  return database.update("assessments", assessment.id, {
+    status: "in_progress",
+    startedAt: assessment.startedAt || now.toISOString(),
+    updatedAt: now.toISOString()
+  });
 }
 
 async function saveAssessment(database, sessionId, input = {}, now = new Date()) {
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
   const questionnaireVersion = assessmentQuestionnaireVersion(assessment);
-  if (isPrepaid(assessment)) {
+  if (isPrepaidFlow(assessment)) {
     await requirePaidAccess(database, assessment);
     if (!["paid_ready", "in_progress"].includes(assessment.status)) throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
+  } else if (isFreeAssessmentPostpaid(assessment)) {
+    if (!["draft", "in_progress"].includes(assessment.status)) throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
   } else if (assessment.status !== "draft") throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
   const answers = input.answers && typeof input.answers === "object" ? input.answers : {};
   const existingRows = await database.find("assessment_answers", { assessmentId: assessment.id });
@@ -116,9 +138,10 @@ async function saveAssessment(database, sessionId, input = {}, now = new Date())
       sourceQuestionIds: Array.isArray(normalized.sourceQuestionIds) ? normalized.sourceQuestionIds.slice(0, 10) : [], confirmedAt: now.toISOString()
     } });
   }
-  const firstStart = isPrepaid(assessment) && !assessment.startedAt;
+  const startsOnSave = isPrepaidFlow(assessment) || isFreeAssessmentPostpaid(assessment);
+  const firstStart = startsOnSave && !assessment.startedAt;
   operations.push({ action: "update", table: "assessments", id: assessment.id, patch: {
-    ...(isPrepaid(assessment) ? { status: "in_progress" } : {}), ...(firstStart ? { startedAt: now.toISOString() } : {}), updatedAt: now.toISOString()
+    ...(startsOnSave ? { status: "in_progress" } : {}), ...(firstStart ? { startedAt: now.toISOString() } : {}), updatedAt: now.toISOString()
   } });
   const transaction = await database.transaction(operations);
   return transaction.results[transaction.results.length - 1];
@@ -128,7 +151,10 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
   const assessment = await ownedAssessment(database, sessionId, input.assessmentId);
   const questionnaireVersion = assessmentQuestionnaireVersion(assessment);
   if (assessment.status === "complete") return assessment;
-  if (isPrepaid(assessment)) await requirePaidAccess(database, assessment);
+  if (isPrepaidFlow(assessment)) await requirePaidAccess(database, assessment);
+  if (isFreeAssessmentPostpaid(assessment) && !["draft", "in_progress"].includes(assessment.status)) {
+    throw Object.assign(new Error("Assessment is not ready"), { statusCode: 409, code: "assessment_not_ready" });
+  }
   const answers = await database.find("assessment_answers", { assessmentId: assessment.id });
   const answerMap = Object.fromEntries(answers.map(row => [row.questionId, row.value]));
   const safety = calculateAssessmentSafety(answerMap);
@@ -162,13 +188,16 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
   const evidence = buildEvidence(evidenceRows, summaries, { questionnaireVersion, linkedLongestMethod });
   const fullReport = buildFullReport(evidence, now, { questionnaireVersion });
   const reportMode = fullReport.mode;
+  const initialView = isFreeAssessmentPostpaid(assessment)
+    ? buildInitialResult(fullReport)
+    : { mode: reportMode, evidenceCount: fullReport.internalEvidenceMap.informativeQuestionCount };
   const operations = [
     { action: "update", table: "assessments", id: assessment.id, patch: {
       status: "complete", reportMode, safetyRoute: null, completedAt: now.toISOString(), updatedAt: now.toISOString()
     } },
     { action: "upsert", table: "report_snapshots", id: assessment.id, row: {
       assessmentId: assessment.id, sessionId, reportMode, safetyRoute: null,
-      initialView: { mode: reportMode, evidenceCount: fullReport.internalEvidenceMap.informativeQuestionCount }, fullReport,
+      initialView, fullReport,
       createdAt: now.toISOString()
     } }
   ];
@@ -179,14 +208,36 @@ async function completeAssessment(database, sessionId, input = {}, now = new Dat
 
 async function reportForSession(database, sessionId, assessmentId) {
   const assessment = await ownedAssessment(database, sessionId, assessmentId);
-  if (isPrepaid(assessment)) await requirePaidAccess(database, assessment);
+  if (isPrepaidFlow(assessment)) await requirePaidAccess(database, assessment);
   const snapshot = await resolveReportSnapshot(database, assessmentId);
   if (!snapshot) throw Object.assign(new Error("Report not found"), { statusCode: 404, code: "report_not_found" });
-  const entitlements = await database.find("entitlements", { assessmentId, status: "active" });
+  const paid = await hasPaidAccess(database, assessment);
   return { assessmentId, reportMode: snapshot.reportMode, safetyRoute: snapshot.safetyRoute,
-    initialView: snapshot.initialView, fullReport: (entitlements.length || isPrepaid(assessment)) ? publicReport(snapshot.fullReport) : null,
-    entitled: entitlements.length > 0 || isPrepaid(assessment), commercialFlowVersion: assessment.commercialFlowVersion || LEGACY_FLOW,
+    initialView: snapshot.initialView, fullReport: paid ? publicReport(snapshot.fullReport) : null,
+    entitled: paid, commercialFlowVersion: assessment.commercialFlowVersion || LEGACY_FLOW,
     reportVersion: snapshot.snapshotMetadata };
 }
 
-module.exports = { assessmentQuestionnaireVersion, ownedAssessment, createAssessment, startAssessment, saveAssessment, completeAssessment, reportForSession };
+async function initialResultForSession(database, sessionId, assessmentId) {
+  const assessment = await ownedAssessment(database, sessionId, assessmentId);
+  if (!isFreeAssessmentPostpaid(assessment) || assessment.status !== "complete" || assessment.safetyRoute) {
+    throw Object.assign(new Error("Initial result not found"), { statusCode: 404, code: "initial_result_not_found" });
+  }
+  const snapshot = await resolveReportSnapshot(database, assessmentId);
+  const initialResult = publicInitialResult(snapshot?.initialView);
+  if (!snapshot || !initialResult) {
+    throw Object.assign(new Error("Initial result not found"), { statusCode: 404, code: "initial_result_not_found" });
+  }
+  return { ...initialResult, price: PRODUCT.amount, currency: "MNT" };
+}
+
+module.exports = {
+  assessmentQuestionnaireVersion,
+  ownedAssessment,
+  createAssessment,
+  startAssessment,
+  saveAssessment,
+  completeAssessment,
+  reportForSession,
+  initialResultForSession
+};
