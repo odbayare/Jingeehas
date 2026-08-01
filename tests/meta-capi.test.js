@@ -42,6 +42,7 @@ class MemoryDb {
     id: "wp_safe_order_1",
     status: "paid",
     providerPaymentId: "provider-payment-1",
+    paidAt: "2026-08-01T02:59:30.000Z",
     amount: 9900,
     productCode: "WEIGHT_TEST_ONE_TIME",
     weight: 94,
@@ -57,12 +58,15 @@ class MemoryDb {
     headers: {
       "x-nf-client-connection-ip": "203.0.113.5",
       "user-agent": "Test Browser",
-      cookie: "_fbp=fb.1.123.abc; _fbc=fb.1.123.xyz"
+      cookie: "_fbp=fb.1.123.abc; _fbc=fb.1.123.xyz",
+      referer: "https://jingeehas.fit/assessment/payment?assessmentId=never-send"
     }
   };
   const payload = purchasePayload(payment, event, new Date("2026-08-01T03:00:00.000Z"));
   assert.equal(payload.event_name, "Purchase");
   assert.equal(payload.event_id, eventId);
+  assert.equal(payload.event_time, Math.floor(Date.parse(payment.paidAt) / 1000));
+  assert.equal(payload.event_source_url, "https://jingeehas.fit/assessment/payment");
   assert.deepEqual(payload.custom_data, {
     value: 9900,
     currency: "MNT",
@@ -78,7 +82,7 @@ class MemoryDb {
     fbc: "fb.1.123.xyz"
   });
   const serialized = JSON.stringify(payload);
-  for (const forbidden of ["private@example.com", "sensitive", "\"weight\"", "\"bmi\"", "\"result\""]) {
+  for (const forbidden of ["private@example.com", "sensitive", "never-send", "\"weight\"", "\"bmi\"", "\"result\""]) {
     assert.ok(!serialized.includes(forbidden), `Meta payload must exclude ${forbidden}`);
   }
 
@@ -105,6 +109,7 @@ class MemoryDb {
   assert.ok(!calls[0].url.includes("secret-token"), "access token must not be placed in the URL");
   const sent = JSON.parse(calls[0].init.body);
   assert.equal(sent.data[0].event_id, eventId);
+  assert.equal(sent.data[0].event_time, Math.floor(Date.parse(payment.paidAt) / 1000));
   assert.equal(db.row.metaPurchaseEventId, eventId);
   assert.equal(db.row.metaPurchaseSentAt, "2026-08-01T03:00:00.000Z");
   assert.equal(db.row.metaPurchaseApiVersion, "v25.0");
