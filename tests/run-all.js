@@ -24,6 +24,7 @@ const tests = [
   "tests/admin-bootstrap.test.js",
   "tests/daily-funnel-analytics.test.js",
   "tests/question-progress-analytics.test.js",
+  "tests/meta-capi.test.js",
   "tests/contracts/owner-preview.contract.test.js",
   "tests/contracts/assessment.contract.test.js",
   "tests/contracts/free-initial-result-funnel.contract.test.js",
