@@ -9,6 +9,14 @@ on:
       - "tests/**"
       - "tools/apply-landing-personal-attribute-policy.mjs"
       - ".github/workflows/temporary-landing-personal-attribute-policy.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "app.js"
+      - "tests/**"
+      - "tools/apply-landing-personal-attribute-policy.mjs"
+      - ".github/workflows/temporary-landing-personal-attribute-policy.yml"
 
 permissions:
   contents: write
@@ -19,6 +27,7 @@ concurrency:
 
 jobs:
   apply-validate-commit:
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
