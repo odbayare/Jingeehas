@@ -57,6 +57,10 @@
       "sha256": "d486c9507102ce77f84b319899598d624fb00795128044f7c00fdaaae553f265"
     },
     {
+      "file": "netlify/functions/_lib/meta-capi.js",
+      "sha256": "433700c000303da31ff01176a3db124dbef3c64c34eaa8a3b842a1c71c48f5e3"
+    },
+    {
       "file": "netlify/functions/_lib/payment.js",
       "sha256": "b0ee5981ab1d9af2002ec6a390f6a014b8f991501528ee8891c3ce54e278ddda"
     },
@@ -209,8 +213,12 @@
       "sha256": "b4e919211cf0c8936c6f5370e1bb8be5af786bced7d3d94731a2b3147d281092"
     },
     {
+      "file": "netlify/functions/meta-browser-config.js",
+      "sha256": "69543abc9e8ac4665d1f4c01f034623933ad1f15d57075be3e132351dc8a6543"
+    },
+    {
       "file": "netlify/functions/qpay-check-payment.js",
-      "sha256": "9bb75aaede6d53a554fbc5b42187f59bdd7770bee830030c39998564f4675f80"
+      "sha256": "6b305f3814e21ce6047ddacfba1f4094301fe84a40df025b5e04a7e11534f471"
     },
     {
       "file": "netlify/functions/qpay-create-invoice.js",
@@ -290,7 +298,7 @@
     },
     {
       "file": "site/_headers",
-      "sha256": "c174d1500c48b608a6f77817dda418514825c27297abfbdfc487415d98a22950"
+      "sha256": "372149e8834d8b5ea69e6dda56e12492c3a794cae27f6d8b932ecc2967df77be"
     },
     {
       "file": "site/_redirects",
@@ -318,7 +326,11 @@
     },
     {
       "file": "site/index.html",
-      "sha256": "1b2e1bbfe06b90b3cdb51bd066cda8e2d1ff354afa41031f9b12395da21971e5"
+      "sha256": "5b4cc3dc31b4634668aa06ae7fcb5894cebc755f4dd959caad00d2463d929712"
+    },
+    {
+      "file": "site/meta-pixel.js",
+      "sha256": "6f2332b32fc0dd5eb6f5665dac328c5ff2e0faec2b08fa12144bb03455ed26f7"
     },
     {
       "file": "site/questions.js",
@@ -352,6 +364,7 @@
     "advisor-password-change",
     "advisor-report",
     "analytics-collect",
+    "meta-browser-config",
     "qpay-check-payment",
     "qpay-create-invoice",
     "weight-assessment-complete",
