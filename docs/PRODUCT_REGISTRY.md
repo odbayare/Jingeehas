@@ -14,14 +14,33 @@ Timezone: Asia/Ulaanbaatar
 | Price | 9,900 MNT, one-time | PASS |
 | Commercial flow | Free assessment → initial result → optional 9,900 MNT full report | PASS |
 | Source of truth | Provider-confirmed QPay payment | PASS |
+| Production source | `d239c99239404306a06074ebfbacd615b7b70914` | PASS |
+| Production deploy | Netlify `6a6dbae714b3bb6785cdcdcf` | PASS |
+| Landing policy | Neutral/non-diagnostic production copy | PASS |
+| Meta tracking foundation | Pixel/CAPI code deployed, disabled by default | PASS FOUNDATION / DELIVERY BLOCKED |
 | Primary Meta objective | Sales | APPROVED |
 | Optimization event | Purchase | BLOCKED until Test Events PASS |
-| Target authoritative CPA | ≤ USD 1.00 | APPROVED target, not guaranteed |
+| Target authoritative CPA | ≤ USD 1.00 | APPROVED operating target, not guaranteed |
 | Initial daily budget | USD 3.00 | APPROVED |
 | Execution mode | APPROVED_EXECUTION, tracking-first | ACTIVE spend still BLOCKED |
 | Product daily cap | USD 3.00 | APPROVED |
-| Product monthly cap | UNKNOWN | BLOCKED |
+| August 2026 product monthly ceiling | USD 93.00 | APPROVED DERIVED CEILING |
+| Portfolio cap / remaining capacity | UNKNOWN | BLOCKED |
 | Net revenue assumptions | Fees, tax, refunds and variable cost UNKNOWN | WARNING |
+
+## Production tracking state
+
+```json
+{
+  "enabled": false,
+  "pixelId": "",
+  "productCode": "WEIGHT_TEST_ONE_TIME",
+  "amount": 9900,
+  "currency": "MNT"
+}
+```
+
+The disabled state is intentional until a dedicated Jingeehas dataset/pixel, read credential, domain state, Test Events and browser/server Purchase deduplication are verified.
 
 ## Prohibited marketing data
 
