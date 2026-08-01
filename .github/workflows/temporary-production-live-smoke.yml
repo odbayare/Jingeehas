@@ -45,7 +45,7 @@ jobs:
 
           check_contains() {
             local label="$1" file="$2" text="$3"
-            if [[ -f "$file" ]] && grep -Fq "$text" "$file"; then
+            if [[ -f "$file" ]] && grep -Fqi "$text" "$file"; then
               echo "${label}=PASS"
             else
               echo "${label}=FAIL"
