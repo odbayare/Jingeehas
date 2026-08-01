@@ -51,13 +51,13 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
   test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ" })).toBeVisible();
     const questions = page.locator(".hero-question");
     await expect(questions).toHaveCount(3);
     const highlight = page.locator(".hero-highlight");
     const lead = page.locator(".hero-lead");
-    await expect(highlight).toContainText("Жин хасахад зөвхөн хоол, дасгал биш — таны сэтгэлзүйн хэв маяг, далд зуршил хүчтэй нөлөөлдөг.");
-    await expect(lead).toHaveText("Өөрт тань саад болж буй сэтгэлзүйн шалтгааныг эхлээд ойлгож чадвал жин хасах арга барилаа илүү бодитой, өөртөө тохирсон, тогтвортой сонгоход хялбар болно.");
+    await expect(highlight).toContainText("Жин хасах оролдлогод хоол, хөдөлгөөнөөс гадна сэтгэлзүйн хэв маяг, өдөр тутмын зуршил болон орчин нөлөөлж болно.");
+    await expect(lead).toHaveText("Энэхүү үнэлгээ нь давтагддаг хэв маяг, өдөр тутмын нөхцөл болон орчны нөлөөг эргэцүүлж, өөрт тохирсон тогтвортой арга барилаа сонгоход тусална.");
     const highlightStyles = await highlight.locator("p").evaluate(element => {
       const styles = getComputedStyle(element);
       return { color: styles.color, fontSize: parseFloat(styles.fontSize), fontWeight: Number(styles.fontWeight), lineHeight: parseFloat(styles.lineHeight) / parseFloat(styles.fontSize) };

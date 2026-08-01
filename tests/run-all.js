@@ -26,6 +26,7 @@ const tests = [
   "tests/question-progress-analytics.test.js",
   "tests/meta-capi.test.js",
   "tests/meta-paused-draft-builder.test.mjs",
+  "tests/landing-personal-attribute-policy.test.js",
   "tests/contracts/owner-preview.contract.test.js",
   "tests/contracts/assessment.contract.test.js",
   "tests/contracts/free-initial-result-funnel.contract.test.js",
