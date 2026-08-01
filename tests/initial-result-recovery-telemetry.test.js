@@ -24,7 +24,9 @@ assert.equal(
 
 assert(collectSource.includes('["paywall_viewed", "report_opened", "initial_result_load_failed"]'));
 assert(migrationSource.includes("'initial_result_load_failed'::text"));
-assert(!migrationSource.match(/raw[_ -]?(answer|result)|email|phone|bmi|body_weight/i));
+assert(migrationSource.includes("The load-failure event carries no custom metadata."));
+assert(!migrationSource.includes("initial_result_load_failed jsonb"));
+assert(!migrationSource.includes("initial_result_load_failed metadata"));
 
 assert(appSource.includes('initialResultError: ""'));
 assert(appSource.includes('trackEvent("initial_result_load_failed"'));
