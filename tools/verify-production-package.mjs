@@ -20,7 +20,10 @@ if (headers.includes("unsafe-inline")) failures.push("CSP allows inline executio
 const app = fs.readFileSync(path.join(root, "dist", "app.js"), "utf8");
 for (const invariant of ["WEIGHT_TEST_COMING_SOON_MODE = false", "WEIGHT_TEST_ONE_TIME", "amount: 9900", "displayPrice: \"9,900₮\""]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
 const allowedHosts = new Set(["jingeehas.fit", "merchant.qpay.mn", "www.w3.org", "connect.facebook.net", "www.facebook.com"]);
-for (const match of publicText.matchAll(/https?:\/\/([^/\s"')]+)/g)) if (!allowedHosts.has(match[1].toLowerCase())) failures.push(`unapproved public domain: ${match[1]}`);
+for (const match of publicText.matchAll(/https?:\/\/([^/\s"')]+)/g)) {
+  const host = match[1].toLowerCase().replace(/[;,]+$/, "");
+  if (!allowedHosts.has(host)) failures.push(`unapproved public domain: ${host}`);
+}
 const forbiddenName = String(process.env.CROSS_PROJECT_FORBIDDEN_TOKEN || "").trim();
 if (forbiddenName && publicText.toLowerCase().includes(forbiddenName.toLowerCase())) failures.push("cross-project name found in production package");
 if (distFiles.some(file => /(?:test|fixture|mock)/i.test(path.relative(path.join(root, "dist"), file)))) failures.push("test-only artifact included in production package");
