@@ -1,0 +1,377 @@
+name: Temporary guarded Jingeehas production deploy
+
+on:
+  push:
+    branches:
+      - agent/netlify-production-deploy-d239-v1
+    paths:
+      - ".github/workflows/temporary-netlify-production-deploy.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: jingeehas-production-deploy-d239
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      SOURCE_SHA: d239c99239404306a06074ebfbacd615b7b70914
+      SITE_ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
+      SITE_NAME: weight-loss-deep-pattern-9900
+      PRODUCTION_DOMAIN: jingeehas.fit
+      EXPECTED_PREVIOUS_DEPLOY_ID: 6a6ca18974be9bd0004fbbb1
+      NETLIFY_TOKEN_PRIMARY: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_TOKEN_FALLBACK: ${{ secrets.NETLIFY_TOKEN }}
+    steps:
+      - name: Checkout deployment control branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/netlify-production-deploy-d239-v1
+          path: control
+          fetch-depth: 0
+
+      - name: Checkout exact approved production source
+        uses: actions/checkout@v4
+        with:
+          ref: d239c99239404306a06074ebfbacd615b7b70914
+          path: source
+          fetch-depth: 1
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+
+      - name: Install dependencies and browser
+        working-directory: source
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - id: validate
+        name: Validate exact production source
+        continue-on-error: true
+        working-directory: source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          node --check app.js
+          npm test
+          npm run test:e2e
+          npm run test:contracts
+          npm run verify:database-config
+          npm run verify:database-gateway-auth
+          npm run verify:recovery-config
+          npm run verify:qpay-config
+          npm run verify:domain-config
+          npm run build:production
+          npm run generate:artifacts
+          npm run verify:production-package
+          npm run build:staging
+          npm run verify:staging-package
+          git diff --exit-code
+          test -z "$(git status --porcelain)"
+
+      - id: transaction
+        name: Deploy, verify, and rollback on failure
+        if: steps.validate.outcome == 'success'
+        continue-on-error: true
+        shell: bash
+        run: |
+          cat > /tmp/netlify-production-transaction.mjs <<'NODE'
+          import fs from 'node:fs';
+          import crypto from 'node:crypto';
+          import { spawnSync } from 'node:child_process';
+          import path from 'node:path';
+
+          const sourceDir = path.resolve('source');
+          const reportPath = '/tmp/NETLIFY_PRODUCTION_DEPLOY_20260801.json';
+          const token = String(process.env.NETLIFY_TOKEN_PRIMARY || process.env.NETLIFY_TOKEN_FALLBACK || '').trim();
+          const siteId = process.env.SITE_ID;
+          const expectedSiteName = process.env.SITE_NAME;
+          const domain = process.env.PRODUCTION_DOMAIN;
+          const sourceSha = process.env.SOURCE_SHA;
+          const expectedPreviousDeployId = process.env.EXPECTED_PREVIOUS_DEPLOY_ID;
+          if (token) console.log(`::add-mask::${token}`);
+
+          const report = {
+            schemaVersion: 1,
+            operation: 'guarded_netlify_production_deploy',
+            checkedAt: new Date().toISOString(),
+            sourceSha,
+            expectedSite: { id: siteId, name: expectedSiteName, domain },
+            validationOutcome: 'PASS',
+            credentialPresent: Boolean(token),
+            credentialAuthorized: false,
+            preflight: null,
+            netlifyCliVersion: null,
+            previousDeploy: null,
+            newDeploy: null,
+            liveChecks: {},
+            rollback: { required: false, attempted: false, status: 'not_required', restoredDeployId: null },
+            status: 'FAIL',
+            productionMutationPerformed: false,
+            metaMutationCount: 0,
+            adSpendMutationUsd: 0,
+            tokenExposed: false,
+            errorCode: null,
+            errorSummary: null,
+          };
+
+          const authHeaders = () => ({ authorization: `Bearer ${token}`, 'content-type': 'application/json' });
+          const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+          const safeDeploy = item => item ? ({
+            id: item.id || null,
+            state: item.state || null,
+            context: item.context || null,
+            branch: item.branch || null,
+            title: item.title || null,
+            createdAt: item.created_at || null,
+            publishedAt: item.published_at || null,
+            deployUrl: item.deploy_ssl_url || item.ssl_url || item.deploy_url || null,
+          }) : null;
+          const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+          const redact = value => String(value || '').replaceAll(token, '[REDACTED]').slice(-3000);
+          function parseJsonLoose(text) {
+            const raw = String(text || '').trim();
+            try { return JSON.parse(raw); } catch {}
+            const starts = [...raw.matchAll(/\{/g)].map(match => match.index).reverse();
+            for (const start of starts) {
+              try { return JSON.parse(raw.slice(start)); } catch {}
+            }
+            return null;
+          }
+          async function api(pathname, options = {}) {
+            const response = await fetch(`https://api.netlify.com/api/v1${pathname}`, {
+              ...options,
+              headers: { ...authHeaders(), ...(options.headers || {}) },
+              signal: AbortSignal.timeout(45000),
+            });
+            const text = await response.text();
+            const json = parseJsonLoose(text);
+            if (!response.ok) {
+              const error = new Error(`NETLIFY_API_${response.status}`);
+              error.status = response.status;
+              error.body = redact(text);
+              throw error;
+            }
+            return json;
+          }
+          async function liveFetch(pathname) {
+            const separator = pathname.includes('?') ? '&' : '?';
+            const response = await fetch(`https://${domain}${pathname}${separator}verify=${Date.now()}`, {
+              redirect: 'follow',
+              headers: { 'cache-control': 'no-cache', pragma: 'no-cache' },
+              signal: AbortSignal.timeout(45000),
+            });
+            const bytes = Buffer.from(await response.arrayBuffer());
+            return { status: response.status, headers: Object.fromEntries(response.headers.entries()), bytes, text: bytes.toString('utf8') };
+          }
+          async function waitDeployReady(deployId) {
+            let last = null;
+            for (let attempt = 0; attempt < 30; attempt += 1) {
+              last = await api(`/deploys/${deployId}`);
+              if (last?.state === 'ready') return last;
+              if (['error', 'failed'].includes(String(last?.state || '').toLowerCase())) return last;
+              await sleep(5000);
+            }
+            return last;
+          }
+          async function waitPublished(deployId) {
+            let last = null;
+            for (let attempt = 0; attempt < 24; attempt += 1) {
+              last = await api(`/sites/${siteId}`);
+              if (last?.published_deploy?.id === deployId) return last;
+              await sleep(5000);
+            }
+            return last;
+          }
+          function writeReport() {
+            report.completedAt = new Date().toISOString();
+            fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`, { mode: 0o600 });
+          }
+
+          try {
+            if (!token) throw Object.assign(new Error('NETLIFY_CREDENTIAL_MISSING'), { code: 'NETLIFY_CREDENTIAL_MISSING' });
+            const site = await api(`/sites/${siteId}`);
+            report.credentialAuthorized = true;
+            const previous = site?.published_deploy || null;
+            report.previousDeploy = safeDeploy(previous);
+            report.preflight = {
+              siteIdMatch: site?.id === siteId,
+              siteNameMatch: site?.name === expectedSiteName,
+              domainMatch: [site?.custom_domain, site?.url, site?.ssl_url].filter(Boolean).some(value => String(value).includes(domain)),
+              expectedPreviousDeployMatch: previous?.id === expectedPreviousDeployId,
+            };
+            if (!report.preflight.siteIdMatch || !report.preflight.siteNameMatch || !report.preflight.domainMatch) {
+              throw Object.assign(new Error('NETLIFY_SITE_PREFLIGHT_MISMATCH'), { code: 'NETLIFY_SITE_PREFLIGHT_MISMATCH' });
+            }
+            if (!report.preflight.expectedPreviousDeployMatch) {
+              throw Object.assign(new Error('NETLIFY_PREVIOUS_DEPLOY_MOVED'), { code: 'NETLIFY_PREVIOUS_DEPLOY_MOVED' });
+            }
+
+            const version = spawnSync('npx', ['--yes', 'netlify-cli@latest', '--version'], {
+              cwd: sourceDir, encoding: 'utf8', env: { ...process.env, NETLIFY_AUTH_TOKEN: token }, maxBuffer: 1024 * 1024,
+            });
+            report.netlifyCliVersion = String(version.stdout || version.stderr || '').trim().split(/\r?\n/).at(-1) || null;
+            if (version.status !== 0) throw Object.assign(new Error('NETLIFY_CLI_UNAVAILABLE'), { code: 'NETLIFY_CLI_UNAVAILABLE', summary: redact(version.stderr) });
+
+            const deployment = spawnSync('npx', [
+              '--yes', 'netlify-cli@latest', 'deploy', '--prod', '--no-build',
+              '--dir=dist', '--functions=netlify/functions', `--site=${siteId}`,
+              `--message=Production ${sourceSha} Jingeehas tracking and landing policy`, '--json',
+            ], {
+              cwd: sourceDir,
+              encoding: 'utf8',
+              env: { ...process.env, NETLIFY_AUTH_TOKEN: token },
+              maxBuffer: 20 * 1024 * 1024,
+            });
+            if (deployment.status !== 0) {
+              throw Object.assign(new Error('NETLIFY_DEPLOY_COMMAND_FAILED'), { code: 'NETLIFY_DEPLOY_COMMAND_FAILED', summary: redact(deployment.stderr || deployment.stdout) });
+            }
+            const deploymentJson = parseJsonLoose(deployment.stdout);
+            const deployId = deploymentJson?.deploy_id || deploymentJson?.deployId || deploymentJson?.id;
+            if (!deployId) throw Object.assign(new Error('NETLIFY_DEPLOY_ID_MISSING'), { code: 'NETLIFY_DEPLOY_ID_MISSING', summary: redact(deployment.stdout) });
+            report.productionMutationPerformed = true;
+            report.rollback.required = true;
+
+            const readyDeploy = await waitDeployReady(deployId);
+            report.newDeploy = safeDeploy(readyDeploy || { id: deployId });
+            if (readyDeploy?.state !== 'ready') throw Object.assign(new Error('NETLIFY_DEPLOY_NOT_READY'), { code: 'NETLIFY_DEPLOY_NOT_READY' });
+            const publishedSite = await waitPublished(deployId);
+            const publishedId = publishedSite?.published_deploy?.id || null;
+
+            const [home, app, pixel, config] = await Promise.all([
+              liveFetch('/'), liveFetch('/app.js'), liveFetch('/meta-pixel.js'), liveFetch('/.netlify/functions/meta-browser-config'),
+            ]);
+            const localApp = fs.readFileSync(path.join(sourceDir, 'dist', 'app.js'));
+            const localPixel = fs.readFileSync(path.join(sourceDir, 'dist', 'meta-pixel.js'));
+            let configJson = null;
+            try { configJson = JSON.parse(config.text); } catch {}
+            const csp = String(home.headers['content-security-policy'] || '').toLowerCase();
+            const hsts = String(home.headers['strict-transport-security'] || '').toLowerCase();
+            const frame = String(home.headers['x-frame-options'] || '').toLowerCase();
+            const checks = {
+              homeHttp200: home.status === 200,
+              appHttp200: app.status === 200,
+              pixelHttp200: pixel.status === 200,
+              configHttp200: config.status === 200,
+              appHashMatches: sha256(app.bytes) === sha256(localApp),
+              pixelHashMatches: sha256(pixel.bytes) === sha256(localPixel),
+              newHeadlinePresent: app.text.includes('Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ'),
+              newDisclaimerPresent: app.text.includes('Эмнэлгийн болон сэтгэлзүйн онош тавихгүй. Хариултад тулгуурласан өөрийгөө ойлгох үнэлгээ.'),
+              oldHeadlineAbsent: !app.text.includes('Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?'),
+              oldAttributeAbsent: !app.text.includes('Илүүдэл жин тань таны санааг байнга зовоодог уу?'),
+              pixelBootstrapPresent: pixel.text.includes('meta-browser-config'),
+              browserConfigDisabled: configJson?.enabled === false,
+              browserConfigPixelEmpty: configJson?.pixelId === '',
+              browserConfigProductExact: configJson?.productCode === 'WEIGHT_TEST_ONE_TIME',
+              browserConfigAmountExact: configJson?.amount === 9900,
+              browserConfigCurrencyExact: configJson?.currency === 'MNT',
+              cspMetaScript: csp.includes("script-src 'self' https://connect.facebook.net"),
+              cspMetaImage: csp.includes("img-src 'self' data: https://www.facebook.com"),
+              cspMetaConnect: csp.includes("connect-src 'self' https://www.facebook.com"),
+              hstsPresent: hsts.includes('max-age=31536000') && hsts.includes('includesubdomains'),
+              frameDenied: frame === 'deny',
+              publishedDeployExact: publishedId === deployId,
+            };
+            report.liveChecks = checks;
+            report.liveEvidence = {
+              appSha256: sha256(app.bytes),
+              expectedAppSha256: sha256(localApp),
+              pixelSha256: sha256(pixel.bytes),
+              expectedPixelSha256: sha256(localPixel),
+              browserConfig: configJson && typeof configJson === 'object' ? configJson : null,
+              publishedDeployId: publishedId,
+            };
+            const failed = Object.entries(checks).filter(([, value]) => value !== true).map(([key]) => key);
+            if (failed.length) {
+              const error = new Error(`LIVE_SMOKE_FAILED:${failed.join(',')}`);
+              error.code = 'LIVE_SMOKE_FAILED';
+              throw error;
+            }
+
+            report.rollback.required = false;
+            report.status = 'PASS';
+            writeReport();
+          } catch (error) {
+            report.errorCode = error?.code || error?.message || 'UNKNOWN';
+            report.errorSummary = redact(error?.summary || error?.body || error?.message || error);
+            if (report.productionMutationPerformed && report.previousDeploy?.id) {
+              report.rollback.attempted = true;
+              try {
+                const restored = await api(`/sites/${siteId}/deploys/${report.previousDeploy.id}/restore`, { method: 'POST', body: '{}' });
+                const restoredId = restored?.id || report.previousDeploy.id;
+                const restoredSite = await waitPublished(restoredId);
+                report.rollback.restoredDeployId = restoredSite?.published_deploy?.id || restoredId;
+                report.rollback.status = report.rollback.restoredDeployId === restoredId ? 'completed' : 'verification_failed';
+                report.status = report.rollback.status === 'completed' ? 'ROLLED_BACK' : 'ROLLBACK_FAILED';
+              } catch (rollbackError) {
+                report.rollback.status = 'failed';
+                report.status = 'ROLLBACK_FAILED';
+                report.rollback.errorSummary = redact(rollbackError?.body || rollbackError?.message || rollbackError);
+              }
+            }
+            writeReport();
+          }
+
+          console.log(JSON.stringify({ status: report.status, sourceSha, previousDeployId: report.previousDeploy?.id || null, newDeployId: report.newDeploy?.id || null, rollback: report.rollback.status, errorCode: report.errorCode }));
+          process.exitCode = report.status === 'PASS' ? 0 : 1;
+          NODE
+          node /tmp/netlify-production-transaction.mjs
+
+      - name: Materialize deployment report when validation failed
+        if: steps.validate.outcome != 'success'
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const report = {
+            schemaVersion: 1,
+            operation: 'guarded_netlify_production_deploy',
+            checkedAt: new Date().toISOString(),
+            completedAt: new Date().toISOString(),
+            sourceSha: process.env.SOURCE_SHA,
+            expectedSite: { id: process.env.SITE_ID, name: process.env.SITE_NAME, domain: process.env.PRODUCTION_DOMAIN },
+            validationOutcome: 'FAIL',
+            status: 'BLOCKED_VALIDATION',
+            productionMutationPerformed: false,
+            metaMutationCount: 0,
+            adSpendMutationUsd: 0,
+            tokenExposed: false,
+            rollback: { required: false, attempted: false, status: 'not_required', restoredDeployId: null },
+          };
+          fs.writeFileSync('/tmp/NETLIFY_PRODUCTION_DEPLOY_20260801.json', `${JSON.stringify(report, null, 2)}\n`, { mode: 0o600 });
+          NODE
+
+      - name: Commit sanitized deployment evidence
+        if: always()
+        working-directory: control
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p docs
+          cp /tmp/NETLIFY_PRODUCTION_DEPLOY_20260801.json docs/NETLIFY_PRODUCTION_DEPLOY_20260801.json
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/NETLIFY_PRODUCTION_DEPLOY_20260801.json
+          git commit -m "Record guarded Netlify production deployment" || true
+          git push origin HEAD:agent/netlify-production-deploy-d239-v1
+
+      - name: Enforce successful production certification
+        if: always()
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const report = JSON.parse(fs.readFileSync('/tmp/NETLIFY_PRODUCTION_DEPLOY_20260801.json', 'utf8'));
+          if (report.status !== 'PASS') throw new Error(`PRODUCTION_DEPLOY_NOT_CERTIFIED:${report.status}`);
+          console.log(JSON.stringify({ status: report.status, sourceSha: report.sourceSha, deployId: report.newDeploy?.id, rollback: report.rollback?.status }));
+          NODE
