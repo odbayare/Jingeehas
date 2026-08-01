@@ -1,44 +1,88 @@
 # Jingeehas Meta Production Certification
 
 Updated: 2026-08-01
-Current verdict: NOT CERTIFIED / NO DEPLOYMENT / NO AD SPEND
+Current verdict: PARTIAL PASS / TRACKING FOUNDATION MERGED / DATABASE MIGRATION PASS / PRODUCTION DEPLOYMENT UNKNOWN / NO META OBJECTS / NO AD SPEND
 
-## Repository gate
+## Tracking-foundation repository gate
 
-- [ ] Full `npm test` PASS at exact branch head.
-- [ ] Contract tests PASS.
-- [ ] E2E tests PASS.
-- [ ] Production package verification PASS.
-- [ ] Staging package verification PASS.
-- [ ] Migration dry-run and rollback verification PASS.
-- [ ] CI working tree remains clean after deterministic builds.
+Merged main commit: `1d229960993d519d067227dc299d22f8a1e3a8b5`.
+
+- [x] Full `npm test` PASS at exact PR head.
+- [x] Contract tests PASS.
+- [x] E2E tests PASS: 28/28.
+- [x] Production package verification PASS.
+- [x] Staging package verification PASS.
+- [x] Database, gateway, recovery, QPay and domain configuration verifiers PASS in CI.
+- [x] CI working tree clean after deterministic builds.
+- [x] PR #22 squash-merged with an expected-head guard.
+
+## Database migration gate
+
+- [x] Forward-only migration `meta_purchase_delivery` applied to Supabase project `nemgfbanmwqudjfzddrn`.
+- [x] Migration history contains version `20260801074000`.
+- [x] Three Meta delivery columns verified on `jingeehas.payments`.
+- [x] Three delivery-shape/value constraints verified.
+- [x] One partial unique event-ID index verified.
+- [x] Existing payment rows with Meta delivery metadata: zero.
+- [x] Post-migration advisors produced no new migration-specific WARN.
+
+Existing unrelated advisor warnings remain unresolved and are not marked PASS by this certification.
+
+## Production deployment gate
+
+- [ ] Netlify deploy for main commit `1d229960…` verified.
+- [ ] Live `/meta-pixel.js` verified.
+- [ ] Live `/.netlify/functions/meta-browser-config` verified disabled before asset setup.
+- [ ] Live CSP verified with the approved Meta hosts and no broader execution permissions.
+
+No Netlify connector is available in the current execution environment, so deployment remains UNKNOWN rather than PASS.
+
+## PAUSED draft-builder gate
+
+Branch: `agent/jingeehas-meta-paused-draft-builder-v1`.
+
+- [x] Plan mode cannot mutate.
+- [x] Preflight mode is read-only.
+- [x] Execute mode requests only PAUSED delivery objects.
+- [x] Exact $3 daily budget, Purchase optimization, Mongolia and age 25–65 enforced.
+- [x] Product name, URL and product-code isolation enforced.
+- [x] Sensitive-key payload scanner permits the generic product code but rejects raw/sensitive fields.
+- [x] Monthly cap, audio rights, Page, Instagram, pixel, shared-account acknowledgement and approval fingerprint required.
+- [x] Existing active/exact Jingeehas campaign blocks creation.
+- [x] Post-create PAUSED/budget read-back required.
+- [x] Partial failure triggers reverse-order rollback attempts and secret-free audit output.
+- [ ] Builder branch full CI PASS at exact head.
+- [ ] Live Meta preflight PASS.
 
 ## Tracking gate
 
 - [ ] Dedicated Jingeehas dataset/pixel verified.
-- [ ] Domain verified.
+- [ ] Domain verified in Meta.
 - [ ] Browser PageView and ViewContent received.
 - [ ] InitiateCheckout received only after an invoice exists.
 - [ ] Controlled provider-confirmed Purchase received through CAPI.
 - [ ] Matching browser Purchase received with identical event ID.
 - [ ] Purchase deduplicated.
 - [ ] Value `9900`, currency `MNT` and product code exact.
-- [ ] Admin, owner preview and test activity excluded.
-- [ ] No sensitive data in event payload, diagnostics, URL or logs.
-- [ ] Test Events code removed before production.
+- [ ] Admin, owner preview and test activity excluded in live Test Events.
+- [ ] No sensitive data in live event payload, diagnostics, URL or logs.
+- [ ] Test Events code removed before production activation.
 
 ## Asset and campaign gate
 
 - [ ] Business Portfolio verified.
-- [ ] Dedicated ad account verified.
-- [ ] Page access verified.
-- [ ] Instagram identity verified or intentionally omitted with owner approval.
-- [ ] Billing, account limits and restrictions PASS.
+- [ ] Ad account `981721134334269` freshly verified and shared-account isolation accepted.
+- [ ] Conflicting Page IDs resolved by live Graph read.
+- [ ] Instagram identity verified.
+- [ ] Dedicated pixel/dataset verified.
+- [ ] Existing campaign `52503252094202` reconciled and not duplicating active spend.
+- [ ] Billing, account limits and restrictions PASS on current read.
 - [ ] Audio commercial-use rights verified.
 - [ ] Monthly product/portfolio cap approved.
 - [ ] Campaign, ad set and ad created PAUSED with exact approved payload.
 - [ ] Post-create read-back matches approval.
+- [ ] Public Page Reel published and read back, or explicitly separated from the paid dark-ad creative.
 
 ## Activation decision
 
-ACTIVE delivery is prohibited while any required item is FAIL or UNKNOWN. Tracking code is disabled by default and must not be enabled merely because this branch merges.
+ACTIVE delivery is prohibited while any required item is FAIL or UNKNOWN. Both tracking flags remain disabled by default. Merge, migration or successful local tests alone do not authorize activation.
