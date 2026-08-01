@@ -127,17 +127,17 @@ function scientificMethodologyBox() {
 
 function renderLanding() {
   return `<div class="page landing-page">${navigation()}<main><section class="hero" aria-labelledby="page-title"><div class="hero-copy">
-    <p class="eyebrow">Жин хасахад саад болж буй шалтгаанаа тань</p>
-    <h1 id="page-title" tabindex="-1">Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?</h1>
-    <div class="hero-question-list" role="list" aria-label="Танд танил байж болох нөхцөлүүд">
-      <p class="hero-question" role="listitem">Илүүдэл жин тань таны санааг байнга зовоодог уу?</p>
-      <p class="hero-question" role="listitem">Янз бүрийн дасгал хөдөлгөөн туршсан ч өөрчлөлт бага байна уу?</p>
-      <p class="hero-question" role="listitem">Тураах бэлдмэл, хоолны дэглэм хэрэглэсэн ч үр дүн нь хангалтгүй эсвэл удаан тогтдоггүй юу?</p>
+    <p class="eyebrow">Жин хасах оролдлогод нөлөөлдөг хэв маягаа таних</p>
+    <h1 id="page-title" tabindex="-1">Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ</h1>
+    <div class="hero-question-list" role="list" aria-label="Жин хасах оролдлогод нөлөөлж болох нийтлэг хүчин зүйлс">
+      <p class="hero-question" role="listitem">Стресс, ядаргаа, нойрны хэмнэл хооллолтын шийдвэрт нөлөөлж болно.</p>
+      <p class="hero-question" role="listitem">Хэт хатуу дэглэмийг удаан хугацаанд тогтвортой үргэлжлүүлэхэд хэцүү байж болно.</p>
+      <p class="hero-question" role="listitem">Орчин, цагийн хуваарь болон автомат зуршил давтагдсан саад үүсгэж болно.</p>
     </div>
-    <div class="hero-highlight"><p>Жин хасахад зөвхөн хоол, дасгал биш — таны сэтгэлзүйн хэв маяг, далд зуршил хүчтэй нөлөөлдөг.</p></div>
-    <p class="hero-lead">Өөрт тань саад болж буй сэтгэлзүйн шалтгааныг эхлээд ойлгож чадвал жин хасах арга барилаа илүү бодитой, өөртөө тохирсон, тогтвортой сонгоход хялбар болно.</p>
+    <div class="hero-highlight"><p>Жин хасах оролдлогод хоол, хөдөлгөөнөөс гадна сэтгэлзүйн хэв маяг, өдөр тутмын зуршил болон орчин нөлөөлж болно.</p></div>
+    <p class="hero-lead">Энэхүү үнэлгээ нь давтагддаг хэв маяг, өдөр тутмын нөхцөл болон орчны нөлөөг эргэцүүлж, өөрт тохирсон тогтвортой арга барилаа сонгоход тусална.</p>
     <div class="hero-actions"><a class="button" href="/assessment/start" data-route>Тестээ үнэгүй эхлүүлэх</a>
-      <p class="hero-note">Эмнэлгийн онош тавихгүй. Таны хариултаас давтагдаж буй хэв маягийг таньж ойлгоход тусална.</p>
+      <p class="hero-note">Эмнэлгийн болон сэтгэлзүйн онош тавихгүй. Хариултад тулгуурласан өөрийгөө ойлгох үнэлгээ.</p>
     </div>
     </div><div class="hero-visual" aria-hidden="true"></div></section>
     <section id="sample-report" class="sample-report" aria-labelledby="sample-title">
