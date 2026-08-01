@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "checkedAt": "2026-08-01T09:16:09.126Z",
+  "operation": "read_only_netlify_deploy_preflight",
+  "status": "PASS",
+  "credentialPresent": true,
+  "credentialAuthorized": true,
+  "siteRequestHttp": "200",
+  "deploysRequestHttp": "200",
+  "expected": {
+    "siteId": "fb4def02-8e5d-4f00-8996-8cae09ed836f",
+    "siteName": "weight-loss-deep-pattern-9900",
+    "productionDomain": "jingeehas.fit"
+  },
+  "site": {
+    "id": "fb4def02-8e5d-4f00-8996-8cae09ed836f",
+    "idMatch": true,
+    "name": "weight-loss-deep-pattern-9900",
+    "nameMatch": true,
+    "url": "https://jingeehas.fit",
+    "sslUrl": "https://jingeehas.fit",
+    "customDomain": "jingeehas.fit",
+    "domainMatch": true,
+    "repoUrl": null,
+    "repoBranch": null,
+    "buildCommand": null,
+    "publishDir": null,
+    "functionsDir": null,
+    "publishedDeploy": {
+      "id": "6a6ca18974be9bd0004fbbb1",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "source ab7b001fc6f567677b21d30f8bf216a028867171 count-only initial result",
+      "createdAt": "2026-07-31T13:22:17.556Z",
+      "publishedAt": "2026-07-31T13:22:52.990Z",
+      "deployUrl": "https://6a6ca18974be9bd0004fbbb1--weight-loss-deep-pattern-9900.netlify.app"
+    }
+  },
+  "recentDeploys": [
+    {
+      "id": "6a6ca18974be9bd0004fbbb1",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "source ab7b001fc6f567677b21d30f8bf216a028867171 count-only initial result",
+      "createdAt": "2026-07-31T13:22:17.556Z",
+      "publishedAt": "2026-07-31T13:22:52.990Z",
+      "deployUrl": "https://6a6ca18974be9bd0004fbbb1--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a6c1f7765592b6b54aee1f5",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "Production 207f7f0b8352d44cec24821ca3272df1be571041",
+      "createdAt": "2026-07-31T04:07:19.302Z",
+      "publishedAt": "2026-07-31T04:08:11.636Z",
+      "deployUrl": "https://6a6c1f7765592b6b54aee1f5--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a6b2239e1473720b417740f",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "Production dc88879c71c008abef37e0d74e1d51edae873f33",
+      "createdAt": "2026-07-30T10:06:49.239Z",
+      "publishedAt": "2026-07-30T10:07:20.191Z",
+      "deployUrl": "https://6a6b2239e1473720b417740f--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a6a286e87be032203c48bd8",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "main bfd41c4 restore natural Mongolian report preview",
+      "createdAt": "2026-07-29T16:21:02.532Z",
+      "publishedAt": "2026-07-29T16:21:05.633Z",
+      "deployUrl": "https://6a6a286e87be032203c48bd8--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a6a1b3b3d50086f36db4f69",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "main 44bf379 restore landing trust content",
+      "createdAt": "2026-07-29T15:24:43.536Z",
+      "publishedAt": "2026-07-29T15:24:47.620Z",
+      "deployUrl": "https://6a6a1b3b3d50086f36db4f69--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a6a12b3082f2b07a2df16c3",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "main a8649fe1 remove pre-payment safety gate",
+      "createdAt": "2026-07-29T14:48:19.711Z",
+      "publishedAt": "2026-07-29T14:48:43.853Z",
+      "deployUrl": "https://6a6a12b3082f2b07a2df16c3--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a6a07a947ede55c906b9979",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "main 640fc90b PR 15 hero and methodology",
+      "createdAt": "2026-07-29T14:01:13.595Z",
+      "publishedAt": "2026-07-29T14:01:18.081Z",
+      "deployUrl": "https://6a6a07a947ede55c906b9979--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a69b90e5e2928f526be4f29",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "main 1f750631 scientific methodology trust box",
+      "createdAt": "2026-07-29T08:25:50.142Z",
+      "publishedAt": "2026-07-29T08:26:09.414Z",
+      "deployUrl": "https://6a69b90e5e2928f526be4f29--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a69b31b8a1967bf2e2b6cf7",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "Weight Test scientific methods box",
+      "createdAt": "2026-07-29T08:00:27.542Z",
+      "publishedAt": "2026-07-29T08:00:30.560Z",
+      "deployUrl": "https://6a69b31b8a1967bf2e2b6cf7--weight-loss-deep-pattern-9900.netlify.app"
+    },
+    {
+      "id": "6a69a0a27573976717d3dff8",
+      "state": "ready",
+      "context": "production",
+      "branch": "main",
+      "commitRef": null,
+      "title": "Approved landing report value copy",
+      "createdAt": "2026-07-29T06:41:38.792Z",
+      "publishedAt": "2026-07-29T06:42:37.717Z",
+      "deployUrl": "https://6a69a0a27573976717d3dff8--weight-loss-deep-pattern-9900.netlify.app"
+    }
+  ],
+  "decision": {
+    "canDeploy": true,
+    "productionMutationPerformed": false,
+    "tokenExposed": false
+  }
+}
