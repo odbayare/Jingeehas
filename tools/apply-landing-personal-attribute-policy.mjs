@@ -7,8 +7,8 @@ const dedicatedRegression = path.join(root, "tests", "landing-personal-attribute
 
 const replacements = Object.freeze([
   [
-    '<p class="eyebrow">Жин хасахад саад болж буй шалтгаанаа тань</p>',
-    '<p class="eyebrow">Жин хасах оролдлогод нөлөөлдөг хэв маягаа таних</p>'
+    'Жин хасахад саад болж буй шалтгаанаа тань',
+    'Жин хасах оролдлогод нөлөөлдөг хэв маягаа таних'
   ],
   [
     'Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?',
