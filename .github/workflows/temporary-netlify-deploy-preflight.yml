@@ -1,0 +1,148 @@
+name: Temporary Netlify deploy preflight
+
+on:
+  push:
+    branches:
+      - agent/netlify-deploy-preflight-v1
+    paths:
+      - ".github/workflows/temporary-netlify-deploy-preflight.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      EXPECTED_SITE_ID: fb4def02-8e5d-4f00-8996-8cae09ed836f
+      EXPECTED_SITE_NAME: weight-loss-deep-pattern-9900
+      NETLIFY_TOKEN_PRIMARY: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_TOKEN_FALLBACK: ${{ secrets.NETLIFY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/netlify-deploy-preflight-v1
+          fetch-depth: 0
+      - name: Read-only Netlify site and deploy preflight
+        shell: bash
+        run: |
+          set -uo pipefail
+          REPORT="docs/NETLIFY_DEPLOY_PREFLIGHT_20260801.json"
+          TOKEN="${NETLIFY_TOKEN_PRIMARY:-${NETLIFY_TOKEN_FALLBACK:-}}"
+          mkdir -p docs
+          site_code="000"
+          deploys_code="000"
+          credential_present=false
+
+          if [[ -n "$TOKEN" ]]; then
+            credential_present=true
+            site_code=$(curl --silent --show-error \
+              --connect-timeout 15 --max-time 45 \
+              --header "Authorization: Bearer $TOKEN" \
+              --output /tmp/netlify-site.json \
+              --write-out '%{http_code}' \
+              "https://api.netlify.com/api/v1/sites/${EXPECTED_SITE_ID}") || site_code="000"
+            deploys_code=$(curl --silent --show-error \
+              --connect-timeout 15 --max-time 45 \
+              --header "Authorization: Bearer $TOKEN" \
+              --output /tmp/netlify-deploys.json \
+              --write-out '%{http_code}' \
+              "https://api.netlify.com/api/v1/sites/${EXPECTED_SITE_ID}/deploys?per_page=10") || deploys_code="000"
+          else
+            printf '{}' > /tmp/netlify-site.json
+            printf '[]' > /tmp/netlify-deploys.json
+          fi
+
+          CREDENTIAL_PRESENT="$credential_present" SITE_CODE="$site_code" DEPLOYS_CODE="$deploys_code" node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+
+          const expectedSiteId = process.env.EXPECTED_SITE_ID;
+          const expectedSiteName = process.env.EXPECTED_SITE_NAME;
+          const credentialPresent = process.env.CREDENTIAL_PRESENT === 'true';
+          const siteHttp = process.env.SITE_CODE;
+          const deploysHttp = process.env.DEPLOYS_CODE;
+
+          function readJson(path, fallback) {
+            try { return JSON.parse(fs.readFileSync(path, 'utf8')); }
+            catch { return fallback; }
+          }
+          const site = readJson('/tmp/netlify-site.json', {});
+          const deploys = readJson('/tmp/netlify-deploys.json', []);
+          const published = site.published_deploy || null;
+          const build = site.build_settings || {};
+          const safeDeploy = (item) => item ? ({
+            id: item.id || null,
+            state: item.state || null,
+            context: item.context || null,
+            branch: item.branch || null,
+            commitRef: item.commit_ref || item.commit_ref || null,
+            title: item.title || null,
+            createdAt: item.created_at || null,
+            publishedAt: item.published_at || null,
+            deployUrl: item.deploy_ssl_url || item.ssl_url || item.deploy_url || null,
+          }) : null;
+
+          const idMatch = site.id === expectedSiteId;
+          const nameMatch = site.name === expectedSiteName;
+          const domainMatch = [site.custom_domain, site.url, site.ssl_url]
+            .filter(Boolean)
+            .some(value => String(value).includes('jingeehas.fit') || String(value).includes(expectedSiteName));
+          const credentialAuthorized = credentialPresent && siteHttp === '200' && deploysHttp === '200';
+          const canDeploy = credentialAuthorized && idMatch && nameMatch && domainMatch;
+          const status = canDeploy ? 'PASS' : credentialPresent ? 'BLOCKED' : 'BLOCKED_NO_CREDENTIAL';
+
+          const report = {
+            schemaVersion: 1,
+            checkedAt: new Date().toISOString(),
+            operation: 'read_only_netlify_deploy_preflight',
+            status,
+            credentialPresent,
+            credentialAuthorized,
+            siteRequestHttp: siteHttp,
+            deploysRequestHttp: deploysHttp,
+            expected: {
+              siteId: expectedSiteId,
+              siteName: expectedSiteName,
+              productionDomain: 'jingeehas.fit',
+            },
+            site: {
+              id: site.id || null,
+              idMatch,
+              name: site.name || null,
+              nameMatch,
+              url: site.url || null,
+              sslUrl: site.ssl_url || null,
+              customDomain: site.custom_domain || null,
+              domainMatch,
+              repoUrl: build.repo_url || null,
+              repoBranch: build.repo_branch || null,
+              buildCommand: build.cmd || null,
+              publishDir: build.dir || null,
+              functionsDir: build.functions_dir || null,
+              publishedDeploy: safeDeploy(published),
+            },
+            recentDeploys: Array.isArray(deploys) ? deploys.slice(0, 10).map(safeDeploy) : [],
+            decision: {
+              canDeploy,
+              productionMutationPerformed: false,
+              tokenExposed: false,
+            },
+          };
+          fs.writeFileSync('docs/NETLIFY_DEPLOY_PREFLIGHT_20260801.json', `${JSON.stringify(report, null, 2)}\n`);
+          console.log(JSON.stringify({ status, credentialPresent, credentialAuthorized, idMatch, nameMatch, domainMatch, canDeploy }));
+          NODE
+
+      - name: Commit sanitized preflight evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/NETLIFY_DEPLOY_PREFLIGHT_20260801.json
+          if git diff --cached --quiet; then
+            echo "No preflight evidence change"
+            exit 0
+          fi
+          git commit -m "Record sanitized Netlify deploy preflight"
+          git push origin HEAD:agent/netlify-deploy-preflight-v1
