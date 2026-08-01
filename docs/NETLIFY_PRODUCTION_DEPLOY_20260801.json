@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "operation": "guarded_netlify_production_deploy",
+  "checkedAt": "2026-08-01T09:22:00.956Z",
+  "sourceSha": "d239c99239404306a06074ebfbacd615b7b70914",
+  "expectedSite": {
+    "id": "fb4def02-8e5d-4f00-8996-8cae09ed836f",
+    "name": "weight-loss-deep-pattern-9900",
+    "domain": "jingeehas.fit"
+  },
+  "validationOutcome": "PASS",
+  "credentialPresent": true,
+  "credentialAuthorized": true,
+  "preflight": {
+    "siteIdMatch": true,
+    "siteNameMatch": true,
+    "domainMatch": true,
+    "expectedPreviousDeployMatch": true
+  },
+  "netlifyCliVersion": "netlify-cli/27.0.1 linux-x64 node-v22.23.1",
+  "previousDeploy": {
+    "id": "6a6ca18974be9bd0004fbbb1",
+    "state": "ready",
+    "context": "production",
+    "branch": "main",
+    "title": "source ab7b001fc6f567677b21d30f8bf216a028867171 count-only initial result",
+    "createdAt": "2026-07-31T13:22:17.556Z",
+    "publishedAt": "2026-07-31T13:22:52.990Z",
+    "deployUrl": "https://6a6ca18974be9bd0004fbbb1--weight-loss-deep-pattern-9900.netlify.app"
+  },
+  "newDeploy": {
+    "id": "6a6dbae714b3bb6785cdcdcf",
+    "state": "ready",
+    "context": "production",
+    "branch": "main",
+    "title": "Production d239c99239404306a06074ebfbacd615b7b70914 Jingeehas tracking and landing policy",
+    "createdAt": "2026-08-01T09:22:47.245Z",
+    "publishedAt": "2026-08-01T09:23:45.630Z",
+    "deployUrl": "https://6a6dbae714b3bb6785cdcdcf--weight-loss-deep-pattern-9900.netlify.app"
+  },
+  "liveChecks": {
+    "homeHttp200": true,
+    "appHttp200": true,
+    "pixelHttp200": true,
+    "configHttp200": true,
+    "appHashMatches": true,
+    "pixelHashMatches": true,
+    "newHeadlinePresent": true,
+    "newDisclaimerPresent": true,
+    "oldHeadlineAbsent": true,
+    "oldAttributeAbsent": true,
+    "pixelBootstrapPresent": true,
+    "browserConfigDisabled": true,
+    "browserConfigPixelEmpty": true,
+    "browserConfigProductExact": true,
+    "browserConfigAmountExact": true,
+    "browserConfigCurrencyExact": true,
+    "cspMetaScript": true,
+    "cspMetaImage": true,
+    "cspMetaConnect": true,
+    "hstsPresent": true,
+    "frameDenied": true,
+    "publishedDeployExact": true
+  },
+  "rollback": {
+    "required": false,
+    "attempted": false,
+    "status": "not_required",
+    "restoredDeployId": null
+  },
+  "status": "PASS",
+  "productionMutationPerformed": true,
+  "metaMutationCount": 0,
+  "adSpendMutationUsd": 0,
+  "tokenExposed": false,
+  "errorCode": null,
+  "errorSummary": null,
+  "liveEvidence": {
+    "appSha256": "a88ed57e2134a044b293a5876c0fb1e299ce6055679b4a336a21d68697d7e597",
+    "expectedAppSha256": "a88ed57e2134a044b293a5876c0fb1e299ce6055679b4a336a21d68697d7e597",
+    "pixelSha256": "6f2332b32fc0dd5eb6f5665dac328c5ff2e0faec2b08fa12144bb03455ed26f7",
+    "expectedPixelSha256": "6f2332b32fc0dd5eb6f5665dac328c5ff2e0faec2b08fa12144bb03455ed26f7",
+    "browserConfig": {
+      "enabled": false,
+      "pixelId": "",
+      "productCode": "WEIGHT_TEST_ONE_TIME",
+      "amount": 9900,
+      "currency": "MNT"
+    },
+    "publishedDeployId": "6a6dbae714b3bb6785cdcdcf"
+  },
+  "completedAt": "2026-08-01T09:23:47.910Z"
+}
