@@ -1,0 +1,71 @@
+name: Temporary initial-result recovery transaction
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'app.js'
+      - 'netlify/functions/_lib/analytics.js'
+      - 'netlify/functions/analytics-collect.js'
+      - 'supabase/migrations/20260801104500_allow_initial_result_load_failed_event.sql'
+      - 'tests/initial-result-recovery-telemetry.test.js'
+      - 'tests/e2e/initial-result-recovery.spec.js'
+      - 'tests/run-all.js'
+      - 'tools/apply-initial-result-recovery-telemetry.mjs'
+      - '.github/workflows/temporary-initial-result-recovery-transaction.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: initial-result-recovery-telemetry-v1
+  cancel-in-progress: false
+
+jobs:
+  apply-validate-commit:
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: agent/initial-result-recovery-telemetry-v1
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Apply exact source changes
+        run: node tools/apply-initial-result-recovery-telemetry.mjs
+      - name: Validate full repository gates
+        run: |
+          node --check app.js
+          node --check netlify/functions/_lib/analytics.js
+          node --check netlify/functions/analytics-collect.js
+          npm test
+          npm run test:e2e
+          npm run test:contracts
+          npm run generate:artifacts
+          npm run verify:production-package
+          npm run verify:database-config
+          npm run verify:database-gateway-auth
+          npm run verify:recovery-config
+          npm run verify:qpay-config
+          npm run verify:domain-config
+          npm run build:staging
+          npm run verify:staging-package
+          git diff --check
+      - name: Commit only validated source and generated manifests
+        run: |
+          if git diff --quiet; then
+            echo "No validated changes to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js netlify/functions/_lib/analytics.js netlify/functions/analytics-collect.js artifacts/production-package-manifest.json artifacts/staging-package-manifest.json
+          git commit -m "Make initial-result loading recoverable and observable"
+          git push origin HEAD:agent/initial-result-recovery-telemetry-v1
