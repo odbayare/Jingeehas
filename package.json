@@ -16,7 +16,9 @@
     "verify:qpay-config": "node tools/verify-qpay-config.mjs",
     "verify:domain-config": "node tools/verify-domain-config.mjs",
     "verify:staging-package": "node tools/verify-staging-package.mjs",
-    "verify:production-package": "node tools/verify-production-package.mjs"
+    "verify:production-package": "node tools/verify-production-package.mjs",
+    "meta:draft:plan": "node tools/meta-jingeehas-draft.mjs --plan",
+    "meta:draft:preflight": "node tools/meta-jingeehas-draft.mjs --preflight"
   },
   "devDependencies": {
     "@playwright/test": "1.61.1"
