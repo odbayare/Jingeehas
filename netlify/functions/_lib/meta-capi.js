@@ -7,6 +7,7 @@ const { PRODUCT } = require("./config.js");
 const DEFAULT_GRAPH_API_VERSION = "v25.0";
 const SAFE_GRAPH_VERSION = /^v\d+\.\d+$/;
 const SAFE_META_ID = /^\d{5,32}$/;
+const DEFAULT_EVENT_SOURCE_URL = "https://jingeehas.fit/assessment/payment";
 
 function exactEnabled(value) {
   return String(value || "").toLowerCase() === "true";
@@ -51,6 +52,26 @@ function clientIp(event = {}) {
     .split(",")[0].trim().slice(0, 64);
 }
 
+function eventSourceUrl(event = {}) {
+  const referer = String(event.headers?.referer || event.headers?.Referer || "");
+  try {
+    const url = new URL(referer);
+    if (url.protocol === "https:" && url.hostname === "jingeehas.fit") {
+      return `https://jingeehas.fit${url.pathname.startsWith("/") ? url.pathname : "/"}`;
+    }
+  } catch {}
+  return DEFAULT_EVENT_SOURCE_URL;
+}
+
+function purchaseEventTime(payment = {}, now = new Date()) {
+  const paidAt = Date.parse(String(payment.paidAt || ""));
+  const lowerBound = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+  if (Number.isFinite(paidAt) && paidAt >= lowerBound && paidAt <= now.getTime()) {
+    return Math.floor(paidAt / 1000);
+  }
+  return Math.floor(now.getTime() / 1000);
+}
+
 function userData(event = {}) {
   const jar = cookies(event);
   const data = {
@@ -69,10 +90,10 @@ function purchasePayload(payment, event, now = new Date()) {
   }
   return {
     event_name: "Purchase",
-    event_time: Math.floor(now.getTime() / 1000),
+    event_time: purchaseEventTime(payment, now),
     event_id: eventId,
     action_source: "website",
-    event_source_url: "https://jingeehas.fit/report",
+    event_source_url: eventSourceUrl(event),
     user_data: userData(event),
     custom_data: {
       value: PRODUCT.amount,
@@ -157,9 +178,12 @@ async function deliverConfirmedPurchaseSafe(database, paymentId, event, options 
 
 module.exports = {
   DEFAULT_GRAPH_API_VERSION,
+  DEFAULT_EVENT_SOURCE_URL,
   metaCapiConfig,
   metaBrowserConfig,
   purchaseEventId,
+  eventSourceUrl,
+  purchaseEventTime,
   userData,
   purchasePayload,
   deliverConfirmedPurchase,
