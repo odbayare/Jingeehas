@@ -38,6 +38,6 @@ alter table jingeehas.analytics_events
   );
 
 comment on constraint analytics_events_event_name_check on jingeehas.analytics_events is
-  'Allowlisted generic funnel events. initial_result_load_failed contains no raw error, answer, result, contact, or assessment content.';
+  'Allowlisted generic funnel events. The load-failure event carries no custom metadata.';
 
 commit;
