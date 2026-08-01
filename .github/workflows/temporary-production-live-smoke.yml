@@ -1,0 +1,71 @@
+name: Temporary Jingeehas production live smoke
+
+on:
+  push:
+    branches:
+      - agent/production-live-smoke-v1
+    paths:
+      - ".github/workflows/temporary-production-live-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read-only production smoke
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE="https://jingeehas.fit"
+          fetch() {
+            local path="$1" body="$2" headers="$3"
+            curl --fail-with-body --silent --show-error --location \
+              --retry 5 --retry-all-errors --retry-delay 2 \
+              --connect-timeout 15 --max-time 45 \
+              --dump-header "$headers" --output "$body" "$BASE$path"
+          }
+
+          fetch "/" /tmp/home.html /tmp/home.headers
+          fetch "/app.js" /tmp/app.js /tmp/app.headers
+          fetch "/meta-pixel.js" /tmp/meta-pixel.js /tmp/meta-pixel.headers
+          fetch "/.netlify/functions/meta-browser-config" /tmp/meta-browser-config.json /tmp/meta-browser-config.headers
+
+          grep -Fq "Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ" /tmp/app.js
+          grep -Fq "Эмнэлгийн болон сэтгэлзүйн онош тавихгүй. Хариултад тулгуурласан өөрийгөө ойлгох үнэлгээ." /tmp/app.js
+          ! grep -Fq "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" /tmp/app.js
+          ! grep -Fq "Илүүдэл жин тань таны санааг байнга зовоодог уу?" /tmp/app.js
+          grep -Fq "meta-browser-config" /tmp/meta-pixel.js
+
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const config = JSON.parse(fs.readFileSync('/tmp/meta-browser-config.json', 'utf8'));
+          const expected = {
+            enabled: false,
+            pixelId: '',
+            productCode: 'WEIGHT_TEST_ONE_TIME',
+            amount: 9900,
+            currency: 'MNT',
+          };
+          for (const [key, value] of Object.entries(expected)) {
+            if (config[key] !== value) throw new Error(`META_BROWSER_CONFIG_MISMATCH:${key}:${JSON.stringify(config[key])}`);
+          }
+          console.log(JSON.stringify({ metaBrowserConfig: config }));
+          NODE
+
+          tr -d '\r' < /tmp/home.headers > /tmp/home.headers.normalized
+          grep -Fiq "content-security-policy:" /tmp/home.headers.normalized
+          grep -Fiq "script-src 'self' https://connect.facebook.net" /tmp/home.headers.normalized
+          grep -Fiq "img-src 'self' data: https://www.facebook.com" /tmp/home.headers.normalized
+          grep -Fiq "connect-src 'self' https://www.facebook.com" /tmp/home.headers.normalized
+          grep -Fiq "strict-transport-security: max-age=31536000; includesubdomains" /tmp/home.headers.normalized
+          grep -Fiq "x-frame-options: deny" /tmp/home.headers.normalized
+
+          echo "LIVE_SMOKE_STATUS=PASS"
+          echo "LANDING_POLICY_COPY=PASS"
+          echo "META_PIXEL_ASSET=PASS"
+          echo "META_BROWSER_CONFIG=DISABLED_SAFE"
+          echo "SECURITY_HEADERS=PASS"
