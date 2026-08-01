@@ -9,7 +9,7 @@
   "staticFiles": [
     {
       "file": "_headers",
-      "sha256": "c174d1500c48b608a6f77817dda418514825c27297abfbdfc487415d98a22950"
+      "sha256": "372149e8834d8b5ea69e6dda56e12492c3a794cae27f6d8b932ecc2967df77be"
     },
     {
       "file": "_redirects",
@@ -37,11 +37,15 @@
     },
     {
       "file": "index.html",
-      "sha256": "1b2e1bbfe06b90b3cdb51bd066cda8e2d1ff354afa41031f9b12395da21971e5"
+      "sha256": "5b4cc3dc31b4634668aa06ae7fcb5894cebc755f4dd959caad00d2463d929712"
     },
     {
       "file": "questions.js",
       "sha256": "ac79aa5e83d6c37234f886f2683fd036ba80862afa5f3b6f3d8b2131f7f22d14"
+    },
+    {
+      "file": "meta-pixel.js",
+      "sha256": "6f2332b32fc0dd5eb6f5665dac328c5ff2e0faec2b08fa12144bb03455ed26f7"
     },
     {
       "file": "styles.css",
@@ -71,6 +75,7 @@
     "advisor-password-change",
     "advisor-report",
     "analytics-collect",
+    "meta-browser-config",
     "qpay-check-payment",
     "qpay-create-invoice",
     "weight-assessment-complete",
