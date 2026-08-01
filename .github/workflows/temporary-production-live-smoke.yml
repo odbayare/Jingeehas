@@ -24,28 +24,62 @@ jobs:
       - name: Read-only production smoke
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
           BASE="https://jingeehas.fit"
+          failures=0
+
           fetch() {
-            local path="$1" body="$2" headers="$3"
-            curl --fail-with-body --silent --show-error --location \
-              --retry 5 --retry-all-errors --retry-delay 2 \
+            local label="$1" path="$2" body="$3" headers="$4"
+            local code
+            code=$(curl --silent --show-error --location \
+              --retry 3 --retry-all-errors --retry-delay 1 \
               --connect-timeout 15 --max-time 45 \
-              --dump-header "$headers" --output "$body" "$BASE$path"
+              --dump-header "$headers" --output "$body" \
+              --write-out '%{http_code}' "$BASE$path") || code="000"
+            echo "HTTP_${label}=$code"
+            if [[ "$code" != "200" ]]; then
+              echo "FAIL_HTTP_${label}=expected_200_actual_${code}"
+              failures=$((failures + 1))
+            fi
           }
 
-          fetch "/" /tmp/home.html /tmp/home.headers
-          fetch "/app.js" /tmp/app.js /tmp/app.headers
-          fetch "/meta-pixel.js" /tmp/meta-pixel.js /tmp/meta-pixel.headers
-          fetch "/.netlify/functions/meta-browser-config" /tmp/meta-browser-config.json /tmp/meta-browser-config.headers
+          check_contains() {
+            local label="$1" file="$2" text="$3"
+            if [[ -f "$file" ]] && grep -Fq "$text" "$file"; then
+              echo "${label}=PASS"
+            else
+              echo "${label}=FAIL"
+              failures=$((failures + 1))
+            fi
+          }
 
-          grep -Fq "Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ" /tmp/app.js
-          grep -Fq "Эмнэлгийн болон сэтгэлзүйн онош тавихгүй. Хариултад тулгуурласан өөрийгөө ойлгох үнэлгээ." /tmp/app.js
-          ! grep -Fq "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?" /tmp/app.js
-          ! grep -Fq "Илүүдэл жин тань таны санааг байнга зовоодог уу?" /tmp/app.js
-          grep -Fq "meta-browser-config" /tmp/meta-pixel.js
+          check_absent() {
+            local label="$1" file="$2" text="$3"
+            if [[ -f "$file" ]] && ! grep -Fq "$text" "$file"; then
+              echo "${label}=PASS"
+            else
+              echo "${label}=FAIL"
+              failures=$((failures + 1))
+            fi
+          }
 
-          node --input-type=module <<'NODE'
+          fetch HOME "/" /tmp/home.html /tmp/home.headers
+          fetch APP_JS "/app.js" /tmp/app.js /tmp/app.headers
+          fetch META_PIXEL "/meta-pixel.js" /tmp/meta-pixel.js /tmp/meta-pixel.headers
+          fetch META_CONFIG "/.netlify/functions/meta-browser-config" /tmp/meta-browser-config.json /tmp/meta-browser-config.headers
+
+          check_contains LANDING_NEW_HEADLINE /tmp/app.js "Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ"
+          check_contains LANDING_NEW_DISCLAIMER /tmp/app.js "Эмнэлгийн болон сэтгэлзүйн онош тавихгүй. Хариултад тулгуурласан өөрийгөө ойлгох үнэлгээ."
+          check_absent LANDING_OLD_HEADLINE_REMOVED /tmp/app.js "Та жингээ хасах гэж олон удаа оролдсон ч үр дүн гарахгүй байна уу?"
+          check_absent LANDING_OLD_ATTRIBUTE_REMOVED /tmp/app.js "Илүүдэл жин тань таны санааг байнга зовоодог уу?"
+          check_contains META_PIXEL_BOOTSTRAP /tmp/meta-pixel.js "meta-browser-config"
+
+          echo "META_CONFIG_BODY_BEGIN"
+          if [[ -f /tmp/meta-browser-config.json ]]; then cat /tmp/meta-browser-config.json; fi
+          echo
+          echo "META_CONFIG_BODY_END"
+
+          if node --input-type=module <<'NODE'
           import fs from 'node:fs';
           const config = JSON.parse(fs.readFileSync('/tmp/meta-browser-config.json', 'utf8'));
           const expected = {
@@ -60,17 +94,28 @@ jobs:
           }
           console.log(JSON.stringify({ metaBrowserConfig: config }));
           NODE
+          then
+            echo "META_BROWSER_CONFIG_DISABLED_SAFE=PASS"
+          else
+            echo "META_BROWSER_CONFIG_DISABLED_SAFE=FAIL"
+            failures=$((failures + 1))
+          fi
 
-          tr -d '\r' < /tmp/home.headers > /tmp/home.headers.normalized
-          grep -Fiq "content-security-policy:" /tmp/home.headers.normalized
-          grep -Fiq "script-src 'self' https://connect.facebook.net" /tmp/home.headers.normalized
-          grep -Fiq "img-src 'self' data: https://www.facebook.com" /tmp/home.headers.normalized
-          grep -Fiq "connect-src 'self' https://www.facebook.com" /tmp/home.headers.normalized
-          grep -Fiq "strict-transport-security: max-age=31536000; includesubdomains" /tmp/home.headers.normalized
-          grep -Fiq "x-frame-options: deny" /tmp/home.headers.normalized
+          tr -d '\r' < /tmp/home.headers > /tmp/home.headers.normalized 2>/dev/null || true
+          echo "HOME_HEADERS_BEGIN"
+          sed -n '1,80p' /tmp/home.headers.normalized 2>/dev/null || true
+          echo "HOME_HEADERS_END"
 
+          check_contains HEADER_CSP /tmp/home.headers.normalized "content-security-policy:"
+          check_contains HEADER_META_SCRIPT /tmp/home.headers.normalized "script-src 'self' https://connect.facebook.net"
+          check_contains HEADER_META_IMAGE /tmp/home.headers.normalized "img-src 'self' data: https://www.facebook.com"
+          check_contains HEADER_META_CONNECT /tmp/home.headers.normalized "connect-src 'self' https://www.facebook.com"
+          check_contains HEADER_HSTS /tmp/home.headers.normalized "strict-transport-security: max-age=31536000; includesubdomains"
+          check_contains HEADER_FRAME_DENY /tmp/home.headers.normalized "x-frame-options: DENY"
+
+          echo "LIVE_SMOKE_FAILURES=$failures"
+          if [[ "$failures" -ne 0 ]]; then
+            echo "LIVE_SMOKE_STATUS=FAIL"
+            exit 1
+          fi
           echo "LIVE_SMOKE_STATUS=PASS"
-          echo "LANDING_POLICY_COPY=PASS"
-          echo "META_PIXEL_ASSET=PASS"
-          echo "META_BROWSER_CONFIG=DISABLED_SAFE"
-          echo "SECURITY_HEADERS=PASS"
