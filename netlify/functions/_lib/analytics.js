@@ -4,13 +4,12 @@ const crypto = require("node:crypto");
 const { cookies } = require("./http.js");
 const { PREVIEW_COOKIE_NAME } = require("./preview.js");
 
-const BROWSER_EVENTS = new Set(["landing_viewed", "start_cta_clicked", "payment_preparation_viewed", "paywall_viewed", "recovery_requested"]);
+const BROWSER_EVENTS = new Set(["landing_viewed", "start_cta_clicked", "payment_preparation_viewed", "post_assessment_paywall_viewed", "paywall_viewed", "recovery_requested"]);
 const SERVER_EVENTS = new Set([
   "assessment_started",
   "assessment_completed",
   "free_assessment_started",
   "free_assessment_completed",
-  "initial_result_viewed",
   "result_email_saved",
   "full_report_cta_clicked",
   "invoice_created",
@@ -83,6 +82,7 @@ function localAnalyticsDay(now = new Date()) {
 function browserEventIdempotencyKey(name, context = {}, assessmentId = null, now = new Date()) {
   if (name === "landing_viewed" && context.visitorIdHash) return `landing_viewed:${context.visitorIdHash}:${localAnalyticsDay(now)}`;
   if (name === "payment_preparation_viewed" && context.sessionIdHash) return `payment_preparation_viewed:${context.sessionIdHash}`;
+  if (name === "post_assessment_paywall_viewed" && assessmentId) return `${name}:${assessmentId}`;
   if (["paywall_viewed", "report_opened"].includes(name) && assessmentId) return `${name}:${assessmentId}`;
   if (name === "start_cta_clicked" && context.sessionIdHash) return `start_cta_clicked:${context.sessionIdHash}`;
   return null;

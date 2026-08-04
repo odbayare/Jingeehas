@@ -217,8 +217,15 @@ async function reportForSession(database, sessionId, assessmentId) {
   const snapshot = await resolveReportSnapshot(database, assessmentId);
   if (!snapshot) throw Object.assign(new Error("Report not found"), { statusCode: 404, code: "report_not_found" });
   const paid = await hasPaidAccess(database, assessment);
+  const initialView = snapshot.safetyRoute
+    ? snapshot.initialView
+    : paid
+      ? snapshot.initialView
+      : isFreeAssessmentPostpaid(assessment)
+        ? publicInitialResult(snapshot.initialView, snapshot.fullReport)
+        : {};
   return { assessmentId, reportMode: snapshot.reportMode, safetyRoute: snapshot.safetyRoute,
-    initialView: snapshot.initialView, fullReport: paid ? publicReport(snapshot.fullReport) : null,
+    initialView, fullReport: paid ? publicReport(snapshot.fullReport) : null,
     entitled: paid, commercialFlowVersion: assessment.commercialFlowVersion || LEGACY_FLOW,
     reportVersion: snapshot.snapshotMetadata };
 }

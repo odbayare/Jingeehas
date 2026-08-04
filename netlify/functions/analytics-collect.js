@@ -3,7 +3,10 @@
 const { getDatabase } = require("./_lib/store.js");
 const { handler, response } = require("./_lib/http.js");
 const { BROWSER_EVENTS, UUID, clientContext, flagsFromEvent, isKnownBotRequest, browserOriginAllowed, hashAnonymous,
-  browserEventIdempotencyKey, recordEvent } = require("./_lib/analytics.js");
+  browserEventIdempotencyKey, funnelKeyHash, recordEvent } = require("./_lib/analytics.js");
+const { authenticateSession } = require("./_lib/session.js");
+const { ownedAssessment } = require("./_lib/assessment.js");
+const { isFreeAssessmentPostpaid } = require("./_lib/commercial-flow.js");
 
 exports.handler = handler("POST", async (event, body) => {
   if (!browserOriginAllowed(event)) throw Object.assign(new Error("Invalid origin"), { statusCode: 403, code: "invalid_origin" });
@@ -16,16 +19,30 @@ exports.handler = handler("POST", async (event, body) => {
   const context = clientContext(body.context || {});
   if (!context.visitorIdHash || !context.sessionIdHash) throw Object.assign(new Error("Anonymous context required"), { statusCode: 400, code: "invalid_context" });
   const assessmentId = String(body.assessmentId || "") || null;
-  if (["paywall_viewed", "report_opened"].includes(body.eventName) && !assessmentId) {
+  if (["post_assessment_paywall_viewed", "paywall_viewed", "report_opened"].includes(body.eventName) && !assessmentId) {
     throw Object.assign(new Error("Assessment required"), { statusCode: 400, code: "assessment_required" });
   }
   const ip = String(event.headers?.["x-nf-client-connection-ip"] || event.headers?.["x-forwarded-for"] || "").split(",")[0].trim();
   const rateKeyHash = hashAnonymous("rate", `${ip}:${body.context.visitorId}`);
   const database = getDatabase();
+  const now = new Date();
+  let values = { assessmentId };
+  let idempotencyKey = browserEventIdempotencyKey(body.eventName, context, assessmentId, now);
+  let metadata = {};
+  if (body.eventName === "post_assessment_paywall_viewed") {
+    const session = await authenticateSession(database, event);
+    const assessment = await ownedAssessment(database, session.id, assessmentId);
+    if (!isFreeAssessmentPostpaid(assessment) || assessment.status !== "complete" || assessment.safetyRoute) {
+      throw Object.assign(new Error("Paywall unavailable"), { statusCode: 404, code: "paywall_unavailable" });
+    }
+    const key = funnelKeyHash(assessmentId);
+    values = { funnelKeyHash: key };
+    idempotencyKey = `post_assessment_paywall_viewed:${key}`;
+    metadata = { flowVersion: assessment.commercialFlowVersion };
+  }
   const recent = (await database.find("analytics_events", { rateKeyHash })).filter(row => new Date(row.createdAt) > new Date(Date.now() - 60_000));
   if (recent.length >= 30) throw Object.assign(new Error("Too many events"), { statusCode: 429, code: "rate_limited" });
-  const now = new Date();
-  await recordEvent(database, body.eventName, context, { assessmentId }, { eventId: body.eventId, rateKeyHash,
-    idempotencyKey: browserEventIdempotencyKey(body.eventName, context, assessmentId, now), now, ...flagsFromEvent(event) });
+  await recordEvent(database, body.eventName, context, values, { eventId: body.eventId, rateKeyHash,
+    idempotencyKey, metadata, now, ...flagsFromEvent(event) });
   return response(202, { accepted: true, recorded: true });
 });

@@ -24,6 +24,7 @@ const complete = require("../../netlify/functions/weight-assessment-complete.js"
 const initialResult = require("../../netlify/functions/weight-assessment-initial-result.js").handler;
 const emailSave = require("../../netlify/functions/weight-result-email-save.js").handler;
 const report = require("../../netlify/functions/weight-assessment-report.js").handler;
+const analyticsCollect = require("../../netlify/functions/analytics-collect.js").handler;
 
 function event(httpMethod, body, cookie = "", query = {}) {
   return { httpMethod, body: body ? JSON.stringify(body) : null, headers: { cookie, host: "localhost" }, queryStringParameters: query };
@@ -43,21 +44,9 @@ const completeAnswers = {
 };
 
 (async () => {
-  const evidenceDerived = buildInitialResult({
-    influencingPatterns: [
-      { id: "one", title: "Нэгдүгээр хэв маяг", evidenceSummary: "Нэгдүгээр ажиглалт.", effectOnWeightLoss: "Нэгдүгээр нөлөө." },
-      { id: "two", title: "Хоёрдугаар хэв маяг", evidenceSummary: "Хоёрдугаар ажиглалт.", effectOnWeightLoss: "Хоёрдугаар нөлөө." },
-      { id: "one", title: "Давхардсан хэв маяг", evidenceSummary: "Давхардсан ажиглалт.", effectOnWeightLoss: "Давхардсан нөлөө." }
-    ],
-    managementModules: ["one", "two"].map(patternId => ({ patternId, observe: "Ажиглана.", prepare: "Бэлдэнэ.", inMoment: "Хийнэ." })),
-    interactionSummary: [{ id: "one_two", patternIds: ["one", "two"], explanation: "Хоёр хэв маяг нэг нь нөгөөгөө хүчтэй болгож болно." }],
-    combinedManagementPlan: { patternIds: ["one", "two"], startWith: "Нэгээс эхэлнэ.", why: "Нотолгоонд тулгуурлана.", nextStep: "Хоёрыг дараа нь ажиглана.", combinedAction: "Хамтад нь удирдана." }
-  });
-  assert.equal(evidenceDerived.schemaVersion, INITIAL_RESULT_SCHEMA_VERSION);
-  assert.equal(evidenceDerived.mode, "summary");
-  assert.equal(evidenceDerived.patternCount, 2, "duplicate rendered pattern is counted once");
-  assert.equal(evidenceDerived.interactionCount, 1);
-  assert(!JSON.stringify(publicInitialResult(evidenceDerived)).includes("Нэгдүгээр хэв маяг"));
+  const sealedView = buildInitialResult({ personalized: "ignored" });
+  assert.deepEqual(sealedView, { schemaVersion: INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed" });
+  assert.deepEqual(publicInitialResult(sealedView), sealedView);
 
   const migration = fs.readFileSync(require.resolve("../../supabase/migrations/20260731024831_free_assessment_initial_result_funnel.sql"), "utf8");
   for (const expected of [
@@ -69,6 +58,10 @@ const completeAnswers = {
     "Asia/Ulaanbaatar", "no_denominator"
   ]) assert(migration.includes(expected), expected);
   assert(!/\bupdate\s+jingeehas\.(?:assessments|assessment_answers|payments|entitlements|report_snapshots)\b/i.test(migration), "migration must not rewrite customer records");
+  const sealedMigration = fs.readFileSync(require.resolve("../../supabase/migrations/20260804043918_map_post_assessment_paywall_analytics.sql"), "utf8");
+  assert(sealedMigration.includes("post_assessment_paywall_viewed"));
+  assert(sealedMigration.includes("event_name in ('initial_result_viewed', 'post_assessment_paywall_viewed')"), "reporting keeps historical event compatibility");
+  assert(!/\b(?:insert|update|delete)\s+(?:into\s+|from\s+)?jingeehas\.(?:assessments|assessment_answers|payments|entitlements|report_snapshots)\b/i.test(sealedMigration), "sealed analytics migration must not rewrite customer records");
 
   const sessionResult = await startSession(event("POST"));
   const cookie = credential(sessionResult.headers["set-cookie"]);
@@ -101,25 +94,36 @@ const completeAnswers = {
   assert.equal(completed.nextRoute, "/assessment/result");
   assert.equal((await database.find("report_snapshots", { assessmentId: firstCreate.assessmentId })).length, 1);
 
+  const paywallTracked = await analyticsCollect({
+    httpMethod: "POST",
+    headers: { cookie, host: "localhost", origin: "https://localhost", "user-agent": "Safari" },
+    body: JSON.stringify({
+      eventId: "30000000-0000-4000-8000-000000000003",
+      eventName: "post_assessment_paywall_viewed",
+      assessmentId: firstCreate.assessmentId,
+      context: analyticsContext
+    })
+  });
+  assert.equal(paywallTracked.statusCode, 202);
+
   const unpaidReport = body(await report(event("GET", null, cookie, { assessmentId: firstCreate.assessmentId })));
   assert.equal(unpaidReport.entitled, false);
   assert.equal(unpaidReport.fullReport, null);
+  assert.deepEqual(unpaidReport.initialView, { schemaVersion: INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed" });
   const initial = body(await initialResult(event("GET", null, cookie, { assessmentId: firstCreate.assessmentId })));
-  assert.deepEqual(Object.keys(initial).sort(), ["currency", "interactionCount", "lockedSections", "mode", "patternCount", "price"].sort());
-  assert.equal(initial.mode, "neutral");
-  assert.equal(initial.patternCount, 0);
-  assert.equal(initial.interactionCount, 0);
-  assert.equal(initial.lockedSections.length, 7);
+  assert.deepEqual(Object.keys(initial).sort(), ["currency", "mode", "price", "schemaVersion"].sort());
+  assert.equal(initial.schemaVersion, INITIAL_RESULT_SCHEMA_VERSION);
+  assert.equal(initial.mode, "sealed");
   assert.equal(initial.price, 9900);
   assert.equal(initial.currency, "MNT");
   const serializedInitial = JSON.stringify(initial);
-  for (const forbidden of ["primaryPattern", "title", "summary", "Q-AGE", "S1-S04", "internalEvidenceMap", "threshold", "confidence", "recommendations", "fullReport", "providerPaymentId"]) {
+  for (const forbidden of ["patternCount", "interactionCount", "primaryPattern", "lockedSections", "title", "summary", "Q-AGE", "S1-S04", "internalEvidenceMap", "threshold", "confidence", "recommendations", "fullReport", "providerPaymentId"]) {
     assert(!serializedInitial.includes(forbidden), `initial result leaked ${forbidden}`);
   }
 
   const [storedSnapshot] = await database.find("report_snapshots", { assessmentId: firstCreate.assessmentId });
-  assert.equal(storedSnapshot.initialView.schemaVersion, INITIAL_RESULT_SCHEMA_VERSION, "new completion stores V2 initial view");
-  const v2InitialView = structuredClone(storedSnapshot.initialView);
+  assert.deepEqual(storedSnapshot.initialView, { schemaVersion: INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed" }, "new completion stores sealed initial view");
+  const sealedInitialView = structuredClone(storedSnapshot.initialView);
   const legacyInitialView = {
     schemaVersion: "jingeehas-initial-result-v1",
     mode: "pattern",
@@ -129,10 +133,22 @@ const completeAnswers = {
   };
   await database.update("report_snapshots", storedSnapshot.id, { initialView: structuredClone(legacyInitialView) });
   const legacyProjected = body(await initialResult(event("GET", null, cookie, { assessmentId: firstCreate.assessmentId })));
-  assert.deepEqual(Object.keys(legacyProjected).sort(), ["currency", "interactionCount", "lockedSections", "mode", "patternCount", "price"].sort());
+  assert.deepEqual(Object.keys(legacyProjected).sort(), ["currency", "mode", "price", "schemaVersion"].sort());
+  assert.equal(legacyProjected.mode, "sealed");
   assert(!JSON.stringify(legacyProjected).includes("SERVER ONLY LEGACY"), "V1 title and summary never reach the client");
   assert.deepEqual((await database.get("report_snapshots", storedSnapshot.id)).initialView, legacyInitialView, "V1 projection performs no snapshot mutation");
-  await database.update("report_snapshots", storedSnapshot.id, { initialView: v2InitialView });
+  const countOnlyInitialView = {
+    schemaVersion: "jingeehas-initial-result-v2-count-only",
+    mode: "summary",
+    patternCount: 4,
+    interactionCount: 2,
+    lockedSections: ["SERVER ONLY LOCKED TITLE"]
+  };
+  await database.update("report_snapshots", storedSnapshot.id, { initialView: structuredClone(countOnlyInitialView) });
+  const countOnlyProjected = body(await initialResult(event("GET", null, cookie, { assessmentId: firstCreate.assessmentId })));
+  assert.deepEqual(countOnlyProjected, { schemaVersion: INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed", price: 9900, currency: "MNT" });
+  assert.deepEqual((await database.get("report_snapshots", storedSnapshot.id)).initialView, countOnlyInitialView, "count-only projection performs no snapshot mutation");
+  await database.update("report_snapshots", storedSnapshot.id, { initialView: sealedInitialView });
 
   const otherSession = await startSession(event("POST"));
   const otherCookie = credential(otherSession.headers["set-cookie"]);
@@ -198,9 +214,14 @@ const completeAnswers = {
   const freeEvents = (await database.find("analytics_events", {})).filter(row => row.funnelKeyHash);
   assert.ok(freeEvents.some(row => row.eventName === "free_assessment_started"));
   assert.ok(freeEvents.some(row => row.eventName === "free_assessment_completed"));
-  assert.ok(freeEvents.some(row => row.eventName === "initial_result_viewed"));
+  const paywallEvent = freeEvents.find(row => row.eventName === "post_assessment_paywall_viewed");
+  assert.ok(paywallEvent);
+  assert.equal(paywallEvent.deviceClass, "mobile");
+  assert.equal(paywallEvent.utmCampaign, "free-flow-contract");
+  assert.equal(paywallEvent.metadata.flowVersion, "free_assessment_postpaid_v1");
+  assert.ok(!freeEvents.some(row => row.eventName === "initial_result_viewed"));
   assert.ok(freeEvents.some(row => row.eventName === "result_email_saved"));
   assert(freeEvents.every(row => !row.assessmentId && !row.invoiceId && !row.paymentId), "new funnel analytics stores no raw operational IDs");
 
-  console.log("free assessment and initial-result funnel contract tests passed");
+  console.log("free assessment and sealed-paywall funnel contract tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

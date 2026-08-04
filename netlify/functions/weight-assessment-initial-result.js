@@ -14,9 +14,9 @@ exports.handler = handler("GET", async event => {
   const assessmentId = event.queryStringParameters?.assessmentId || "";
   const result = await initialResultForSession(database, session.id, assessmentId);
   const key = funnelKeyHash(assessmentId);
-  await recordEventSafe(database, "initial_result_viewed", await assessmentContext(database, assessmentId), { funnelKeyHash: key }, {
-    idempotencyKey: `initial_result_viewed:${key}`,
-    metadata: { resultVariant: "count_only_v2" },
+  await recordEventSafe(database, "post_assessment_paywall_viewed", await assessmentContext(database, assessmentId), { funnelKeyHash: key }, {
+    idempotencyKey: `post_assessment_paywall_viewed:${key}`,
+    metadata: { flowVersion: "free_assessment_postpaid_v1" },
     ...flagsFromEvent(event)
   });
   return response(200, result);
