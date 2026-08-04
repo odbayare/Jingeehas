@@ -1,16 +1,9 @@
 "use strict";
 
-const INITIAL_RESULT_SCHEMA_VERSION = "jingeehas-initial-result-v2-count-only";
+const INITIAL_RESULT_SCHEMA_VERSION = "jingeehas-post-assessment-paywall-v1";
 const LEGACY_INITIAL_RESULT_SCHEMA_VERSION = "jingeehas-initial-result-v1";
-const LOCKED_REPORT_TITLES = Object.freeze([
-  "Танд нөлөөлж буй хэв маягууд",
-  "Хэв маягуудын уялдаа холбоо",
-  "Ямар үед илүү хүчтэй болдог",
-  "Сэтгэлзүйн хэв маягаа хэрхэн удирдах вэ?",
-  "Хэцүү үеийг хэрхэн даван туулах вэ?",
-  "Эхэлж хэрэгжүүлэх 3 алхам",
-  "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
-]);
+const COUNT_ONLY_INITIAL_RESULT_SCHEMA_VERSION = "jingeehas-initial-result-v2-count-only";
+const SEALED_PAYWALL = Object.freeze({ schemaVersion: INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed" });
 
 function hasText(value) {
   if (Array.isArray(value)) return value.some(hasText);
@@ -66,50 +59,23 @@ function deliverableInteractions(fullReport = {}, patterns = deliverablePatterns
   });
 }
 
-function buildInitialResult(fullReport = {}) {
-  const patterns = deliverablePatterns(fullReport);
-  const neutral = Boolean(fullReport.neutralResult) || patterns.length === 0;
-  return {
-    schemaVersion: INITIAL_RESULT_SCHEMA_VERSION,
-    mode: neutral ? "neutral" : "summary",
-    patternCount: neutral ? 0 : patterns.length,
-    interactionCount: neutral ? 0 : deliverableInteractions(fullReport, patterns).length,
-    lockedSections: [...LOCKED_REPORT_TITLES]
-  };
-}
-
-function validLockedSections(initialView = {}) {
-  return Array.isArray(initialView.lockedSections)
-    && initialView.lockedSections.length === LOCKED_REPORT_TITLES.length
-    && LOCKED_REPORT_TITLES.every((title, index) => initialView.lockedSections[index] === title);
+function buildInitialResult() {
+  return { ...SEALED_PAYWALL };
 }
 
 function publicInitialResult(initialView = {}, fullReport = null) {
-  let projected = initialView?.schemaVersion === LEGACY_INITIAL_RESULT_SCHEMA_VERSION
-    ? buildInitialResult(fullReport || {})
-    : initialView;
-  if (projected?.schemaVersion === INITIAL_RESULT_SCHEMA_VERSION && fullReport) projected = buildInitialResult(fullReport);
-  if (projected?.schemaVersion !== INITIAL_RESULT_SCHEMA_VERSION || !validLockedSections(projected)) return null;
-  if (!["summary", "neutral"].includes(projected.mode)) return null;
-  const neutral = projected.mode === "neutral";
-  const rawPatternCount = Math.trunc(Number(projected.patternCount));
-  const rawInteractionCount = Math.trunc(Number(projected.interactionCount));
-  if (!neutral && (!Number.isInteger(rawPatternCount) || rawPatternCount < 1 || rawPatternCount > 20)) return null;
-  if (!neutral && (!Number.isInteger(rawInteractionCount) || rawInteractionCount < 0 || rawInteractionCount > 20)) return null;
-  const patternCount = neutral ? 0 : rawPatternCount;
-  const interactionCount = neutral ? 0 : rawInteractionCount;
-  return {
-    mode: neutral ? "neutral" : "summary",
-    patternCount,
-    interactionCount,
-    lockedSections: [...LOCKED_REPORT_TITLES]
-  };
+  if (initialView?.schemaVersion === INITIAL_RESULT_SCHEMA_VERSION && initialView?.mode === "sealed") {
+    return { ...SEALED_PAYWALL };
+  }
+  const historical = [LEGACY_INITIAL_RESULT_SCHEMA_VERSION, COUNT_ONLY_INITIAL_RESULT_SCHEMA_VERSION]
+    .includes(initialView?.schemaVersion);
+  return historical && fullReport ? { ...SEALED_PAYWALL } : null;
 }
 
 module.exports = {
   INITIAL_RESULT_SCHEMA_VERSION,
   LEGACY_INITIAL_RESULT_SCHEMA_VERSION,
-  LOCKED_REPORT_TITLES,
+  COUNT_ONLY_INITIAL_RESULT_SCHEMA_VERSION,
   supportedPatterns,
   deliverablePatterns,
   deliverableInteractions,

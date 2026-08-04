@@ -114,14 +114,15 @@ class MemoryDatabaseAdapter {
       const publicEvents = allEvents.filter(row => !row.isAdmin && !row.isOwnerPreview && !row.isTest);
       const first = new Map();
       for (const event of publicEvents.sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
-        if (event.funnelKeyHash && !first.has(`${event.eventName}:${event.funnelKeyHash}`)) first.set(`${event.eventName}:${event.funnelKeyHash}`, event);
+        const eventName = event.eventName === "initial_result_viewed" ? "post_assessment_paywall_viewed" : event.eventName;
+        if (event.funnelKeyHash && !first.has(`${eventName}:${event.funnelKeyHash}`)) first.set(`${eventName}:${event.funnelKeyHash}`, { ...event, eventName });
       }
       const rowsFor = name => [...first.values()].filter(row => row.eventName === name && inRange(row.occurredAt));
       const allFor = name => [...first.values()].filter(row => row.eventName === name);
       const landings = [...new Map(publicEvents.filter(row => row.eventName === "landing_viewed" && row.visitorIdHash && inRange(row.occurredAt))
         .map(row => [row.visitorIdHash, row])).values()];
       const names = {
-        starts: "free_assessment_started", completes: "free_assessment_completed", results: "initial_result_viewed",
+        starts: "free_assessment_started", completes: "free_assessment_completed", results: "post_assessment_paywall_viewed",
         emails: "result_email_saved", ctas: "full_report_cta_clicked", invoices: "invoice_created",
         payments: "payment_confirmed", reports: "full_report_opened"
       };

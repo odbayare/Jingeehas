@@ -31,8 +31,8 @@ const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-
 
 function createState() {
   return { contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
-    answers: {}, questionIndex: 0, validationError: "", report: null, initialResult: null,
-    resultEmail: { saved: false, skipped: false, message: "", error: "" }, recovery: { recoveryId: "", message: "", error: "" },
+    answers: {}, questionIndex: 0, validationError: "", report: null,
+    recovery: { recoveryId: "", message: "", error: "" },
     inviteToken: "", invitation: null, invitationError: "", advisor: { profile: null, dashboard: null, temporaryPasswordChange: false, error: "" },
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
       analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
@@ -267,15 +267,15 @@ function renderLegacyPostResultPaywall() {
   return `<div class="page">${navigation()}<main class="content-card completion-card">${reportPaywallContent()}</main>${footer()}</div>`;
 }
 function renderInitialResult() {
-  const result = state.initialResult;
-  if (!result) return `<div class="page">${navigation()}<main class="content-card initial-result-loading"><h1 id="page-title" tabindex="-1">Таны хариултыг нэгтгэж байна…</h1><p role="status">Хариултуудын давтагдсан холбоог шалгаж байна.</p></main>${footer()}</div>`;
-  const resultBlock = result.mode === "neutral"
-    ? `<section class="initial-result-summary" aria-labelledby="page-title"><p class="eyebrow">Таны үр дүн</p><h1 id="page-title" tabindex="-1">Нэг хэв маяг бусдаасаа илт давамгай гарсангүй</h1><p>Таны хариултад хэд хэдэн нөхцөл зэрэг нөлөөлж байгаа зураглал харагдлаа. Бүрэн тайланд эдгээр нөхцөл хэрхэн уялдаж байгааг, юунд эхэлж анхаарах нь илүү тохиромжтойг тайлбарлана.</p></section>`
-    : `<section class="initial-result-summary" aria-labelledby="page-title"><p class="eyebrow">Таны үр дүн</p><h1 id="page-title" tabindex="-1">Таны хариултыг нэгтгэж дууслаа</h1><p>Таны хариултаас жин хасах оролдлогод тань нөлөөлж байж болох дараах зураглал гарлаа.</p><div class="initial-result-counts"><article class="result-count-card"><p class="result-count-label">Нөлөөлөх хэв маяг</p><p class="result-count-value">${escapeHtml(result.patternCount)}</p><p>Тайланд эдгээр хэв маяг тус бүрийн нэр, нөлөө болон удирдах аргыг тайлбарлана.</p></article>${result.interactionCount > 0 ? `<article class="result-count-card"><p class="result-count-label">Чухал уялдаа холбоо</p><p class="result-count-value">${escapeHtml(result.interactionCount)}</p><p>Тайланд хэв маягууд хоорондоо хэрхэн нөлөөлж байгааг тайлбарлана.</p></article>` : ""}</div></section>`;
-  const emailCard = state.resultEmail.skipped ? "" : `<section class="result-email-card" aria-labelledby="result-email-title"><h2 id="result-email-title">Үр дүнгээ хадгалах</h2><p>Имэйлээ хадгалбал тестийн үр дүн болон бүрэн тайлангаа өөр төхөөрөмжөөс сэргээж болно.</p>
-    ${state.resultEmail.saved ? `<p class="notice" role="status">Имэйл хадгалагдлаа.</p>` : `<form id="result-email-form" novalidate><label class="field" for="result-email"><span>Имэйл</span><input id="result-email" name="email" type="email" autocomplete="email" required></label><p class="error" role="alert">${escapeHtml(state.resultEmail.error)}</p><div class="actions"><button class="button" type="submit" ${state.busy ? "disabled" : ""}>Имэйлээ хадгалах</button><button class="button secondary" type="button" data-action="skip-result-email">Одоо алгасах</button></div></form>`}
-  </section>`;
-  return `<div class="page">${navigation()}<main class="content-card result-page">${resultBlock}${reportPaywallContent(true)}${emailCard}</main>${footer()}</div>`;
+  return `<div class="page">${navigation()}<main class="content-card result-page sealed-paywall" aria-labelledby="page-title">
+    <p class="eyebrow">Тест дууслаа</p>
+    <h1 id="page-title" tabindex="-1">Таны тайлан бэлэн боллоо</h1>
+    <p>Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг нөлөөлж байгааг, тэдгээр нь хоорондоо хэрхэн холбогдож, бие биеэ хүчтэй болгон жин хасах зорилгод тань хэрхэн саад болж байгааг мэдэж авна.</p>
+    <p>Мөн эдгээр хэв маягийг хэрхэн удирдах, хэцүү үеийг хэрхэн даван туулах болон эхэлж хэрэгжүүлэх 3 алхмын зааварчилгааг авна.</p>
+    <p class="paywall-closing">Даван туулах аргаа ойлгосноор сэтгэлзүй болон зуршлаа удирдахад илүү хялбар болно.</p>
+    <button class="button paywall-primary-cta" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "Нэхэмжлэл үүсгэж байна…" : `Бүрэн тайлангаа нээх — ${PRODUCT.displayPrice}`}</button>
+    <p class="muted paywall-note">Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ.</p>
+  </main>${footer()}</div>`;
 }
 function renderAssessmentCompleted() {
   if (state.commercialFlowVersion === "prepaid_v2") return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тест дууслаа. Таны тайланг боловсруулж байна.</h1><p role="status">Бүрэн тайланг ачаалж байна…</p></main>${footer()}</div>`;
@@ -572,8 +572,7 @@ function renderAdminAnalytics() {
     ["Шинэ зочин", total.eligibleVisitors || 0, conversions.visitorToAssessmentStart],
     ["Үнэгүй тест эхлүүлсэн", total.assessmentsStarted || 0, conversions.assessmentStartToComplete],
     ["Тест дуусгасан", total.assessmentsCompleted || 0, conversions.completeToInitialResult],
-    ["Эхний үр дүн харсан", total.initialResultsViewed || 0, conversions.initialResultToEmail],
-    ["Имэйл хадгалсан", total.emailsSaved || 0, null],
+    ["Тайлан бэлэн дэлгэц", total.initialResultsViewed || 0, conversions.initialResultToFullReportCta],
     ["Бүрэн тайлан нээх товч", total.fullReportCtaClicks || 0, conversions.fullReportCtaToInvoice],
     ["Нэхэмжлэл", total.invoicesCreated || 0, conversions.invoiceToPayment],
     ["Төлбөр", total.paymentsConfirmed || 0, conversions.paymentToFullReportOpen],
@@ -581,20 +580,20 @@ function renderAdminAnalytics() {
     ["Орлого", money(total.revenueMnt), null]
   ];
   const historical = (label, values) => `<aside class="analytics-coverage" aria-label="${escapeAttribute(label)}"><p><strong>${escapeHtml(label)}</strong></p><ul><li>Тест эхлүүлсэн: ${Number(values.assessmentsStarted || 0)}</li><li>Тест дуусгасан: ${Number(values.assessmentsCompleted || 0)}</li><li>Нэхэмжлэл: ${Number(values.invoicesCreated || 0)}</li><li>Төлбөр: ${Number(values.paymentsConfirmed || 0)}</li><li>Орлого: ${money(values.revenueMnt)}</li></ul></aside>`;
-  return `<section class="analytics-dashboard" aria-labelledby="analytics-title"><h2 id="analytics-title">Өдөр тутмын үзүүлэлт</h2><p><strong>Одоогийн урсгал: Үнэгүй тест → эхний хувийн үр дүн → бүрэн тайлан</strong></p><p>Цагийн бүс: Улаанбаатар</p>
+  return `<section class="analytics-dashboard" aria-labelledby="analytics-title"><h2 id="analytics-title">Өдөр тутмын үзүүлэлт</h2><p><strong>Одоогийн урсгал: Үнэгүй тест → тайлан бэлэн дэлгэц → бүрэн тайлан</strong></p><p>Цагийн бүс: Улаанбаатар</p>
     <form id="analytics-filter-form" class="analytics-filters"><label><span>Хугацаа</span><select name="preset"><option value="today"${analytics.preset === "today" ? " selected" : ""}>Өнөөдөр</option><option value="yesterday"${analytics.preset === "yesterday" ? " selected" : ""}>Өчигдөр</option><option value="last7"${analytics.preset === "last7" ? " selected" : ""}>Сүүлийн 7 хоног</option><option value="last30"${analytics.preset === "last30" ? " selected" : ""}>Сүүлийн 30 хоног</option><option value="thisMonth"${analytics.preset === "thisMonth" ? " selected" : ""}>Энэ сар</option><option value="previousMonth"${analytics.preset === "previousMonth" ? " selected" : ""}>Өмнөх сар</option><option value="custom"${analytics.preset === "custom" ? " selected" : ""}>Өөр хугацаа</option></select></label><label><span>Эхлэх өдөр</span><input type="date" name="startDate" value="${escapeAttribute(analytics.startDate)}"></label><label><span>Дуусах өдөр</span><input type="date" name="endDate" value="${escapeAttribute(analytics.endDate)}"></label><button class="button compact" type="submit">Харах</button></form>
     ${analytics.loading ? `<p role="status">Үзүүлэлтийг ачаалж байна…</p>` : ""}${analytics.error ? `<p class="error">${escapeHtml(analytics.error)}</p>` : ""}
     <p class="analytics-context"><strong>Сонгосон хугацаанд хэмжигдсэн нийт зочин: ${allMeasuredVisitors}</strong></p>
     ${coverageNotices.map(notice => `<p class="analytics-coverage">${escapeHtml(notice)}</p>`).join("")}
     ${flowNotice ? `<p class="notice">${escapeHtml(flowNotice)}</p>` : ""}
     ${!priorAvailable ? `<p class="analytics-comparison-note">Сонгосон хугацааг өмнөх ижил хугацаатай харьцуулах боломжгүй байна.</p>` : ""}
-    <div class="metric-grid analytics-metrics">${card("Шинэ урсгалын зочин", total.eligibleVisitors || 0, `Үнэгүй тест эхлүүлсэн хувь: ${conversionDisplay(conversions.visitorToAssessmentStart)}`, "eligibleVisitors")}${card("Үнэгүй тест эхлүүлсэн", total.assessmentsStarted || 0, `Дуусгасан хувь: ${conversionDisplay(conversions.assessmentStartToComplete)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted || 0, `Эхний үр дүн харсан хувь: ${conversionDisplay(conversions.completeToInitialResult)}`, "assessmentsCompleted")}${card("Эхний үр дүн харсан", total.initialResultsViewed || 0, `Имэйл хадгалсан хувь: ${conversionDisplay(conversions.initialResultToEmail)} · Бүрэн тайлангийн товч дарсан хувь: ${conversionDisplay(conversions.initialResultToFullReportCta)}`, "initialResultsViewed")}${card("Имэйл хадгалсан", total.emailsSaved || 0, "Сонголттой сэргээх холбоо", "emailsSaved")}${card("Бүрэн тайлангийн товч", total.fullReportCtaClicks || 0, `Нэхэмжлэл үүсгэсэн хувь: ${conversionDisplay(conversions.fullReportCtaToInvoice)}`, "fullReportCtaClicks")}${card("Нэхэмжлэл", total.invoicesCreated || 0, `Төлбөр төлсөн хувь: ${conversionDisplay(conversions.invoiceToPayment)}`, "invoicesCreated")}${card("Төлбөр", total.paymentsConfirmed || 0, `Бүрэн тайлан нээсэн хувь: ${conversionDisplay(conversions.paymentToFullReportOpen)}`, "paymentsConfirmed")}${card("Бүрэн тайлан нээсэн", total.reportsOpened || 0, "Серверээр эрх баталгаажсан", "reportsOpened")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
+    <div class="metric-grid analytics-metrics">${card("Шинэ урсгалын зочин", total.eligibleVisitors || 0, `Үнэгүй тест эхлүүлсэн хувь: ${conversionDisplay(conversions.visitorToAssessmentStart)}`, "eligibleVisitors")}${card("Үнэгүй тест эхлүүлсэн", total.assessmentsStarted || 0, `Дуусгасан хувь: ${conversionDisplay(conversions.assessmentStartToComplete)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted || 0, `Тайлан бэлэн дэлгэц харсан хувь: ${conversionDisplay(conversions.completeToInitialResult)}`, "assessmentsCompleted")}${card("Тайлан бэлэн дэлгэц", total.initialResultsViewed || 0, `Бүрэн тайлангийн товч дарсан хувь: ${conversionDisplay(conversions.initialResultToFullReportCta)}`, "initialResultsViewed")}${card("Бүрэн тайлангийн товч", total.fullReportCtaClicks || 0, `Нэхэмжлэл үүсгэсэн хувь: ${conversionDisplay(conversions.fullReportCtaToInvoice)}`, "fullReportCtaClicks")}${card("Нэхэмжлэл", total.invoicesCreated || 0, `Төлбөр төлсөн хувь: ${conversionDisplay(conversions.invoiceToPayment)}`, "invoicesCreated")}${card("Төлбөр", total.paymentsConfirmed || 0, `Бүрэн тайлан нээсэн хувь: ${conversionDisplay(conversions.paymentToFullReportOpen)}`, "paymentsConfirmed")}${card("Бүрэн тайлан нээсэн", total.reportsOpened || 0, "Серверээр эрх баталгаажсан", "reportsOpened")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
     <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value, conversion]) => `<li><span>${label}</span><strong>${value}</strong>${conversion ? `<small>${conversionDisplay(conversion)}</small>` : ""}</li>`).join("")}</ol>
     ${coverage.prepaidActivityPresent ? historical("Өмнөх төлбөр-эхэнд урсгал", prepaid) : ""}
     ${coverage.legacyActivityPresent ? historical("Legacy postpaid урсгал", legacy) : ""}
     ${renderQuestionProgressAnalytics()}
     <p class="analytics-daily-note">Доорх хүснэгт үнэгүй тестийн урсгалын үзүүлэлтийг өдрөөр харуулна.</p>
-    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Шинэ зочин</th><th>Тест эхлүүлсэн</th><th>Тест дуусгасан</th><th>Эхний үр дүн</th><th>Имэйл</th><th>Бүрэн тайлангийн товч</th><th>Нэхэмжлэл</th><th>Төлбөр</th><th>Бүрэн тайлан</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${Number(day.uniqueVisitors || 0)}</td><td>${Number(day.assessmentsStarted || 0)}</td><td>${Number(day.assessmentsCompleted || 0)}</td><td>${Number(day.initialResultsViewed || 0)}</td><td>${Number(day.emailsSaved || 0)}</td><td>${Number(day.fullReportCtaClicks || 0)}</td><td>${Number(day.invoicesCreated || 0)}</td><td>${Number(day.paymentsConfirmed || 0)}</td><td>${Number(day.reportsOpened || 0)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
+    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Шинэ зочин</th><th>Тест эхлүүлсэн</th><th>Тест дуусгасан</th><th>Тайлан бэлэн дэлгэц</th><th>Бүрэн тайлангийн товч</th><th>Нэхэмжлэл</th><th>Төлбөр</th><th>Бүрэн тайлан</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${Number(day.uniqueVisitors || 0)}</td><td>${Number(day.assessmentsStarted || 0)}</td><td>${Number(day.assessmentsCompleted || 0)}</td><td>${Number(day.initialResultsViewed || 0)}</td><td>${Number(day.fullReportCtaClicks || 0)}</td><td>${Number(day.invoicesCreated || 0)}</td><td>${Number(day.paymentsConfirmed || 0)}</td><td>${Number(day.reportsOpened || 0)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
 }
 function renderAdvisorLogin() {
   if (state.advisor.temporaryPasswordChange) return `<div class="page"><main class="content-card"><h1 id="page-title" tabindex="-1">Нууц үгээ солино уу</h1><form id="advisor-password-form"><label class="field"><span>Одоогийн нууц үг</span><input name="currentPassword" type="password" autocomplete="current-password" required></label><label class="field"><span>Шинэ нууц үг</span><input name="newPassword" type="password" autocomplete="new-password" minlength="12" required></label><button class="button" type="submit">Нууц үг солих</button></form><p class="error">${escapeHtml(state.advisor.error)}</p></main></div>`;
@@ -679,10 +678,6 @@ async function authorizeAssessmentQuestions(analyticsContext = {}) {
   state.startedAt = access.startedAt || state.startedAt;
   state.questionsAuthorized = true;
 }
-async function loadInitialResult() {
-  state.initialResult = await api(`/.netlify/functions/weight-assessment-initial-result?assessmentId=${encodeURIComponent(state.assessmentId)}`, { method: "GET" });
-  return state.initialResult;
-}
 async function startFreeAssessment(form) {
   if (state.busy) return;
   const input = formObject(form);
@@ -693,7 +688,6 @@ async function startFreeAssessment(form) {
     if (restored.assessment) {
       applyAssessmentState(restored);
       if (restored.nextRoute === "/assessment/questions") await authorizeAssessmentQuestions(analyticsIdentity());
-      if (restored.nextRoute === "/assessment/result") await loadInitialResult();
       state.busy = false;
       navigate(restored.nextRoute || "/assessment/questions");
       return;
@@ -726,27 +720,6 @@ async function startFreeAssessment(form) {
     render({ focus: false });
   }
 }
-async function saveResultEmail(form) {
-  if (state.busy) return;
-  const input = formObject(form);
-  const error = contactValidation(input);
-  if (error) { state.resultEmail.error = error; render({ focus: false }); return; }
-  state.busy = true; state.resultEmail.error = ""; render({ focus: false });
-  try {
-    await api("/.netlify/functions/weight-result-email-save", {
-      method: "POST",
-      body: JSON.stringify({ assessmentId: state.assessmentId, email: input.email })
-    });
-    state.resultEmail.saved = true;
-    state.resultEmail.message = "Имэйл хадгалагдлаа.";
-  } catch {
-    state.resultEmail.error = "Имэйлийг хадгалж чадсангүй. Та төлбөр рүү үргэлжлүүлж болно.";
-  } finally {
-    state.busy = false;
-    render({ focus: false });
-  }
-}
-
 async function submitContact(form) {
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
   state.busy = true; render();
@@ -877,7 +850,7 @@ async function nextQuestion() {
     const completed = await api("/.netlify/functions/weight-assessment-complete", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
     state.assessmentStatus = completed.status; state.busy = false; state.slowSave = false;
     if (completed.safetyRoute) { state.report = await loadReport(); navigate("/report"); return; }
-    if (completed.nextRoute === "/assessment/result") { await loadInitialResult(); navigate("/assessment/result"); return; }
+    if (completed.nextRoute === "/assessment/result") { navigate("/assessment/result"); return; }
     if (completed.nextRoute === "/report" || state.commercialFlowVersion === "prepaid_v2") { state.report = await loadReport(); navigate("/report"); return; }
     navigate(completed.nextRoute || "/assessment/completed");
   } catch (requestError) {
@@ -985,10 +958,12 @@ async function restoreServerState() {
   if (!["assessmentResult", "assessmentCompleted", "payment", "questions", "report", "dataDeletion"].includes(route)) return;
   try {
     const restored = await api("/.netlify/functions/weight-session-state", { method: "GET" });
-    if (!restored.assessment) { if (route === "questions") navigate("/assessment/start", { replace: true }); return; }
+    if (!restored.assessment) {
+      if (["assessmentResult", "assessmentCompleted", "payment", "questions", "report"].includes(route)) navigate("/assessment/start", { replace: true });
+      return;
+    }
     applyAssessmentState(restored);
     if (route === "assessmentResult" && restored.nextRoute !== "/assessment/result") { navigate(restored.nextRoute || "/assessment/start", { replace: true }); return; }
-    if (route === "assessmentResult") await loadInitialResult();
     if (restored.nextRoute && route === "questions" && restored.nextRoute !== "/assessment/questions") { navigate(restored.nextRoute, { replace: true }); return; }
     if (route === "questions" && restored.nextRoute === "/assessment/questions") {
       await authorizeAssessmentQuestions();
@@ -1020,8 +995,6 @@ function bind(root) {
   root.querySelectorAll("[data-question]").forEach(input => input.addEventListener(["text", "number"].includes(input.type) || input.tagName === "TEXTAREA" ? "input" : "change", () => updateAnswer(input)));
   root.querySelector("#assessment-start-form")?.addEventListener("submit", event => { event.preventDefault(); startFreeAssessment(event.currentTarget); });
   root.querySelector("#contact-form")?.addEventListener("submit", event => { event.preventDefault(); submitContact(event.currentTarget).catch(error => { state.busy = false; render(); const node = document.getElementById("contact-error"); if (node) node.textContent = error.message; }); });
-  root.querySelector("#result-email-form")?.addEventListener("submit", event => { event.preventDefault(); saveResultEmail(event.currentTarget); });
-  root.querySelector('[data-action="skip-result-email"]')?.addEventListener("click", () => { state.resultEmail.skipped = true; render({ focus: false }); });
   root.querySelector("#consent-form")?.addEventListener("submit", event => { event.preventDefault(); submitConsent(event.currentTarget).catch(() => { state.validationError = "Сонголтыг хадгалж чадсангүй."; render(); }); });
   root.querySelector("#question-form")?.addEventListener("submit", event => { event.preventDefault(); nextQuestion(); });
   root.querySelector("#recovery-request-form")?.addEventListener("submit", event => { event.preventDefault(); requestRecovery(event.currentTarget).catch(error => { state.recovery.error = error?.body?.error === "recovery_unavailable" || error.message === "recovery_unavailable" ? "Сэргээх кодыг одоогоор илгээж чадсангүй. Түр хүлээгээд дахин оролдоно уу." : "Сэргээх хүсэлтийг одоогоор боловсруулах боломжгүй байна."; render(); }); });
@@ -1055,6 +1028,7 @@ function render(options = {}) {
   const route = routeName(window.location.pathname);
   if (route === "landing") trackEvent("landing_viewed", "", "landing_viewed:page-load");
   if (route === "assessmentContact") trackEvent("payment_preparation_viewed", "", "payment_preparation_viewed:page-load");
+  if (route === "assessmentResult" && state.assessmentId) trackEvent("post_assessment_paywall_viewed", state.assessmentId);
   if (route === "payment") trackEvent("paywall_viewed", state.assessmentId || undefined);
   if (route === "questions" && state.questionsAuthorized && state.assessmentId) trackRenderedQuestion();
   const heading = document.getElementById("page-title"); if (options.focus !== false && heading) heading.focus();

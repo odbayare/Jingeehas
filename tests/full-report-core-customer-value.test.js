@@ -59,24 +59,24 @@ for (const title of lockedTitles) assert.equal(paywall.split(title).length - 1, 
 assert.equal((paywall.match(/class="lock-mark"/g) || []).length, 7);
 for (const hiddenBody of ["Юуг анзаарах вэ?", "Урьдчилан юу бэлдэх вэ?", "Тухайн үед юу хийж болох вэ?"]) assert(!paywall.includes(hiddenBody), `full report body leaked into locked preview: ${hiddenBody}`);
 
-app._test.setState({ ownerPreview: true, commercialFlowVersion: "free_assessment_postpaid_v1", assessmentStatus: "complete", assessmentId: "count-only-result", initialResult: { mode: "summary", patternCount: 4, interactionCount: 2, lockedSections: lockedTitles }, resultEmail: { saved: false, skipped: false, error: "" } });
-const countOnlyResult = app.renderForPath("/assessment/result");
+app._test.setState({ ownerPreview: true, commercialFlowVersion: "free_assessment_postpaid_v1", assessmentStatus: "complete", assessmentId: "sealed-result" });
+const sealedResult = app.renderForPath("/assessment/result");
 for (const exact of [
-  "Таны хариултыг нэгтгэж дууслаа",
-  "Нөлөөлөх хэв маяг",
-  "Чухал уялдаа холбоо",
-  "Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох",
-  "сэтгэлзүйн хэв маягаа анзаарч, удирдахад илүү хялбар болно",
-  "Бүрэн тайлангаа нээх — 9,900₮"
-]) assert(countOnlyResult.includes(exact), `count-only result copy missing: ${exact}`);
-for (const forbidden of ["Хамгийн тод харагдсан хэв маяг", "Сэтгэл хөдлөлөөр идэгч", "Үүнээс гадна өөр нэг хэв маяг", "actionable insight", "personalized roadmap"]) assert(!countOnlyResult.includes(forbidden), `count-only result leaked or used prohibited copy: ${forbidden}`);
-assert(countOnlyResult.indexOf("paywall-primary-cta") < countOnlyResult.indexOf("result-email-card"), "optional email must follow the primary CTA in DOM order");
-
-app._test.setState({ ownerPreview: true, commercialFlowVersion: "free_assessment_postpaid_v1", assessmentStatus: "complete", assessmentId: "neutral-result", initialResult: { mode: "neutral", patternCount: 0, interactionCount: 0, lockedSections: lockedTitles }, resultEmail: { saved: false, skipped: false, error: "" } });
-const neutralResult = app.renderForPath("/assessment/result");
-assert(neutralResult.includes("Нэг хэв маяг бусдаасаа илт давамгай гарсангүй"));
-assert(neutralResult.includes("Таны хариултад хэд хэдэн нөхцөл зэрэг нөлөөлж байгаа зураглал харагдлаа."));
-assert(!neutralResult.includes("result-count-card"), "neutral result must not render zero-count cards");
+  "Тест дууслаа",
+  "Таны тайлан бэлэн боллоо",
+  "Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг нөлөөлж байгааг, тэдгээр нь хоорондоо хэрхэн холбогдож, бие биеэ хүчтэй болгон жин хасах зорилгод тань хэрхэн саад болж байгааг мэдэж авна.",
+  "Мөн эдгээр хэв маягийг хэрхэн удирдах, хэцүү үеийг хэрхэн даван туулах болон эхэлж хэрэгжүүлэх 3 алхмын зааварчилгааг авна.",
+  "Даван туулах аргаа ойлгосноор сэтгэлзүй болон зуршлаа удирдахад илүү хялбар болно.",
+  "Бүрэн тайлангаа нээх — 9,900₮",
+  "Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ."
+]) assert(sealedResult.includes(exact), `sealed paywall copy missing: ${exact}`);
+for (const forbidden of [
+  "Нөлөөлөх хэв маяг", "Чухал уялдаа холбоо", "Таны хариултыг нэгтгэж дууслаа",
+  "Нэг хэв маяг бусдаасаа илт давамгай гарсангүй", "Бүрэн тайланд нээгдэх хэсгүүд",
+  "Танд нөлөөлж буй хэв маягууд", "Хэв маягуудын уялдаа холбоо", "Үр дүнгээ хадгалах",
+  "Имэйлээ хадгалах", "Одоо алгасах", "patternCount", "interactionCount", "primaryPattern", "lockedSections"
+]) assert(!sealedResult.includes(forbidden), `sealed paywall exposed forbidden content: ${forbidden}`);
+assert.equal((sealedResult.match(/<section\b/g) || []).length, 0, "sealed paywall has no preview or secondary section");
 
 const requiredModuleFields = ["title", "evidenceLink", "observe", "triggerRecognition", "prepare", "inMoment", "avoidRigidDemand", "resume", "professionalHelp"];
 const requiredFallbackFields = ["introduction", "resume", "softenRule", "recheckTrigger", "fitDailyLife"];

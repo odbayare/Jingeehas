@@ -115,10 +115,10 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
   assert(dashboard.includes("Үнэгүй тест эхлүүлсэн хувь: 80.0%")); assert(!dashboard.includes("NaN"));
   assert(dashboard.includes("Өмнөх төлбөр-эхэнд урсгал")); assert(dashboard.includes("Legacy postpaid урсгал"));
   assert(dashboard.includes("Сонгосон хугацаанд хэмжигдсэн нийт зочин: 10"));
-  assert(dashboard.includes("Одоогийн урсгал: Үнэгүй тест → эхний хувийн үр дүн → бүрэн тайлан"));
+  assert(dashboard.includes("Одоогийн урсгал: Үнэгүй тест → тайлан бэлэн дэлгэц → бүрэн тайлан"));
   assert(dashboard.includes("Доорх хүснэгт үнэгүй тестийн урсгалын үзүүлэлтийг өдрөөр харуулна."));
   assert(dashboard.includes("Урсгалуудын numerator, denominator-ийг хольж хувь тооцоогүй."));
-  const headers = ["Огноо", "Шинэ зочин", "Тест эхлүүлсэн", "Тест дуусгасан", "Эхний үр дүн", "Имэйл", "Бүрэн тайлангийн товч", "Нэхэмжлэл", "Төлбөр", "Бүрэн тайлан", "Орлого"];
+  const headers = ["Огноо", "Шинэ зочин", "Тест эхлүүлсэн", "Тест дуусгасан", "Тайлан бэлэн дэлгэц", "Бүрэн тайлангийн товч", "Нэхэмжлэл", "Төлбөр", "Бүрэн тайлан", "Орлого"];
   let offset = -1; for (const header of headers) { const next = dashboard.indexOf(`<th>${header}</th>`); assert(next > offset, `daily header order: ${header}`); offset = next; }
   assert(!/(NaN|Infinity|null|undefined|legacy_postpaid_v1|prepaid_v2)/.test(dashboard));
 
