@@ -7,7 +7,7 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const output = path.join(root, "staging");
 const generatedRoot = path.join(root, ".generated-copy-hotfix");
-const manifestPath = path.join(root, "artifacts", "staging-package-manifest.json");
+const manifestPath = path.join(root, "artifacts", "runtime", "staging-package-manifest.json");
 execFileSync(process.execPath, ["tools/build-production.mjs"], { cwd: root, stdio: "inherit" });
 fs.rmSync(output, { recursive: true, force: true });
 fs.mkdirSync(output, { recursive: true });
