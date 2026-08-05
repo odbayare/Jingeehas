@@ -105,6 +105,56 @@ class MemoryDatabaseAdapter {
       return copy(activated);
     } finally { release(); if (this.activationLocks.get(target.assessmentId) === currentLock) this.activationLocks.delete(target.assessmentId); }
   }
+  async getCampaignAttributionAnalytics(startDate, endDate) {
+    const events = [...this.table("analytics_events").values()];
+    const day = value => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
+    const inRange = value => value && day(value) >= startDate && day(value) <= endDate;
+    const flagged = row => Boolean(row.isAdmin || row.isOwnerPreview || row.isTest);
+    const excludedFunnels = new Set(events.filter(row => row.funnelKeyHash && flagged(row)).map(row => row.funnelKeyHash));
+    const excludedAssessments = new Set(events.filter(row => row.assessmentId && flagged(row)).map(row => row.assessmentId));
+    const excludedEvent = row => flagged(row) || excludedFunnels.has(row.funnelKeyHash) || excludedAssessments.has(row.assessmentId);
+    const publicEvents = events.filter(row => !excludedEvent(row));
+    const fields = ["utmSource", "utmMedium", "utmCampaign", "utmContent", "utmTerm"];
+    const keyFor = row => JSON.stringify(fields.map(field => row?.[field] || null));
+    const emptyRow = key => { const [utmSource, utmMedium, utmCampaign, utmContent, utmTerm] = JSON.parse(key); return {
+      utmSource, utmMedium, utmCampaign, utmContent, utmTerm,
+      unattributed: ![utmSource, utmMedium, utmCampaign, utmContent, utmTerm].some(Boolean), visitors: 0,
+      assessmentsStarted: 0, assessmentsCompleted: 0, paywallViews: 0, fullReportCtaClicks: 0,
+      invoicesCreated: 0, paymentsConfirmed: 0, reportsOpened: 0, revenueMnt: 0
+    }; };
+    const grouped = new Map(); const group = key => { if (!grouped.has(key)) grouped.set(key, emptyRow(key)); return grouped.get(key); };
+    const landingVisitors = new Set();
+    for (const event of publicEvents.filter(row => row.eventName === "landing_viewed" && row.visitorIdHash && inRange(row.occurredAt))) {
+      const key = keyFor(event); const visitorKey = `${key}:${event.visitorIdHash}`;
+      if (!landingVisitors.has(visitorKey)) { landingVisitors.add(visitorKey); group(key).visitors += 1; }
+    }
+    const acquisition = new Map();
+    for (const event of publicEvents.filter(row => row.eventName === "free_assessment_started" && row.funnelKeyHash)
+      .sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
+      if (!acquisition.has(event.funnelKeyHash)) acquisition.set(event.funnelKeyHash, event);
+    }
+    const metric = { free_assessment_started: "assessmentsStarted", free_assessment_completed: "assessmentsCompleted",
+      post_assessment_paywall_viewed: "paywallViews", full_report_cta_clicked: "fullReportCtaClicks",
+      invoice_created: "invoicesCreated", payment_confirmed: "paymentsConfirmed", full_report_opened: "reportsOpened" };
+    const first = new Set();
+    for (const event of publicEvents.filter(row => metric[row.eventName] && row.funnelKeyHash)
+      .sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
+      const eventKey = `${event.eventName}:${event.funnelKeyHash}`;
+      if (first.has(eventKey)) continue; first.add(eventKey);
+      if (!inRange(event.occurredAt) || !acquisition.has(event.funnelKeyHash)) continue;
+      const row = group(keyFor(acquisition.get(event.funnelKeyHash))); row[metric[event.eventName]] += 1;
+      if (event.eventName === "payment_confirmed") row.revenueMnt += Number(event.amountMnt || 0);
+    }
+    const excluded = events.filter(row => excludedEvent(row) && inRange(row.occurredAt));
+    const excludedPayments = new Map();
+    for (const event of excluded.filter(row => row.eventName === "payment_confirmed")) {
+      const paymentKey = event.funnelKeyHash || event.paymentId || event.eventId || event.id;
+      if (!excludedPayments.has(paymentKey)) excludedPayments.set(paymentKey, Number(event.amountMnt || 0));
+    }
+    return { rows: [...grouped.values()].sort((a, b) => Number(a.unattributed) - Number(b.unattributed) || String(a.utmCampaign || "").localeCompare(String(b.utmCampaign || ""))),
+      excluded: { eventCount: excluded.length, paymentCount: excludedPayments.size,
+        revenueMnt: [...excludedPayments.values()].reduce((sum, value) => sum + value, 0) } };
+  }
   async getDailyFunnelAnalytics(startDate, endDate) {
     const cutover = new Date("2026-07-21T16:17:45.493Z");
     const allEvents = [...this.table("analytics_events").values()];
@@ -175,6 +225,7 @@ class MemoryDatabaseAdapter {
         paymentsConfirmed: totals.paymentsConfirmed + prepaidFlow.paymentsConfirmed + legacyFlow.paymentsConfirmed,
         revenueMnt: totals.revenueMnt + prepaidFlow.revenueMnt + legacyFlow.revenueMnt },
         currentFlow: totals, prepaidFlow, legacyFlow, conversions,
+        campaignAttribution: await this.getCampaignAttributionAnalytics(startDate, endDate),
         coverage: { freeFlowCutoverAt: allFor(names.starts).map(row => row.occurredAt).sort()[0] || null,
           allMeasuredVisitors: landings.length, freeActivityPresent: true,
           prepaidActivityPresent: Object.values(prepaidFlow).some(Number), legacyActivityPresent: Object.values(legacyFlow).some(Number),
@@ -264,6 +315,7 @@ class MemoryDatabaseAdapter {
         : legacyPresent ? "legacy_only" : prepaidAssessmentPresent ? "prepaid_only" : prepaidVisitorPresent ? "prepaid_visitors_only" : "empty";
     return { days: output, summary: allFlows, allFlows,
       currentFlow: { eligibleVisitors: firstLandingEntries.length, ...prepaid }, legacyFlow: legacy, conversions,
+      campaignAttribution: await this.getCampaignAttributionAnalytics(startDate, endDate),
       coverage: { paidFirstCutoverAt: cutover.toISOString(), rangeStartsBeforeCutover: new Date(`${startDate}T00:00:00+08:00`) < cutover,
         rangeEndsAfterCutover: rangeEnd > cutover, allMeasuredVisitors: allFlows.uniqueVisitors, paidFirstEligibleVisitors: firstLandingEntries.length,
         legacyActivityPresent: legacyPresent, prepaidActivityPresent: prepaidAssessmentPresent,

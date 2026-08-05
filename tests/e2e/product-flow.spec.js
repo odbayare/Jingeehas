@@ -205,18 +205,26 @@ test("scientific methodology box is responsive and keyboard accessible", async (
   }
 });
 
-test("owner daily funnel dashboard is readable at 375px", async ({ page, context }) => {
+test("owner daily funnel and campaign attribution tables are responsive", async ({ page, context }) => {
   await context.addCookies([{ name: "jingeehas_admin", value: "admin-e2e", domain: "127.0.0.1", path: "/" }]);
-  await page.setViewportSize({ width: 375, height: 812 });
-  await page.goto("/admin?e2e=1");
-  await expect(page.getByRole("heading", { name: "Өдөр тутмын үзүүлэлт" })).toBeVisible();
-  await expect(page.getByText("Цагийн бүс: Улаанбаатар")).toBeVisible();
-  await expect(page.getByText("Одоогийн урсгал: Үнэгүй тест → тайлан бэлэн дэлгэц → бүрэн тайлан", { exact: true })).toBeVisible();
-  await expect(page.getByText("Paywall", { exact: false })).toHaveCount(0);
-  await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
-  expect(overflow).toBeLessThanOrEqual(1);
-  await expect(page.locator(".table-scroll")).toHaveCSS("overflow-x", "auto");
+  for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], [1440, 900]]) {
+    await page.setViewportSize({ width, height });
+    await page.goto("/admin?e2e=1");
+    await expect(page.getByRole("heading", { name: "Өдөр тутмын үзүүлэлт" })).toBeVisible();
+    await expect(page.getByText("Цагийн бүс: Улаанбаатар")).toBeVisible();
+    await expect(page.getByText("Одоогийн урсгал: Үнэгүй тест → тайлан бэлэн дэлгэц → бүрэн тайлан", { exact: true })).toBeVisible();
+    await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
+    const attribution = page.getByRole("region", { name: "Campaign attribution хүснэгт" });
+    await expect(page.getByRole("heading", { name: "Campaign attribution" })).toBeVisible();
+    await expect(attribution.getByRole("rowheader", { name: "jingeehas_traffic_lpv_reel_v1" })).toBeVisible();
+    await expect(attribution.getByRole("rowheader", { name: "Unattributed" })).toBeVisible();
+    await expect(attribution).toContainText("Visitor → Start: 83.3%");
+    await expect(page.getByText("Owner / test traffic excluded: 4 event, 1 payment, 9,900₮", { exact: true })).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+    await expect(page.locator(".analytics-dashboard > .table-scroll")).toHaveCSS("overflow-x", "auto");
+    await expect(attribution).toHaveCSS("overflow-x", "auto");
+    expect(await attribution.evaluate(element => element.scrollWidth > element.clientWidth)).toBe(true);
+  }
 });
 
 test("question progress card stays compact and expands in two levels", async ({ page, context }) => {

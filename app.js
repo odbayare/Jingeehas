@@ -37,6 +37,7 @@ function createState() {
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
       analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
         allFlows: null, currentFlow: null, priorCurrentFlow: null, prepaidFlow: null, legacyFlow: null, conversions: null, coverage: null, loading: false, error: "",
+        campaignAttribution: { rows: [], excluded: { eventCount: 0, paymentCount: 0, revenueMnt: 0 } },
         questionProgress: { summary: null, questions: [], expanded: false, showAll: false } } }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
@@ -58,11 +59,15 @@ function analyticsIdentity(now = Date.now()) {
   for (const key of ["source", "medium", "campaign", "content", "term"]) { const value = params.get(`utm_${key}`); if (value) touch[`utm${key[0].toUpperCase()}${key.slice(1)}`] = value.slice(0, 100); }
   try { if (document.referrer) touch.referrerHost = new URL(document.referrer).hostname; } catch {}
   const expired = !Number(saved.seen) || now - Number(saved.seen) > 30 * 60 * 1000;
+  const hasCampaign = value => ["utmSource", "utmMedium", "utmCampaign", "utmContent", "utmTerm"].some(key => Boolean(value?.[key]));
+  const savedAcquisition = expired ? {} : (saved.acquisition || saved.firstTouch || {});
+  const acquisition = hasCampaign(savedAcquisition) ? savedAcquisition : hasCampaign(touch) ? touch
+    : Object.keys(savedAcquisition).length ? savedAcquisition : touch;
   const next = { visitorId: /^[0-9a-f-]{36}$/i.test(saved.visitorId || "") ? saved.visitorId : browserUuid(),
     sessionId: !expired && /^[0-9a-f-]{36}$/i.test(saved.sessionId || "") ? saved.sessionId : browserUuid(), seen: now,
-    firstTouch: saved.firstTouch || touch };
+    acquisition };
   document.cookie = `${ANALYTICS_COOKIE}=${encodeURIComponent(JSON.stringify(next))}; Path=/; Max-Age=31536000; Secure; SameSite=Lax`;
-  const width = window.innerWidth || 1024; return { visitorId: next.visitorId, sessionId: next.sessionId, ...next.firstTouch, ...touch,
+  const width = window.innerWidth || 1024; return { visitorId: next.visitorId, sessionId: next.sessionId, ...next.acquisition,
     deviceClass: width < 768 ? "mobile" : width < 1024 ? "tablet" : "desktop" };
 }
 const trackedPageEvents = new Set();
@@ -541,6 +546,25 @@ function conversionDisplay(conversion) {
   const reason = CONVERSION_REASONS[conversion?.reason] || CONVERSION_REASONS[conversion?.status] || "Энэ хөрвөлтийн хувийг ижил cohort-оор тооцох боломжгүй.";
   return `<span title="${escapeAttribute(reason)}">—</span>`;
 }
+function attributionRate(numerator, denominator) { return Number(denominator) > 0 ? safeRate(Number(numerator || 0) / Number(denominator)) : "—"; }
+function renderCampaignAttribution(attribution = {}) {
+  const rows = Array.isArray(attribution.rows) ? attribution.rows : [];
+  const excluded = attribution.excluded || {};
+  const label = row => row.unattributed ? "Unattributed" : (row.utmCampaign || "—");
+  const cell = value => escapeHtml(value || "—");
+  const conversions = row => [
+    ["Visitor → Start", row.assessmentsStarted, row.visitors], ["Start → Completion", row.assessmentsCompleted, row.assessmentsStarted],
+    ["Completion → Paywall", row.paywallViews, row.assessmentsCompleted], ["Paywall → CTA", row.fullReportCtaClicks, row.paywallViews],
+    ["CTA → Invoice", row.invoicesCreated, row.fullReportCtaClicks], ["Invoice → Payment", row.paymentsConfirmed, row.invoicesCreated],
+    ["Landing → Payment", row.paymentsConfirmed, row.visitors]
+  ].map(([name, numerator, denominator]) => `${name}: ${attributionRate(numerator, denominator)}`).join(" · ");
+  const body = rows.length ? rows.map(row => `<tr><th scope="row">${escapeHtml(label(row))}</th><td>${cell(row.utmSource)}</td><td>${cell(row.utmMedium)}</td><td>${cell(row.utmContent)}</td><td>${cell(row.utmTerm)}</td><td>${Number(row.visitors || 0)}</td><td>${Number(row.assessmentsStarted || 0)}</td><td>${Number(row.assessmentsCompleted || 0)}</td><td>${Number(row.paywallViews || 0)}</td><td>${Number(row.fullReportCtaClicks || 0)}</td><td>${Number(row.invoicesCreated || 0)}</td><td>${Number(row.paymentsConfirmed || 0)}</td><td>${Number(row.reportsOpened || 0)}</td><td>${money(row.revenueMnt)}</td><td class="attribution-conversions">${conversions(row)}</td></tr>`).join("")
+    : `<tr><td colspan="15">Сонгосон хугацаанд campaign attribution бүртгэл алга.</td></tr>`;
+  return `<section class="campaign-attribution" aria-labelledby="campaign-attribution-title"><h3 id="campaign-attribution-title">Campaign attribution</h3>
+    <p>UTM эх үүсвэрийг тест эхлэх үед assessment funnel-д холбож, дараагийн шууд эсвэл өөр UTM оролтоор солихгүй.</p>
+    <p class="analytics-coverage">Owner / test traffic excluded: ${Number(excluded.eventCount || 0)} event, ${Number(excluded.paymentCount || 0)} payment, ${money(excluded.revenueMnt)}</p>
+    <div class="table-scroll campaign-attribution-scroll" tabindex="0" role="region" aria-label="Campaign attribution хүснэгт"><table><thead><tr><th scope="col">Campaign</th><th scope="col">Source</th><th scope="col">Medium</th><th scope="col">Content</th><th scope="col">Term</th><th scope="col">Зочин</th><th scope="col">Тест эхлүүлсэн</th><th scope="col">Тест дуусгасан</th><th scope="col">Тайлан бэлэн дэлгэц</th><th scope="col">Бүрэн тайлан нээх товч</th><th scope="col">Нэхэмжлэл</th><th scope="col">Төлбөр</th><th scope="col">Бүрэн тайлан нээсэн</th><th scope="col">Бодит орлого</th><th scope="col">Хөрвөлтүүд</th></tr></thead><tbody>${body}</tbody></table></div></section>`;
+}
 function analyticsCoverageCopy(coverage) {
   const notices = [];
   if (coverage?.visitorTrackingStartedAt) notices.push(`Зочны ерөнхий хэмжилт ${formatAnalyticsDate(coverage.visitorTrackingStartedAt)}-өөс эхэлсэн. Үүнээс өмнөх зочны үзэлтийн мэдээлэл бүрэн биш байж болно.`);
@@ -591,6 +615,7 @@ function renderAdminAnalytics() {
     <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value, conversion]) => `<li><span>${label}</span><strong>${value}</strong>${conversion ? `<small>${conversionDisplay(conversion)}</small>` : ""}</li>`).join("")}</ol>
     ${coverage.prepaidActivityPresent ? historical("Өмнөх төлбөр-эхэнд урсгал", prepaid) : ""}
     ${coverage.legacyActivityPresent ? historical("Legacy postpaid урсгал", legacy) : ""}
+    ${renderCampaignAttribution(analytics.campaignAttribution)}
     ${renderQuestionProgressAnalytics()}
     <p class="analytics-daily-note">Доорх хүснэгт үнэгүй тестийн урсгалын үзүүлэлтийг өдрөөр харуулна.</p>
     <div class="table-scroll" tabindex="0"><table><thead><tr><th>Огноо</th><th>Шинэ зочин</th><th>Тест эхлүүлсэн</th><th>Тест дуусгасан</th><th>Тайлан бэлэн дэлгэц</th><th>Бүрэн тайлангийн товч</th><th>Нэхэмжлэл</th><th>Төлбөр</th><th>Бүрэн тайлан</th><th>Орлого</th></tr></thead><tbody>${analytics.days.map(day => `<tr><td>${escapeHtml(day.date)}</td><td>${Number(day.uniqueVisitors || 0)}</td><td>${Number(day.assessmentsStarted || 0)}</td><td>${Number(day.assessmentsCompleted || 0)}</td><td>${Number(day.initialResultsViewed || 0)}</td><td>${Number(day.fullReportCtaClicks || 0)}</td><td>${Number(day.invoicesCreated || 0)}</td><td>${Number(day.paymentsConfirmed || 0)}</td><td>${Number(day.reportsOpened || 0)}</td><td>${money(day.revenueMnt)}</td></tr>`).join("")}</tbody></table></div></section>`;
@@ -900,6 +925,7 @@ async function loadAdminAnalytics(preset = state.admin.analytics.preset, custom 
     analytics.allFlows = current.allFlows || current.summary || null; analytics.currentFlow = current.currentFlow || null; analytics.priorCurrentFlow = prior.currentFlow || null;
     analytics.prepaidFlow = current.prepaidFlow || null; analytics.legacyFlow = current.legacyFlow || null;
     analytics.conversions = current.conversions || null; analytics.coverage = current.coverage || null;
+    analytics.campaignAttribution = current.campaignAttribution || { rows: [], excluded: { eventCount: 0, paymentCount: 0, revenueMnt: 0 } };
     analytics.questionProgress.summary = questionProgress.summary || null; analytics.questionProgress.questions = questionProgress.questions || [];
   } catch { analytics.error = "Өдөр тутмын үзүүлэлтийг ачаалж чадсангүй."; }
   analytics.loading = false;
@@ -1053,4 +1079,4 @@ if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAY
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,
     analyticsRange, analyticsTotals, rate, safeRate, comparison, conversionDisplay, hasAnalyticsData, analyticsCoverageCopy, analyticsFlowStateCopy, questionProgressWarning, formatAnalyticsDate, formatAnalyticsDateTime,
-    renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics } };
+    analyticsIdentity, attributionRate, renderCampaignAttribution, renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics } };
