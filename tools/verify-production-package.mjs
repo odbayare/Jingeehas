@@ -2,6 +2,7 @@ import nodeCrypto from "node:crypto";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { REQUIRED_PRODUCTION_FUNCTIONS } from "./required-production-functions.mjs";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const dist = path.join(root, "dist");
@@ -12,7 +13,7 @@ execFileSync(process.execPath, ["tools/generate-production-manifest.mjs", "--che
 
 const manifestPath = path.join(dist, "production-package-manifest.json");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
-const requiredFunctions = manifest.serverFunctions || [];
+const manifestFunctions = new Set(manifest.serverFunctions || []);
 const failures = [];
 const sha256 = absolute => nodeCrypto.createHash("sha256").update(fs.readFileSync(absolute)).digest("hex");
 
@@ -26,8 +27,9 @@ for (const item of manifest.functionFiles || []) {
   if (!fs.existsSync(absolute)) failures.push(`manifest function file missing: ${item.file}`);
   else if (sha256(absolute) !== item.sha256) failures.push(`manifest function hash mismatch: ${item.file}`);
 }
-for (const name of requiredFunctions) {
-  if (!fs.existsSync(path.join(functionRoot, `${name}.js`))) failures.push(`missing generated function: ${name}`);
+for (const name of REQUIRED_PRODUCTION_FUNCTIONS) {
+  if (!manifestFunctions.has(name)) failures.push(`required function absent from deployed manifest: ${name}`);
+  if (!fs.existsSync(path.join(functionRoot, `${name}.js`))) failures.push(`required generated function missing: ${name}`);
 }
 
 const distFiles = [];
@@ -61,4 +63,4 @@ const forbiddenName = String(process.env.CROSS_PROJECT_FORBIDDEN_TOKEN || "").tr
 if (forbiddenName && publicText.toLowerCase().includes(forbiddenName.toLowerCase())) failures.push("cross-project name found in production package");
 if (distFiles.some(file => /(?:test|fixture|mock)/i.test(path.relative(dist, file)))) failures.push("test-only artifact included in production package");
 if (failures.length) { console.error(failures.join("\n")); process.exit(1); }
-console.log(`Production package verified (${distFiles.length} static files, ${(manifest.functionFiles || []).length} function files)`);
+console.log(`Production package verified (${distFiles.length} static files, ${(manifest.functionFiles || []).length} function files, ${REQUIRED_PRODUCTION_FUNCTIONS.length} required endpoints)`);
