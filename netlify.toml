@@ -1,7 +1,7 @@
 [build]
   command = "npm run build:production"
   publish = "dist"
-  functions = "netlify/functions"
+  functions = ".generated-copy-hotfix/netlify/functions"
 
 [functions]
   node_bundler = "esbuild"
