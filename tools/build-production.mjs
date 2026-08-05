@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { applyMongolianCopyHotfix } from "./apply-mongolian-copy-hotfix.mjs";
+import { applyMongolianCopyHotfixRuntime } from "./apply-mongolian-copy-hotfix-runtime.mjs";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const generatedRoot = path.join(root, ".generated-copy-hotfix");
@@ -11,7 +11,7 @@ fs.mkdirSync(path.join(generatedRoot, "netlify"), { recursive: true });
 fs.copyFileSync(path.join(root, "app.js"), path.join(generatedRoot, "app.js"));
 fs.copyFileSync(path.join(root, "questions.js"), path.join(generatedRoot, "questions.js"));
 fs.cpSync(path.join(root, "netlify", "functions"), path.join(generatedRoot, "netlify", "functions"), { recursive: true });
-applyMongolianCopyHotfix(generatedRoot);
+applyMongolianCopyHotfixRuntime(generatedRoot);
 
 fs.rmSync(output, { recursive: true, force: true });
 fs.mkdirSync(output, { recursive: true });
