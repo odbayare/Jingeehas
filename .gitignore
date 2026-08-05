@@ -5,6 +5,7 @@ node_modules/
 dist/
 build/
 .netlify/
+.generated-copy-hotfix/
 coverage/
 test-results/
 playwright-report/
