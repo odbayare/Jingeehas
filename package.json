@@ -3,9 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "test": "node tests/run-all.js",
+    "test": "node tools/verify-mongolian-copy-hotfix.mjs && node tests/run-all.js",
     "test:contracts": "node tests/contracts/run.js",
     "test:e2e": "playwright test",
+    "verify:copy-hotfix": "node tools/verify-mongolian-copy-hotfix.mjs",
     "build:production": "node tools/build-production.mjs",
     "build:staging": "node tools/build-staging.mjs",
     "generate:artifacts": "node tools/generate-production-manifest.mjs",
