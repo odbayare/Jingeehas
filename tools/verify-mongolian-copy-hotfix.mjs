@@ -1,3 +1,4 @@
+import nodeCrypto from "node:crypto";
 import { execFileSync } from "node:child_process";
 import { createRequire } from "node:module";
 import fs from "node:fs";
@@ -11,7 +12,8 @@ execFileSync(process.execPath, ["tools/build-production.mjs"], { cwd: root, stdi
 const generatedRoot = path.join(root, ".generated-copy-hotfix");
 const functionRoot = path.join(generatedRoot, "netlify", "functions");
 const reportPath = path.join(functionRoot, "_lib", "report.js");
-const app = fs.readFileSync(path.join(root, "dist", "app.js"), "utf8");
+const dist = path.join(root, "dist");
+const app = fs.readFileSync(path.join(dist, "app.js"), "utf8");
 const reportSource = fs.readFileSync(reportPath, "utf8");
 
 function allJavaScript(directory) {
@@ -23,7 +25,6 @@ function allJavaScript(directory) {
   }
   return files;
 }
-
 function assertIncludes(source, phrase, label) {
   if (!source.includes(phrase)) throw new Error(`${label} missing: ${phrase}`);
 }
@@ -33,11 +34,17 @@ function assertExcludes(source, phrase, label) {
 function assertEqual(actual, expected, label) {
   if (actual !== expected) throw new Error(`${label}: expected ${JSON.stringify(expected)}, received ${JSON.stringify(actual)}`);
 }
+function assertDeepEqual(actual, expected, label) {
+  assertEqual(JSON.stringify(actual), JSON.stringify(expected), label);
+}
+function sha256(absolute) {
+  return nodeCrypto.createHash("sha256").update(fs.readFileSync(absolute)).digest("hex");
+}
 
 const deployedFunctionsText = allJavaScript(functionRoot).map(file => fs.readFileSync(file, "utf8")).join("\n");
-
 assertIncludes(app, "QPay төлбөрөө хийсний дараа бүрэн тайлан автоматаар нээгдэнэ.", "Post-assessment pending copy");
 assertIncludes(app, "questionOptionLabel(question, option)", "Displayed option normalization");
+assertIncludes(app, "\"Мэргэжлийн хоолзүйчийн зөвлөгөө\": \"Мэргэжлийн хоол зүйчийн зөвлөгөө\"", "Display-only professional label");
 assertIncludes(app, "full.neutralResult ? \"ОДОО ТОХИРЧ БУЙ ХЭМНЭЛЭЭ ХЭРХЭН ХАДГАЛАХ ВЭ?\"", "Neutral report heading");
 assertIncludes(reportSource, "function polishPublicText(value)", "Public copy sanitizer");
 assertIncludes(reportSource, "Эхлээд эхний хэв маяг ямар үед илэрч байгааг ажиглаарай.", "Natural combined-plan explanation");
@@ -51,6 +58,25 @@ assertExcludes(reportSource, "why: `${primary.title}-ийн", "Raw dynamic-title
 assertExcludes(reportSource, "triggerRecognition: `${observe} ${pattern.title}", "Raw title insertion in trigger recognition");
 assertExcludes(reportSource, "evidenceLink: `${evidenceAnchor}; шинэ асуудал зохиохгүйгээр", "Neutral QA-language assembly");
 
+const sourceQuestions = require(path.join(root, "questions.js"));
+const deployedQuestions = require(path.join(dist, "questions.js"));
+assertEqual(deployedQuestions.QUESTIONNAIRE_VERSION, sourceQuestions.QUESTIONNAIRE_VERSION, "Questionnaire version preservation");
+assertEqual(deployedQuestions.LEGACY_QUESTIONNAIRE_VERSION, sourceQuestions.LEGACY_QUESTIONNAIRE_VERSION, "Legacy questionnaire version preservation");
+for (const sourceQuestion of sourceQuestions.QUESTIONS) {
+  const deployedQuestion = deployedQuestions.QUESTIONS.find(item => item.id === sourceQuestion.id);
+  if (!deployedQuestion) throw new Error(`Deployed question missing: ${sourceQuestion.id}`);
+  assertDeepEqual(deployedQuestion.options || [], sourceQuestion.options || [], `Canonical option values changed for ${sourceQuestion.id}`);
+}
+assertEqual(deployedQuestions.questionById("Q-HUNGER").text, "Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?", "Safe question-text update");
+assertEqual(deployedQuestions.questionById("Q-METHOD-REGAIN").text, "Аргаа зогсоосны дараа жин тань хэрхэн өөрчлөгдсөн бэ?", "Regain question wording");
+
+const manifestPath = path.join(dist, "production-package-manifest.json");
+const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+assertEqual(manifest.schemaVersion, 2, "Production manifest schema");
+if (!(manifest.functionFiles || []).length) throw new Error("Production manifest contains no generated function hashes");
+for (const item of manifest.staticFiles || []) assertEqual(item.sha256, sha256(path.join(dist, item.file)), `Static deploy hash ${item.file}`);
+for (const item of manifest.functionFiles || []) assertEqual(item.sha256, sha256(path.join(functionRoot, item.file)), `Function deploy hash ${item.file}`);
+
 const { publicReport } = require(reportPath);
 const rendered = publicReport({
   caseSeams: "хэв маяг-ийн нөхцөлийг хэв маяг-тай харьцуулж, нөхцөл-ийн нөлөөг ажиглана.",
@@ -58,7 +84,6 @@ const rendered = publicReport({
   unsupportedLeakage: "Дэмжигдээгүй хооллолтын асуудлыг засах шинэ дүрэм нэмэхгүй.",
   instructions: ["тэмдэглэ.", "сонго.", "үргэлжлүүл.", "хэт хязгаарлахгүй бай."]
 });
-
 assertEqual(rendered.caseSeams, "хэв маягийн нөхцөлийг хэв маягтай харьцуулж, нөхцөлийн нөлөөг ажиглана.", "Rendered Mongolian case seams");
 assertEqual(rendered.qaLeakage, "Таны хариултаас онцлон нэрлэх нэмэлт давуу тал одоогоор ялгараагүй байна.", "Rendered QA leakage removal");
 assertEqual(rendered.unsupportedLeakage, "Хооллолтод шинэ хориг, шаардлагагүй дүрэм нэмэхгүй.", "Rendered unsupported-language removal");
