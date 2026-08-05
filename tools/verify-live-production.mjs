@@ -9,8 +9,9 @@ const requestTimeoutMs = Math.max(1000, Number(process.env.LIVE_SMOKE_REQUEST_TI
 
 const sha256 = value => nodeCrypto.createHash("sha256").update(value).digest("hex");
 const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
+const compactPrefix = value => String(value || "").slice(0, 160).replace(/\s+/g, " ").trim();
 
-async function request(pathname, expectedType = "text") {
+async function request(pathname) {
   let response;
   try {
     response = await fetch(`${origin}${pathname}`, {
@@ -24,11 +25,15 @@ async function request(pathname, expectedType = "text") {
   if (!response.ok) throw new Error(`${pathname} returned HTTP ${response.status}`);
   const body = await response.text();
   if (!body.trim()) throw new Error(`${pathname} returned an empty body`);
-  if (expectedType === "json") {
-    try { return { response, body, value: JSON.parse(body) }; }
-    catch { throw new Error(`${pathname} did not return valid JSON`); }
+  return { response, body };
+}
+
+function parseJson(result, pathname, diagnostics = "") {
+  try { return JSON.parse(result.body); }
+  catch {
+    const contentType = result.response.headers.get("content-type") || "unknown";
+    throw new Error(`${pathname} did not return valid JSON contentType=${contentType} prefix=${JSON.stringify(compactPrefix(result.body))}${diagnostics ? ` ${diagnostics}` : ""}`);
   }
-  return { response, body, value: body };
 }
 
 function includes(source, phrase, label) {
@@ -39,20 +44,28 @@ function excludes(source, phrase, label) {
 }
 
 async function smokeOnce() {
-  const [home, manifestResult, appResult, questionsResult, about, methodology, assessmentStart, metaConfig] = await Promise.all([
+  const [home, manifestResult, appResult, questionsResult, about, methodology, assessmentStart, metaConfigResult] = await Promise.all([
     request("/"),
-    request("/production-package-manifest.json", "json"),
+    request("/production-package-manifest.json"),
     request("/app.js"),
     request("/questions.js"),
     request("/about"),
     request("/methodology"),
     request("/assessment/start"),
-    request("/.netlify/functions/meta-browser-config", "json")
+    request("/.netlify/functions/meta-browser-config")
   ]);
 
-  const manifest = manifestResult.value;
   const app = appResult.body;
   const questions = questionsResult.body;
+  const appHasNewCopy = app.includes("QPay төлбөрөө хийсний дараа бүрэн тайлан автоматаар нээгдэнэ.");
+  const questionsHaveNewPrompt = questions.includes("Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?");
+  const manifest = parseJson(
+    manifestResult,
+    "/production-package-manifest.json",
+    `appHasNewCopy=${appHasNewCopy} questionsHaveNewPrompt=${questionsHaveNewPrompt} appSha256=${sha256(app)} questionsSha256=${sha256(questions)}`
+  );
+  const metaConfig = parseJson(metaConfigResult, "/.netlify/functions/meta-browser-config");
+
   if (manifest.schemaVersion !== 2) throw new Error(`live manifest schema is ${manifest.schemaVersion}, expected 2`);
   if (manifest.product?.comingSoon !== false) throw new Error("live manifest still marks the product as coming soon");
   if (manifest.packageRoot !== "dist") throw new Error(`unexpected packageRoot: ${manifest.packageRoot}`);
@@ -90,7 +103,7 @@ async function smokeOnce() {
   includes(questions, "Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?", "Revised hunger prompt");
   includes(questions, "Аргаа зогсоосны дараа жин тань хэрхэн өөрчлөгдсөн бэ?", "Revised regain prompt");
 
-  if (!metaConfig.value || typeof metaConfig.value !== "object") throw new Error("meta-browser-config returned an invalid payload");
+  if (!metaConfig || typeof metaConfig !== "object") throw new Error("meta-browser-config returned an invalid payload");
   return {
     manifestStaticFiles: manifest.staticFiles.length,
     manifestFunctionFiles: manifest.functionFiles.length,
