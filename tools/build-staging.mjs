@@ -6,13 +6,14 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const output = path.join(root, "staging");
+const generatedRoot = path.join(root, ".generated-copy-hotfix");
 const manifestPath = path.join(root, "artifacts", "staging-package-manifest.json");
 execFileSync(process.execPath, ["tools/build-production.mjs"], { cwd: root, stdio: "inherit" });
 fs.rmSync(output, { recursive: true, force: true });
 fs.mkdirSync(output, { recursive: true });
 fs.cpSync(path.join(root, "dist"), path.join(output, "site"), { recursive: true });
-fs.cpSync(path.join(root, "netlify", "functions"), path.join(output, "netlify", "functions"), { recursive: true });
-fs.copyFileSync(path.join(root, "questions.js"), path.join(output, "questions.js"));
+fs.cpSync(path.join(generatedRoot, "netlify", "functions"), path.join(output, "netlify", "functions"), { recursive: true });
+fs.copyFileSync(path.join(generatedRoot, "questions.js"), path.join(output, "questions.js"));
 fs.writeFileSync(path.join(output, "netlify.toml"), `[build]\n  publish = "site"\n  functions = "netlify/functions"\n\n[functions]\n  node_bundler = "esbuild"\n`);
 const requiredEnvironment = [
   "JINGEEHAS_DATABASE_API_URL", "JINGEEHAS_DATABASE_API_KEY", "QPAY_API_BASE_URL", "QPAY_CLIENT_ID", "QPAY_CLIENT_SECRET", "QPAY_INVOICE_CODE",
