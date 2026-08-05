@@ -1,6 +1,10 @@
 import fs from "node:fs";
 import path from "node:path";
+import { applyMongolianCopyHotfix } from "./apply-mongolian-copy-hotfix.mjs";
+
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+applyMongolianCopyHotfix(root);
+
 const output = path.join(root, "dist");
 fs.rmSync(output, { recursive: true, force: true });
 fs.mkdirSync(output, { recursive: true });
