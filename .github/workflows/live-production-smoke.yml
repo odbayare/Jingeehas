@@ -29,5 +29,6 @@ jobs:
         run: node tools/verify-live-production.mjs
         env:
           JINGEEHAS_LIVE_ORIGIN: https://jingeehas.fit
-          LIVE_SMOKE_ATTEMPTS: 20
-          LIVE_SMOKE_DELAY_MS: 15000
+          LIVE_SMOKE_ATTEMPTS: ${{ github.event_name == 'push' && '20' || '3' }}
+          LIVE_SMOKE_DELAY_MS: ${{ github.event_name == 'push' && '15000' || '5000' }}
+          LIVE_SMOKE_REQUEST_TIMEOUT_MS: 8000
