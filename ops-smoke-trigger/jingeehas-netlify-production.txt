@@ -1,0 +1,5 @@
+Deploy current main to the linked Jingeehas Netlify production site and certify the live package.
+
+Target main SHA at trigger creation: ae4cb3c2b4fa0012f309f596d25102b6956a383b
+Expected live origin: https://jingeehas.fit
+Expected deployment package: dist static assets plus .generated-copy-hotfix/netlify/functions
