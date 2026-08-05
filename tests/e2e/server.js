@@ -117,6 +117,13 @@ const endpoints = {
       prepaidFlow: { assessmentsStarted: 2, assessmentsCompleted: 2, invoicesCreated: 2, paymentsConfirmed: 2, reportsOpened: 2, revenueMnt: 19800 },
       legacyFlow: { assessmentsStarted: 0, assessmentsCompleted: 0, invoicesCreated: 0, paymentsConfirmed: 0, reportsOpened: 0, revenueMnt: 0 },
       allFlows: { uniqueVisitors: 10 },
+      campaignAttribution: { rows: [{ utmSource: "meta", utmMedium: "paid_social", utmCampaign: "jingeehas_traffic_lpv_reel_v1",
+        utmContent: "paid_cut_v1_lpv", utmTerm: "broad_25plus", unattributed: false, visitors: 6, assessmentsStarted: 5,
+        assessmentsCompleted: 4, paywallViews: 4, fullReportCtaClicks: 3, invoicesCreated: 3, paymentsConfirmed: 2,
+        reportsOpened: 2, revenueMnt: 19800 }, { utmSource: null, utmMedium: null, utmCampaign: null, utmContent: null,
+        utmTerm: null, unattributed: true, visitors: 4, assessmentsStarted: 3, assessmentsCompleted: 2, paywallViews: 2,
+        fullReportCtaClicks: 1, invoicesCreated: 1, paymentsConfirmed: 1, reportsOpened: 1, revenueMnt: 9900 }],
+        excluded: { eventCount: 4, paymentCount: 1, revenueMnt: 9900 } },
       conversions: {
         visitorToAssessmentStart: conversion(10, 8),
         assessmentStartToComplete: conversion(8, 6),
