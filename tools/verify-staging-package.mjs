@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+import { REQUIRED_PRODUCTION_FUNCTIONS } from "./required-production-functions.mjs";
 
 const require = createRequire(import.meta.url);
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -12,6 +13,8 @@ execFileSync(process.execPath, ["tools/build-staging.mjs"], { cwd: root, stdio: 
 execFileSync(process.execPath, ["tools/verify-removed-product.mjs"], { cwd: root, stdio: "inherit" });
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "artifacts", "runtime", "staging-package-manifest.json"), "utf8"));
 const productionManifest = JSON.parse(fs.readFileSync(path.join(staging, "site", "production-package-manifest.json"), "utf8"));
+const productionManifestFunctions = new Set(productionManifest.serverFunctions || []);
+const stagingFunctions = new Set(manifest.functionNames || []);
 const failures = [];
 const actualFiles = [];
 function walk(directory) { for (const entry of fs.readdirSync(directory, { withFileTypes: true })) { const absolute = path.join(directory, entry.name); if (entry.isDirectory()) walk(absolute); else actualFiles.push(path.relative(staging, absolute)); } }
@@ -28,8 +31,11 @@ if (!app.includes("WEIGHT_TEST_COMING_SOON_MODE = false")) failures.push("public
 const preview = fs.readFileSync(path.join(staging, "netlify", "functions", "_lib", "preview.js"), "utf8");
 if (!preview.includes("WEIGHT_TEST_COMING_SOON_MODE = false")) failures.push("server launch switch is not disabled in the staging package");
 for (const invariant of ["WEIGHT_TEST_ONE_TIME", "amount: 9900", "displayPrice: \"9,900₮\""]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
-const requiredFunctions = productionManifest.serverFunctions;
-for (const name of requiredFunctions) if (!manifest.functionNames.includes(name) || !fs.existsSync(path.join(staging, "netlify", "functions", `${name}.js`))) failures.push(`required function missing: ${name}`);
+for (const name of REQUIRED_PRODUCTION_FUNCTIONS) {
+  if (!productionManifestFunctions.has(name)) failures.push(`required function absent from production manifest: ${name}`);
+  if (!stagingFunctions.has(name)) failures.push(`required function absent from staging manifest: ${name}`);
+  if (!fs.existsSync(path.join(staging, "netlify", "functions", `${name}.js`))) failures.push(`required staged function missing: ${name}`);
+}
 const headers = fs.readFileSync(path.join(staging, "site", "_headers"), "utf8");
 for (const header of ["Content-Security-Policy", "Strict-Transport-Security", "Referrer-Policy", "X-Content-Type-Options", "Permissions-Policy", "frame-ancestors"]) if (!headers.includes(header)) failures.push(`security header missing: ${header}`);
 if (headers.includes("unsafe-inline")) failures.push("security policy permits unsafe-inline");
@@ -47,4 +53,4 @@ if (safe.length !== 1 || safe[0].name !== "good") failures.push("unsafe applicat
 const store = fs.readFileSync(path.join(staging, "netlify", "functions", "_lib", "store.js"), "utf8");
 if (/MemoryDatabaseAdapter|return\s+.*memory/i.test(store)) failures.push("database adapter can fall back to memory");
 if (failures.length) { console.error(failures.join("\n")); process.exit(1); }
-console.log(`STAGING_PACKAGE_STATUS=PASS (${actualFiles.length} files, ${manifest.functionNames.length} functions, no deployment)`);
+console.log(`STAGING_PACKAGE_STATUS=PASS (${actualFiles.length} files, ${manifest.functionNames.length} functions, ${REQUIRED_PRODUCTION_FUNCTIONS.length} required endpoints, no deployment)`);
