@@ -5,15 +5,22 @@ const origin = String(process.env.JINGEEHAS_LIVE_ORIGIN || "https://jingeehas.fi
 const expectedVersion = "jingeehas-production-2026-07-v2-method-link";
 const attempts = Math.max(1, Number(process.env.LIVE_SMOKE_ATTEMPTS || 20));
 const delayMs = Math.max(1000, Number(process.env.LIVE_SMOKE_DELAY_MS || 15000));
+const requestTimeoutMs = Math.max(1000, Number(process.env.LIVE_SMOKE_REQUEST_TIMEOUT_MS || 10000));
 
 const sha256 = value => nodeCrypto.createHash("sha256").update(value).digest("hex");
 const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 
 async function request(pathname, expectedType = "text") {
-  const response = await fetch(`${origin}${pathname}`, {
-    redirect: "follow",
-    headers: { "cache-control": "no-cache", "user-agent": "JingeehasProductionSmoke/1.0" }
-  });
+  let response;
+  try {
+    response = await fetch(`${origin}${pathname}`, {
+      redirect: "follow",
+      signal: AbortSignal.timeout(requestTimeoutMs),
+      headers: { "cache-control": "no-cache", "user-agent": "JingeehasProductionSmoke/1.0" }
+    });
+  } catch (error) {
+    throw new Error(`${pathname} request failed: ${error?.message || error}`);
+  }
   if (!response.ok) throw new Error(`${pathname} returned HTTP ${response.status}`);
   const body = await response.text();
   if (!body.trim()) throw new Error(`${pathname} returned an empty body`);
