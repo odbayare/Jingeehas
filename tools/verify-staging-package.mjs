@@ -11,7 +11,7 @@ const staging = path.join(root, "staging");
 execFileSync(process.execPath, ["tools/build-staging.mjs"], { cwd: root, stdio: "inherit" });
 execFileSync(process.execPath, ["tools/verify-removed-product.mjs"], { cwd: root, stdio: "inherit" });
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "artifacts", "runtime", "staging-package-manifest.json"), "utf8"));
-const productionManifest = JSON.parse(fs.readFileSync(path.join(root, "artifacts", "production-package-manifest.json"), "utf8"));
+const productionManifest = JSON.parse(fs.readFileSync(path.join(staging, "site", "production-package-manifest.json"), "utf8"));
 const failures = [];
 const actualFiles = [];
 function walk(directory) { for (const entry of fs.readdirSync(directory, { withFileTypes: true })) { const absolute = path.join(directory, entry.name); if (entry.isDirectory()) walk(absolute); else actualFiles.push(path.relative(staging, absolute)); } }
