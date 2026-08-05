@@ -9,7 +9,7 @@
     "verify:copy-hotfix": "node tools/verify-mongolian-copy-hotfix.mjs",
     "build:production": "node tools/build-production.mjs",
     "build:staging": "node tools/build-staging.mjs",
-    "generate:artifacts": "node tools/generate-production-manifest.mjs",
+    "generate:artifacts": "node tools/build-production.mjs",
     "verify:database-config": "node tools/verify-database-config.mjs",
     "verify:database-gateway-auth": "node tools/verify-database-gateway-auth.mjs",
     "certify:database-external": "node tools/certify-database-external.mjs",

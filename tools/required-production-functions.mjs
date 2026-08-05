@@ -1,0 +1,20 @@
+export const REQUIRED_PRODUCTION_FUNCTIONS = Object.freeze([
+  "weight-session-start",
+  "weight-safety-gate",
+  "weight-recovery-contact-save",
+  "weight-assessment-create",
+  "weight-assessment-save",
+  "weight-assessment-complete",
+  "weight-assessment-report",
+  "weight-session-state",
+  "weight-entitlements",
+  "weight-recovery-request",
+  "weight-recovery-confirm",
+  "qpay-create-invoice",
+  "qpay-check-payment",
+  "advisor-login",
+  "advisor-dashboard",
+  "advisor-report",
+  "admin-login",
+  "meta-browser-config"
+]);

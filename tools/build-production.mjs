@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { applyMongolianCopyHotfixRuntime } from "./apply-mongolian-copy-hotfix-runtime.mjs";
@@ -22,4 +23,5 @@ for (const file of ["app.js", "questions.js"]) {
   fs.copyFileSync(path.join(generatedRoot, file), path.join(output, file));
 }
 fs.cpSync(path.join(root, "assets"), path.join(output, "assets"), { recursive: true });
-console.log("Production static package and patched Netlify functions created.");
+execFileSync(process.execPath, ["tools/generate-production-manifest.mjs"], { cwd: root, stdio: "inherit" });
+console.log("Production static package, patched Netlify functions, and deployed-byte manifest created.");
