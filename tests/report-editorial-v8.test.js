@@ -69,6 +69,11 @@ for (const contextPattern of (multi.contextualFactors || []).filter(item => item
 }
 
 const multiSections = visibleSections(multi);
+const overview = multiSections.find(section => section.id === "overview");
+assert(overview);
+const overviewHtml = overview.paragraphs.join(" ");
+assert(overviewHtml.includes("Түшиг болох давуу тал"), "V8 natural overview strength label missing");
+assert(!overviewHtml.includes("Хамгаалах буюу давуу тал"), "legacy overview strength label leaked into V8");
 const management = multiSections.find(section => section.id === "management");
 assert(management);
 assert.equal(management.heading, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?");
@@ -97,10 +102,12 @@ assert(renderedText(neutral).length < 7000, "neutral V8 report exceeds editorial
 
 const historicalV7 = JSON.parse(JSON.stringify(multi));
 historicalV7.version = V7;
-const v7Ids = visibleSections(historicalV7).map(section => section.id);
+const historicalV7Sections = visibleSections(historicalV7);
+const v7Ids = historicalV7Sections.map(section => section.id);
 for (const id of ["overview", "patterns", "management", "initial-actions", "recovery"]) {
   assert(v7Ids.includes(id), `historical V7 semantic snapshot section missing: ${id}`);
 }
-assert.notEqual(visibleSections(historicalV7).find(section => section.id === "management")?.heading, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?", "V8 editorial heading leaked into historical V7 snapshot");
+assert.notEqual(historicalV7Sections.find(section => section.id === "management")?.heading, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?", "V8 editorial heading leaked into historical V7 snapshot");
+assert(historicalV7Sections.find(section => section.id === "overview")?.paragraphs.join(" ").includes("Хамгаалах буюу давуу тал"), "historical V7 overview label changed");
 
-console.log("V8 report editorial, projection, and reading-load tests passed");
+console.log("V8 report editorial, overview, projection, and reading-load tests passed");
