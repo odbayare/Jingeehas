@@ -180,7 +180,8 @@ export function applyPostAssessmentPaywallFlowV1(root) {
     source = replaceNamedFunction(source, "reportPaywallContent", TRUST_PAYWALL);
     source = replaceNamedFunction(source, "renderInitialResult", INITIAL_RESULT);
     source = replaceNamedFunction(source, "startFreeAssessment", START_FREE);
-    source = replaceFunctionBefore(source, "renderPayment", "renderQuestionInput", RENDER_PAYMENT);
+    const paymentNextFunction = source.includes("function questionOptionLabel(") ? "questionOptionLabel" : "renderQuestionInput";
+    source = replaceFunctionBefore(source, "renderPayment", paymentNextFunction, RENDER_PAYMENT);
     fs.writeFileSync(appPath, source);
   }
 }
