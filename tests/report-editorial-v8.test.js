@@ -13,7 +13,7 @@ const app = require(path.join(__dirname, "..", "dist", "app.js"));
 
 const byName = Object.fromEntries(fixtures.map(fixture => [fixture.name, fixture]));
 const rows = answers => Object.entries(answers).map(([questionId, value]) => ({ questionId, value }));
-function reportFor(name) {
+function fullReportFor(name) {
   const fixture = byName[name];
   assert(fixture, `fixture missing: ${name}`);
   return reportModule.buildFullReport(
@@ -22,26 +22,51 @@ function reportFor(name) {
     { questionnaireVersion: "jingeehas-production-2026-08-v3-routing-safety" }
   );
 }
-function visibleSections(full) {
-  return app._test.buildReportSections(full).filter(section => section.visible);
-}
+function publicReportFor(name) { return reportModule.publicReport(fullReportFor(name)); }
+function visibleSections(full) { return app._test.buildReportSections(full).filter(section => section.visible); }
 function textFromHtml(html) {
   return String(html || "").replace(/<[^>]+>/g, " ").replace(/&[^;]+;/g, " ").replace(/\s+/g, " ").trim();
 }
 function renderedText(full) {
   return textFromHtml(visibleSections(full).flatMap(section => [section.heading, ...section.paragraphs]).join(" "));
 }
-
-const multi = reportModule.publicReport(reportFor("stress eating + poor sleep + evening hunger"));
-assert.equal(multi.version, V8);
-assert.equal(validateReportForActivation(reportFor("stress eating + poor sleep + evening hunger")).valid, true);
-
-const publicText = JSON.stringify(multi);
-for (const phrase of ["хамгаалах хүчин зүйл", "хэрэгжүүлэх босго", "суурь зураглал", "нөлөөлөгч нөхцөл", "өөрчлөлтийг тууштай барих", "өдөр тутам хадгалж болох", "орчны хоолны дохио"]) {
-  assert(!publicText.includes(phrase), `technical public phrase remains: ${phrase}`);
+function assertEditorialLanguage(name, report) {
+  const publicText = JSON.stringify(report);
+  for (const phrase of ["хамгаалах хүчин зүйл", "хэрэгжүүлэх босго", "суурь зураглал", "нөлөөлөгч нөхцөл", "өөрчлөлтийг тууштай барих", "өдөр тутам хадгалж болох", "орчны хоолны дохио"]) {
+    assert(!publicText.includes(phrase), `${name}: technical public phrase remains: ${phrase}`);
+  }
+  assert(!/(?:тэмдэглэ|сонго|бич|бэлд|шалга|үргэлжлүүл|өөрчил|багасга|тогтоо|нэрлэ|соль|хий)\./.test(publicText), `${name}: blunt imperative remains`);
+  assert(!/гүй бай\./.test(publicText), `${name}: blunt negative imperative remains`);
 }
-assert(!/(?:тэмдэглэ|сонго|бич|бэлд|шалга|үргэлжлүүл|өөрчил|багасга|тогтоо|нэрлэ|соль|хий)\./.test(publicText), "blunt imperative remains in V8 public report");
-assert(!/гүй бай\./.test(publicText), "blunt negative imperative remains in V8 public report");
+
+const profileNames = [
+  "stress eating + poor sleep + evening hunger",
+  "fully routed neutral protective",
+  "sleep fatigue context",
+  "stable eating with low movement only",
+  "environmental cue dominant",
+  "environmental cues + sedentary routine + irregular meals",
+  "mixed weak evidence"
+];
+for (const name of profileNames) {
+  const full = fullReportFor(name);
+  const report = reportModule.publicReport(full);
+  assert.equal(report.version, V8, `${name}: report version`);
+  const validation = validateReportForActivation(full);
+  assert.equal(validation.valid, true, `${name}: activation failed: ${validation.errors.join(", ")}`);
+  assertEditorialLanguage(name, report);
+  assert(renderedText(report).length < 16000, `${name}: report exceeds maximum editorial reading-load limit`);
+}
+
+const multi = publicReportFor("stress eating + poor sleep + evening hunger");
+for (const pattern of multi.influencingPatterns || []) {
+  if (!(Array.isArray(pattern.paragraphs) && pattern.paragraphs.length)) {
+    assert(!Object.hasOwn(pattern, "explanation"), `unused V8 pattern explanation exposed: ${pattern.title}`);
+  }
+}
+for (const contextPattern of (multi.contextualFactors || []).filter(item => item.isPattern)) {
+  assert(!Object.hasOwn(contextPattern, "explanation"), `unused V8 contextual explanation exposed: ${contextPattern.title}`);
+}
 
 const multiSections = visibleSections(multi);
 const management = multiSections.find(section => section.id === "management");
@@ -59,13 +84,10 @@ const patternSection = multiSections.find(section => section.id === "patterns");
 assert(patternSection);
 const patternArticles = patternSection.paragraphs.join(" ").match(/<article class="report-pattern">[\s\S]*?<\/article>/g) || [];
 assert(patternArticles.length > 0);
-for (const article of patternArticles) {
-  assert((article.match(/<p>/g) || []).length <= 3, "V8 pattern card exceeds three paragraphs");
-}
+for (const article of patternArticles) assert((article.match(/<p>/g) || []).length <= 3, "V8 pattern card exceeds three paragraphs");
 assert(renderedText(multi).length < 15000, "multi-factor V8 report exceeds editorial reading-load limit");
 
-const neutral = reportModule.publicReport(reportFor("fully routed neutral protective"));
-assert.equal(neutral.version, V8);
+const neutral = publicReportFor("fully routed neutral protective");
 const neutralSections = visibleSections(neutral);
 assert(neutralSections.some(section => section.id === "neutral-limits"));
 for (const limit of neutral.neutralResult?.limits || []) {
@@ -81,4 +103,4 @@ for (const id of ["overview", "patterns", "management", "initial-actions", "reco
 }
 assert.notEqual(visibleSections(historicalV7).find(section => section.id === "management")?.heading, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?", "V8 editorial heading leaked into historical V7 snapshot");
 
-console.log("V8 report editorial and reading-load tests passed");
+console.log("V8 report editorial, projection, and reading-load tests passed");
