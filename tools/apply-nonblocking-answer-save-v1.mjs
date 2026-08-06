@@ -118,7 +118,7 @@ function pumpAnswerSaveQueue() {
   const batch = new Map(answerSaveQueue.pending); answerSaveQueue.pending.clear(); answerSaveQueue.inFlight = batch; state.saveStatus = "saving";
   answerSaveQueue.worker = (async () => {
     try {
-      const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: Object.fromEntries(batch) }) });
+      const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", keepalive: true, body: JSON.stringify({ assessmentId: state.assessmentId, answers: Object.fromEntries(batch) }) });
       for (const [questionId, value] of batch) {
         if (answerSaveQueue.pending.has(questionId) && !sameAnswer(answerSaveQueue.pending.get(questionId), value)) continue;
         if (!saved.savedQuestionIds?.includes(questionId)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed", questionId } });
@@ -126,9 +126,25 @@ function pumpAnswerSaveQueue() {
       }
       state.saveStatus = answerSaveQueue.pending.size ? "saving" : "saved";
     } catch (error) {
-      for (const [questionId, value] of batch) if (!answerSaveQueue.pending.has(questionId)) answerSaveQueue.pending.set(questionId, value);
-      for (const questionId of batch.keys()) answerSaveQueue.failed.set(questionId, true);
-      answerSaveQueue.paused = true; applySaveFailure(error);
+      const visibleQuestionIds = new Set(questionApi.visibleQuestions(state.answers, state.questionnaireVersion).map(question => question.id));
+      const retryable = [];
+      for (const [questionId, value] of batch) {
+        const hasNewerPending = answerSaveQueue.pending.has(questionId) && !sameAnswer(answerSaveQueue.pending.get(questionId), value);
+        const stillCurrent = Object.prototype.hasOwnProperty.call(state.answers, questionId)
+          && visibleQuestionIds.has(questionId)
+          && sameAnswer(state.answers[questionId], value);
+        if (!hasNewerPending && stillCurrent) {
+          answerSaveQueue.pending.set(questionId, value);
+          retryable.push(questionId);
+        }
+      }
+      if (retryable.length) {
+        for (const questionId of retryable) answerSaveQueue.failed.set(questionId, true);
+        answerSaveQueue.paused = true; applySaveFailure(error);
+      } else {
+        answerSaveQueue.paused = false;
+        state.saveStatus = answerSaveQueue.pending.size ? "saving" : "saved";
+      }
     } finally {
       answerSaveQueue.inFlight = null; answerSaveQueue.worker = null; render({ focus: false });
       if (answerSaveQueue.pending.size && !answerSaveQueue.paused) queueMicrotask(pumpAnswerSaveQueue);
@@ -138,7 +154,7 @@ function pumpAnswerSaveQueue() {
 }
 function enqueueAnswerSave(questionId, value) {
   answerSaveQueue.pending.set(questionId, value); answerSaveQueue.failed.delete(questionId); answerSaveQueue.paused = false; state.saveStatus = "saving";
-  queueMicrotask(pumpAnswerSaveQueue);
+  pumpAnswerSaveQueue();
 }
 async function flushAnswerSaves() {
   answerSaveQueue.paused = false;
@@ -179,7 +195,11 @@ const NEXT_QUESTION = `async function nextQuestion() {
 const APPLY_ASSESSMENT_STATE = `function applyAssessmentState(restored) {
   if (!restored?.assessment) return;
   const nextAssessmentId = restored.assessment.assessmentId;
-  if (state.assessmentId !== nextAssessmentId) {
+  const sameAssessment = state.assessmentId === nextAssessmentId;
+  const queuedAnswers = sameAssessment
+    ? Object.fromEntries([...(answerSaveQueue.inFlight || new Map()), ...answerSaveQueue.pending])
+    : {};
+  if (!sameAssessment) {
     resetAnswerSaveQueue();
     state.initialResult = null; state.initialResultError = "";
   }
@@ -188,7 +208,12 @@ const APPLY_ASSESSMENT_STATE = `function applyAssessmentState(restored) {
   state.commercialFlowVersion = restored.assessment.commercialFlowVersion || "legacy_postpaid_v1";
   state.questionnaireVersion = restored.assessment.questionnaireVersion || questionApi.LEGACY_QUESTIONNAIRE_VERSION;
   state.payment = restored.payment || state.payment;
-  state.answers = restored.answers || {};
+  const serverAnswers = restored.answers || {};
+  if (sameAssessment && Object.keys(queuedAnswers).length) {
+    const mergedAnswers = { ...serverAnswers, ...queuedAnswers };
+    const visibleQuestionIds = new Set(questionApi.visibleQuestions(mergedAnswers, state.questionnaireVersion).map(question => question.id));
+    state.answers = Object.fromEntries(Object.entries(mergedAnswers).filter(([questionId]) => visibleQuestionIds.has(questionId)));
+  } else state.answers = serverAnswers;
   state.report = restored.report || null;
 }`;
 
@@ -229,7 +254,7 @@ function patchLifecycle(source) {
     source = replaceOnce(
       source,
       "_test: { setComingSoon",
-      "_test: { nextQuestion, flushAnswerSaves, retryAnswerSaves, resetAnswerSaveQueue, answerSaveQueue, setComingSoon",
+      "_test: { nextQuestion, enqueueAnswerSave, pumpAnswerSaveQueue, flushAnswerSaves, retryAnswerSaves, resetAnswerSaveQueue, applyAssessmentState, answerSaveQueue, setComingSoon",
       "answer-save test exports"
     );
   }
