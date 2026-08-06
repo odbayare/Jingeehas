@@ -1,0 +1,58 @@
+name: Jingeehas V7 Live Certification
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ops-smoke-trigger/jingeehas-v7-live-certification.txt
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jingeehas-v7-live-certification
+  cancel-in-progress: true
+
+jobs:
+  certify-live-v7:
+    name: Build main candidate and certify exact live V7 package
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.1"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build exact production candidate
+        run: npm run build:production
+
+      - name: Verify local V7 release markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'jingeehas-case-formulation-v7-semantic-builder' .generated-copy-hotfix/netlify/functions/_lib/report.js
+          grep -q 'ЭНЭ ТЕСТЭЭР ЮУГ ДҮГНЭЖ БОЛОХГҮЙ ВЭ?' dist/app.js
+          grep -q 'function buildLegacyReportSectionsV6' dist/app.js
+
+      - name: Verify exact V7 candidate is live
+        env:
+          JINGEEHAS_LIVE_ORIGIN: https://jingeehas.fit
+          JINGEEHAS_EXPECTED_MANIFEST_PATH: dist/production-package-manifest.json
+          JINGEEHAS_EXPECTED_QUESTIONNAIRE_VERSION: jingeehas-production-2026-08-v3-routing-safety
+          LIVE_SMOKE_ATTEMPTS: 24
+          LIVE_SMOKE_DELAY_MS: 15000
+          LIVE_SMOKE_REQUEST_TIMEOUT_MS: 10000
+        run: node tools/verify-live-production.mjs
