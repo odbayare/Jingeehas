@@ -32,7 +32,7 @@ assert.equal(multi.version, "jingeehas-case-formulation-v7-semantic-builder");
 assert(multi.managementModules.length >= 2, "multi-factor report must retain supported management coverage");
 for (const module of multi.managementModules) {
   assert(module.title);
-  assert(module.evidenceNote);
+  assert(!Object.hasOwn(module, "evidenceNote"), "module-level repeated intro must be removed");
   assert(Array.isArray(module.fields));
   assert.deepEqual(module.fields.map(field => field.key), ["observe", "trigger", "prepare", "inMoment", "avoidRigidDemand", "professionalHelp"]);
   for (const field of module.fields) assert(field.label && field.body);
@@ -70,6 +70,8 @@ assert.equal(multiIds.filter(id => id === "recovery").length, 1);
 assert(!multiIds.includes("difficult-moment"));
 assert(!multiIds.includes("fallback"));
 const multiHtml = multiSections.flatMap(section => section.paragraphs).join(" ");
+assert(multiHtml.includes('class="management-section-intro"'));
+assert.equal((multiHtml.match(/management-section-intro/g) || []).length, 1, "management intro must appear once per section");
 assert(multiHtml.includes('class="recovery-plan"'));
 assert(/<strong>[^<]+:<\/strong>\s+<span>/.test(multiHtml), "title/action separator is missing");
 assert(!/<strong>[^<]+<\/strong><span>/.test(multiHtml), "title and body remain directly concatenated");
