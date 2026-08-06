@@ -1,0 +1,7 @@
+Read-only certification target: current main at 37528051c5c7542d5ec959fc6b685975edd8a9ed
+Source release merge: PR #42 / 790b9c263f365a973ae7cec67251955f6e7591b6
+Expected initial result schema: jingeehas-initial-result-v2-count-only
+Expected report engine: jingeehas-case-formulation-v8-editorial-polish
+Expected questionnaire: jingeehas-production-2026-08-v3-routing-safety
+Expected live origin: https://jingeehas.fit
+Required result: exact candidate manifest and deployed bytes match production; personalized pattern and supported-interaction counts load after completion, reload, and resume; zero-interaction and neutral branches remain safe; no primary pattern title, evidence, or internal report content reaches the unpaid result.
