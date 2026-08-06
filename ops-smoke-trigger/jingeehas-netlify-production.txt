@@ -1,5 +1,7 @@
-Deploy current main to the linked Jingeehas Netlify production site and certify the live package.
+Deploy current main to the linked Jingeehas Netlify production site and certify the exact live candidate package.
 
-Target main SHA at trigger creation: ae4cb3c2b4fa0012f309f596d25102b6956a383b
+Release scope: PR #36 questionnaire V3 safety, routing, evidence, and neutral-safe paywall.
+Candidate questionnaire version: jingeehas-production-2026-08-v3-routing-safety
 Expected live origin: https://jingeehas.fit
 Expected deployment package: dist static assets plus .generated-copy-hotfix/netlify/functions
+Required certification: exact candidate manifest SHA, questionnaire version, routes, static assets, and generated functions.
