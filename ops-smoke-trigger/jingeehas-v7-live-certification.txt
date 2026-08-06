@@ -1,0 +1,6 @@
+Read-only certification target: current main at 7c9dad0f875dbc74c9fa473778d9b19fd0d24a32
+Source release merge: PR #38 / 7b3af219f667bd58a933e3e64868b94afc73e19d
+Expected report engine: jingeehas-case-formulation-v7-semantic-builder
+Expected questionnaire: jingeehas-production-2026-08-v3-routing-safety
+Expected live origin: https://jingeehas.fit
+Required result: exact candidate manifest and deployed bytes match production; V7 neutral limitations and V6 snapshot compatibility markers are present in the certified candidate.
