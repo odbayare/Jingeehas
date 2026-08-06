@@ -4,6 +4,7 @@ import { applyMongolianCopyHotfix } from "./apply-mongolian-copy-hotfix.mjs";
 import { applyRoutingSafetyEvidenceV3 } from "./apply-routing-safety-evidence-v3.mjs";
 import { applyReportBuilderSemanticV1 } from "./apply-report-builder-semantic-v1.mjs";
 import { applyReportBuilderSemanticV1Dedup } from "./apply-report-builder-semantic-v1-dedup.mjs";
+import { prepareReportValidationSemanticQuality } from "./prepare-report-validation-semantic-quality.mjs";
 import { applyReportBuilderSemanticV1Quality } from "./apply-report-builder-semantic-v1-quality.mjs";
 
 const SAFE_QUESTION_TEXT_REPLACEMENTS = Object.freeze([
@@ -61,5 +62,6 @@ export function applyMongolianCopyHotfixRuntime(root) {
   applyRoutingSafetyEvidenceV3(root);
   applyReportBuilderSemanticV1(root);
   applyReportBuilderSemanticV1Dedup(root);
+  prepareReportValidationSemanticQuality(root);
   applyReportBuilderSemanticV1Quality(root);
 }
