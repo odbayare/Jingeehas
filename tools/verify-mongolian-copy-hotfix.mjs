@@ -47,9 +47,10 @@ assertIncludes(app, "questionOptionLabel(question, option)", "Displayed option n
 assertIncludes(app, "\"Мэргэжлийн хоолзүйчийн зөвлөгөө\": \"Мэргэжлийн хоол зүйчийн зөвлөгөө\"", "Display-only professional label");
 assertIncludes(app, "НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГЛАХ АРГА", "Dedicated neutral observation heading");
 assertIncludes(app, "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", "Unified recovery heading");
-assertIncludes(reportSource, "jingeehas-case-formulation-v7-semantic-builder", "Semantic report version");
+assertIncludes(app, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?", "Editorial management heading");
+assertIncludes(reportSource, "jingeehas-case-formulation-v8-editorial-polish", "Editorial report version");
 assertIncludes(reportSource, "function polishPublicText(value)", "Public copy sanitizer");
-assertIncludes(reportSource, "Хоолны зай болон өлсөх мэдрэмжийг нэг өдрийн дотор шууд ажиглаж", "Pattern-specific combined-plan reason");
+assertIncludes(reportSource, "Хоолны зайг нэг өдрийн дотор ажиглаж", "Editorial combined-plan reason");
 assertIncludes(deployedFunctionsText, "103 дугаарт залгах", "Emergency action copy");
 
 assertExcludes(app, "const statusCopy = payment.status === \"paid\" ? PAYMENT_COPY.paidBeforeTest", "Flow-agnostic paid status");
@@ -60,6 +61,9 @@ assertExcludes(reportSource, "why: `${primary.title}-ийн", "Raw dynamic-title
 assertExcludes(reportSource, "triggerRecognition: `${observe} ${pattern.title}", "Raw title insertion in trigger recognition");
 assertExcludes(reportSource, "evidenceLink: `${evidenceAnchor}; шинэ асуудал зохиохгүйгээр", "Neutral QA-language assembly");
 assertExcludes(reportSource, "Дараа нь хоёр дахь нөлөө мөн тэр үед давхцаж байгаа эсэхийг шалгана.", "Repeated generic combined-plan sentence");
+assertExcludes(reportSource, "хамгаалах хүчин зүйл", "Technical protective terminology");
+assertExcludes(reportSource, "хэрэгжүүлэх босго", "Technical implementation terminology");
+assertExcludes(reportSource, "суурь зураглал", "Technical report-use terminology");
 
 const sourceQuestions = require(path.join(root, "questions.js"));
 const deployedQuestions = require(path.join(dist, "questions.js"));
@@ -95,4 +99,4 @@ assertEqual(rendered.instructions[1], "сонгоорой.", "Polite instruction
 assertEqual(rendered.instructions[2], "үргэлжлүүлээрэй.", "Polite instruction: үргэлжлүүлэх");
 assertEqual(rendered.instructions[3], "хэт хязгаарлахгүй байгаарай.", "Polite negative instruction");
 
-console.log("Mongolian copy hotfix verification PASS");
+console.log("Mongolian copy and V8 editorial verification PASS");
