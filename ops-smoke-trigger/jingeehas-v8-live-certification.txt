@@ -1,0 +1,6 @@
+Read-only certification target: current main at 301186a7439cbdcfd579a0740fb8a803f7aad2c6
+Source release merge: PR #40 / 03de75f320dfbc156069d180c6cd6916f5b29b4f
+Expected report engine: jingeehas-case-formulation-v8-editorial-polish
+Expected questionnaire: jingeehas-production-2026-08-v3-routing-safety
+Expected live origin: https://jingeehas.fit
+Required result: exact candidate manifest and deployed bytes match production; V8 natural overview, editorial heading, movement-specific interaction copy, and V6/V7 compatibility markers are present in the certified candidate.
