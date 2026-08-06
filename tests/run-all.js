@@ -16,6 +16,7 @@ const tests = [
   "tests/report-builder-semantic-v7.test.js",
   "tests/report-builder-v6-snapshot-compat.test.js",
   "tests/report-builder-v7-review-regressions.test.js",
+  "tests/report-editorial-v8.test.js",
   "tests/question-bank-versioned.test.js",
   "tests/questionnaire-versioning.test.js",
   "tests/questionnaire-v3-safety-routing.test.js",
