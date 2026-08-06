@@ -14,10 +14,16 @@ for (const expected of [
   "initialResult: null, initialResultError",
   "async function loadInitialResult()",
   "/.netlify/functions/weight-assessment-initial-result?assessmentId=",
-  "if (completed.nextRoute === \"/assessment/result\") { try { await loadInitialResult(); } catch {}",
   "route === \"assessmentResult\" && restored.nextRoute === \"/assessment/result\"",
   "data-action=\"retry-initial-result\""
 ]) assert(appSource.includes(expected), `personalized-result client lifecycle missing: ${expected}`);
+
+const completionRouteStart = appSource.indexOf('if (completed.nextRoute === "/assessment/result")');
+const completionNavigate = appSource.indexOf('navigate("/assessment/result")', completionRouteStart);
+const completionLoad = appSource.indexOf("loadInitialResult().then", completionRouteStart);
+assert(completionRouteStart >= 0, "personalized result completion branch is missing");
+assert(completionNavigate > completionRouteStart, "personalized result route does not open after completion");
+assert(completionLoad > completionNavigate, "initial result must load after the result screen opens rather than blocking navigation");
 
 const {
   INITIAL_RESULT_SCHEMA_VERSION,

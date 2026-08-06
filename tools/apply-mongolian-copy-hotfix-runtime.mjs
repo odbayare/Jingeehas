@@ -19,6 +19,8 @@ import { applyPostAssessmentPaywallFlowV1 } from "./apply-post-assessment-paywal
 import { applyPostAssessmentPaymentUrlFilterV1 } from "./apply-post-assessment-payment-url-filter-v1.mjs";
 import { applyPostAssessmentPaymentCopyV1 } from "./apply-post-assessment-payment-copy-v1.mjs";
 import { applyPostAssessmentPaywallApprovedCopyV1 } from "./apply-post-assessment-paywall-approved-copy-v1.mjs";
+import { applyNonBlockingAnswerSaveV1 } from "./apply-nonblocking-answer-save-v1.mjs";
+import { applyNonBlockingAnswerSaveFinalizeV1 } from "./apply-nonblocking-answer-save-finalize-v1.mjs";
 
 const SAFE_QUESTION_TEXT_REPLACEMENTS = Object.freeze([
   ["Хоолноос өмнө өлсөх мэдрэмжээ анзаарах нь танд хэр амар байдаг вэ?", "Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?"],
@@ -90,4 +92,6 @@ export function applyMongolianCopyHotfixRuntime(root) {
   applyPostAssessmentPaymentUrlFilterV1(root);
   applyPostAssessmentPaymentCopyV1(root);
   applyPostAssessmentPaywallApprovedCopyV1(root);
+  applyNonBlockingAnswerSaveV1(root);
+  applyNonBlockingAnswerSaveFinalizeV1(root);
 }
