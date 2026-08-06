@@ -1,0 +1,68 @@
+name: Jingeehas Nonblocking Save Live Certification
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ops-smoke-trigger/jingeehas-nonblocking-save-live-certification.txt
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jingeehas-nonblocking-save-live-certification
+  cancel-in-progress: true
+
+jobs:
+  certify-live:
+    name: Build main candidate and certify exact non-blocking save package
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.1"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build exact production candidate
+        run: npm run build:production
+
+      - name: Verify non-blocking save contracts
+        run: |
+          node tests/nonblocking-answer-save-runtime.test.js
+          node tests/nonblocking-answer-save-finalize-runtime.test.js
+          node tests/post-assessment-personalized-result-runtime.test.js
+
+      - name: Verify local release markers
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'const answerSaveQueue = .*generation: 0' dist/app.js
+          grep -q 'keepalive: true' dist/app.js
+          grep -q 'await flushAnswerSaves();' dist/app.js
+          grep -q 'function updateAnswerSaveStatus()' dist/app.js
+          grep -q 'answerSaveQueue.generation !== generation' dist/app.js
+          ! grep -q 'state.slowSave' dist/app.js
+          ! grep -q 'Хариултыг хадгалж байна...' dist/app.js
+
+      - name: Verify exact candidate is live
+        env:
+          JINGEEHAS_LIVE_ORIGIN: https://jingeehas.fit
+          JINGEEHAS_EXPECTED_MANIFEST_PATH: dist/production-package-manifest.json
+          JINGEEHAS_EXPECTED_QUESTIONNAIRE_VERSION: jingeehas-production-2026-08-v3-routing-safety
+          LIVE_SMOKE_ATTEMPTS: 24
+          LIVE_SMOKE_DELAY_MS: 15000
+          LIVE_SMOKE_REQUEST_TIMEOUT_MS: 10000
+        run: node tools/verify-live-production.mjs
