@@ -36,11 +36,6 @@ function replaceNamedFunction(source, name, replacement) {
   throw new Error(`Post-assessment flow function end missing: ${name}`);
 }
 
-function replaceRequired(source, from, to, label) {
-  if (!source.includes(from)) throw new Error(`Post-assessment flow anchor missing: ${label}`);
-  return source.replace(from, to);
-}
-
 const LOCKED_TITLES = `const LOCKED_REPORT_TITLES = Object.freeze([
   "Таны үр дүнгийн тойм",
   "Танд нөлөөлж буй хэв маяг ба нотолгоо",
@@ -148,9 +143,14 @@ function patchLockedTitles(source) {
 }
 
 function patchPaymentStatus(source) {
-  const from = `  const statusCopy = payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY[payment.status] || "";\n  const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);\n  const prepaid = state.commercialFlowVersion === "prepaid_v2";`;
-  const to = `  const prepaid = state.commercialFlowVersion === "prepaid_v2";\n  const statusCopy = payment.status === "paid" ? (prepaid ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY.paidAfterAssessment) : PAYMENT_COPY[payment.status] || "";\n  const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);`;
-  return replaceRequired(source, from, to, "flow-aware paid status copy");
+  const statusLine = /^\s*const statusCopy = payment\.status === "paid" \? .*;$/m;
+  const prepaidLine = /^\s*const prepaid = state\.commercialFlowVersion === "prepaid_v2";$/m;
+  if (!statusLine.test(source) || !prepaidLine.test(source)) {
+    throw new Error("Post-assessment flow anchor missing: flow-aware paid status copy");
+  }
+  let output = source.replace(statusLine, "");
+  output = output.replace(prepaidLine, `  const prepaid = state.commercialFlowVersion === "prepaid_v2";\n  const statusCopy = payment.status === "paid" ? (prepaid ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY.paidAfterAssessment) : PAYMENT_COPY[payment.status] || "";`);
+  return output;
 }
 
 export function applyPostAssessmentPaywallFlowV1(root) {
