@@ -134,23 +134,32 @@ const START_FREE = `async function startFreeAssessment(form) {
   }
 }`;
 
+const RENDER_PAYMENT = `function renderPayment() {
+  const payment = state.payment || { status: "idle" };
+  const prepaid = state.commercialFlowVersion === "prepaid_v2";
+  const statusCopy = payment.status === "paid"
+    ? (prepaid ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY.paidAfterAssessment)
+    : PAYMENT_COPY[payment.status] || "";
+  const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
+  const paymentReady = prepaid ? state.assessmentStatus === "payment_pending" : state.assessmentStatus === "complete";
+  return \`<div class="page">\${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">\${prepaid ? "Төлбөрөө баталгаажуулж байна" : "Бүрэн тайлангаа нээх"}</h1>
+      <p>\${prepaid ? "Тест болон бүрэн хувийн тайлан" : \`QPay-аар \${PRODUCT.displayPrice} төлсний дараа таны бүрэн тайлан нээгдэнэ.\`}</p>
+      <section aria-labelledby="payment-title"><h2 id="payment-title">QPay нэхэмжлэл</h2><p class="price">Үнэ: \${PRODUCT.displayPrice}</p>
+        \${prepaid ? \`<p class="notice">QPay төлбөрөө хийсний дараа тест автоматаар нээгдэнэ.</p>\` : paymentReady ? "" : \`<p class="notice">QPay төлбөрийн товч тестийг бүрэн дуусгасны дараа нээгдэнэ.</p>\`}
+        <p class="payment-status" role="status" aria-live="polite">\${escapeHtml(statusCopy)}</p>
+        \${payment.status !== "paid" && payment.qrImage ? \`<img class="qpay-qr" src="data:image/png;base64,\${escapeAttribute(payment.qrImage)}" alt="QPay QR код">\` : ""}
+        \${payment.status !== "paid" && Array.isArray(payment.urls) && payment.urls.length ? \`<ul class="payment-app-links">\${payment.urls.filter(item => /^https:\/\//.test(String(item.link || item.url || ""))).map(item => \`<li><a class="button secondary" href="\${escapeAttribute(item.link || item.url)}" rel="noopener">\${escapeHtml(item.name || item.description || "Банкны апп")}</a></li>\`).join("")}</ul>\` : ""}
+        \${payment.status !== "paid" && payment.expiresAt ? \`<p>Нэхэмжлэлийн хугацаа: <time datetime="\${escapeAttribute(payment.expiresAt)}">\${escapeHtml(new Date(payment.expiresAt).toLocaleString("mn-MN"))}</time></p>\` : ""}
+        \${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? \`<button class="button" type="button" data-action="check-payment">Төлбөр шалгах</button>\` : payment.status === "paid" ? (prepaid ? \`<p class="notice">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>\` : \`<p class="notice">Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.</p><a class="button" href="/report" data-route>Бүрэн тайлан харах</a>\`) : !paymentReady || createBlocked || prepaid ? "" : \`<button class="button" type="button" data-action="create-invoice">\${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>\`}
+      </section></main>\${footer()}</div>\`;
+}`;
+
 function patchLockedTitles(source) {
   const start = source.indexOf("const LOCKED_REPORT_TITLES = Object.freeze([");
   const endMarker = "]);";
   const end = source.indexOf(endMarker, start);
   if (start < 0 || end < 0) throw new Error("Locked report title block missing");
   return `${source.slice(0, start)}${LOCKED_TITLES}${source.slice(end + endMarker.length)}`;
-}
-
-function patchPaymentStatus(source) {
-  const statusLine = /^\s*const statusCopy = payment\.status === "paid" \? .*;$/m;
-  const prepaidLine = /^\s*const prepaid = state\.commercialFlowVersion === "prepaid_v2";$/m;
-  if (!statusLine.test(source) || !prepaidLine.test(source)) {
-    throw new Error("Post-assessment flow anchor missing: flow-aware paid status copy");
-  }
-  let output = source.replace(statusLine, "");
-  output = output.replace(prepaidLine, `  const prepaid = state.commercialFlowVersion === "prepaid_v2";\n  const statusCopy = payment.status === "paid" ? (prepaid ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY.paidAfterAssessment) : PAYMENT_COPY[payment.status] || "";`);
-  return output;
 }
 
 export function applyPostAssessmentPaywallFlowV1(root) {
@@ -162,7 +171,7 @@ export function applyPostAssessmentPaywallFlowV1(root) {
     source = replaceNamedFunction(source, "reportPaywallContent", TRUST_PAYWALL);
     source = replaceNamedFunction(source, "renderInitialResult", INITIAL_RESULT);
     source = replaceNamedFunction(source, "startFreeAssessment", START_FREE);
-    source = patchPaymentStatus(source);
+    source = replaceNamedFunction(source, "renderPayment", RENDER_PAYMENT);
     fs.writeFileSync(appPath, source);
   }
 }
