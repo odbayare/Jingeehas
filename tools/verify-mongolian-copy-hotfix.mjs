@@ -49,7 +49,7 @@ assertIncludes(app, "НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГ
 assertIncludes(app, "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", "Unified recovery heading");
 assertIncludes(reportSource, "jingeehas-case-formulation-v7-semantic-builder", "Semantic report version");
 assertIncludes(reportSource, "function polishPublicText(value)", "Public copy sanitizer");
-assertIncludes(reportSource, "Дараа нь хоёр дахь нөлөө мөн тэр үед давхцаж байгаа эсэхийг шалгана.", "Natural combined-plan explanation");
+assertIncludes(reportSource, "Хоолны зай болон өлсөх мэдрэмжийг нэг өдрийн дотор шууд ажиглаж", "Pattern-specific combined-plan reason");
 assertIncludes(deployedFunctionsText, "103 дугаарт залгах", "Emergency action copy");
 
 assertExcludes(app, "const statusCopy = payment.status === \"paid\" ? PAYMENT_COPY.paidBeforeTest", "Flow-agnostic paid status");
@@ -59,6 +59,7 @@ assertExcludes(deployedFunctionsText, "тестийн төлбөр хийхээ�
 assertExcludes(reportSource, "why: `${primary.title}-ийн", "Raw dynamic-title inflection");
 assertExcludes(reportSource, "triggerRecognition: `${observe} ${pattern.title}", "Raw title insertion in trigger recognition");
 assertExcludes(reportSource, "evidenceLink: `${evidenceAnchor}; шинэ асуудал зохиохгүйгээр", "Neutral QA-language assembly");
+assertExcludes(reportSource, "Дараа нь хоёр дахь нөлөө мөн тэр үед давхцаж байгаа эсэхийг шалгана.", "Repeated generic combined-plan sentence");
 
 const sourceQuestions = require(path.join(root, "questions.js"));
 const deployedQuestions = require(path.join(dist, "questions.js"));
