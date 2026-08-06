@@ -1,9 +1,10 @@
 Deploy current main to the linked Jingeehas Netlify production site and certify the exact live candidate package.
 
-Release scope: PR #40 V8 editorial report engine, natural Mongolian register, reduced reading load, exact rendered-field public projection, movement-specific interaction guidance, and preserved V6/V7 snapshot rendering.
-Source merge SHA: 03de75f320dfbc156069d180c6cd6916f5b29b4f
+Release scope: PR #42 free assessment before payment, personalized count-only post-assessment result, supported interaction count and management-value copy, safe zero-interaction and neutral branches, completed-result loading across completion/reload/resume, stale prepaid-session isolation, and post-assessment QPay flow.
+Source merge SHA: 790b9c263f365a973ae7cec67251955f6e7591b6
 Report engine version: jingeehas-case-formulation-v8-editorial-polish
+Initial result schema: jingeehas-initial-result-v2-count-only
 Questionnaire version: jingeehas-production-2026-08-v3-routing-safety
 Expected live origin: https://jingeehas.fit
 Expected deployment package: dist static assets plus .generated-copy-hotfix/netlify/functions
-Required certification: exact candidate manifest SHA, V8 report engine, natural V8 overview, three-paragraph pattern cards, low-movement pair-specific guidance, V7/V6 restored snapshot compatibility, routes, static assets, and generated functions.
+Required certification: exact candidate/live manifest match, personalized pattern count, supported interaction count, zero-interaction and neutral safety branches, result loading on completion/reload/resume, no primary-pattern title or evidence leakage, post-assessment payment flow, V8 report engine, V7/V6 restored snapshot compatibility, routes, static assets, and generated functions.
