@@ -15,6 +15,10 @@ import { applyReportEditorialPolishV1 } from "./apply-report-editorial-polish-v1
 import { applyReportEditorialLowMovementV1 } from "./apply-report-editorial-low-movement-v1.mjs";
 import { applyReportEditorialOverviewV1 } from "./apply-report-editorial-overview-v1.mjs";
 import { applyReportEditorialProjectionV1 } from "./apply-report-editorial-projection-v1.mjs";
+import { applyPostAssessmentPaywallFlowV1 } from "./apply-post-assessment-paywall-flow-v1.mjs";
+import { applyPostAssessmentPaymentUrlFilterV1 } from "./apply-post-assessment-payment-url-filter-v1.mjs";
+import { applyPostAssessmentPaymentCopyV1 } from "./apply-post-assessment-payment-copy-v1.mjs";
+import { applyPostAssessmentPaywallApprovedCopyV1 } from "./apply-post-assessment-paywall-approved-copy-v1.mjs";
 
 const SAFE_QUESTION_TEXT_REPLACEMENTS = Object.freeze([
   ["Хоолноос өмнө өлсөх мэдрэмжээ анзаарах нь танд хэр амар байдаг вэ?", "Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?"],
@@ -82,4 +86,8 @@ export function applyMongolianCopyHotfixRuntime(root) {
   applyReportEditorialLowMovementV1(root);
   applyReportEditorialOverviewV1(root);
   applyReportEditorialProjectionV1(root);
+  applyPostAssessmentPaywallFlowV1(root);
+  applyPostAssessmentPaymentUrlFilterV1(root);
+  applyPostAssessmentPaymentCopyV1(root);
+  applyPostAssessmentPaywallApprovedCopyV1(root);
 }
