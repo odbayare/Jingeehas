@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { applyMongolianCopyHotfix } from "./apply-mongolian-copy-hotfix.mjs";
 import { applyRoutingSafetyEvidenceV3 } from "./apply-routing-safety-evidence-v3.mjs";
+import { applyReportBuilderSemanticV1InteractionCopy } from "./apply-report-builder-semantic-v1-interaction-copy.mjs";
 import { applyReportBuilderSemanticV1 } from "./apply-report-builder-semantic-v1.mjs";
 import { applyReportBuilderSemanticV1Dedup } from "./apply-report-builder-semantic-v1-dedup.mjs";
 import { prepareReportValidationSemanticQuality } from "./prepare-report-validation-semantic-quality.mjs";
@@ -61,6 +62,7 @@ export function applyMongolianCopyHotfixRuntime(root) {
   restoreCanonicalQuestionValues(root);
   addDisplayOnlyQuestionLabels(root);
   applyRoutingSafetyEvidenceV3(root);
+  applyReportBuilderSemanticV1InteractionCopy(root);
   applyReportBuilderSemanticV1(root);
   applyReportBuilderSemanticV1Dedup(root);
   prepareReportValidationSemanticQuality(root);
