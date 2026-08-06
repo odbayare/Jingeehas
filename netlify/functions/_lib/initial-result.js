@@ -7,6 +7,7 @@ const SEALED_PAYWALL = Object.freeze({ schemaVersion: INITIAL_RESULT_SCHEMA_VERS
 
 function hasText(value) {
   if (Array.isArray(value)) return value.some(hasText);
+  if (value && typeof value === "object") return Object.values(value).some(hasText);
   return String(value || "").trim().length > 0;
 }
 
@@ -15,6 +16,11 @@ function supportedPatterns(fullReport = {}) {
     ...(Array.isArray(fullReport.influencingPatterns) ? fullReport.influencingPatterns : []),
     ...(Array.isArray(fullReport.contextualFactors) ? fullReport.contextualFactors.filter(item => item?.isPattern) : [])
   ];
+}
+
+function moduleField(module = {}, key) {
+  const structured = Array.isArray(module.fields) ? module.fields.find(field => field?.key === key)?.body : null;
+  return structured || module[key] || null;
 }
 
 function deliverablePatterns(fullReport = {}) {
@@ -28,9 +34,9 @@ function deliverablePatterns(fullReport = {}) {
       && hasText(pattern?.evidenceSummary || pattern?.paragraphs || pattern?.explanation)
       && hasText(pattern?.effectOnWeightLoss)
       && module
-      && hasText(module.observe)
-      && hasText(module.prepare)
-      && hasText(module.inMoment);
+      && hasText(moduleField(module, "observe"))
+      && hasText(moduleField(module, "prepare"))
+      && hasText(moduleField(module, "inMoment"));
     if (delivered) seen.add(key);
     return Boolean(delivered);
   });
@@ -41,13 +47,23 @@ function planPairKey(plan = {}) {
   return ids.length === 2 ? ids.sort().join("::") : "";
 }
 
+function structuredPlanPart(value) {
+  if (value && typeof value === "object") return hasText(value.title) && hasText(value.body);
+  return hasText(value);
+}
+
 function deliverableInteractions(fullReport = {}, patterns = deliverablePatterns(fullReport)) {
   const patternIds = new Set(patterns.map(pattern => String(pattern.id || "")));
   const plans = [
     fullReport.combinedManagementPlan,
     ...(Array.isArray(fullReport.additionalInteractionManagementPlans) ? fullReport.additionalInteractionManagementPlans : [])
   ].filter(Boolean);
-  const planPairs = new Set(plans.filter(plan => ["startWith", "why", "nextStep", "combinedAction"].every(field => hasText(plan[field]))).map(planPairKey).filter(Boolean));
+  const planPairs = new Set(plans.filter(plan =>
+    structuredPlanPart(plan.startWith)
+    && hasText(plan.why)
+    && structuredPlanPart(plan.nextStep)
+    && structuredPlanPart(plan.combinedAction)
+  ).map(planPairKey).filter(Boolean));
   const seen = new Set();
   return (Array.isArray(fullReport.interactionSummary) ? fullReport.interactionSummary : []).filter(interaction => {
     if (String(interaction?.id || "").startsWith("observed_")) return false;

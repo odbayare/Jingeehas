@@ -2,6 +2,15 @@ import fs from "node:fs";
 import path from "node:path";
 import { applyMongolianCopyHotfix } from "./apply-mongolian-copy-hotfix.mjs";
 import { applyRoutingSafetyEvidenceV3 } from "./apply-routing-safety-evidence-v3.mjs";
+import { applyReportBuilderSemanticV1InteractionCopy } from "./apply-report-builder-semantic-v1-interaction-copy.mjs";
+import { applyReportBuilderSemanticV1 } from "./apply-report-builder-semantic-v1.mjs";
+import { applyReportBuilderSemanticV1Dedup } from "./apply-report-builder-semantic-v1-dedup.mjs";
+import { prepareReportValidationSemanticQuality } from "./prepare-report-validation-semantic-quality.mjs";
+import { applyReportBuilderSemanticV1Quality } from "./apply-report-builder-semantic-v1-quality.mjs";
+import { applyReportBuilderNeutralValidationV1 } from "./apply-report-builder-neutral-validation-v1.mjs";
+import { applyReportBuilderNeutralLimitsV1 } from "./apply-report-builder-neutral-limits-v1.mjs";
+import { applyReportBuilderV6SnapshotCompatibility } from "./apply-report-builder-v6-snapshot-compat.mjs";
+import { applyReportBuilderSemanticV1PublicProjection } from "./apply-report-builder-semantic-v1-public-projection.mjs";
 
 const SAFE_QUESTION_TEXT_REPLACEMENTS = Object.freeze([
   ["Хоолноос өмнө өлсөх мэдрэмжээ анзаарах нь танд хэр амар байдаг вэ?", "Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?"],
@@ -56,4 +65,13 @@ export function applyMongolianCopyHotfixRuntime(root) {
   restoreCanonicalQuestionValues(root);
   addDisplayOnlyQuestionLabels(root);
   applyRoutingSafetyEvidenceV3(root);
+  applyReportBuilderSemanticV1InteractionCopy(root);
+  applyReportBuilderSemanticV1(root);
+  applyReportBuilderSemanticV1Dedup(root);
+  prepareReportValidationSemanticQuality(root);
+  applyReportBuilderSemanticV1Quality(root);
+  applyReportBuilderNeutralValidationV1(root);
+  applyReportBuilderNeutralLimitsV1(root);
+  applyReportBuilderV6SnapshotCompatibility(root);
+  applyReportBuilderSemanticV1PublicProjection(root);
 }
