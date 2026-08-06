@@ -11,6 +11,7 @@ import { applyReportBuilderNeutralValidationV1 } from "./apply-report-builder-ne
 import { applyReportBuilderNeutralLimitsV1 } from "./apply-report-builder-neutral-limits-v1.mjs";
 import { applyReportBuilderV6SnapshotCompatibility } from "./apply-report-builder-v6-snapshot-compat.mjs";
 import { applyReportBuilderSemanticV1PublicProjection } from "./apply-report-builder-semantic-v1-public-projection.mjs";
+import { applyReportEditorialPolishV1 } from "./apply-report-editorial-polish-v1.mjs";
 
 const SAFE_QUESTION_TEXT_REPLACEMENTS = Object.freeze([
   ["Хоолноос өмнө өлсөх мэдрэмжээ анзаарах нь танд хэр амар байдаг вэ?", "Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?"],
@@ -74,4 +75,5 @@ export function applyMongolianCopyHotfixRuntime(root) {
   applyReportBuilderNeutralLimitsV1(root);
   applyReportBuilderV6SnapshotCompatibility(root);
   applyReportBuilderSemanticV1PublicProjection(root);
+  applyReportEditorialPolishV1(root);
 }
