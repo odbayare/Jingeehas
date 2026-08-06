@@ -48,44 +48,47 @@ const PUBLIC_REPORT = `function publicReport(fullReport) {
     return Object.fromEntries(Object.entries(value).filter(([key]) => !internalKeys.has(key)).map(([key, child]) => [key, sanitize(child)]));
   }
   const safe = sanitize(fullReport);
+  const semanticV7 = safe.version === "jingeehas-case-formulation-v7-semantic-builder";
 
-  // These values are report-engine planning artifacts. The public renderer does
-  // not consume them, and retaining them duplicates guidance already delivered
-  // by the semantic management and initial-action sections.
-  delete safe.additionalPatternActions;
+  if (semanticV7) {
+    // These values are V7 report-engine planning artifacts. The V7 renderer
+    // does not consume them, and retaining them duplicates guidance already
+    // delivered by semantic sections.
+    delete safe.additionalPatternActions;
 
-  for (const pattern of safe.influencingPatterns || []) {
-    // A paragraph cluster is the complete rendered representation for this
-    // pattern. Do not also expose the unused component strings.
-    if (Array.isArray(pattern.paragraphs) && pattern.paragraphs.length) {
-      delete pattern.explanation;
-      delete pattern.evidenceSummary;
-      delete pattern.effectOnWeightLoss;
-      delete pattern.uncertainty;
-    }
-  }
-
-  for (const context of safe.contextualFactors || []) {
-    if (context?.isPattern) {
-      // Pattern cards render their semantic component fields. The synthetic
-      // summary concatenates those same sentences and is not rendered.
-      delete context.summary;
-      if (Array.isArray(context.paragraphs) && context.paragraphs.length) {
-        delete context.explanation;
-        delete context.evidenceSummary;
-        delete context.effectOnWeightLoss;
-        delete context.uncertainty;
+    for (const pattern of safe.influencingPatterns || []) {
+      if (Array.isArray(pattern.paragraphs) && pattern.paragraphs.length) {
+        delete pattern.explanation;
+        delete pattern.evidenceSummary;
+        delete pattern.effectOnWeightLoss;
+        delete pattern.uncertainty;
       }
     }
-  }
 
-  if (safe.neutralResult) {
-    // The dedicated neutralActionPlan is the single rendered owner of the
-    // observation fields. Keep neutralResult for overview, strengths, limits,
-    // and professional scope only.
-    delete safe.neutralResult.observation;
+    for (const context of safe.contextualFactors || []) {
+      if (context?.isPattern) {
+        delete context.summary;
+        if (Array.isArray(context.paragraphs) && context.paragraphs.length) {
+          delete context.explanation;
+          delete context.evidenceSummary;
+          delete context.effectOnWeightLoss;
+          delete context.uncertainty;
+        }
+      }
+    }
+
+    if (safe.neutralResult) {
+      // The dedicated V7 neutralActionPlan is the single rendered owner of
+      // observation fields.
+      delete safe.neutralResult.observation;
+      delete safe.professionalGuidance;
+    }
+  } else if (safe.neutralResult) {
+    // Preserve the historical V6 payload shape byte-for-field while avoiding
+    // the already-established duplicate professional-guidance alias.
     delete safe.professionalGuidance;
   }
+
   if (pending) safe.prioritizedStartingAction = null;
   return safe;
 }`;
