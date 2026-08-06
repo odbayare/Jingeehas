@@ -36,6 +36,15 @@ function replaceNamedFunction(source, name, replacement) {
   throw new Error(`Post-assessment flow function end missing: ${name}`);
 }
 
+function replaceFunctionBefore(source, name, nextName, replacement) {
+  const startMarker = `function ${name}(`;
+  const nextMarker = `function ${nextName}(`;
+  const start = source.indexOf(startMarker);
+  const end = source.indexOf(nextMarker, start + startMarker.length);
+  if (start < 0 || end < 0) throw new Error(`Post-assessment flow function markers missing: ${name} -> ${nextName}`);
+  return `${source.slice(0, start)}${replacement}\n${source.slice(end)}`;
+}
+
 const LOCKED_TITLES = `const LOCKED_REPORT_TITLES = Object.freeze([
   "Таны үр дүнгийн тойм",
   "Танд нөлөөлж буй хэв маяг ба нотолгоо",
@@ -171,7 +180,7 @@ export function applyPostAssessmentPaywallFlowV1(root) {
     source = replaceNamedFunction(source, "reportPaywallContent", TRUST_PAYWALL);
     source = replaceNamedFunction(source, "renderInitialResult", INITIAL_RESULT);
     source = replaceNamedFunction(source, "startFreeAssessment", START_FREE);
-    source = replaceNamedFunction(source, "renderPayment", RENDER_PAYMENT);
+    source = replaceFunctionBefore(source, "renderPayment", "renderQuestionInput", RENDER_PAYMENT);
     fs.writeFileSync(appPath, source);
   }
 }
