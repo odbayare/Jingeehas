@@ -23,24 +23,57 @@ const OVERVIEW = `function renderEditorialResultOverviewV8(full) {
     </dl>\`;
 }`;
 
+function namedFunctionRange(source, name) {
+  const marker = `function ${name}(`;
+  const start = source.indexOf(marker);
+  if (start < 0) throw new Error(`Editorial overview function missing: ${name}`);
+  const braceStart = source.indexOf("{", start + marker.length);
+  if (braceStart < 0) throw new Error(`Editorial overview body missing: ${name}`);
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  let lineComment = false;
+  let blockComment = false;
+  for (let index = braceStart; index < source.length; index += 1) {
+    const char = source[index];
+    const next = source[index + 1];
+    if (lineComment) { if (char === "\n") lineComment = false; continue; }
+    if (blockComment) { if (char === "*" && next === "/") { blockComment = false; index += 1; } continue; }
+    if (quote) {
+      if (escaped) { escaped = false; continue; }
+      if (char === "\\") { escaped = true; continue; }
+      if (char === quote) quote = null;
+      continue;
+    }
+    if (char === "/" && next === "/") { lineComment = true; index += 1; continue; }
+    if (char === "/" && next === "*") { blockComment = true; index += 1; continue; }
+    if (char === "\"" || char === "'" || char === "`") { quote = char; continue; }
+    if (char === "{") depth += 1;
+    if (char === "}" && --depth === 0) return { start, end: index + 1, text: source.slice(start, index + 1) };
+  }
+  throw new Error(`Editorial overview function end missing: ${name}`);
+}
+
 function replaceRequired(source, from, to, label) {
   if (!source.includes(from)) throw new Error(`Editorial overview anchor missing: ${label}`);
   return source.replace(from, to);
 }
 
 export function applyReportEditorialOverviewV1(root) {
+  const legacyOverview = '{ id: "overview", heading: "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [renderResultOverview(full)], visible: true },';
+  const editorialOverview = '{ id: "overview", heading: "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [editorialV8 ? renderEditorialResultOverviewV8(full) : renderResultOverview(full)], visible: true },';
   for (const appPath of [path.join(root, "app.js"), path.join(root, "site", "app.js")]) {
     if (!fs.existsSync(appPath)) continue;
     let source = fs.readFileSync(appPath, "utf8");
+    const range = namedFunctionRange(source, "buildSemanticReportSectionsV7");
+    let semantic = range.text;
+    semantic = replaceRequired(semantic, legacyOverview, editorialOverview, "V8 overview renderer selection");
+    source = `${source.slice(0, range.start)}${semantic}${source.slice(range.end)}`;
     if (!source.includes("function renderEditorialResultOverviewV8(")) {
-      source = replaceRequired(source, "function buildSemanticReportSectionsV7(full) {", `${OVERVIEW}\n\nfunction buildSemanticReportSectionsV7(full) {`, "V8 overview insertion");
+      const semanticStart = source.indexOf("function buildSemanticReportSectionsV7(");
+      if (semanticStart < 0) throw new Error("V8 semantic renderer insertion point missing");
+      source = `${source.slice(0, semanticStart)}${OVERVIEW}\n\n${source.slice(semanticStart)}`;
     }
-    source = replaceRequired(
-      source,
-      '{ id: "overview", heading: "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [renderResultOverview(full)], visible: true },',
-      '{ id: "overview", heading: "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [editorialV8 ? renderEditorialResultOverviewV8(full) : renderResultOverview(full)], visible: true },',
-      "V8 overview renderer selection"
-    );
     fs.writeFileSync(appPath, source);
   }
 }
