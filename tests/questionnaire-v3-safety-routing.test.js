@@ -45,6 +45,7 @@ assert.equal(questions.validateAnswer(cue, ["Аль нь ч үгүй"], { answer
 const food = questions.questionById("Q-FOOD-FEELING", V3);
 assert.equal(questions.validateAnswer(food, ["Тодорхой хоол анзаараагүй", "Гурилан хоол"], { answers: {}, version: V3 }), "Зөв хариулт сонгоно уу.");
 
+assert.equal(calculateAssessmentSafety({ "S1-S04": "Хааяа" }).route, "confirmation_required", "V3 recent self-harm answer must not complete without immediate-risk confirmation");
 assert.equal(calculateAssessmentSafety({ "S1-S04": "Хааяа", "S1-S04-NOW": "Тийм" }).route, "urgent_self_harm");
 assert.equal(calculateAssessmentSafety({ "S1-S04": "Олон өдөр", "S1-S04-NOW": "Эргэлзэж байна" }).route, "urgent_self_harm");
 assert.equal(calculateAssessmentSafety({ "S1-S04": "Хааяа", "S1-S04-NOW": "Үгүй" }).route, "mental_health_support");
