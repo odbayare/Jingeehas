@@ -14,7 +14,7 @@ const OVERVIEW = `function renderEditorialResultOverviewV8(full) {
     ...(!full.protectiveSectionSummary ? (full.protectiveFactors || []).map(item => item.text) : []),
     ...(full.contradictions || []).map(item => item.text)
   ].filter(Boolean);
-  return \`${renderReportParagraphs(Array.isArray(full.overallPicture) ? full.overallPicture : [full.overallPicture])}
+  return \`\${renderReportParagraphs(Array.isArray(full.overallPicture) ? full.overallPicture : [full.overallPicture])}
     <dl class="result-overview">
       <dt>Хамгийн тод харагдсан хэв маяг</dt><dd>\${escapeHtml(primary?.title || "Нэг хэв маягийг дангаар нь гол гэж хатуу дүгнээгүй.")}</dd>
       <dt>Дагалдах хэв маяг</dt><dd>\${escapeHtml(supporting.length ? supporting.map(item => item.title).join(" · ") : "Нэмэлт дагалдах хэв маяг хүчтэй ялгараагүй.")}</dd>
