@@ -97,8 +97,11 @@ function patchValidationMetadata(source) {
   const from = '"patternId", "patternIds", "order", "version"';
   const to = '"patternId", "patternIds", "patternTitle", "order", "version"';
   if (source.includes(to)) return source;
-  if (!source.includes(from)) throw new Error("Validation metadata insertion point missing");
-  return source.replace(from, to);
+  if (source.includes(from)) return source.replace(from, to);
+  // The narrative-only validator enumerates rendered prose fields directly and
+  // does not traverse metadata, so no metadata exclusion patch is required.
+  if (source.includes("function substantiveSentences(report)") && source.includes("const values = [];")) return source;
+  throw new Error("Validation metadata insertion point missing");
 }
 
 export function applyReportBuilderSemanticV1PublicProjection(root) {
