@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import { applyMongolianCopyHotfix } from "./apply-mongolian-copy-hotfix.mjs";
+import { applyRoutingSafetyEvidenceV3 } from "./apply-routing-safety-evidence-v3.mjs";
 
 const SAFE_QUESTION_TEXT_REPLACEMENTS = Object.freeze([
   ["Хоолноос өмнө өлсөх мэдрэмжээ анзаарах нь танд хэр амар байдаг вэ?", "Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?"],
@@ -35,7 +36,7 @@ function addDisplayOnlyQuestionLabels(root) {
   const appTargets = [path.join(root, "app.js"), path.join(root, "site", "app.js")];
   for (const target of appTargets) {
     if (!fs.existsSync(target)) continue;
-    let source = fs.readFileSync(target, "utf8");
+    const source = fs.readFileSync(target, "utf8");
     if (source.includes("\"Мэргэжлийн хоолзүйчийн зөвлөгөө\": \"Мэргэжлийн хоол зүйчийн зөвлөгөө\"")) continue;
     const updated = replaceAll(source, DISPLAY_LABELS);
     if (updated === source) throw new Error(`Display-label insertion point missing: ${target}`);
@@ -49,14 +50,10 @@ export function applyMongolianCopyHotfixRuntime(root) {
   } catch (error) {
     const message = String(error?.message || error);
     if (!message.startsWith("Mongolian copy hotfix incomplete:")) throw error;
-    // The deterministic transformations have already run. The legacy scan also
-    // sees replacement-map keys, so rendered output is verified separately.
     console.log("Mongolian copy transformations applied; rendered-output verification follows.");
   }
 
-  // Never change stored answer values under the existing questionnaire version.
-  // Rebuild the generated question bank from the canonical source and apply only
-  // prompt-text changes; user-facing spelling is handled by questionOptionLabel().
   restoreCanonicalQuestionValues(root);
   addDisplayOnlyQuestionLabels(root);
+  applyRoutingSafetyEvidenceV3(root);
 }
