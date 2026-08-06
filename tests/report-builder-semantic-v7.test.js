@@ -15,6 +15,12 @@ const reportFor = answers => reportModule.buildFullReport(
   new Date("2026-08-06T00:00:00.000Z"),
   { questionnaireVersion: "jingeehas-production-2026-08-v3-routing-safety" }
 );
+const duplicateSentences = value => {
+  const sentences = JSON.stringify(value).split(/[.!?]\s*/).map(item => item.replace(/[{}\[\]"\\]/g, "").trim()).filter(item => item.length > 45);
+  const counts = new Map();
+  for (const sentence of sentences) counts.set(sentence, (counts.get(sentence) || 0) + 1);
+  return [...counts.entries()].filter(([, count]) => count > 1).map(([sentence, count]) => `${count}x ${sentence}`);
+};
 
 const multiFixture = fixtures.find(item => item.name === "stress eating + poor sleep + evening hunger");
 const neutralFixture = fixtures.find(item => item.name === "fully routed neutral protective");
@@ -55,7 +61,8 @@ for (const step of multi.recoveryPlan.steps) assert(step.label && step.body);
 assert(!Object.hasOwn(multi, "difficultMomentPlan"));
 assert(!Object.hasOwn(multi, "fallbackPlan"));
 assert.equal(multi.initialActions.length, 3);
-assert.equal(validateReportForActivation(multiFull).valid, true, validateReportForActivation(multiFull).errors.join(", "));
+const multiValidation = validateReportForActivation(multiFull);
+assert.equal(multiValidation.valid, true, `${multiValidation.errors.join(", ")}; duplicates=${JSON.stringify(duplicateSentences(multi))}`);
 
 const multiSections = app._test.buildReportSections(multi).filter(section => section.visible);
 const multiIds = multiSections.map(section => section.id);
@@ -77,7 +84,8 @@ assert(!Object.hasOwn(neutral, "difficultMomentPlan"));
 assert(!Object.hasOwn(neutral, "fallbackPlan"));
 const coreStrength = "Өлсөх мэдрэмжээ анзаарах болон цадсанаа мэдээд зогсох нь ашиглаж болох давуу тал байна";
 assert((JSON.stringify(neutral).match(new RegExp(coreStrength, "g")) || []).length <= 1, "neutral strength prefix is repeated");
-assert.equal(validateReportForActivation(neutralFull).valid, true, validateReportForActivation(neutralFull).errors.join(", "));
+const neutralValidation = validateReportForActivation(neutralFull);
+assert.equal(neutralValidation.valid, true, `${neutralValidation.errors.join(", ")}; duplicates=${JSON.stringify(duplicateSentences(neutral))}`);
 
 const neutralSections = app._test.buildReportSections(neutral).filter(section => section.visible);
 assert.deepEqual(neutralSections.map(section => section.id), ["neutral-overview", "neutral-strengths", "neutral-observation", "recovery", "guidance"]);
