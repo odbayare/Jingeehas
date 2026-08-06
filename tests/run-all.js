@@ -13,7 +13,7 @@ const tests = [
   "tests/report-copy-exactness-v2-2.test.js",
   "tests/report-v2-2-p2-closeout.test.js",
   "tests/full-report-core-customer-value.test.js",
-  "tests/question-bank.test.js",
+  "tests/question-bank-versioned.test.js",
   "tests/questionnaire-versioning.test.js",
   "tests/questionnaire-v3-safety-routing.test.js",
   "tests/assessment-flow-regression.test.js",
