@@ -44,10 +44,10 @@ const PUBLIC_REPORT = `function publicReport(fullReport) {
   ]);
   function sanitize(value) {
     if (Array.isArray(value)) return value.map(sanitize);
-    if (!value || typeof value !== "object") return value;
+    if (!value || typeof value !== "object") return typeof value === "string" ? polishPublicText(value) : value;
     return Object.fromEntries(Object.entries(value).filter(([key]) => !internalKeys.has(key)).map(([key, child]) => [key, sanitize(child)]));
   }
-  const safe = polishPublicText(sanitize(fullReport));
+  const safe = sanitize(fullReport);
 
   // These values are report-engine planning artifacts. The public renderer does
   // not consume them, and retaining them duplicates guidance already delivered
