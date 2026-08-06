@@ -19,16 +19,35 @@ concurrency:
 jobs:
   smoke:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Verify live Jingeehas production
+          cache: npm
+
+      - name: Verify current live production on pull request
+        if: github.event_name == 'pull_request'
         run: node tools/verify-live-production.mjs
         env:
           JINGEEHAS_LIVE_ORIGIN: https://jingeehas.fit
-          LIVE_SMOKE_ATTEMPTS: ${{ github.event_name == 'push' && '20' || '3' }}
-          LIVE_SMOKE_DELAY_MS: ${{ github.event_name == 'push' && '15000' || '5000' }}
+          LIVE_SMOKE_ATTEMPTS: 3
+          LIVE_SMOKE_DELAY_MS: 5000
+          LIVE_SMOKE_REQUEST_TIMEOUT_MS: 8000
+
+      - name: Build expected main deployment package
+        if: github.event_name != 'pull_request'
+        run: |
+          npm ci
+          npm run build:production
+
+      - name: Verify exact main candidate is live
+        if: github.event_name != 'pull_request'
+        run: node tools/verify-live-production.mjs
+        env:
+          JINGEEHAS_LIVE_ORIGIN: https://jingeehas.fit
+          JINGEEHAS_EXPECTED_MANIFEST_PATH: dist/production-package-manifest.json
+          LIVE_SMOKE_ATTEMPTS: 20
+          LIVE_SMOKE_DELAY_MS: 15000
           LIVE_SMOKE_REQUEST_TIMEOUT_MS: 8000
