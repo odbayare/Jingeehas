@@ -1,0 +1,8 @@
+Read-only certification target: current main at 1577e243a25ee597cbeb131d542f77159a124a30
+Source release merge: PR #44 / 42f34860f3bf870f3fa068f9701d31ce8a19a665
+Expected behavior: immediate next-question transition with single-flight unload-safe background persistence, retryable failure, final flush before completion, active-input preservation, and stale-worker generation isolation.
+Expected report engine: jingeehas-case-formulation-v8-editorial-polish
+Expected initial-result schema: jingeehas-initial-result-v2-count-only
+Expected questionnaire: jingeehas-production-2026-08-v3-routing-safety
+Expected live origin: https://jingeehas.fit
+Required result: exact candidate manifest and deployed bytes match production; blocking slow-save markers are absent.
