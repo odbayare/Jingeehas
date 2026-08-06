@@ -45,9 +45,11 @@ const deployedFunctionsText = allJavaScript(functionRoot).map(file => fs.readFil
 assertIncludes(app, "QPay төлбөрөө хийсний дараа бүрэн тайлан автоматаар нээгдэнэ.", "Post-assessment pending copy");
 assertIncludes(app, "questionOptionLabel(question, option)", "Displayed option normalization");
 assertIncludes(app, "\"Мэргэжлийн хоолзүйчийн зөвлөгөө\": \"Мэргэжлийн хоол зүйчийн зөвлөгөө\"", "Display-only professional label");
-assertIncludes(app, "full.neutralResult ? \"ОДОО ТОХИРЧ БУЙ ХЭМНЭЛЭЭ ХЭРХЭН ХАДГАЛАХ ВЭ?\"", "Neutral report heading");
+assertIncludes(app, "НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГЛАХ АРГА", "Dedicated neutral observation heading");
+assertIncludes(app, "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", "Unified recovery heading");
+assertIncludes(reportSource, "jingeehas-case-formulation-v7-semantic-builder", "Semantic report version");
 assertIncludes(reportSource, "function polishPublicText(value)", "Public copy sanitizer");
-assertIncludes(reportSource, "Эхлээд эхний хэв маяг ямар үед илэрч байгааг ажиглаарай.", "Natural combined-plan explanation");
+assertIncludes(reportSource, "Дараа нь хоёр дахь нөлөө мөн тэр үед давхцаж байгаа эсэхийг шалгана.", "Natural combined-plan explanation");
 assertIncludes(deployedFunctionsText, "103 дугаарт залгах", "Emergency action copy");
 
 assertExcludes(app, "const statusCopy = payment.status === \"paid\" ? PAYMENT_COPY.paidBeforeTest", "Flow-agnostic paid status");
