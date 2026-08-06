@@ -1,40 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
 
-function replaceNamedFunction(source, name, replacement) {
-  const marker = `function ${name}(`;
-  const start = source.indexOf(marker);
-  if (start < 0) throw new Error(`Neutral validation function missing: ${name}`);
-  const braceStart = source.indexOf("{", start + marker.length);
-  if (braceStart < 0) throw new Error(`Neutral validation body missing: ${name}`);
-  let depth = 0;
-  let quote = null;
-  let escaped = false;
-  let lineComment = false;
-  let blockComment = false;
-  for (let index = braceStart; index < source.length; index += 1) {
-    const char = source[index];
-    const next = source[index + 1];
-    if (lineComment) { if (char === "\n") lineComment = false; continue; }
-    if (blockComment) { if (char === "*" && next === "/") { blockComment = false; index += 1; } continue; }
-    if (quote) {
-      if (escaped) { escaped = false; continue; }
-      if (char === "\\") { escaped = true; continue; }
-      if (char === quote) quote = null;
-      continue;
-    }
-    if (char === "/" && next === "/") { lineComment = true; index += 1; continue; }
-    if (char === "/" && next === "*") { blockComment = true; index += 1; continue; }
-    if (char === "\"" || char === "'" || char === "`") { quote = char; continue; }
-    if (char === "{") depth += 1;
-    if (char === "}" && --depth === 0) return `${source.slice(0, start)}${replacement}${source.slice(index + 1)}`;
-  }
-  throw new Error(`Neutral validation function end missing: ${name}`);
-}
-
 function replaceRequired(source, from, to, label) {
   if (!source.includes(from)) throw new Error(`Neutral validation anchor missing: ${label}`);
   return source.replace(from, to);
+}
+
+function replaceFunctionBefore(source, name, nextName, replacement) {
+  const startMarker = `function ${name}(`;
+  const nextMarker = `function ${nextName}(`;
+  const start = source.indexOf(startMarker);
+  const end = source.indexOf(nextMarker, start + startMarker.length);
+  if (start < 0 || end < 0) throw new Error(`Neutral validation function markers missing: ${name} -> ${nextName}`);
+  return `${source.slice(0, start)}${replacement}\n\n${source.slice(end)}`;
 }
 
 const NARRATIVE_SENTENCES = `function substantiveSentences(report) {
@@ -104,7 +82,7 @@ function patchReport(source) {
 }
 
 function patchValidation(source) {
-  let output = replaceNamedFunction(source, "substantiveSentences", NARRATIVE_SENTENCES);
+  let output = replaceFunctionBefore(source, "substantiveSentences", "validateReportForActivation", NARRATIVE_SENTENCES);
   output = replaceRequired(
     output,
     "  if (supportedPatternCount && modules.length !== supportedPatternCount) errors.push(\"supported_pattern_management_coverage\");",
