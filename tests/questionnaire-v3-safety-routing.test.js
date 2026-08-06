@@ -21,6 +21,7 @@ const femaleIds = ids({ "Q-SEX": "Эмэгтэй" });
 assert(femaleIds.includes("PREG-GATE"));
 assert(femaleIds.includes("PREG-BREASTFEEDING"), "breastfeeding status must be independently recordable");
 assert(!ids({ "Q-SEX": "Эрэгтэй" }).includes("PREG-BREASTFEEDING"));
+assert.equal(questions.questionById("PREG-BREASTFEEDING", V3).parent, "Q-SEX", "breastfeeding must remain a sibling of pregnancy/postpartum status");
 assert.deepEqual(questions.questionById("PREG-GATE", V3).options, ["Үгүй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хариулахгүй"]);
 
 assert(!ids({ "Q-METHOD-PAST": ["Алхалт"], "Q-METHOD-RESULT": "Жин тогтвортой байсан" }).includes("Q-METHOD-REGAIN"));
@@ -71,6 +72,7 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
 assert(appSource.includes("Хэд хэдэн хэв маяг зэрэг илэрсэн бол тэдгээрийн уялдаа холбоог мөн тайлбарлана."));
 assert(!appSource.includes("бие биеэ хүчтэй болгон"));
 assert(appSource.includes('"S1-S04": ["S1-S04-NOW"]'));
+assert(!appSource.includes('"PREG-GATE": ["PREG-"]'), "changing pregnancy/postpartum status must not clear independent breastfeeding state");
 assert(appSource.includes('questionApi.questionById(input.dataset.question, state.questionnaireVersion)'));
 
 const { buildEvidence, buildFullReport, publicReport } = require(generatedReportPath);
