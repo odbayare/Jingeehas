@@ -69,7 +69,11 @@ assert.equal(deployedQuestions.QUESTIONNAIRE_VERSION, V3);
 assert(deployedQuestions.visibleQuestions({ "S1-S04": "Хааяа" }, V3).some(question => question.id === "S1-S04-NOW"));
 
 const appSource = fs.readFileSync(distAppPath, "utf8");
-assert(appSource.includes("Хэд хэдэн хэв маяг зэрэг илэрсэн бол тэдгээрийн уялдаа холбоог мөн тайлбарлана."));
+assert(appSource.includes("Таны тайланд ${escapeHtml(patternCount)} хэв маяг илэрлээ"), "personalized pattern-count heading is missing");
+assert(appSource.includes("чухал уялдаа холбоо"), "supported interaction-count copy is missing");
+assert(appSource.includes("бие биеийнхээ нөлөөг нэмэгдүүлж"), "approved interaction effect copy is missing");
+assert(appSource.includes("батлагдсан хүчтэй давхцал илрээгүй"), "zero-interaction safety branch is missing");
+assert(appSource.includes("Таны тайланд хүчтэй давамгай нэг хэв маяг илрээгүй"), "neutral result branch is missing");
 assert(!appSource.includes("бие биеэ хүчтэй болгон"));
 assert(appSource.includes('"S1-S04": ["S1-S04-NOW"]'));
 assert(!appSource.includes('"PREG-GATE": ["PREG-"]'), "changing pregnancy/postpartum status must not clear independent breastfeeding state");
