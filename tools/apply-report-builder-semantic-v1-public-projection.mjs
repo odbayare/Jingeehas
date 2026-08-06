@@ -79,9 +79,13 @@ const PUBLIC_REPORT = `function publicReport(fullReport) {
     }
   }
 
-  // Neutral reports render the evidence-gated guidance from
-  // neutralResult.professionalScope. Do not expose the duplicate top-level alias.
-  if (safe.neutralResult) delete safe.professionalGuidance;
+  if (safe.neutralResult) {
+    // The dedicated neutralActionPlan is the single rendered owner of the
+    // observation fields. Keep neutralResult for overview, strengths, limits,
+    // and professional scope only.
+    delete safe.neutralResult.observation;
+    delete safe.professionalGuidance;
+  }
   if (pending) safe.prioritizedStartingAction = null;
   return safe;
 }`;
