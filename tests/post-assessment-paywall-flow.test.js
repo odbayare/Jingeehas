@@ -44,27 +44,67 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
   app._test.setState({
     assessmentStatus: "complete",
     commercialFlowVersion: FREE_POSTPAID_FLOW,
+    initialResult: {
+      mode: "summary",
+      patternCount: 4,
+      interactionCount: 2,
+      lockedSections: []
+    },
+    resultEmail: { skipped: true, saved: false, error: "" },
     payment: { status: "idle" },
     busy: false,
     report: null
   });
   const paywall = app.renderForPath("/assessment/result");
   for (const expected of [
-    "Тест дууслаа",
-    "Таны хариултад тулгуурласан бүрэн тайлан бэлэн",
+    "Таны тайланд 4 хэв маяг илэрлээ",
+    "Эдгээрийн дундаас <strong>2 чухал уялдаа холбоо</strong> илэрсэн",
+    "бие биеийнхээ нөлөөг нэмэгдүүлж",
+    "хэрхэн удирдахаа сайн мэдэхгүй байгаа зураглал",
+    "Бүрэн тайлангаас танд ямар хэв маягууд байгааг",
+    "ямар үед давхцаж хүчтэй нөлөөлдгийг",
+    "илүү хялбар, тогтвортой хүрч болохыг",
+    "Бүрэн тайлангаас авах зүйлс",
     "Төлбөр хийхээс өмнө мэдэх зүйлс",
     "Тайлан зөвхөн таны тестийн хариултаар дэмжигдсэн мэдээлэлд тулгуурлана.",
     "Захиалга болон автоматаар сунгалт байхгүй.",
     "QPay төлбөр баталгаажмагц бүрэн тайлан шууд нээгдэнэ.",
-    "Та тестээ аль хэдийн бүрэн дуусгасан.",
     "Бүрэн тайлангаа нээх — 9,900₮"
-  ]) assert(paywall.includes(expected), `post-assessment trust copy missing: ${expected}`);
-  assert(paywall.includes("Тод хэв маяг илрээгүй бол зохиомол асуудал нэмэхгүй"), "neutral-safe trust message is missing");
+  ]) assert(paywall.includes(expected), `personalized post-assessment copy missing: ${expected}`);
   for (const forbidden of [
     "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх",
     "Төлбөр баталгаажсаны дараа тест нээгдэнэ",
-    "хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг"
-  ]) assert(!paywall.includes(forbidden), `prepaid or unconditional claim remains on paywall: ${forbidden}`);
+    "Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг"
+  ]) assert(!paywall.includes(forbidden), `prepaid or regressed generic claim remains on paywall: ${forbidden}`);
+
+  app._test.setState({
+    initialResult: {
+      mode: "summary",
+      patternCount: 3,
+      interactionCount: 0,
+      lockedSections: []
+    }
+  });
+  const noInteractionPaywall = app.renderForPath("/assessment/result");
+  assert(noInteractionPaywall.includes("Таны тайланд 3 хэв маяг илэрлээ"));
+  assert(noInteractionPaywall.includes("батлагдсан хүчтэй давхцал илрээгүй"));
+  assert(!noInteractionPaywall.includes("бие биеийнхээ нөлөөг нэмэгдүүлж"), "interaction claim was fabricated for zero-interaction result");
+  assert(!noInteractionPaywall.includes("хэрхэн удирдахаа сайн мэдэхгүй байгаа зураглал"), "management-overlap claim was fabricated for zero-interaction result");
+
+  app._test.setState({
+    initialResult: {
+      mode: "neutral",
+      patternCount: 0,
+      interactionCount: 0,
+      lockedSections: []
+    }
+  });
+  const neutralPaywall = app.renderForPath("/assessment/result");
+  assert(neutralPaywall.includes("Таны тайланд хүчтэй давамгай нэг хэв маяг илрээгүй"));
+  assert(neutralPaywall.includes("зохиомлоор дүгнэсэнгүй"));
+  assert(neutralPaywall.includes("давуу тал, өдөр тутам ажиглах нөхцөл"));
+  assert(!neutralPaywall.includes("хүчтэй саад болж байж болохыг"), "problem claim leaked into neutral result");
+  assert(!neutralPaywall.includes("чухал уялдаа холбоо"), "interaction claim leaked into neutral result");
 
   app._test.setState({
     assessmentStatus: "complete",
@@ -95,7 +135,7 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
   assert.equal(await nextRoute(database, freeAssessment), "/assessment/questions");
 
   app._test.resetComingSoon();
-  console.log("post-assessment paywall and stale-session isolation tests passed");
+  console.log("personalized post-assessment paywall and stale-session isolation tests passed");
 })().catch(error => {
   console.error(error);
   process.exit(1);
