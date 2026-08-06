@@ -1,0 +1,5 @@
+Certify that current main `01c0c3e68b10eae4a262b97f9b434a942c6ad2da` is live at https://jingeehas.fit.
+
+Required questionnaire version: jingeehas-production-2026-08-v3-routing-safety
+Required proof: exact candidate manifest SHA and all static/function hashes.
+Read-only: no deployment, payment, assessment, database, or customer-data mutation.
