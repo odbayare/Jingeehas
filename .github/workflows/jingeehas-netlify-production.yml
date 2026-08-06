@@ -1,0 +1,161 @@
+name: Jingeehas Netlify Production Deploy
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ops-smoke-trigger/jingeehas-netlify-production.txt
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: jingeehas-netlify-production
+  cancel-in-progress: false
+
+jobs:
+  deploy-production:
+    name: Build, validate, deploy, and smoke Jingeehas production
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+
+    steps:
+      - name: Checkout current main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.1"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Validate application syntax
+        run: node --check app.js
+
+      - name: Run unit and rendered-copy gates
+        run: npm test
+        env:
+          CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
+
+      - name: Run end-to-end tests
+        run: npm run test:e2e
+
+      - name: Run API contract tests
+        run: npm run test:contracts
+
+      - name: Verify production package
+        run: npm run verify:production-package
+        env:
+          CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
+
+      - name: Verify production configuration
+        shell: bash
+        env:
+          CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
+        run: |
+          set -euo pipefail
+          npm run verify:database-config
+          npm run verify:database-gateway-auth
+          npm run verify:recovery-config
+          npm run verify:qpay-config
+          npm run verify:domain-config
+
+      - name: Verify staging package and clean worktree
+        shell: bash
+        env:
+          CROSS_PROJECT_FORBIDDEN_TOKEN: ${{ secrets.CROSS_PROJECT_FORBIDDEN_TOKEN }}
+        run: |
+          set -euo pipefail
+          npm run build:staging
+          npm run verify:staging-package
+          git diff --exit-code
+          test -z "$(git status --porcelain)"
+
+      - name: Resolve Netlify deployment method
+        shell: bash
+        env:
+          TOKEN_1: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          TOKEN_2: ${{ secrets.JINGEEHAS_NETLIFY_AUTH_TOKEN }}
+          TOKEN_3: ${{ secrets.NETLIFY_TOKEN }}
+          TOKEN_4: ${{ secrets.JINGEEHAS_NETLIFY_TOKEN }}
+          SITE_1: ${{ secrets.NETLIFY_SITE_ID }}
+          SITE_2: ${{ secrets.JINGEEHAS_NETLIFY_SITE_ID }}
+          HOOK_1: ${{ secrets.NETLIFY_BUILD_HOOK }}
+          HOOK_2: ${{ secrets.JINGEEHAS_NETLIFY_BUILD_HOOK }}
+        run: |
+          set -euo pipefail
+          token="${TOKEN_1:-}"
+          [ -n "$token" ] || token="${TOKEN_2:-}"
+          [ -n "$token" ] || token="${TOKEN_3:-}"
+          [ -n "$token" ] || token="${TOKEN_4:-}"
+
+          site_id="${SITE_1:-}"
+          [ -n "$site_id" ] || site_id="${SITE_2:-}"
+          [ -n "$site_id" ] || site_id="weight-loss-deep-pattern-9900"
+
+          hook="${HOOK_1:-}"
+          [ -n "$hook" ] || hook="${HOOK_2:-}"
+
+          if [ -n "$token" ]; then
+            echo "::add-mask::$token"
+            echo "NETLIFY_DEPLOY_MODE=cli" >> "$GITHUB_ENV"
+            echo "NETLIFY_AUTH_TOKEN=$token" >> "$GITHUB_ENV"
+            echo "NETLIFY_SITE_ID=$site_id" >> "$GITHUB_ENV"
+            echo "Netlify deployment method: authenticated CLI."
+          elif [ -n "$hook" ]; then
+            echo "::add-mask::$hook"
+            echo "NETLIFY_DEPLOY_MODE=hook" >> "$GITHUB_ENV"
+            echo "NETLIFY_BUILD_HOOK=$hook" >> "$GITHUB_ENV"
+            echo "Netlify deployment method: build hook."
+          else
+            echo '::error::No Netlify deployment credential is configured. Add NETLIFY_AUTH_TOKEN (or JINGEEHAS_NETLIFY_AUTH_TOKEN / NETLIFY_TOKEN / JINGEEHAS_NETLIFY_TOKEN), or add NETLIFY_BUILD_HOOK / JINGEEHAS_NETLIFY_BUILD_HOOK.'
+            exit 1
+          fi
+
+      - name: Deploy validated package with Netlify CLI
+        if: env.NETLIFY_DEPLOY_MODE == 'cli'
+        shell: bash
+        run: |
+          set -euo pipefail
+          npx --yes netlify-cli@26.2.0 deploy \
+            --auth "$NETLIFY_AUTH_TOKEN" \
+            --site "$NETLIFY_SITE_ID" \
+            --dir dist \
+            --functions .generated-copy-hotfix/netlify/functions \
+            --prod \
+            --no-build \
+            --skip-functions-cache \
+            --timeout 600000 \
+            --message "Jingeehas audited Mongolian copy ${GITHUB_SHA}" \
+            --json
+
+      - name: Trigger linked Netlify production build
+        if: env.NETLIFY_DEPLOY_MODE == 'hook'
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error \
+            --max-time 30 \
+            --request POST \
+            --output /dev/null \
+            "$NETLIFY_BUILD_HOOK"
+
+      - name: Verify deployed candidate is live
+        shell: bash
+        env:
+          JINGEEHAS_LIVE_ORIGIN: https://jingeehas.fit
+          JINGEEHAS_EXPECTED_MANIFEST_PATH: dist/production-package-manifest.json
+          LIVE_SMOKE_ATTEMPTS: 24
+          LIVE_SMOKE_DELAY_MS: 15000
+          LIVE_SMOKE_REQUEST_TIMEOUT_MS: 10000
+        run: node tools/verify-live-production.mjs
