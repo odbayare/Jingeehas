@@ -1,10 +1,10 @@
 Deploy current main to the linked Jingeehas Netlify production site and certify the exact live candidate package.
 
-Release scope: PR #42 free assessment before payment, personalized count-only post-assessment result, supported interaction count and management-value copy, safe zero-interaction and neutral branches, completed-result loading across completion/reload/resume, stale prepaid-session isolation, and post-assessment QPay flow.
-Source merge SHA: 790b9c263f365a973ae7cec67251955f6e7591b6
+Release scope: PR #44 restored non-blocking per-question answer saving. The next routed question opens immediately while one unload-safe single-flight background queue persists answers. Failed saves remain retryable, final completion waits for confirmed persistence, active text/number input is not rebuilt when a background save settles, stale workers cannot mutate a new assessment queue, and personalized post-assessment result/QPay behavior remains unchanged.
+Source merge SHA: 42f34860f3bf870f3fa068f9701d31ce8a19a665
 Report engine version: jingeehas-case-formulation-v8-editorial-polish
 Initial result schema: jingeehas-initial-result-v2-count-only
 Questionnaire version: jingeehas-production-2026-08-v3-routing-safety
 Expected live origin: https://jingeehas.fit
 Expected deployment package: dist static assets plus .generated-copy-hotfix/netlify/functions
-Required certification: exact candidate/live manifest match, personalized pattern count, supported interaction count, zero-interaction and neutral safety branches, result loading on completion/reload/resume, no primary-pattern title or evidence leakage, post-assessment payment flow, V8 report engine, V7/V6 restored snapshot compatibility, routes, static assets, and generated functions.
+Required certification: exact candidate/live manifest match, no blocking slow-save path, immediate next-question transition, single-flight keepalive queue, retryable failure, final flush before completion, active-input preservation, stale-worker generation isolation, personalized result, post-assessment QPay, safety, V8 report engine, V7/V6 snapshot compatibility, routes, static assets, and generated functions.
