@@ -21,6 +21,10 @@ const replacements = [
     'const female = assertRoute("menstruating female maximum V3 route", { "Q-SEX": "Эмэгтэй", "MC-GATE": "Тийм, хамаарна", "ALC-GATE": "Хааяа", "TOB-GATE": "Хааяа", "S1-S03": "Сүүлийн 28 хоногт байсан", "S1-S04": "Хааяа" }, ["MC-GATE", "MC-01", "PREG-GATE", "PREG-BREASTFEEDING", "MENO-GATE", "ALC-01", "TOB-01", "S1-S03-TYPE", "S1-S03-FREQUENCY", "S1-S04-NOW"]);'
   ],
   [
+    'assertRoute("sleep risk", { "Q-SLEEP-DURATION": "4 цагаас бага", "Q-SLEEP-QUALITY": "Өглөө ядарсан хэвээр байдаг" }, ["Q-SLEEP-DURATION", "Q-SLEEP-QUALITY"]);',
+    'assertRoute("sleep risk", { "Q-SLEEP-DURATION": "4 цагаас бага", "Q-SLEEP-QUALITY": "Маш тааруу" }, ["Q-SLEEP-DURATION", "Q-SLEEP-QUALITY"]);'
+  ],
+  [
     'assertRoute("safety escalation", { "S1-S04": "Одоо идэвхтэй бодогдож байна" }, ["S1-S04"]);',
     'assertRoute("safety escalation", { "S1-S04": "Хааяа", "S1-S04-NOW": "Тийм" }, ["S1-S04", "S1-S04-NOW"]);'
   ],
