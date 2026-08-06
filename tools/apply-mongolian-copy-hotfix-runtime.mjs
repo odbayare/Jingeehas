@@ -7,6 +7,7 @@ import { applyReportBuilderSemanticV1 } from "./apply-report-builder-semantic-v1
 import { applyReportBuilderSemanticV1Dedup } from "./apply-report-builder-semantic-v1-dedup.mjs";
 import { prepareReportValidationSemanticQuality } from "./prepare-report-validation-semantic-quality.mjs";
 import { applyReportBuilderSemanticV1Quality } from "./apply-report-builder-semantic-v1-quality.mjs";
+import { applyReportBuilderNeutralValidationV1 } from "./apply-report-builder-neutral-validation-v1.mjs";
 import { applyReportBuilderV6SnapshotCompatibility } from "./apply-report-builder-v6-snapshot-compat.mjs";
 import { applyReportBuilderSemanticV1PublicProjection } from "./apply-report-builder-semantic-v1-public-projection.mjs";
 
@@ -68,6 +69,7 @@ export function applyMongolianCopyHotfixRuntime(root) {
   applyReportBuilderSemanticV1Dedup(root);
   prepareReportValidationSemanticQuality(root);
   applyReportBuilderSemanticV1Quality(root);
+  applyReportBuilderNeutralValidationV1(root);
   applyReportBuilderV6SnapshotCompatibility(root);
   applyReportBuilderSemanticV1PublicProjection(root);
 }
