@@ -7,6 +7,7 @@ const tests = [
   "tests/direct-assessment-start.test.js",
   "tests/paid-first-flow.test.js",
   "tests/post-assessment-paywall-flow.test.js",
+  "tests/post-assessment-personalized-result-runtime.test.js",
   "tests/report-evidence-versioned.test.js",
   "tests/report-snapshot-versioning.test.js",
   "tests/report-attribution-v2.test.js",
