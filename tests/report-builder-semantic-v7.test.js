@@ -113,7 +113,11 @@ const neutralValidation = validateReportForActivation(neutralFull);
 assert.equal(neutralValidation.valid, true, `${neutralValidation.errors.join(", ")}; duplicates=${JSON.stringify(duplicateSentences(neutral))}`);
 
 const neutralSections = app._test.buildReportSections(neutral).filter(section => section.visible);
-assert.deepEqual(neutralSections.map(section => section.id), ["neutral-overview", "neutral-strengths", "neutral-observation", "recovery", "guidance"]);
+assert.deepEqual(neutralSections.map(section => section.id), ["neutral-overview", "neutral-strengths", "neutral-limits", "neutral-observation", "recovery", "guidance"]);
+const limitsSection = neutralSections.find(section => section.id === "neutral-limits");
+assert(limitsSection, "neutral limitations section is missing");
+const limitsHtml = limitsSection.paragraphs.join(" ");
+for (const limit of neutral.neutralResult.limits || []) assert(limitsHtml.includes(limit), `neutral limitation hidden: ${limit}`);
 const neutralHtml = neutralSections.flatMap(section => section.paragraphs).join(" ");
 assert(neutralHtml.includes("НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГЛАХ АРГА") === false, "section heading must not leak into body HTML");
 assert(neutralHtml.includes('class="recovery-plan"'));
