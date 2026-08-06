@@ -41,6 +41,17 @@ function provenance(category, questionId, value, severity, route) {
   };
 }
 
+function confirmationRequired(category, questionIds, values) {
+  return {
+    mode: "confirmation_required",
+    category,
+    triggerQuestionIds: Array.isArray(questionIds) ? questionIds : [questionIds],
+    triggerValues: Array.isArray(values) ? values : [values],
+    severity: "unknown",
+    route: "confirmation_required"
+  };
+}
+
 function currentSelfHarmRoute(value, questionId = "S1-S04-NOW") {
   if (["Тийм", "Эргэлзэж байна", "Одоо идэвхтэй бодогдож байна"].includes(value)) {
     return provenance("self_harm", questionId, value, "urgent", "urgent_self_harm");
@@ -97,9 +108,16 @@ function possibleOpenTextSafety(value) {
 }
 
 function calculateAssessmentSafety(answers = {}) {
-  const immediate = currentSelfHarmRoute(answers["S1-S04-NOW"]);
+  const recentValue = answers["S1-S04"];
+  const immediateValue = answers["S1-S04-NOW"];
+  const v3RecentValues = new Set(["Хааяа", "Олон өдөр", "Бараг өдөр бүр"]);
+  if (v3RecentValues.has(recentValue) && immediateValue == null) {
+    return confirmationRequired("self_harm", ["S1-S04", "S1-S04-NOW"], [recentValue]);
+  }
+
+  const immediate = currentSelfHarmRoute(immediateValue);
   if (immediate) return immediate;
-  const recent = recentSelfHarmRoute(answers["S1-S04"]);
+  const recent = recentSelfHarmRoute(recentValue);
   if (recent) return recent;
 
   const acute = (Array.isArray(answers["S1-B01"]) ? answers["S1-B01"] : [])
@@ -114,16 +132,7 @@ function calculateAssessmentSafety(answers = {}) {
     const category = possibleOpenTextSafety(value);
     if (!category) continue;
     const confirmation = answers[`SAFETY-CONFIRM-${questionId}`];
-    if (!confirmation) {
-      return {
-        mode: "confirmation_required",
-        category,
-        triggerQuestionIds: [questionId],
-        triggerValues: [value],
-        severity: "unknown",
-        route: "confirmation_required"
-      };
-    }
+    if (!confirmation) return confirmationRequired(category, questionId, value);
     const confirmedImmediate = currentSelfHarmRoute(confirmation, `SAFETY-CONFIRM-${questionId}`);
     if (confirmedImmediate) return confirmedImmediate;
     const confirmedRecent = recentSelfHarmRoute(confirmation, `SAFETY-CONFIRM-${questionId}`);
