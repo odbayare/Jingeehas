@@ -4,11 +4,11 @@ import path from "node:path";
 import { REQUIRED_PRODUCTION_FUNCTIONS } from "./required-production-functions.mjs";
 
 const origin = String(process.env.JINGEEHAS_LIVE_ORIGIN || "https://jingeehas.fit").replace(/\/+$/, "");
-const expectedVersion = "jingeehas-production-2026-07-v2-method-link";
 const attempts = Math.max(1, Number(process.env.LIVE_SMOKE_ATTEMPTS || 20));
 const delayMs = Math.max(1000, Number(process.env.LIVE_SMOKE_DELAY_MS || 15000));
 const requestTimeoutMs = Math.max(1000, Number(process.env.LIVE_SMOKE_REQUEST_TIMEOUT_MS || 10000));
 const expectedManifestPath = String(process.env.JINGEEHAS_EXPECTED_MANIFEST_PATH || "").trim();
+let expectedVersion = String(process.env.JINGEEHAS_EXPECTED_QUESTIONNAIRE_VERSION || "").trim();
 
 const sha256 = value => nodeCrypto.createHash("sha256").update(value).digest("hex");
 const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -23,6 +23,15 @@ if (expectedManifestPath) {
   try { JSON.parse(expectedManifestBody); }
   catch { throw new Error(`Expected candidate manifest is not valid JSON: ${absolute}`); }
   expectedManifestSha256 = sha256(expectedManifestBody);
+
+  if (!expectedVersion) {
+    const candidateQuestionsPath = path.join(path.dirname(absolute), "questions.js");
+    if (!fs.existsSync(candidateQuestionsPath)) throw new Error(`Expected candidate questions.js is missing: ${candidateQuestionsPath}`);
+    const candidateQuestions = fs.readFileSync(candidateQuestionsPath, "utf8");
+    const match = candidateQuestions.match(/const QUESTIONNAIRE_VERSION = "([^"]+)"/);
+    if (!match) throw new Error(`Expected candidate questionnaire version is missing: ${candidateQuestionsPath}`);
+    expectedVersion = match[1];
+  }
 }
 
 async function request(pathname) {
@@ -111,7 +120,8 @@ async function smokeOnce() {
   excludes(app, "prepaid ? `<p class=\"notice\">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>`", "Duplicate paid notice");
   excludes(app, "тестийн төлбөр хийхээс өмнө сэтгэцийн эрүүл мэндийн", "Commercial wording in safety copy");
 
-  includes(questions, `const QUESTIONNAIRE_VERSION = \"${expectedVersion}\"`, "Questionnaire version");
+  if (expectedVersion) includes(questions, `const QUESTIONNAIRE_VERSION = \"${expectedVersion}\"`, "Questionnaire version");
+  else if (!/const QUESTIONNAIRE_VERSION = "[^"]+"/.test(questions)) throw new Error("Questionnaire version declaration is missing");
   for (const canonical of [
     "Мэргэжлийн хоолзүйчийн зөвлөгөө",
     "Сэтгэлзүйн зөвлөгөө",
@@ -137,7 +147,8 @@ for (let attempt = 1; attempt <= attempts; attempt += 1) {
   try {
     const result = await smokeOnce();
     const candidate = expectedManifestSha256 ? ` candidateManifestSha256=${expectedManifestSha256}` : "";
-    console.log(`LIVE_PRODUCTION_SMOKE=PASS origin=${origin} attempt=${attempt}/${attempts} static=${result.manifestStaticFiles} functionFiles=${result.manifestFunctionFiles} functions=${result.serverFunctions} liveManifestSha256=${result.manifestSha256}${candidate} appSha256=${result.appSha256} questionsSha256=${result.questionsSha256}`);
+    const version = expectedVersion ? ` questionnaireVersion=${expectedVersion}` : "";
+    console.log(`LIVE_PRODUCTION_SMOKE=PASS origin=${origin} attempt=${attempt}/${attempts} static=${result.manifestStaticFiles} functionFiles=${result.manifestFunctionFiles} functions=${result.serverFunctions} liveManifestSha256=${result.manifestSha256}${candidate}${version} appSha256=${result.appSha256} questionsSha256=${result.questionsSha256}`);
     process.exit(0);
   } catch (error) {
     lastError = error;
