@@ -107,7 +107,9 @@ const v7Ids = historicalV7Sections.map(section => section.id);
 for (const id of ["overview", "patterns", "management", "initial-actions", "recovery"]) {
   assert(v7Ids.includes(id), `historical V7 semantic snapshot section missing: ${id}`);
 }
+const historicalV7Overview = historicalV7Sections.find(section => section.id === "overview")?.paragraphs.join(" ") || "";
 assert.notEqual(historicalV7Sections.find(section => section.id === "management")?.heading, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?", "V8 editorial heading leaked into historical V7 snapshot");
-assert(historicalV7Sections.find(section => section.id === "overview")?.paragraphs.join(" ").includes("Хамгаалах буюу давуу тал"), "historical V7 overview label changed");
+assert(historicalV7Overview.includes("Хамгийн тод ажиглагдсан хэв маяг"), "historical V7 overview renderer was replaced");
+assert(!historicalV7Overview.includes("Хамгийн тод харагдсан хэв маяг"), "V8 overview renderer leaked into historical V7 snapshot");
 
 console.log("V8 report editorial, overview, projection, and reading-load tests passed");
