@@ -4,6 +4,7 @@ import { applyMongolianCopyHotfix } from "./apply-mongolian-copy-hotfix.mjs";
 import { applyRoutingSafetyEvidenceV3 } from "./apply-routing-safety-evidence-v3.mjs";
 import { applyReportBuilderSemanticV1 } from "./apply-report-builder-semantic-v1.mjs";
 import { applyReportBuilderSemanticV1Dedup } from "./apply-report-builder-semantic-v1-dedup.mjs";
+import { applyReportBuilderSemanticV1Quality } from "./apply-report-builder-semantic-v1-quality.mjs";
 
 const SAFE_QUESTION_TEXT_REPLACEMENTS = Object.freeze([
   ["Хоолноос өмнө өлсөх мэдрэмжээ анзаарах нь танд хэр амар байдаг вэ?", "Та өлсөх мэдрэмжээ ихэвчлэн хэзээ анзаардаг вэ?"],
@@ -60,4 +61,5 @@ export function applyMongolianCopyHotfixRuntime(root) {
   applyRoutingSafetyEvidenceV3(root);
   applyReportBuilderSemanticV1(root);
   applyReportBuilderSemanticV1Dedup(root);
+  applyReportBuilderSemanticV1Quality(root);
 }
