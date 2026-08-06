@@ -31,7 +31,7 @@ const tests = [
   "tests/landing-personal-attribute-policy.test.js",
   "tests/contracts/owner-preview.contract.test.js",
   "tests/contracts/assessment-versioned.test.js",
-  "tests/contracts/free-initial-result-funnel.contract.test.js",
+  "tests/contracts/free-initial-result-funnel-versioned.test.js",
   "tests/contracts/payment.contract.test.js",
   "tests/contracts/recovery.contract.test.js",
   "tests/contracts/advisor-auth.contract.test.js"
