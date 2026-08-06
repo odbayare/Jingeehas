@@ -150,10 +150,11 @@ jobs:
             --output /dev/null \
             "$NETLIFY_BUILD_HOOK"
 
-      - name: Verify live production package
+      - name: Verify deployed candidate is live
         shell: bash
         env:
           JINGEEHAS_LIVE_ORIGIN: https://jingeehas.fit
+          JINGEEHAS_EXPECTED_MANIFEST_PATH: dist/production-package-manifest.json
           LIVE_SMOKE_ATTEMPTS: 24
           LIVE_SMOKE_DELAY_MS: 15000
           LIVE_SMOKE_REQUEST_TIMEOUT_MS: 10000
