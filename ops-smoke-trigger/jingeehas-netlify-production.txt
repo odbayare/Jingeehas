@@ -1,7 +1,9 @@
 Deploy current main to the linked Jingeehas Netlify production site and certify the exact live candidate package.
 
-Release scope: PR #36 questionnaire V3 safety, routing, evidence, and neutral-safe paywall.
-Candidate questionnaire version: jingeehas-production-2026-08-v3-routing-safety
+Release scope: PR #38 semantic V7 report builder, dedicated neutral and recovery sections, visible neutral limitations, narrative-scoped duplication validation, and historical V6 snapshot rendering compatibility.
+Source merge SHA: 7b3af219f667bd58a933e3e64868b94afc73e19d
+Report engine version: jingeehas-case-formulation-v7-semantic-builder
+Questionnaire version: jingeehas-production-2026-08-v3-routing-safety
 Expected live origin: https://jingeehas.fit
 Expected deployment package: dist static assets plus .generated-copy-hotfix/netlify/functions
-Required certification: exact candidate manifest SHA, questionnaire version, routes, static assets, and generated functions.
+Required certification: exact candidate manifest SHA, report engine and questionnaire versions, V7 neutral/multi-factor rendering, V6 restored snapshot compatibility, routes, static assets, and generated functions.
