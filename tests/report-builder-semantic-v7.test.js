@@ -51,7 +51,7 @@ assert(multiFixture && neutralFixture);
 
 const multiFull = reportFor(multiFixture.answers);
 const multi = reportModule.publicReport(multiFull);
-assert.equal(multi.version, "jingeehas-case-formulation-v7-semantic-builder");
+assert.equal(multi.version, "jingeehas-case-formulation-v8-editorial-polish");
 assert(multi.managementModules.length >= 2, "multi-factor report must retain supported management coverage");
 for (const module of multi.managementModules) {
   assert(module.title);
@@ -122,4 +122,4 @@ const neutralHtml = neutralSections.flatMap(section => section.paragraphs).join(
 assert(neutralHtml.includes("НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГЛАХ АРГА") === false, "section heading must not leak into body HTML");
 assert(neutralHtml.includes('class="recovery-plan"'));
 
-console.log("semantic report-builder V7 regression tests passed");
+console.log("semantic report-builder V8 regression tests passed");
