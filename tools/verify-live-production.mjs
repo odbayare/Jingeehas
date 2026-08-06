@@ -1,4 +1,6 @@
 import nodeCrypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import { REQUIRED_PRODUCTION_FUNCTIONS } from "./required-production-functions.mjs";
 
 const origin = String(process.env.JINGEEHAS_LIVE_ORIGIN || "https://jingeehas.fit").replace(/\/+$/, "");
@@ -6,10 +8,22 @@ const expectedVersion = "jingeehas-production-2026-07-v2-method-link";
 const attempts = Math.max(1, Number(process.env.LIVE_SMOKE_ATTEMPTS || 20));
 const delayMs = Math.max(1000, Number(process.env.LIVE_SMOKE_DELAY_MS || 15000));
 const requestTimeoutMs = Math.max(1000, Number(process.env.LIVE_SMOKE_REQUEST_TIMEOUT_MS || 10000));
+const expectedManifestPath = String(process.env.JINGEEHAS_EXPECTED_MANIFEST_PATH || "").trim();
 
 const sha256 = value => nodeCrypto.createHash("sha256").update(value).digest("hex");
 const sleep = milliseconds => new Promise(resolve => setTimeout(resolve, milliseconds));
 const compactPrefix = value => String(value || "").slice(0, 160).replace(/\s+/g, " ").trim();
+
+let expectedManifestBody = "";
+let expectedManifestSha256 = "";
+if (expectedManifestPath) {
+  const absolute = path.resolve(expectedManifestPath);
+  if (!fs.existsSync(absolute)) throw new Error(`Expected candidate manifest is missing: ${absolute}`);
+  expectedManifestBody = fs.readFileSync(absolute, "utf8");
+  try { JSON.parse(expectedManifestBody); }
+  catch { throw new Error(`Expected candidate manifest is not valid JSON: ${absolute}`); }
+  expectedManifestSha256 = sha256(expectedManifestBody);
+}
 
 async function request(pathname) {
   let response;
@@ -64,6 +78,10 @@ async function smokeOnce() {
     "/production-package-manifest.json",
     `appHasNewCopy=${appHasNewCopy} questionsHaveNewPrompt=${questionsHaveNewPrompt} appSha256=${sha256(app)} questionsSha256=${sha256(questions)}`
   );
+  const liveManifestSha256 = sha256(manifestResult.body);
+  if (expectedManifestSha256 && liveManifestSha256 !== expectedManifestSha256) {
+    throw new Error(`candidate manifest is not live expectedManifestSha256=${expectedManifestSha256} liveManifestSha256=${liveManifestSha256}`);
+  }
   const metaConfig = parseJson(metaConfigResult, "/.netlify/functions/meta-browser-config");
 
   if (manifest.schemaVersion !== 2) throw new Error(`live manifest schema is ${manifest.schemaVersion}, expected 2`);
@@ -108,6 +126,7 @@ async function smokeOnce() {
     manifestStaticFiles: manifest.staticFiles.length,
     manifestFunctionFiles: manifest.functionFiles.length,
     serverFunctions: serverFunctions.size,
+    manifestSha256: liveManifestSha256,
     appSha256: sha256(app),
     questionsSha256: sha256(questions)
   };
@@ -117,7 +136,8 @@ let lastError;
 for (let attempt = 1; attempt <= attempts; attempt += 1) {
   try {
     const result = await smokeOnce();
-    console.log(`LIVE_PRODUCTION_SMOKE=PASS origin=${origin} attempt=${attempt}/${attempts} static=${result.manifestStaticFiles} functionFiles=${result.manifestFunctionFiles} functions=${result.serverFunctions} appSha256=${result.appSha256} questionsSha256=${result.questionsSha256}`);
+    const candidate = expectedManifestSha256 ? ` candidateManifestSha256=${expectedManifestSha256}` : "";
+    console.log(`LIVE_PRODUCTION_SMOKE=PASS origin=${origin} attempt=${attempt}/${attempts} static=${result.manifestStaticFiles} functionFiles=${result.manifestFunctionFiles} functions=${result.serverFunctions} liveManifestSha256=${result.manifestSha256}${candidate} appSha256=${result.appSha256} questionsSha256=${result.questionsSha256}`);
     process.exit(0);
   } catch (error) {
     lastError = error;
