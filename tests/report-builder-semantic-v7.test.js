@@ -16,29 +16,33 @@ const reportFor = answers => reportModule.buildFullReport(
   { questionnaireVersion: "jingeehas-production-2026-08-v3-routing-safety" }
 );
 const duplicateSentences = value => {
-  const metadataKeys = new Set(["id", "key", "label", "title", "patternId", "patternIds", "order", "version", "schemaVersion", "recommendationId", "questionnaireVersion"]);
-  const sentences = [];
-  function visit(current, key = "") {
+  const metadataKeys = new Set(["id", "key", "label", "title", "patternTitle", "patternId", "patternIds", "order", "version", "schemaVersion", "recommendationId", "questionnaireVersion"]);
+  const occurrences = [];
+  function visit(current, key = "", currentPath = "report") {
     if (current == null || metadataKeys.has(key)) return;
     if (typeof current === "string") {
       for (const item of current.split(/[.!?]\s*/)) {
         const sentence = item.replace(/[{}\[\]"\\]/g, "").trim();
-        if (sentence.length > 45) sentences.push(sentence);
+        if (sentence.length > 45) occurrences.push({ sentence, path: currentPath });
       }
       return;
     }
     if (Array.isArray(current)) {
-      for (const item of current) visit(item, key);
+      current.forEach((item, index) => visit(item, key, `${currentPath}[${index}]`));
       return;
     }
     if (typeof current === "object") {
-      for (const [childKey, childValue] of Object.entries(current)) visit(childValue, childKey);
+      for (const [childKey, childValue] of Object.entries(current)) visit(childValue, childKey, `${currentPath}.${childKey}`);
     }
   }
   visit(value);
-  const counts = new Map();
-  for (const sentence of sentences) counts.set(sentence, (counts.get(sentence) || 0) + 1);
-  return [...counts.entries()].filter(([, count]) => count > 1).map(([sentence, count]) => `${count}x ${sentence}`);
+  const paths = new Map();
+  for (const occurrence of occurrences) {
+    if (!paths.has(occurrence.sentence)) paths.set(occurrence.sentence, []);
+    paths.get(occurrence.sentence).push(occurrence.path);
+  }
+  return [...paths.entries()].filter(([, locations]) => locations.length > 1)
+    .map(([sentence, locations]) => `${locations.length}x ${sentence} @ ${locations.join(" | ")}`);
 };
 
 const multiFixture = fixtures.find(item => item.name === "stress eating + poor sleep + evening hunger");
