@@ -15,6 +15,7 @@ const tests = [
   "tests/full-report-core-customer-value.test.js",
   "tests/question-bank.test.js",
   "tests/questionnaire-versioning.test.js",
+  "tests/questionnaire-v3-safety-routing.test.js",
   "tests/assessment-flow-regression.test.js",
   "tests/accessibility-print.test.js",
   "tests/security-routing-metadata.test.js",
