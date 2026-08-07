@@ -132,17 +132,21 @@ function scientificMethodologyBox() {
 
 function renderLanding() {
   return `<div class="page landing-page">${navigation()}<main><section class="hero" aria-labelledby="page-title"><div class="hero-copy">
-    <p class="eyebrow">Жин хасах оролдлогод нөлөөлдөг хэв маягаа таних</p>
-    <h1 id="page-title" tabindex="-1">Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ</h1>
-    <div class="hero-question-list" role="list" aria-label="Жин хасах оролдлогод нөлөөлж болох нийтлэг хүчин зүйлс">
-      <p class="hero-question" role="listitem">Стресс, ядаргаа, нойрны хэмнэл хооллолтын шийдвэрт нөлөөлж болно.</p>
-      <p class="hero-question" role="listitem">Хэт хатуу дэглэмийг удаан хугацаанд тогтвортой үргэлжлүүлэхэд хэцүү байж болно.</p>
-      <p class="hero-question" role="listitem">Орчин, цагийн хуваарь болон автомат зуршил давтагдсан саад үүсгэж болно.</p>
+    <p class="eyebrow">ЖИН ХАСАХ АМАРХАН БОЛЛОО</p>
+    <h1 id="page-title" tabindex="-1">Та өөртөө юу саад болдгийг мэддэг. Харин тэд хоорондоо яаж нийлж ажилладгийг мэдэх үү?</h1>
+    <p class="hero-paragraph">Хүн стрессдэхээрээ, баярлахаараа, гуниглахаараа дуртай зүйлээ идчихдэг, орой болохоор хоолны дуршил нэмэгддэг, дэглэмээ нэг алдахаараа бүр орхичихдог гэх мэт жин хасахад саад болдог зуршлуудаа өөрөө сайн мэдэж байдаг.</p>
+    <p class="hero-paragraph">Гэхдээ эдгээр нь амьдрал дээр дандаа тус тусдаа ажилладаггүй.</p>
+    <p class="hero-paragraph">Зарим хэв маяг давхацахаараа нэг нь нөгөөгөө улам хүчтэй болгож, таныг өөрийн мэдэлгүйгээр жин хасах зорилгыг чинь унтраадаг.</p>
+    <p class="hero-test-intro">Энэхүү тест яг үүнийг олж харна.</p>
+    <div class="hero-question-list" role="list" aria-label="Энэхүү тестийн олж харах зүйлс">
+      <p class="hero-question" role="listitem">Танд ямар хэв маягууд байна?</p>
+      <p class="hero-question" role="listitem">Аль нь альтайгаа давхцаж байна?</p>
+      <p class="hero-question" role="listitem">Давхцах үедээ танд хэрхэн нөлөөлж байна?</p>
+      <p class="hero-question" role="listitem">Тэр нөлөөний улмаас таныг ямар алхам хийлгэж байна?</p>
+      <p class="hero-question" role="listitem">Тэр нөлөөллүүдийг яаж удирдах вэ?</p>
     </div>
-    <div class="hero-highlight"><p>Жин хасах оролдлогод хоол, хөдөлгөөнөөс гадна сэтгэлзүйн хэв маяг, өдөр тутмын зуршил болон орчин нөлөөлж болно.</p></div>
-    <p class="hero-lead">Энэхүү үнэлгээ нь давтагддаг хэв маяг, өдөр тутмын нөхцөл болон орчны нөлөөг эргэцүүлж, өөрт тохирсон тогтвортой арга барилаа сонгоход тусална.</p>
     <div class="hero-actions"><a class="button" href="/assessment/start" data-route>Тестээ үнэгүй эхлүүлэх</a>
-      <p class="hero-note">Эмнэлгийн болон сэтгэлзүйн онош тавихгүй. Хариултад тулгуурласан өөрийгөө ойлгох үнэлгээ.</p>
+      <p class="hero-note">Эхний үр дүн үнэгүй</p>
     </div>
     </div><div class="hero-visual" aria-hidden="true"></div></section>
     <section id="sample-report" class="sample-report" aria-labelledby="sample-title">
