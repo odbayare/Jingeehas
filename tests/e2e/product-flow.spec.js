@@ -51,34 +51,27 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
   test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Та өөртөө юу саад болдгийг мэддэг. Харин тэд хоорондоо яаж нийлж ажилладгийг мэдэх үү?" })).toBeVisible();
     const questions = page.locator(".hero-question");
-    await expect(questions).toHaveCount(3);
-    const highlight = page.locator(".hero-highlight");
-    const lead = page.locator(".hero-lead");
-    await expect(highlight).toContainText("Жин хасах оролдлогод хоол, хөдөлгөөнөөс гадна сэтгэлзүйн хэв маяг, өдөр тутмын зуршил болон орчин нөлөөлж болно.");
-    await expect(lead).toHaveText("Энэхүү үнэлгээ нь давтагддаг хэв маяг, өдөр тутмын нөхцөл болон орчны нөлөөг эргэцүүлж, өөрт тохирсон тогтвортой арга барилаа сонгоход тусална.");
-    const highlightStyles = await highlight.locator("p").evaluate(element => {
+    await expect(questions).toHaveCount(5);
+    const paragraphs = page.locator(".hero-paragraph");
+    await expect(paragraphs).toHaveCount(3);
+    const paragraphMetrics = await paragraphs.first().evaluate(element => {
       const styles = getComputedStyle(element);
-      return { color: styles.color, fontSize: parseFloat(styles.fontSize), fontWeight: Number(styles.fontWeight), lineHeight: parseFloat(styles.lineHeight) / parseFloat(styles.fontSize) };
+      return { width: element.getBoundingClientRect().width, lineHeight: parseFloat(styles.lineHeight) / parseFloat(styles.fontSize) };
     });
-    const leadStyles = await lead.evaluate(element => {
-      const styles = getComputedStyle(element);
-      return { color: styles.color, fontSize: parseFloat(styles.fontSize), fontWeight: Number(styles.fontWeight), lineHeight: parseFloat(styles.lineHeight) / parseFloat(styles.fontSize) };
-    });
-    expect(highlightStyles.color).toBe("rgb(23, 67, 49)");
-    expect(highlightStyles.fontSize).toBeGreaterThanOrEqual(width >= 1024 ? 19 : 17);
-    expect(highlightStyles.fontWeight).toBe(800);
-    expect(highlightStyles.lineHeight).toBeGreaterThanOrEqual(1.45);
-    expect(leadStyles.color).toBe("rgb(32, 49, 38)");
-    expect(leadStyles.fontSize).toBeGreaterThanOrEqual(width >= 1024 ? 17 : 16);
-    expect(leadStyles.fontWeight).toBeGreaterThanOrEqual(550);
-    expect(leadStyles.lineHeight).toBeGreaterThanOrEqual(1.59);
+    expect(paragraphMetrics.width).toBeLessThanOrEqual(700);
+    expect(paragraphMetrics.lineHeight).toBeGreaterThanOrEqual(1.6);
+    const questionTops = await questions.evaluateAll(elements => elements.map(element => element.getBoundingClientRect().top));
+    expect(questionTops.every((top, index) => index === 0 || top > questionTops[index - 1])).toBe(true);
+    const intro = page.locator(".hero-test-intro");
+    await expect(intro).toHaveText("Энэхүү тест яг үүнийг олж харна.");
+    expect(await intro.evaluate(element => Number(getComputedStyle(element).fontWeight))).toBeGreaterThanOrEqual(700);
     const cta = page.getByRole("link", { name: "Тестээ үнэгүй эхлүүлэх" });
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
     expect(await cta.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
-    await expect(page.locator(".hero-note")).toBeVisible();
+    await expect(page.locator(".hero-note")).toHaveText("Эхний үр дүн үнэгүй");
     await expect(page.locator(".hero-visual")).toBeVisible();
     expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);

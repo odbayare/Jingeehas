@@ -19,15 +19,17 @@ assert.notEqual(questions.questionById("Q-TRAVEL").id, questions.questionById("Q
 
 app._test.setComingSoon(false);
 const landing = app.renderForPath("/");
-assert(landing.includes("Жин хасах оролдлогод нөлөөлдөг хэв маягаа таних"));
-assert(landing.includes("Жин хасах оролдлого яагаад тогтвортой үргэлжлэхгүй байдгийг ойлгоход туслах тест үнэлгээ"));
-for (const question of ["Стресс, ядаргаа, нойрны хэмнэл хооллолтын шийдвэрт нөлөөлж болно.", "Хэт хатуу дэглэмийг удаан хугацаанд тогтвортой үргэлжлүүлэхэд хэцүү байж болно.", "Орчин, цагийн хуваарь болон автомат зуршил давтагдсан саад үүсгэж болно."]) assert(landing.includes(question), question);
-assert(landing.includes("Жин хасах оролдлогод хоол, хөдөлгөөнөөс гадна сэтгэлзүйн хэв маяг, өдөр тутмын зуршил болон орчин нөлөөлж болно."));
-assert(landing.includes("Энэхүү үнэлгээ нь давтагддаг хэв маяг, өдөр тутмын нөхцөл болон орчны нөлөөг эргэцүүлж, өөрт тохирсон тогтвортой арга барилаа сонгоход тусална."));
+assert(landing.includes("ЖИН ХАСАХ АМАРХАН БОЛЛОО"));
+assert(landing.includes("Та өөртөө юу саад болдгийг мэддэг. Харин тэд хоорондоо яаж нийлж ажилладгийг мэдэх үү?"));
+assert(landing.includes("Хүн стрессдэхээрээ, баярлахаараа, гуниглахаараа дуртай зүйлээ идчихдэг, орой болохоор хоолны дуршил нэмэгддэг, дэглэмээ нэг алдахаараа бүр орхичихдог гэх мэт жин хасахад саад болдог зуршлуудаа өөрөө сайн мэдэж байдаг."));
+assert(landing.includes("Гэхдээ эдгээр нь амьдрал дээр дандаа тус тусдаа ажилладаггүй."));
+assert(landing.includes("Зарим хэв маяг давхацахаараа нэг нь нөгөөгөө улам хүчтэй болгож, таныг өөрийн мэдэлгүйгээр жин хасах зорилгыг чинь унтраадаг."));
+assert(landing.includes("Энэхүү тест яг үүнийг олж харна."));
+for (const question of ["Танд ямар хэв маягууд байна?", "Аль нь альтайгаа давхцаж байна?", "Давхцах үедээ танд хэрхэн нөлөөлж байна?", "Тэр нөлөөний улмаас таныг ямар алхам хийлгэж байна?", "Тэр нөлөөллүүдийг яаж удирдах вэ?"]) assert(landing.includes(question), question);
 assert(landing.includes(">Тестээ үнэгүй эхлүүлэх</a>"));
 assert(landing.includes('href="/assessment/start"'));
-assert(landing.includes("Эмнэлгийн болон сэтгэлзүйн онош тавихгүй. Хариултад тулгуурласан өөрийгөө ойлгох үнэлгээ."));
-assert.equal((landing.match(/class="hero-question"/g) || []).length, 3);
+assert(landing.includes("Эхний үр дүн үнэгүй"));
+assert.equal((landing.match(/class="hero-question"/g) || []).length, 5);
 assert(!/<section class="hero"[^>]*>[\s\S]*?<h1[^>]*>Илүүдэл жингээс салах тест үнэлгээ<\/h1>/.test(landing));
 assert(!landing.includes("Үнэ: 9,900₮"));
 const landingHero = /<section class="hero"[^>]*>[\s\S]*?<\/section>/.exec(landing)?.[0] || "";
