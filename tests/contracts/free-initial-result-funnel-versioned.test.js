@@ -13,6 +13,10 @@ const replacements = [
     '"Q-SLEEP-DURATION": "6–8 цаг", "Q-SLEEP-QUALITY": "Сайн", "Q-MOVEMENT": "Дунд",'
   ],
   [
+    '"Q-METHOD-BARRIERS": ["Тодорхой саад байгаагүй"]',
+    '"Q-METHOD-BARRIERS": ["Тодорхой саад байгаагүй"], "HFE-HOUSEHOLD": ["Ганцаараа"]'
+  ],
+  [
     'await saveAssessment(database, newSession.sessionId, { assessmentId: safety.id, answers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } });',
     'await saveAssessment(database, newSession.sessionId, { assessmentId: safety.id, answers: { "S1-S04": "Хааяа", "S1-S04-NOW": "Тийм" } });'
   ]

@@ -8,7 +8,7 @@ const { mappingCoverage } = require("../netlify/functions/_lib/report-signals.js
 const { calculateAssessmentSafety, ROUTE_COPY } = require("../netlify/functions/_lib/safety.js");
 
 const V3 = "jingeehas-production-2026-08-v3-routing-safety";
-assert.equal(questions.QUESTIONNAIRE_VERSION, V3);
+assert.equal(questions.ROUTING_SAFETY_QUESTIONNAIRE_VERSION, V3);
 assert.equal(questions.PREVIOUS_QUESTIONNAIRE_VERSION, "jingeehas-production-2026-07-v2-method-link");
 
 const route = (answers, version = V3) => questions.visibleQuestions(answers, version);
@@ -65,7 +65,7 @@ const generatedReportPath = path.join(__dirname, "..", ".generated-copy-hotfix",
 const distAppPath = path.join(__dirname, "..", "dist", "app.js");
 assert(fs.existsSync(distQuestionsPath), "production build must exist before V3 regression test");
 const deployedQuestions = require(distQuestionsPath);
-assert.equal(deployedQuestions.QUESTIONNAIRE_VERSION, V3);
+assert.equal(deployedQuestions.ROUTING_SAFETY_QUESTIONNAIRE_VERSION, V3);
 assert(deployedQuestions.visibleQuestions({ "S1-S04": "Хааяа" }, V3).some(question => question.id === "S1-S04-NOW"));
 
 const appSource = fs.readFileSync(distAppPath, "utf8");

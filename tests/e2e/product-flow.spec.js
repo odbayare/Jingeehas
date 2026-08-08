@@ -451,6 +451,46 @@ test("question transition gives immediate feedback and ignores duplicate submit"
   expect(after - before).toBe(1);
 });
 
+test("HFE back navigation prunes household context after changing to lives alone", async ({ page }) => {
+  await openFreeAssessment(page);
+  await page.getByRole("button", { name: "Эхлэх" }).click();
+  for (let step = 0; step < 30; step += 1) {
+    const first = page.locator("#question-form [data-question]").first();
+    const questionId = await first.getAttribute("data-question");
+    if (questionId === "HFE-HOUSEHOLD") break;
+    const type = await first.getAttribute("type");
+    const tagName = await first.evaluate(element => element.tagName);
+    if (type === "number") await first.fill(questionId === "Q-HEIGHT" ? "170" : questionId === "Q-WEIGHT" ? "80" : "30");
+    else if (tagName === "TEXTAREA") await first.fill("Өдөр тутмын хуваарьтай нийцээгүй.");
+    else if (type === "radio") await first.check();
+    else if (type === "checkbox") {
+      const none = page.locator('#question-form [data-question][value="Аль нь ч үгүй"]');
+      if (await none.count()) await none.first().check(); else await first.check();
+    }
+    await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
+    await page.waitForFunction(previous => document.querySelector("[data-question]")?.dataset.question !== previous, questionId);
+  }
+  await expect(page.locator('[data-question="HFE-HOUSEHOLD"]').first()).toBeVisible();
+  await page.locator('[data-question="HFE-HOUSEHOLD"][value="Хүүхэдтэй"]').check();
+  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
+  await expect(page.locator('[data-question="HFE-CONTEXT"]').first()).toBeVisible();
+  await page.locator('[data-question="HFE-CONTEXT"]').first().check();
+  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
+  await expect(page.locator('[data-question="Q-SLEEP-DURATION"]').first()).toBeVisible();
+  await page.getByRole("button", { name: "Буцах" }).click();
+  await expect(page.locator('[data-question="HFE-CONTEXT"]').first()).toBeVisible();
+  await page.getByRole("button", { name: "Буцах" }).click();
+  await page.locator('[data-question="HFE-HOUSEHOLD"][value="Ганцаараа"]').check();
+  await expect(page.locator('[data-question="HFE-HOUSEHOLD"][value="Хүүхэдтэй"]')).not.toBeChecked();
+  await page.getByRole("button", { name: "Үргэлжлүүлэх" }).click();
+  await expect(page.locator('[data-question="Q-SLEEP-DURATION"]').first()).toBeVisible();
+  await page.reload();
+  await expect(page.locator('[data-question="Q-SLEEP-DURATION"]').first()).toBeVisible();
+  await page.getByRole("button", { name: "Буцах" }).click();
+  await expect(page.locator('[data-question="HFE-HOUSEHOLD"]').first()).toBeVisible();
+  await expect(page.locator('[data-question="HFE-CONTEXT"]')).toHaveCount(0);
+});
+
 test("recovery succeeds in a new browser context", async ({ browser }) => {
   const context = await browser.newContext({ viewport: { width: 430, height: 820 } });
   const page = await context.newPage();

@@ -14,6 +14,7 @@ function defaultValue(question) {
   if (question.id === "S1-B01") return ["Аль нь ч үгүй"];
   if (question.id === "Q-METHOD-CURRENT") return ["Алхалт"];
   if (question.id === "Q-METHOD-PAST") return ["Хоолны дэглэм", "Дасгал хөдөлгөөн"];
+  if (question.id === "HFE-HOUSEHOLD") return ["Хань эсвэл хамтрагчтай"];
   if (question.type === "number") return question.min;
   if (question.type === "multi") return [question.options[0]];
   if (question.type === "text") return "Өдөр тутмын хуваарьтай нийцээгүй тул тогтвортой үргэлжлээгүй.";

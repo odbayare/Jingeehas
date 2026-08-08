@@ -26,8 +26,8 @@ const LOCKED_REPORT_TITLES = Object.freeze([
 ]);
 const ADMIN_REPORT_PREVIEW_STORAGE_KEY = "jingeehas_admin_report_preview_assessment";
 const questionApi = typeof require === "function" ? require("./questions.js") : window.JingeehasQuestions;
-const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй", "Одоогоор ямар нэг арга хэрэглээгүй", "Ямар нэг арга хэрэглэж үзээгүй", "Мэргэжлийн дэмжлэг аваагүй", "Тодорхой саад байгаагүй"]);
-const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "PREG-GATE": ["PREG-"], "Q-METHOD-PAST": ["Q-METHOD-LONGEST", "Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION"] });
+const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй", "Одоогоор ямар нэг арга хэрэглээгүй", "Ямар нэг арга хэрэглэж үзээгүй", "Мэргэжлийн дэмжлэг аваагүй", "Тодорхой хоол байхгүй", "Тодорхой хоол анзаараагүй", "Тодорхой саад байгаагүй", "Ганцаараа", "Дээрхээс аль нь ч тогтмол тохиолддоггүй"]);
+const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "S1-S03": ["S1-S03-TYPE", "S1-S03-FREQUENCY"], "S1-S04": ["S1-S04-NOW"], "Q-METHOD-RESULT": ["Q-METHOD-REGAIN"], "HFE-HOUSEHOLD": ["HFE-CONTEXT"], "Q-METHOD-PAST": ["Q-METHOD-LONGEST", "Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION", "OPEN-PAST"] });
 
 function createState() {
   return { contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
@@ -840,17 +840,21 @@ function schedulePaymentPolling() {
   paymentPollTimer = setTimeout(() => { if (!document.hidden) checkPayment(); else schedulePaymentPolling(); }, document.hidden ? 12000 : 4000);
 }
 function updateAnswer(input) {
-  const question = questionApi.questionById(input.dataset.question); if (!question) return;
+  const question = questionApi.questionById(input.dataset.question, state.questionnaireVersion); if (!question) return;
   const previousValue = state.answers[question.id];
   if (question.type === "multi") {
     const current = Array.isArray(state.answers[question.id]) ? state.answers[question.id] : [];
     const selected = input.value;
     let next;
-    if (EXCLUSIVE.has(selected)) next = input.checked ? [selected] : [];
+    if (EXCLUSIVE.has(selected)) {
+      next = input.checked ? [selected] : [];
+      if (input.checked && typeof document !== "undefined") document.querySelectorAll(`[data-question="${question.id}"]`).forEach(node => { if (node !== input) node.checked = false; });
+    }
     else {
       const withoutExclusive = current.filter(value => !EXCLUSIVE.has(value) && value !== selected);
       if (input.checked && withoutExclusive.length >= question.max) { state.validationError = `Та хамгийн ихдээ ${question.max} хариулт сонгох боломжтой.`; render(); return; }
       next = input.checked ? [...withoutExclusive, selected] : withoutExclusive;
+      if (input.checked && typeof document !== "undefined") document.querySelectorAll(`[data-question="${question.id}"]`).forEach(node => { if (EXCLUSIVE.has(node.value)) node.checked = false; });
     }
     state.answers[question.id] = next;
   } else state.answers[question.id] = input.value;
@@ -1082,5 +1086,6 @@ if (typeof window !== "undefined") { window.addEventListener("popstate", async (
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,
+    updateAnswer,
     analyticsRange, analyticsTotals, rate, safeRate, comparison, conversionDisplay, hasAnalyticsData, analyticsCoverageCopy, analyticsFlowStateCopy, questionProgressWarning, formatAnalyticsDate, formatAnalyticsDateTime,
     analyticsIdentity, attributionRate, renderCampaignAttribution, renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics } };
