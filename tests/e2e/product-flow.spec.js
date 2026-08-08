@@ -86,6 +86,11 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
     if (width >= 1024) {
       expect(await cta.evaluate(element => element.getBoundingClientRect().bottom <= window.innerHeight)).toBe(true);
       expect(await page.locator(".hero-visual").evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(330);
+      const columnHeights = await page.locator(".hero").evaluate(element => ({
+        copy: element.querySelector(".hero-copy").getBoundingClientRect().height,
+        visual: element.querySelector(".hero-visual").getBoundingClientRect().height
+      }));
+      expect(Math.abs(columnHeights.visual - columnHeights.copy)).toBeLessThan(1);
       const sectionLefts = await page.locator(".landing-page").evaluate(element => ({
         hero: element.querySelector(".hero").getBoundingClientRect().left,
         explainer: element.querySelector(".hero-explainer").getBoundingClientRect().left,
