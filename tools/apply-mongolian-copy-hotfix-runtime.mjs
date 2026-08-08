@@ -33,6 +33,17 @@ const DISPLAY_LABELS = Object.freeze([
   ["\"Будилах\": \"Ухаан санаа будилах\"\n  };", "\"Будилах\": \"Ухаан санаа будилах\",\n    \"Мэргэжлийн хоолзүйчийн зөвлөгөө\": \"Мэргэжлийн хоол зүйчийн зөвлөгөө\",\n    \"Сэтгэлзүйн зөвлөгөө\": \"Сэтгэл зүйн зөвлөгөө\",\n    \"Хоолзүйч\": \"Хоол зүйч\",\n    \"Сэтгэлзүйч\": \"Сэтгэл зүйч\"\n  };"]
 ]);
 
+const APPROVED_HERO_COPY = Object.freeze([
+  [
+    "Та жин хасахад тань юу саад болж, яагаад хэцүү болгодогоо мэддэг гэж боддог уу? Таныг заримдаа дэглэмээ зөрчиж хооллох, хааяа нэг амттан сэмээрхэн идчихдэг, зарим хоолыг хэтрүүлчихдэг сэтгэл зүйн шалтгаануудаа та сайн мэдэж байгаа. Гэхдээ таныг далдуур удирдаж буй сэтгэл зүйн дадал зуршлууд хоорондоо нийлэхээрээ ямар үр дүнд хүргэдэгийг мэдэх үү?",
+    "Та жин хасахад тань юу саад болж, яагаад хэцүү болгодогоо мэддэг гэж боддог уу? Таныг заримдаа дэглэмээ зөрчиж хооллох, хааяа нэг амттан сэмээрхэн идчихдэг, зарим хоолыг хэтрүүлчихдэг сэтгэлзүйн шалтгаануудаа та сайн мэдэж байгаа. Гэхдээ таныг далдуур удирдаж буй сэтгэлзүйн дадал зуршлууд хоорондоо нийлэхээрээ ямар үр дүнд хүргэдэгийг мэдэх үү?"
+  ],
+  [
+    "Жин хасахад саад болж буй сэтгэл зүйн хэв маягууд болон тэдгээрийн харилцан нөлөөг энэ тестээр олж мэдээрэй. Зөвхөн тэдгээрийг мэдээд зогсохгүй, хэрхэн удирдаж, нөлөөг нь багасгах аргуудыг мэдэж аваарай.",
+    "Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд болон тэдгээрийн харилцан нөлөөг энэ тестээр олж мэдээрэй. Зөвхөн тэдгээрийг мэдээд зогсохгүй, хэрхэн удирдаж, нөлөөг нь багасгах аргуудыг мэдэж аваарай."
+  ]
+]);
+
 function replaceAll(source, replacements) {
   let output = source;
   for (const [from, to] of replacements) output = output.split(from).join(to);
@@ -63,6 +74,17 @@ function addDisplayOnlyQuestionLabels(root) {
   }
 }
 
+function restoreApprovedHeroCopy(root) {
+  const appTargets = [path.join(root, "app.js"), path.join(root, "site", "app.js")];
+  for (const target of appTargets) {
+    if (!fs.existsSync(target)) continue;
+    const source = fs.readFileSync(target, "utf8");
+    const updated = replaceAll(source, APPROVED_HERO_COPY);
+    if (updated === source) throw new Error(`Approved hero copy restoration point missing: ${target}`);
+    fs.writeFileSync(target, updated);
+  }
+}
+
 export function applyMongolianCopyHotfixRuntime(root) {
   try {
     applyMongolianCopyHotfix(root);
@@ -74,6 +96,7 @@ export function applyMongolianCopyHotfixRuntime(root) {
 
   restoreCanonicalQuestionValues(root);
   addDisplayOnlyQuestionLabels(root);
+  restoreApprovedHeroCopy(root);
   applyRoutingSafetyEvidenceV3(root);
   applyReportBuilderSemanticV1InteractionCopy(root);
   applyReportBuilderSemanticV1(root);
