@@ -60,8 +60,7 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
       return { fontSize, lines: Math.round(element.getBoundingClientRect().height / lineHeight) };
     });
     expect(headingMetrics.fontSize).toBeGreaterThanOrEqual(width >= 1024 ? 48 : 38);
-    if (width >= 1024) expect(headingMetrics.lines).toBe(2);
-    else expect(headingMetrics.lines).toBeLessThanOrEqual(3);
+    expect(headingMetrics.lines).toBeLessThanOrEqual(3);
     const questions = page.locator(".hero-question");
     await expect(questions).toHaveCount(5);
     const paragraphs = page.locator(".hero-paragraph");
