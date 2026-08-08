@@ -48,6 +48,10 @@ assertIncludes(app, "\"Мэргэжлийн хоолзүйчийн зөвлөг�
 assertIncludes(app, "НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГЛАХ АРГА", "Dedicated neutral observation heading");
 assertIncludes(app, "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", "Unified recovery heading");
 assertIncludes(app, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?", "Editorial management heading");
+assertIncludes(app, "сэтгэлзүйн шалтгаануудаа та сайн мэдэж байгаа", "Approved hero paragraph one");
+assertIncludes(app, "Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд", "Approved hero paragraph two");
+assertExcludes(app, "сэтгэл зүйн шалтгаануудаа та сайн мэдэж байгаа", "Transformed hero paragraph one");
+assertExcludes(app, "Жин хасахад саад болж буй сэтгэл зүйн хэв маягууд", "Transformed hero paragraph two");
 assertIncludes(reportSource, "jingeehas-case-formulation-v8-editorial-polish", "Editorial report version");
 assertIncludes(reportSource, "function polishPublicText(value)", "Public copy sanitizer");
 assertIncludes(reportSource, "Хоолны зайг нэг өдрийн дотор ажиглаж", "Editorial combined-plan reason");
