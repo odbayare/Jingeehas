@@ -7,13 +7,12 @@ const app = require("../app.js");
 
 const root = path.resolve(__dirname, "..");
 const source = fs.readFileSync(path.join(root, "app.js"), "utf8");
+const visibleText = html => html.replace(/<[^>]+>/g, "").replace(/\s+/g, " ");
 
 const required = [
   "ЖИН ХАСАХ АМАРХАН БОЛЛОО",
-  "Та өөртөө юу саад болдгийг мэддэг. Харин тэд хоорондоо яаж нийлж ажилладгийг мэдэх үү?",
-  "Хүн стрессдэхээрээ, баярлахаараа, гуниглахаараа дуртай зүйлээ идчихдэг, орой болохоор хоолны дуршил нэмэгддэг, дэглэмээ нэг алдахаараа бүр орхичихдог гэх мэт жин хасахад саад болдог зуршлуудаа өөрөө сайн мэдэж байдаг.",
-  "Гэхдээ эдгээр нь амьдрал дээр дандаа тус тусдаа ажилладаггүй.",
-  "Зарим хэв маяг давхацахаараа нэг нь нөгөөгөө улам хүчтэй болгож, таныг өөрийн мэдэлгүйгээр жин хасах зорилгыг чинь унтраадаг.",
+  "Та жин хасахад тань юу саад болж, яагаад хэцүү болгодогоо мэддэг гэж боддог уу? Таныг заримдаа дэглэмээ зөрчиж хооллох, хааяа нэг амттан сэмээрхэн идчихдэг, зарим хоолыг хэтрүүлчихдэг сэтгэлзүйн шалтгаануудаа та сайн мэдэж байгаа. Гэхдээ таныг далдуур удирдаж буй сэтгэлзүйн дадал зуршлууд хоорондоо нийлэхээрээ ямар үр дүнд хүргэдэгийг мэдэх үү?",
+  "Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд болон тэдгээрийн харилцан нөлөөг энэ тестээр олж мэдээрэй. Зөвхөн тэдгээрийг мэдээд зогсохгүй, хэрхэн удирдаж, нөлөөг нь багасгах аргуудыг мэдэж аваарай.",
   "Энэхүү тест яг үүнийг олж харна.",
   "Танд ямар хэв маягууд байна?",
   "Аль нь альтайгаа давхцаж байна?",
@@ -31,14 +30,14 @@ const prohibited = [
   "Жин хасахад зөвхөн хоол, дасгал биш — таны сэтгэлзүйн хэв маяг, далд зуршил хүчтэй нөлөөлдөг."
 ];
 
-for (const copy of required) assert(source.includes(copy), `required policy-safe copy missing: ${copy}`);
+for (const copy of required) assert(visibleText(source).includes(copy), `required policy-safe copy missing: ${copy}`);
 for (const copy of prohibited) assert(!source.includes(copy), `direct personal-attribute copy remains: ${copy}`);
 
 app._test.setComingSoon(false);
 const landing = app.renderForPath("/");
-for (const copy of required) assert(landing.includes(copy), `rendered landing missing: ${copy}`);
+for (const copy of required) assert(visibleText(landing).includes(copy), `rendered landing missing: ${copy}`);
 for (const copy of prohibited) assert(!landing.includes(copy), `rendered landing contains prohibited copy: ${copy}`);
-assert(landing.includes("Тестээ үнэгүй эхлүүлэх"));
+assert(landing.includes("ТЕСТЭЭ ЭХЛҮҮЛЭХ"));
 assert(landing.includes("9,900₮"));
 app._test.resetComingSoon();
 
