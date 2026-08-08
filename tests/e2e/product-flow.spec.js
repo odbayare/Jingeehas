@@ -83,7 +83,17 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
     expect(await cta.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(54);
     const visualOrder = await page.locator(".landing-page").evaluate(element => [...element.querySelectorAll(".hero h1, .hero-paragraph, .hero-actions, .hero-visual, .hero-explainer")].map(node => node.matches("h1") ? "h1" : node.classList[0]));
     expect(visualOrder).toEqual(["h1", "hero-paragraph", "hero-paragraph", "hero-actions", "hero-visual", "hero-explainer"]);
-    if (width >= 1024) expect(await cta.evaluate(element => element.getBoundingClientRect().bottom <= window.innerHeight)).toBe(true);
+    if (width >= 1024) {
+      expect(await cta.evaluate(element => element.getBoundingClientRect().bottom <= window.innerHeight)).toBe(true);
+      expect(await page.locator(".hero-visual").evaluate(element => element.getBoundingClientRect().width)).toBeGreaterThanOrEqual(330);
+      const sectionLefts = await page.locator(".landing-page").evaluate(element => ({
+        hero: element.querySelector(".hero").getBoundingClientRect().left,
+        explainer: element.querySelector(".hero-explainer").getBoundingClientRect().left,
+        sample: element.querySelector(".sample-report").getBoundingClientRect().left
+      }));
+      expect(Math.abs(sectionLefts.explainer - sectionLefts.hero)).toBeLessThan(1);
+      expect(Math.abs(sectionLefts.explainer - sectionLefts.sample)).toBeLessThan(1);
+    }
     await expect(page.locator(".hero-note")).toHaveText("Эхний үр дүн үнэгүй");
     await expect(page.locator(".hero-visual")).toBeVisible();
     expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
