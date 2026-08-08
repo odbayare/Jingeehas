@@ -18,7 +18,7 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
 
   const landing = app.renderForPath("/");
   assert(landing.includes('href="/assessment/start"'), "landing CTA must open the free assessment start route");
-  assert(landing.includes("Тестээ үнэгүй эхлүүлэх"), "landing free-test promise is missing");
+  assert(landing.includes("ТЕСТЭЭ ЭХЛҮҮЛЭХ"), "landing free-test CTA is missing");
   assert(!landing.includes("төлөөд тестээ эхлүүлэх"), "landing still advertises payment before the test");
 
   const start = app.renderForPath("/assessment/start");

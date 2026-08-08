@@ -132,11 +132,14 @@ function scientificMethodologyBox() {
 
 function renderLanding() {
   return `<div class="page landing-page">${navigation()}<main><section class="hero" aria-labelledby="page-title"><div class="hero-copy">
-    <p class="eyebrow">ЖИН ХАСАХ АМАРХАН БОЛЛОО</p>
-    <h1 id="page-title" tabindex="-1">Та өөртөө юу саад болдгийг мэддэг. Харин тэд хоорондоо яаж нийлж ажилладгийг мэдэх үү?</h1>
-    <p class="hero-paragraph">Хүн стрессдэхээрээ, баярлахаараа, гуниглахаараа дуртай зүйлээ идчихдэг, орой болохоор хоолны дуршил нэмэгддэг, дэглэмээ нэг алдахаараа бүр орхичихдог гэх мэт жин хасахад саад болдог зуршлуудаа өөрөө сайн мэдэж байдаг.</p>
-    <p class="hero-paragraph">Гэхдээ эдгээр нь амьдрал дээр дандаа тус тусдаа ажилладаггүй.</p>
-    <p class="hero-paragraph">Зарим хэв маяг давхацахаараа нэг нь нөгөөгөө улам хүчтэй болгож, таныг өөрийн мэдэлгүйгээр жин хасах зорилгыг чинь унтраадаг.</p>
+    <h1 id="page-title" tabindex="-1">ЖИН ХАСАХ <span>АМАРХАН БОЛЛОО</span></h1>
+    <p class="hero-paragraph">Та жин хасахад тань юу саад болж, яагаад хэцүү болгодогоо мэддэг гэж боддог уу? Таныг заримдаа дэглэмээ зөрчиж хооллох, хааяа нэг амттан сэмээрхэн идчихдэг, зарим хоолыг хэтрүүлчихдэг сэтгэлзүйн шалтгаануудаа та сайн мэдэж байгаа. Гэхдээ таныг далдуур удирдаж буй сэтгэлзүйн дадал зуршлууд хоорондоо нийлэхээрээ ямар үр дүнд хүргэдэгийг мэдэх үү?</p>
+    <p class="hero-paragraph">Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд болон тэдгээрийн харилцан нөлөөг энэ тестээр олж мэдээрэй. Зөвхөн тэдгээрийг мэдээд зогсохгүй, хэрхэн удирдаж, нөлөөг нь багасгах аргуудыг мэдэж аваарай.</p>
+    <div class="hero-actions"><a class="button" href="/assessment/start" data-route>ТЕСТЭЭ ЭХЛҮҮЛЭХ</a>
+      <p class="hero-note">Эхний үр дүн үнэгүй</p>
+    </div>
+    </div><div class="hero-visual" aria-hidden="true"></div></section>
+    <section class="hero-explainer" aria-label="Энэхүү тестийн олж харах зүйлс">
     <p class="hero-test-intro">Энэхүү тест яг үүнийг олж харна.</p>
     <div class="hero-question-list" role="list" aria-label="Энэхүү тестийн олж харах зүйлс">
       <p class="hero-question" role="listitem">Танд ямар хэв маягууд байна?</p>
@@ -145,10 +148,7 @@ function renderLanding() {
       <p class="hero-question" role="listitem">Тэр нөлөөний улмаас таныг ямар алхам хийлгэж байна?</p>
       <p class="hero-question" role="listitem">Тэр нөлөөллүүдийг яаж удирдах вэ?</p>
     </div>
-    <div class="hero-actions"><a class="button" href="/assessment/start" data-route>Тестээ үнэгүй эхлүүлэх</a>
-      <p class="hero-note">Эхний үр дүн үнэгүй</p>
-    </div>
-    </div><div class="hero-visual" aria-hidden="true"></div></section>
+    </section>
     <section id="sample-report" class="sample-report" aria-labelledby="sample-title">
       <p class="eyebrow">Таны авах тайлан</p>
       <h2 id="sample-title">Таны тайлан ямар байх вэ?</h2>

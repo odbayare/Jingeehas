@@ -51,26 +51,40 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
   test(`refreshed landing hero is usable at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height });
     await page.goto("/");
-    await expect(page.getByRole("heading", { name: "Та өөртөө юу саад болдгийг мэддэг. Харин тэд хоорондоо яаж нийлж ажилладгийг мэдэх үү?" })).toBeVisible();
+    const heading = page.getByRole("heading", { name: "ЖИН ХАСАХ АМАРХАН БОЛЛОО" });
+    await expect(heading).toBeVisible();
+    const headingMetrics = await heading.evaluate(element => {
+      const styles = getComputedStyle(element);
+      const fontSize = parseFloat(styles.fontSize);
+      const lineHeight = parseFloat(styles.lineHeight);
+      return { fontSize, lines: Math.round(element.getBoundingClientRect().height / lineHeight) };
+    });
+    expect(headingMetrics.fontSize).toBeGreaterThanOrEqual(width >= 1024 ? 48 : 38);
+    if (width >= 1024) expect(headingMetrics.lines).toBe(2);
+    else expect(headingMetrics.lines).toBeLessThanOrEqual(3);
     const questions = page.locator(".hero-question");
     await expect(questions).toHaveCount(5);
     const paragraphs = page.locator(".hero-paragraph");
-    await expect(paragraphs).toHaveCount(3);
+    await expect(paragraphs).toHaveCount(2);
     const paragraphMetrics = await paragraphs.first().evaluate(element => {
       const styles = getComputedStyle(element);
-      return { width: element.getBoundingClientRect().width, lineHeight: parseFloat(styles.lineHeight) / parseFloat(styles.fontSize) };
+      return { width: element.getBoundingClientRect().width, fontSize: parseFloat(styles.fontSize), lineHeight: parseFloat(styles.lineHeight) / parseFloat(styles.fontSize) };
     });
     expect(paragraphMetrics.width).toBeLessThanOrEqual(700);
     expect(paragraphMetrics.lineHeight).toBeGreaterThanOrEqual(1.6);
+    expect(headingMetrics.fontSize).toBeGreaterThan(paragraphMetrics.fontSize * 2);
     const questionTops = await questions.evaluateAll(elements => elements.map(element => element.getBoundingClientRect().top));
     expect(questionTops.every((top, index) => index === 0 || top > questionTops[index - 1])).toBe(true);
     const intro = page.locator(".hero-test-intro");
     await expect(intro).toHaveText("Энэхүү тест яг үүнийг олж харна.");
     expect(await intro.evaluate(element => Number(getComputedStyle(element).fontWeight))).toBeGreaterThanOrEqual(700);
-    const cta = page.getByRole("link", { name: "Тестээ үнэгүй эхлүүлэх" });
+    const cta = page.getByRole("link", { name: "ТЕСТЭЭ ЭХЛҮҮЛЭХ" });
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/assessment/start");
-    expect(await cta.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(44);
+    expect(await cta.evaluate(element => element.getBoundingClientRect().height)).toBeGreaterThanOrEqual(54);
+    const visualOrder = await page.locator(".landing-page").evaluate(element => [...element.querySelectorAll(".hero h1, .hero-paragraph, .hero-actions, .hero-visual, .hero-explainer")].map(node => node.matches("h1") ? "h1" : node.classList[0]));
+    expect(visualOrder).toEqual(["h1", "hero-paragraph", "hero-paragraph", "hero-actions", "hero-visual", "hero-explainer"]);
+    if (width >= 1024) expect(await cta.evaluate(element => element.getBoundingClientRect().bottom <= window.innerHeight)).toBe(true);
     await expect(page.locator(".hero-note")).toHaveText("Эхний үр дүн үнэгүй");
     await expect(page.locator(".hero-visual")).toBeVisible();
     expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
@@ -87,7 +101,7 @@ test("landing CTA retains SPA routing and analytics tracking", async ({ page }) 
     if (!request.url().endsWith("/.netlify/functions/analytics-collect") || request.method() !== "POST") return false;
     try { return JSON.parse(request.postData() || "{}").eventName === "start_cta_clicked"; } catch { return false; }
   });
-  await page.getByRole("link", { name: "Тестээ үнэгүй эхлүүлэх" }).click();
+  await page.getByRole("link", { name: "ТЕСТЭЭ ЭХЛҮҮЛЭХ" }).click();
   await trackingRequest;
   await expect(page).toHaveURL(/\/assessment\/start$/);
   await expect(page.getByRole("heading", { name: "Тестээ эхлүүлэх" })).toBeVisible();
@@ -193,7 +207,7 @@ test("scientific methodology box is responsive and keyboard accessible", async (
     await expect(toggle).toHaveAttribute("aria-expanded", "false");
     await expect(toggle).toHaveText("Аргачлал бүрийн тайлбарыг харах");
     await expect(details).toBeHidden();
-    const cta = page.getByRole("link", { name: "Тестээ үнэгүй эхлүүлэх" });
+    const cta = page.getByRole("link", { name: "ТЕСТЭЭ ЭХЛҮҮЛЭХ" });
     await expect(cta).toHaveAttribute("href", "/assessment/start");
   }
 });
