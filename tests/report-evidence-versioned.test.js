@@ -25,9 +25,9 @@ source = source.replace(frozenBlock, `const versionedSemantics = {
   currentQuestionCount: questionBank.QUESTIONS.length,
   mappingCoverage: mappingCoverage(questionBank.QUESTIONS)
 };
-assert.equal(versionedSemantics.questionnaireVersion, "jingeehas-production-2026-08-v3-routing-safety");
+assert.equal(versionedSemantics.questionnaireVersion, "jingeehas-production-2026-08-v4-household-context");
 assert.equal(versionedSemantics.previousVersion, "jingeehas-production-2026-07-v2-method-link");
-assert(versionedSemantics.currentQuestionCount >= 44, "V3 question bank must include the new safety and breastfeeding follow-ups");
+assert.equal(versionedSemantics.currentQuestionCount, 46, "V4 question bank must add exactly two HFE items");
 assert.equal(versionedSemantics.mappingCoverage.percent, 100, "V3 semantic mappings must be complete");
 assert.deepEqual(versionedSemantics.mappingCoverage.unmappedQuestions, []);
 assert.deepEqual(versionedSemantics.mappingCoverage.unmappedOptions, []);`);

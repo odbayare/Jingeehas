@@ -1,12 +1,13 @@
 "use strict";
 
-const EXCLUSIVE_OPTIONS = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй"]);
+const EXCLUSIVE_OPTIONS = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй", "Ганцаараа", "Дээрхээс аль нь ч тогтмол тохиолддоггүй"]);
 const BRANCHES = Object.freeze({
   "CTX-GENDER": ["MC-", "PREG-"],
   "MC-GATE": ["MC-"],
   "ALC-GATE": ["ALC-"],
   "TOB-GATE": ["TOB-"],
-  "PREG-GATE": ["PREG-"]
+  "PREG-GATE": ["PREG-"],
+  "HFE-HOUSEHOLD": ["HFE-CONTEXT"]
 });
 
 function normalizeMultiSelection(current, selected, maximum = 3) {

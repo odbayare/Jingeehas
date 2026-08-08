@@ -3,6 +3,7 @@
 const { ANSWER_SIGNAL_CONTRACT, directivesFor } = require("./report-signals.js");
 const { PATTERN_PRIORITY, evaluatePatterns } = require("./report-patterns.js");
 const { PATTERN_COPY, PATTERN_PUBLIC_TITLES, CONTEXT_PUBLIC_TITLES, SENTENCE_TEMPLATES, RECOMMENDATIONS, STRATEGY_COPY, INTERACTION_COPY, PROTECTIVE_COPY, sentenceTemplateMatches } = require("./report-copy.js");
+const { deriveHouseholdContext, householdContextLinks, recommendationFeasibilityModifiers, householdContextFactors } = require("./household-context.js");
 
 const REPORT_VERSION = "jingeehas-case-formulation-v6-actionable-management";
 const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION } = require("../../../questions.js");
@@ -562,6 +563,15 @@ function professionalGuidance(composer) {
 
 function environmentalCueCopy(facts) {
   const cues = facts.environmentalCues || [];
+  const householdFlags = new Set(facts.householdContext?.flags || []);
+  if (householdFlags.has("household_social_eating_cue")) return {
+    action: "Гэрийнхэнтэйгээ хамт байх харилцааг хадгалж, бусад хүн идэж байх үед хэрэглэх нэг урьдчилсан хариу эсвэл өөр үйлдлийг бэлдэнэ.",
+    strategy: "Гэрийнхэнтэйгээ хамт байх харилцааг хадгална. Бусад хүн идэж байх үед дагаж идэхээс өмнө хэрэглэх нэг урьдчилсан хариу эсвэл өөр үйлдлийг бэлдэнэ."
+  };
+  if (householdFlags.has("household_food_exposure")) return {
+    action: "Гэрийн бүх хүнсийг өөрчлөхгүйгээр хамгийн их нөлөөлдөг нэг хүнсний харагдах байдал эсвэл хүртээмжийг тохируулна.",
+    strategy: "Хамгийн их нөлөөлдөг нэг хүнсний харагдах байдал эсвэл хүртээмжийг л тохируулна."
+  };
   const generic = "Өлсөөгүй үед идэх хүсэл хамгийн их төрүүлдэг нэг орчны дохиог сонгож, түүний хүртээмж эсвэл нөлөөг нэг аргаар багасгана.";
   if (cues.length !== 1) return { action: generic, strategy: generic };
   if (cues[0] === "Хоол харагдах") return {
@@ -581,6 +591,7 @@ function environmentalCueCopy(facts) {
 
 function recommendationFor(candidate, facts, composer) {
   const gate = { requiredPatterns: [candidate.id] };
+  const householdFlags = new Set(facts.householdContext?.flags || []);
   if (candidate.id === "environmental_cues") {
     const cue = environmentalCueCopy(facts);
     return {
@@ -589,6 +600,31 @@ function recommendationFor(candidate, facts, composer) {
       reason: composer.recordRule("strategy_environmental_cues_reason", gate, "Нэг тодорхой орчны дохиог өөрчлөх нь олон дүрэм нэмэхгүйгээр түүний нөлөөг шалгах боломж өгнө.", "7")
     };
   }
+  if (candidate.id === "irregular_meals_late_hunger" && householdFlags.has("household_meal_delay")) return {
+    recommendationId: candidate.recommendationId,
+    action: composer.recordRule("strategy_irregular_meals_late_hunger_household_action", gate, "Гэрийн хоолны цагийг бүхэлд нь өөрчлөхгүйгээр өөрийн бодитоор хамгаалж болох нэг хооллох зангууг сонгоно.", "7"),
+    reason: composer.recordRule("strategy_irregular_meals_late_hunger_household_reason", gate, "Нэг боломжит зангуу нь гэрийн цаг бүрийг тогтмол болгох шаардлагагүйгээр хоол хэт хойшлох нөхцөлийг удирдахад тусална.", "7")
+  };
+  if (candidate.id === "plan_daily_life_mismatch" && householdFlags.has("household_other_primary_meal_preparer")) return {
+    recommendationId: candidate.recommendationId,
+    action: composer.recordRule("strategy_plan_daily_life_mismatch_other_preparer_action", gate, "Хоол хийх аргыг өөрөө хянадаг мэт үзэхгүйгээр өөрийн порц, хачир, таваглалт эсвэл нэг боломжит хүсэлтээс нэгийг сонгоно.", "7"),
+    reason: composer.recordRule("strategy_plan_daily_life_mismatch_other_preparer_reason", gate, "Өөрийн шууд хянаж болох нэг сонголтод төвлөрөх нь төлөвлөгөөг гэрийн бодит нөхцөлд багтаана.", "7")
+  };
+  if (candidate.id === "plan_daily_life_mismatch" && householdFlags.has("household_food_autonomy_constraint")) return {
+    recommendationId: candidate.recommendationId,
+    action: composer.recordRule("strategy_plan_daily_life_mismatch_autonomy_action", gate, "Өөртөө бүхэлдээ тусдаа хоол бэлтгэхгүйгээр гэрийн үндсэн хоолны өөрийн хянаж болох нэг хэсгийг тохируулна.", "7"),
+    reason: composer.recordRule("strategy_plan_daily_life_mismatch_autonomy_reason", gate, "Нэг хянаж болох хэсгийг сонгох нь тусдаа хоолны систем шаардахгүйгээр өөрчлөлтийг хэрэгжүүлэх боломж өгнө.", "7")
+  };
+  if (candidate.id === "plan_daily_life_mismatch" && householdFlags.has("household_meal_responsibility")) return {
+    recommendationId: candidate.recommendationId,
+    action: composer.recordRule("strategy_plan_daily_life_mismatch_responsibility_action", gate, "Гэрийн хоолноос тусдаа нарийн бэлтгэл нэмэхгүйгээр өдөр тутам багтах хамгийн бага нэг хувилбарыг сонгоно.", "7"),
+    reason: composer.recordRule("strategy_plan_daily_life_mismatch_responsibility_reason", gate, "Нэмэлт хоол бэлтгэлийн систем үүсгэхгүй байх нь одоогийн үүрэгтэй давхардах ачааллыг нэмэхгүй.", "7")
+  };
+  if (candidate.id === "plan_daily_life_mismatch" && householdFlags.has("household_support_constraint")) return {
+    recommendationId: candidate.recommendationId,
+    action: composer.recordRule("strategy_plan_daily_life_mismatch_support_action", gate, "Гэрийн хүмүүсийг буруутгахгүйгээр өөрчлөлтөө хэрэгжүүлэхэд хэрэгтэй нэг тодорхой, боломжит хүсэлтийг сонгоно.", "7"),
+    reason: composer.recordRule("strategy_plan_daily_life_mismatch_support_reason", gate, "Хэрэгжүүлэх орчныг төвийг сахисан байдлаар харгалзах нь төлөвлөгөөг бодит нөхцөлд багтаахад тусална.", "7")
+  };
   if (candidate.id !== "previous_attempt_sustainability") {
     const copy = STRATEGY_COPY[candidate.recommendationId];
     return {
@@ -614,7 +650,12 @@ function managementModule(candidate, pattern, facts) {
     ? naturalList(selectedCues.map((cue, index) => index === 0 ? cue : `${cue.charAt(0).toLowerCase()}${cue.slice(1)}`))
     : null;
   const observe = cueLabel ? `${cueLabel} үед өлсөөгүй ч идэх хүсэл төрж буй эсэхийг анзаараарай.` : copy.observe;
-  const prepare = candidate.id === "environmental_cues" && selectedCues.length ? environmentalCueCopy(facts).strategy : copy.prepare;
+  const householdFlags = new Set(facts.householdContext?.flags || []);
+  let prepare = candidate.id === "environmental_cues" && (selectedCues.length || householdFlags.has("household_food_exposure") || householdFlags.has("household_social_eating_cue")) ? environmentalCueCopy(facts).strategy : copy.prepare;
+  if (candidate.id === "irregular_meals_late_hunger" && householdFlags.has("household_meal_delay")) prepare = "Гэрийн хоолны цаг бүхэлдээ тогтмол байхыг шаардахгүйгээр өөрийн бодитоор хамгаалж болох нэг хооллох зангууг сонгоорой.";
+  if (candidate.id === "plan_daily_life_mismatch" && householdFlags.has("household_other_primary_meal_preparer")) prepare = "Хоол хийх аргыг өөрөө хянадаг мэт үзэхгүйгээр өөрийн порц, хачир, таваглалт эсвэл нэг боломжит хүсэлтээс зөвхөн нэгийг сонгоорой.";
+  else if (candidate.id === "plan_daily_life_mismatch" && householdFlags.has("household_food_autonomy_constraint")) prepare = "Өөртөө бүхэлдээ тусдаа хоол бэлтгэхгүйгээр гэрийн үндсэн хоолны өөрийн хянаж болох нэг хэсгийг тохируулаарай.";
+  else if (candidate.id === "plan_daily_life_mismatch" && householdFlags.has("household_meal_responsibility")) prepare = "Гэрийн хоолноос тусдаа нарийн бэлтгэл нэмэхгүйгээр өдөр тутам багтах хамгийн бага нэг хувилбарыг сонгоорой.";
   return {
     patternId: candidate.id,
     title: pattern.title,
@@ -801,9 +842,13 @@ function startingAction(prioritized, facts, composer) {
     const mealTimingPriority = prioritized.id === "irregular_meals_late_hunger"
       ? [composer.render("experiment_meal_timing_priority", "8"), composer.render("experiment_meal_timing_stress", "8")].filter(Boolean).join(" ")
       : null;
+    const householdFlags = new Set(facts.householdContext?.flags || []);
+    const useFeasibilityAction = (prioritized.id === "irregular_meals_late_hunger" && householdFlags.has("household_meal_delay"))
+      || (prioritized.id === "plan_daily_life_mismatch" && ["household_other_primary_meal_preparer", "household_food_autonomy_constraint", "household_meal_responsibility", "household_support_constraint"].some(flag => householdFlags.has(flag)));
+    const actionCopy = useFeasibilityAction ? recommendation.action : RECOMMENDATIONS[prioritized.recommendationId].action;
     const result = {
       patternId: prioritized.id, recommendationId: recommendation.recommendationId,
-      action: composer.recordRule(`experiment_${prioritized.id}_action`, patternGate, `Эхний туршилтаар дараах нэг алхмыг хийнэ: ${RECOMMENDATIONS[prioritized.recommendationId].action.charAt(0).toLowerCase()}${RECOMMENDATIONS[prioritized.recommendationId].action.slice(1)}`, "8"),
+      action: composer.recordRule(`experiment_${prioritized.id}_action`, patternGate, `Эхний туршилтаар дараах нэг алхмыг хийнэ: ${actionCopy.charAt(0).toLowerCase()}${actionCopy.slice(1)}`, "8"),
       reason: composer.recordRule(`experiment_${prioritized.id}_reason`, patternGate, "Өөрчлөлтийг нэг зүйлээр эхлүүлснээр бодит амьдралд хэрэгжиж байгаа эсэхийг тодорхой ажиглаж, дараагийн алхмаа баримжаатай сонгоно.", "8"),
       priorityReason: mealTimingPriority
         || composer.recordRule(`experiment_${prioritized.id}_priority`, patternGate, "Энэ алхам одоо харагдсан гол саадтай шууд холбоотой бөгөөд ажиглаж болохоор жижиг байна.", "8")
@@ -924,7 +969,7 @@ function neutralResult(evidence, composer, strengths, contextual = [], quality =
     injury_or_pain_barrier: "neutral_context_injury", food_discomfort_context: "neutral_context_food",
     alcohol_food_change: "neutral_context_alcohol"
   };
-  const contextualSummary = contextual.map(item => composer.render(contextualTemplateIds[item.id], "neutral_overview")).filter(Boolean).join(" ");
+  const contextualSummary = contextual.map(item => item.householdContext ? item.summary : composer.render(contextualTemplateIds[item.id], "neutral_overview")).filter(Boolean).join(" ");
   const subtype = neutralSubtype(evidence, contextual, strengths);
   return {
     subtype,
@@ -946,7 +991,9 @@ function neutralResult(evidence, composer, strengths, contextual = [], quality =
 function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
   const quality = evidenceQuality(evidence);
   const evaluated = quality.patternResult;
-  const facts = factGates(evidence);
+  const questionnaireVersion = metadata.questionnaireVersion || evidence.questionnaireVersion || LEGACY_QUESTIONNAIRE_VERSION;
+  const householdContext = deriveHouseholdContext(evidence.answerMap || {}, questionnaireVersion);
+  const facts = Object.freeze({ ...factGates(evidence), householdContext });
   const composer = sentenceComposer(evidence, evaluated, facts);
   const influencingPatterns = evaluated.influencingPatterns.map(candidate => patternObject(candidate, composer, facts, "2"));
   const contextualPatternObjects = evaluated.contextualPatterns.map(candidate => patternObject(candidate, composer, facts, "4"));
@@ -969,7 +1016,10 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
       || null;
   const supportedIds = new Set(evaluated.supported.map(item => item.id));
   const previous = previousAttemptAnalysis(evidence, facts, composer);
-  const contextual = contextualFactors(evidence, evaluated.contextualPatterns, facts, composer, patternById);
+  const activePatternIds = evaluated.supported.map(item => item.id);
+  const householdLinks = householdContextLinks(householdContext, activePatternIds);
+  const feasibilityModifiers = recommendationFeasibilityModifiers(householdContext);
+  const contextual = [...contextualFactors(evidence, evaluated.contextualPatterns, facts, composer, patternById), ...householdContextFactors(householdContext, householdLinks)];
   const strengths = strengthItems(evidence, composer, facts);
   const protectiveSection = [composer.render("strength_body", "6"), composer.render("strength_common_barriers", "6"), composer.render("strength_adherence_success", "6")].filter(Boolean).join(" ") || null;
   const additionalPatternActions = evaluated.influencingPatterns.map(candidate => ({ patternId: candidate.id, patternTitle: PATTERN_PUBLIC_TITLES[candidate.id] || candidate.title, ...recommendationFor(candidate, facts, composer) }));
@@ -993,10 +1043,15 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
     ? composer.recordRule("avoid_simultaneous_changes", { requiredPatterns: evaluated.influencingPatterns.map(item => item.id) }, "Эхний туршилтын хугацаанд хоолны шинэ хатуу хориг болон олон шинэ дүрмийг зэрэг нэмэхгүй. Сонгосон нэг алхам өдөр тутмын амьдралд багтаж байгаа эсэхийг эхэлж ажиглана.", "9")
     : null;
   return {
-    version: REPORT_VERSION, questionnaireVersion: metadata.questionnaireVersion || evidence.questionnaireVersion || LEGACY_QUESTIONNAIRE_VERSION,
+    version: REPORT_VERSION, questionnaireVersion,
     productName: "Илүүдэл жингээс салах тест үнэлгээ", reportDate: now.toISOString(), mode: quality.mode,
     overallPicture: overview, influencingPatterns,
     contextualFactors: contextual,
+    householdContextStatus: householdContext.status,
+    householdProfile: householdContext.profile,
+    householdContextFlags: householdContext.flags,
+    householdContextLinks: householdLinks,
+    recommendationFeasibilityModifiers: feasibilityModifiers,
     neutralResult: neutral,
     protectiveSectionSummary: protectiveSection, protectiveFactors: strengths, contradictions: contradictionItems(evidence, evaluated.candidates),
     previousAttemptAnalysis: previous, interactionSummary: interactions,
@@ -1036,8 +1091,10 @@ function publicReport(fullReport) {
   const pending = fullReport.planDecisionPending === true;
   const internalKeys = new Set([
     "internalEvidenceMap", "evidence", "planDecisionPending", "planAppendices", "parameterApprovalStatus",
+    "householdContextStatus", "householdProfile", "householdContextFlags", "householdContextLinks", "recommendationFeasibilityModifiers",
     "candidateA", "candidateB", "recommendedCandidate", "selectedCandidate", "id", "patternId", "patternIds", "interactionsWith",
     "recommendationId", "signal", "questionId", "questionIds", "sentenceTemplateId", "requiredSignals",
+    "sourceQuestionIds", "sourceAnswerValues", "certainty", "contextualLinkId", "corePatternId", "householdContext", "counted", "linked",
     "forbiddenSignals", "requiredProtectiveSignals", "requiredPatterns", "forbiddenPatterns", "requiredContexts",
     "forbiddenContexts", "actualSupportingQuestionIds"
   ]);

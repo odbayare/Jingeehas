@@ -7,10 +7,12 @@
 
   const LEGACY_QUESTIONNAIRE_VERSION = "jingeehas-production-2026-07";
   const PREVIOUS_QUESTIONNAIRE_VERSION = "jingeehas-production-2026-07-v2-method-link";
-  const QUESTIONNAIRE_VERSION = "jingeehas-production-2026-08-v3-routing-safety";
+  const ROUTING_SAFETY_QUESTIONNAIRE_VERSION = "jingeehas-production-2026-08-v3-routing-safety";
+  const QUESTIONNAIRE_VERSION = "jingeehas-production-2026-08-v4-household-context";
   const VERSION_ORDER = Object.freeze([
     LEGACY_QUESTIONNAIRE_VERSION,
     PREVIOUS_QUESTIONNAIRE_VERSION,
+    ROUTING_SAFETY_QUESTIONNAIRE_VERSION,
     QUESTIONNAIRE_VERSION
   ]);
   const EXCLUSIVE_OPTIONS = Object.freeze(new Set([
@@ -23,7 +25,9 @@
     "Мэргэжлийн дэмжлэг аваагүй",
     "Тодорхой хоол байхгүй",
     "Тодорхой хоол анзаараагүй",
-    "Тодорхой саад байгаагүй"
+    "Тодорхой саад байгаагүй",
+    "Ганцаараа",
+    "Дээрхээс аль нь ч тогтмол тохиолддоггүй"
   ]));
 
   const QUESTIONS = Object.freeze([
@@ -39,8 +43,11 @@
     { id: "Q-PORTION", section: "Хооллосны дараах мэдрэмж ба цадалт", type: "multi", text: "Идэх хэмжээгээ тохируулахад хэцүү санагддаг хоол аль нь вэ?", required: false, max: 3, options: ["Амттан", "Давслаг зууш", "Түргэн хоол", "Гурилан хоол", "Тодорхой хоол байхгүй", "Хариулахгүй"], sensitive: true },
     { id: "Q-EMOTION", section: "Сэтгэл хөдлөл", type: "single", text: "Стресстэй үедээ хоол идэх хүсэл тань хэр өөрчлөгддөг вэ?", required: true, options: ["Өөрчлөгддөггүй", "Бага зэрэг нэмэгддэг", "Нэлээд нэмэгддэг", "Тодорхой биш", "Хариулахгүй"], sensitive: true },
     { id: "Q-CUE", section: "Орчны дохио", type: "multi", text: "Өлсөөгүй үед идэх хүсэл төрөхөд аль нөхцөл нөлөөлдөг вэ?", required: false, max: 3, options: ["Хоол харагдах", "Хоолны үнэр үнэртэх", "Хоол захиалгын апп нээх", "Бусад хүн идэж байх", "Аль нь ч үгүй", "Хариулахгүй"] },
+    { id: "HFE-HOUSEHOLD", introducedIn: QUESTIONNAIRE_VERSION, section: "Гэрийн хоолны орчин", type: "multi", text: "Та одоо хэнтэй хамт амьдардаг вэ?", required: true, max: 4, options: ["Ганцаараа", "Хань эсвэл хамтрагчтай", "Хүүхэдтэй", "Эцэг эх, төрөл садантай", "Бусад хүнтэй"] },
+    { id: "HFE-CONTEXT", introducedIn: QUESTIONNAIRE_VERSION, parent: "HFE-HOUSEHOLD", showWhenExcludes: ["Ганцаараа"], section: "Гэрийн хоолны орчин", type: "multi", text: "Гэрийн хооллолттой холбоотой дараах нөхцөлүүдээс танд тогтмол тохиолддог нь аль вэ?", required: true, max: 8, options: ["Гэрийн бусад хүмүүсийн хоолыг би тогтмол бэлтгэж эсвэл зохицуулдаг", "Гэрийн үндсэн хоолыг ихэвчлэн өөр хүн бэлтгэдэг", "Гэрийн бусад хүний хоолны цаг, хэрэгцээнд тааруулахын тулд өөрийн хоол хойшилдог", "Гэрийнхэндээ хоол бэлтгэх эсвэл өгөх үед төлөвлөөгүйгээр амсах, бага багаар идэх эсвэл үлдсэн хоолноос идэх тохиолдол гардаг", "Өөрийн порц, хачир эсвэл идэх зүйлээ гэрийн бусад хүнээс өөрөөр тохируулахад хэцүү байдаг", "Надад идэх хүсэл төрүүлдэг хүнс гэрийн бусад хүнд зориулж гэрт тогтмол бэлэн байдаг", "Гэрийн бусад хүн идэж байх үед өлсөөгүй байсан ч өөрөө идэх хүсэл төрөх тохиолдол байдаг", "Хооллолтоо өөрчлөхийг хичээх үед гэрийн хүмүүсийн хандлага эсвэл дэмжлэг заримдаа хэрэгжүүлэхэд хүндрэл болдог", "Дээрхээс аль нь ч тогтмол тохиолддоггүй", "Хариулахгүй"] },
     { id: "Q-SLEEP-DURATION", section: "Нойр", type: "single", text: "Ердийн шөнө хэдэн цаг унтдаг вэ?", required: true, options: ["4 цагаас бага", "4–6 цаг", "6–8 цаг", "8 цагаас их"] },
     { id: "Q-SLEEP-QUALITY", section: "Нойр", type: "single", text: "Унтсан хугацаанаас үл хамааран нойрны чанар тань ямар байдаг вэ?", required: true, options: ["Сайн амардаг", "Заримдаа тасалддаг", "Олон сэрдэг", "Өглөө ядарсан хэвээр байдаг"], variants: {
+      [ROUTING_SAFETY_QUESTIONNAIRE_VERSION]: { options: ["Сайн", "Дунд зэрэг", "Тааруу", "Маш тааруу"] },
       [QUESTIONNAIRE_VERSION]: { options: ["Сайн", "Дунд зэрэг", "Тааруу", "Маш тааруу"] }
     } },
     { id: "Q-TRAVEL", section: "Өдөр тутмын хөдөлгөөн", type: "single", text: "Та өдөр тутам ихэвчлэн хэрхэн зорчдог вэ?", required: false, options: ["Алхдаг", "Нийтийн тээврээр", "Машинаар", "Гэрээсээ ажилладаг", "Өөр хэлбэрээр"] },
@@ -54,19 +61,22 @@
     { id: "TOB-GATE", section: "Тамхины хэрэглээ", type: "single", text: "Та тамхи эсвэл никотин агуулсан бүтээгдэхүүн хэрэглэдэг үү?", required: false, options: ["Үгүй", "Хааяа", "Тогтмол", "Хариулахгүй"], sensitive: true },
     { id: "TOB-01", parent: "TOB-GATE", showWhen: ["Хааяа", "Тогтмол"], section: "Тамхины хэрэглээ", type: "single", text: "Хэрэглэх үед хоолны дуршил тань өөрчлөгддөг үү?", required: false, options: ["Өөрчлөгддөггүй", "Багасдаг", "Дараа нь нэмэгддэг", "Тодорхой биш", "Хариулахгүй"] },
     { id: "PREG-GATE", parent: "Q-SEX", showWhen: "Эмэгтэй", section: "Жирэмслэлт ба төрсний дараах үе", type: "single", text: "Та одоогоор жирэмсэн, төрсний дараах эсвэл хөхүүл үед байна уу?", required: false, options: ["Үгүй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл", "Хариулахгүй"], sensitive: true, sexSpecific: true, variants: {
+      [ROUTING_SAFETY_QUESTIONNAIRE_VERSION]: { text: "Танд одоогоор дараах нөхцөлөөс аль нь хамаарах вэ?", options: ["Үгүй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хариулахгүй"] },
       [QUESTIONNAIRE_VERSION]: { text: "Танд одоогоор дараах нөхцөлөөс аль нь хамаарах вэ?", options: ["Үгүй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хариулахгүй"] }
     } },
-    { id: "PREG-BREASTFEEDING", introducedIn: QUESTIONNAIRE_VERSION, parent: "Q-SEX", showWhen: "Эмэгтэй", section: "Жирэмслэлт ба төрсний дараах үе", type: "single", text: "Та одоогоор хөхүүл үү?", required: false, options: ["Тийм", "Үгүй", "Хариулахгүй"], sensitive: true, sexSpecific: true },
+    { id: "PREG-BREASTFEEDING", introducedIn: ROUTING_SAFETY_QUESTIONNAIRE_VERSION, parent: "Q-SEX", showWhen: "Эмэгтэй", section: "Жирэмслэлт ба төрсний дараах үе", type: "single", text: "Та одоогоор хөхүүл үү?", required: false, options: ["Тийм", "Үгүй", "Хариулахгүй"], sensitive: true, sexSpecific: true },
     { id: "MENO-GATE", parent: "Q-SEX", showWhen: "Эмэгтэй", section: "Цэвэршилтийн үе", type: "single", text: "Цэвэршилттэй холбоотой асуулт танд хамаарах уу?", required: false, options: ["Тийм, хамаарна", "Үгүй, хамаарахгүй", "Тодорхойгүй", "Хариулахгүй"], sensitive: true, sexSpecific: true },
     { id: "S1-S03", section: "Аюулгүй байдлын дохио", type: "single", text: "Идсэнээ буцаахын тулд зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол гардаг уу?", required: true, options: ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], sensitive: true, variants: {
+      [ROUTING_SAFETY_QUESTIONNAIRE_VERSION]: { text: "Сүүлийн 28 хоногт идсэнээ нөхөх эсвэл жин нэмэхээс сэргийлэх зорилгоор зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол байсан уу?", options: ["Үгүй", "Өмнө байсан, сүүлийн 28 хоногт байгаагүй", "Сүүлийн 28 хоногт байсан", "Хариулахгүй"] },
       [QUESTIONNAIRE_VERSION]: { text: "Сүүлийн 28 хоногт идсэнээ нөхөх эсвэл жин нэмэхээс сэргийлэх зорилгоор зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол байсан уу?", options: ["Үгүй", "Өмнө байсан, сүүлийн 28 хоногт байгаагүй", "Сүүлийн 28 хоногт байсан", "Хариулахгүй"] }
     } },
-    { id: "S1-S03-TYPE", introducedIn: QUESTIONNAIRE_VERSION, parent: "S1-S03", showWhen: "Сүүлийн 28 хоногт байсан", section: "Аюулгүй байдлын дохио", type: "multi", text: "Сүүлийн 28 хоногт аль үйлдэл гарсан бэ?", required: true, max: 4, options: ["Зориудаар бөөлжих", "Туулгах эм хэрэглэх", "Нөхөн хэт их дасгал хийх", "Олон цаг хоолгүй явах", "Хариулахгүй"], sensitive: true },
-    { id: "S1-S03-FREQUENCY", introducedIn: QUESTIONNAIRE_VERSION, parent: "S1-S03", showWhen: "Сүүлийн 28 хоногт байсан", section: "Аюулгүй байдлын дохио", type: "single", text: "Сүүлийн 28 хоногт ийм үйлдэл нийт хэд орчим удаа гарсан бэ?", required: true, options: ["1 удаа", "2–5 удаа", "6–12 удаа", "13-аас олон удаа", "Хариулахгүй"], sensitive: true },
+    { id: "S1-S03-TYPE", introducedIn: ROUTING_SAFETY_QUESTIONNAIRE_VERSION, parent: "S1-S03", showWhen: "Сүүлийн 28 хоногт байсан", section: "Аюулгүй байдлын дохио", type: "multi", text: "Сүүлийн 28 хоногт аль үйлдэл гарсан бэ?", required: true, max: 4, options: ["Зориудаар бөөлжих", "Туулгах эм хэрэглэх", "Нөхөн хэт их дасгал хийх", "Олон цаг хоолгүй явах", "Хариулахгүй"], sensitive: true },
+    { id: "S1-S03-FREQUENCY", introducedIn: ROUTING_SAFETY_QUESTIONNAIRE_VERSION, parent: "S1-S03", showWhen: "Сүүлийн 28 хоногт байсан", section: "Аюулгүй байдлын дохио", type: "single", text: "Сүүлийн 28 хоногт ийм үйлдэл нийт хэд орчим удаа гарсан бэ?", required: true, options: ["1 удаа", "2–5 удаа", "6–12 удаа", "13-аас олон удаа", "Хариулахгүй"], sensitive: true },
     { id: "S1-S04", section: "Аюулгүй байдлын дохио", type: "single", text: "Сүүлийн үед өөртөө хор хүргэх бодол төрсөн үү?", required: true, options: ["Үгүй", "Өнгөрсөнд байсан", "Одоо хааяа бодогддог", "Одоо идэвхтэй бодогдож байна", "Хариулахгүй"], sensitive: true, variants: {
+      [ROUTING_SAFETY_QUESTIONNAIRE_VERSION]: { text: "Сүүлийн 2 долоо хоногт өөртөө хор хүргэх эсвэл амьдрахгүй байсан нь дээр мэт бодол төрсөн үү?", options: ["Үгүй", "Хааяа", "Олон өдөр", "Бараг өдөр бүр", "Хариулахгүй"] },
       [QUESTIONNAIRE_VERSION]: { text: "Сүүлийн 2 долоо хоногт өөртөө хор хүргэх эсвэл амьдрахгүй байсан нь дээр мэт бодол төрсөн үү?", options: ["Үгүй", "Хааяа", "Олон өдөр", "Бараг өдөр бүр", "Хариулахгүй"] }
     } },
-    { id: "S1-S04-NOW", introducedIn: QUESTIONNAIRE_VERSION, parent: "S1-S04", showWhen: ["Хааяа", "Олон өдөр", "Бараг өдөр бүр"], section: "Аюулгүй байдлын дохио", type: "single", text: "Та яг одоо өөртөө хор хүргэх эрсдэлтэй гэж мэдэрч байна уу?", required: true, options: ["Үгүй", "Эргэлзэж байна", "Тийм", "Хариулахгүй"], sensitive: true },
+    { id: "S1-S04-NOW", introducedIn: ROUTING_SAFETY_QUESTIONNAIRE_VERSION, parent: "S1-S04", showWhen: ["Хааяа", "Олон өдөр", "Бараг өдөр бүр"], section: "Аюулгүй байдлын дохио", type: "single", text: "Та яг одоо өөртөө хор хүргэх эрсдэлтэй гэж мэдэрч байна уу?", required: true, options: ["Үгүй", "Эргэлзэж байна", "Тийм", "Хариулахгүй"], sensitive: true },
     { id: "S1-B01", section: "Аюулгүй байдлын дохио", type: "multi", text: "Одоо илэрч буй биеийн яаралтай шинж аль нь вэ?", required: true, max: 3, options: ["Будилах", "Ухаан балартах", "Бие огцом муудах", "Аль нь ч үгүй", "Хариулахгүй"], sensitive: true },
     { id: "Q-METHOD-CURRENT", section: "Жин бууруулах аргын түүх", type: "multi", text: "Та одоогоор жингээ бууруулахын тулд ямар арга хэрэглэж байна вэ?", required: true, max: 8, options: ["Хоолны дэглэм", "Илчлэг тоолох", "Мацаг барих", "Нүүрс ус багасгах", "Дасгал хөдөлгөөн", "Алхалт", "Жин хасах эм", "Хоолны дуршил бууруулах бүтээгдэхүүн", "Нэмэлт бүтээгдэхүүн", "Мэргэжлийн хоолзүйчийн зөвлөгөө", "Сэтгэлзүйн зөвлөгөө", "Мэс заслын арга", "Онлайн хөтөлбөр эсвэл апп", "Өөр арга", "Одоогоор ямар нэг арга хэрэглээгүй"] },
     { id: "Q-METHOD-PAST", section: "Жин бууруулах аргын түүх", type: "multi", text: "Жингээ бууруулахын тулд дараах аргуудаас алийг нь хэрэглэж үзсэн бэ?", required: true, max: 8, options: ["Хоолны дэглэм", "Илчлэг тоолох", "Мацаг барих", "Нүүрс ус багасгах", "Дасгал хөдөлгөөн", "Алхалт", "Жин хасах эм", "Хоолны дуршил бууруулах бүтээгдэхүүн", "Нэмэлт бүтээгдэхүүн", "Мэргэжлийн хоолзүйчийн зөвлөгөө", "Сэтгэлзүйн зөвлөгөө", "Мэс заслын арга", "Онлайн хөтөлбөр эсвэл апп", "Өөр арга", "Ямар нэг арга хэрэглэж үзээгүй"] },
@@ -75,16 +85,18 @@
     { id: "Q-METHOD-STOP", parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], section: "Жин бууруулах аргын түүх", type: "text", text: "Тэр оролдлого яагаад зогссон бэ?", required: true, maxLength: 1000 },
     { id: "Q-METHOD-RESULT", parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], section: "Жин бууруулах аргын түүх", type: "single", text: "Эхний үед ямар үр дүн ажиглагдсан бэ?", required: true, options: ["Жин буурсан", "Жин тогтвортой байсан", "Жин нэмэгдсэн", "Тодорхой өөрчлөлт ажиглагдаагүй", "Тодорхой санахгүй"] },
     { id: "Q-METHOD-REGAIN", parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], section: "Жин бууруулах аргын түүх", type: "single", text: "Аргаа зогсоосны дараа жин эргэн нэмэгдсэн үү?", required: true, options: ["Үгүй", "Хэсэгчлэн нэмэгдсэн", "Ихэнх нь эргэн нэмэгдсэн", "Өмнөхөөс илүү нэмэгдсэн", "Тодорхой санахгүй"], variants: {
+      [ROUTING_SAFETY_QUESTIONNAIRE_VERSION]: { parent: "Q-METHOD-RESULT", showWhen: "Жин буурсан", showWhenExcludes: undefined, text: "Аргаа зогсоосны дараа жин тань хэрхэн өөрчлөгдсөн бэ?", options: ["Цааш буурсан", "Тогтвортой байсан", "Бага зэрэг нэмэгдсэн", "Нэлээд нэмэгдсэн", "Өмнөхөөс илүү нэмэгдсэн", "Тодорхой санахгүй"] },
       [QUESTIONNAIRE_VERSION]: { parent: "Q-METHOD-RESULT", showWhen: "Жин буурсан", showWhenExcludes: undefined, text: "Аргаа зогсоосны дараа жин тань хэрхэн өөрчлөгдсөн бэ?", options: ["Цааш буурсан", "Тогтвортой байсан", "Бага зэрэг нэмэгдсэн", "Нэлээд нэмэгдсэн", "Өмнөхөөс илүү нэмэгдсэн", "Тодорхой санахгүй"] }
     } },
     { id: "Q-METHOD-SUPPORT", parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], section: "Жин бууруулах аргын түүх", type: "multi", text: "Тухайн үед ямар мэргэжлийн дэмжлэг авсан бэ?", required: true, max: 4, options: ["Эмч", "Хоолзүйч", "Сэтгэлзүйч", "Дасгал хөдөлгөөний мэргэжилтэн", "Бусад мэргэжилтэн", "Мэргэжлийн дэмжлэг аваагүй", "Хариулахгүй"] },
     { id: "Q-METHOD-MEDICATION", parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], section: "Жин бууруулах аргын түүх", type: "single", text: "Жин бууруулах оролдлогын үеэр эм эсвэл нэмэлт бүтээгдэхүүн хэрэглэж байсан уу? Нэр, тун бичих шаардлагагүй.", required: true, options: ["Үгүй", "Эмчийн хяналттай эм хэрэглэсэн", "Эмчийн хяналтгүй эм хэрэглэсэн", "Нэмэлт бүтээгдэхүүн хэрэглэсэн", "Тодорхойгүй", "Хариулахгүй"], sensitive: true },
     { id: "Q-METHOD-BARRIERS", section: "Жин бууруулах аргын түүх", type: "multi", text: "Аргаа тогтвортой үргэлжлүүлэхэд юу хамгийн их саад болдог вэ?", required: true, max: 5, options: ["Цагийн хуваарь", "Өлсөх эсвэл цадах мэдрэмж", "Стресс ба сэтгэл хөдлөл", "Гэр бүл эсвэл орчны нөлөө", "Зардал", "Ядаргаа эсвэл нойр", "Өвдөлт эсвэл хөдөлгөөний хязгаарлалт", "Үр дүн удаан харагдах", "Хэт хатуу дүрэм", "Тодорхой саад байгаагүй", "Хариулахгүй"] },
     { id: "OPEN-PAST", section: "Өмнөх оролдлого", type: "text", text: "Жингээ бууруулахын тулд өмнө туршсан нэг арга яагаад удаан үргэлжлээгүй вэ?", required: false, maxLength: 2000, variants: {
+      [ROUTING_SAFETY_QUESTIONNAIRE_VERSION]: { parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], text: "Өмнөх оролдлогоосоо та юу ойлгож авсан бэ?" },
       [QUESTIONNAIRE_VERSION]: { parent: "Q-METHOD-PAST", showWhenExcludes: ["Ямар нэг арга хэрэглэж үзээгүй"], text: "Өмнөх оролдлогоосоо та юу ойлгож авсан бэ?" }
     } }
   ]);
-  const MAX_ROUTED_QUESTION_COUNT = 44;
+  const MAX_ROUTED_QUESTION_COUNT = 46;
 
   function versionIndex(version) {
     return VERSION_ORDER.indexOf(version);
@@ -165,6 +177,7 @@
     QUESTIONS,
     LEGACY_QUESTIONNAIRE_VERSION,
     PREVIOUS_QUESTIONNAIRE_VERSION,
+    ROUTING_SAFETY_QUESTIONNAIRE_VERSION,
     QUESTIONNAIRE_VERSION,
     MAX_ROUTED_QUESTION_COUNT,
     EXCLUSIVE_OPTIONS,

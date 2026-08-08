@@ -13,6 +13,10 @@ const replacements = [
     '"Q-SLEEP-DURATION": "6–8 цаг", "Q-SLEEP-QUALITY": "Сайн", "Q-MOVEMENT": "Дунд",'
   ],
   [
+    '"Q-METHOD-BARRIERS": ["Тодорхой саад байгаагүй"]',
+    '"Q-METHOD-BARRIERS": ["Тодорхой саад байгаагүй"], "HFE-HOUSEHOLD": ["Ганцаараа"]'
+  ],
+  [
     'await save(event("PATCH", { assessmentId: safetyAssessmentId, answers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } }, otherCookie));',
     'await save(event("PATCH", { assessmentId: safetyAssessmentId, answers: { "S1-S04": "Хааяа", "S1-S04-NOW": "Тийм" } }, otherCookie));'
   ]
