@@ -48,7 +48,8 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
       mode: "summary",
       patternCount: 4,
       interactionCount: 2,
-      lockedSections: []
+      primaryPattern: { title: "SECRET_PATTERN", condition: "SECRET_CONDITION", explanation: "SECRET_REASON" },
+      lockedSections: ["SECRET_SECTION"]
     },
     resultEmail: { skipped: true, saved: false, error: "" },
     payment: { status: "idle" },
@@ -57,54 +58,28 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
   });
   const paywall = app.renderForPath("/assessment/result");
   for (const expected of [
-    "Таны тайланд 4 хэв маяг илэрлээ",
-    "Эдгээрийн дундаас <strong>2 чухал уялдаа холбоо</strong> илэрсэн",
-    "бие биеийнхээ нөлөөг нэмэгдүүлж",
-    "хэрхэн удирдахаа сайн мэдэхгүй байгаа зураглал",
-    "Бүрэн тайлангаас танд ямар хэв маягууд байгааг",
-    "ямар үед давхцаж хүчтэй нөлөөлдгийг",
-    "илүү хялбар, тогтвортой хүрч болохыг",
-    "Бүрэн тайлангаас авах зүйлс",
-    "Төлбөр хийхээс өмнө мэдэх зүйлс",
-    "Тайлан зөвхөн таны тестийн хариултаар дэмжигдсэн мэдээлэлд тулгуурлана.",
-    "Захиалга болон автоматаар сунгалт байхгүй.",
-    "QPay төлбөр баталгаажмагц бүрэн тайлан шууд нээгдэнэ.",
+    "Тест дууслаа",
+    "Таны тайлан бэлэн боллоо",
+    "Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг нөлөөлж байгааг",
+    "Мөн эдгээр хэв маягийг хэрхэн удирдах, хэцүү үеийг хэрхэн даван туулах болон эхэлж хэрэгжүүлэх 3 алхмын зааварчилгааг авна.",
+    "Бүрэн тайланд юу багтах вэ?",
+    "Танд нөлөөлж буй хувийн хэв маяг",
+    "Тэр хэв маяг ямар нөхцөлд илэрч, яагаад жин хасалтад саад болдог тайлбар",
+    "Хэв маягууд давхцах үед үүсэх харилцан нөлөө",
+    "Удирдах арга, хэцүү үед хэрэглэх алхам болон эхэлж хэрэгжүүлэх 3 алхам",
+    "Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ.",
     "Бүрэн тайлангаа нээх — 9,900₮"
-  ]) assert(paywall.includes(expected), `personalized post-assessment copy missing: ${expected}`);
+  ]) assert(paywall.includes(expected), `sealed post-assessment copy missing: ${expected}`);
   for (const forbidden of [
+    "4 хэв маяг",
+    "2 чухал уялдаа холбоо",
+    "SECRET_PATTERN",
+    "SECRET_CONDITION",
+    "SECRET_REASON",
+    "SECRET_SECTION",
     "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх",
-    "Төлбөр баталгаажсаны дараа тест нээгдэнэ",
-    "Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг"
-  ]) assert(!paywall.includes(forbidden), `prepaid or regressed generic claim remains on paywall: ${forbidden}`);
-
-  app._test.setState({
-    initialResult: {
-      mode: "summary",
-      patternCount: 3,
-      interactionCount: 0,
-      lockedSections: []
-    }
-  });
-  const noInteractionPaywall = app.renderForPath("/assessment/result");
-  assert(noInteractionPaywall.includes("Таны тайланд 3 хэв маяг илэрлээ"));
-  assert(noInteractionPaywall.includes("батлагдсан хүчтэй давхцал илрээгүй"));
-  assert(!noInteractionPaywall.includes("бие биеийнхээ нөлөөг нэмэгдүүлж"), "interaction claim was fabricated for zero-interaction result");
-  assert(!noInteractionPaywall.includes("хэрхэн удирдахаа сайн мэдэхгүй байгаа зураглал"), "management-overlap claim was fabricated for zero-interaction result");
-
-  app._test.setState({
-    initialResult: {
-      mode: "neutral",
-      patternCount: 0,
-      interactionCount: 0,
-      lockedSections: []
-    }
-  });
-  const neutralPaywall = app.renderForPath("/assessment/result");
-  assert(neutralPaywall.includes("Таны тайланд хүчтэй давамгай нэг хэв маяг илрээгүй"));
-  assert(neutralPaywall.includes("зохиомлоор дүгнэсэнгүй"));
-  assert(neutralPaywall.includes("давуу тал, өдөр тутам ажиглах нөхцөл"));
-  assert(!neutralPaywall.includes("хүчтэй саад болж байж болохыг"), "problem claim leaked into neutral result");
-  assert(!neutralPaywall.includes("чухал уялдаа холбоо"), "interaction claim leaked into neutral result");
+    "Төлбөр баталгаажсаны дараа тест нээгдэнэ"
+  ]) assert(!paywall.includes(forbidden), `personal insight or prepaid copy leaked into paywall: ${forbidden}`);
 
   app._test.setState({
     assessmentStatus: "complete",
@@ -135,7 +110,7 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
   assert.equal(await nextRoute(database, freeAssessment), "/assessment/questions");
 
   app._test.resetComingSoon();
-  console.log("personalized post-assessment paywall and stale-session isolation tests passed");
+  console.log("sealed post-assessment paywall and stale-session isolation tests passed");
 })().catch(error => {
   console.error(error);
   process.exit(1);

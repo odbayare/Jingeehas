@@ -18,7 +18,6 @@ import { applyReportEditorialProjectionV1 } from "./apply-report-editorial-proje
 import { applyPostAssessmentPaywallFlowV1 } from "./apply-post-assessment-paywall-flow-v1.mjs";
 import { applyPostAssessmentPaymentUrlFilterV1 } from "./apply-post-assessment-payment-url-filter-v1.mjs";
 import { applyPostAssessmentPaymentCopyV1 } from "./apply-post-assessment-payment-copy-v1.mjs";
-import { applyPostAssessmentPaywallApprovedCopyV1 } from "./apply-post-assessment-paywall-approved-copy-v1.mjs";
 import { applyNonBlockingAnswerSaveV1 } from "./apply-nonblocking-answer-save-v1.mjs";
 import { applyNonBlockingAnswerSaveFinalizeV1 } from "./apply-nonblocking-answer-save-finalize-v1.mjs";
 
@@ -39,8 +38,8 @@ const APPROVED_HERO_COPY = Object.freeze([
     "Та жин хасахад тань юу саад болж, яагаад хэцүү болгодогоо мэддэг гэж боддог уу? Таныг заримдаа дэглэмээ зөрчиж хооллох, хааяа нэг амттан сэмээрхэн идчихдэг, зарим хоолыг хэтрүүлчихдэг сэтгэлзүйн шалтгаануудаа та сайн мэдэж байгаа. Гэхдээ таныг далдуур удирдаж буй сэтгэлзүйн дадал зуршлууд хоорондоо нийлэхээрээ ямар үр дүнд хүргэдэгийг мэдэх үү?"
   ],
   [
-    "Жин хасахад саад болж буй сэтгэл зүйн хэв маягууд болон тэдгээрийн харилцан нөлөөг энэ тестээр олж мэдээрэй. Зөвхөн тэдгээрийг мэдээд зогсохгүй, хэрхэн удирдаж, нөлөөг нь багасгах аргуудыг мэдэж аваарай.",
-    "Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд болон тэдгээрийн харилцан нөлөөг энэ тестээр олж мэдээрэй. Зөвхөн тэдгээрийг мэдээд зогсохгүй, хэрхэн удирдаж, нөлөөг нь багасгах аргуудыг мэдэж аваарай."
+    "Жин хасахад саад болж буй сэтгэл зүйн хэв маягууд, тэдгээрийн харилцан нөлөө болон хэрхэн удирдаж, нөлөөг нь багасгах аргуудаа мэдэхийн тулд тестээ бөглөөрэй. Энэ мэдээлэл таны бүрэн тайланд нээгдэнэ.",
+    "Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд, тэдгээрийн харилцан нөлөө болон хэрхэн удирдаж, нөлөөг нь багасгах аргуудаа мэдэхийн тулд тестээ бөглөөрэй. Энэ мэдээлэл таны бүрэн тайланд нээгдэнэ."
   ]
 ]);
 
@@ -114,7 +113,6 @@ export function applyMongolianCopyHotfixRuntime(root) {
   applyPostAssessmentPaywallFlowV1(root);
   applyPostAssessmentPaymentUrlFilterV1(root);
   applyPostAssessmentPaymentCopyV1(root);
-  applyPostAssessmentPaywallApprovedCopyV1(root);
   applyNonBlockingAnswerSaveV1(root);
   applyNonBlockingAnswerSaveFinalizeV1(root);
 }

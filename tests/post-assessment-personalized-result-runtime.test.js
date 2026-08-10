@@ -6,109 +6,56 @@ const path = require("node:path");
 
 const distAppPath = path.join(__dirname, "..", "dist", "app.js");
 const generatedInitialResultPath = path.join(__dirname, "..", ".generated-copy-hotfix", "netlify", "functions", "_lib", "initial-result.js");
-assert(fs.existsSync(distAppPath), "production app must be generated before personalized-result runtime test");
-assert(fs.existsSync(generatedInitialResultPath), "generated count-only initial-result backend is missing");
+assert(fs.existsSync(distAppPath), "production app must be generated before sealed-result runtime test");
+assert(fs.existsSync(generatedInitialResultPath), "generated sealed initial-result backend is missing");
 
 const appSource = fs.readFileSync(distAppPath, "utf8");
-for (const expected of [
+for (const forbidden of [
   "initialResult: null, initialResultError",
   "async function loadInitialResult()",
   "/.netlify/functions/weight-assessment-initial-result?assessmentId=",
-  "route === \"assessmentResult\" && restored.nextRoute === \"/assessment/result\"",
   "data-action=\"retry-initial-result\""
-]) assert(appSource.includes(expected), `personalized-result client lifecycle missing: ${expected}`);
+]) assert(!appSource.includes(forbidden), `sealed client still loads a free personalized result: ${forbidden}`);
 
-const completionRouteStart = appSource.indexOf('if (completed.nextRoute === "/assessment/result")');
-const completionNavigate = appSource.indexOf('navigate("/assessment/result")', completionRouteStart);
-const completionLoad = appSource.indexOf("loadInitialResult().then", completionRouteStart);
-assert(completionRouteStart >= 0, "personalized result completion branch is missing");
-assert(completionNavigate > completionRouteStart, "personalized result route does not open after completion");
-assert(completionLoad > completionNavigate, "initial result must load after the result screen opens rather than blocking navigation");
+const renderStart = appSource.indexOf("function renderInitialResult()");
+const renderEnd = appSource.indexOf("function renderAssessmentCompleted()", renderStart);
+assert(renderStart >= 0 && renderEnd > renderStart, "sealed result renderer is missing");
+const renderSource = appSource.slice(renderStart, renderEnd);
+for (const expected of ["Тест дууслаа", "Таны тайлан бэлэн боллоо", "Бүрэн тайлангаа нээх —"])
+  assert(renderSource.includes(expected), `sealed result copy missing: ${expected}`);
+for (const forbidden of ["state.initialResult", "patternCount", "interactionCount", "primaryPattern", "lockedSections"])
+  assert(!renderSource.includes(forbidden), `sealed result renderer reads personalized data: ${forbidden}`);
 
 const {
   INITIAL_RESULT_SCHEMA_VERSION,
-  SEALED_INITIAL_RESULT_SCHEMA_VERSION,
+  LEGACY_INITIAL_RESULT_SCHEMA_VERSION,
+  COUNT_ONLY_INITIAL_RESULT_SCHEMA_VERSION,
   buildInitialResult,
   publicInitialResult
 } = require(generatedInitialResultPath);
 
-function pattern(id) {
-  return {
-    id,
-    title: `SERVER ONLY ${id}`,
-    evidenceSummary: `SERVER ONLY EVIDENCE ${id}`,
-    effectOnWeightLoss: `SERVER ONLY EFFECT ${id}`
-  };
-}
-
-function moduleFor(id) {
-  return {
-    patternId: id,
-    fields: [
-      { key: "observe", body: `observe ${id}` },
-      { key: "prepare", body: `prepare ${id}` },
-      { key: "inMoment", body: `inMoment ${id}` }
-    ]
-  };
-}
-
 const fullReport = {
-  influencingPatterns: [pattern("p1"), pattern("p2"), pattern("p3")],
-  contextualFactors: [],
-  managementModules: [moduleFor("p1"), moduleFor("p2"), moduleFor("p3")],
-  interactionSummary: [
-    { id: "p1-p2", patternIds: ["p1", "p2"], explanation: "SERVER ONLY INTERACTION" },
-    { id: "observed_context", patternIds: ["p2", "p3"], explanation: "not countable" }
-  ],
-  combinedManagementPlan: {
-    patternIds: ["p1", "p2"],
-    startWith: { title: "Start", body: "Start body" },
-    why: "Why",
-    nextStep: { title: "Next", body: "Next body" },
-    combinedAction: { title: "Together", body: "Together body" }
-  },
-  additionalInteractionManagementPlans: []
+  influencingPatterns: [{
+    id: "p1",
+    title: "SERVER ONLY PATTERN",
+    evidenceSummary: "SERVER ONLY CONDITION",
+    effectOnWeightLoss: "SERVER ONLY REASON"
+  }],
+  recommendations: ["SERVER ONLY ACTION"]
 };
+const sealed = { schemaVersion: INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed" };
 
-const built = buildInitialResult(fullReport);
-assert.equal(INITIAL_RESULT_SCHEMA_VERSION, "jingeehas-initial-result-v2-count-only");
-assert.deepEqual(
-  { mode: built.mode, patternCount: built.patternCount, interactionCount: built.interactionCount },
-  { mode: "summary", patternCount: 3, interactionCount: 1 }
-);
-assert.equal(built.lockedSections.length, 7);
+assert.equal(INITIAL_RESULT_SCHEMA_VERSION, "jingeehas-post-assessment-paywall-v1");
+assert.deepEqual(buildInitialResult(fullReport), sealed);
+assert.deepEqual(publicInitialResult(sealed, fullReport), sealed);
+assert.deepEqual(publicInitialResult({ schemaVersion: LEGACY_INITIAL_RESULT_SCHEMA_VERSION, title: "LEAK" }, fullReport), sealed);
+assert.deepEqual(publicInitialResult({ schemaVersion: COUNT_ONLY_INITIAL_RESULT_SCHEMA_VERSION, patternCount: 3 }, fullReport), sealed);
 
-const projectedFromSealed = publicInitialResult(
-  { schemaVersion: SEALED_INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed" },
-  fullReport
-);
-assert.deepEqual(projectedFromSealed, built, "historical sealed snapshot must project to current count-only result without snapshot mutation");
+const serialized = JSON.stringify([
+  buildInitialResult(fullReport),
+  publicInitialResult({ schemaVersion: COUNT_ONLY_INITIAL_RESULT_SCHEMA_VERSION, patternCount: 3 }, fullReport)
+]);
+for (const forbidden of ["SERVER ONLY", "patternCount", "interactionCount", "primaryPattern", "recommendations"])
+  assert(!serialized.includes(forbidden), `sealed initial result leaked ${forbidden}`);
 
-const publicSerialized = JSON.stringify(projectedFromSealed);
-for (const forbidden of [
-  "SERVER ONLY p1",
-  "SERVER ONLY EVIDENCE",
-  "SERVER ONLY EFFECT",
-  "SERVER ONLY INTERACTION",
-  "primaryPattern",
-  "recommendations",
-  "internalEvidenceMap"
-]) assert(!publicSerialized.includes(forbidden), `count-only initial result leaked ${forbidden}`);
-
-const zeroInteractionReport = {
-  ...fullReport,
-  interactionSummary: [],
-  combinedManagementPlan: null
-};
-const zeroInteraction = buildInitialResult(zeroInteractionReport);
-assert.equal(zeroInteraction.patternCount, 3);
-assert.equal(zeroInteraction.interactionCount, 0);
-
-const neutral = buildInitialResult({ neutralResult: { summary: "SERVER ONLY NEUTRAL" } });
-assert.deepEqual(
-  { mode: neutral.mode, patternCount: neutral.patternCount, interactionCount: neutral.interactionCount },
-  { mode: "neutral", patternCount: 0, interactionCount: 0 }
-);
-assert(!JSON.stringify(neutral).includes("SERVER ONLY NEUTRAL"));
-
-console.log("personalized initial-result client lifecycle and count-only backend contract passed");
+console.log("sealed initial-result client and backend contract passed");
