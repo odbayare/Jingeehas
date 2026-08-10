@@ -65,9 +65,11 @@ for (const exact of [
   "Тест дууслаа",
   "Таны тайлан бэлэн боллоо",
   "Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг нөлөөлж байгааг, тэдгээр нь хоорондоо хэрхэн холбогдож, бие биеэ хүчтэй болгон жин хасах зорилгод тань хэрхэн саад болж байгааг мэдэж авна.",
-  "Мөн эдгээр хэв маягийг хэрхэн удирдах, хэцүү үеийг хэрхэн даван туулах болон эхэлж хэрэгжүүлэх 3 алхмын зааварчилгааг авна.",
+  "Бүрэн тайланд юу багтах вэ?",
+  "Тэр хэв маяг ямар нөхцөлд илэрч, яагаад жин хасалтад саад болдог тайлбар",
   "Даван туулах аргаа ойлгосноор сэтгэлзүй болон зуршлаа удирдахад илүү хялбар болно.",
   "Бүрэн тайлангаа нээх — 9,900₮",
+  "Та нэг аяга кофены үнээр жин хасахад тань саад болдог сэтгэлзүйн хэв маягуудаа таньж мэдэх гэж байна.",
   "Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ."
 ]) assert(sealedResult.includes(exact), `sealed paywall copy missing: ${exact}`);
 for (const forbidden of [
@@ -76,7 +78,8 @@ for (const forbidden of [
   "Танд нөлөөлж буй хэв маягууд", "Хэв маягуудын уялдаа холбоо", "Үр дүнгээ хадгалах",
   "Имэйлээ хадгалах", "Одоо алгасах", "patternCount", "interactionCount", "primaryPattern", "lockedSections"
 ]) assert(!sealedResult.includes(forbidden), `sealed paywall exposed forbidden content: ${forbidden}`);
-assert.equal((sealedResult.match(/<section\b/g) || []).length, 0, "sealed paywall has no preview or secondary section");
+assert.equal((sealedResult.match(/<section\b/g) || []).length, 1, "sealed paywall must contain only the generic report-contents preview");
+assert.equal((sealedResult.match(/<li>/g) || []).length, 4, "sealed paywall report-contents preview must stay concise");
 
 const requiredModuleFields = ["title", "evidenceLink", "observe", "triggerRecognition", "prepare", "inMoment", "avoidRigidDemand", "resume", "professionalHelp"];
 const requiredFallbackFields = ["introduction", "resume", "softenRule", "recheckTrigger", "fitDailyLife"];

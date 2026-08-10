@@ -92,7 +92,12 @@ legend { margin-bottom: 0.7rem; font-weight: 800; }
 .sealed-paywall > .eyebrow { margin: 0 0 0.35rem; }
 .sealed-paywall > h1 { max-width: 20ch; margin-bottom: 1rem; }
 .sealed-paywall > p:not(.eyebrow, .paywall-note) { margin-block: 0.85rem; }
+.report-contents-preview { margin: 1.25rem 0; border: 1px solid #b9cabc; border-radius: 1rem; padding: 1rem 1.15rem; background: #f4f8f3; }
+.report-contents-preview h2 { margin: 0 0 0.75rem; font-size: clamp(1.1rem, 3vw, 1.3rem); }
+.report-contents-preview ul { display: grid; gap: 0.55rem; margin: 0; padding-left: 1.25rem; }
+.report-contents-preview li { padding-left: 0.15rem; }
 .sealed-paywall > .paywall-closing { margin-block: 1rem; }
+.paywall-price-anchor { margin: 0.8rem auto 0; max-width: 42rem; border-left: 3px solid #b56b2b; padding: 0.65rem 0.8rem; background: #fff7ed; color: #3d3328; font-size: 0.92rem; font-weight: 700; }
 .muted, .coverage { color: var(--muted); }
 progress { width: 100%; height: 0.8rem; overflow: hidden; border: 0; border-radius: 99px; accent-color: var(--primary); }
 progress::-webkit-progress-bar { background: #dfe6df; }

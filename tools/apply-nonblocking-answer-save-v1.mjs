@@ -243,12 +243,11 @@ function patchLifecycle(source) {
   source = replaceInsideFunction(source, "submitContact", "state.assessmentId = assessment.assessmentId;", "resetAnswerSaveQueue(); state.assessmentId = assessment.assessmentId;", "prepaid assessment queue reset");
   source = replaceInsideFunction(source, "submitConsent", "state.assessmentId = assessment.assessmentId;", "resetAnswerSaveQueue(); state.assessmentId = assessment.assessmentId;", "consent assessment queue reset");
   if (!source.includes('data-action="retry-answer-saves"\')?.addEventListener')) {
-    source = replaceOnce(
-      source,
-      'root.querySelector(\'[data-action="retry-initial-result"]\')?.addEventListener',
-      'root.querySelector(\'[data-action="retry-answer-saves"]\')?.addEventListener("click", retryAnswerSaves);\n  root.querySelector(\'[data-action="retry-initial-result"]\')?.addEventListener',
-      "answer-save retry binding"
-    );
+    const initialResultRetry = 'root.querySelector(\'[data-action="retry-initial-result"]\')?.addEventListener';
+    const invoiceBinding = 'root.querySelector(\'[data-action="create-invoice"]\')?.addEventListener';
+    source = source.includes(initialResultRetry)
+      ? replaceOnce(source, initialResultRetry, 'root.querySelector(\'[data-action="retry-answer-saves"]\')?.addEventListener("click", retryAnswerSaves);\n  ' + initialResultRetry, "answer-save retry binding")
+      : replaceOnce(source, invoiceBinding, 'root.querySelector(\'[data-action="retry-answer-saves"]\')?.addEventListener("click", retryAnswerSaves);\n  ' + invoiceBinding, "answer-save retry binding");
   }
   if (!source.includes("_test: { nextQuestion,")) {
     source = replaceOnce(

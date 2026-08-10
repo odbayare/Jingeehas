@@ -75,7 +75,7 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
     const questionTops = await questions.evaluateAll(elements => elements.map(element => element.getBoundingClientRect().top));
     expect(questionTops.every((top, index) => index === 0 || top > questionTops[index - 1])).toBe(true);
     const intro = page.locator(".hero-test-intro");
-    await expect(intro).toHaveText("Энэхүү тест яг үүнийг олж харна.");
+    await expect(intro).toHaveText("Бүрэн тайлан тань яг үүнийг харуулна.");
     expect(await intro.evaluate(element => Number(getComputedStyle(element).fontWeight))).toBeGreaterThanOrEqual(700);
     const cta = page.getByRole("link", { name: "ТЕСТЭЭ ЭХЛҮҮЛЭХ" });
     await expect(cta).toBeVisible();
@@ -99,11 +99,11 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
       expect(Math.abs(sectionLefts.explainer - sectionLefts.hero)).toBeLessThan(1);
       expect(Math.abs(sectionLefts.explainer - sectionLefts.sample)).toBeLessThan(1);
     }
-    await expect(page.locator(".hero-note")).toHaveText("Эхний үр дүн үнэгүй");
+    await expect(page.locator(".hero-note")).toHaveText("Тест үнэгүй · Хувийн тайлан 9,900₮");
     await expect(page.locator(".hero-visual")).toBeVisible();
     expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
     await expect(page.getByText("Үнэ: 9,900₮", { exact: true })).toHaveCount(0);
-    await expect(page.locator(".hero")).not.toContainText("9,900₮");
+    await expect(page.locator(".hero")).toContainText("9,900₮");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     expect(await cta.evaluate(element => element.getBoundingClientRect().width <= window.innerWidth)).toBe(true);
   });
@@ -145,7 +145,7 @@ test("natural Mongolian report preview is complete, ordered, and responsive", as
     for (const label of labels) await expect(preview.getByText(label, { exact: true })).toBeVisible();
     for (const body of bodies) await expect(preview.getByText(body, { exact: true })).toBeVisible();
     for (const phrase of banned) await expect(preview.getByText(phrase, { exact: false })).toHaveCount(0);
-    await expect(preview.locator(".section-close")).toHaveText("Үнэгүй тест · Эхний хувийн үр дүн · Бүрэн тайлан 9,900₮");
+    await expect(preview.locator(".section-close")).toHaveText("Үнэгүй тест · Хувийн бүрэн тайлан 9,900₮");
     await expect(preview.getByText("Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш.", { exact: true })).toBeVisible();
     const layout = await preview.evaluate(element => {
       const card = element.querySelector(".sample-report-card").getBoundingClientRect();
@@ -352,11 +352,13 @@ test("free completion shows only the sealed paywall before provider-confirmed fu
   await expect(page.getByText("Тест дууслаа", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Таны тайлан бэлэн боллоо" })).toBeVisible();
   await expect(page.getByText("Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг нөлөөлж байгааг, тэдгээр нь хоорондоо хэрхэн холбогдож, бие биеэ хүчтэй болгон жин хасах зорилгод тань хэрхэн саад болж байгааг мэдэж авна.", { exact: true })).toBeVisible();
-  await expect(page.getByText("Мөн эдгээр хэв маягийг хэрхэн удирдах, хэцүү үеийг хэрхэн даван туулах болон эхэлж хэрэгжүүлэх 3 алхмын зааварчилгааг авна.", { exact: true })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Бүрэн тайланд юу багтах вэ?" })).toBeVisible();
+  await expect(page.locator(".report-contents-preview li")).toHaveCount(4);
   await expect(page.getByText("Даван туулах аргаа ойлгосноор сэтгэлзүй болон зуршлаа удирдахад илүү хялбар болно.", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" })).toBeVisible();
+  await expect(page.getByText("Та нэг аяга кофены үнээр жин хасахад тань саад болдог сэтгэлзүйн хэв маягуудаа таньж мэдэх гэж байна.", { exact: true })).toBeVisible();
   await expect(page.getByText("Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ.", { exact: true })).toBeVisible();
-  await expect(page.locator("main.sealed-paywall > *")).toHaveCount(7);
+  await expect(page.locator("main.sealed-paywall > *")).toHaveCount(8);
   for (const forbidden of ["Нөлөөлөх хэв маяг", "Чухал уялдаа холбоо", "Таны хариултыг нэгтгэж дууслаа", "Нэг хэв маяг бусдаасаа илт давамгай гарсангүй", "Бүрэн тайланд нээгдэх хэсгүүд", "Үр дүнгээ хадгалах", "Имэйлээ хадгалах", "Одоо алгасах"]) {
     await expect(page.getByText(forbidden, { exact: true })).toHaveCount(0);
   }
@@ -374,6 +376,7 @@ test("free completion shows only the sealed paywall before provider-confirmed fu
   }
   await page.reload();
   await expect(page.getByRole("heading", { name: "Таны тайлан бэлэн боллоо" })).toBeVisible();
+  await expect(page.locator(".report-contents-preview li")).toHaveCount(4);
   expect(resultRequests).toEqual([]);
   expect((await (await request.get("/__test/stats")).json()).resultEmailSave).toBe(0);
   await page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" }).evaluate(button => { button.click(); button.click(); });
@@ -407,6 +410,7 @@ test("neutral completion shows the same sealed paywall", async ({ page, request 
   await page.getByRole("button", { name: "Эхлэх" }).click();
   await completeQuestionnaire(page);
   await expect(page.getByRole("heading", { name: "Таны тайлан бэлэн боллоо" })).toBeVisible();
+  await expect(page.locator(".report-contents-preview li")).toHaveCount(4);
   await expect(page.getByText("Нэг хэв маяг бусдаасаа илт давамгай гарсангүй", { exact: true })).toHaveCount(0);
   await expect(page.locator(".result-count-card, .locked-report-preview, .result-email-card")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" })).toBeVisible();
@@ -430,6 +434,7 @@ test("safety completion bypasses ordinary result, paywall, and invoice creation"
   await expect(page).toHaveURL(/\/report$/);
   await expect(page.getByRole("heading", { name: "Мэргэжлийн хүнтэй ярилцахыг зөвлөж байна" })).toBeVisible();
   await expect(page.locator(".locked-report-preview")).toHaveCount(0);
+  await expect(page.locator(".report-contents-preview")).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" })).toHaveCount(0);
   const stats = await (await request.get("/__test/stats")).json();
   expect(stats.qpayCreate).toBe(0);
