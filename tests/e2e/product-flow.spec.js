@@ -352,11 +352,11 @@ test("free completion shows only the sealed paywall before provider-confirmed fu
   await expect(page.getByText("Тест дууслаа", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Таны тайлан бэлэн боллоо" })).toBeVisible();
   await expect(page.getByText("Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг нөлөөлж байгааг, тэдгээр нь хоорондоо хэрхэн холбогдож, бие биеэ хүчтэй болгон жин хасах зорилгод тань хэрхэн саад болж байгааг мэдэж авна.", { exact: true })).toBeVisible();
-  await expect(page.getByText("Мөн эдгээр хэв маягийг хэрхэн удирдах, хэцүү үеийг хэрхэн даван туулах болон эхэлж хэрэгжүүлэх 3 алхмын зааварчилгааг авна.", { exact: true })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Бүрэн тайланд юу багтах вэ?" })).toBeVisible();
   await expect(page.locator(".report-contents-preview li")).toHaveCount(4);
   await expect(page.getByText("Даван туулах аргаа ойлгосноор сэтгэлзүй болон зуршлаа удирдахад илүү хялбар болно.", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "Бүрэн тайлангаа нээх — 9,900₮" })).toBeVisible();
+  await expect(page.getByText("Та нэг аяга кофены үнээр жин хасахад тань саад болдог сэтгэлзүйн хэв маягуудаа таньж мэдэх гэж байна.", { exact: true })).toBeVisible();
   await expect(page.getByText("Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ.", { exact: true })).toBeVisible();
   await expect(page.locator("main.sealed-paywall > *")).toHaveCount(8);
   for (const forbidden of ["Нөлөөлөх хэв маяг", "Чухал уялдаа холбоо", "Таны хариултыг нэгтгэж дууслаа", "Нэг хэв маяг бусдаасаа илт давамгай гарсангүй", "Бүрэн тайланд нээгдэх хэсгүүд", "Үр дүнгээ хадгалах", "Имэйлээ хадгалах", "Одоо алгасах"]) {
