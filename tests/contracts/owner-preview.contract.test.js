@@ -22,7 +22,8 @@ function credential(setCookie) { return String(setCookie).split(";")[0]; }
 function event(method, cookie = "", body = null) { return { httpMethod: method, headers: { cookie }, body: body == null ? null : JSON.stringify(body) }; }
 
 (async () => {
-  const now = new Date("2026-07-17T00:00:00.000Z");
+  // Keep the synthetic 30-day assessment session valid regardless of the calendar date on which CI runs.
+  const now = new Date();
   await database.insert("admin_accounts", { id: "owner-admin", email: "owner@example.com", passwordHash: hashPassword("owner-password-strong"), status: "active", isOwner: true, createdAt: now.toISOString() });
   await database.insert("admin_accounts", { id: "other-admin", email: "other@example.com", passwordHash: hashPassword("other-password-strong"), status: "active", isOwner: false, createdAt: now.toISOString() });
   const owner = await adminLogin(database, "owner@example.com", "owner-password-strong");
