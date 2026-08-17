@@ -1,1 +1,0 @@
-Temporary release note: the owner-preview contract test now uses a current synthetic session timestamp so its 30-day session does not expire as the calendar advances. Production auth/session behavior is unchanged. This file exists only to make the release intent explicit in the deploy-gate repair branch.
