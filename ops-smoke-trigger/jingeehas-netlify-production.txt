@@ -1,10 +1,7 @@
 Deploy current main to the linked Jingeehas Netlify production site and certify the exact live candidate package.
 
-Release scope: PR #44 restored non-blocking per-question answer saving. The next routed question opens immediately while one unload-safe single-flight background queue persists answers. Failed saves remain retryable, final completion waits for confirmed persistence, active text/number input is not rebuilt when a background save settles, stale workers cannot mutate a new assessment queue, and personalized post-assessment result/QPay behavior remains unchanged.
-Source merge SHA: 42f34860f3bf870f3fa068f9701d31ce8a19a665
-Report engine version: jingeehas-case-formulation-v8-editorial-polish
-Initial result schema: jingeehas-initial-result-v2-count-only
-Questionnaire version: jingeehas-production-2026-08-v3-routing-safety
+Release scope: PR #53 fixes the admin-panel load bottleneck in report-regeneration candidate discovery. Completed assessments are filtered against active entitlements before report work; legacy report snapshots are fetched in bounded transaction batches; report version lookups run only for eligible candidates with bounded concurrency. Public assessment, payment, report-generation, report-activation, safety, and customer-facing copy behavior must remain unchanged.
+Source fix merge SHA: 71030beea6ecc1e5e58fc99df0d1a983e9a333bc
 Expected live origin: https://jingeehas.fit
 Expected deployment package: dist static assets plus .generated-copy-hotfix/netlify/functions
-Required certification: exact candidate/live manifest match, no blocking slow-save path, immediate next-question transition, single-flight keepalive queue, retryable failure, final flush before completion, active-input preservation, stale-worker generation isolation, personalized result, post-assessment QPay, safety, V8 report engine, V7/V6 snapshot compatibility, routes, static assets, and generated functions.
+Required certification: exact candidate/live manifest match, admin report candidate endpoint uses the batched loader, no per-completed-assessment serial N+1 path, admin authentication remains protected, analytics and question-progress remain correct, public assessment flow unchanged, payment/QPay unchanged, safety unchanged, report rendering and report version activation unchanged, routes/static assets/generated functions pass existing production smoke gates.
