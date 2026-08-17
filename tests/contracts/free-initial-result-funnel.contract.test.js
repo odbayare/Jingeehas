@@ -114,7 +114,7 @@ const completeAnswers = {
   assert.deepEqual(Object.keys(initial).sort(), ["currency", "mode", "price", "schemaVersion"].sort());
   assert.equal(initial.schemaVersion, INITIAL_RESULT_SCHEMA_VERSION);
   assert.equal(initial.mode, "sealed");
-  assert.equal(initial.price, 9900);
+  assert.equal(initial.price, 39000);
   assert.equal(initial.currency, "MNT");
   const serializedInitial = JSON.stringify(initial);
   for (const forbidden of ["patternCount", "interactionCount", "primaryPattern", "lockedSections", "title", "summary", "Q-AGE", "S1-S04", "internalEvidenceMap", "threshold", "confidence", "recommendations", "fullReport", "providerPaymentId"]) {
@@ -146,7 +146,7 @@ const completeAnswers = {
   };
   await database.update("report_snapshots", storedSnapshot.id, { initialView: structuredClone(countOnlyInitialView) });
   const countOnlyProjected = body(await initialResult(event("GET", null, cookie, { assessmentId: firstCreate.assessmentId })));
-  assert.deepEqual(countOnlyProjected, { schemaVersion: INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed", price: 9900, currency: "MNT" });
+  assert.deepEqual(countOnlyProjected, { schemaVersion: INITIAL_RESULT_SCHEMA_VERSION, mode: "sealed", price: 39000, currency: "MNT" });
   assert.deepEqual((await database.get("report_snapshots", storedSnapshot.id)).initialView, countOnlyInitialView, "count-only projection performs no snapshot mutation");
   await database.update("report_snapshots", storedSnapshot.id, { initialView: sealedInitialView });
 
@@ -158,11 +158,11 @@ const completeAnswers = {
   const provider = {
     async createInvoice(input) {
       providerCreates += 1;
-      assert.equal(input.amount, 9900);
+      assert.equal(input.amount, 39000);
       return { invoiceId: "free-contract-invoice", qrText: "safe", urls: [] };
     },
     async checkPayment() {
-      return { rows: [{ payment_id: "provider-free-contract", payment_status: "PAID", payment_amount: 9900 }] };
+      return { rows: [{ payment_id: "provider-free-contract", payment_status: "PAID", payment_amount: 39000 }] };
     }
   };
   const invoice = await createInvoice(database, provider, sessionId, {
@@ -171,7 +171,7 @@ const completeAnswers = {
     amount: 1
   });
   assert.equal(invoice.status, "pending");
-  assert.equal(invoice.amount, 9900);
+  assert.equal(invoice.amount, 39000);
   assert.equal(providerCreates, 1);
   assert.equal((await database.find("entitlements", { assessmentId: firstCreate.assessmentId })).length, 0);
   assert.equal(await nextRoute(database, await database.get("assessments", firstCreate.assessmentId)), "/assessment/payment");

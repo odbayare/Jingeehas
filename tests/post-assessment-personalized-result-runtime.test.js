@@ -21,8 +21,9 @@ const renderStart = appSource.indexOf("function renderInitialResult()");
 const renderEnd = appSource.indexOf("function renderAssessmentCompleted()", renderStart);
 assert(renderStart >= 0 && renderEnd > renderStart, "sealed result renderer is missing");
 const renderSource = appSource.slice(renderStart, renderEnd);
-for (const expected of ["Тест дууслаа", "Таны тайлан бэлэн боллоо", "Бүрэн тайлангаа нээх —"])
-  assert(renderSource.includes(expected), `sealed result copy missing: ${expected}`);
+assert(renderSource.includes("reportPaywallContent()"), "sealed result renderer must use the V2a paywall component");
+for (const expected of ["ТЕСТ ДУУСЛАА", "Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо", "БҮРЭН ТАЙЛАНГАА НЭЭХ"])
+  assert(appSource.includes(expected), `sealed result copy missing: ${expected}`);
 for (const forbidden of ["state.initialResult", "patternCount", "interactionCount", "primaryPattern", "lockedSections"])
   assert(!renderSource.includes(forbidden), `sealed result renderer reads personalized data: ${forbidden}`);
 

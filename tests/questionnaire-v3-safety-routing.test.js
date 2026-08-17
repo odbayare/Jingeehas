@@ -69,8 +69,8 @@ assert.equal(deployedQuestions.ROUTING_SAFETY_QUESTIONNAIRE_VERSION, V3);
 assert(deployedQuestions.visibleQuestions({ "S1-S04": "Хааяа" }, V3).some(question => question.id === "S1-S04-NOW"));
 
 const appSource = fs.readFileSync(distAppPath, "utf8");
-assert(appSource.includes("Таны тайлан бэлэн боллоо"), "sealed result heading is missing");
-assert(appSource.includes("Бүрэн тайлангаа нээснээр"), "sealed report value copy is missing");
+assert(appSource.includes("Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо"), "sealed result heading is missing");
+assert(appSource.includes("Бүрэн тайлангаас та:"), "sealed report value copy is missing");
 for (const forbidden of [
   "Таны тайланд ${escapeHtml(patternCount)} хэв маяг илэрлээ",
   "чухал уялдаа холбоо</strong> илэрсэн",

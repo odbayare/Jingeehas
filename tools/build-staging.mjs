@@ -33,7 +33,7 @@ function walk(directory) {
 walk(output);
 const sha256 = relative => nodeCrypto.createHash("sha256").update(fs.readFileSync(path.join(output, relative))).digest("hex");
 const functionNames = fs.readdirSync(path.join(output, "netlify", "functions"), { withFileTypes: true }).filter(entry => entry.isFile() && entry.name.endsWith(".js")).map(entry => entry.name.replace(/\.js$/, "")).sort();
-const manifest = { schemaVersion: 1, product: { code: "WEIGHT_TEST_ONE_TIME", amount: 9900, displayPrice: "9,900₮", comingSoon: true }, packageRoot: "staging", files: files.map(file => ({ file, sha256: sha256(file) })), functionNames };
+const manifest = { schemaVersion: 1, product: { code: "WEIGHT_TEST_ONE_TIME", amount: 39000, displayPrice: "39,000₮", comingSoon: true }, packageRoot: "staging", files: files.map(file => ({ file, sha256: sha256(file) })), functionNames };
 fs.mkdirSync(path.dirname(manifestPath), { recursive: true });
 fs.writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 console.log(`Staging package created (${files.length} files, ${functionNames.length} functions); no deployment performed`);

@@ -16,6 +16,7 @@ import { applyReportEditorialLowMovementV1 } from "./apply-report-editorial-low-
 import { applyReportEditorialOverviewV1 } from "./apply-report-editorial-overview-v1.mjs";
 import { applyReportEditorialProjectionV1 } from "./apply-report-editorial-projection-v1.mjs";
 import { applyPostAssessmentPaywallFlowV1 } from "./apply-post-assessment-paywall-flow-v1.mjs";
+import { applyPaywallV2a39000 } from "./apply-paywall-v2a-39000.mjs";
 import { applyPostAssessmentPaymentUrlFilterV1 } from "./apply-post-assessment-payment-url-filter-v1.mjs";
 import { applyPostAssessmentPaymentCopyV1 } from "./apply-post-assessment-payment-copy-v1.mjs";
 import { applyNonBlockingAnswerSaveV1 } from "./apply-nonblocking-answer-save-v1.mjs";
@@ -111,6 +112,7 @@ export function applyMongolianCopyHotfixRuntime(root) {
   applyReportEditorialOverviewV1(root);
   applyReportEditorialProjectionV1(root);
   applyPostAssessmentPaywallFlowV1(root);
+  applyPaywallV2a39000(root);
   applyPostAssessmentPaymentUrlFilterV1(root);
   applyPostAssessmentPaymentCopyV1(root);
   applyNonBlockingAnswerSaveV1(root);

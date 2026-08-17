@@ -13,10 +13,10 @@ const { calculateAssessmentSafety } = require("../../netlify/functions/_lib/safe
   const start = app.renderForPath("/assessment/start");
   const legacy = app.renderForPath("/assessment/contact");
   for (const expected of ["Тестээ эхлүүлэх", "Зөв, буруу хариулт байхгүй.", "Таны хариултаас шалтгаалан зарим асуулт нэмэгдэж болно.", ">Эхлэх</button>"]) assert(start.includes(expected), expected);
-  for (const forbidden of ['id="safety-form"', 'id="contact-email"', "QPay", "9,900₮", "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт", "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах"]) assert(!start.includes(forbidden), forbidden);
+  for (const forbidden of ['id="safety-form"', 'id="contact-email"', "QPay", "39,000₮", "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт", "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах"]) assert(!start.includes(forbidden), forbidden);
   assert(legacy.includes("Тест үнэлгээ болон бүрэн тайлангаа нээх"));
   assert(legacy.includes('id="contact-email"'));
-  assert(legacy.includes("QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх"));
+  assert(legacy.includes("QPay-аар 39,000₮ төлөөд тестээ эхлүүлэх"));
 
   const source = fs.readFileSync(require.resolve("../../app.js"), "utf8");
   for (const forbidden of ["renderSafetyCheck", "submitSafety", "#safety-form", 'api("/.netlify/functions/weight-safety-gate"']) assert(!source.includes(forbidden), forbidden);

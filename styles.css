@@ -98,6 +98,30 @@ legend { margin-bottom: 0.7rem; font-weight: 800; }
 .report-contents-preview li { padding-left: 0.15rem; }
 .sealed-paywall > .paywall-closing { margin-block: 1rem; }
 .paywall-price-anchor { margin: 0.8rem auto 0; max-width: 42rem; border-left: 3px solid #b56b2b; padding: 0.65rem 0.8rem; background: #fff7ed; color: #3d3328; font-size: 0.92rem; font-weight: 700; }
+.paywall-page { width: min(880px, 100%); }
+.paywall-nav { justify-content: space-between; }
+.paywall-nav a:first-child { color: var(--text); font-size: 1.08rem; }
+.paywall-page .content-card { margin-top: clamp(1.25rem, 4vw, 2.5rem); }
+.paywall-page .result-page { padding: clamp(1.15rem, 3vw, 2rem); }
+.paywall-page .sealed-paywall > h1 { font-size: clamp(1.8rem, 4vw, 2.65rem); }
+.paywall-page .report-contents-preview { margin-block: 1rem; }
+.paywall-lead { max-width: 63ch; font-size: clamp(1rem, 2vw, 1.12rem); line-height: 1.65; }
+.premium-price-block { margin: 1.35rem 0 1.15rem; border: 1px solid rgba(35, 92, 67, 0.28); border-radius: 1.2rem; padding: clamp(1.1rem, 3vw, 1.6rem); background: #edf5ef; text-align: center; }
+.premium-price-label { margin: 0; color: var(--primary-dark); font-size: 0.82rem; font-weight: 850; letter-spacing: 0.075em; }
+.premium-price { margin: 0.25rem 0 0; color: var(--primary-dark); font-size: clamp(2.6rem, 9vw, 4.2rem); font-weight: 900; line-height: 1.05; letter-spacing: -0.035em; }
+.premium-price-support { margin: 0.2rem 0 0.8rem; color: var(--muted); font-weight: 750; }
+.premium-price-block .paywall-primary-cta { min-height: 56px; margin-top: 0.35rem; }
+.paywall-payment-note { margin: 0.7rem 0 0; color: var(--muted); font-size: 0.9rem; font-weight: 650; }
+.paywall-trust-copy { margin: 1.15rem 0 0.5rem; border-left: 4px solid var(--primary); padding: 0.7rem 0 0.7rem 0.9rem; background: #f4f8f3; }
+.paywall-boundary { margin: 0.65rem 0 0; font-size: 0.94rem; }
+@media (max-width: 520px) {
+  .paywall-page { padding-inline: 0.85rem; }
+  .paywall-page .content-card { padding: 1.1rem; border-radius: 1.15rem; }
+  .paywall-page .sealed-paywall > h1 { font-size: clamp(1.75rem, 8.5vw, 2.3rem); }
+  .report-contents-preview { padding: 0.9rem 1rem; }
+  .premium-price-block { padding-inline: 0.9rem; }
+  .premium-price-block .paywall-primary-cta { width: 100%; }
+}
 .muted, .coverage { color: var(--muted); }
 progress { width: 100%; height: 0.8rem; overflow: hidden; border: 0; border-radius: 99px; accent-color: var(--primary); }
 progress::-webkit-progress-bar { background: #dfe6df; }

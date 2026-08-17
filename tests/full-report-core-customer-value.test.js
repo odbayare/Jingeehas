@@ -21,7 +21,7 @@ for (const exact of [
   "Нөлөөг нь хэрхэн удирдах арга",
   "Эхэлж хэрэгжүүлэх 3 алхам",
   "Төлөвлөснөөрөө явж чадаагүй үед үргэлжлүүлэх арга",
-  "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх",
+  "QPay-аар 39,000₮ төлөөд тестээ эхлүүлэх",
   "Төлбөр нэг удаагийн. Төлбөр баталгаажсаны дараа тест нээгдэнэ."
 ]) assert(currentPaidFirstPaywall.includes(exact), `current paid-first copy missing: ${exact}`);
 for (const premature of [
@@ -36,41 +36,25 @@ assert(app.renderForPath("/assessment/start").includes("Тестээ эхлүү�
 app._test.setState({ ownerPreview: true, commercialFlowVersion: "legacy_postpaid_v1", assessmentStatus: "complete", assessmentId: "core-value-paywall" });
 const paywall = app.renderForPath("/assessment/completed");
 for (const exact of [
-  "Бүрэн тайлан",
-  "Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох",
-  "Ямар хэв маяг нөлөөлж байгааг мэдэх нь зөвхөн эхний алхам. Бүрэн тайлангаас эдгээр хэв маяг ямар үед хүчтэй болдог, хоорондоо хэрхэн нөлөөлдөг болон жин хасах оролдлогыг тань яаж хүндрүүлдэг байж болохыг мэдэж авна.",
-  "Мөн тухайн үед юу хийж болох, сэтгэл хөдлөл, зуршил, идэх хүсэл болон орчны нөлөөг хэрхэн удирдах талаар таны хариултад тулгуурласан тодорхой заавар авна.",
-  "Даван туулах аргаа ойлгосноор жин хасахад саад болж буй сэтгэлзүйн хэв маягаа анзаарч, удирдахад илүү хялбар болно. Ингэснээр жин хасах зорилгодоо илүү ойлгомжтой, тогтвортой ажиллах боломжтой болно.",
-  "Хэв маягуудын нэр, уялдаа холбооноос гадна тэдгээрийн нөлөөг багасгах, сэтгэл хөдлөл болон зуршлаа удирдах, хэцүү үеийг даван туулах аргуудаа авна.",
-  "Бүрэн тайлангаа нээх — 9,900₮",
-  "Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ."
+  "ТЕСТ ДУУСЛАА",
+  "Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо",
+  "Бүрэн тайлангаас та:",
+  "39,000₮",
+  "БҮРЭН ТАЙЛАНГАА НЭЭХ",
+  "QPay · Төлбөр баталгаажмагц бүрэн тайлан нээгдэнэ"
 ]) assert(paywall.includes(exact), `paywall exact copy missing: ${exact}`);
-
-const lockedTitles = [
-  "Танд нөлөөлж буй хэв маягууд",
-  "Хэв маягуудын уялдаа холбоо",
-  "Ямар үед илүү хүчтэй болдог",
-  "Сэтгэлзүйн хэв маягаа хэрхэн удирдах вэ?",
-  "Хэцүү үеийг хэрхэн даван туулах вэ?",
-  "Эхэлж хэрэгжүүлэх 3 алхам",
-  "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
-];
-for (const title of lockedTitles) assert.equal(paywall.split(title).length - 1, 1, `locked title must appear exactly once: ${title}`);
-assert.equal((paywall.match(/class="lock-mark"/g) || []).length, 7);
+assert.equal((paywall.match(/<li>/g) || []).length, 3, "V2a value preview stays compact");
 for (const hiddenBody of ["Юуг анзаарах вэ?", "Урьдчилан юу бэлдэх вэ?", "Тухайн үед юу хийж болох вэ?"]) assert(!paywall.includes(hiddenBody), `full report body leaked into locked preview: ${hiddenBody}`);
 
 app._test.setState({ ownerPreview: true, commercialFlowVersion: "free_assessment_postpaid_v1", assessmentStatus: "complete", assessmentId: "sealed-result" });
 const sealedResult = app.renderForPath("/assessment/result");
 for (const exact of [
-  "Тест дууслаа",
-  "Таны тайлан бэлэн боллоо",
-  "Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг нөлөөлж байгааг, тэдгээр нь хоорондоо хэрхэн холбогдож, бие биеэ хүчтэй болгон жин хасах зорилгод тань хэрхэн саад болж байгааг мэдэж авна.",
-  "Бүрэн тайланд юу багтах вэ?",
-  "Тэр хэв маяг ямар нөхцөлд илэрч, яагаад жин хасалтад саад болдог тайлбар",
-  "Даван туулах аргаа ойлгосноор сэтгэлзүй болон зуршлаа удирдахад илүү хялбар болно.",
-  "Бүрэн тайлангаа нээх — 9,900₮",
-  "Та нэг аяга кофены үнээр жин хасахад тань саад болдог сэтгэлзүйн хэв маягуудаа таньж мэдэх гэж байна.",
-  "Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ."
+  "ТЕСТ ДУУСЛАА",
+  "Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо",
+  "Бүрэн тайлангаас та:",
+  "39,000₮",
+  "БҮРЭН ТАЙЛАНГАА НЭЭХ",
+  "Тайлангийн агуулгыг таны өгсөн хариултад тулгуурлан бүрдүүлнэ. Тод хэв маяг ажиглагдаагүй бол зохиомол дүгнэлт нэмэхгүй."
 ]) assert(sealedResult.includes(exact), `sealed paywall copy missing: ${exact}`);
 for (const forbidden of [
   "Нөлөөлөх хэв маяг", "Чухал уялдаа холбоо", "Таны хариултыг нэгтгэж дууслаа",
@@ -78,8 +62,8 @@ for (const forbidden of [
   "Танд нөлөөлж буй хэв маягууд", "Хэв маягуудын уялдаа холбоо", "Үр дүнгээ хадгалах",
   "Имэйлээ хадгалах", "Одоо алгасах", "patternCount", "interactionCount", "primaryPattern", "lockedSections"
 ]) assert(!sealedResult.includes(forbidden), `sealed paywall exposed forbidden content: ${forbidden}`);
-assert.equal((sealedResult.match(/<section\b/g) || []).length, 1, "sealed paywall must contain only the generic report-contents preview");
-assert.equal((sealedResult.match(/<li>/g) || []).length, 4, "sealed paywall report-contents preview must stay concise");
+assert.equal((sealedResult.match(/<li>/g) || []).length, 3, "sealed paywall report-contents preview must stay concise");
+assert(!sealedResult.includes("Та нэг аяга кофены үнээр"), "retired coffee comparison must not render");
 
 const requiredModuleFields = ["title", "evidenceLink", "observe", "triggerRecognition", "prepare", "inMoment", "avoidRigidDemand", "resume", "professionalHelp"];
 const requiredFallbackFields = ["introduction", "resume", "softenRule", "recheckTrigger", "fitDailyLife"];

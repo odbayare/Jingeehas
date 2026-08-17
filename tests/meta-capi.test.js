@@ -32,7 +32,7 @@ class MemoryDb {
     enabled: true,
     pixelId: "123456789",
     productCode: "WEIGHT_TEST_ONE_TIME",
-    amount: 9900,
+    amount: 39000,
     currency: "MNT"
   });
   assert.equal(metaBrowserConfig({ META_BROWSER_PIXEL_ENABLED: "false", META_PIXEL_ID: "123456789" }).enabled, false);
@@ -75,6 +75,8 @@ class MemoryDb {
     content_type: "product",
     product_code: "WEIGHT_TEST_ONE_TIME"
   });
+  const currentPayment = { ...payment, id: "wp_current_39000", providerPaymentId: "provider-current-39000", amount: 39000 };
+  assert.equal(purchasePayload(currentPayment, event).custom_data.value, 39000);
   assert.deepEqual(payload.user_data, {
     client_ip_address: "203.0.113.5",
     client_user_agent: "Test Browser",
@@ -136,6 +138,7 @@ class MemoryDb {
     assert.ok(!configSource.includes(forbidden), `browser config must exclude ${forbidden}`);
   }
   assert.ok(indexSource.indexOf("/meta-pixel.js") < indexSource.indexOf("/app.js"), "Pixel bridge must wrap fetch before app.js runs");
+  assert.equal((browserSource.match(/value: paymentAmount/g) || []).length, 2, "browser checkout and purchase must use the server payment amount");
 
   console.log("Meta CAPI tests passed");
 })().catch(error => {

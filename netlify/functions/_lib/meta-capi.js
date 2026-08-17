@@ -8,6 +8,11 @@ const DEFAULT_GRAPH_API_VERSION = "v25.0";
 const SAFE_GRAPH_VERSION = /^v\d+\.\d+$/;
 const SAFE_META_ID = /^\d{5,32}$/;
 const DEFAULT_EVENT_SOURCE_URL = "https://jingeehas.fit/assessment/payment";
+const LEGACY_PAYMENT_AMOUNT = 9900;
+
+function isSupportedPaymentAmount(amount) {
+  return Number.isInteger(amount) && (amount === LEGACY_PAYMENT_AMOUNT || amount === PRODUCT.amount);
+}
 
 function exactEnabled(value) {
   return String(value || "").toLowerCase() === "true";
@@ -96,7 +101,7 @@ function purchasePayload(payment, event, now = new Date()) {
     event_source_url: eventSourceUrl(event),
     user_data: userData(event),
     custom_data: {
-      value: PRODUCT.amount,
+      value: payment.amount,
       currency: "MNT",
       order_id: String(payment.id),
       content_ids: [PRODUCT.code],
@@ -118,7 +123,7 @@ async function deliverConfirmedPurchase(database, paymentId, event, options = {}
 
   const payment = await database.get("payments", paymentId);
   if (!payment || payment.status !== "paid" || !payment.providerPaymentId ||
-      payment.amount !== PRODUCT.amount || payment.productCode !== PRODUCT.code) {
+      !isSupportedPaymentAmount(payment.amount) || payment.productCode !== PRODUCT.code) {
     return { delivered: false, reason: "not_authoritative" };
   }
 

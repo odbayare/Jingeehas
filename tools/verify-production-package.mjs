@@ -51,8 +51,14 @@ for (const required of ["Content-Security-Policy", "Referrer-Policy", "X-Content
 }
 if (headers.includes("unsafe-inline")) failures.push("CSP allows inline execution");
 const app = fs.readFileSync(path.join(dist, "app.js"), "utf8");
-for (const invariant of ["WEIGHT_TEST_COMING_SOON_MODE = false", "WEIGHT_TEST_ONE_TIME", "amount: 9900", "displayPrice: \"9,900₮\""]) {
+for (const invariant of ["WEIGHT_TEST_COMING_SOON_MODE = false", "WEIGHT_TEST_ONE_TIME", "amount: 39000", "displayPrice: \"39,000₮\""]) {
   if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
+}
+for (const required of ["Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо", "39,000₮", "БҮРЭН ТАЙЛАНГАА НЭЭХ", "Нэг удаагийн төлбөр"]) {
+  if (!app.includes(required)) failures.push(`Paywall V2a artifact copy missing: ${required}`);
+}
+for (const forbidden of ["Та нэг аяга кофены үнээр", ">Таны тайлан бэлэн боллоо<"]) {
+  if (app.includes(forbidden)) failures.push(`retired paywall copy remains in artifact: ${forbidden}`);
 }
 const allowedHosts = new Set(["jingeehas.fit", "merchant.qpay.mn", "www.w3.org", "connect.facebook.net", "www.facebook.com"]);
 for (const match of publicText.matchAll(/https?:\/\/([^/\s"')]+)/g)) {

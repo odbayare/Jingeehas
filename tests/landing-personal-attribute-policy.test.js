@@ -19,7 +19,7 @@ const required = [
   "Давхцах үедээ танд хэрхэн нөлөөлж байна?",
   "Тэр нөлөөний улмаас таныг ямар алхам хийлгэж байна?",
   "Тэр нөлөөллүүдийг яаж удирдах вэ?",
-  "Тест үнэгүй · Хувийн тайлан 9,900₮"
+  "Тест үнэгүй · Хувийн тайлан 39,000₮"
 ];
 
 const prohibited = [
@@ -40,7 +40,7 @@ const landing = app.renderForPath("/");
 for (const copy of required) assert(visibleText(landing).includes(copy), `rendered landing missing: ${copy}`);
 for (const copy of prohibited) assert(!landing.includes(copy), `rendered landing contains prohibited copy: ${copy}`);
 assert(landing.includes("ТЕСТЭЭ ЭХЛҮҮЛЭХ"));
-assert(landing.includes("9,900₮"));
+assert(landing.includes("39,000₮"));
 app._test.resetComingSoon();
 
 console.log("landing personal-attribute policy copy tests passed");

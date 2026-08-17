@@ -9,14 +9,14 @@ Updated: 2026-08-01
 | `PageView` | Yes | No | Page render after Pixel config is enabled |
 | `ViewContent` | Yes | No | Landing/product content render |
 | `InitiateCheckout` | Yes | No | QPay invoice exists in `pending` or `paid` state |
-| `Purchase` | Yes | Yes | Provider-confirmed QPay payment, exact 9,900 MNT, stable provider payment ID and active entitlement path |
+| `Purchase` | Yes | Yes | Provider-confirmed QPay payment, exact server-stored transaction amount (39,000 MNT current draft or 9,900 MNT legacy), stable provider payment ID and active entitlement path |
 
 ## Purchase contract
 
 - Event name: `Purchase`.
 - Event ID: deterministic `jh_purchase_<sha256-prefix>` derived from generic product code plus provider payment authority.
 - Browser `eventID` and server `event_id` must be identical.
-- Value: `9900`.
+- Value: actual server-created payment amount (`39000` for new V2a transactions; `9900` for legitimate legacy transactions).
 - Currency: `MNT`.
 - Content ID/product code: `WEIGHT_TEST_ONE_TIME`.
 - Order ID: local payment ID; provider payment ID is not exposed to the browser.

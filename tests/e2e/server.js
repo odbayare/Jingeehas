@@ -66,7 +66,7 @@ const initialResult = {
     "Эхэлж хэрэгжүүлэх 3 алхам",
     "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
   ],
-  price: 9900,
+  price: 39000,
   currency: "MNT"
 };
 const neutralInitialResult = {
@@ -74,7 +74,7 @@ const neutralInitialResult = {
   patternCount: 0,
   interactionCount: 0,
   lockedSections: initialResult.lockedSections,
-  price: 9900,
+  price: 39000,
   currency: "MNT"
 };
 const singleInitialResult = { ...initialResult, patternCount: 1, interactionCount: 0 };
@@ -176,13 +176,13 @@ const endpoints = {
       stats.paymentRows += 1;
     }
     paymentStatus = "pending";
-    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "pending", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] });
+    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 39000, status: "pending", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] });
   },
   "qpay-check-payment": async (_body, response) => {
     stats.qpayCheck += 1;
     paymentStatus = "paid";
     entitled = true;
-    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 9900, status: "paid", entitlement: true, nextRoute: "/report" });
+    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 39000, status: "paid", entitlement: true, nextRoute: "/report" });
   },
   "weight-assessment-questions": async (_body, response, request) => { assessmentStatus = "in_progress"; const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e"); json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", status: assessmentStatus, startedAt: "2026-07-21T08:00:00.000Z", questionnaireVersion: questions.QUESTIONNAIRE_VERSION }); },
   "weight-assessment-save": async (body, response) => {
@@ -257,7 +257,7 @@ const endpoints = {
     json(response, 200, {
       assessment: { assessmentId, status: assessmentStatus, safetyRoute: flowMode === "safety" ? "professional_support" : null, commercialFlowVersion: "free_assessment_postpaid_v1", questionnaireVersion: questions.QUESTIONNAIRE_VERSION },
       nextRoute,
-      payment: paymentStatus ? { status: paymentStatus, paymentId: "wp-e2e", amount: 9900, productCode: "WEIGHT_TEST_ONE_TIME", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] } : null,
+      payment: paymentStatus ? { status: paymentStatus, paymentId: "wp-e2e", amount: 39000, productCode: "WEIGHT_TEST_ONE_TIME", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] } : null,
       answers: savedAnswers,
       report: nextRoute === "/report"
         ? flowMode === "safety"
