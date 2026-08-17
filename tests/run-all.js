@@ -33,6 +33,7 @@ const tests = [
   "tests/security.test.js",
   "tests/certification-tools.test.js",
   "tests/admin-bootstrap.test.js",
+  "tests/admin-report-candidate-performance.test.js",
   "tests/daily-funnel-analytics.test.js",
   "tests/campaign-attribution-analytics.test.js",
   "tests/question-progress-analytics.test.js",
