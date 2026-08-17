@@ -104,7 +104,7 @@ class QPayClient {
       invoice_code: this.config.invoiceCode,
       sender_invoice_no: senderInvoiceNo,
       invoice_receiver_code: senderInvoiceNo,
-      invoice_description: "Илүүдэл жингээс салах тест үнэлгээ",
+      invoice_description: "Жингээ Хас — хувийн бүрэн тайлан",
       amount,
       callback_url: `${this.config.callbackOrigin}/.netlify/functions/qpay-check-payment?senderInvoiceNo=${encodeURIComponent(senderInvoiceNo)}`
     });

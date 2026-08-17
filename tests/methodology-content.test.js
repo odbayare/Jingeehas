@@ -22,7 +22,7 @@ const reportPreviewBodies = [
 ];
 const bannedReportPhrases = ["нэг удаа хазайх", "хазайсны дараа", "хэмнэлдээ эргэн орох", "эргэн орох арга", "гол саадтай ажиллах", "бодит аргуудыг авна", "танд тохирох орчин", "өөрчлөлтөө хялбарчлах", "төлөвлөгөө тасарвал", "хувилбарыг харна", "боломжит хувилбарыг авна", "таны journey", "зан үйлийн journey", "actionable insight", "personalized roadmap", "өөрийн хэмнэлээ дахин олох", "өөрийгөө хүчээр өөрчлөх", "бүх амьдралаа нэг дор өөрчлөх", "ойрын хугацаанд хэрэгжүүлж болох", "танд зориулсан замын зураг", "саадтайгаа ажиллах", "хэрэгжүүлэх боломжтой болгох"];
 assert.equal((landing.match(/id="sample-report"/g) || []).length, 1);
-for (const exactCopy of ["Таны авах тайлан", "Таны тайлан ямар байх вэ?", reportPreviewLead, ...reportPreviewLabels, ...reportPreviewBodies, "Үнэгүй тест · Хувийн бүрэн тайлан", "9,900₮", "Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш."]) assert(landing.includes(exactCopy), exactCopy);
+for (const exactCopy of ["Таны авах тайлан", "Таны тайлан ямар байх вэ?", reportPreviewLead, ...reportPreviewLabels, ...reportPreviewBodies, "Үнэгүй тест · Хувийн бүрэн тайлан", "39,000₮", "Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш."]) assert(landing.includes(exactCopy), exactCopy);
 for (const banned of bannedReportPhrases) {
   assert(!source.toLowerCase().includes(banned), `source: ${banned}`);
   assert(!landing.toLowerCase().includes(banned), `rendered: ${banned}`);

@@ -1,6 +1,6 @@
 "use strict";
 
-const PRODUCT = Object.freeze({ code: "WEIGHT_TEST_ONE_TIME", amount: 9900 });
+const PRODUCT = Object.freeze({ code: "WEIGHT_TEST_ONE_TIME", amount: 39000 });
 const TABLES = Object.freeze([
   "sessions", "assessment_sessions", "safety_checks", "assessments", "assessment_answers", "assessment_summaries",
   "report_snapshots", "report_snapshot_versions", "payments", "entitlements", "recovery_contacts",

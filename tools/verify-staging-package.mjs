@@ -30,7 +30,7 @@ const app = fs.readFileSync(path.join(staging, "site", "app.js"), "utf8");
 if (!app.includes("WEIGHT_TEST_COMING_SOON_MODE = false")) failures.push("public launch switch is not disabled in the staging package");
 const preview = fs.readFileSync(path.join(staging, "netlify", "functions", "_lib", "preview.js"), "utf8");
 if (!preview.includes("WEIGHT_TEST_COMING_SOON_MODE = false")) failures.push("server launch switch is not disabled in the staging package");
-for (const invariant of ["WEIGHT_TEST_ONE_TIME", "amount: 9900", "displayPrice: \"9,900₮\""]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
+for (const invariant of ["WEIGHT_TEST_ONE_TIME", "amount: 39000", "displayPrice: \"39,000₮\"", "БҮРЭН ТАЙЛАНГАА НЭЭХ"]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
 for (const name of REQUIRED_PRODUCTION_FUNCTIONS) {
   if (!productionManifestFunctions.has(name)) failures.push(`required function absent from production manifest: ${name}`);
   if (!stagingFunctions.has(name)) failures.push(`required function absent from staging manifest: ${name}`);

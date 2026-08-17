@@ -1,6 +1,6 @@
 "use strict";
 
-const PRODUCT = Object.freeze({ name: "Илүүдэл жингээс салах тест үнэлгээ", code: "WEIGHT_TEST_ONE_TIME", amount: 9900, displayPrice: "9,900₮" });
+const PRODUCT = Object.freeze({ name: "Жингээ Хас — хувийн бүрэн тайлан", code: "WEIGHT_TEST_ONE_TIME", amount: 39000, displayPrice: "39,000₮" });
 const SUPPORT_EMAIL = "jingeehas@gmail.com";
 const WEIGHT_TEST_COMING_SOON_MODE = false;
 const PAYMENT_COPY = Object.freeze({
@@ -100,6 +100,7 @@ const ROUTES = Object.freeze({
 const OWNER_PREVIEW_ROUTES = new Set(["assessmentStart", "assessmentContact", "assessmentResult", "assessmentCompleted", "payment", "questions", "report", "recovery", "dataDeletion"]);
 function routeName(pathname) { return ROUTES[String(pathname || "/").replace(/\/+$/, "") || "/"] || "notFound"; }
 function navigation() { return `<nav class="site-nav" aria-label="Үндсэн цэс"><a href="/" data-route>Нүүр</a><a href="/about" data-route>Тестийн тухай</a><a href="/recovery" data-route>Тайлан сэргээх</a></nav>`; }
+function paywallNavigation() { return `<nav class="site-nav paywall-nav" aria-label="Тайлангийн төлбөрийн цэс"><a href="/" data-route>Жингээ Хас</a><a href="/support" data-route>Төлбөрийн тусламж</a></nav>`; }
 function footer() { return `<footer class="site-footer"><p>${PRODUCT.name}</p><nav aria-label="Арга зүй, хууль, тусламжийн холбоос"><a href="/methodology" data-route>Арга зүй</a> · <a href="/privacy" data-route>Нууцлалын бодлого</a> · <a href="/terms" data-route>Үйлчилгээний нөхцөл</a> · <a href="/support" data-route>Төлбөрийн тусламж</a> · <a href="/data-deletion" data-route>Өгөгдөл устгах хүсэлт</a></nav><p>Дэмжлэг: ${supportContactLink()}</p></footer>`; }
 
 function scientificMethodologyBox() {
@@ -136,7 +137,7 @@ function renderLanding() {
     <p class="hero-paragraph">Та жин хасахад тань юу саад болж, яагаад хэцүү болгодогоо мэддэг гэж боддог уу? Таныг заримдаа дэглэмээ зөрчиж хооллох, хааяа нэг амттан сэмээрхэн идчихдэг, зарим хоолыг хэтрүүлчихдэг сэтгэлзүйн шалтгаануудаа та сайн мэдэж байгаа. Гэхдээ таныг далдуур удирдаж буй сэтгэлзүйн дадал зуршлууд хоорондоо нийлэхээрээ ямар үр дүнд хүргэдэгийг мэдэх үү?</p>
     <p class="hero-paragraph">Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд, тэдгээрийн харилцан нөлөө болон хэрхэн удирдаж, нөлөөг нь багасгах аргуудаа мэдэхийн тулд тестээ бөглөөрэй. Энэ мэдээлэл таны бүрэн тайланд нээгдэнэ.</p>
     <div class="hero-actions"><a class="button" href="/assessment/start" data-route>ТЕСТЭЭ ЭХЛҮҮЛЭХ</a>
-      <p class="hero-note">Тест үнэгүй · Хувийн тайлан 9,900₮</p>
+      <p class="hero-note">Тест үнэгүй · Хувийн тайлан 39,000₮</p>
     </div>
     </div><div class="hero-visual" aria-hidden="true"></div></section>
     <section class="hero-explainer" aria-label="Энэхүү тестийн олж харах зүйлс">
@@ -160,7 +161,7 @@ function renderLanding() {
         <div class="report-preview-item"><p class="sample-kicker">ДЭГЛЭМЭЭ БАРЬЖ ЧАДААГҮЙ ҮЕД ЯАХ ВЭ?</p><p>Дэглэмээ барьж чадаагүй нэг өдрөөс болж бүхнээ орхихгүйгээр дараагийн хоол, дараагийн өдрөөсөө хэрхэн хэвийн үргэлжлүүлэхийг тайлбарлана.</p></div>
         <div class="report-preview-item"><p class="sample-kicker">ӨӨРТӨӨ ТОХИРСОН АРГА БАРИЛАА ХЭРХЭН СОНГОХ ВЭ?</p><p>Нойр, ажил, гэр бүл, хөдөлгөөн, санхүүгийн боломж болон өдөр тутмын хуваарьтайгаа нийцүүлэн жин хасах арга барилаа хэрхэн сонгохыг ойлгоно.</p></div>
       </div>
-      <p class="section-close"><strong>Үнэгүй тест · Хувийн бүрэн тайлан <span class="price-token">9,900₮</span></strong></p>
+      <p class="section-close"><strong>Үнэгүй тест · Хувийн бүрэн тайлан <span class="price-token">39,000₮</span></strong></p>
       <p class="methodology-limitation">Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш.</p>
     </section>
     <section class="methodology-summary" aria-labelledby="methodology-title">
@@ -257,37 +258,27 @@ function renderAssessmentContact() {
 function reportPaywallContent(embedded = false) {
   const completed = state.assessmentStatus === "complete";
   const heading = embedded
-    ? `<h2 id="full-report-value-title">Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох</h2>`
-    : `<h1 id="page-title" tabindex="-1">Хамгийн чухал нь эдгээр бэрхшээлийг хэрхэн даван туулах вэ гэдгийг ойлгох</h1>`;
-  return `<section class="report-paywall" aria-labelledby="${embedded ? "full-report-value-title" : "page-title"}"><p class="eyebrow">Бүрэн тайлан</p>
+    ? `<h2 id="full-report-value-title">Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо</h2>`
+    : `<h1 id="page-title" tabindex="-1">Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо</h1>`;
+  return `<section class="report-paywall sealed-paywall" aria-labelledby="${embedded ? "full-report-value-title" : "page-title"}"><p class="eyebrow">ТЕСТ ДУУСЛАА</p>
     ${heading}
-    <p>Ямар хэв маяг нөлөөлж байгааг мэдэх нь зөвхөн эхний алхам. Бүрэн тайлангаас эдгээр хэв маяг ямар үед хүчтэй болдог, хоорондоо хэрхэн нөлөөлдөг болон жин хасах оролдлогыг тань яаж хүндрүүлдэг байж болохыг мэдэж авна.</p>
-    <p>Мөн тухайн үед юу хийж болох, сэтгэл хөдлөл, зуршил, идэх хүсэл болон орчны нөлөөг хэрхэн удирдах талаар таны хариултад тулгуурласан тодорхой заавар авна.</p>
-    <p class="paywall-closing">Даван туулах аргаа ойлгосноор жин хасахад саад болж буй сэтгэлзүйн хэв маягаа анзаарч, удирдахад илүү хялбар болно. Ингэснээр жин хасах зорилгодоо илүү ойлгомжтой, тогтвортой ажиллах боломжтой болно.</p>
-    <section class="locked-report-preview" aria-labelledby="locked-report-title"><h2 id="locked-report-title">Бүрэн тайланд нээгдэх хэсгүүд</h2>
-      <ol aria-label="Төлбөрийн дараа нээгдэх долоон хэсэг">${LOCKED_REPORT_TITLES.map(title => `<li><span class="lock-mark" role="img" aria-label="Түгжээтэй">🔒</span><span>${escapeHtml(title)}</span></li>`).join("")}</ol>
+    <p class="paywall-lead">Тестийн хариултуудыг тань нэгтгэн, жин хасах төлөвлөгөөгөө дагахад ямар нөхцөл хүндрэл үүсгэж болох, өөр дээрээ юуг анзаарах, юунаас эхлэхийг бүрэн тайланд харуулна.</p>
+    <section class="report-contents-preview" aria-labelledby="report-contents-title"><h2 id="report-contents-title">Бүрэн тайлангаас та:</h2>
+      <ul><li>Таны хариултаас юу хамгийн тод ажиглагдсаныг</li><li>Ямар нөхцөлд хүндрэл нэмэгдэж болох, хэд хэдэн хэв маяг зэрэг ажиглагдсан бол тэдгээрийн уялдаа холбоог</li><li>Өөр дээрээ юу ажиглаж, ямар алхмаас эхэлж болохыг харна</li></ul>
     </section>
-    <p class="muted paywall-cta-support">Хэв маягуудын нэр, уялдаа холбооноос гадна тэдгээрийн нөлөөг багасгах, сэтгэл хөдлөл болон зуршлаа удирдах, хэцүү үеийг даван туулах аргуудаа авна.</p>
-    ${completed ? `<button class="button paywall-primary-cta" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "Нэхэмжлэл үүсгэж байна…" : `Бүрэн тайлангаа нээх — ${PRODUCT.displayPrice}`}</button>` : `<p class="notice">Тест үнэлгээг бүрэн дуусгасны дараа тайлангийн төлбөр рүү үргэлжлүүлнэ.</p>`}
-    <p class="muted paywall-note">Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ.</p>
+    <section class="premium-price-block" aria-label="Бүрэн тайлангийн үнэ ба төлбөр"><p class="premium-price-label">ТАНЫ ХУВИЙН БҮРЭН ТАЙЛАН</p><p class="premium-price">${PRODUCT.displayPrice}</p><p class="premium-price-support">Нэг удаагийн төлбөр</p>
+      ${completed ? `<button class="button paywall-primary-cta" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "НЭХЭМЖЛЭЛ ҮҮСГЭЖ БАЙНА…" : "БҮРЭН ТАЙЛАНГАА НЭЭХ"}</button>` : `<p class="notice">Тестийг бүрэн дуусгасны дараа тайлангаа нээх сонголт гарна.</p>`}
+      <p class="paywall-payment-note">QPay · Төлбөр баталгаажмагц бүрэн тайлан нээгдэнэ</p>
+    </section>
+    <p class="paywall-trust-copy">Тайлангийн агуулгыг таны өгсөн хариултад тулгуурлан бүрдүүлнэ. Тод хэв маяг ажиглагдаагүй бол зохиомол дүгнэлт нэмэхгүй.</p>
+    <p class="muted paywall-boundary">Энэ тайлан нь эмнэлгийн болон сэтгэл зүйн онош биш.</p>
   </section>`;
 }
 function renderLegacyPostResultPaywall() {
-  return `<div class="page">${navigation()}<main class="content-card completion-card">${reportPaywallContent()}</main>${footer()}</div>`;
+  return `<div class="page paywall-page">${paywallNavigation()}<main class="content-card completion-card">${reportPaywallContent()}</main>${footer()}</div>`;
 }
 function renderInitialResult() {
-  return `<div class="page">${navigation()}<main class="content-card result-page sealed-paywall" aria-labelledby="page-title">
-    <p class="eyebrow">Тест дууслаа</p>
-    <h1 id="page-title" tabindex="-1">Таны тайлан бэлэн боллоо</h1>
-    <p>Бүрэн тайлангаа нээснээр жин хасахад тань хэдэн сэтгэлзүйн болон зан үйлийн хэв маяг нөлөөлж байгааг, тэдгээр нь хоорондоо хэрхэн холбогдож, бие биеэ хүчтэй болгон жин хасах зорилгод тань хэрхэн саад болж байгааг мэдэж авна.</p>
-    <section class="report-contents-preview" aria-labelledby="report-contents-title"><h2 id="report-contents-title">Бүрэн тайланд юу багтах вэ?</h2>
-      <ul><li>Танд нөлөөлж буй хувийн хэв маяг</li><li>Тэр хэв маяг ямар нөхцөлд илэрч, яагаад жин хасалтад саад болдог тайлбар</li><li>Хэв маягууд давхцах үед үүсэх харилцан нөлөө</li><li>Удирдах арга, хэцүү үед хэрэглэх алхам болон эхэлж хэрэгжүүлэх 3 алхам</li></ul>
-    </section>
-    <p class="paywall-closing">Даван туулах аргаа ойлгосноор сэтгэлзүй болон зуршлаа удирдахад илүү хялбар болно.</p>
-    <button class="button paywall-primary-cta" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "Нэхэмжлэл үүсгэж байна…" : `Бүрэн тайлангаа нээх — ${PRODUCT.displayPrice}`}</button>
-    <p class="paywall-price-anchor">Та нэг аяга кофены үнээр жин хасахад тань саад болдог сэтгэлзүйн хэв маягуудаа таньж мэдэх гэж байна.</p>
-    <p class="muted paywall-note">Нэг удаагийн төлбөр. Төлбөр баталгаажсаны дараа бүрэн тайлан шууд нээгдэнэ.</p>
-  </main>${footer()}</div>`;
+  return `<div class="page paywall-page">${paywallNavigation()}<main class="content-card result-page">${reportPaywallContent()}</main>${footer()}</div>`;
 }
 function renderAssessmentCompleted() {
   if (state.commercialFlowVersion === "prepaid_v2") return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тест дууслаа. Таны тайланг боловсруулж байна.</h1><p role="status">Бүрэн тайланг ачаалж байна…</p></main>${footer()}</div>`;

@@ -59,19 +59,21 @@
     if (!["/.netlify/functions/qpay-create-invoice", "/.netlify/functions/qpay-check-payment"].includes(path)) return;
     const body = await response.clone().json().catch(() => null);
     if (!body || typeof body !== "object") return;
+    const paymentAmount = Number(body.amount);
+    if (!Number.isInteger(paymentAmount) || paymentAmount <= 0) return;
 
     if (path.endsWith("qpay-create-invoice") && body.paymentId && ["pending", "paid"].includes(body.status)) {
       send("InitiateCheckout", {
         content_ids: [state.config.productCode],
         content_type: "product",
-        value: state.config.amount,
+        value: paymentAmount,
         currency: state.config.currency
       }, `jh_checkout_${String(body.paymentId).slice(0, 100)}`);
     }
 
     if (path.endsWith("qpay-check-payment") && body.status === "paid" && body.purchaseEventId) {
       send("Purchase", {
-        value: state.config.amount,
+        value: paymentAmount,
         currency: state.config.currency,
         order_id: String(body.paymentId || "").slice(0, 100),
         content_ids: [state.config.productCode],

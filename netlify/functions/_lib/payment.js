@@ -10,6 +10,11 @@ const { isFreeAssessmentPostpaid, isPrepaidFlow } = require("./commercial-flow.j
 const ACTIVE = new Set(["creating", "create_unknown", "reconciling", "pending", "checking", "check_error"]);
 const AMBIGUOUS_CREATE = new Set(["create_error", "create_unknown", "reconciling"]);
 const SAFE_SENDER_INVOICE_MAX_LENGTH = 45;
+const LEGACY_PAYMENT_AMOUNT = 9900;
+
+function isSupportedPaymentAmount(amount) {
+  return Number.isInteger(amount) && (amount === LEGACY_PAYMENT_AMOUNT || amount === PRODUCT.amount);
+}
 
 function senderInvoiceNumber() {
   const value = randomId("jh_");
@@ -17,8 +22,8 @@ function senderInvoiceNumber() {
   return value;
 }
 
-function requestFingerprint(sessionId, assessmentId) {
-  return hashToken([sessionId, assessmentId, PRODUCT.code, PRODUCT.amount].join("|"));
+function requestFingerprint(sessionId, assessmentId, amount = PRODUCT.amount) {
+  return hashToken([sessionId, assessmentId, PRODUCT.code, amount].join("|"));
 }
 
 function maskedReference(value) {
@@ -73,18 +78,19 @@ async function validateInvoiceRequest(database, sessionId, input) {
   return assessment;
 }
 
-async function createInvoiceAttempt(database, provider, sessionId, assessment, now, replacementForPaymentId = null) {
+async function createInvoiceAttempt(database, provider, sessionId, assessment, now, replacementForPaymentId = null, paymentAmount = PRODUCT.amount) {
+  if (!isSupportedPaymentAmount(paymentAmount)) throw Object.assign(new Error("Unsupported server payment amount"), { statusCode: 409, code: "payment_amount_unsupported" });
   const id = randomId("wp_");
   const senderInvoiceNo = senderInvoiceNumber();
   const expiresAt = new Date(now.getTime() + 15 * 60 * 1000).toISOString();
   const timestamp = now.toISOString();
   await database.insert("payments", { id, sessionId, assessmentId: assessment.id, productCode: PRODUCT.code,
-    amount: PRODUCT.amount, status: "creating", senderInvoiceNo, invoiceId: null, expiresAt,
-    qrText: "", qrImage: "", urls: [], requestFingerprint: requestFingerprint(sessionId, assessment.id),
+    amount: paymentAmount, status: "creating", senderInvoiceNo, invoiceId: null, expiresAt,
+    qrText: "", qrImage: "", urls: [], requestFingerprint: requestFingerprint(sessionId, assessment.id, paymentAmount),
     reconciliationStatus: "not_required", replacementForPaymentId,
     createdAt: timestamp, updatedAt: timestamp, paidAt: null });
   try {
-    const invoice = await provider.createInvoice({ senderInvoiceNo, amount: PRODUCT.amount });
+    const invoice = await provider.createInvoice({ senderInvoiceNo, amount: paymentAmount });
     if (!invoice?.invoiceId) throw Object.assign(new Error("Missing invoice ID"), {
       failureClass: "missing_expected_fields", providerHttpStatus: 200,
       providerResponseShape: invoice && typeof invoice === "object" ? Object.keys(invoice).sort() : typeof invoice,
@@ -152,10 +158,13 @@ async function createReplacementInvoice(database, provider, sessionId, input = {
   if (failed.status !== "create_failed_confirmed" || failed.reconciliationStatus !== "absence_confirmed") {
     throw Object.assign(new Error("Provider absence is not confirmed"), { statusCode: 409, code: "invoice_absence_not_confirmed" });
   }
-  const assessment = await validateInvoiceRequest(database, sessionId, { assessmentId: failed.assessmentId, productCode: failed.productCode, amount: failed.amount });
+  if (failed.productCode !== PRODUCT.code || !isSupportedPaymentAmount(failed.amount)) {
+    throw Object.assign(new Error("Payment mismatch"), { statusCode: 409, code: "payment_mismatch" });
+  }
+  const assessment = await validateInvoiceRequest(database, sessionId, { assessmentId: failed.assessmentId, productCode: failed.productCode });
   const payments = await database.find("payments", { sessionId, assessmentId: assessment.id, productCode: PRODUCT.code });
   if (payments.some(payment => ACTIVE.has(payment.status))) throw Object.assign(new Error("Active invoice exists"), { statusCode: 409, code: "active_invoice_exists" });
-  return createInvoiceAttempt(database, provider, sessionId, assessment, now, failed.id);
+  return createInvoiceAttempt(database, provider, sessionId, assessment, now, failed.id, failed.amount);
 }
 
 function confirmedProviderPayment(result, expectedAmount) {
@@ -189,7 +198,7 @@ async function grantEntitlement(database, payment, sessionId, now) {
 async function checkPayment(database, provider, sessionId, input = {}, now = new Date()) {
   const payment = await database.get("payments", input.paymentId);
   if (!payment || payment.sessionId !== sessionId) throw Object.assign(new Error("Payment not found"), { statusCode: 404, code: "payment_not_found" });
-  if (payment.productCode !== PRODUCT.code || payment.amount !== PRODUCT.amount) throw Object.assign(new Error("Payment mismatch"), { statusCode: 409, code: "payment_mismatch" });
+  if (payment.productCode !== PRODUCT.code || !isSupportedPaymentAmount(payment.amount)) throw Object.assign(new Error("Payment mismatch"), { statusCode: 409, code: "payment_mismatch" });
   if (payment.status === "paid" || payment.status === "paid_but_not_unlocked") {
     try { return publicPayment({ ...(await grantEntitlement(database, payment, sessionId, now)), entitlement: true }); }
     catch { return publicPayment(await database.update("payments", payment.id, { status: "paid_but_not_unlocked", updatedAt: now.toISOString() })); }
@@ -202,7 +211,7 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
   let providerResult;
   try { providerResult = await provider.checkPayment(payment.invoiceId); }
   catch { return publicPayment(await database.update("payments", payment.id, { status: "check_error", updatedAt: now.toISOString() })); }
-  const paidRow = confirmedProviderPayment(providerResult, PRODUCT.amount);
+  const paidRow = confirmedProviderPayment(providerResult, payment.amount);
   if (!paidRow) return publicPayment(await database.update("payments", payment.id, { status: "pending", updatedAt: now.toISOString() }));
 
   const confirmed = await database.update("payments", payment.id, { status: "checking", paidAt: now.toISOString(), updatedAt: now.toISOString(),
@@ -214,6 +223,6 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
   }
 }
 
-module.exports = { ACTIVE, AMBIGUOUS_CREATE, SAFE_SENDER_INVOICE_MAX_LENGTH, senderInvoiceNumber, requestFingerprint,
+module.exports = { ACTIVE, AMBIGUOUS_CREATE, SAFE_SENDER_INVOICE_MAX_LENGTH, LEGACY_PAYMENT_AMOUNT, isSupportedPaymentAmount, senderInvoiceNumber, requestFingerprint,
   providerFailureEvidence, publicPayment, validateInvoiceRequest, createInvoice, reconcileInvoiceCreation, createReplacementInvoice,
   confirmedProviderPayment, grantEntitlement, checkPayment };

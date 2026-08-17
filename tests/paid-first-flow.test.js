@@ -27,7 +27,7 @@ const { nextRoute } = require("../netlify/functions/_lib/commercial-flow.js");
 
   let creates = 0;
   const provider = { async createInvoice() { creates += 1; return { invoiceId: "INV-PREPAID-1", qrText: "stub", urls: [{ name: "Тест банк", link: "https://example.test/pay" }] }; },
-    async checkPayment() { return { rows: [{ payment_status: "PAID", payment_amount: 9900, payment_id: "provider-paid-1" }] }; } };
+    async checkPayment() { return { rows: [{ payment_status: "PAID", payment_amount: 39000, payment_id: "provider-paid-1" }] }; } };
   const first = await createInvoice(database, provider, "ws-prepaid", { assessmentId: assessment.id }, now);
   const retry = await createInvoice(database, provider, "ws-prepaid", { assessmentId: assessment.id }, now);
   assert.equal(first.paymentId, retry.paymentId); assert.equal(creates, 1, "duplicate checkout creates one invoice");
@@ -39,13 +39,13 @@ const { nextRoute } = require("../netlify/functions/_lib/commercial-flow.js");
   assert.equal(refreshed.startedAt, started.startedAt, "started_at is immutable after first persisted answer");
 
   const prep = app.renderForPath("/assessment/contact");
-  for (const copy of ["Тест үнэлгээ болон бүрэн тайлангаа нээх", "Тестийн хариултад тулгуурлан жин хасахад тань нөлөөлж буй сэтгэлзүйн болон зан үйлийн хэв маягийг тайлбарлана.", "9,900₮", "QPay-аар 9,900₮ төлөөд тестээ эхлүүлэх"]) assert(prep.includes(copy), copy);
+  for (const copy of ["Тест үнэлгээ болон бүрэн тайлангаа нээх", "Тестийн хариултад тулгуурлан жин хасахад тань нөлөөлж буй сэтгэлзүйн болон зан үйлийн хэв маягийг тайлбарлана.", "39,000₮", "QPay-аар 39,000₮ төлөөд тестээ эхлүүлэх"]) assert(prep.includes(copy), copy);
   app._test.setState({ commercialFlowVersion: "prepaid_v2", assessmentStatus: "complete", report: { fullReport: {} } });
   assert(!app.renderForPath("/assessment/completed").includes("Бүрэн тайлангийн үнэ"));
   app._test.setState({ questionsAuthorized: false });
   assert(!app.renderForPath("/assessment/questions").includes("Q-AGE"), "question UI fails closed before server authorization");
   assert(!String(app.renderForPath).includes("create-invoice"), "report route has no second payment control");
-  assert.equal(app.PRODUCT.amount, 9900);
+  assert.equal(app.PRODUCT.amount, 39000);
 
   await database.insert("sessions", { id: "ws-legacy", tokenHash: "hash", createdAt: now.toISOString(), expiresAt: new Date(now.getTime() + 3600000).toISOString(), revokedAt: null });
   const legacy = await createAssessment(database, "ws-legacy", {}, now);

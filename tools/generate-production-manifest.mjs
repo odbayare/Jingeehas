@@ -35,7 +35,7 @@ function buildManifest() {
 
   return {
     schemaVersion: 2,
-    product: { code: "WEIGHT_TEST_ONE_TIME", amount: 9900, displayPrice: "9,900₮", comingSoon: false },
+    product: { code: "WEIGHT_TEST_ONE_TIME", amount: 39000, displayPrice: "39,000₮", comingSoon: false },
     packageRoot: "dist",
     functionsRoot: ".generated-copy-hotfix/netlify/functions",
     staticFiles: staticFiles.map(file => ({ file, sha256: sha256(path.join(staticRoot, file)) })),

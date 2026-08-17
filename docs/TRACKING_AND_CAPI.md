@@ -34,7 +34,7 @@ Meta delivery failure must not reverse a confirmed payment, block entitlement, e
 3. Set a Test Events code and enable browser/CAPI flags in staging only.
 4. Confirm PageView, ViewContent, InitiateCheckout and one controlled Purchase.
 5. Confirm browser/server Purchase share event name and event ID and appear deduplicated.
-6. Confirm value 9,900 MNT and product code are exact.
+6. Confirm value matches the actual server-created payment amount: 39,000 MNT for a new V2a payment or 9,900 MNT for a legitimate legacy payment; product code remains exact.
 7. Remove Test Events code.
 8. Enable production flags and run a read-only smoke check.
 9. Only then create/activate a Purchase-optimized paid campaign.

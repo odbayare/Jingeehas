@@ -151,7 +151,7 @@ create table payments (
   session_id text not null references sessions(id) on delete restrict,
   assessment_id text not null references assessments(id) on delete restrict,
   product_code text not null check (product_code = 'WEIGHT_TEST_ONE_TIME'),
-  amount integer not null check (amount = 9900),
+  amount integer not null check (amount in (9900, 39000)),
   status text not null check (status in ('creating', 'create_unknown', 'reconciling', 'pending', 'checking', 'paid', 'create_error', 'create_failed_confirmed', 'check_error', 'expired', 'failed', 'cancelled', 'paid_but_not_unlocked')),
   invoice_id text unique,
   sender_invoice_no text not null unique check (char_length(sender_invoice_no) <= 45),
