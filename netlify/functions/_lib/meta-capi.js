@@ -3,6 +3,7 @@
 const crypto = require("node:crypto");
 const { cookies } = require("./http.js");
 const { PRODUCT } = require("./config.js");
+const { isCommercialAnalyticsEligible } = require("./payment-context.js");
 
 const DEFAULT_GRAPH_API_VERSION = "v25.0";
 const SAFE_GRAPH_VERSION = /^v\d+\.\d+$/;
@@ -52,6 +53,10 @@ function purchaseEventId(payment = {}) {
   return `jh_purchase_${digest}`;
 }
 
+function eligiblePurchaseEventId(payment = {}) {
+  return isCommercialAnalyticsEligible(payment) ? purchaseEventId(payment) : "";
+}
+
 function clientIp(event = {}) {
   return String(event.headers?.["x-nf-client-connection-ip"] || event.headers?.["x-forwarded-for"] || "")
     .split(",")[0].trim().slice(0, 64);
@@ -89,7 +94,7 @@ function userData(event = {}) {
 }
 
 function purchasePayload(payment, event, now = new Date()) {
-  const eventId = purchaseEventId(payment);
+  const eventId = eligiblePurchaseEventId(payment);
   if (!eventId) {
     throw Object.assign(new Error("Purchase event authority is missing"), { code: "meta_purchase_authority_missing" });
   }
@@ -116,12 +121,8 @@ async function deliverConfirmedPurchase(database, paymentId, event, options = {}
   const config = metaCapiConfig(env);
   if (!config.enabled) return { delivered: false, reason: "disabled" };
   if (!config.datasetId || !config.accessToken) return { delivered: false, reason: "unconfigured" };
-  const flags = options.flags || {};
-  if (flags.isAdmin || flags.isOwnerPreview || flags.isTest) {
-    return { delivered: false, reason: "non_customer" };
-  }
-
   const payment = await database.get("payments", paymentId);
+  if (!isCommercialAnalyticsEligible(payment)) return { delivered: false, reason: "non_customer" };
   if (!payment || payment.status !== "paid" || !payment.providerPaymentId ||
       !isSupportedPaymentAmount(payment.amount) || payment.productCode !== PRODUCT.code) {
     return { delivered: false, reason: "not_authoritative" };
@@ -187,6 +188,7 @@ module.exports = {
   metaCapiConfig,
   metaBrowserConfig,
   purchaseEventId,
+  eligiblePurchaseEventId,
   eventSourceUrl,
   purchaseEventTime,
   userData,

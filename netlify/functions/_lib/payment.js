@@ -78,7 +78,8 @@ async function validateInvoiceRequest(database, sessionId, input) {
   return assessment;
 }
 
-async function createInvoiceAttempt(database, provider, sessionId, assessment, now, replacementForPaymentId = null, paymentAmount = PRODUCT.amount) {
+async function createInvoiceAttempt(database, provider, sessionId, assessment, now, replacementForPaymentId = null, paymentAmount = PRODUCT.amount,
+  classification = { paymentContext: "unknown", analyticsEligible: false, environment: "unknown" }) {
   if (!isSupportedPaymentAmount(paymentAmount)) throw Object.assign(new Error("Unsupported server payment amount"), { statusCode: 409, code: "payment_amount_unsupported" });
   const id = randomId("wp_");
   const senderInvoiceNo = senderInvoiceNumber();
@@ -88,6 +89,7 @@ async function createInvoiceAttempt(database, provider, sessionId, assessment, n
     amount: paymentAmount, status: "creating", senderInvoiceNo, invoiceId: null, expiresAt,
     qrText: "", qrImage: "", urls: [], requestFingerprint: requestFingerprint(sessionId, assessment.id, paymentAmount),
     reconciliationStatus: "not_required", replacementForPaymentId,
+    paymentContext: classification.paymentContext, analyticsEligible: classification.analyticsEligible, environment: classification.environment,
     createdAt: timestamp, updatedAt: timestamp, paidAt: null });
   try {
     const invoice = await provider.createInvoice({ senderInvoiceNo, amount: paymentAmount });
@@ -110,7 +112,8 @@ async function createInvoiceAttempt(database, provider, sessionId, assessment, n
   }
 }
 
-async function createInvoice(database, provider, sessionId, input = {}, now = new Date()) {
+async function createInvoice(database, provider, sessionId, input = {}, now = new Date(),
+  classification = { paymentContext: "unknown", analyticsEligible: false, environment: "unknown" }) {
   const assessment = await validateInvoiceRequest(database, sessionId, input);
   const payments = await database.find("payments", { sessionId, assessmentId: assessment.id, productCode: PRODUCT.code });
   const ambiguous = payments.find(payment => AMBIGUOUS_CREATE.has(payment.status) ||
@@ -126,7 +129,7 @@ async function createInvoice(database, provider, sessionId, input = {}, now = ne
   const active = payments.find(payment => ACTIVE.has(payment.status) && payment.expiresAt && new Date(payment.expiresAt) > now && (payment.status === "creating" || payment.invoiceId));
   if (active) return { ...publicPayment(active), reused: true };
   for (const stale of payments.filter(payment => ACTIVE.has(payment.status))) await database.update("payments", stale.id, { status: "expired", updatedAt: now.toISOString() });
-  return createInvoiceAttempt(database, provider, sessionId, assessment, now);
+  return createInvoiceAttempt(database, provider, sessionId, assessment, now, null, PRODUCT.amount, classification);
 }
 
 async function reconcileInvoiceCreation(database, provider, sessionId, input = {}, now = new Date()) {
@@ -164,7 +167,11 @@ async function createReplacementInvoice(database, provider, sessionId, input = {
   const assessment = await validateInvoiceRequest(database, sessionId, { assessmentId: failed.assessmentId, productCode: failed.productCode });
   const payments = await database.find("payments", { sessionId, assessmentId: assessment.id, productCode: PRODUCT.code });
   if (payments.some(payment => ACTIVE.has(payment.status))) throw Object.assign(new Error("Active invoice exists"), { statusCode: 409, code: "active_invoice_exists" });
-  return createInvoiceAttempt(database, provider, sessionId, assessment, now, failed.id, failed.amount);
+  return createInvoiceAttempt(database, provider, sessionId, assessment, now, failed.id, failed.amount, {
+    paymentContext: failed.paymentContext || "unknown",
+    analyticsEligible: failed.analyticsEligible === true,
+    environment: failed.environment || "unknown"
+  });
 }
 
 function confirmedProviderPayment(result, expectedAmount) {

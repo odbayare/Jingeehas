@@ -8,9 +8,15 @@ const {
   metaCapiConfig,
   metaBrowserConfig,
   purchaseEventId,
+  eligiblePurchaseEventId,
   purchasePayload,
   deliverConfirmedPurchase
 } = require("../netlify/functions/_lib/meta-capi.js");
+const {
+  analyticsFlagsForPayment,
+  isCommercialAnalyticsEligible,
+  paymentClassification
+} = require("../netlify/functions/_lib/payment-context.js");
 
 class MemoryDb {
   constructor(row) { this.row = { ...row }; }
@@ -37,6 +43,15 @@ class MemoryDb {
   });
   assert.equal(metaBrowserConfig({ META_BROWSER_PIXEL_ENABLED: "false", META_PIXEL_ID: "123456789" }).enabled, false);
   assert.equal(metaBrowserConfig({ META_BROWSER_PIXEL_ENABLED: "true", META_PIXEL_ID: "not-an-id" }).enabled, false);
+  assert.deepEqual(paymentClassification({ headers: { host: "jingeehas.fit" } }, {}, { NODE_ENV: "production" }), {
+    paymentContext: "customer", analyticsEligible: true, environment: "production"
+  });
+  assert.deepEqual(paymentClassification({ headers: { host: "preview.netlify.app" } }, { isTest: true }, { NODE_ENV: "production" }), {
+    paymentContext: "qa", analyticsEligible: false, environment: "deploy_preview"
+  });
+  assert.deepEqual(paymentClassification({ headers: { host: "unexpected.example" } }, {}, { NODE_ENV: "production" }), {
+    paymentContext: "unknown", analyticsEligible: false, environment: "unknown"
+  });
 
   const payment = {
     id: "wp_safe_order_1",
@@ -45,6 +60,9 @@ class MemoryDb {
     paidAt: "2026-08-01T02:59:30.000Z",
     amount: 9900,
     productCode: "WEIGHT_TEST_ONE_TIME",
+    paymentContext: "customer",
+    analyticsEligible: true,
+    environment: "production",
     weight: 94,
     bmi: 31,
     result: "sensitive",
@@ -53,6 +71,7 @@ class MemoryDb {
   const eventId = purchaseEventId(payment);
   assert.match(eventId, /^jh_purchase_[a-f0-9]{32}$/);
   assert.equal(eventId, purchaseEventId(payment));
+  assert.equal(eligiblePurchaseEventId(payment), eventId);
 
   const event = {
     headers: {
@@ -126,8 +145,41 @@ class MemoryDb {
   assert.equal((await deliverConfirmedPurchase(disabledDb, payment.id, event, { env: {} })).reason, "disabled");
   assert.equal((await deliverConfirmedPurchase(disabledDb, payment.id, event, {
     env,
-    flags: { isTest: true }
-  })).reason, "non_customer");
+    flags: { isTest: true },
+    fetchImpl: async () => ({ ok: true, status: 200, async json() { return { events_received: 1 }; } })
+  })).delivered, true, "persisted customer classification is authoritative across a later QA-like polling request");
+
+  const qaDb = new MemoryDb({ ...payment, id: "wp_qa", paymentContext: "qa", analyticsEligible: false });
+  assert.equal((await deliverConfirmedPurchase(qaDb, "wp_qa", event, { env })).reason, "non_customer");
+  assert.equal(eligiblePurchaseEventId(qaDb.row), "", "QA payment response cannot trigger browser Purchase");
+  const unknownDb = new MemoryDb({ ...payment, id: "wp_unknown", paymentContext: "unknown", analyticsEligible: false, environment: "unknown" });
+  assert.equal((await deliverConfirmedPurchase(unknownDb, "wp_unknown", event, { env })).reason, "non_customer");
+  assert.equal(eligiblePurchaseEventId(unknownDb.row), "", "historically ambiguous payment response cannot trigger browser Purchase");
+  assert.equal(isCommercialAnalyticsEligible(payment), true);
+  assert.deepEqual(analyticsFlagsForPayment(payment), { isAdmin: false, isOwnerPreview: false, isTest: false });
+  assert.deepEqual(analyticsFlagsForPayment(qaDb.row), { isAdmin: false, isOwnerPreview: false, isTest: true });
+
+  const previousMetaEnv = {
+    NODE_ENV: process.env.NODE_ENV,
+    META_BROWSER_PIXEL_ENABLED: process.env.META_BROWSER_PIXEL_ENABLED,
+    META_PIXEL_ID: process.env.META_PIXEL_ID
+  };
+  process.env.NODE_ENV = "production";
+  process.env.META_BROWSER_PIXEL_ENABLED = "true";
+  process.env.META_PIXEL_ID = "123456789";
+  try {
+    const configHandler = require("../netlify/functions/meta-browser-config.js").handler;
+    const productionConfig = JSON.parse((await configHandler({ httpMethod: "GET", headers: { host: "jingeehas.fit" } })).body);
+    const previewConfig = JSON.parse((await configHandler({ httpMethod: "GET", headers: { host: "preview.netlify.app" } })).body);
+    const ownerConfig = JSON.parse((await configHandler({ httpMethod: "GET", headers: { host: "jingeehas.fit", cookie: "jingeehas_owner_preview=qa" } })).body);
+    assert.equal(productionConfig.enabled, true, "real production browser remains Pixel eligible");
+    assert.equal(previewConfig.enabled, false, "deploy-preview QA emits no production browser Pixel events");
+    assert.equal(ownerConfig.enabled, false, "owner-preview QA emits no production browser Pixel events");
+  } finally {
+    for (const [key, value] of Object.entries(previousMetaEnv)) {
+      if (value == null) delete process.env[key]; else process.env[key] = value;
+    }
+  }
 
   const root = path.resolve(__dirname, "..");
   const browserSource = fs.readFileSync(path.join(root, "meta-pixel.js"), "utf8");

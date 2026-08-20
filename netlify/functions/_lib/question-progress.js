@@ -4,7 +4,7 @@ const { ownedAssessment, assessmentQuestionnaireVersion } = require("./assessmen
 const { flagsFromEvent } = require("./analytics.js");
 const { visibleQuestions } = require("../../../questions.js");
 const { questionAnalytics } = require("./question-analytics.js");
-const { isPrepaid, requirePaidAccess } = require("./commercial-flow.js");
+const { isFreeAssessmentPostpaid, isPrepaid, requirePaidAccess } = require("./commercial-flow.js");
 
 function safeLog(action, error) {
   console.warn(JSON.stringify({ event: "question_progress_write_failed", action, code: error?.code || "unknown" }));
@@ -17,7 +17,9 @@ async function canonicalQuestion(database, sessionId, input) {
     if (assessment.status !== "in_progress" || !assessment.startedAt) {
       throw Object.assign(new Error("Question access is not authorized"), { statusCode: 409, code: "question_access_required" });
     }
-  } else if (assessment.status !== "draft") {
+  } else if (isFreeAssessmentPostpaid(assessment) && !["draft", "in_progress"].includes(assessment.status)) {
+    throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
+  } else if (!isFreeAssessmentPostpaid(assessment) && assessment.status !== "draft") {
     throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
   }
   const version = assessmentQuestionnaireVersion(assessment);
