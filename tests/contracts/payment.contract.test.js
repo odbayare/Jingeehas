@@ -54,9 +54,14 @@ async function expectUnknownCreate(provider) {
 
 (async () => {
   const migration = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20260818090000_allow_paywall_v2a_price.sql"), "utf8");
+  const contextMigration = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20260820112008_add_payment_analytics_context.sql"), "utf8");
   assert(migration.includes("amount in (9900, 39000)"), "price migration must preserve legacy and current amounts");
   assert(!/\b(?:update|delete)\s+(?:from\s+)?jingeehas\.(?:payments|entitlements|assessments)\b/i.test(migration), "price migration must not rewrite customer rows");
   assert.ok(senderInvoiceNumber().length <= SAFE_SENDER_INVOICE_MAX_LENGTH, "QPay sender reference must fit the documented limit");
+  for (const required of ["payment_context", "analytics_eligible", "environment", "'unknown'", "'customer'", "'qa'"]) {
+    assert(contextMigration.includes(required), `payment analytics context migration missing ${required}`);
+  }
+  assert(contextMigration.includes("analytics_eligible = false"), "historical payment rows must remain commercially ineligible until reconciled");
 
   // Baseline success and payment lifecycle remains idempotent.
   const baseline = await context();
@@ -67,10 +72,16 @@ async function expectUnknownCreate(provider) {
     async checkPayment() { checkCount += 1; return { rows: [{ payment_id: "provider-1", payment_status: "PAID", payment_amount: PRODUCT.amount }] }; }
   };
   await assert.rejects(() => createInvoice(baseline.database, provider, baseline.session.id, { assessmentId: baseline.assessment.id, amount: 1 }), error => error.code === "invalid_amount");
-  const invoice = await createInvoice(baseline.database, provider, baseline.session.id, { assessmentId: baseline.assessment.id, productCode: PRODUCT.code, amount: PRODUCT.amount });
+  const invoice = await createInvoice(baseline.database, provider, baseline.session.id,
+    { assessmentId: baseline.assessment.id, productCode: PRODUCT.code, amount: PRODUCT.amount }, new Date(),
+    { paymentContext: "customer", analyticsEligible: true, environment: "production" });
   assert.equal(invoice.status, "pending");
   assert.equal(invoice.amount, 39000);
   assert.equal(createCount, 1);
+  const classifiedPayment = await baseline.database.get("payments", invoice.paymentId);
+  assert.equal(classifiedPayment.paymentContext, "customer");
+  assert.equal(classifiedPayment.analyticsEligible, true);
+  assert.equal(classifiedPayment.environment, "production");
 
   // Concurrent create requests are serialized by the active-attempt uniqueness rule.
   const concurrent = await context();

@@ -7,7 +7,8 @@ const { checkPayment } = require("./_lib/payment.js");
 const { isFreeAssessmentPostpaid } = require("./_lib/commercial-flow.js");
 const { authenticateOwnerPreview } = require("./_lib/preview.js");
 const { assessmentContext, flagsFromEvent, funnelKeyHash, recordEventSafe } = require("./_lib/analytics.js");
-const { deliverConfirmedPurchaseSafe, purchaseEventId } = require("./_lib/meta-capi.js");
+const { deliverConfirmedPurchaseSafe, eligiblePurchaseEventId } = require("./_lib/meta-capi.js");
+const { analyticsFlagsForPayment } = require("./_lib/payment-context.js");
 
 exports.handler = handler("POST", async (event, body) => {
   const database = getDatabase();
@@ -22,27 +23,28 @@ exports.handler = handler("POST", async (event, body) => {
     ? { funnelKeyHash: key }
     : { assessmentId: existing?.assessmentId, invoiceId: existing?.invoiceId, paymentId: existing?.id };
   const requestFlags = flagsFromEvent(event);
+  const measurementFlags = analyticsFlagsForPayment(existing || {});
   if (existing?.sessionId === session.id) await recordEventSafe(database, "payment_check_started", context,
-    analyticsValues, requestFlags);
+    analyticsValues, measurementFlags);
   let payment;
   try { payment = await checkPayment(database, getQPayProvider(), session.id, body); }
   catch (error) {
     if (existing?.sessionId === session.id) await recordEventSafe(database, "payment_check_failed", context,
       analyticsValues,
-      { metadata: { errorCode: String(error?.code || "payment_check_failed").slice(0, 80) }, ...requestFlags });
+      { metadata: { errorCode: String(error?.code || "payment_check_failed").slice(0, 80) }, ...measurementFlags });
     throw error;
   }
   if (payment.status === "check_error") await recordEventSafe(database, "payment_check_failed", context,
-    freeFlow ? { funnelKeyHash: key } : { assessmentId: payment.assessmentId, invoiceId: payment.invoiceId, paymentId: payment.paymentId }, requestFlags);
+    freeFlow ? { funnelKeyHash: key } : { assessmentId: payment.assessmentId, invoiceId: payment.invoiceId, paymentId: payment.paymentId }, measurementFlags);
   if (payment.status === "paid") {
     await recordEventSafe(database, "payment_confirmed", await assessmentContext(database, payment.assessmentId),
       freeFlow
         ? { funnelKeyHash: key, amountMnt: payment.amount }
         : { assessmentId: payment.assessmentId, invoiceId: payment.invoiceId, paymentId: payment.paymentId, amountMnt: payment.amount },
-      { idempotencyKey: freeFlow ? `payment_confirmed:${key}` : `payment_confirmed:${payment.paymentId}`, ...requestFlags });
+      { idempotencyKey: freeFlow ? `payment_confirmed:${key}` : `payment_confirmed:${payment.paymentId}`, ...measurementFlags });
     await deliverConfirmedPurchaseSafe(database, payment.paymentId, event, { flags: requestFlags });
     const authoritativePayment = await database.get("payments", payment.paymentId);
-    const eventId = purchaseEventId(authoritativePayment || payment);
+    const eventId = eligiblePurchaseEventId(authoritativePayment || {});
     if (eventId) payment = { ...payment, purchaseEventId: eventId };
   }
   return response(200, payment);

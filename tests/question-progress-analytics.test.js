@@ -112,6 +112,22 @@ async function assessment(database, id, createdAt, status = "draft", updatedAt =
     "Хэмжихэд хараахан хангалттай live хугацаа бүрдээгүй."]) assert(html.includes(copy), copy);
   assert(!html.includes("0.0%</td>"), "zero eligible denominator renders dash, not zero percent");
 
+  const freeDatabase = new MemoryDatabaseAdapter();
+  const freeNow = new Date("2026-08-20T10:00:00.000Z");
+  await freeDatabase.insert("sessions", { id: "ws_free_progress", tokenHash: "hash", createdAt: freeNow.toISOString(), expiresAt: "2027-01-01T00:00:00.000Z", revokedAt: null });
+  await freeDatabase.insert("assessments", { id: "wa_free_progress", sessionId: "ws_free_progress", status: "in_progress",
+    commercialFlowVersion: "free_assessment_postpaid_v1", startedAt: freeNow.toISOString(), questionnaireVersion: questions.QUESTIONNAIRE_VERSION,
+    createdAt: freeNow.toISOString(), updatedAt: freeNow.toISOString() });
+  await freeDatabase.insert("assessment_answers", { id: "wa_free_progress:Q-AGE", assessmentId: "wa_free_progress",
+    questionId: "Q-AGE", value: 35, updatedAt: freeNow.toISOString() });
+  const priorEnvironment = process.env.NODE_ENV; process.env.NODE_ENV = "production";
+  try {
+    const freeView = await recordQuestionView(freeDatabase, "ws_free_progress", { assessmentId: "wa_free_progress", questionId: "Q-SEX" },
+      { httpMethod: "POST", headers: { host: "jingeehas.fit", "user-agent": "Mozilla/5.0" } }, freeNow);
+    assert.deepEqual(freeView, { recorded: true, excluded: false }, "free postpaid in-progress questions remain measurable after the first save");
+  } finally { process.env.NODE_ENV = priorEnvironment; }
+  assert.equal((await freeDatabase.find("assessment_question_progress", { assessmentId: "wa_free_progress" })).length, 1);
+
   const paidDatabase = new MemoryDatabaseAdapter();
   const paidNow = new Date("2026-07-21T08:00:00.000Z");
   await paidDatabase.insert("sessions", { id: "ws_paid_progress", tokenHash: "hash", createdAt: paidNow.toISOString(), expiresAt: "2027-01-01T00:00:00.000Z", revokedAt: null });
