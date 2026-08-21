@@ -37,7 +37,7 @@ function createState() {
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
       analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
         allFlows: null, currentFlow: null, priorCurrentFlow: null, prepaidFlow: null, legacyFlow: null, conversions: null, coverage: null, loading: false, error: "",
-        campaignAttribution: { rows: [], excluded: { eventCount: 0, paymentCount: 0, revenueMnt: 0 } },
+        campaignAttribution: { rows: [], excluded: { eventCount: 0, paymentCount: 0, revenueMnt: 0 } }, cleanControl: null, visitorReconciliation: null,
         questionProgress: { summary: null, questions: [], expanded: false, showAll: false } } }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
@@ -544,11 +544,38 @@ function conversionDisplay(conversion) {
   const reason = CONVERSION_REASONS[conversion?.reason] || CONVERSION_REASONS[conversion?.status] || "Энэ хөрвөлтийн хувийг ижил cohort-оор тооцох боломжгүй.";
   return `<span title="${escapeAttribute(reason)}">—</span>`;
 }
+function conversionEvidence(conversion) {
+  if (conversion?.status !== "available" || conversion.rate == null) return conversionDisplay(conversion);
+  return `${Number(conversion.convertedCount || 0)} / ${Number(conversion.entryCount || 0)} = ${safeRate(conversion.rate)}`;
+}
 function attributionRate(numerator, denominator) { return Number(denominator) > 0 ? safeRate(Number(numerator || 0) / Number(denominator)) : "—"; }
+function ratioEvidence(value = {}) { return value.rate == null ? "—" : `${Number(value.numerator || 0)} / ${Number(value.denominator || 0)} = ${safeRate(value.rate)}`; }
+function renderCleanControl(control) {
+  if (!control) return "";
+  const rates = control.rates || {}; const experiment = control.experiment || {}; const invariant = control.invariants || {};
+  const metric = (label, value) => `<article><h4>${escapeHtml(label)}</h4><p class="metric-value">${value}</p></article>`;
+  const statusClass = experiment.status === "EARLY WARNING" ? "notice" : "analytics-coverage";
+  return `<section class="clean-control" aria-labelledby="clean-control-title"><h3 id="clean-control-title">39,000₮ Clean Control — цэвэр хяналтын бүлэг</h3>
+    <p><code>utm_content=price_aligned_39000_control_v1</code> гэсэн locked acquisition attribution-тай traffic-ийг л тооцсон. Legacy 9,900₮, Reel, unattributed, owner/test traffic ороогүй.</p>
+    <div class="metric-grid analytics-metrics">${metric("Зочин", Number(control.visitors || 0))}${metric("Тест эхлүүлсэн", Number(control.assessmentsStarted || 0))}${metric("Тест дуусгасан", Number(control.assessmentsCompleted || 0))}${metric("Safety-flow bypass", Number(control.safetyBypass || 0))}${metric("Commercial eligible", Number(control.commercialEligible || 0))}${metric("Paywall батлагдсан", Number(control.paywallConfirmed || 0))}${metric("Paywall CTA", Number(control.paywallCta || 0))}${metric("Нэхэмжлэл", Number(control.invoicesCreated || 0))}${metric("Provider-confirmed paid", Number(control.providerConfirmedPaid || 0))}${metric("Merchant-settled paid", control.merchantSettledPaid == null ? "—" : Number(control.merchantSettledPaid))}${metric("Орлого", money(control.revenueMnt))}</div>
+    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Хөрвөлт</th><th>Numerator / denominator</th></tr></thead><tbody>
+      <tr><th>LPV → Start (linked visitor cohort)</th><td>${ratioEvidence(rates.lpvToStart)}</td></tr><tr><th>Start → Completion</th><td>${ratioEvidence(rates.startToCompletion)}</td></tr>
+      <tr><th>Completion → Safety bypass</th><td>${ratioEvidence(rates.completionToSafetyBypass)}</td></tr><tr><th>Completion → Commercial eligible</th><td>${ratioEvidence(rates.completionToCommercialEligible)}</td></tr>
+      <tr><th>Eligible → Paywall</th><td>${ratioEvidence(rates.eligibleToPaywall)}</td></tr><tr><th>Paywall → CTA</th><td>${ratioEvidence(rates.paywallToCta)}</td></tr>
+      <tr><th>CTA → Invoice</th><td>${ratioEvidence(rates.ctaToInvoice)}</td></tr><tr><th>Invoice → Provider-confirmed paid</th><td>${ratioEvidence(rates.invoiceToProviderConfirmedPaid)}</td></tr>
+      <tr><th>LPV → Provider-confirmed paid</th><td>${ratioEvidence(rates.lpvToProviderConfirmedPaid)}</td></tr></tbody></table></div>
+    <p class="analytics-coverage">Merchant settlement-ийн тусдаа нотолгоо хадгалагддаггүй тул утга зохиогоогүй.</p>
+    <p class="${invariant.completionClassified ? "analytics-coverage" : "error"}">Completion reconciliation: ${Number(control.assessmentsCompleted || 0)} = ${Number(control.safetyBypass || 0)} safety + ${Number(control.commercialEligible || 0)} eligible. Unclassified: ${Number(control.unclassifiedCompletions || 0)}.</p>
+    <p class="${invariant.eligibleDeliveryReconciled ? "analytics-coverage" : "error"}">Eligible delivery: ${Number(control.commercialEligible || 0)} = ${Number(control.eligiblePaywallConfirmed || 0)} paywall confirmed + ${Number(control.explainedDeliveryExceptions || 0)} explained exception.</p>
+    <aside class="${statusClass}" aria-label="39,000 төгрөгийн туршилтын төлөв"><p><strong>Experiment status: ${escapeHtml(experiment.status || "COLLECTING")}</strong></p><p>Checkpoint: ${Number(experiment.completions || 0)} / ${Number(experiment.checkpointCompletions || 20)} clean completion. Commercial eligibility: ${experiment.commercialEligibilityRate == null ? "—" : safeRate(experiment.commercialEligibilityRate)}.</p><p>${escapeHtml(experiment.interpretation || "")}</p></aside>
+  </section>`;
+}
 function renderCampaignAttribution(attribution = {}) {
   const rows = Array.isArray(attribution.rows) ? attribution.rows : [];
   const excluded = attribution.excluded || {};
-  const label = row => row.unattributed ? "Unattributed" : (row.utmCampaign || "—");
+  const label = row => row.unattributed ? "Unattributed" : row.utmContent === "52508731514802"
+    ? `Legacy 9,900₮ — ${row.utmSource === "fb" ? "Facebook" : row.utmSource === "ig" ? "Instagram" : (row.utmSource || "Meta")}`
+    : row.utmContent === "price_aligned_39000_control_v1" ? "39,000₮ Clean Control" : (row.utmCampaign || "—");
   const cell = value => escapeHtml(value || "—");
   const conversions = row => [
     ["Visitor → Start", row.assessmentsStarted, row.visitors], ["Start → Completion", row.assessmentsCompleted, row.assessmentsStarted],
@@ -560,8 +587,18 @@ function renderCampaignAttribution(attribution = {}) {
     : `<tr><td colspan="15">Сонгосон хугацаанд campaign attribution бүртгэл алга.</td></tr>`;
   return `<section class="campaign-attribution" aria-labelledby="campaign-attribution-title"><h3 id="campaign-attribution-title">Campaign attribution</h3>
     <p>UTM эх үүсвэрийг тест эхлэх үед assessment funnel-д холбож, дараагийн шууд эсвэл өөр UTM оролтоор солихгүй.</p>
+    <p class="analytics-coverage">Энэ хүснэгтийн visitor нь сонгосон хугацаанд landing хийсэн visitor-attribution мөр; “Хөрвөлтүүд” нь cohort linkage биш, тухайн мөрийн шатны харьцаа.</p>
     <p class="analytics-coverage">Owner / test traffic excluded: ${Number(excluded.eventCount || 0)} event, ${Number(excluded.paymentCount || 0)} payment, ${money(excluded.revenueMnt)}</p>
-    <div class="table-scroll campaign-attribution-scroll" tabindex="0" role="region" aria-label="Campaign attribution хүснэгт"><table><thead><tr><th scope="col">Campaign</th><th scope="col">Source</th><th scope="col">Medium</th><th scope="col">Content</th><th scope="col">Term</th><th scope="col">Зочин</th><th scope="col">Тест эхлүүлсэн</th><th scope="col">Тест дуусгасан</th><th scope="col">Тайлан бэлэн дэлгэц</th><th scope="col">Бүрэн тайлан нээх товч</th><th scope="col">Нэхэмжлэл</th><th scope="col">Төлбөр</th><th scope="col">Бүрэн тайлан нээсэн</th><th scope="col">Бодит орлого</th><th scope="col">Хөрвөлтүүд</th></tr></thead><tbody>${body}</tbody></table></div></section>`;
+    <div class="table-scroll campaign-attribution-scroll" tabindex="0" role="region" aria-label="Campaign attribution хүснэгт"><table><thead><tr><th scope="col">Campaign</th><th scope="col">Source</th><th scope="col">Medium</th><th scope="col">Content</th><th scope="col">Term</th><th scope="col">Зочин</th><th scope="col">Тест эхлүүлсэн</th><th scope="col">Тест дуусгасан</th><th scope="col">Тайлан бэлэн дэлгэц</th><th scope="col">Бүрэн тайлан нээх товч</th><th scope="col">Нэхэмжлэл</th><th scope="col">Төлбөр</th><th scope="col">Бүрэн тайлан нээсэн</th><th scope="col">Бодит орлого</th><th scope="col">Шатны харьцаа (cohort биш)</th></tr></thead><tbody>${body}</tbody></table></div></section>`;
+}
+function renderMeasurementReconciliation(analytics) {
+  const total = analytics.currentFlow || {}; const conversion = analytics.conversions?.visitorToAssessmentStart || {};
+  const progress = analytics.questionProgress?.summary || {}; const visitor = analytics.visitorReconciliation || {};
+  return `<section class="measurement-reconciliation" aria-labelledby="measurement-reconciliation-title"><h3 id="measurement-reconciliation-title">Хэмжилтийн grain ба зөрүүний тайлбар</h3>
+    <ul><li><strong>Visitor → Start:</strong> ${conversionEvidence(conversion)}. ${Number(total.assessmentsStarted || 0)} нь хугацаанд бичигдсэн бүх first start event; хувь нь зөвхөн ижил first-visitor cohort-д холбогдсон ${Number(conversion.convertedCount || 0)} start-ыг numerator болгосон.</li>
+    <li><strong>Event funnel vs canonical assessment:</strong> event telemetry ${Number(total.assessmentsStarted || 0)} start / ${Number(total.assessmentsCompleted || 0)} completion; canonical progress ${Number(progress.cohortStarted || 0)} start / ${Number(progress.completedCount || 0)} completion. Эхнийх нь <code>funnel_key_hash + event_name</code>-ийн анхны event, хоёр дахь нь assessment record-ийн <code>started_at/status/completed_at</code>.</li>
+    <li><strong>Visitor card vs campaign table:</strong> first-time visitor ${Number(visitor.firstTimeVisitors ?? total.eligibleVisitors ?? 0)}; хугацаанд landing хийсэн visitor ${Number(visitor.anyRangeVisitors || 0)}; campaign attribution pair ${Number(visitor.attributionPairs || 0)}. Returning visitor ${Number(visitor.returningVisitors || 0)}, duplicate attribution pair ${Number(visitor.duplicateAttributionPairs || 0)}.</li></ul>
+  </section>`;
 }
 function analyticsCoverageCopy(coverage) {
   const notices = [];
@@ -609,10 +646,12 @@ function renderAdminAnalytics() {
     ${coverageNotices.map(notice => `<p class="analytics-coverage">${escapeHtml(notice)}</p>`).join("")}
     ${flowNotice ? `<p class="notice">${escapeHtml(flowNotice)}</p>` : ""}
     ${!priorAvailable ? `<p class="analytics-comparison-note">Сонгосон хугацааг өмнөх ижил хугацаатай харьцуулах боломжгүй байна.</p>` : ""}
-    <div class="metric-grid analytics-metrics">${card("Шинэ урсгалын зочин", total.eligibleVisitors || 0, `Үнэгүй тест эхлүүлсэн хувь: ${conversionDisplay(conversions.visitorToAssessmentStart)}`, "eligibleVisitors")}${card("Үнэгүй тест эхлүүлсэн", total.assessmentsStarted || 0, `Дуусгасан хувь: ${conversionDisplay(conversions.assessmentStartToComplete)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted || 0, `Тайлан бэлэн дэлгэц харсан хувь: ${conversionDisplay(conversions.completeToInitialResult)}`, "assessmentsCompleted")}${card("Тайлан бэлэн дэлгэц", total.initialResultsViewed || 0, `Бүрэн тайлангийн товч дарсан хувь: ${conversionDisplay(conversions.initialResultToFullReportCta)}`, "initialResultsViewed")}${card("Бүрэн тайлангийн товч", total.fullReportCtaClicks || 0, `Нэхэмжлэл үүсгэсэн хувь: ${conversionDisplay(conversions.fullReportCtaToInvoice)}`, "fullReportCtaClicks")}${card("Нэхэмжлэл", total.invoicesCreated || 0, `Төлбөр төлсөн хувь: ${conversionDisplay(conversions.invoiceToPayment)}`, "invoicesCreated")}${card("Төлбөр", total.paymentsConfirmed || 0, `Бүрэн тайлан нээсэн хувь: ${conversionDisplay(conversions.paymentToFullReportOpen)}`, "paymentsConfirmed")}${card("Бүрэн тайлан нээсэн", total.reportsOpened || 0, "Серверээр эрх баталгаажсан", "reportsOpened")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
+    <div class="metric-grid analytics-metrics">${card("Шинэ урсгалын анхны зочин", total.eligibleVisitors || 0, `Ижил visitor cohort-оос эхэлсэн: ${conversionEvidence(conversions.visitorToAssessmentStart)}`, "eligibleVisitors")}${card("Үнэгүй тест эхлүүлсэн", total.assessmentsStarted || 0, `Дуусгасан: ${conversionEvidence(conversions.assessmentStartToComplete)}`, "assessmentsStarted")}${card("Тест дуусгасан", total.assessmentsCompleted || 0, `Тайлан бэлэн дэлгэц: ${conversionEvidence(conversions.completeToInitialResult)}`, "assessmentsCompleted")}${card("Тайлан бэлэн дэлгэц", total.initialResultsViewed || 0, `Бүрэн тайлангийн товч: ${conversionEvidence(conversions.initialResultToFullReportCta)}`, "initialResultsViewed")}${card("Бүрэн тайлангийн товч", total.fullReportCtaClicks || 0, `Нэхэмжлэл: ${conversionEvidence(conversions.fullReportCtaToInvoice)}`, "fullReportCtaClicks")}${card("Нэхэмжлэл", total.invoicesCreated || 0, `Provider-confirmed paid: ${conversionEvidence(conversions.invoiceToPayment)}`, "invoicesCreated")}${card("Төлбөр", total.paymentsConfirmed || 0, `Бүрэн тайлан нээсэн: ${conversionEvidence(conversions.paymentToFullReportOpen)}`, "paymentsConfirmed")}${card("Бүрэн тайлан нээсэн", total.reportsOpened || 0, "Серверээр эрх баталгаажсан", "reportsOpened")}${card("Орлого", money(total.revenueMnt), "Серверээр баталгаажсан төлбөр", "revenueMnt")}</div>
     <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value, conversion]) => `<li><span>${label}</span><strong>${value}</strong>${conversion ? `<small>${conversionDisplay(conversion)}</small>` : ""}</li>`).join("")}</ol>
     ${coverage.prepaidActivityPresent ? historical("Өмнөх төлбөр-эхэнд урсгал", prepaid) : ""}
     ${coverage.legacyActivityPresent ? historical("Legacy postpaid урсгал", legacy) : ""}
+    ${renderCleanControl(analytics.cleanControl)}
+    ${renderMeasurementReconciliation(analytics)}
     ${renderCampaignAttribution(analytics.campaignAttribution)}
     ${renderQuestionProgressAnalytics()}
     <p class="analytics-daily-note">Доорх хүснэгт үнэгүй тестийн урсгалын үзүүлэлтийг өдрөөр харуулна.</p>
@@ -928,6 +967,7 @@ async function loadAdminAnalytics(preset = state.admin.analytics.preset, custom 
     analytics.prepaidFlow = current.prepaidFlow || null; analytics.legacyFlow = current.legacyFlow || null;
     analytics.conversions = current.conversions || null; analytics.coverage = current.coverage || null;
     analytics.campaignAttribution = current.campaignAttribution || { rows: [], excluded: { eventCount: 0, paymentCount: 0, revenueMnt: 0 } };
+    analytics.cleanControl = current.cleanControl || null; analytics.visitorReconciliation = current.visitorReconciliation || null;
     analytics.questionProgress.summary = questionProgress.summary || null; analytics.questionProgress.questions = questionProgress.questions || [];
   } catch { analytics.error = "Өдөр тутмын үзүүлэлтийг ачаалж чадсангүй."; }
   analytics.loading = false;
@@ -1081,5 +1121,5 @@ if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAY
   saveAdminReportPreviewAssessment, loadAdminReportPreviewAssessment, clearAdminReportPreviewAssessment,
   _test: { setComingSoon(value) { testComingSoonOverride = Boolean(value); }, resetComingSoon() { testComingSoonOverride = null; }, setState(value) { state = { ...createState(), ...value }; }, getState() { return state; }, buildReportSections,
     updateAnswer,
-    analyticsRange, analyticsTotals, rate, safeRate, comparison, conversionDisplay, hasAnalyticsData, analyticsCoverageCopy, analyticsFlowStateCopy, questionProgressWarning, formatAnalyticsDate, formatAnalyticsDateTime,
-    analyticsIdentity, attributionRate, renderCampaignAttribution, renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics } };
+    analyticsRange, analyticsTotals, rate, safeRate, comparison, conversionDisplay, conversionEvidence, hasAnalyticsData, analyticsCoverageCopy, analyticsFlowStateCopy, questionProgressWarning, formatAnalyticsDate, formatAnalyticsDateTime,
+    analyticsIdentity, attributionRate, ratioEvidence, renderCleanControl, renderMeasurementReconciliation, renderCampaignAttribution, renderQuestionRows, renderQuestionProgressAnalytics, renderAdminAnalytics } };

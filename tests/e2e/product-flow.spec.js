@@ -235,10 +235,15 @@ test("owner daily funnel and campaign attribution tables are responsive", async 
     await expect(page.getByText("Цагийн бүс: Улаанбаатар")).toBeVisible();
     await expect(page.getByText("Одоогийн урсгал: Үнэгүй тест → тайлан бэлэн дэлгэц → бүрэн тайлан", { exact: true })).toBeVisible();
     await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "39,000₮ Clean Control — цэвэр хяналтын бүлэг" })).toBeVisible();
+    await expect(page.getByText("Experiment status: COLLECTING", { exact: true })).toBeVisible();
     const attribution = page.getByRole("region", { name: "Campaign attribution хүснэгт" });
     await expect(page.getByRole("heading", { name: "Campaign attribution" })).toBeVisible();
     await expect(attribution.getByRole("rowheader", { name: "jingeehas_traffic_lpv_reel_v1" })).toBeVisible();
     await expect(attribution.getByRole("rowheader", { name: "Unattributed" })).toBeVisible();
+    await expect(attribution.getByRole("rowheader", { name: "Legacy 9,900₮ — Facebook" })).toBeVisible();
+    await expect(attribution.getByRole("rowheader", { name: "Legacy 9,900₮ — Instagram" })).toBeVisible();
+    await expect(attribution.getByRole("rowheader", { name: "39,000₮ Clean Control" })).toBeVisible();
     await expect(attribution).toContainText("Visitor → Start: 83.3%");
     await expect(page.getByText("Owner / test traffic excluded: 4 event, 1 payment, 9,900₮", { exact: true })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);

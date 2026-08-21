@@ -36,6 +36,7 @@ const tests = [
   "tests/admin-report-candidate-performance.test.js",
   "tests/daily-funnel-analytics.test.js",
   "tests/campaign-attribution-analytics.test.js",
+  "tests/clean-control-analytics.test.js",
   "tests/question-progress-analytics.test.js",
   "tests/meta-capi.test.js",
   "tests/meta-paused-draft-builder.test.mjs",

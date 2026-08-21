@@ -112,7 +112,7 @@ async function addEvent(database, id, eventName, occurredAt, { assessmentId = nu
     priorCurrentFlow: null, prepaidFlow: aggregate.currentFlow, legacyFlow: aggregate.legacyFlow, conversions: freeConversions,
     coverage: { freeFlowCutoverAt: "2026-07-22T00:00:00.000Z", allMeasuredVisitors: 10, freeActivityPresent: true, prepaidActivityPresent: true, legacyActivityPresent: true, flowState: "mixed" }, loading: false } } });
   const dashboard = app._test.renderAdminAnalytics();
-  assert(dashboard.includes("Үнэгүй тест эхлүүлсэн хувь: 80.0%")); assert(!dashboard.includes("NaN"));
+  assert(dashboard.includes("Ижил visitor cohort-оос эхэлсэн: 8 / 10 = 80.0%")); assert(!dashboard.includes("NaN"));
   assert(dashboard.includes("Өмнөх төлбөр-эхэнд урсгал")); assert(dashboard.includes("Legacy postpaid урсгал"));
   assert(dashboard.includes("Сонгосон хугацаанд хэмжигдсэн нийт зочин: 10"));
   assert(dashboard.includes("Одоогийн урсгал: Үнэгүй тест → тайлан бэлэн дэлгэц → бүрэн тайлан"));

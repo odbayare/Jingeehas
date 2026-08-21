@@ -3,6 +3,8 @@
 const { getDatabase } = require("./_lib/store.js");
 const { handler, response } = require("./_lib/http.js");
 const { authenticateOwnerAdmin } = require("./_lib/preview.js");
+const { funnelKeyHash } = require("./_lib/analytics.js");
+const { CLEAN_CONTROL_UTM_CONTENT, buildCleanControlAnalytics } = require("./_lib/control-analytics.js");
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 exports.handler = handler("GET", async event => {
@@ -14,9 +16,15 @@ exports.handler = handler("GET", async event => {
   }
   const days = Math.floor((Date.parse(`${query.endDate}T00:00:00Z`) - Date.parse(`${query.startDate}T00:00:00Z`)) / 86400000) + 1;
   if (days < 1 || days > 366) throw Object.assign(new Error("Date range too large"), { statusCode: 400, code: "invalid_date_range" });
-  const analytics = await database.getDailyFunnelAnalytics(query.startDate, query.endDate);
+  const [analytics, controlBase, completedAssessments] = await Promise.all([
+    database.getDailyFunnelAnalytics(query.startDate, query.endDate),
+    database.getControlMeasurementBase(query.startDate, query.endDate, CLEAN_CONTROL_UTM_CONTENT),
+    database.find("assessments", { status: "complete", commercialFlowVersion: "free_assessment_postpaid_v1" })
+  ]);
+  const cleanControl = buildCleanControlAnalytics(controlBase, completedAssessments, funnelKeyHash);
   return response(200, { timeZone: "Asia/Ulaanbaatar", days: analytics.days, summary: analytics.allFlows || analytics.summary,
     allFlows: analytics.allFlows || analytics.summary, currentFlow: analytics.currentFlow, prepaidFlow: analytics.prepaidFlow,
     legacyFlow: analytics.legacyFlow,
-    conversions: analytics.conversions, coverage: analytics.coverage, campaignAttribution: analytics.campaignAttribution });
+    conversions: analytics.conversions, coverage: analytics.coverage, campaignAttribution: analytics.campaignAttribution,
+    cleanControl, visitorReconciliation: controlBase.visitorReconciliation || null });
 });
