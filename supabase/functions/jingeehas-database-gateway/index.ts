@@ -56,7 +56,7 @@ function normalizeOperation(operation: Record<string, unknown>): Record<string, 
   const reportVersionActions = new Set([
     "get_active_report_snapshot", "list_report_snapshot_versions", "get_report_snapshot_version",
     "create_report_snapshot_version", "activate_report_snapshot_version", "insert_analytics_event", "find_analytics_events", "get_daily_funnel_analytics",
-    "record_question_progress", "get_question_progress_analytics",
+    "record_question_progress", "get_question_progress_analytics", "get_control_measurement_base",
   ]);
   const normalized = reportVersionActions.has(String(operation.action || ""))
     ? mapRecordKeys(operation, snakeKey) as Record<string, unknown>
@@ -86,6 +86,7 @@ function normalizeResult(result: unknown): unknown {
     return { ...(mapRecordKeys(record, camelKey) as Record<string, unknown>), questions: record.questions.map(item => mapRecordKeys(item, camelKey)),
       summary: mapRecordKeys(record.summary, camelKey) };
   }
+  if (Array.isArray(record.completed_funnels)) return deepCamelKeys(record);
   if (Array.isArray(record.results)) {
     return { ...(mapRecordKeys(record, camelKey) as Record<string, unknown>), results: record.results.map(item => mapRecordKeys(item, camelKey)) };
   }

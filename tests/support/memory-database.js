@@ -155,6 +155,49 @@ class MemoryDatabaseAdapter {
       excluded: { eventCount: excluded.length, paymentCount: excludedPayments.size,
         revenueMnt: [...excludedPayments.values()].reduce((sum, value) => sum + value, 0) } };
   }
+  async getControlMeasurementBase(startDate, endDate, utmContent) {
+    const events = [...this.table("analytics_events").values()];
+    const day = value => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
+    const inRange = value => value && day(value) >= startDate && day(value) <= endDate;
+    const flagged = row => Boolean(row.isAdmin || row.isOwnerPreview || row.isTest);
+    const excludedFunnels = new Set(events.filter(row => row.funnelKeyHash && flagged(row)).map(row => row.funnelKeyHash));
+    const excludedAssessments = new Set(events.filter(row => row.assessmentId && flagged(row)).map(row => row.assessmentId));
+    for (const row of this.table("assessment_sessions").values()) if (row.source === "owner") excludedAssessments.add(row.assessmentId);
+    const publicEvents = events.filter(row => !flagged(row) && !excludedFunnels.has(row.funnelKeyHash) && !excludedAssessments.has(row.assessmentId));
+    const first = new Map();
+    for (const event of publicEvents.sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
+      if (event.funnelKeyHash && !first.has(`${event.eventName}:${event.funnelKeyHash}`)) first.set(`${event.eventName}:${event.funnelKeyHash}`, event);
+    }
+    const acquisition = new Map([...first.values()].filter(row => row.eventName === "free_assessment_started").map(row => [row.funnelKeyHash, row]));
+    const cleanStages = [...first.values()].filter(row => inRange(row.occurredAt) && acquisition.get(row.funnelKeyHash)?.utmContent === utmContent);
+    const cleanLandings = [...new Map(publicEvents.filter(row => row.eventName === "landing_viewed" && row.visitorIdHash && row.utmContent === utmContent && inRange(row.occurredAt))
+      .map(row => [row.visitorIdHash, row])).values()];
+    const linkedVisitorStarts = cleanLandings.filter(landing => [...acquisition.values()].some(start => start.utmContent === utmContent
+      && start.visitorIdHash === landing.visitorIdHash && new Date(start.occurredAt) >= new Date(landing.occurredAt) && inRange(start.occurredAt))).length;
+    const completed = cleanStages.filter(row => row.eventName === "free_assessment_completed");
+    const completedFunnels = completed.map(row => ({ funnelKeyHash: row.funnelKeyHash,
+      paywallConfirmed: cleanStages.some(next => next.funnelKeyHash === row.funnelKeyHash && next.eventName === "post_assessment_paywall_viewed" && new Date(next.occurredAt) >= new Date(row.occurredAt)),
+      paywallCta: cleanStages.some(next => next.funnelKeyHash === row.funnelKeyHash && next.eventName === "full_report_cta_clicked" && new Date(next.occurredAt) >= new Date(row.occurredAt)),
+      invoiceCreated: cleanStages.some(next => next.funnelKeyHash === row.funnelKeyHash && next.eventName === "invoice_created" && new Date(next.occurredAt) >= new Date(row.occurredAt)),
+      providerConfirmedPaid: cleanStages.some(next => next.funnelKeyHash === row.funnelKeyHash && next.eventName === "payment_confirmed" && new Date(next.occurredAt) >= new Date(row.occurredAt)) }));
+    const rangeLandings = publicEvents.filter(row => row.eventName === "landing_viewed" && row.visitorIdHash && inRange(row.occurredAt));
+    const firstLandingByVisitor = new Map();
+    for (const row of publicEvents.filter(row => row.eventName === "landing_viewed" && row.visitorIdHash)) {
+      if (!firstLandingByVisitor.has(row.visitorIdHash)) firstLandingByVisitor.set(row.visitorIdHash, row);
+    }
+    const firstLandings = [...firstLandingByVisitor.values()];
+    const anyRangeVisitors = new Set(rangeLandings.map(row => row.visitorIdHash)).size;
+    const attributionPairs = new Set(rangeLandings.map(row => JSON.stringify([row.visitorIdHash, row.utmSource || "", row.utmMedium || "", row.utmCampaign || "", row.utmContent || "", row.utmTerm || ""]))).size;
+    const firstTimeVisitors = firstLandings.filter(row => inRange(row.occurredAt)).length;
+    const count = eventName => cleanStages.filter(row => row.eventName === eventName).length;
+    return { utmContent, visitors: cleanLandings.length, linkedVisitorStarts,
+      assessmentsStarted: count("free_assessment_started"), assessmentsCompleted: completed.length,
+      paywallConfirmed: count("post_assessment_paywall_viewed"), paywallCta: count("full_report_cta_clicked"),
+      invoicesCreated: count("invoice_created"), providerConfirmedPaid: count("payment_confirmed"), merchantSettledPaid: null,
+      revenueMnt: cleanStages.filter(row => row.eventName === "payment_confirmed").reduce((sum, row) => sum + Number(row.amountMnt || 0), 0),
+      completedFunnels, visitorReconciliation: { firstTimeVisitors, anyRangeVisitors, attributionPairs,
+        returningVisitors: Math.max(0, anyRangeVisitors - firstTimeVisitors), duplicateAttributionPairs: Math.max(0, attributionPairs - anyRangeVisitors) } };
+  }
   async getDailyFunnelAnalytics(startDate, endDate) {
     const cutover = new Date("2026-07-21T16:17:45.493Z");
     const allEvents = [...this.table("analytics_events").values()];

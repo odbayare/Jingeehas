@@ -224,6 +224,11 @@ code { overflow-wrap: anywhere; }
 .question-progress-table table { min-width: 980px; }
 .question-progress-table th, .question-progress-table td { font-size: 0.85rem; }
 .campaign-attribution { margin: 2rem 0; }
+.clean-control, .measurement-reconciliation { margin: 2rem 0; padding: 1.25rem; border: 1px solid #c8d8c6; border-radius: 18px; background: #f8fbf7; }
+.clean-control code, .measurement-reconciliation code { overflow-wrap: anywhere; }
+.clean-control .table-scroll { margin: 1rem 0; }
+.clean-control table { min-width: 640px; }
+.measurement-reconciliation li + li { margin-top: 0.65rem; }
 .campaign-attribution-scroll table { min-width: 1760px; }
 .campaign-attribution-scroll th, .campaign-attribution-scroll td { font-size: 0.82rem; }
 .campaign-attribution-scroll tbody th { position: sticky; left: 0; z-index: 1; min-width: 250px; background: #fff; overflow-wrap: anywhere; }
