@@ -1,6 +1,6 @@
 # Jingeehas Budget Guardrails
 
-Updated: 2026-08-01
+Updated: 2026-08-23
 
 ## Approved limits
 
@@ -18,7 +18,7 @@ The USD 93.00 product ceiling is the strict mathematical maximum of the approved
 
 ## Economics
 
-Gross price is 9,900 MNT. Maximum economically sustainable CPA cannot be certified until payment fees, tax, refund rate, variable cost and required contribution margin are known. USD 1.00 is therefore the owner-approved operating acquisition target and stop/hold threshold, not a certified contribution-margin CPA.
+Gross current price is 19,900 MNT. Historical 9,900/39,000 MNT payments must use their stored amount. Maximum economically sustainable CPA cannot be certified until payment fees, tax, refund rate, variable cost and required contribution margin are known. USD 1.00 is therefore the owner-approved operating acquisition target and stop/hold threshold, not a certified contribution-margin CPA.
 
 ## Mutation enforcement
 

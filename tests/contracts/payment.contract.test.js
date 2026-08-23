@@ -10,7 +10,7 @@ const { createSession } = require("../../netlify/functions/_lib/session.js");
 const { createAssessment } = require("../../netlify/functions/_lib/assessment.js");
 const {
   SAFE_SENDER_INVOICE_MAX_LENGTH, senderInvoiceNumber, createInvoice, reconcileInvoiceCreation,
-  createReplacementInvoice, checkPayment
+  createReplacementInvoice, checkPayment, paymentForCurrentOffer
 } = require("../../netlify/functions/_lib/payment.js");
 const { safeAppLinks, responseShape, QPayClient } = require("../../netlify/functions/_lib/qpay.js");
 const { PRODUCT } = require("../../netlify/functions/_lib/config.js");
@@ -53,9 +53,9 @@ async function expectUnknownCreate(provider) {
 }
 
 (async () => {
-  const migration = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20260818090000_allow_paywall_v2a_price.sql"), "utf8");
+  const migration = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20260823074841_full_report_price_19900.sql"), "utf8");
   const contextMigration = fs.readFileSync(path.join(__dirname, "../../supabase/migrations/20260820112008_add_payment_analytics_context.sql"), "utf8");
-  assert(migration.includes("amount in (9900, 39000)"), "price migration must preserve legacy and current amounts");
+  assert(migration.includes("amount in (9900, 19900, 39000)"), "price migration must preserve both legacy prices and current 19,900 MNT");
   assert(!/\b(?:update|delete)\s+(?:from\s+)?jingeehas\.(?:payments|entitlements|assessments)\b/i.test(migration), "price migration must not rewrite customer rows");
   assert.ok(senderInvoiceNumber().length <= SAFE_SENDER_INVOICE_MAX_LENGTH, "QPay sender reference must fit the documented limit");
   for (const required of ["payment_context", "analytics_eligible", "environment", "'unknown'", "'customer'", "'qa'"]) {
@@ -76,7 +76,7 @@ async function expectUnknownCreate(provider) {
     { assessmentId: baseline.assessment.id, productCode: PRODUCT.code, amount: PRODUCT.amount }, new Date(),
     { paymentContext: "customer", analyticsEligible: true, environment: "production" });
   assert.equal(invoice.status, "pending");
-  assert.equal(invoice.amount, 39000);
+  assert.equal(invoice.amount, 19900);
   assert.equal(createCount, 1);
   const classifiedPayment = await baseline.database.get("payments", invoice.paymentId);
   assert.equal(classifiedPayment.paymentContext, "customer");
@@ -127,10 +127,48 @@ async function expectUnknownCreate(provider) {
   assert.equal(legacyPaid.entitlement, true);
   assert.equal((await legacy.database.find("entitlements", { assessmentId: legacy.assessment.id })).length, 1);
 
+  // A legitimate historical 39,000₮ invoice also remains verifiable from its persisted contract amount.
+  const historical39000 = await context();
+  const historicalCreatedAt = new Date();
+  await historical39000.database.insert("payments", {
+    id: "wp-historical-39000", sessionId: historical39000.session.id, assessmentId: historical39000.assessment.id,
+    productCode: PRODUCT.code, amount: 39000, status: "pending", senderInvoiceNo: "historical-39000-reference",
+    invoiceId: "historical-39000-invoice", expiresAt: new Date(historicalCreatedAt.getTime() + 3600000).toISOString(),
+    createdAt: historicalCreatedAt.toISOString(), updatedAt: historicalCreatedAt.toISOString()
+  });
+  const historicalPaid = await checkPayment(historical39000.database, {
+    async checkPayment() { return { rows: [{ payment_id: "provider-historical-39000", payment_status: "PAID", payment_amount: 39000 }] }; }
+  }, historical39000.session.id, { paymentId: "wp-historical-39000" });
+  assert.equal(historicalPaid.status, "paid");
+  assert.equal(historicalPaid.amount, 39000);
+  assert.equal(historicalPaid.entitlement, true);
+
+  // A returning user never receives an obsolete unpaid 39,000₮ offer; the old provider invoice is preserved locally and a new 19,900₮ invoice is created.
+  const repriced = await context();
+  const repricedAt = new Date();
+  await repriced.database.insert("payments", {
+    id: "wp-obsolete-39000", sessionId: repriced.session.id, assessmentId: repriced.assessment.id,
+    productCode: PRODUCT.code, amount: 39000, status: "pending", senderInvoiceNo: "obsolete-39000-reference",
+    invoiceId: "obsolete-39000-invoice", qrText: "obsolete-qr", urls: [{ name: "Old", link: "https://old.example" }],
+    expiresAt: new Date(repricedAt.getTime() + 3600000).toISOString(), createdAt: repricedAt.toISOString(), updatedAt: repricedAt.toISOString()
+  });
+  const shielded = paymentForCurrentOffer(await repriced.database.get("payments", "wp-obsolete-39000"));
+  assert.equal(shielded.status, "expired");
+  assert.equal(shielded.obsoleteOffer, true);
+  assert.equal(shielded.qrText, "");
+  let repricedCreates = 0;
+  const currentInvoice = await createInvoice(repriced.database, {
+    async createInvoice({ amount }) { repricedCreates += 1; assert.equal(amount, 19900); return { invoiceId: "current-19900-invoice", urls: [] }; }
+  }, repriced.session.id, { assessmentId: repriced.assessment.id }, new Date(repricedAt.getTime() + 1000));
+  assert.equal(currentInvoice.amount, 19900);
+  assert.equal(repricedCreates, 1);
+  assert.equal((await repriced.database.get("payments", "wp-obsolete-39000")).status, "expired");
+  assert.equal((await repriced.database.find("payments", { assessmentId: repriced.assessment.id })).length, 2);
+
   // A mismatched provider amount never grants a new V2a entitlement.
   const wrongAmount = await context();
   const wrongInvoice = await createInvoice(wrongAmount.database, {
-    async createInvoice({ amount }) { assert.equal(amount, 39000); return { invoiceId: "wrong-amount-invoice", urls: [] }; },
+    async createInvoice({ amount }) { assert.equal(amount, 19900); return { invoiceId: "wrong-amount-invoice", urls: [] }; },
     async checkPayment() { return { rows: [{ payment_id: "provider-underpaid", payment_status: "PAID", payment_amount: 9900 }] }; }
   }, wrongAmount.session.id, { assessmentId: wrongAmount.assessment.id });
   const stillPending = await checkPayment(wrongAmount.database, {
@@ -222,9 +260,9 @@ async function expectUnknownCreate(provider) {
   qpay.request = async (requestPath, requestBody) => {
     assert.equal(requestPath, "/v2/invoice");
     assert.equal(requestBody.invoice_description, "Жингээ Хас — хувийн бүрэн тайлан");
-    assert.equal(requestBody.amount, 39000);
+    assert.equal(requestBody.amount, 19900);
     return { invoice_id: "description-contract" };
   };
-  await qpay.createInvoice({ senderInvoiceNo: "description-contract", amount: 39000 });
+  await qpay.createInvoice({ senderInvoiceNo: "description-contract", amount: 19900 });
   console.log("QPay API contract tests passed");
 })().catch(error => { console.error(error); process.exit(1); });

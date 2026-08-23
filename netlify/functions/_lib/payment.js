@@ -1,6 +1,6 @@
 "use strict";
 
-const { PRODUCT } = require("./config.js");
+const { PRODUCT, SUPPORTED_FULL_REPORT_PRICES_MNT } = require("./config.js");
 const { randomId, hashToken } = require("./crypto.js");
 const { ownedAssessment } = require("./assessment.js");
 const { publicInitialResult } = require("./initial-result.js");
@@ -11,9 +11,12 @@ const ACTIVE = new Set(["creating", "create_unknown", "reconciling", "pending", 
 const AMBIGUOUS_CREATE = new Set(["create_error", "create_unknown", "reconciling"]);
 const SAFE_SENDER_INVOICE_MAX_LENGTH = 45;
 const LEGACY_PAYMENT_AMOUNT = 9900;
+const LEGACY_PAYMENT_AMOUNTS = Object.freeze(SUPPORTED_FULL_REPORT_PRICES_MNT.filter(amount => amount !== PRODUCT.amount));
+const SUPPORTED_PAYMENT_AMOUNTS = new Set(SUPPORTED_FULL_REPORT_PRICES_MNT);
+const IN_FLIGHT_PROVIDER_STATES = new Set(["creating", "create_unknown", "reconciling", "checking"]);
 
 function isSupportedPaymentAmount(amount) {
-  return Number.isInteger(amount) && (amount === LEGACY_PAYMENT_AMOUNT || amount === PRODUCT.amount);
+  return Number.isInteger(amount) && SUPPORTED_PAYMENT_AMOUNTS.has(amount);
 }
 
 function senderInvoiceNumber() {
@@ -49,6 +52,13 @@ function publicPayment(payment) {
     expiresAt: payment.expiresAt || null, qrText: payment.qrText || "", qrImage: payment.qrImage || "",
     urls: payment.urls || [], entitlement: payment.entitlement || null, nextRoute: payment.nextRoute || null
   };
+}
+
+function paymentForCurrentOffer(payment) {
+  const publicRow = publicPayment(payment);
+  if (payment.amount === PRODUCT.amount || payment.status === "paid" || payment.status === "paid_but_not_unlocked") return publicRow;
+  if (!ACTIVE.has(payment.status)) return publicRow;
+  return { ...publicRow, status: "expired", qrText: "", qrImage: "", urls: [], expiresAt: null, obsoleteOffer: true };
 }
 
 async function validateInvoiceRequest(database, sessionId, input) {
@@ -126,7 +136,14 @@ async function createInvoice(database, provider, sessionId, input = {}, now = ne
       statusCode: 409, code: "replacement_authorization_required"
     });
   }
-  const active = payments.find(payment => ACTIVE.has(payment.status) && payment.expiresAt && new Date(payment.expiresAt) > now && (payment.status === "creating" || payment.invoiceId));
+  const obsoleteInFlight = payments.find(payment => payment.amount !== PRODUCT.amount && IN_FLIGHT_PROVIDER_STATES.has(payment.status));
+  if (obsoleteInFlight) throw Object.assign(new Error("Previous-price invoice operation is still in progress"), {
+    statusCode: 409, code: "legacy_invoice_operation_in_progress", paymentId: obsoleteInFlight.id
+  });
+  for (const obsolete of payments.filter(payment => payment.amount !== PRODUCT.amount && ACTIVE.has(payment.status))) {
+    await database.update("payments", obsolete.id, { status: "expired", updatedAt: now.toISOString() });
+  }
+  const active = payments.find(payment => payment.amount === PRODUCT.amount && ACTIVE.has(payment.status) && payment.expiresAt && new Date(payment.expiresAt) > now && (payment.status === "creating" || payment.invoiceId));
   if (active) return { ...publicPayment(active), reused: true };
   for (const stale of payments.filter(payment => ACTIVE.has(payment.status))) await database.update("payments", stale.id, { status: "expired", updatedAt: now.toISOString() });
   return createInvoiceAttempt(database, provider, sessionId, assessment, now, null, PRODUCT.amount, classification);
@@ -167,7 +184,7 @@ async function createReplacementInvoice(database, provider, sessionId, input = {
   const assessment = await validateInvoiceRequest(database, sessionId, { assessmentId: failed.assessmentId, productCode: failed.productCode });
   const payments = await database.find("payments", { sessionId, assessmentId: assessment.id, productCode: PRODUCT.code });
   if (payments.some(payment => ACTIVE.has(payment.status))) throw Object.assign(new Error("Active invoice exists"), { statusCode: 409, code: "active_invoice_exists" });
-  return createInvoiceAttempt(database, provider, sessionId, assessment, now, failed.id, failed.amount, {
+  return createInvoiceAttempt(database, provider, sessionId, assessment, now, failed.id, PRODUCT.amount, {
     paymentContext: failed.paymentContext || "unknown",
     analyticsEligible: failed.analyticsEligible === true,
     environment: failed.environment || "unknown"
@@ -230,6 +247,7 @@ async function checkPayment(database, provider, sessionId, input = {}, now = new
   }
 }
 
-module.exports = { ACTIVE, AMBIGUOUS_CREATE, SAFE_SENDER_INVOICE_MAX_LENGTH, LEGACY_PAYMENT_AMOUNT, isSupportedPaymentAmount, senderInvoiceNumber, requestFingerprint,
-  providerFailureEvidence, publicPayment, validateInvoiceRequest, createInvoice, reconcileInvoiceCreation, createReplacementInvoice,
+module.exports = { ACTIVE, AMBIGUOUS_CREATE, SAFE_SENDER_INVOICE_MAX_LENGTH, LEGACY_PAYMENT_AMOUNT, LEGACY_PAYMENT_AMOUNTS,
+  isSupportedPaymentAmount, senderInvoiceNumber, requestFingerprint, providerFailureEvidence, publicPayment, paymentForCurrentOffer,
+  validateInvoiceRequest, createInvoice, reconcileInvoiceCreation, createReplacementInvoice,
   confirmedProviderPayment, grantEntitlement, checkPayment };

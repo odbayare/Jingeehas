@@ -1,5 +1,9 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { PRODUCT } = require("../product-config.js");
 
 function csv(value) { return String(value || "").split(",").map(item => item.trim().toLowerCase()).filter(Boolean); }
 export function verifyQPayConfig(env = process.env) {
@@ -16,7 +20,7 @@ export function verifyQPayConfig(env = process.env) {
   const hosts = csv(env.QPAY_ALLOWED_HTTPS_HOSTS);
   if (schemes.some(value => !/^[a-z][a-z0-9+.-]{1,30}$/.test(value) || ["http", "https", "javascript", "data", "file"].includes(value))) return { status: "FAIL", reason: "QPAY_ALLOWED_APP_SCHEMES contains an unsafe or invalid scheme", externalRequestMade: false };
   if (hosts.some(value => value.includes(":") || value.includes("/") || !/^(?:[a-z0-9-]+\.)*[a-z0-9-]+$/.test(value))) return { status: "FAIL", reason: "QPAY_ALLOWED_HTTPS_HOSTS must contain hostnames only", externalRequestMade: false };
-  return { status: "PASS", mode: "configuration-only", baseOrigin: base.origin, callbackOrigin: callback.origin, allowedSchemeCount: schemes.length, allowedHostCount: hosts.length, productCode: "WEIGHT_TEST_ONE_TIME", amount: 39000, externalRequestMade: false };
+  return { status: "PASS", mode: "configuration-only", baseOrigin: base.origin, callbackOrigin: callback.origin, allowedSchemeCount: schemes.length, allowedHostCount: hosts.length, productCode: PRODUCT.code, amount: PRODUCT.amount, externalRequestMade: false };
 }
 
 function main() {

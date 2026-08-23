@@ -7,6 +7,7 @@ const { BROWSER_EVENTS, UUID, clientContext, flagsFromEvent, isKnownBotRequest, 
 const { authenticateSession } = require("./_lib/session.js");
 const { ownedAssessment } = require("./_lib/assessment.js");
 const { isFreeAssessmentPostpaid } = require("./_lib/commercial-flow.js");
+const { PRODUCT } = require("./_lib/config.js");
 
 exports.handler = handler("POST", async (event, body) => {
   if (!browserOriginAllowed(event)) throw Object.assign(new Error("Invalid origin"), { statusCode: 403, code: "invalid_origin" });
@@ -36,9 +37,9 @@ exports.handler = handler("POST", async (event, body) => {
       throw Object.assign(new Error("Paywall unavailable"), { statusCode: 404, code: "paywall_unavailable" });
     }
     const key = funnelKeyHash(assessmentId);
-    values = { funnelKeyHash: key };
+    values = { funnelKeyHash: key, amountMnt: PRODUCT.amount };
     idempotencyKey = `post_assessment_paywall_viewed:${key}`;
-    metadata = { flowVersion: assessment.commercialFlowVersion };
+    metadata = { flowVersion: assessment.commercialFlowVersion, offerPriceMnt: PRODUCT.amount, priceVersion: PRODUCT.priceVersion };
   }
   const recent = (await database.find("analytics_events", { rateKeyHash })).filter(row => new Date(row.createdAt) > new Date(Date.now() - 60_000));
   if (recent.length >= 30) throw Object.assign(new Error("Too many events"), { statusCode: 429, code: "rate_limited" });

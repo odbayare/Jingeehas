@@ -1,5 +1,7 @@
 # Paywall V2a + 39,000₮ draft audit
 
+> MIGRATION_HISTORY: retained as the immutable audit of the prior 39,000 MNT rollout. It is not current price authority.
+
 Status: **DRAFT_ONLY — pending production publication**. The public production price remains 9,900₮ until an owner-authorized release and required database migration.
 
 ## Preflight

@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { REQUIRED_PRODUCTION_FUNCTIONS } from "./required-production-functions.mjs";
 
 const require = createRequire(import.meta.url);
+const { PRODUCT } = require("../product-config.js");
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const staging = path.join(root, "staging");
 execFileSync(process.execPath, ["tools/build-staging.mjs"], { cwd: root, stdio: "inherit" });
@@ -30,7 +31,10 @@ const app = fs.readFileSync(path.join(staging, "site", "app.js"), "utf8");
 if (!app.includes("WEIGHT_TEST_COMING_SOON_MODE = false")) failures.push("public launch switch is not disabled in the staging package");
 const preview = fs.readFileSync(path.join(staging, "netlify", "functions", "_lib", "preview.js"), "utf8");
 if (!preview.includes("WEIGHT_TEST_COMING_SOON_MODE = false")) failures.push("server launch switch is not disabled in the staging package");
-for (const invariant of ["WEIGHT_TEST_ONE_TIME", "amount: 39000", "displayPrice: \"39,000₮\"", "БҮРЭН ТАЙЛАНГАА НЭЭХ"]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
+const stagedProductConfig = fs.readFileSync(path.join(staging, "site", "product-config.js"), "utf8");
+for (const invariant of ["PRODUCT.displayPrice", "PRODUCT.amount", "БҮРЭН ТАЙЛАНГАА НЭЭХ"]) if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
+for (const invariant of ["FULL_REPORT_PRICE_MNT = 19900", `FULL_REPORT_PRICE_VERSION = "${PRODUCT.priceVersion}"`, `displayPrice: "${PRODUCT.displayPrice}"`, "priceVersion: FULL_REPORT_PRICE_VERSION"]) if (!stagedProductConfig.includes(invariant)) failures.push(`catalog invariant missing: ${invariant}`);
+if (manifest.product?.amount !== PRODUCT.amount || productionManifest.product?.amount !== PRODUCT.amount) failures.push("staging product authority mismatch");
 for (const name of REQUIRED_PRODUCTION_FUNCTIONS) {
   if (!productionManifestFunctions.has(name)) failures.push(`required function absent from production manifest: ${name}`);
   if (!stagingFunctions.has(name)) failures.push(`required function absent from staging manifest: ${name}`);

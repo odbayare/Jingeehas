@@ -5,7 +5,7 @@ process.env.RECOVERY_HASH_PEPPER = "advisor-test-pepper-value-at-least-32-charac
 const assert = require("node:assert/strict");
 const { MemoryDatabaseAdapter } = require("../support/memory-database.js");
 const { hashPassword, authenticateRole, ADMIN_SESSION } = require("../../netlify/functions/_lib/auth.js");
-const { adminLogin, advisorLogin, createInvitation, resolveInvitation, recordConsent, accessAdvisorReport } = require("../../netlify/functions/_lib/advisor.js");
+const { adminLogin, advisorLogin, createInvitation, resolveInvitation, recordConsent, accessAdvisorReport, advisorDashboard } = require("../../netlify/functions/_lib/advisor.js");
 const { createAdvisor, updateAdvisor } = require("../../netlify/functions/_lib/admin.js");
 const { createSession } = require("../../netlify/functions/_lib/session.js");
 const { saveRecoveryContacts } = require("../../netlify/functions/_lib/recovery.js");
@@ -50,6 +50,7 @@ function cookieEvent(cookie) { return { headers: { cookie: cookie.split(";")[0] 
   await database.insert("payments", { id: "advisor-payment", sessionId: user.session.id, assessmentId: assessment.id, productCode: PRODUCT.code, amount: PRODUCT.amount, status: "paid" });
   await database.insert("entitlements", { id: `${assessment.id}:${PRODUCT.code}`, sessionId: user.session.id, assessmentId: assessment.id, paymentId: "advisor-payment", productCode: PRODUCT.code, status: "active", grantedAt: new Date().toISOString() });
   await database.insert("report_snapshots", { id: assessment.id, assessmentId: assessment.id, sessionId: user.session.id, reportMode: "sufficient", safetyRoute: null, fullReport: { sections: [], evidence: [{ questionId: "Q-HUNGER", text: "Түүхий хариулт" }] }, initialView: {}, createdAt: new Date().toISOString() });
+  assert.equal((await advisorDashboard(database, cookieEvent(advisor.cookie))).totals.clientPayments, PRODUCT.amount);
 
   const report = await accessAdvisorReport(database, cookieEvent(advisor.cookie), assessment.id);
   assert.deepEqual(report.fullReport, { sections: [] });

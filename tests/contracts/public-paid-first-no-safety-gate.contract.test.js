@@ -16,7 +16,7 @@ const { calculateAssessmentSafety } = require("../../netlify/functions/_lib/safe
   for (const forbidden of ['id="safety-form"', 'id="contact-email"', "QPay", "39,000₮", "Төлбөрөөс өмнөх аюулгүй байдлын шалгалт", "Үргэлжлүүлэхэд тохиромжтой эсэхийг шалгах"]) assert(!start.includes(forbidden), forbidden);
   assert(legacy.includes("Тест үнэлгээ болон бүрэн тайлангаа нээх"));
   assert(legacy.includes('id="contact-email"'));
-  assert(legacy.includes("QPay-аар 39,000₮ төлөөд тестээ эхлүүлэх"));
+  assert(legacy.includes("QPay-аар 19,900₮ төлөөд тестээ эхлүүлэх"));
 
   const source = fs.readFileSync(require.resolve("../../app.js"), "utf8");
   for (const forbidden of ["renderSafetyCheck", "submitSafety", "#safety-form", 'api("/.netlify/functions/weight-safety-gate"']) assert(!source.includes(forbidden), forbidden);

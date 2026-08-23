@@ -8,6 +8,7 @@ const { isFreeAssessmentPostpaid } = require("./_lib/commercial-flow.js");
 const { authenticateOwnerPreview } = require("./_lib/preview.js");
 const { assessmentContext, flagsFromEvent, funnelKeyHash, recordEventSafe } = require("./_lib/analytics.js");
 const { analyticsFlagsForPayment, paymentClassification } = require("./_lib/payment-context.js");
+const { PRODUCT } = require("./_lib/config.js");
 
 exports.handler = handler("POST", async (event, body) => {
   const database = getDatabase();
@@ -20,6 +21,7 @@ exports.handler = handler("POST", async (event, body) => {
   const classification = paymentClassification(event, requestFlags);
   if (freeFlow) await recordEventSafe(database, "full_report_cta_clicked", await assessmentContext(database, body.assessmentId), { funnelKeyHash: key }, {
     idempotencyKey: `full_report_cta_clicked:${key}`,
+    metadata: { offerPriceMnt: PRODUCT.amount, priceVersion: PRODUCT.priceVersion },
     ...requestFlags
   });
   let payment;
@@ -36,6 +38,8 @@ exports.handler = handler("POST", async (event, body) => {
     freeFlow
       ? { funnelKeyHash: key, amountMnt: payment.amount }
       : { assessmentId: payment.assessmentId, invoiceId: payment.invoiceId, paymentId: payment.paymentId, amountMnt: payment.amount },
-    { idempotencyKey: freeFlow ? `invoice_created:${key}` : `invoice_created:${payment.invoiceId}`, ...measurementFlags });
+    { idempotencyKey: freeFlow ? `invoice_created:${key}` : `invoice_created:${payment.invoiceId}`,
+      metadata: { offerPriceMnt: payment.amount, priceVersion: payment.amount === PRODUCT.amount ? PRODUCT.priceVersion : "legacy" },
+      ...measurementFlags });
   return response(200, payment);
 });

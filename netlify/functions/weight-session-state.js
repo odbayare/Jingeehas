@@ -3,7 +3,7 @@ const { getDatabase } = require("./_lib/store.js");
 const { handler, response } = require("./_lib/http.js");
 const { authenticateSession } = require("./_lib/session.js");
 const { reportForSession } = require("./_lib/assessment.js");
-const { publicPayment } = require("./_lib/payment.js");
+const { paymentForCurrentOffer } = require("./_lib/payment.js");
 const { authenticateOwnerPreview } = require("./_lib/preview.js");
 const { hasPaidAccess, nextRoute } = require("./_lib/commercial-flow.js");
 
@@ -25,5 +25,5 @@ exports.handler = handler("GET", async event => {
   return response(200, { assessment: { assessmentId: assessment.id, status: assessment.status, safetyRoute: assessment.safetyRoute,
     commercialFlowVersion: assessment.commercialFlowVersion || "legacy_postpaid_v1", startedAt: assessment.startedAt || null,
     questionnaireVersion: assessment.questionnaireVersion || require("../../questions.js").LEGACY_QUESTIONNAIRE_VERSION },
-    nextRoute: await nextRoute(database, assessment), payment: payment ? publicPayment(payment) : null, answers, report });
+    nextRoute: await nextRoute(database, assessment), payment: payment ? paymentForCurrentOffer(payment) : null, answers, report });
 });

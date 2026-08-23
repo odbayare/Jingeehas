@@ -1,6 +1,6 @@
 # Jingeehas Audience and Creative Policy
 
-Updated: 2026-08-01
+Updated: 2026-08-23
 
 ## Audience rules
 
@@ -17,7 +17,7 @@ Updated: 2026-08-01
 - Do not say or imply “та тарган”, “таны сэтгэлзүйн асуудал”, diagnosis or treatment.
 - Present the product as a non-diagnostic self-understanding test evaluation.
 - Avoid fear, fake urgency and unsupported outcome claims.
-- Landing page, ad copy, CTA, price and commercial flow must agree.
+- Landing page, CTA, price and commercial flow must agree. An approved no-price ad may omit the price; it must not state a stale price.
 
 ## Reel V1 decision
 
@@ -27,6 +27,6 @@ Use `Jingeehas_Reel_Paid_Cut_V1.mp4`, not the original chronology master, for pa
 
 Хоол, дасгалын төлөвлөгөө зөв байсан ч жин хасах оролдлого нэг л тогтдоггүй үе бий. Үүнд стресс, хэт хязгаарлалт, автомат зуршил зэрэг давтагддаг хэв маяг нөлөөлж болно.
 
-Жингээ Хас тест үнэлгээг үнэ төлбөргүй бөглөөрэй. Таны хувийн хэв маяг, ямар нөхцөлд илэрдэг, жин хасалтад яагаад саад болдог болон хэрхэн удирдахыг бүрэн тайлангаас мэдэж авна. Бүрэн тайлан 9,900₮.
+Жингээ Хас тест үнэлгээг үнэ төлбөргүй бөглөөрэй. Эхний үр дүн үнэгүй. Хэрэв хүсвэл таны хувийн хэв маяг, ямар нөхцөлд илэрдэг, жин хасалтад яагаад саад болдог болон хэрхэн удирдахыг бүрэн тайлангаас мэдэж авна.
 
 Энэ нь эмнэлзүйн онош биш.

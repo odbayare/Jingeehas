@@ -2,17 +2,17 @@
 
 const crypto = require("node:crypto");
 const { cookies } = require("./http.js");
-const { PRODUCT } = require("./config.js");
+const { PRODUCT, SUPPORTED_FULL_REPORT_PRICES_MNT } = require("./config.js");
 const { isCommercialAnalyticsEligible } = require("./payment-context.js");
 
 const DEFAULT_GRAPH_API_VERSION = "v25.0";
 const SAFE_GRAPH_VERSION = /^v\d+\.\d+$/;
 const SAFE_META_ID = /^\d{5,32}$/;
 const DEFAULT_EVENT_SOURCE_URL = "https://jingeehas.fit/assessment/payment";
-const LEGACY_PAYMENT_AMOUNT = 9900;
+const SUPPORTED_PAYMENT_AMOUNTS = new Set(SUPPORTED_FULL_REPORT_PRICES_MNT);
 
 function isSupportedPaymentAmount(amount) {
-  return Number.isInteger(amount) && (amount === LEGACY_PAYMENT_AMOUNT || amount === PRODUCT.amount);
+  return Number.isInteger(amount) && SUPPORTED_PAYMENT_AMOUNTS.has(amount);
 }
 
 function exactEnabled(value) {

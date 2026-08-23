@@ -1,6 +1,6 @@
 # Jingeehas Product Registry
 
-Updated: 2026-08-01
+Updated: 2026-08-23
 Owner: Э.Одбаяр
 Timezone: Asia/Ulaanbaatar
 
@@ -11,8 +11,9 @@ Timezone: Asia/Ulaanbaatar
 | Product code | `WEIGHT_TEST_ONE_TIME` | PASS |
 | Public name | Илүүдэл жингээс салах тест үнэлгээ | PASS |
 | Domain | `https://jingeehas.fit` | PASS |
-| Price | 39,000 MNT, one-time — DRAFT_ONLY, pending production publication; live price remains 9,900 MNT | DRAFT |
-| Commercial flow | Free assessment → sealed paywall → optional 39,000 MNT personalized full report | DRAFT |
+| Price | 19,900 MNT, one-time; 9,900/39,000 MNT remain historical verification amounts | APPROVED |
+| Price version | `p19900_v1` | APPROVED |
+| Commercial flow | Free assessment + initial result → sealed paywall → optional 19,900 MNT personalized full report | APPROVED |
 | Source of truth | Provider-confirmed QPay payment | PASS |
 | Production source | `d239c99239404306a06074ebfbacd615b7b70914` | PASS |
 | Production deploy | Netlify `6a6dbae714b3bb6785cdcdcf` | PASS |
@@ -35,7 +36,7 @@ Timezone: Asia/Ulaanbaatar
   "enabled": false,
   "pixelId": "",
   "productCode": "WEIGHT_TEST_ONE_TIME",
-  "amount": 39000,
+  "amount": 19900,
   "currency": "MNT"
 }
 ```

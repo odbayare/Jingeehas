@@ -38,7 +38,7 @@ class MemoryDb {
     enabled: true,
     pixelId: "123456789",
     productCode: "WEIGHT_TEST_ONE_TIME",
-    amount: 39000,
+    amount: 19900,
     currency: "MNT"
   });
   assert.equal(metaBrowserConfig({ META_BROWSER_PIXEL_ENABLED: "false", META_PIXEL_ID: "123456789" }).enabled, false);
@@ -94,8 +94,10 @@ class MemoryDb {
     content_type: "product",
     product_code: "WEIGHT_TEST_ONE_TIME"
   });
-  const currentPayment = { ...payment, id: "wp_current_39000", providerPaymentId: "provider-current-39000", amount: 39000 };
-  assert.equal(purchasePayload(currentPayment, event).custom_data.value, 39000);
+  const historical39000 = { ...payment, id: "wp_historical_39000", providerPaymentId: "provider-historical-39000", amount: 39000 };
+  assert.equal(purchasePayload(historical39000, event).custom_data.value, 39000);
+  const currentPayment = { ...payment, id: "wp_current_19900", providerPaymentId: "provider-current-19900", amount: 19900 };
+  assert.equal(purchasePayload(currentPayment, event).custom_data.value, 19900);
   assert.deepEqual(payload.user_data, {
     client_ip_address: "203.0.113.5",
     client_user_agent: "Test Browser",

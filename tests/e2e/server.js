@@ -66,7 +66,7 @@ const initialResult = {
     "Эхэлж хэрэгжүүлэх 3 алхам",
     "Төлөвлөснөөрөө явж чадаагүй үед хэрхэн үргэлжлүүлэх вэ?"
   ],
-  price: 39000,
+  price: 19900,
   currency: "MNT"
 };
 const neutralInitialResult = {
@@ -74,7 +74,7 @@ const neutralInitialResult = {
   patternCount: 0,
   interactionCount: 0,
   lockedSections: initialResult.lockedSections,
-  price: 39000,
+  price: 19900,
   currency: "MNT"
 };
 const singleInitialResult = { ...initialResult, patternCount: 1, interactionCount: 0 };
@@ -129,6 +129,7 @@ const endpoints = {
           lpvToProviderConfirmedPaid: { numerator: 0, denominator: 25, rate: 0 } },
         experiment: { status: "COLLECTING", checkpointCompletions: 20, completions: 8, remainingCompletions: 12,
           commercialEligibilityRate: 0.125, interpretation: "20 clean completion хүртэл шийдвэр гаргахгүй." } },
+      offerPriceMeasurement: { cutoverAt: "2026-08-23T08:00:00.000Z", historical: { label: "39,000₮ historical", paywallViews: 2, fullReportCtaClicks: 0, invoicesCreated: 0, paymentsConfirmed: 0, revenueMnt: 0 }, current: { label: "19,900₮ current", paywallViews: 1, fullReportCtaClicks: 1, invoicesCreated: 1, paymentsConfirmed: 0, revenueMnt: 0 } },
       visitorReconciliation: { firstTimeVisitors: 248, anyRangeVisitors: 256, attributionPairs: 256, returningVisitors: 8, duplicateAttributionPairs: 0 },
       campaignAttribution: { rows: [{ utmSource: "meta", utmMedium: "paid_social", utmCampaign: "jingeehas_traffic_lpv_reel_v1",
         utmContent: "paid_cut_v1_lpv", utmTerm: "broad_25plus", unattributed: false, visitors: 6, assessmentsStarted: 5,
@@ -199,13 +200,13 @@ const endpoints = {
       stats.paymentRows += 1;
     }
     paymentStatus = "pending";
-    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 39000, status: "pending", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] });
+    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 19900, status: "pending", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] });
   },
   "qpay-check-payment": async (_body, response) => {
     stats.qpayCheck += 1;
     paymentStatus = "paid";
     entitled = true;
-    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 39000, status: "paid", entitlement: true, nextRoute: "/report" });
+    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 19900, status: "paid", entitlement: true, nextRoute: "/report" });
   },
   "weight-assessment-questions": async (_body, response, request) => { assessmentStatus = "in_progress"; const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e"); json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", status: assessmentStatus, startedAt: "2026-07-21T08:00:00.000Z", questionnaireVersion: questions.QUESTIONNAIRE_VERSION }); },
   "weight-assessment-save": async (body, response) => {
@@ -280,7 +281,7 @@ const endpoints = {
     json(response, 200, {
       assessment: { assessmentId, status: assessmentStatus, safetyRoute: flowMode === "safety" ? "professional_support" : null, commercialFlowVersion: "free_assessment_postpaid_v1", questionnaireVersion: questions.QUESTIONNAIRE_VERSION },
       nextRoute,
-      payment: paymentStatus ? { status: paymentStatus, paymentId: "wp-e2e", amount: 39000, productCode: "WEIGHT_TEST_ONE_TIME", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] } : null,
+      payment: paymentStatus ? { status: paymentStatus, paymentId: "wp-e2e", amount: 19900, productCode: "WEIGHT_TEST_ONE_TIME", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] } : null,
       answers: savedAnswers,
       report: nextRoute === "/report"
         ? flowMode === "safety"
@@ -300,7 +301,7 @@ const endpoints = {
   "advisor-invite-resolve": async (_body, response) => json(response, 200, { coachClientId: "ac-e2e", coachId: "adv-e2e", advisorName: "Нараа", consentStatus: "pending" }),
   "advisor-consent": async (body, response) => json(response, 200, { coachClientId: body.coachClientId, consentStatus: body.consent ? "consent_accepted" : "consent_declined" }),
   "advisor-login": async (_body, response) => json(response, 200, { coachId: "adv-e2e", name: "Нараа", forcePasswordChange: false }, { "set-cookie": "jingeehas_advisor=e2e; Path=/; HttpOnly" }),
-  "advisor-dashboard": async (_body, response) => json(response, 200, { coachId: "adv-e2e", clients: [{ coachClientId: "ac-e2e", name: "Үйлчлүүлэгч", status: "Зөвшөөрсөн", assessmentId: "wa-e2e" }], totals: { clientPayments: 9900, commissionTotal: 4000, commissionPending: 4000, commissionPaid: 0 } }),
+  "advisor-dashboard": async (_body, response) => json(response, 200, { coachId: "adv-e2e", clients: [{ coachClientId: "ac-e2e", name: "Үйлчлүүлэгч", status: "Зөвшөөрсөн", assessmentId: "wa-e2e" }], totals: { clientPayments: 19900, commissionTotal: 4000, commissionPending: 4000, commissionPaid: 0 } }),
   "advisor-client-invite": async (_body, response) => json(response, 201, { coachClientId: "ac-2", inviteToken: "invite-e2e", advisorName: "Нараа" }),
   "advisor-report": async (_body, response) => json(response, 200, { assessmentId: "wa-e2e", fullReport }),
   "advisor-logout": async (_body, response) => json(response, 200, { loggedOut: true })
