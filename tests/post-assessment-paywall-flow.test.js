@@ -23,7 +23,7 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
 
   const start = app.renderForPath("/assessment/start");
   assert(start.includes("Тестээ эхлүүлэх"));
-  for (const forbidden of ["39,000₮", "QPay", "Нэхэмжлэл", "картын мэдээлэл"]) {
+  for (const forbidden of ["19,900₮", "39,000₮", "QPay", "Нэхэмжлэл", "картын мэдээлэл"]) {
     assert(!start.includes(forbidden), `pre-test payment copy leaked into start screen: ${forbidden}`);
   }
 
@@ -66,7 +66,7 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
     "Ямар нөхцөлд хүндрэл нэмэгдэж болох, хэд хэдэн хэв маяг зэрэг ажиглагдсан бол тэдгээрийн уялдаа холбоог",
     "Өөр дээрээ юу ажиглаж, ямар алхмаас эхэлж болохыг харна",
     "ТАНЫ ХУВИЙН БҮРЭН ТАЙЛАН",
-    "39,000₮",
+    "19,900₮",
     "Нэг удаагийн төлбөр",
     "БҮРЭН ТАЙЛАНГАА НЭЭХ",
     "QPay · Төлбөр баталгаажмагц бүрэн тайлан нээгдэнэ",
@@ -83,7 +83,7 @@ const appSource = fs.readFileSync(distAppPath, "utf8");
     "SECRET_REASON",
     "SECRET_SECTION",
     "Та нэг аяга кофены үнээр",
-    "Бүрэн тайлангаа нээх — 39,000₮",
+    "Бүрэн тайлангаа нээх — 19,900₮",
     ">Нүүр<",
     ">Тестийн тухай<",
     ">Тайлан сэргээх<",

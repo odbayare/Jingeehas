@@ -1,5 +1,7 @@
 # Owner launch review
 
+> HISTORICAL_DOCUMENTATION: pre-launch snapshot. Any 9,900 MNT references below describe the then-current certification and are not the current offer.
+
 Status: **PRE-PAYMENT CERTIFICATION PASS / CONTROLLED PAYMENT APPROVAL REQUIRED**. Owner-provided operational legal defaults are implemented in the product copy; this is not a claim of external legal-counsel review. The canonical repository value is `https://jingeehas.fit/`. Coming-soon pre-launch deploy `6a59415e6edc31375bbbdbae` retains the certified static package and passes live recovery, temporary support-contact delivery, database lifecycle and cleanup, real owner-admin security, legal-copy consistency, and QPay production configuration checks. No invoice or payment was created. Coming-soon remains enabled pending explicit approval for the controlled 9,900 MNT production payment test. The three approved hero sentences are unchanged.
 
 ## Database infrastructure status

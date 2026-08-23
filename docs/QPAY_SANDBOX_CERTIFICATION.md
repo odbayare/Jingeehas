@@ -8,7 +8,7 @@ Required variables are `QPAY_API_BASE_URL`, `QPAY_CLIENT_ID`, `QPAY_CLIENT_SECRE
 
 The live probe authenticates a disposable Jingeehas session and submits an intentionally nonexistent assessment ID. HTTP 404 proves the production function loaded QPay configuration before the request failed safely at assessment ownership; no provider request, invoice, payment, entitlement, or residual session remains.
 
-Protected invariants: product `WEIGHT_TEST_ONE_TIME`, amount `9900`, display price `9,900₮`, create endpoint `/.netlify/functions/qpay-create-invoice`, and check endpoint `/.netlify/functions/qpay-check-payment`.
+Protected invariants: product `WEIGHT_TEST_ONE_TIME`, new-invoice amount `19900`, display price `19,900₮`, historical verification amounts `9900` and `39000`, create endpoint `/.netlify/functions/qpay-create-invoice`, and check endpoint `/.netlify/functions/qpay-check-payment`.
 
 Authentication uses `POST /v2/auth/token`; creation uses `POST /v2/invoice`; verification uses `POST /v2/payment/check`. The server owns product/amount, session and assessment ownership, invoice reuse/expiry, and safe application links. A callback URL is a notification location only; it never substitutes for provider payment verification or user authorization. Duplicate callbacks/checks must not create a second entitlement or commission.
 
@@ -21,7 +21,7 @@ Run only after both `STAGING DEPLOY APPROVED` and `QPAY SANDBOX TEST APPROVED` a
 3. Enter a designated recovery contact.
 4. Create an assessment draft.
 5. Create one sandbox invoice.
-6. Verify product code `WEIGHT_TEST_ONE_TIME` and amount `9900` in server and sandbox records.
+6. Verify product code `WEIGHT_TEST_ONE_TIME` and amount `19900` in server and sandbox records.
 7. Inspect the QR and confirm every application/HTTPS link is allowlisted.
 8. Complete the sandbox payment using the owner-approved sandbox instrument.
 9. Use the server payment-check action.

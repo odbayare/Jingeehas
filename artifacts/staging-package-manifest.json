@@ -2,8 +2,9 @@
   "schemaVersion": 1,
   "product": {
     "code": "WEIGHT_TEST_ONE_TIME",
-    "amount": 9900,
-    "displayPrice": "9,900₮",
+    "amount": 19900,
+    "displayPrice": "19,900₮",
+    "priceVersion": "p19900_v1",
     "comingSoon": true
   },
   "packageRoot": "staging",

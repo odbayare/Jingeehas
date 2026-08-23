@@ -1,6 +1,10 @@
 import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { PRODUCT } = require("../product-config.js");
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const staticRoot = path.join(root, "dist");
@@ -35,7 +39,7 @@ function buildManifest() {
 
   return {
     schemaVersion: 2,
-    product: { code: "WEIGHT_TEST_ONE_TIME", amount: 39000, displayPrice: "39,000₮", comingSoon: false },
+    product: { code: PRODUCT.code, amount: PRODUCT.amount, displayPrice: PRODUCT.displayPrice, priceVersion: PRODUCT.priceVersion, comingSoon: false },
     packageRoot: "dist",
     functionsRoot: ".generated-copy-hotfix/netlify/functions",
     staticFiles: staticFiles.map(file => ({ file, sha256: sha256(path.join(staticRoot, file)) })),

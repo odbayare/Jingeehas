@@ -3,7 +3,7 @@ const { TABLES } = require("../../netlify/functions/_lib/config.js");
 function copy(value) { return value == null ? value : JSON.parse(JSON.stringify(value)); }
 
 class MemoryDatabaseAdapter {
-  constructor() { this.tables = Object.fromEntries(TABLES.map(table => [table, new Map()])); this.activationLocks = new Map(); }
+  constructor() { this.tables = Object.fromEntries(TABLES.map(table => [table, new Map()])); this.activationLocks = new Map(); this.p19900T0 = null; }
   table(name) { if (!this.tables[name]) throw new Error(`Unknown table: ${name}`); return this.tables[name]; }
   async get(table, id) { return copy(this.table(table).get(id) || null); }
   async find(table, filters = {}) { return copy([...this.table(table).values()].filter(row => Object.entries(filters).every(([key, value]) => row[key] === value))); }
@@ -197,6 +197,38 @@ class MemoryDatabaseAdapter {
       revenueMnt: cleanStages.filter(row => row.eventName === "payment_confirmed").reduce((sum, row) => sum + Number(row.amountMnt || 0), 0),
       completedFunnels, visitorReconciliation: { firstTimeVisitors, anyRangeVisitors, attributionPairs,
         returningVisitors: Math.max(0, anyRangeVisitors - firstTimeVisitors), duplicateAttributionPairs: Math.max(0, attributionPairs - anyRangeVisitors) } };
+  }
+  async recordP19900Cutover(effectiveAt) {
+    const value = new Date(effectiveAt).toISOString();
+    if (this.p19900T0 && this.p19900T0 !== value) throw Object.assign(new Error("Cutover conflict"), { code: "conflict" });
+    this.p19900T0 = value;
+    return { priceVersion: "p19900_v1", productCode: "WEIGHT_TEST_ONE_TIME", amountMnt: 19900, effectiveAt: value };
+  }
+  async getOfferPriceMeasurement(startDate, endDate, utmContent) {
+    const events = [...this.table("analytics_events").values()].filter(row => !row.isAdmin && !row.isOwnerPreview && !row.isTest);
+    const day = value => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Ulaanbaatar", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(value));
+    const inRange = value => value && day(value) >= startDate && day(value) <= endDate;
+    const acquisition = new Map();
+    for (const row of events.filter(item => item.eventName === "free_assessment_started" && item.funnelKeyHash).sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
+      if (!acquisition.has(row.funnelKeyHash)) acquisition.set(row.funnelKeyHash, row);
+    }
+    const paywalls = new Map();
+    for (const row of events.filter(item => item.eventName === "post_assessment_paywall_viewed" && item.funnelKeyHash).sort((a, b) => String(a.occurredAt).localeCompare(String(b.occurredAt)))) {
+      if (!paywalls.has(row.funnelKeyHash) && acquisition.get(row.funnelKeyHash)?.utmContent === utmContent && inRange(row.occurredAt)) paywalls.set(row.funnelKeyHash, row);
+    }
+    const grouped = new Map();
+    for (const [funnelKeyHash, paywall] of paywalls) {
+      const current = Number(paywall.amountMnt) === 19900 || this.p19900T0 && new Date(paywall.occurredAt) >= new Date(this.p19900T0);
+      const priceVersion = current ? "p19900_v1" : "p39000_historical";
+      const row = grouped.get(priceVersion) || { priceVersion, offerPriceMnt: current ? 19900 : 39000, paywallExposures: 0, ctaClicks: 0, invoicesCreated: 0, paymentsConfirmed: 0, revenueMnt: 0 };
+      row.paywallExposures += 1;
+      const after = name => events.find(event => event.funnelKeyHash === funnelKeyHash && event.eventName === name && new Date(event.occurredAt) >= new Date(paywall.occurredAt));
+      if (after("full_report_cta_clicked")) row.ctaClicks += 1;
+      if (after("invoice_created")) row.invoicesCreated += 1;
+      const paid = after("payment_confirmed"); if (paid) { row.paymentsConfirmed += 1; row.revenueMnt += Number(paid.amountMnt || 0); }
+      grouped.set(priceVersion, row);
+    }
+    return { utmContent, currentPriceMnt: 19900, currentPriceVersion: "p19900_v1", p19900T0: this.p19900T0, epochs: [...grouped.values()].sort((a, b) => a.offerPriceMnt - b.offerPriceMnt) };
   }
   async getDailyFunnelAnalytics(startDate, endDate) {
     const cutover = new Date("2026-07-21T16:17:45.493Z");

@@ -66,10 +66,12 @@ async function accessAdvisorReport(database, event, assessmentId, now = new Date
 async function advisorDashboard(database, event) {
   const session = await authenticateRole(database, event, ADVISOR_SESSION); const clients = await database.find("advisor_clients", { coachId: session.coachId });
   const commissions = await database.find("advisor_commissions", { coachId: session.coachId });
+  const clientPaymentRows = (await Promise.all(clients.filter(client => client.assessmentId).map(client =>
+    database.find("payments", { assessmentId: client.assessmentId, status: "paid" })))).flat();
   const paid = commissions.reduce((sum, row) => sum + Number(row.amount || 0), 0);
   return { coachId: session.coachId, clients: clients.map(client => ({ coachClientId: client.id, name: client.name,
     status: advisorStatusLabel(client.status),
-    assessmentId: client.assessmentId })), totals: { clientPayments: clients.filter(client => client.assessmentId).length * 9900,
+    assessmentId: client.assessmentId })), totals: { clientPayments: clientPaymentRows.reduce((sum, row) => sum + Number(row.amount || 0), 0),
     commissionTotal: paid, commissionPending: commissions.filter(row => row.status === "pending").reduce((sum, row) => sum + Number(row.amount), 0),
     commissionPaid: commissions.filter(row => row.status === "paid").reduce((sum, row) => sum + Number(row.amount), 0) } };
 }

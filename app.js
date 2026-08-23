@@ -1,6 +1,8 @@
 "use strict";
 
-const PRODUCT = Object.freeze({ name: "Жингээ Хас — хувийн бүрэн тайлан", code: "WEIGHT_TEST_ONE_TIME", amount: 39000, displayPrice: "39,000₮" });
+const { PRODUCT } = typeof module !== "undefined" && module.exports
+  ? require("./product-config.js")
+  : globalThis.JINGEEHAS_PRODUCT_CONFIG;
 const SUPPORT_EMAIL = "jingeehas@gmail.com";
 const WEIGHT_TEST_COMING_SOON_MODE = false;
 const PAYMENT_COPY = Object.freeze({
@@ -37,7 +39,7 @@ function createState() {
     admin: { authenticated: false, owner: false, created: null, reportCandidates: [], regenerationKeys: {}, regenerated: null, error: "",
       analytics: { preset: "last7", startDate: "", endDate: "", days: [], priorDays: [], summary: null, priorSummary: null,
         allFlows: null, currentFlow: null, priorCurrentFlow: null, prepaidFlow: null, legacyFlow: null, conversions: null, coverage: null, loading: false, error: "",
-        campaignAttribution: { rows: [], excluded: { eventCount: 0, paymentCount: 0, revenueMnt: 0 } }, cleanControl: null, visitorReconciliation: null,
+        campaignAttribution: { rows: [], excluded: { eventCount: 0, paymentCount: 0, revenueMnt: 0 } }, cleanControl: null, offerPriceMeasurement: null, visitorReconciliation: null,
         questionProgress: { summary: null, questions: [], expanded: false, showAll: false } } }, ownerPreview: false, busy: false, slowSave: false };
 }
 let state = createState();
@@ -137,7 +139,7 @@ function renderLanding() {
     <p class="hero-paragraph">Та жин хасахад тань юу саад болж, яагаад хэцүү болгодогоо мэддэг гэж боддог уу? Таныг заримдаа дэглэмээ зөрчиж хооллох, хааяа нэг амттан сэмээрхэн идчихдэг, зарим хоолыг хэтрүүлчихдэг сэтгэлзүйн шалтгаануудаа та сайн мэдэж байгаа. Гэхдээ таныг далдуур удирдаж буй сэтгэлзүйн дадал зуршлууд хоорондоо нийлэхээрээ ямар үр дүнд хүргэдэгийг мэдэх үү?</p>
     <p class="hero-paragraph">Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд, тэдгээрийн харилцан нөлөө болон хэрхэн удирдаж, нөлөөг нь багасгах аргуудаа мэдэхийн тулд тестээ бөглөөрэй. Энэ мэдээлэл таны бүрэн тайланд нээгдэнэ.</p>
     <div class="hero-actions"><a class="button" href="/assessment/start" data-route>ТЕСТЭЭ ЭХЛҮҮЛЭХ</a>
-      <p class="hero-note">Тест үнэгүй · Хувийн тайлан 39,000₮</p>
+      <p class="hero-note">Тест үнэгүй · Хувийн тайлан ${PRODUCT.displayPrice}</p>
     </div>
     </div><div class="hero-visual" aria-hidden="true"></div></section>
     <section class="hero-explainer" aria-label="Энэхүү тестийн олж харах зүйлс">
@@ -161,7 +163,7 @@ function renderLanding() {
         <div class="report-preview-item"><p class="sample-kicker">ДЭГЛЭМЭЭ БАРЬЖ ЧАДААГҮЙ ҮЕД ЯАХ ВЭ?</p><p>Дэглэмээ барьж чадаагүй нэг өдрөөс болж бүхнээ орхихгүйгээр дараагийн хоол, дараагийн өдрөөсөө хэрхэн хэвийн үргэлжлүүлэхийг тайлбарлана.</p></div>
         <div class="report-preview-item"><p class="sample-kicker">ӨӨРТӨӨ ТОХИРСОН АРГА БАРИЛАА ХЭРХЭН СОНГОХ ВЭ?</p><p>Нойр, ажил, гэр бүл, хөдөлгөөн, санхүүгийн боломж болон өдөр тутмын хуваарьтайгаа нийцүүлэн жин хасах арга барилаа хэрхэн сонгохыг ойлгоно.</p></div>
       </div>
-      <p class="section-close"><strong>Үнэгүй тест · Хувийн бүрэн тайлан <span class="price-token">39,000₮</span></strong></p>
+      <p class="section-close"><strong>Үнэгүй тест · Хувийн бүрэн тайлан <span class="price-token">${PRODUCT.displayPrice}</span></strong></p>
       <p class="methodology-limitation">Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш.</p>
     </section>
     <section class="methodology-summary" aria-labelledby="methodology-title">
@@ -550,6 +552,16 @@ function conversionEvidence(conversion) {
 }
 function attributionRate(numerator, denominator) { return Number(denominator) > 0 ? safeRate(Number(numerator || 0) / Number(denominator)) : "—"; }
 function ratioEvidence(value = {}) { return value.rate == null ? "—" : `${Number(value.numerator || 0)} / ${Number(value.denominator || 0)} = ${safeRate(value.rate)}`; }
+function renderOfferPriceMeasurement(measurement) {
+  const epochs = Array.isArray(measurement?.epochs) ? measurement.epochs : [];
+  const rows = epochs.map(epoch => `<tr><th scope="row">${epoch.priceVersion === PRODUCT.priceVersion ? `Current ${PRODUCT.displayPrice}` : "Historical 39,000₮"}</th><td><code>${escapeHtml(epoch.priceVersion)}</code></td><td>${Number(epoch.paywallExposures || 0)}</td><td>${Number(epoch.ctaClicks || 0)}</td><td>${Number(epoch.invoicesCreated || 0)}</td><td>${Number(epoch.paymentsConfirmed || 0)}</td><td>${money(epoch.revenueMnt)}</td></tr>`).join("");
+  const t0 = measurement?.p19900T0 ? `${formatAnalyticsDateTime(measurement.p19900T0)} Asia/Ulaanbaatar` : "production cutover pending";
+  return `<section class="offer-price-measurement" aria-labelledby="offer-price-title"><h3 id="offer-price-title">Current full-report price: ${PRODUCT.displayPrice}</h3>
+    <p><strong>Нэг удаагийн төлбөр.</strong> Үнэгүй тест болон эхний хувийн үр дүн үнэгүй; бүрэн тайлан сонголттой төлбөртэй хэвээр.</p>
+    <p><code>utm_content=value_first_no_price_image_v1</code> acquisition-ийг өөрчлөлгүй үнэ харсан анхны paywall exposure-оор нь салгав.</p>
+    <p class="analytics-coverage">P19900_T0: ${escapeHtml(t0)}. Legacy 9,900₮ transactions болон өмнөх 39,000₮ exposure/revenue түүхийг дахин шошголоогүй.</p>
+    <div class="table-scroll" tabindex="0"><table><thead><tr><th>Price epoch</th><th>Version</th><th>Paywall exposure</th><th>CTA</th><th>Invoice</th><th>Paid</th><th>Revenue</th></tr></thead><tbody>${rows || `<tr><td colspan="7">Сонгосон хугацаанд үнэ-version-тэй paywall exposure алга.</td></tr>`}</tbody></table></div></section>`;
+}
 function renderCleanControl(control) {
   if (!control) return "";
   const rates = control.rates || {}; const experiment = control.experiment || {}; const invariant = control.invariants || {};
@@ -650,6 +662,7 @@ function renderAdminAnalytics() {
     <ol class="funnel-visual" aria-label="Үндсэн хөрвөлтийн дараалал">${stages.map(([label, value, conversion]) => `<li><span>${label}</span><strong>${value}</strong>${conversion ? `<small>${conversionDisplay(conversion)}</small>` : ""}</li>`).join("")}</ol>
     ${coverage.prepaidActivityPresent ? historical("Өмнөх төлбөр-эхэнд урсгал", prepaid) : ""}
     ${coverage.legacyActivityPresent ? historical("Legacy postpaid урсгал", legacy) : ""}
+    ${renderOfferPriceMeasurement(analytics.offerPriceMeasurement)}
     ${renderCleanControl(analytics.cleanControl)}
     ${renderMeasurementReconciliation(analytics)}
     ${renderCampaignAttribution(analytics.campaignAttribution)}
@@ -967,7 +980,7 @@ async function loadAdminAnalytics(preset = state.admin.analytics.preset, custom 
     analytics.prepaidFlow = current.prepaidFlow || null; analytics.legacyFlow = current.legacyFlow || null;
     analytics.conversions = current.conversions || null; analytics.coverage = current.coverage || null;
     analytics.campaignAttribution = current.campaignAttribution || { rows: [], excluded: { eventCount: 0, paymentCount: 0, revenueMnt: 0 } };
-    analytics.cleanControl = current.cleanControl || null; analytics.visitorReconciliation = current.visitorReconciliation || null;
+    analytics.cleanControl = current.cleanControl || null; analytics.offerPriceMeasurement = current.offerPriceMeasurement || null; analytics.visitorReconciliation = current.visitorReconciliation || null;
     analytics.questionProgress.summary = questionProgress.summary || null; analytics.questionProgress.questions = questionProgress.questions || [];
   } catch { analytics.error = "Өдөр тутмын үзүүлэлтийг ачаалж чадсангүй."; }
   analytics.loading = false;

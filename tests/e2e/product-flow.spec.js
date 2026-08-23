@@ -99,11 +99,11 @@ for (const [width, height] of [[375, 812], [390, 844], [430, 900], [768, 1024], 
       expect(Math.abs(sectionLefts.explainer - sectionLefts.hero)).toBeLessThan(1);
       expect(Math.abs(sectionLefts.explainer - sectionLefts.sample)).toBeLessThan(1);
     }
-    await expect(page.locator(".hero-note")).toHaveText("Тест үнэгүй · Хувийн тайлан 39,000₮");
+    await expect(page.locator(".hero-note")).toHaveText("Тест үнэгүй · Хувийн тайлан 19,900₮");
     await expect(page.locator(".hero-visual")).toBeVisible();
     expect(await page.locator(".hero-visual").evaluate(element => getComputedStyle(element).backgroundImage.includes("hero-woman-stretch.png"))).toBe(true);
-    await expect(page.getByText("Үнэ: 39,000₮", { exact: true })).toHaveCount(0);
-    await expect(page.locator(".hero")).toContainText("39,000₮");
+    await expect(page.getByText("Үнэ: 19,900₮", { exact: true })).toHaveCount(0);
+    await expect(page.locator(".hero")).toContainText("19,900₮");
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true);
     expect(await cta.evaluate(element => element.getBoundingClientRect().width <= window.innerWidth)).toBe(true);
   });
@@ -145,7 +145,7 @@ test("natural Mongolian report preview is complete, ordered, and responsive", as
     for (const label of labels) await expect(preview.getByText(label, { exact: true })).toBeVisible();
     for (const body of bodies) await expect(preview.getByText(body, { exact: true })).toBeVisible();
     for (const phrase of banned) await expect(preview.getByText(phrase, { exact: false })).toHaveCount(0);
-    await expect(preview.locator(".section-close")).toHaveText("Үнэгүй тест · Хувийн бүрэн тайлан 39,000₮");
+    await expect(preview.locator(".section-close")).toHaveText("Үнэгүй тест · Хувийн бүрэн тайлан 19,900₮");
     await expect(preview.getByText("Энэ тайлан нь эмнэлгийн болон сэтгэлзүйн онош биш.", { exact: true })).toBeVisible();
     const layout = await preview.evaluate(element => {
       const card = element.querySelector(".sample-report-card").getBoundingClientRect();
@@ -235,6 +235,7 @@ test("owner daily funnel and campaign attribution tables are responsive", async 
     await expect(page.getByText("Цагийн бүс: Улаанбаатар")).toBeVisible();
     await expect(page.getByText("Одоогийн урсгал: Үнэгүй тест → тайлан бэлэн дэлгэц → бүрэн тайлан", { exact: true })).toBeVisible();
     await expect(page.locator(".metric-value", { hasText: "29,700₮" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Current full-report price: 19,900₮" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "39,000₮ Clean Control — цэвэр хяналтын бүлэг" })).toBeVisible();
     await expect(page.getByText("Experiment status: COLLECTING", { exact: true })).toBeVisible();
     const attribution = page.getByRole("region", { name: "Campaign attribution хүснэгт" });
@@ -358,7 +359,7 @@ test("free completion shows only the sealed paywall before provider-confirmed fu
   await expect(page.getByRole("heading", { name: "Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Бүрэн тайлангаас та:" })).toBeVisible();
   await expect(page.locator(".report-contents-preview li")).toHaveCount(3);
-  await expect(page.getByText("39,000₮", { exact: true })).toBeVisible();
+  await expect(page.getByText("19,900₮", { exact: true })).toBeVisible();
   await expect(page.getByRole("button", { name: "БҮРЭН ТАЙЛАНГАА НЭЭХ" })).toBeVisible();
   await expect(page.getByText("QPay · Төлбөр баталгаажмагц бүрэн тайлан нээгдэнэ", { exact: true })).toBeVisible();
   await expect(page.getByText("Та нэг аяга кофены үнээр", { exact: false })).toHaveCount(0);
@@ -385,7 +386,7 @@ test("free completion shows only the sealed paywall before provider-confirmed fu
   await page.getByRole("button", { name: "БҮРЭН ТАЙЛАНГАА НЭЭХ" }).evaluate(button => { button.click(); button.click(); });
   await expect(page).toHaveURL(/\/assessment\/payment$/);
   await expect(page.getByRole("heading", { name: "Бүрэн тайлангаа нээх" })).toBeVisible();
-  await expect(page.getByText("Үнэ: 39,000₮", { exact: true })).toBeVisible();
+  await expect(page.getByText("Үнэ: 19,900₮", { exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "Банкны апп" })).toBeVisible();
   let stats = await (await request.get("/__test/stats")).json();
   expect(stats.qpayCreate).toBe(1);

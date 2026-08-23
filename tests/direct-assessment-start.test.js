@@ -13,7 +13,7 @@ const { calculateAssessmentSafety } = require("../netlify/functions/_lib/safety.
   for (const expected of ["Тестээ эхлүүлэх", "Зөв, буруу хариулт байхгүй. Өөрт хамгийн ойр санагдсан хариултаа сонгоорой.", "Таны хариултаас шалтгаалан зарим асуулт нэмэгдэж болно.", ">Эхлэх</button>"]) assert(start.includes(expected), expected);
   for (const removed of ['id="safety-form"', 'id="contact-email"', "39,000₮", "QPay", "10 минут", "12 / 40"]) assert(!start.includes(removed), removed);
   const legacyContact = app.renderForPath("/assessment/contact");
-  assert(legacyContact.includes("QPay-аар 39,000₮ төлөөд тестээ эхлүүлэх"), "historical prepaid contact route remains available at the current catalog price");
+  assert(legacyContact.includes("QPay-аар 19,900₮ төлөөд тестээ эхлүүлэх"), "historical prepaid route renders the current catalog price");
   const appSource = fs.readFileSync(require.resolve("../app.js"), "utf8");
   for (const removed of ["renderSafetyCheck", "submitSafety", "#safety-form", 'api("/.netlify/functions/weight-safety-gate"']) assert(!appSource.includes(removed), removed);
   const startFreeSource = /async function startFreeAssessment\(form\) \{[\s\S]*?\n\}/.exec(appSource)?.[0] || "";

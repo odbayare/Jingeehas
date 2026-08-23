@@ -3,6 +3,10 @@ import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { REQUIRED_PRODUCTION_FUNCTIONS } from "./required-production-functions.mjs";
+import { createRequire } from "node:module";
+
+const require = createRequire(import.meta.url);
+const { PRODUCT } = require("../product-config.js");
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
 const dist = path.join(root, "dist");
@@ -51,10 +55,15 @@ for (const required of ["Content-Security-Policy", "Referrer-Policy", "X-Content
 }
 if (headers.includes("unsafe-inline")) failures.push("CSP allows inline execution");
 const app = fs.readFileSync(path.join(dist, "app.js"), "utf8");
-for (const invariant of ["WEIGHT_TEST_COMING_SOON_MODE = false", "WEIGHT_TEST_ONE_TIME", "amount: 39000", "displayPrice: \"39,000₮\""]) {
+const productConfig = fs.readFileSync(path.join(dist, "product-config.js"), "utf8");
+for (const invariant of ["WEIGHT_TEST_COMING_SOON_MODE = false", "PRODUCT.displayPrice", "PRODUCT.amount"]) {
   if (!app.includes(invariant)) failures.push(`protected invariant missing: ${invariant}`);
 }
-for (const required of ["Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо", "39,000₮", "БҮРЭН ТАЙЛАНГАА НЭЭХ", "Нэг удаагийн төлбөр"]) {
+for (const invariant of ["FULL_REPORT_PRICE_MNT = 19900", `FULL_REPORT_PRICE_VERSION = "${PRODUCT.priceVersion}"`, `displayPrice: "${PRODUCT.displayPrice}"`, "priceVersion: FULL_REPORT_PRICE_VERSION"]) {
+  if (!productConfig.includes(invariant)) failures.push(`catalog invariant missing: ${invariant}`);
+}
+if (manifest.product?.amount !== PRODUCT.amount || manifest.product?.displayPrice !== PRODUCT.displayPrice || manifest.product?.priceVersion !== PRODUCT.priceVersion) failures.push("production manifest product authority mismatch");
+for (const required of ["Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо", "БҮРЭН ТАЙЛАНГАА НЭЭХ", "Нэг удаагийн төлбөр"]) {
   if (!app.includes(required)) failures.push(`Paywall V2a artifact copy missing: ${required}`);
 }
 for (const forbidden of ["Та нэг аяга кофены үнээр", ">Таны тайлан бэлэн боллоо<"]) {

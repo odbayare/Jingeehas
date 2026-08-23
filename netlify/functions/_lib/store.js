@@ -1,6 +1,12 @@
 "use strict";
 
 const { databaseConfig } = require("./config.js");
+function camelKey(value) { return value.replace(/_([a-z])/g, (_match, letter) => letter.toUpperCase()); }
+function deepCamelKeys(value) {
+  if (Array.isArray(value)) return value.map(deepCamelKeys);
+  if (!value || typeof value !== "object") return value;
+  return Object.fromEntries(Object.entries(value).map(([key, item]) => [camelKey(key), deepCamelKeys(item)]));
+}
 
 class RestDatabaseAdapter {
   constructor(config = databaseConfig()) { this.config = config; }
@@ -47,6 +53,12 @@ class RestDatabaseAdapter {
   }
   getControlMeasurementBase(startDate, endDate, utmContent) {
     return this.request({ action: "get_control_measurement_base", startDate, endDate, utmContent });
+  }
+  async getOfferPriceMeasurement(startDate, endDate, utmContent) {
+    return deepCamelKeys(await this.request({ action: "get_offer_price_measurement", start_date: startDate, end_date: endDate, utm_content: utmContent }));
+  }
+  recordP19900Cutover(effectiveAt) {
+    return this.request({ action: "record_p19900_cutover", effective_at: effectiveAt });
   }
   recordQuestionProgress(input) { return this.request({ action: "record_question_progress", ...input }); }
   getQuestionProgressAnalytics(startDate, endDate, now = new Date()) {

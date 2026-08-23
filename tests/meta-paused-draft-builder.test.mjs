@@ -84,6 +84,9 @@ function formParams(call) {
 const plan = validatePlan(buildPlan(baseEnv()));
 assert.equal(plan.mode, "DRAFT_ONLY");
 assert.equal(plan.product.productCode, PRODUCT_CODE);
+assert.equal(plan.product.priceMnt, 19900);
+assert(!JSON.stringify(plan.creative).includes("9,900₮"));
+assert(!JSON.stringify(plan.creative).includes("39,000₮"));
 assert.equal(plan.campaign.status, "PAUSED");
 assert.equal(plan.adset.status, "PAUSED");
 assert.equal(plan.ad.status, "PAUSED");

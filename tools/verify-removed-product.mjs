@@ -11,7 +11,7 @@ const pieces = [
   ["upgrade", "_access"], ["seven", "Day"], ["seven", "-day"], ["seven", "_day"],
   ["diary", "Entries"], ["diary", "Draft"], ["diary", "Day"],
   ["diary", "QuestionIndex"], ["diary", "SummaryUi"], ["29,", "000₮"],
-  ["69,", "000₮"], ["19,", "900₮"]
+  ["69,", "000₮"]
 ];
 const forbidden = pieces.map(parts => parts.join(""));
 const files = execFileSync("git", ["ls-files", "-co", "--exclude-standard"], {

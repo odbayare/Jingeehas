@@ -40,6 +40,7 @@ const tests = [
   "tests/question-progress-analytics.test.js",
   "tests/meta-capi.test.js",
   "tests/meta-paused-draft-builder.test.mjs",
+  "tests/price-migration-19900.test.js",
   "tests/landing-personal-attribute-policy.test.js",
   "tests/contracts/owner-preview.contract.test.js",
   "tests/contracts/assessment-versioned.test.js",

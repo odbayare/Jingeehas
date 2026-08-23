@@ -1,6 +1,12 @@
 "use strict";
 
-const PRODUCT = Object.freeze({ code: "WEIGHT_TEST_ONE_TIME", amount: 39000 });
+const {
+  FULL_REPORT_PRICE_MNT,
+  FULL_REPORT_PRICE_VERSION,
+  LEGACY_FULL_REPORT_PRICES_MNT,
+  SUPPORTED_FULL_REPORT_PRICES_MNT,
+  PRODUCT
+} = require("../../../product-config.js");
 const TABLES = Object.freeze([
   "sessions", "assessment_sessions", "safety_checks", "assessments", "assessment_answers", "assessment_summaries",
   "report_snapshots", "report_snapshot_versions", "payments", "entitlements", "recovery_contacts",
@@ -22,4 +28,12 @@ function databaseConfig(env = process.env) {
   return { url, apiKey };
 }
 
-module.exports = { PRODUCT, TABLES, databaseConfig };
+module.exports = {
+  FULL_REPORT_PRICE_MNT,
+  FULL_REPORT_PRICE_VERSION,
+  LEGACY_FULL_REPORT_PRICES_MNT,
+  SUPPORTED_FULL_REPORT_PRICES_MNT,
+  PRODUCT,
+  TABLES,
+  databaseConfig
+};
