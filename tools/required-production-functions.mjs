@@ -12,7 +12,6 @@ export const REQUIRED_PRODUCTION_FUNCTIONS = Object.freeze([
   "weight-recovery-confirm",
   "qpay-create-invoice",
   "qpay-check-payment",
-  "qpay-payment-callback",
   "advisor-login",
   "advisor-dashboard",
   "advisor-report",
