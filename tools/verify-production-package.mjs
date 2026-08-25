@@ -69,7 +69,7 @@ for (const required of ["Таны хариултад тулгуурласан х
 for (const forbidden of ["Та нэг аяга кофены үнээр", ">Таны тайлан бэлэн боллоо<"]) {
   if (app.includes(forbidden)) failures.push(`retired paywall copy remains in artifact: ${forbidden}`);
 }
-const allowedHosts = new Set(["jingeehas.fit", "merchant.qpay.mn", "www.w3.org", "connect.facebook.net", "www.facebook.com"]);
+const allowedHosts = new Set(["jingeehas.fit", "merchant.qpay.mn", "qpay.mn", "*.qpay.mn", "www.w3.org", "connect.facebook.net", "www.facebook.com"]);
 for (const match of publicText.matchAll(/https?:\/\/([^/\s"')]+)/g)) {
   const host = match[1].toLowerCase().replace(/[;,]+$/, "");
   if (!allowedHosts.has(host)) failures.push(`unapproved public domain: ${host}`);

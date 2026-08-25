@@ -200,7 +200,7 @@ const endpoints = {
       stats.paymentRows += 1;
     }
     paymentStatus = "pending";
-    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 19900, status: "pending", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] });
+    json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 19900, status: "pending", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "e2e-qr-image", urls: [{ name: "Khan bank", description: "Хаан банк", logo: "https://qpay.mn/q/logo/khanbank.png", link: "khanbank://q?qPay_QRcode=e2e" }] });
   },
   "qpay-check-payment": async (_body, response) => {
     stats.qpayCheck += 1;
@@ -281,7 +281,7 @@ const endpoints = {
     json(response, 200, {
       assessment: { assessmentId, status: assessmentStatus, safetyRoute: flowMode === "safety" ? "professional_support" : null, commercialFlowVersion: "free_assessment_postpaid_v1", questionnaireVersion: questions.QUESTIONNAIRE_VERSION },
       nextRoute,
-      payment: paymentStatus ? { status: paymentStatus, paymentId: "wp-e2e", amount: 19900, productCode: "WEIGHT_TEST_ONE_TIME", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "", urls: [{ name: "Банкны апп", link: "https://example.com/qpay-e2e" }] } : null,
+      payment: paymentStatus ? { status: paymentStatus, paymentId: "wp-e2e", amount: 19900, productCode: "WEIGHT_TEST_ONE_TIME", expiresAt: "2027-07-21T12:30:00.000Z", qrText: "qr", qrImage: "e2e-qr-image", urls: [{ name: "Khan bank", description: "Хаан банк", logo: "https://qpay.mn/q/logo/khanbank.png", link: "khanbank://q?qPay_QRcode=e2e" }] } : null,
       answers: savedAnswers,
       report: nextRoute === "/report"
         ? flowMode === "safety"

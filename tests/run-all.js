@@ -6,6 +6,7 @@ const tests = [
   "tests/safety-branching.test.js",
   "tests/direct-assessment-start.test.js",
   "tests/paid-first-flow.test.js",
+  "tests/qpay-deeplink-ui.test.js",
   "tests/nonblocking-answer-save-runtime.test.js",
   "tests/nonblocking-answer-save-finalize-runtime.test.js",
   "tests/post-assessment-paywall-flow.test.js",

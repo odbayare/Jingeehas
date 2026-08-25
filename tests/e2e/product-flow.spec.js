@@ -387,7 +387,16 @@ test("free completion shows only the sealed paywall before provider-confirmed fu
   await expect(page).toHaveURL(/\/assessment\/payment$/);
   await expect(page.getByRole("heading", { name: "Бүрэн тайлангаа нээх" })).toBeVisible();
   await expect(page.getByText("Үнэ: 19,900₮", { exact: true })).toBeVisible();
-  await expect(page.getByRole("link", { name: "Банкны апп" })).toBeVisible();
+  const bankAppLink = page.getByRole("link", { name: "Хаан банк" });
+  await expect(bankAppLink).toBeVisible();
+  await expect(bankAppLink).toHaveAttribute("href", "khanbank://q?qPay_QRcode=e2e");
+  await expect(bankAppLink.locator("img")).toHaveAttribute("src", "https://qpay.mn/q/logo/khanbank.png");
+  await expect(page.getByRole("img", { name: "QPay QR код" })).toBeVisible();
+  for (const width of [375, 390, 430]) {
+    await page.setViewportSize({ width, height: 844 });
+    await expect(bankAppLink).toBeVisible();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth)).toBeLessThanOrEqual(1);
+  }
   let stats = await (await request.get("/__test/stats")).json();
   expect(stats.qpayCreate).toBe(1);
   expect(stats.paymentRows).toBe(1);
