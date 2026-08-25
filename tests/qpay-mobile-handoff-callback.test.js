@@ -5,6 +5,7 @@ const assert = require("node:assert/strict");
 const { MemoryDatabaseAdapter } = require("./support/memory-database.js");
 const { PRODUCT } = require("../netlify/functions/_lib/config.js");
 const { paymentLinks, safeShortUrl, QPayClient } = require("../netlify/functions/_lib/qpay.js");
+const { handoffMetadata } = require("../netlify/functions/qpay-create-invoice.js")._test;
 const callback = require("../netlify/functions/qpay-payment-callback.js")._test;
 
 (async () => {
@@ -26,6 +27,7 @@ const callback = require("../netlify/functions/qpay-payment-callback.js")._test;
   assert.equal(shortOnly.length, 1);
   assert.equal(shortOnly[0].kind, "qpay_short_url");
   assert.equal(shortOnly[0].description, "QPay төлбөрийн холбоос");
+  assert.deepEqual(handoffMetadata({ urls: shortOnly, qrImage: "qr" }), { handoffMode: "qpay_short_url", appLinkCount: 0, hasShortUrl: true });
 
   const mixed = paymentLinks({
     qPay_shortUrl: "https://qpay.mn/q/test",
@@ -34,6 +36,8 @@ const callback = require("../netlify/functions/qpay-payment-callback.js")._test;
   assert.equal(mixed.length, 2);
   assert.equal(mixed[0].kind, "bank_app");
   assert.equal(mixed[1].kind, "qpay_short_url");
+  assert.deepEqual(handoffMetadata({ urls: mixed, qrImage: "qr" }), { handoffMode: "bank_deeplinks", appLinkCount: 1, hasShortUrl: true });
+  assert.deepEqual(handoffMetadata({ urls: [], qrImage: "qr" }), { handoffMode: "qr_only", appLinkCount: 0, hasShortUrl: false });
 
   const client = new QPayClient(qpayConfig);
   let requestBody;
