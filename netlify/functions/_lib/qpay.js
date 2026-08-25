@@ -55,6 +55,16 @@ function safeLogoUrl(value, config = {}) {
   } catch { return ""; }
 }
 
+function safeShortUrl(value, config = {}) {
+  const raw = String(value || "").trim();
+  if (!raw || raw.length > MAX_APP_LINK_LENGTH || /[\u0000-\u001f\u007f]/.test(raw)) return "";
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "https:" || parsed.username || parsed.password || !trustedHttpsHost(parsed.hostname, config)) return "";
+    return parsed.href;
+  } catch { return ""; }
+}
+
 function safeAppLinks(urls, config) {
   return (Array.isArray(urls) ? urls : []).flatMap((item, index) => {
     const raw = String(item.link || item.url || "").trim();
@@ -72,10 +82,20 @@ function safeAppLinks(urls, config) {
         name: String(item.name || `Банкны апп ${index + 1}`).slice(0, 80),
         description: String(item.description || "").slice(0, 120),
         logo: safeLogoUrl(item.logo || item.logo_url || item.logoUrl, config),
-        link: parsed.href
+        link: parsed.href,
+        kind: "bank_app"
       }];
     } catch { return []; }
   });
+}
+
+function paymentLinks(data = {}, config = {}) {
+  const links = safeAppLinks(data.urls, config);
+  const shortUrl = safeShortUrl(data.qPay_shortUrl || data.qpay_short_url || data.short_url || data.shortUrl, config);
+  if (shortUrl && !links.some(item => item.link === shortUrl)) {
+    links.push({ name: "QPay", description: "QPay төлбөрийн холбоос", logo: "", link: shortUrl, kind: "qpay_short_url" });
+  }
+  return links;
 }
 
 class QPayClient {
@@ -137,10 +157,10 @@ class QPayClient {
       invoice_receiver_code: senderInvoiceNo,
       invoice_description: "Жингээ Хас — хувийн бүрэн тайлан",
       amount,
-      callback_url: `${this.config.callbackOrigin}/.netlify/functions/qpay-check-payment?senderInvoiceNo=${encodeURIComponent(senderInvoiceNo)}`
+      callback_url: `${this.config.callbackOrigin}/.netlify/functions/qpay-payment-callback?senderInvoiceNo=${encodeURIComponent(senderInvoiceNo)}`
     });
     return { invoiceId: data.invoice_id, qrText: data.qr_text || "", qrImage: data.qr_image || "",
-      urls: safeAppLinks(data.urls, this.config) };
+      urls: paymentLinks(data, this.config) };
   }
   checkPayment(invoiceId) { return this.request("/v2/payment/check", { object_type: "INVOICE", object_id: invoiceId, offset: { page_number: 1, page_limit: 100 } }); }
   async reconcileInvoice() {
@@ -151,5 +171,5 @@ class QPayClient {
 
 function getQPayProvider() { return new QPayClient(); }
 
-module.exports = { qpayConfig, safeAppLinks, safeLogoUrl, trustedHttpsHost, BLOCKED_LINK_SCHEMES,
+module.exports = { qpayConfig, safeAppLinks, safeShortUrl, paymentLinks, safeLogoUrl, trustedHttpsHost, BLOCKED_LINK_SCHEMES,
   responseShape, providerError, QPayClient, getQPayProvider };
