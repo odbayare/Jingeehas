@@ -39,6 +39,11 @@ const callback = require("../netlify/functions/qpay-payment-callback.js")._test;
   assert.deepEqual(handoffMetadata({ urls: mixed, qrImage: "qr" }), { handoffMode: "bank_deeplinks", appLinkCount: 1, hasShortUrl: true });
   assert.deepEqual(handoffMetadata({ urls: [], qrImage: "qr" }), { handoffMode: "qr_only", appLinkCount: 0, hasShortUrl: false });
 
+  const successAck = callback.providerCallbackResponse(200, "SUCCESS");
+  assert.equal(successAck.statusCode, 200);
+  assert.equal(successAck.body, "SUCCESS");
+  assert.equal(successAck.headers["content-type"], "text/plain; charset=utf-8");
+
   const client = new QPayClient(qpayConfig);
   let requestBody;
   client.request = async (path, body) => {
