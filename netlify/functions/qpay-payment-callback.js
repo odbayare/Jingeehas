@@ -2,7 +2,6 @@
 
 const { getDatabase } = require("./_lib/store.js");
 const { getQPayProvider } = require("./_lib/qpay.js");
-const { response } = require("./_lib/http.js");
 const { PRODUCT } = require("./_lib/config.js");
 const { isFreeAssessmentPostpaid } = require("./_lib/commercial-flow.js");
 const { assessmentContext, funnelKeyHash, recordEventSafe } = require("./_lib/analytics.js");
@@ -19,6 +18,14 @@ function callbackReference(event = {}) {
   const value = String(event.queryStringParameters?.senderInvoiceNo || "").trim();
   if (!value || value.length > SAFE_SENDER_INVOICE_MAX_LENGTH) return "";
   return value;
+}
+
+function providerCallbackResponse(statusCode, body, extraHeaders = {}) {
+  return {
+    statusCode,
+    headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store", ...extraHeaders },
+    body
+  };
 }
 
 async function confirmCallbackPayment(database, provider, senderInvoiceNo, now = new Date()) {
@@ -78,16 +85,16 @@ async function recordCallbackConfirmation(database, payment) {
 }
 
 exports.handler = async event => {
-  if (!["GET", "POST"].includes(event.httpMethod)) return response(405, { error: "method_not_allowed" }, { allow: "GET, POST" });
+  if (!["GET", "POST"].includes(event.httpMethod)) return providerCallbackResponse(405, "METHOD_NOT_ALLOWED", { allow: "GET, POST" });
   const senderInvoiceNo = callbackReference(event);
-  if (!senderInvoiceNo) return response(200, { ok: true });
+  if (!senderInvoiceNo) return providerCallbackResponse(200, "SUCCESS");
 
   const database = getDatabase();
   const result = await confirmCallbackPayment(database, getQPayProvider(), senderInvoiceNo);
-  if (result.state === "ignored") return response(200, { ok: true });
-  if (result.state !== "paid") return response(503, { ok: false, error: "verification_pending" });
+  if (result.state === "ignored") return providerCallbackResponse(200, "SUCCESS");
+  if (result.state !== "paid") return providerCallbackResponse(503, "RETRY");
   await recordCallbackConfirmation(database, result.payment);
-  return response(200, { ok: true });
+  return providerCallbackResponse(200, "SUCCESS");
 };
 
-exports._test = { callbackReference, confirmCallbackPayment, recordCallbackConfirmation };
+exports._test = { callbackReference, providerCallbackResponse, confirmCallbackPayment, recordCallbackConfirmation };
