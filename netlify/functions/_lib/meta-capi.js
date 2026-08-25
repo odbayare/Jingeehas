@@ -8,6 +8,7 @@ const { isCommercialAnalyticsEligible } = require("./payment-context.js");
 const DEFAULT_GRAPH_API_VERSION = "v25.0";
 const SAFE_GRAPH_VERSION = /^v\d+\.\d+$/;
 const SAFE_META_ID = /^\d{5,32}$/;
+const SAFE_ANONYMOUS_EXTERNAL_ID = /^[a-f0-9]{64}$/;
 const DEFAULT_EVENT_SOURCE_URL = "https://jingeehas.fit/assessment/payment";
 const SUPPORTED_PAYMENT_AMOUNTS = new Set(SUPPORTED_FULL_REPORT_PRICES_MNT);
 
@@ -82,18 +83,20 @@ function purchaseEventTime(payment = {}, now = new Date()) {
   return Math.floor(now.getTime() / 1000);
 }
 
-function userData(event = {}) {
+function userData(event = {}, options = {}) {
   const jar = cookies(event);
+  const externalId = String(options.externalId || "").trim().toLowerCase();
   const data = {
     client_ip_address: clientIp(event) || undefined,
     client_user_agent: String(event.headers?.["user-agent"] || event.headers?.["User-Agent"] || "").slice(0, 500) || undefined,
     fbp: String(jar._fbp || "").slice(0, 255) || undefined,
-    fbc: String(jar._fbc || "").slice(0, 255) || undefined
+    fbc: String(jar._fbc || "").slice(0, 255) || undefined,
+    external_id: SAFE_ANONYMOUS_EXTERNAL_ID.test(externalId) ? [externalId] : undefined
   };
   return Object.fromEntries(Object.entries(data).filter(([, value]) => value));
 }
 
-function purchasePayload(payment, event, now = new Date()) {
+function purchasePayload(payment, event, now = new Date(), options = {}) {
   const eventId = eligiblePurchaseEventId(payment);
   if (!eventId) {
     throw Object.assign(new Error("Purchase event authority is missing"), { code: "meta_purchase_authority_missing" });
@@ -104,7 +107,7 @@ function purchasePayload(payment, event, now = new Date()) {
     event_id: eventId,
     action_source: "website",
     event_source_url: eventSourceUrl(event),
-    user_data: userData(event),
+    user_data: userData(event, options),
     custom_data: {
       value: payment.amount,
       currency: "MNT",
@@ -134,7 +137,7 @@ async function deliverConfirmedPurchase(database, paymentId, event, options = {}
   }
 
   const now = options.now || new Date();
-  const body = { data: [purchasePayload(payment, event, now)] };
+  const body = { data: [purchasePayload(payment, event, now, { externalId: options.externalId })] };
   if (config.testEventCode) body.test_event_code = config.testEventCode;
   const fetchImpl = options.fetchImpl || globalThis.fetch;
   if (typeof fetchImpl !== "function") {
