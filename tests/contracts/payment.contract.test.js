@@ -251,9 +251,15 @@ async function expectUnknownCreate(provider) {
   const safe = safeAppLinks([
     { name: "Bad", link: "javascript:alert(1)" }, { name: "Data", link: "data:text/html,x" },
     { name: "HTTP", link: "http://bank.example/x" }, { name: "HTTPS", link: "https://bank.example/pay" },
-    { name: "App", link: "bankapp://pay/1" }
+    { name: "App", description: "Тест банк", logo: "https://qpay.mn/q/logo/test.png", link: "bankapp://pay/1" },
+    { name: "Dynamic", logo: "javascript:alert(1)", link: "another-bank://q?invoice=1" },
+    { name: "Blob", link: "blob:https://bank.example/1" }, { name: "Chrome", link: "chrome-extension://unsafe" }
   ], { allowedSchemes: ["bankapp"], allowedHosts: ["bank.example"] });
-  assert.deepEqual(safe.map(item => item.name), ["HTTPS", "App"]);
+  assert.deepEqual(safe.map(item => item.name), ["HTTPS", "App", "Dynamic"]);
+  assert.equal(safe.find(item => item.name === "App").description, "Тест банк");
+  assert.equal(safe.find(item => item.name === "App").logo, "https://qpay.mn/q/logo/test.png");
+  assert.equal(safe.find(item => item.name === "Dynamic").logo, "");
+  assert.equal(safe.find(item => item.name === "Dynamic").link, "another-bank://q?invoice=1");
   assert.deepEqual(responseShape({ error: { code: "X", private: "never log values" } }), { error: { code: "string", private: "string" } });
   const qpay = Object.create(QPayClient.prototype);
   qpay.config = { invoiceCode: "TEST", callbackOrigin: "https://jingeehas.fit", allowedSchemes: [], allowedHosts: [] };

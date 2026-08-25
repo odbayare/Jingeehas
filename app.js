@@ -286,6 +286,31 @@ function renderAssessmentCompleted() {
   if (state.commercialFlowVersion === "prepaid_v2") return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">Тест дууслаа. Таны тайланг боловсруулж байна.</h1><p role="status">Бүрэн тайланг ачаалж байна…</p></main>${footer()}</div>`;
   return renderLegacyPostResultPaywall();
 }
+function qpayAppLabel(item = {}, index = 0) {
+  return item.description || item.name || `Банкны апп ${index + 1}`;
+}
+function qpayAppInitial(label = "") {
+  return escapeHtml(String(label || "Q").trim().slice(0, 1).toUpperCase() || "Q");
+}
+function renderQpayAppGrid(payment = {}) {
+  const urls = Array.isArray(payment.urls) ? payment.urls : [];
+  if (!urls.length) return "";
+  return `<section class="qpay-app-section" aria-labelledby="qpay-app-title"><h3 id="qpay-app-title">Банкны апп-аар төлөх</h3>
+    <p class="muted">Банк эсвэл wallet апп-аа сонгоход төлбөрийн мэдээлэл шууд нээгдэнэ.</p>
+    <ul class="qpay-app-grid">${urls.map((item, index) => {
+      const label = qpayAppLabel(item, index);
+      const logo = item.logo ? `<img class="qpay-app-logo" src="${escapeAttribute(item.logo)}" alt="" loading="lazy">` : `<span class="qpay-app-logo qpay-app-logo-fallback" aria-hidden="true">${qpayAppInitial(label)}</span>`;
+      return `<li><a class="qpay-app-card" data-qpay-app-link href="${escapeAttribute(item.link || item.url || "")}" rel="noopener noreferrer">${logo}<span>${escapeHtml(label)}</span></a></li>`;
+    }).join("")}</ul></section>`;
+}
+function renderQpayPaymentOptions(payment = {}) {
+  const hasApps = Array.isArray(payment.urls) && payment.urls.length > 0;
+  if (!payment.qrImage && !hasApps) return "";
+  return `<div class="qpay-payment-options ${hasApps ? "has-apps" : "qr-only"}">
+    ${renderQpayAppGrid(payment)}
+    ${payment.qrImage ? `<section class="qpay-qr-section" aria-labelledby="qpay-qr-title"><h3 id="qpay-qr-title">QR кодоор төлөх</h3><p class="muted">Өөр төхөөрөмжөөс банкны апп-аараа уншуулна уу.</p><img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код"></section>` : ""}
+  </div>`;
+}
 function renderPayment() {
   const payment = state.payment || { status: "idle" };
   const statusCopy = payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY[payment.status] || "";
@@ -297,8 +322,7 @@ function renderPayment() {
       <section aria-labelledby="payment-title"><h2 id="payment-title">QPay нэхэмжлэл</h2><p class="price">Үнэ: ${PRODUCT.displayPrice}</p>
         ${prepaid ? `<p class="notice">QPay төлбөрөө хийсний дараа тест автоматаар нээгдэнэ.</p>` : paymentReady ? "" : `<p class="notice">QPay төлбөрийн товч тест үнэлгээг бүрэн дуусгасны дараа нээгдэнэ.</p>`}
         <p class="payment-status" role="status" aria-live="polite">${escapeHtml(statusCopy)}</p>
-        ${payment.status !== "paid" && payment.qrImage ? `<img class="qpay-qr" src="data:image/png;base64,${escapeAttribute(payment.qrImage)}" alt="QPay QR код">` : ""}
-        ${payment.status !== "paid" && Array.isArray(payment.urls) && payment.urls.length ? `<ul class="payment-app-links">${payment.urls.filter(item => /^https:\/\//.test(String(item.link || item.url || ""))).map(item => `<li><a class="button secondary" href="${escapeAttribute(item.link || item.url)}" rel="noopener">${escapeHtml(item.name || item.description || "Банкны апп")}</a></li>`).join("")}</ul>` : ""}
+        ${payment.status !== "paid" ? renderQpayPaymentOptions(payment) : ""}
         ${payment.status !== "paid" && payment.expiresAt ? `<p>Нэхэмжлэлийн хугацаа: <time datetime="${escapeAttribute(payment.expiresAt)}">${escapeHtml(new Date(payment.expiresAt).toLocaleString("mn-MN"))}</time></p>` : ""}
         ${["pending", "check_error", "paid_but_not_unlocked"].includes(payment.status) ? `<button class="button" type="button" data-action="check-payment">Төлбөр шалгах</button>` : payment.status === "paid" ? (prepaid ? `<p class="notice">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>` : `<p class="notice">Төлбөр баталгаажлаа. Бүрэн тайлан нээгдлээ.</p><a class="button" href="/report" data-route>Бүрэн тайлан харах</a>`) : !paymentReady || createBlocked || prepaid ? "" : `<button class="button" type="button" data-action="create-invoice">${PRODUCT.displayPrice}-ийн QPay нэхэмжлэл үүсгэх</button>`}
       </section></main>${footer()}</div>`;

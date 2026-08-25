@@ -33,16 +33,47 @@ function qpayConfig(env = process.env) {
     allowedHosts: String(env.QPAY_ALLOWED_HTTPS_HOSTS || "").split(",").map(value => value.trim().toLowerCase()).filter(Boolean) };
 }
 
+const BLOCKED_LINK_SCHEMES = new Set([
+  "http", "javascript", "data", "file", "blob", "about", "vbscript",
+  "chrome", "chrome-extension", "resource"
+]);
+const MAX_APP_LINK_LENGTH = 4096;
+
+function trustedHttpsHost(hostname, config = {}) {
+  const host = String(hostname || "").toLowerCase();
+  return host === "qpay.mn" || host.endsWith(".qpay.mn") ||
+    (Array.isArray(config.allowedHosts) && config.allowedHosts.includes(host));
+}
+
+function safeLogoUrl(value, config = {}) {
+  const raw = String(value || "").trim();
+  if (!raw || raw.length > MAX_APP_LINK_LENGTH) return "";
+  try {
+    const parsed = new URL(raw);
+    if (parsed.protocol !== "https:" || parsed.username || parsed.password || !trustedHttpsHost(parsed.hostname, config)) return "";
+    return parsed.href;
+  } catch { return ""; }
+}
+
 function safeAppLinks(urls, config) {
   return (Array.isArray(urls) ? urls : []).flatMap((item, index) => {
-    const raw = String(item.link || item.url || "");
+    const raw = String(item.link || item.url || "").trim();
+    if (!raw || raw.length > MAX_APP_LINK_LENGTH || /[\u0000-\u001f\u007f]/.test(raw)) return [];
     try {
       const parsed = new URL(raw);
       const scheme = parsed.protocol.slice(0, -1).toLowerCase();
-      const httpsAllowed = scheme === "https" && config.allowedHosts.includes(parsed.hostname.toLowerCase());
-      const appAllowed = scheme !== "http" && scheme !== "https" && config.allowedSchemes.includes(scheme);
+      const httpsAllowed = scheme === "https" && !parsed.username && !parsed.password && trustedHttpsHost(parsed.hostname, config);
+      // QPay's authenticated invoice response is authoritative for the current
+      // bank list. Bank apps use independent custom schemes (for example
+      // khanbank://), so a static allowlist would silently remove valid banks.
+      const appAllowed = /^[a-z][a-z0-9+.-]{1,30}$/.test(scheme) && !BLOCKED_LINK_SCHEMES.has(scheme) && raw.toLowerCase().startsWith(`${scheme}://`);
       if (!httpsAllowed && !appAllowed) return [];
-      return [{ name: String(item.name || `Банкны апп ${index + 1}`).slice(0, 80), link: parsed.href }];
+      return [{
+        name: String(item.name || `Банкны апп ${index + 1}`).slice(0, 80),
+        description: String(item.description || "").slice(0, 120),
+        logo: safeLogoUrl(item.logo || item.logo_url || item.logoUrl, config),
+        link: parsed.href
+      }];
     } catch { return []; }
   });
 }
@@ -120,4 +151,5 @@ class QPayClient {
 
 function getQPayProvider() { return new QPayClient(); }
 
-module.exports = { qpayConfig, safeAppLinks, responseShape, providerError, QPayClient, getQPayProvider };
+module.exports = { qpayConfig, safeAppLinks, safeLogoUrl, trustedHttpsHost, BLOCKED_LINK_SCHEMES,
+  responseShape, providerError, QPayClient, getQPayProvider };

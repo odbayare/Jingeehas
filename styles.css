@@ -236,8 +236,18 @@ code { overflow-wrap: anywhere; }
 .attribution-conversions { min-width: 320px; line-height: 1.55; }
 .question-version-badge { display: inline-block; padding: 0.08rem 0.35rem; border-radius: 999px; background: #e4eee7; color: var(--primary); font-size: 0.7rem; font-weight: 800; }
 .checkout-preparation { max-width: 720px; }
-.payment-app-links { display: grid; gap: 0.6rem; padding: 0; list-style: none; }
-.payment-app-links .button { width: 100%; overflow-wrap: anywhere; }
+.qpay-payment-options { display: grid; gap: 1rem; margin: 1rem 0; }
+.qpay-payment-options.has-apps { grid-template-columns: minmax(0, 1.35fr) minmax(220px, 0.65fr); align-items: start; }
+.qpay-app-section, .qpay-qr-section { min-width: 0; border: 1px solid var(--border); border-radius: 1rem; padding: 1rem; background: #f9fbf8; }
+.qpay-app-section h3, .qpay-qr-section h3 { margin-top: 0; }
+.qpay-app-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(108px, 1fr)); gap: 0.7rem; padding: 0; list-style: none; }
+.qpay-app-grid li { min-width: 0; }
+.qpay-app-card { display: grid; place-items: center; min-height: 104px; gap: 0.55rem; padding: 0.75rem 0.5rem; border: 1px solid var(--border); border-radius: 0.8rem; background: #fff; color: var(--text); font-size: 0.82rem; font-weight: 800; line-height: 1.25; text-align: center; text-decoration: none; overflow-wrap: anywhere; }
+.qpay-app-card:hover, .qpay-app-card:focus-visible { border-color: var(--primary); box-shadow: 0 8px 20px rgba(42, 93, 48, 0.12); transform: translateY(-1px); }
+.qpay-app-logo { display: grid; place-items: center; width: 44px; height: 44px; border: 1px solid var(--border); border-radius: 0.65rem; background: #fff; object-fit: contain; }
+.qpay-app-logo-fallback { color: var(--primary); font-size: 1.05rem; font-weight: 900; }
+.qpay-qr-section { text-align: center; }
+.qpay-qr-section .qpay-qr { margin-bottom: 0; }
 
 @media (max-width: 760px) {
   .page { padding-inline: 1rem; }
@@ -276,6 +286,10 @@ code { overflow-wrap: anywhere; }
   .scientific-methods-box { margin-top: 1.25rem; padding: 1.1rem; border-radius: 1rem; }
   .actions .button { flex: 1 1 100%; }
   .site-nav { align-items: flex-start; }
+  .qpay-payment-options.has-apps { grid-template-columns: 1fr; }
+  .qpay-app-section { order: 1; }
+  .qpay-qr-section { order: 2; }
+  .qpay-app-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 390px) {
