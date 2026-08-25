@@ -61,12 +61,20 @@ const callback = require("../netlify/functions/qpay-payment-callback.js")._test;
     commercialFlowVersion: "free_assessment_postpaid_v1", safetyRoute: null,
     createdAt: "2026-08-25T00:00:00.000Z", updatedAt: "2026-08-25T00:00:00.000Z"
   });
+  await database.insert("analytics_events", {
+    id: "analytics-callback", eventId: "11111111-1111-4111-8111-111111111111",
+    eventName: "assessment_started", occurredAt: "2026-08-25T00:00:00.000Z",
+    assessmentId: "assessment-callback", visitorIdHash: "a".repeat(64), sessionIdHash: "b".repeat(64),
+    utmSource: "meta", utmMedium: "paid_social", utmCampaign: "campaign", utmContent: "creative",
+    deviceClass: "mobile", metadata: {}, createdAt: "2026-08-25T00:00:00.000Z"
+  });
   await database.insert("payments", {
     id: "payment-callback", sessionId: "session-callback", assessmentId: "assessment-callback",
     productCode: PRODUCT.code, amount: PRODUCT.amount, status: "expired",
     senderInvoiceNo: "jh_callback_expired", invoiceId: "invoice-callback",
     expiresAt: "2026-08-25T00:15:00.000Z", createdAt: "2026-08-25T00:00:00.000Z",
-    updatedAt: "2026-08-25T00:15:01.000Z", paidAt: null, urls: []
+    updatedAt: "2026-08-25T00:15:01.000Z", paidAt: null, urls: [],
+    paymentContext: "customer", analyticsEligible: true, environment: "production"
   });
 
   let checks = 0;
@@ -83,6 +91,19 @@ const callback = require("../netlify/functions/qpay-payment-callback.js")._test;
   assert.equal(paid.payment.entitlement, true);
   assert.equal(checks, 1);
   assert.equal((await database.find("entitlements", { assessmentId: "assessment-callback", status: "active" })).length, 1);
+
+  let purchaseDelivery;
+  const callbackDelivery = await callback.recordCallbackConfirmation(database, paid.payment,
+    async (db, paymentId, event, options) => {
+      purchaseDelivery = { db, paymentId, event, options };
+      return { delivered: true, eventId: "callback-purchase" };
+    });
+  assert.equal(callbackDelivery.delivered, true);
+  assert.equal(purchaseDelivery.paymentId, "payment-callback");
+  assert.equal(purchaseDelivery.options.externalId, "a".repeat(64), "callback delivery must use the stored anonymous visitor identity");
+  assert.equal(purchaseDelivery.event.headers.referer, "https://jingeehas.fit/assessment/payment");
+  assert.equal(purchaseDelivery.event.headers["user-agent"], undefined, "QPay server identity must never be sent as customer user-agent");
+  assert.equal((await database.find("analytics_events", { eventName: "payment_confirmed" })).length, 1);
 
   const paidAgain = await callback.confirmCallbackPayment(database, provider, "jh_callback_expired", new Date("2026-08-25T01:01:00.000Z"));
   assert.equal(paidAgain.state, "paid");
