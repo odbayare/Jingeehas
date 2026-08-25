@@ -6,6 +6,7 @@ const { PRODUCT } = require("./_lib/config.js");
 const { isFreeAssessmentPostpaid } = require("./_lib/commercial-flow.js");
 const { assessmentContext, funnelKeyHash, recordEventSafe } = require("./_lib/analytics.js");
 const { analyticsFlagsForPayment } = require("./_lib/payment-context.js");
+const { deliverConfirmedPurchaseSafe } = require("./_lib/meta-capi.js");
 const {
   SAFE_SENDER_INVOICE_MAX_LENGTH,
   isSupportedPaymentAmount,
@@ -68,10 +69,10 @@ async function confirmCallbackPayment(database, provider, senderInvoiceNo, now =
   }
 }
 
-async function recordCallbackConfirmation(database, payment) {
-  if (!payment?.paymentId) return;
+async function recordCallbackConfirmation(database, payment, deliverPurchase = deliverConfirmedPurchaseSafe) {
+  if (!payment?.paymentId) return { delivered: false, reason: "payment_missing" };
   const authoritative = await database.get("payments", payment.paymentId);
-  if (!authoritative) return;
+  if (!authoritative) return { delivered: false, reason: "payment_missing" };
   const assessment = await database.get("assessments", authoritative.assessmentId);
   const freeFlow = isFreeAssessmentPostpaid(assessment);
   const measurementFlags = analyticsFlagsForPayment(authoritative);
@@ -82,6 +83,15 @@ async function recordCallbackConfirmation(database, payment) {
       ? { funnelKeyHash: key, amountMnt: authoritative.amount }
       : { assessmentId: authoritative.assessmentId, invoiceId: authoritative.invoiceId, paymentId: authoritative.id, amountMnt: authoritative.amount },
     { idempotencyKey: freeFlow ? `payment_confirmed:${key}` : `payment_confirmed:${authoritative.id}`, ...measurementFlags });
+
+  // A provider callback carries QPay's server IP/user-agent, not the customer's.
+  // Use only the already-stored anonymous first-party visitor/session hash as
+  // external_id so callback-only confirmations remain attributable without
+  // inventing browser cookies or leaking assessment/report data.
+  const externalId = context.visitorIdHash || context.sessionIdHash || "";
+  return deliverPurchase(database, authoritative.id,
+    { headers: { referer: "https://jingeehas.fit/assessment/payment" } },
+    { externalId });
 }
 
 exports.handler = async event => {
