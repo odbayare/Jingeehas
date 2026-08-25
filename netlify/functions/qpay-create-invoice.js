@@ -10,6 +10,14 @@ const { assessmentContext, flagsFromEvent, funnelKeyHash, recordEventSafe } = re
 const { analyticsFlagsForPayment, paymentClassification } = require("./_lib/payment-context.js");
 const { PRODUCT } = require("./_lib/config.js");
 
+function handoffMetadata(payment = {}) {
+  const urls = Array.isArray(payment.urls) ? payment.urls : [];
+  const appLinkCount = urls.filter(item => item?.kind === "bank_app").length;
+  const hasShortUrl = urls.some(item => item?.kind === "qpay_short_url");
+  const handoffMode = appLinkCount > 0 ? "bank_deeplinks" : hasShortUrl ? "qpay_short_url" : payment.qrImage ? "qr_only" : "none";
+  return { handoffMode, appLinkCount, hasShortUrl };
+}
+
 exports.handler = handler("POST", async (event, body) => {
   const database = getDatabase();
   await authenticateOwnerPreview(database, event);
@@ -39,7 +47,9 @@ exports.handler = handler("POST", async (event, body) => {
       ? { funnelKeyHash: key, amountMnt: payment.amount }
       : { assessmentId: payment.assessmentId, invoiceId: payment.invoiceId, paymentId: payment.paymentId, amountMnt: payment.amount },
     { idempotencyKey: freeFlow ? `invoice_created:${key}` : `invoice_created:${payment.invoiceId}`,
-      metadata: { offerPriceMnt: payment.amount, priceVersion: payment.amount === PRODUCT.amount ? PRODUCT.priceVersion : "legacy" },
+      metadata: { offerPriceMnt: payment.amount, priceVersion: payment.amount === PRODUCT.amount ? PRODUCT.priceVersion : "legacy", ...handoffMetadata(payment) },
       ...measurementFlags });
   return response(200, payment);
 });
+
+exports._test = { handoffMetadata };
