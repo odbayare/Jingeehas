@@ -4,7 +4,7 @@ import path from "node:path";
 const COUNT_TEASER_SCHEMA_VERSION = "jingeehas-initial-result-v3-counts";
 
 function functionSource(fn, targetName) {
-  return fn.toString().replace(/^function\s+[^\s(]+/, `function ${targetName}`);
+  return fn.toString().replace(/^function\s+[^\s(]+/, `function ${targetName}`).replace(/^async function\s+[^\s(]+/, `async function ${targetName}`);
 }
 
 function replaceFunction(source, name, nextName, replacement) {
@@ -12,6 +12,41 @@ function replaceFunction(source, name, nextName, replacement) {
   const end = source.indexOf(`function ${nextName}(`, start);
   if (start < 0 || end <= start) throw new Error(`Conversion funnel function boundary missing: ${name} -> ${nextName}`);
   return `${source.slice(0, start)}${replacement.trim()}\n${source.slice(end)}`;
+}
+
+function replaceNamedFunction(source, name, replacement) {
+  const markers = [`async function ${name}(`, `function ${name}(`];
+  let start = -1;
+  for (const marker of markers) {
+    start = source.indexOf(marker);
+    if (start >= 0) break;
+  }
+  if (start < 0) return null;
+  const braceStart = source.indexOf("{", start);
+  if (braceStart < 0) throw new Error(`Conversion funnel function body missing: ${name}`);
+  let depth = 0;
+  let quote = null;
+  let escaped = false;
+  let lineComment = false;
+  let blockComment = false;
+  for (let index = braceStart; index < source.length; index += 1) {
+    const char = source[index];
+    const next = source[index + 1];
+    if (lineComment) { if (char === "\n") lineComment = false; continue; }
+    if (blockComment) { if (char === "*" && next === "/") { blockComment = false; index += 1; } continue; }
+    if (quote) {
+      if (escaped) { escaped = false; continue; }
+      if (char === "\\") { escaped = true; continue; }
+      if (char === quote) quote = null;
+      continue;
+    }
+    if (char === "/" && next === "/") { lineComment = true; index += 1; continue; }
+    if (char === "/" && next === "*") { blockComment = true; index += 1; continue; }
+    if (char === "\"" || char === "'" || char === "`") { quote = char; continue; }
+    if (char === "{") depth += 1;
+    if (char === "}" && --depth === 0) return `${source.slice(0, start)}${replacement.trim()}${source.slice(index + 1)}`;
+  }
+  throw new Error(`Conversion funnel function end missing: ${name}`);
 }
 
 function replaceUntilMarker(source, functionName, endMarker, replacement) {
@@ -97,6 +132,23 @@ function optimizedRenderPayment() {
       </section></main>${footer()}</div>`;
 }
 
+async function optimizedLoadInitialResult() {
+  if (!state.assessmentId) return null;
+  if (state.initialResultLoading) return state.initialResult || null;
+  state.initialResultLoading = true;
+  try {
+    const result = await api(`/.netlify/functions/weight-assessment-initial-result?assessmentId=${encodeURIComponent(state.assessmentId)}`, { method: "GET" });
+    state.initialResult = result || null;
+    state.initialResultError = "";
+    return state.initialResult;
+  } catch (error) {
+    state.initialResultError = String(error?.body?.error || error?.message || "initial_result_unavailable");
+    throw error;
+  } finally {
+    state.initialResultLoading = false;
+  }
+}
+
 function optimizedPublicInitialResult(initialView = {}, fullReport = null) {
   const historical = [LEGACY_INITIAL_RESULT_SCHEMA_VERSION, COUNT_ONLY_INITIAL_RESULT_SCHEMA_VERSION]
     .includes(initialView?.schemaVersion);
@@ -132,24 +184,23 @@ function patchApp(appPath) {
   source = replaceFunction(source, "renderQpayAppGrid", "renderQpayPaymentOptions", functionSource(optimizedRenderQpayAppGrid, "renderQpayAppGrid"));
   source = replaceFunction(source, "renderPayment", "renderQuestionInput", functionSource(optimizedRenderPayment, "renderPayment"));
 
-  if (!source.includes("async function loadInitialResult()")) {
+  const loader = functionSource(optimizedLoadInitialResult, "loadInitialResult");
+  const replacedLoader = replaceNamedFunction(source, "loadInitialResult", loader);
+  if (replacedLoader === null) {
     const marker = 'async function loadReport() { return api(`/.netlify/functions/weight-assessment-report?assessmentId=${encodeURIComponent(state.assessmentId)}`, { method: "GET" }); }';
     if (!source.includes(marker)) throw new Error(`Initial-result loader insertion point missing: ${appPath}`);
-    source = source.replace(marker, `${marker}\nasync function loadInitialResult() { return api(\`/.netlify/functions/weight-assessment-initial-result?assessmentId=\${encodeURIComponent(state.assessmentId)}\`, { method: "GET" }); }`);
-  }
+    source = source.replace(marker, `${marker}\n${loader}`);
+  } else source = replacedLoader;
 
-  const completionFrom = 'if (completed.nextRoute === "/assessment/result") { navigate("/assessment/result"); return; }';
-  const completionTo = 'if (completed.nextRoute === "/assessment/result") { try { state.initialResult = await loadInitialResult(); } catch { state.initialResult = null; } navigate("/assessment/result"); return; }';
-  if (!source.includes(completionTo)) {
-    if (!source.includes(completionFrom)) throw new Error(`Completion teaser insertion point missing: ${appPath}`);
-    source = source.replace(completionFrom, completionTo);
-  }
-
-  const restoreFrom = 'if (route === "assessmentResult" && restored.nextRoute !== "/assessment/result") { navigate(restored.nextRoute || "/assessment/start", { replace: true }); return; }';
-  const restoreTo = `${restoreFrom}\n    if (route === "assessmentResult") { try { state.initialResult = await loadInitialResult(); } catch { state.initialResult = null; } }`;
-  if (!source.includes('if (route === "assessmentResult") { try { state.initialResult = await loadInitialResult(); }')) {
-    if (!source.includes(restoreFrom)) throw new Error(`Restore teaser insertion point missing: ${appPath}`);
-    source = source.replace(restoreFrom, restoreTo);
+  const renderHookMarker = 'const route = routeName(window.location.pathname);';
+  const renderHook = `${renderHookMarker}\n  if (route === "assessmentResult" && state.assessmentId && !state.initialResult && !state.initialResultLoading) {\n    loadInitialResult().then(() => render({ focus: false })).catch(() => {});\n  }`;
+  if (!source.includes('route === "assessmentResult" && state.assessmentId && !state.initialResult && !state.initialResultLoading')) {
+    const renderStart = source.indexOf("function render(options = {})");
+    const renderEnd = source.indexOf("function bind(", renderStart);
+    if (renderStart < 0 || renderEnd <= renderStart) throw new Error(`Render hook function boundary missing: ${appPath}`);
+    const renderBody = source.slice(renderStart, renderEnd);
+    if (!renderBody.includes(renderHookMarker)) throw new Error(`Render hook insertion point missing: ${appPath}`);
+    source = `${source.slice(0, renderStart)}${renderBody.replace(renderHookMarker, renderHook)}${source.slice(renderEnd)}`;
   }
 
   fs.writeFileSync(appPath, source);
