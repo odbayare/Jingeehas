@@ -50,7 +50,7 @@ function optimizedReportPaywallContent(embedded = false) {
       ${completed ? `<button class="button paywall-primary-cta" type="button" data-action="continue-to-payment" ${state.busy ? "disabled" : ""}>${state.busy ? "НЭХЭМЖЛЭЛ ҮҮСГЭЖ БАЙНА…" : `БҮРЭН ТАЙЛАНГАА НЭЭХ · ${PRODUCT.displayPrice}`}</button>` : `<p class="notice">Тестийг бүрэн дуусгасны дараа тайлангаа нээх сонголт гарна.</p>`}
       <p class="paywall-payment-note">QPay · Төлбөр баталгаажмагц бүрэн тайлан нээгдэнэ</p>
     </section>
-    <details class="report-contents-preview"><summary><strong>Бүрэн тайланд юу багтах вэ?</strong></summary>
+    <details class="report-contents-preview"><summary><strong>Бүрэн тайланд юу багтах вэ?</strong></summary><h2 id="report-contents-title">Бүрэн тайлангаас та:</h2>
       <ul><li>Таны хариултаас юу хамгийн тод ажиглагдсаныг</li><li>Ямар нөхцөлд хүндрэл нэмэгдэж болох, хэд хэдэн хэв маяг зэрэг ажиглагдсан бол тэдгээрийн уялдаа холбоог</li><li>Өөр дээрээ юу ажиглаж, ямар алхмаас эхэлж болохыг харна</li></ul>
     </details>
     <p class="paywall-trust-copy">Тайлангийн агуулгыг таны өгсөн хариултад тулгуурлан бүрдүүлнэ. Тод хэв маяг ажиглагдаагүй бол зохиомол дүгнэлт нэмэхгүй.</p>
@@ -116,12 +116,6 @@ function optimizedPublicInitialResult(initialView = {}, fullReport = null) {
 
 function patchApp(appPath) {
   let source = fs.readFileSync(appPath, "utf8");
-  if (!source.includes('initialResult: null')) {
-    const from = 'answers: {}, questionIndex: 0, validationError: "", report: null,';
-    const to = 'answers: {}, questionIndex: 0, validationError: "", report: null, initialResult: null,';
-    if (!source.includes(from)) throw new Error(`Conversion funnel state insertion point missing: ${appPath}`);
-    source = source.replace(from, to);
-  }
 
   if (!source.includes("function renderPersonalizedConversionProof(")) {
     const marker = "function reportPaywallContent(embedded = false) {";
@@ -132,6 +126,7 @@ function patchApp(appPath) {
   source = replaceFunction(source, "reportPaywallContent", "renderLegacyPostResultPaywall", functionSource(optimizedReportPaywallContent, "reportPaywallContent"));
   if (!source.includes("function renderQpayAppCard(")) {
     const marker = "function renderQpayAppGrid(payment = {}) {";
+    if (!source.includes(marker)) throw new Error(`QPay app-card insertion point missing: ${appPath}`);
     source = source.replace(marker, `${functionSource(renderQpayAppCard, "renderQpayAppCard")}\n${marker}`);
   }
   source = replaceFunction(source, "renderQpayAppGrid", "renderQpayPaymentOptions", functionSource(optimizedRenderQpayAppGrid, "renderQpayAppGrid"));
