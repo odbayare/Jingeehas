@@ -192,15 +192,11 @@ function patchApp(appPath) {
     source = source.replace(marker, `${marker}\n${loader}`);
   } else source = replacedLoader;
 
-  const renderHookMarker = 'const route = routeName(window.location.pathname);';
-  const renderHook = `${renderHookMarker}\n  if (route === "assessmentResult" && state.assessmentId && !state.initialResult && !state.initialResultLoading) {\n    loadInitialResult().then(() => render({ focus: false })).catch(() => {});\n  }`;
-  if (!source.includes('route === "assessmentResult" && state.assessmentId && !state.initialResult && !state.initialResultLoading')) {
-    const renderStart = source.indexOf("function render(options = {})");
-    const renderEnd = source.indexOf("function bind(", renderStart);
-    if (renderStart < 0 || renderEnd <= renderStart) throw new Error(`Render hook function boundary missing: ${appPath}`);
-    const renderBody = source.slice(renderStart, renderEnd);
-    if (!renderBody.includes(renderHookMarker)) throw new Error(`Render hook insertion point missing: ${appPath}`);
-    source = `${source.slice(0, renderStart)}${renderBody.replace(renderHookMarker, renderHook)}${source.slice(renderEnd)}`;
+  const restoreFrom = 'applyAssessmentState(restored);\n    if (route === "assessmentResult" && restored.nextRoute !== "/assessment/result") { navigate(restored.nextRoute || "/assessment/start", { replace: true }); return; }';
+  const restoreTo = 'applyAssessmentState(restored);\n    if (route === "assessmentResult" && restored.nextRoute === "/assessment/result") await loadInitialResult().catch(() => null);\n    if (route === "assessmentResult" && restored.nextRoute !== "/assessment/result") { navigate(restored.nextRoute || "/assessment/start", { replace: true }); return; }';
+  if (!source.includes('restored.nextRoute === "/assessment/result") await loadInitialResult().catch(() => null)')) {
+    if (!source.includes(restoreFrom)) throw new Error(`Initial-result restore insertion point missing: ${appPath}`);
+    source = source.replace(restoreFrom, restoreTo);
   }
 
   fs.writeFileSync(appPath, source);
