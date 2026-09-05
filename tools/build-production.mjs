@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { applyMongolianCopyHotfixRuntime } from "./apply-mongolian-copy-hotfix-runtime.mjs";
 import { applyConversionFunnelV1 } from "./apply-conversion-funnel-v1.mjs";
+import { restoreQuestionOptionLabelHelper } from "./restore-question-option-label-helper.mjs";
 import { reapplyDisplayOnlyLabels } from "./reapply-display-labels.mjs";
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
@@ -17,6 +18,7 @@ fs.copyFileSync(path.join(root, "questions.js"), path.join(generatedRoot, "quest
 fs.cpSync(path.join(root, "netlify", "functions"), path.join(generatedRoot, "netlify", "functions"), { recursive: true });
 applyMongolianCopyHotfixRuntime(generatedRoot);
 applyConversionFunnelV1(generatedRoot);
+restoreQuestionOptionLabelHelper(generatedRoot);
 reapplyDisplayOnlyLabels(generatedRoot);
 
 fs.rmSync(output, { recursive: true, force: true });
