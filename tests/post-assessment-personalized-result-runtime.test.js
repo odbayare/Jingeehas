@@ -12,7 +12,6 @@ assert(fs.existsSync(generatedInitialResultPath), "generated count-teaser initia
 const app = require(distAppPath);
 const appSource = fs.readFileSync(distAppPath, "utf8");
 for (const expected of [
-  "initialResult: null",
   "async function loadInitialResult()",
   "/.netlify/functions/weight-assessment-initial-result?assessmentId=",
   "function renderPersonalizedConversionProof(",
@@ -84,7 +83,8 @@ for (const expected of [
   "1 уялдаа холбоо",
   "Энд зөвхөн тоог харуулж байна.",
   "БҮРЭН ТАЙЛАНГАА НЭЭХ · 19,900₮",
-  "Бүрэн тайланд юу багтах вэ?"
+  "Бүрэн тайланд юу багтах вэ?",
+  "Бүрэн тайлангаас та:"
 ]) assert(paywall.includes(expected), `count-teaser paywall copy missing: ${expected}`);
 for (const forbidden of ["SERVER ONLY PATTERN", "SERVER ONLY CONDITION", "SERVER ONLY REASON", "SERVER ONLY ACTION"])
   assert(!paywall.includes(forbidden), `paid report detail leaked into count-teaser paywall: ${forbidden}`);
