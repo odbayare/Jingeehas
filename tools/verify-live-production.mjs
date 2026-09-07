@@ -2,6 +2,7 @@ import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { REQUIRED_PRODUCTION_FUNCTIONS } from "./required-production-functions.mjs";
+import { questionnaireVersionIsCurrent, resolveCurrentQuestionnaireVersion } from "./questionnaire-version.mjs";
 
 const origin = String(process.env.JINGEEHAS_LIVE_ORIGIN || "https://jingeehas.fit").replace(/\/+$/, "");
 const attempts = Math.max(1, Number(process.env.LIVE_SMOKE_ATTEMPTS || 20));
@@ -28,9 +29,8 @@ if (expectedManifestPath) {
     const candidateQuestionsPath = path.join(path.dirname(absolute), "questions.js");
     if (!fs.existsSync(candidateQuestionsPath)) throw new Error(`Expected candidate questions.js is missing: ${candidateQuestionsPath}`);
     const candidateQuestions = fs.readFileSync(candidateQuestionsPath, "utf8");
-    const match = candidateQuestions.match(/const QUESTIONNAIRE_VERSION = "([^"]+)"/);
-    if (!match) throw new Error(`Expected candidate questionnaire version is missing: ${candidateQuestionsPath}`);
-    expectedVersion = match[1];
+    expectedVersion = resolveCurrentQuestionnaireVersion(candidateQuestions) || "";
+    if (!expectedVersion) throw new Error(`Expected candidate questionnaire version is missing: ${candidateQuestionsPath}`);
   }
 }
 
@@ -120,8 +120,12 @@ async function smokeOnce() {
   excludes(app, "prepaid ? `<p class=\"notice\">Төлбөр баталгаажлаа. Тест нээгдлээ.</p>`", "Duplicate paid notice");
   excludes(app, "тестийн төлбөр хийхээс өмнө сэтгэцийн эрүүл мэндийн", "Commercial wording in safety copy");
 
-  if (expectedVersion) includes(questions, `const QUESTIONNAIRE_VERSION = \"${expectedVersion}\"`, "Questionnaire version");
-  else if (!/const QUESTIONNAIRE_VERSION = "[^"]+"/.test(questions)) throw new Error("Questionnaire version declaration is missing");
+  const liveVersion = resolveCurrentQuestionnaireVersion(questions);
+  if (expectedVersion) {
+    if (!questionnaireVersionIsCurrent(questions, expectedVersion)) {
+      throw new Error(`Questionnaire version mismatch expected=${expectedVersion} live=${liveVersion || "missing"}`);
+    }
+  } else if (!liveVersion) throw new Error("Current questionnaire version declaration is missing");
   for (const canonical of [
     "Мэргэжлийн хоолзүйчийн зөвлөгөө",
     "Сэтгэлзүйн зөвлөгөө",
