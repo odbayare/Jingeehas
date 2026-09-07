@@ -22,6 +22,7 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   "Q-HEIGHT": { dimension: "anthropometric", valueType: "number", classification: "routing_only" },
   "Q-WEIGHT": { dimension: "anthropometric", valueType: "number", classification: "routing_only" },
   "Q-TARGET": { dimension: "anthropometric", valueType: "number", classification: "neutral_context" },
+  "Q-WAIST": { dimension: "anthropometric", valueType: "number", classification: "neutral_context" },
   "Q-MEAL-RHYTHM": { dimension: "meal_rhythm", options: {
     "3–4 цаг": [protective("regular_meal_rhythm")], "4–5 цаг": [neutral],
     "5 цагаас урт": [signal("meal_gap", 3)], "Тогтмол биш": [signal("irregular_meal_rhythm", 3)]
@@ -38,6 +39,22 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
     "Ихэнхдээ хэцүү": [signal("satiety_difficulty", 3)], "Хариулахгүй": [excluded]
   } },
   "Q-FOOD-FEELING": { dimension: "food_context", options: optionMap(["Тослог, шарсан хоол", "Гурилан хоол", "Сүү, сүүн бүтээгдэхүүн", "Чихэрлэг зүйл", "Тодорхой хоол анзаараагүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Тодорхой хоол анзаараагүй" ? [neutral] : [signal("food_discomfort_context", 1, { contextOnly: true })]) },
+  "Q-FUNCTION": { dimension: "functional_context", options: optionMap([
+    "Алхах эсвэл шатаар өгсөх", "Хэсэг хугацаанд зогсох эсвэл алхах", "Бөхийх, гутлаа өмсөх зэрэг хөдөлгөөн",
+    "Хувцаслах эсвэл хувийн арчилгаагаа хийх", "Гэрийн ажил эсвэл өдөр тутмын ажлаа хийх",
+    "Дээрхээс аль нь ч мэдэгдэхүйц хэцүү биш", "Хариулахгүй"
+  ], option => {
+    if (option === "Хариулахгүй") return [excluded];
+    if (option === "Дээрхээс аль нь ч мэдэгдэхүйц хэцүү биш") return [neutral];
+    const flag = {
+      "Алхах эсвэл шатаар өгсөх": "functional_walking_constraint",
+      "Хэсэг хугацаанд зогсох эсвэл алхах": "functional_standing_constraint",
+      "Бөхийх, гутлаа өмсөх зэрэг хөдөлгөөн": "functional_bending_constraint",
+      "Хувцаслах эсвэл хувийн арчилгаагаа хийх": "functional_self_care_constraint",
+      "Гэрийн ажил эсвэл өдөр тутмын ажлаа хийх": "functional_daily_activity_constraint"
+    }[option];
+    return [signal(flag, 1, { contextOnly: true })];
+  }) },
   "Q-PORTION": { dimension: "portion_context", options: optionMap(["Амттан", "Давслаг зууш", "Түргэн хоол", "Гурилан хоол", "Тодорхой хоол байхгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Тодорхой хоол байхгүй" ? [protective("portion_difficulty", -2)] : [signal("portion_difficulty", 1), signal("environmental_portion_trigger", 1)]) },
   "Q-EMOTION": { dimension: "emotional_context", options: mergedOptionMap({
     "Өөрчлөгддөггүй": [protective("emotional_eating", -3)], "Бага зэрэг нэмэгддэг": [signal("emotional_eating", 1)],
@@ -72,8 +89,20 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
     "Хэмжиж байгаагүй": [neutral], "Хэвийн": [protective("medical_followup_context", -1)],
     "Хэвийн хэмжээнээс бага эсвэл их гарч байсан": [signal("medical_followup_context", 2, { guidanceOnly: true })], "Хариулахгүй": [excluded]
   } },
+  "Q-MEDICAL-MONITORING": { dimension: "medical_context", options: {
+    "Цусан дахь сахар": [signal("glucose_monitoring_context", 2, { guidanceOnly: true })],
+    "Цусны даралт": [signal("blood_pressure_monitoring_context", 2, { guidanceOnly: true })],
+    "Хоёуланг нь": [signal("glucose_monitoring_context", 2, { guidanceOnly: true }), signal("blood_pressure_monitoring_context", 2, { guidanceOnly: true })],
+    "Үгүй": [neutral], "Мэдэхгүй": [neutral], "Хариулахгүй": [excluded]
+  } },
   "MC-GATE": { dimension: "medical_context", options: optionMap(["Тийм, хамаарна", "Үгүй, хамаарахгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : [routingOnly]) },
   "MC-01": { dimension: "medical_context", options: optionMap(["Тогтмол", "Заримдаа зөрдөг", "Ихэнхдээ тогтмол биш", "Сүүлийн 3 сард ирээгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Тогтмол" ? [neutral] : [signal("professional_guidance_context", 1, { guidanceOnly: true })]) },
+  "REPRO-STATUS": { dimension: "medical_context", options: optionMap(["Сарын тэмдгийн мөчлөгтэй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл", "Цэвэршилтийн шилжилтийн үе эсвэл цэвэршсэн", "Дээрхээс аль нь ч хамаарахгүй", "Хариулахгүй"], option => {
+    if (option === "Хариулахгүй") return [excluded];
+    if (option === "Сарын тэмдгийн мөчлөгтэй") return [routingOnly];
+    if (["Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл"].includes(option)) return [signal("professional_guidance_context", 2, { guidanceOnly: true })];
+    return [neutral];
+  }) },
   "ALC-GATE": { dimension: "substance_context", options: {
     "Үгүй": [neutral], "Хааяа": [neutral], "Тогтмол": [signal("alcohol_context", 1, { contextOnly: true })], "Хариулахгүй": [excluded]
   } },
@@ -81,6 +110,13 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
     "Өөрчлөгддөггүй": [signal("alcohol_food_change", -2)], "Идэх хэмжээ нэмэгддэг": [signal("alcohol_food_change", 2)],
     "Давслаг эсвэл тослог хоол илүү хүсдэг": [signal("alcohol_food_change", 2)], "Тодорхой биш": [neutral], "Хариулахгүй": [excluded]
   }, { "Тодорхойгүй": [neutral] }) },
+  "Q-ALCOHOL-FOOD": { dimension: "substance_context", options: {
+    "Согтууруулах ундаа хэрэглэдэггүй": [neutral],
+    "Өөрчлөгддөггүй": [signal("alcohol_food_change", -2)],
+    "Идэх хэмжээ нэмэгддэг": [signal("alcohol_food_change", 2)],
+    "Давслаг эсвэл тослог хоол илүү хүсдэг": [signal("alcohol_food_change", 2)],
+    "Тодорхой биш": [neutral], "Хариулахгүй": [excluded]
+  } },
   "TOB-GATE": { dimension: "substance_context", options: optionMap(["Үгүй", "Хааяа", "Тогтмол", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : [neutral]) },
   "TOB-01": { dimension: "substance_context", options: optionMap(["Өөрчлөгддөггүй", "Багасдаг", "Дараа нь нэмэгддэг", "Тодорхой биш", "Тодорхойгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Дараа нь нэмэгддэг" ? [signal("appetite_rebound_context", 1, { contextOnly: true })] : [neutral]) },
   "PREG-GATE": { dimension: "medical_context", options: optionMap(["Үгүй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Үгүй" ? [neutral] : [signal("professional_guidance_context", 2, { guidanceOnly: true })]) },
@@ -115,6 +151,12 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
     "Ихэнх нь эргэн нэмэгдсэн": [signal("weight_regain", 2)], "Цааш буурсан": [protective("weight_regain", -3)],
     "Тогтвортой байсан": [protective("weight_regain", -3)], "Бага зэрэг нэмэгдсэн": [signal("weight_regain", 2)],
     "Нэлээд нэмэгдсэн": [signal("weight_regain", 2)], "Өмнөхөөс илүү нэмэгдсэн": [signal("weight_regain", 3)], "Тодорхой санахгүй": [neutral]
+  } },
+  "Q-MAINTENANCE-PLAN": { dimension: "maintenance_context", options: {
+    "Тийм, тодорхой хувилбар байсан": [protective("maintenance_gap", -3)],
+    "Зарим хувилбар байсан ч тогтсон төлөвлөгөө байгаагүй": [signal("maintenance_gap", 2)],
+    "Үгүй, өөр хувилбар бэлдээгүй": [signal("maintenance_gap_explicit", 4)],
+    "Тодорхой санахгүй": [neutral]
   } },
   "Q-METHOD-SUPPORT": { dimension: "support_context", options: optionMap(["Эмч", "Хоолзүйч", "Сэтгэлзүйч", "Дасгал хөдөлгөөний мэргэжилтэн", "Бусад мэргэжилтэн", "Мэргэжлийн дэмжлэг аваагүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Мэргэжлийн дэмжлэг аваагүй" ? [neutral] : [protective("professional_support", -1)]) },
   "Q-METHOD-MEDICATION": { dimension: "medical_context", options: optionMap(["Үгүй", "Эмчийн хяналттай эм хэрэглэсэн", "Эмчийн хяналтгүй эм хэрэглэсэн", "Нэмэлт бүтээгдэхүүн хэрэглэсэн", "Тодорхойгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Эмчийн хяналтгүй эм хэрэглэсэн" ? [signal("professional_guidance_context", 2, { guidanceOnly: true })] : [neutral]) },
