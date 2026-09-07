@@ -35,6 +35,11 @@ assert.equal(
 if (!source.includes(oldAssertion)) throw new Error("question-bank safety-copy migration anchor missing");
 source = source.replace(oldAssertion, versionedAssertions);
 
+const oldVisibleCopyAssertion = 'for (const exactQuestion of ["Тэр оролдлого яагаад зогссон бэ?", "Аргаа зогсоосны дараа жин эргэн нэмэгдсэн үү?", "Аргаа тогтвортой үргэлжлүүлэхэд юу хамгийн их саад болдог вэ?", "Жингээ бууруулахын тулд өмнө туршсан нэг арга яагаад удаан үргэлжлээгүй вэ?"]) assert(visibleCopy.includes(exactQuestion), `neutral production question changed: ${exactQuestion}`);';
+const v4VisibleCopyAssertion = 'for (const exactQuestion of ["Тэр оролдлого яагаад зогссон бэ?", "Аргаа зогсоосны дараа жин тань хэрхэн өөрчлөгдсөн бэ?", "Аргаа тогтвортой үргэлжлүүлэхэд юу хамгийн их саад болдог вэ?", "Өмнөх оролдлогоосоо та юу ойлгож авсан бэ?"]) assert(visibleCopy.includes(exactQuestion), `V4 production question changed: ${exactQuestion}`);';
+if (!source.includes(oldVisibleCopyAssertion)) throw new Error("question-bank visible-copy migration anchor missing");
+source = source.replace(oldVisibleCopyAssertion, v4VisibleCopyAssertion);
+
 const testModule = new Module(originalPath, module);
 testModule.filename = originalPath;
 testModule.paths = Module._nodeModulePaths(path.dirname(originalPath));
