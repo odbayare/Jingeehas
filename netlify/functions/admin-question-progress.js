@@ -38,6 +38,47 @@ function mergeCanonicalQuestionRows(rows, resolver = questionAnalytics) {
       stoppedCount: item.confirmedStoppedCount, activeCount: item.activeAtQuestionCount, dropoffRate: confirmedDropoffRate }; });
 }
 
+function normalizeQuestionProgressSummary(summary = {}, top = null) {
+  const cohortStarted = Number(summary.cohortStarted || 0);
+  const terminalCompletedCount = Number(summary.terminalCompletedCount ?? summary.completedCount ?? 0);
+  const safetyExitCount = Number(summary.safetyExitCount || 0);
+  const commercialCompletedCount = Number(summary.commercialCompletedCount ?? Math.max(0, terminalCompletedCount - safetyExitCount));
+  const commercialEligibleStartedCount = Number(summary.commercialEligibleStartedCount ?? Math.max(0, cohortStarted - safetyExitCount));
+  const terminalCompletionRate = summary.terminalCompletionRate == null
+    ? (summary.completionRate == null ? (cohortStarted ? terminalCompletedCount / cohortStarted : 0) : Number(summary.completionRate))
+    : Number(summary.terminalCompletionRate);
+  const commercialCompletionRate = summary.commercialCompletionRate == null
+    ? (commercialEligibleStartedCount ? commercialCompletedCount / commercialEligibleStartedCount : 0)
+    : Number(summary.commercialCompletionRate);
+  const safetyExitRate = summary.safetyExitRate == null
+    ? (cohortStarted ? safetyExitCount / cohortStarted : 0)
+    : Number(summary.safetyExitRate);
+
+  return {
+    cohortStarted,
+    coveredAssessments: Number(summary.coveredAssessments || 0),
+    liveProgressAssessments: Number(summary.liveProgressAssessments || 0),
+    backfillOnlyAssessments: Number(summary.backfillOnlyAssessments || 0),
+    coverageRate: Number(summary.coverageRate || 0),
+    averageQuestionsReached: Number(summary.averageQuestionsReached || 0),
+    // Legacy aliases remain terminal-completion metrics.
+    completedCount: terminalCompletedCount,
+    completionRate: terminalCompletionRate,
+    terminalCompletedCount,
+    terminalCompletionRate,
+    commercialCompletedCount,
+    commercialEligibleStartedCount,
+    commercialCompletionRate,
+    safetyExitCount,
+    safetyExitRate,
+    activeInProgressCount: Number(summary.activeInProgressCount || 0),
+    topStopQuestionId: top?.questionId || null,
+    topStopLabel: top?.analyticsLabel || null,
+    topStopCount: Number(top?.confirmedStoppedCount || 0),
+    instrumentationStartedAt: summary.instrumentationStartedAt || null
+  };
+}
+
 exports.handler = handler("GET", async event => {
   const database = getDatabase(); await authenticateOwnerAdmin(database, event);
   const query = event.queryStringParameters || {};
@@ -49,13 +90,9 @@ exports.handler = handler("GET", async event => {
   questions.sort((a, b) => b.confirmedStoppedCount - a.confirmedStoppedCount
     || (b.confirmedDropoffRate || 0) - (a.confirmedDropoffRate || 0)
     || b.dropoffEligibleCount - a.dropoffEligibleCount || a.questionOrder - b.questionOrder);
-  const top = questions.find(row => row.confirmedStoppedCount > 0 && row.dropoffEligibleCount > 0) || null; const summary = result.summary || {};
-  return response(200, { timeZone: "Asia/Ulaanbaatar", summary: { cohortStarted: Number(summary.cohortStarted || 0), coveredAssessments: Number(summary.coveredAssessments || 0),
-    liveProgressAssessments: Number(summary.liveProgressAssessments || 0), backfillOnlyAssessments: Number(summary.backfillOnlyAssessments || 0),
-    coverageRate: Number(summary.coverageRate || 0), averageQuestionsReached: Number(summary.averageQuestionsReached || 0), completedCount: Number(summary.completedCount || 0),
-    completionRate: Number(summary.completionRate || 0), activeInProgressCount: Number(summary.activeInProgressCount || 0),
-    topStopQuestionId: top?.questionId || null, topStopLabel: top?.analyticsLabel || null, topStopCount: Number(top?.confirmedStoppedCount || 0),
-    instrumentationStartedAt: summary.instrumentationStartedAt || null }, questions });
+  const top = questions.find(row => row.confirmedStoppedCount > 0 && row.dropoffEligibleCount > 0) || null;
+  return response(200, { timeZone: "Asia/Ulaanbaatar", summary: normalizeQuestionProgressSummary(result.summary || {}, top), questions });
 });
 
 module.exports.mergeCanonicalQuestionRows = mergeCanonicalQuestionRows;
+module.exports.normalizeQuestionProgressSummary = normalizeQuestionProgressSummary;
