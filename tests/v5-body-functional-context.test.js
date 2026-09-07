@@ -3,7 +3,10 @@
 const assert = require("node:assert/strict");
 const questions = require("../questions.js");
 const { buildEvidence, buildFullReport } = require("../netlify/functions/_lib/report.js");
+const { mappingCoverage } = require("../netlify/functions/_lib/report-signals.js");
 const { calculateAssessmentSafety } = require("../netlify/functions/_lib/safety.js");
+const { deriveBodyFunctionalContext } = require("../netlify/functions/_lib/body-context.js");
+const { v5ProfessionalGuidance } = require("../netlify/functions/_lib/v5-context.js");
 
 const V4 = questions.HOUSEHOLD_CONTEXT_QUESTIONNAIRE_VERSION || "jingeehas-production-2026-08-v4-household-context";
 const V5 = questions.BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION;
@@ -22,15 +25,24 @@ for (const id of ["Q-FOOD-FEELING", "Q-GLUCOSE", "Q-BLOOD-PRESSURE", "MC-GATE", 
 
 assert.equal(questions.questionById("Q-WAIST", V5).required, false);
 assert.equal(questions.questionById("Q-WAIST", V5).unit, "см");
+assert(questions.questionById("Q-WAIST", V5).text.includes("Мэдэхгүй бол алгасаж болно"));
 assert.equal(
   questions.questionById("Q-FUNCTION", V5).text,
   "Сүүлийн 3 сарын хугацаанд дараах өдөр тутмын үйлдлүүдээс аль нь танд мэдэгдэхүйц хэцүү байсан бэ?"
+);
+assert.equal(
+  questions.validateAnswer(questions.questionById("Q-FUNCTION", V5), ["Аль нь ч биш", "Алхах эсвэл шатаар өгсөх"], { version: V5 }),
+  "Зөв хариулт сонгоно уу."
 );
 
 const reproBase = { "Q-SEX": "Эмэгтэй" };
 assert(questions.visibleQuestions(reproBase, V5).some(question => question.id === "REPRO-STATUS"));
 assert(!questions.visibleQuestions(reproBase, V5).some(question => question.id === "MC-01"));
 assert(questions.visibleQuestions({ ...reproBase, "REPRO-STATUS": ["Сарын тэмдгийн мөчлөгтэй"] }, V5).some(question => question.id === "MC-01"));
+assert.equal(
+  questions.validateAnswer(questions.questionById("REPRO-STATUS", V5), ["Аль нь ч биш", "Хөхүүл"], { answers: reproBase, version: V5 }),
+  "Зөв хариулт сонгоно уу."
+);
 
 const noMaintenance = {
   "Q-METHOD-PAST": ["Хоолны дэглэм"],
@@ -41,6 +53,24 @@ const noMaintenance = {
 assert(!questions.visibleQuestions(noMaintenance, V5).some(question => question.id === "Q-MAINTENANCE-PLAN"));
 const maintenanceEligible = { ...noMaintenance, "Q-METHOD-DURATION": "6–12 сар" };
 assert(questions.visibleQuestions(maintenanceEligible, V5).some(question => question.id === "Q-MAINTENANCE-PLAN"));
+
+const compensatoryRoute = questions.visibleQuestions({ "S1-S03": "Сүүлийн 28 хоногт байсан" }, V5);
+assert.equal(compensatoryRoute.at(-1).id, "S1-B01", "recent compensatory behavior must stop before commercial method-history questions after higher-priority safety triage");
+assert(!compensatoryRoute.some(question => question.id === "Q-METHOD-CURRENT"));
+const selfHarmRoute = questions.visibleQuestions({ "S1-S03": "Үгүй", "S1-S04": "Хааяа" }, V5);
+assert.equal(selfHarmRoute.at(-1).id, "S1-S04-NOW", "recent self-harm screen must stop at immediate-risk follow-up");
+assert(!selfHarmRoute.some(question => question.id === "S1-B01"));
+const acuteRoute = questions.visibleQuestions({ "S1-S03": "Үгүй", "S1-S04": "Үгүй", "S1-B01": ["Ухаан балартах"] }, V5);
+assert.equal(acuteRoute.at(-1).id, "S1-B01", "acute medical signal must terminate commercial routing");
+const safeRoute = questions.visibleQuestions({ "S1-S03": "Үгүй", "S1-S04": "Үгүй", "S1-B01": ["Аль нь ч үгүй"] }, V5);
+assert(safeRoute.some(question => question.id === "Q-METHOD-CURRENT"), "non-triggering safety answers must preserve the commercial questionnaire");
+const historicalCompensatoryRoute = questions.visibleQuestions({ "S1-S03": "Сүүлийн 28 хоногт байсан" }, V4);
+assert(historicalCompensatoryRoute.some(question => question.id === "S1-S03-TYPE"), "V4 safety branching must remain unchanged");
+assert(historicalCompensatoryRoute.some(question => question.id === "Q-METHOD-CURRENT"), "V4 commercial route must remain unchanged");
+
+const allV5Questions = questions.QUESTIONS.map(question => questions.questionById(question.id, V5)).filter(Boolean);
+assert.deepEqual(mappingCoverage(allV5Questions).unmappedQuestions, []);
+assert.deepEqual(mappingCoverage(allV5Questions).unmappedOptions, []);
 
 function rows(answers) {
   return Object.entries(answers).map(([questionId, value]) => ({ questionId, value }));
@@ -80,6 +110,14 @@ const bodyContext = {
 };
 assert.deepEqual(coreSnapshot(core), coreSnapshot(bodyContext), "body/function context must not change core pattern scoring or counted interactions");
 
+const derivedBody = deriveBodyFunctionalContext(bodyContext);
+assert.equal(derivedBody.bmi, 31.14);
+assert.equal(derivedBody.waistToHeightRatio, 0.618);
+assert.equal(derivedBody.targetGapKg, 15);
+assert.equal(derivedBody.diagnostic, false);
+assert.equal(derivedBody.counted, false);
+assert(derivedBody.functionalFlags.includes("functional_walking_constraint"));
+
 const maintenanceAnswers = {
   "Q-METHOD-PAST": ["Хоолны дэглэм"],
   "Q-METHOD-DURATION": "6–12 сар",
@@ -89,6 +127,14 @@ const maintenanceAnswers = {
 };
 const maintenanceEvidence = buildEvidence(rows(maintenanceAnswers), [], { questionnaireVersion: V5 });
 assert(maintenanceEvidence.signals.some(row => row.questionId === "Q-MAINTENANCE-PLAN" && row.signal === "maintenance_gap_explicit" && row.effect === 4), "structured maintenance answer must create the explicit maintenance-gap anchor");
+const maintenanceReport = buildFullReport(maintenanceEvidence, new Date("2026-09-07T00:00:00.000Z"), { questionnaireVersion: V5 });
+assert(maintenanceReport.internalEvidenceMap.patternEvidence.some(item => item.id === "previous_attempt_sustainability" && item.supported), "structured maintenance evidence must activate the repaired maintenance pattern when all gates are met");
+
+const guidance = v5ProfessionalGuidance({ "Q-MEDICAL-MONITORING": "Хоёуланг нь", "REPRO-STATUS": ["Хөхүүл"] });
+assert.equal(guidance.length, 3);
+assert(guidance.join(" ").includes("Цусан дахь сахараа"));
+assert(guidance.join(" ").includes("Цусны даралтаа"));
+assert(guidance.join(" ").includes("хөхүүл үед"));
 
 const recentCompensatory = calculateAssessmentSafety({ "S1-S03": "Сүүлийн 28 хоногт байсан" });
 assert.equal(recentCompensatory.route, "eating_behavior_professional");
