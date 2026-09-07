@@ -69,7 +69,6 @@ function bodyContextFactors(context) {
       summary: context.waistCm != null
         ? "Таны оруулсан өндөр, жин, бүсэлхийн тойргийг биеийн суурь нөхцөлийг тайлбарлах нэмэлт мэдээлэл болгон ашиглав. Эдгээр хэмжилт дангаараа онош тогтоохгүй."
         : "Таны оруулсан өндөр, жинг биеийн суурь нөхцөлийг тайлбарлах нэмэлт мэдээлэл болгон ашиглав. Эдгээр хэмжилт дангаараа онош тогтоохгүй.",
-      bodyContext: true,
       certainty: "self_report_context",
       counted: false
     }));
@@ -79,7 +78,6 @@ function bodyContextFactors(context) {
       id: flag,
       title: "Өдөр тутмын хөдөлгөөний нөхцөл",
       summary: `${FUNCTION_COPY[flag]} Энэ тест тухайн хүндрэлийн шалтгааныг тогтоохгүй.`,
-      bodyContext: true,
       certainty: "direct_self_report_non_causal",
       counted: false
     }));
