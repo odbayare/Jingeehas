@@ -17,6 +17,10 @@ const replacements = [
     '"Q-METHOD-BARRIERS": ["Тодорхой саад байгаагүй"], "HFE-HOUSEHOLD": ["Ганцаараа"]'
   ],
   [
+    'assert.equal(JSON.parse(rejectedSexRoute.body).error, "inapplicable_question");',
+    'assert.equal(JSON.parse(rejectedSexRoute.body).error, "invalid_question");'
+  ],
+  [
     'await save(event("PATCH", { assessmentId: safetyAssessmentId, answers: { "S1-S04": "Одоо идэвхтэй бодогдож байна" } }, otherCookie));',
     'await save(event("PATCH", { assessmentId: safetyAssessmentId, answers: { "S1-S04": "Хааяа", "S1-S04-NOW": "Тийм" } }, otherCookie));'
   ]

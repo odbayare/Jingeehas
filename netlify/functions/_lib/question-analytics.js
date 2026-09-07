@@ -2,24 +2,25 @@
 const questionBank = require("../../../questions.js");
 
 const LABELS = Object.freeze({
-  "Q-AGE": "Нас", "Q-SEX": "Хүйс", "Q-HEIGHT": "Өндөр", "Q-WEIGHT": "Одоогийн жин", "Q-TARGET": "Зорилтот жин",
-  "Q-MEAL-RHYTHM": "Хооллох хэмнэл", "Q-HUNGER": "Өлсөх дохио", "Q-SATIETY": "Цадах дохио", "Q-FOOD-FEELING": "Хоолны дараах мэдрэмж",
+  "Q-AGE": "Нас", "Q-SEX": "Хүйс", "Q-HEIGHT": "Өндөр", "Q-WEIGHT": "Одоогийн жин", "Q-TARGET": "Зорилтот жин", "Q-WAIST": "Бүсэлхийн тойрог",
+  "Q-MEAL-RHYTHM": "Хооллох хэмнэл", "Q-HUNGER": "Өлсөх дохио", "Q-SATIETY": "Цадах дохио", "Q-FOOD-FEELING": "Хоолны дараах мэдрэмж", "Q-FUNCTION": "Өдөр тутмын үйл ажиллагаа",
   "Q-PORTION": "Хоолны хэмжээ", "Q-EMOTION": "Сэтгэл хөдлөл ба хооллолт", "Q-CUE": "Орчны дохио", "Q-SLEEP-DURATION": "Унтах хугацаа",
   "Q-SLEEP-QUALITY": "Нойрны чанар", "Q-TRAVEL": "Зорчих хэлбэр", "Q-MOVEMENT": "Өдрийн хөдөлгөөн", "Q-GLUCOSE": "Цусан дахь сахар",
-  "Q-BLOOD-PRESSURE": "Цусны даралт", "MC-GATE": "Мөчлөгийн асуултын хамаарал", "MC-01": "Мөчлөгийн тогтмол байдал",
-  "ALC-GATE": "Согтууруулах ундааны хэрэглээ", "ALC-01": "Ундаа ба хоолны сонголт", "TOB-GATE": "Никотины хэрэглээ", "TOB-01": "Никотин ба хоолны дуршил",
+  "Q-BLOOD-PRESSURE": "Цусны даралт", "Q-MEDICAL-MONITORING": "Эрүүл мэндийн үзүүлэлтийн хяналт", "MC-GATE": "Мөчлөгийн асуултын хамаарал", "MC-01": "Мөчлөгийн тогтмол байдал", "REPRO-STATUS": "Нөхөн үржихүйн үе",
+  "ALC-GATE": "Согтууруулах ундааны хэрэглээ", "ALC-01": "Ундаа ба хоолны сонголт", "Q-ALCOHOL-FOOD": "Ундаа ба хооллолтын өөрчлөлт", "TOB-GATE": "Никотины хэрэглээ", "TOB-01": "Никотин ба хоолны дуршил",
   "PREG-GATE": "Жирэмслэлт ба төрсний дараах үе", "MENO-GATE": "Цэвэршилтийн үе", "S1-S03": "Нөхөн төлөх зан үйл",
   "S1-S04": "Өөртөө хор хүргэх бодол", "S1-B01": "Биеийн яаралтай шинж", "Q-METHOD-CURRENT": "Одоо хэрэглэж буй арга",
   "Q-METHOD-PAST": "Өмнө туршсан арга", "Q-METHOD-LONGEST": "Хамгийн удаан үргэлжилсэн арга", "Q-METHOD-DURATION": "Оролдлогын хугацаа",
-  "Q-METHOD-STOP": "Оролдлого зогссон шалтгаан", "Q-METHOD-RESULT": "Оролдлогын эхний үр дүн", "Q-METHOD-REGAIN": "Жин эргэн нэмэгдсэн эсэх",
+  "Q-METHOD-STOP": "Оролдлого зогссон шалтгаан", "Q-METHOD-RESULT": "Оролдлогын эхний үр дүн", "Q-METHOD-REGAIN": "Жин эргэн нэмэгдсэн эсэх", "Q-MAINTENANCE-PLAN": "Үр дүн хадгалах орлуулах төлөвлөгөө",
   "Q-METHOD-SUPPORT": "Мэргэжлийн дэмжлэг", "Q-METHOD-MEDICATION": "Эм ба нэмэлт бүтээгдэхүүн", "Q-METHOD-BARRIERS": "Үргэлжлүүлэхэд саад болсон зүйл",
   "OPEN-PAST": "Өмнөх оролдлогын тайлбар"
 });
 const SECTION_KEYS = Object.freeze({ "Суурь мэдээлэл": "baseline", "Хооллох хэмнэл": "meal_rhythm", "Өлсөх ба цадах дохио": "hunger_satiety",
-  "Хооллосны дараах мэдрэмж ба цадалт": "post_meal", "Сэтгэл хөдлөл": "emotion", "Орчны дохио": "environment", "Нойр": "sleep",
-  "Өдөр тутмын хөдөлгөөн": "movement", "Биеийн шинж": "physical_signs", "Сарын тэмдгийн мөчлөг": "menstrual_cycle",
+  "Хооллосны дараах мэдрэмж ба цадалт": "post_meal", "Өдөр тутмын үйл ажиллагаа": "functional_context", "Сэтгэл хөдлөл": "emotion", "Орчны дохио": "environment", "Нойр": "sleep",
+  "Өдөр тутмын хөдөлгөөн": "movement", "Биеийн шинж": "physical_signs", "Сарын тэмдгийн мөчлөг": "menstrual_cycle", "Нөхөн үржихүйн үе": "reproductive_status",
   "Согтууруулах ундааны хэрэглээ": "alcohol", "Тамхины хэрэглээ": "tobacco", "Жирэмслэлт ба төрсний дараах үе": "pregnancy_postpartum",
-  "Цэвэршилтийн үе": "menopause", "Аюулгүй байдлын дохио": "safety", "Жин бууруулах аргын түүх": "method_history", "Өмнөх оролдлого": "past_attempt" });
+  "Цэвэршилтийн үе": "menopause", "Аюулгүй байдлын дохио": "safety", "Жин бууруулах аргын түүх": "method_history", "Өмнөх оролдлого": "past_attempt",
+  "Гэрийн хоолны орчин": "household_food_environment" });
 
 function questionAnalytics(id, version = questionBank.QUESTIONNAIRE_VERSION) {
   const question = questionBank.questionById(id, version); if (!question) return null;

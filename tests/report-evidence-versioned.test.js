@@ -19,16 +19,19 @@ source = source.replace(oldCount, semanticCount);
 
 const frozenBlock = /const frozenFileHashes = Object\.freeze\(\{[\s\S]*?for \(const \[file, expectedHash\] of Object\.entries\(frozenFileHashes\)\) \{[\s\S]*?\n\}/;
 if (!frozenBlock.test(source)) throw new Error("frozen semantics migration block missing");
-source = source.replace(frozenBlock, `const versionedSemantics = {
+source = source.replace(frozenBlock, `const v4QuestionBank = questionBank.QUESTIONS
+  .map(question => questionBank.questionById(question.id, questionBank.QUESTIONNAIRE_VERSION))
+  .filter(Boolean);
+const versionedSemantics = {
   questionnaireVersion: questionBank.QUESTIONNAIRE_VERSION,
   previousVersion: questionBank.PREVIOUS_QUESTIONNAIRE_VERSION,
-  currentQuestionCount: questionBank.QUESTIONS.length,
-  mappingCoverage: mappingCoverage(questionBank.QUESTIONS)
+  currentQuestionCount: v4QuestionBank.length,
+  mappingCoverage: mappingCoverage(v4QuestionBank)
 };
 assert.equal(versionedSemantics.questionnaireVersion, "jingeehas-production-2026-08-v4-household-context");
 assert.equal(versionedSemantics.previousVersion, "jingeehas-production-2026-07-v2-method-link");
-assert.equal(versionedSemantics.currentQuestionCount, 46, "V4 question bank must add exactly two HFE items");
-assert.equal(versionedSemantics.mappingCoverage.percent, 100, "V3 semantic mappings must be complete");
+assert.equal(versionedSemantics.currentQuestionCount, 46, "V4 materialized question bank must remain exactly 46 items");
+assert.equal(versionedSemantics.mappingCoverage.percent, 100, "V4 semantic mappings must remain complete");
 assert.deepEqual(versionedSemantics.mappingCoverage.unmappedQuestions, []);
 assert.deepEqual(versionedSemantics.mappingCoverage.unmappedOptions, []);`);
 
