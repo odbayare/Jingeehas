@@ -9,6 +9,14 @@ const { authenticateOwnerPreview, authenticateOwnerPreviewStrict, PREVIEW_COOKIE
 const { cookies } = require("./_lib/http.js");
 const { clientContext, flagsFromEvent, recordEventSafe } = require("./_lib/analytics.js");
 
+async function assignCurrentQuestionnaireToNewAssessment(database, assessment, resumableBefore = [], now = new Date()) {
+  const resumed = resumableBefore.some(row => row.id === assessment.id);
+  if (resumed || assessment.questionnaireVersion === CURRENT_QUESTIONNAIRE_VERSION) return assessment;
+  await database.update("assessments", assessment.id, { questionnaireVersion: CURRENT_QUESTIONNAIRE_VERSION, updatedAt: now.toISOString() });
+  assessment.questionnaireVersion = CURRENT_QUESTIONNAIRE_VERSION;
+  return assessment;
+}
+
 exports.handler = handler("POST", async (event, body) => {
   const database = getDatabase();
   await authenticateOwnerPreview(database, event);
@@ -21,11 +29,7 @@ exports.handler = handler("POST", async (event, body) => {
   const resumableBefore = (await database.find("assessments", { sessionId: session.id, commercialFlowVersion: FREE_POSTPAID_FLOW }))
     .filter(row => new Set(["draft", "in_progress", "complete"]).has(row.status));
   const assessment = await createAssessment(database, session.id, { ...body, prepaid: false, flowVersion: FREE_POSTPAID_FLOW });
-  const resumed = resumableBefore.some(row => row.id === assessment.id);
-  if (!resumed && assessment.questionnaireVersion !== CURRENT_QUESTIONNAIRE_VERSION) {
-    await database.update("assessments", assessment.id, { questionnaireVersion: CURRENT_QUESTIONNAIRE_VERSION, updatedAt: new Date().toISOString() });
-    assessment.questionnaireVersion = CURRENT_QUESTIONNAIRE_VERSION;
-  }
+  await assignCurrentQuestionnaireToNewAssessment(database, assessment, resumableBefore);
 
   if (previewBypass) {
     await database.upsert("assessment_sessions", `${assessment.id}:${session.id}`, { assessmentId: assessment.id, sessionId: session.id,
@@ -44,3 +48,5 @@ exports.handler = handler("POST", async (event, body) => {
   return response(201, { assessmentId: assessment.id, status: assessment.status, commercialFlowVersion: assessment.commercialFlowVersion,
     questionnaireVersion: assessment.questionnaireVersion, previewBypass });
 });
+
+module.exports.assignCurrentQuestionnaireToNewAssessment = assignCurrentQuestionnaireToNewAssessment;
