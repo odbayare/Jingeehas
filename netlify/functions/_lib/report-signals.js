@@ -41,11 +41,10 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   "Q-FOOD-FEELING": { dimension: "food_context", options: optionMap(["Тослог, шарсан хоол", "Гурилан хоол", "Сүү, сүүн бүтээгдэхүүн", "Чихэрлэг зүйл", "Тодорхой хоол анзаараагүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Тодорхой хоол анзаараагүй" ? [neutral] : [signal("food_discomfort_context", 1, { contextOnly: true })]) },
   "Q-FUNCTION": { dimension: "functional_context", options: optionMap([
     "Алхах эсвэл шатаар өгсөх", "Хэсэг хугацаанд зогсох эсвэл алхах", "Бөхийх, гутлаа өмсөх зэрэг хөдөлгөөн",
-    "Хувцаслах эсвэл хувийн арчилгаагаа хийх", "Гэрийн ажил эсвэл өдөр тутмын ажлаа хийх",
-    "Дээрхээс аль нь ч мэдэгдэхүйц хэцүү биш", "Хариулахгүй"
+    "Хувцаслах эсвэл хувийн арчилгаагаа хийх", "Гэрийн ажил эсвэл өдөр тутмын ажлаа хийх", "Аль нь ч биш", "Хариулахгүй"
   ], option => {
     if (option === "Хариулахгүй") return [excluded];
-    if (option === "Дээрхээс аль нь ч мэдэгдэхүйц хэцүү биш") return [neutral];
+    if (option === "Аль нь ч биш") return [neutral];
     const flag = {
       "Алхах эсвэл шатаар өгсөх": "functional_walking_constraint",
       "Хэсэг хугацаанд зогсох эсвэл алхах": "functional_standing_constraint",
@@ -97,7 +96,7 @@ const ANSWER_SIGNAL_CONTRACT = Object.freeze({
   } },
   "MC-GATE": { dimension: "medical_context", options: optionMap(["Тийм, хамаарна", "Үгүй, хамаарахгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : [routingOnly]) },
   "MC-01": { dimension: "medical_context", options: optionMap(["Тогтмол", "Заримдаа зөрдөг", "Ихэнхдээ тогтмол биш", "Сүүлийн 3 сард ирээгүй", "Хариулахгүй"], option => option === "Хариулахгүй" ? [excluded] : option === "Тогтмол" ? [neutral] : [signal("professional_guidance_context", 1, { guidanceOnly: true })]) },
-  "REPRO-STATUS": { dimension: "medical_context", options: optionMap(["Сарын тэмдгийн мөчлөгтэй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл", "Цэвэршилтийн шилжилтийн үе эсвэл цэвэршсэн", "Дээрхээс аль нь ч хамаарахгүй", "Хариулахгүй"], option => {
+  "REPRO-STATUS": { dimension: "medical_context", options: optionMap(["Сарын тэмдгийн мөчлөгтэй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл", "Цэвэршилтийн шилжилтийн үе эсвэл цэвэршсэн", "Аль нь ч биш", "Хариулахгүй"], option => {
     if (option === "Хариулахгүй") return [excluded];
     if (option === "Сарын тэмдгийн мөчлөгтэй") return [routingOnly];
     if (["Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл"].includes(option)) return [signal("professional_guidance_context", 2, { guidanceOnly: true })];
