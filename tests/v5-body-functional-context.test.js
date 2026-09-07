@@ -2,11 +2,13 @@
 
 const assert = require("node:assert/strict");
 const questions = require("../questions.js");
-const { buildEvidence, buildFullReport } = require("../netlify/functions/_lib/report.js");
+const { buildEvidence, buildFullReport, publicReport } = require("../netlify/functions/_lib/report.js");
 const { mappingCoverage } = require("../netlify/functions/_lib/report-signals.js");
 const { calculateAssessmentSafety } = require("../netlify/functions/_lib/safety.js");
 const { deriveBodyFunctionalContext } = require("../netlify/functions/_lib/body-context.js");
 const { v5ProfessionalGuidance } = require("../netlify/functions/_lib/v5-context.js");
+const { enrichV5BodyContext } = require("../netlify/functions/weight-assessment-complete.js");
+const { assignCurrentQuestionnaireToNewAssessment } = require("../netlify/functions/weight-assessment-create.js");
 
 const V4 = questions.HOUSEHOLD_CONTEXT_QUESTIONNAIRE_VERSION || "jingeehas-production-2026-08-v4-household-context";
 const V5 = questions.BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION;
@@ -141,4 +143,48 @@ assert.equal(recentCompensatory.route, "eating_behavior_professional");
 const urgentSelfHarm = calculateAssessmentSafety({ "S1-S04": "Хааяа", "S1-S04-NOW": "Тийм" });
 assert.equal(urgentSelfHarm.route, "urgent_self_harm");
 
-console.log("v5-body-functional-context.test.js PASS");
+async function runtimeContracts() {
+  const updateCalls = [];
+  const versionDb = { update: async (table, id, patch) => { updateCalls.push({ table, id, patch }); return { id, ...patch }; } };
+  const fresh = { id: "fresh_v5", questionnaireVersion: V4 };
+  await assignCurrentQuestionnaireToNewAssessment(versionDb, fresh, [], new Date("2026-09-07T01:00:00.000Z"));
+  assert.equal(fresh.questionnaireVersion, V5, "fresh assessment must be assigned V5");
+  assert.equal(updateCalls.length, 1);
+  const resumed = { id: "resume_v4", questionnaireVersion: V4 };
+  await assignCurrentQuestionnaireToNewAssessment(versionDb, resumed, [{ id: "resume_v4" }], new Date("2026-09-07T01:00:00.000Z"));
+  assert.equal(resumed.questionnaireVersion, V4, "resumed V4 assessment must not be upgraded");
+  assert.equal(updateCalls.length, 1, "resume must not write a version upgrade");
+
+  const enrichmentAnswers = {
+    ...core,
+    "Q-HEIGHT": 170,
+    "Q-WEIGHT": 90,
+    "Q-TARGET": 75,
+    "Q-WAIST": 105,
+    "Q-FUNCTION": ["Алхах эсвэл шатаар өгсөх"],
+    "Q-MEDICAL-MONITORING": "Цусны даралт",
+    "REPRO-STATUS": ["Хөхүүл", "Цэвэршилтийн шилжилтийн үе эсвэл цэвэршсэн"]
+  };
+  const baseEvidence = buildEvidence(rows(core), [], { questionnaireVersion: V5 });
+  const snapshot = { assessmentId: "a_v5", fullReport: buildFullReport(baseEvidence, new Date("2026-09-07T00:00:00.000Z"), { questionnaireVersion: V5 }) };
+  const enrichmentDb = {
+    get: async (table, id) => table === "report_snapshots" && id === "a_v5" ? snapshot : null,
+    find: async (table, filters) => table === "assessment_answers" && filters.assessmentId === "a_v5" ? rows(enrichmentAnswers) : [],
+    update: async (table, id, patch) => { assert.equal(table, "report_snapshots"); assert.equal(id, "a_v5"); snapshot.fullReport = patch.fullReport; return { ...snapshot }; }
+  };
+  const assessment = { id: "a_v5", questionnaireVersion: V5, reportMode: "sufficient" };
+  await enrichV5BodyContext(enrichmentDb, assessment);
+  await enrichV5BodyContext(enrichmentDb, assessment);
+  const bodyFactors = snapshot.fullReport.contextualFactors.filter(item => item.title === "Биеийн суурь хэмжилтийн мэдээлэл");
+  assert.equal(bodyFactors.length, 1, "retry must not duplicate body factor");
+  const functionalFactors = snapshot.fullReport.contextualFactors.filter(item => item.title === "Өдөр тутмын хөдөлгөөний нөхцөл");
+  assert.equal(functionalFactors.length, 1, "retry must not duplicate functional factor");
+  assert(snapshot.fullReport.professionalGuidance.includes("Цусны даралтаа"));
+  assert(snapshot.fullReport.professionalGuidance.includes("хөхүүл үед"));
+  const safePublic = JSON.stringify(publicReport(snapshot.fullReport));
+  assert(safePublic.includes("Биеийн суурь хэмжилтийн мэдээлэл"));
+  assert(!safePublic.includes("bodyContext"));
+  assert(!safePublic.includes("functional_walking_constraint"), "internal functional ID must be removed by public report sanitization");
+}
+
+runtimeContracts().then(() => console.log("v5-body-functional-context.test.js PASS")).catch(error => { console.error(error); process.exitCode = 1; });
