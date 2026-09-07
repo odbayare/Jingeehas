@@ -9,9 +9,9 @@ const V4 = questions.HOUSEHOLD_CONTEXT_QUESTIONNAIRE_VERSION || "jingeehas-produ
 const V5 = questions.BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION;
 
 assert.equal(V5, "jingeehas-production-2026-09-v5-body-functional-context", "V5 version constant must be exact");
-assert.equal(questions.QUESTIONNAIRE_VERSION, V5, "new assessments must use V5");
+assert.equal(questions.CURRENT_QUESTIONNAIRE_VERSION, V5, "new assessments must use V5");
+assert.equal(questions.QUESTIONNAIRE_VERSION, V4, "compatibility alias must preserve V4 historical callers");
 
-const v5Ids = new Set(questions.visibleQuestions({}, V5).map(question => question.id));
 for (const id of ["Q-WAIST", "Q-FUNCTION", "Q-MEDICAL-MONITORING", "REPRO-STATUS", "Q-ALCOHOL-FOOD"]) {
   assert(questions.questionById(id, V5), `${id} must exist in V5`);
 }
