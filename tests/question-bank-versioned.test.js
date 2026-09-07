@@ -7,6 +7,14 @@ const Module = require("node:module");
 const originalPath = path.join(__dirname, "question-bank.test.js");
 let source = fs.readFileSync(originalPath, "utf8");
 
+const requireAnchor = 'const questions = require("../questions.js");';
+const v4Materialized = `${requireAnchor}\nconst v4Questions = questions.QUESTIONS\n  .map(question => questions.questionById(question.id, questions.QUESTIONNAIRE_VERSION))\n  .filter(Boolean);`;
+if (!source.includes(requireAnchor)) throw new Error("question-bank module anchor missing");
+source = source.replace(requireAnchor, v4Materialized);
+source = source.replaceAll("questions.QUESTIONS", "v4Questions");
+// Restore the initialization expression itself after the global replacement.
+source = source.replace("const v4Questions = v4Questions", "const v4Questions = questions.QUESTIONS");
+
 const oldAssertion = 'assert.equal(questions.questionById("S1-S03").text, "Идсэнээ буцаахын тулд зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол гардаг уу?");';
 const versionedAssertions = `assert.equal(
   questions.questionById("S1-S03", questions.QUESTIONNAIRE_VERSION).text,
