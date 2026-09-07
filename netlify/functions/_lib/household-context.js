@@ -1,6 +1,6 @@
 "use strict";
 
-const { QUESTIONNAIRE_VERSION } = require("../../../questions.js");
+const { HOUSEHOLD_CONTEXT_QUESTIONNAIRE_VERSION, BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION } = require("../../../questions.js");
 
 const HOUSEHOLD_OPTIONS = Object.freeze({
   alone: "Ганцаараа",
@@ -46,8 +46,12 @@ const MODIFIER_FLAGS = new Set([
   "household_support_constraint"
 ]);
 
+function householdVersionSupported(questionnaireVersion) {
+  return [HOUSEHOLD_CONTEXT_QUESTIONNAIRE_VERSION, BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION].includes(questionnaireVersion);
+}
+
 function deriveHouseholdContext(answerMap = {}, questionnaireVersion) {
-  if (questionnaireVersion !== QUESTIONNAIRE_VERSION) return Object.freeze({ status: "not_assessed", profile: null, flags: [], evidence: [] });
+  if (!householdVersionSupported(questionnaireVersion)) return Object.freeze({ status: "not_assessed", profile: null, flags: [], evidence: [] });
   const household = Array.isArray(answerMap["HFE-HOUSEHOLD"]) ? answerMap["HFE-HOUSEHOLD"] : [];
   if (!household.length) return Object.freeze({ status: "not_assessed", profile: null, flags: [], evidence: [] });
   const livesAlone = household.includes(HOUSEHOLD_OPTIONS.alone);
