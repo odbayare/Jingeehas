@@ -32,9 +32,7 @@
     "Тодорхой хоол анзаараагүй",
     "Тодорхой саад байгаагүй",
     "Ганцаараа",
-    "Дээрхээс аль нь ч тогтмол тохиолддоггүй",
-    "Дээрхээс аль нь ч мэдэгдэхүйц хэцүү биш",
-    "Дээрхээс аль нь ч хамаарахгүй"
+    "Дээрхээс аль нь ч тогтмол тохиолддоггүй"
   ]));
 
   const QUESTIONS = Object.freeze([
@@ -43,12 +41,12 @@
     { id: "Q-HEIGHT", section: "Суурь мэдээлэл", type: "number", text: "Таны өндөр", required: true, min: 120, max: 230, unit: "см" },
     { id: "Q-WEIGHT", section: "Суурь мэдээлэл", type: "number", text: "Таны одоогийн жин", required: true, min: 30, max: 350, unit: "кг" },
     { id: "Q-TARGET", section: "Суурь мэдээлэл", type: "number", text: "Таны зорилтот жин", required: false, min: 30, max: 350, unit: "кг" },
-    { id: "Q-WAIST", introducedIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, section: "Суурь мэдээлэл", type: "number", text: "Бүсэлхийн тойргоо мэддэг бол оруулна уу", helperText: "Мэдэхгүй эсвэл одоо хэмжих боломжгүй бол алгасаж болно.", required: false, min: 30, max: 250, unit: "см", sensitive: true },
+    { id: "Q-WAIST", introducedIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, section: "Суурь мэдээлэл", type: "number", text: "Бүсэлхийн тойргоо мэддэг бол сантиметрээр оруулна уу. Мэдэхгүй бол алгасаж болно.", helperText: "Мэдэхгүй эсвэл одоо хэмжих боломжгүй бол алгасаж болно.", required: false, min: 30, max: 250, unit: "см", sensitive: true },
     { id: "Q-MEAL-RHYTHM", section: "Хооллох хэмнэл", type: "single", text: "Ердийн өдрүүдэд хоол хоорондын зай тань ямар байдаг вэ?", required: true, options: ["3–4 цаг", "4–5 цаг", "5 цагаас урт", "Тогтмол биш"] },
     { id: "Q-HUNGER", section: "Өлсөх ба цадах дохио", type: "single", text: "Хоолноос өмнө өлсөх мэдрэмжээ анзаарах нь танд хэр амар байдаг вэ?", required: true, options: ["Амар", "Заримдаа анзаардаг", "Хэт өлссөний дараа анзаардаг", "Тодорхой биш"] },
     { id: "Q-SATIETY", section: "Өлсөх ба цадах дохио", type: "single", text: "Идэж байхдаа цадсанаа анзаараад зогсох нь танд хэр амар байдаг вэ?", required: true, options: ["Амар", "Заримдаа хэцүү", "Ихэнхдээ хэцүү", "Хариулахгүй"], sensitive: true },
     { id: "Q-FOOD-FEELING", retiredIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, section: "Хооллосны дараах мэдрэмж ба цадалт", type: "multi", text: "Идсэний дараа тавгүй мэдрэмж төрүүлсэн хоол аль нь вэ?", required: false, max: 3, options: ["Тослог, шарсан хоол", "Гурилан хоол", "Сүү, сүүн бүтээгдэхүүн", "Чихэрлэг зүйл", "Тодорхой хоол анзаараагүй", "Хариулахгүй"], sensitive: true },
-    { id: "Q-FUNCTION", introducedIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, section: "Өдөр тутмын үйл ажиллагаа", type: "multi", text: "Сүүлийн 3 сарын хугацаанд дараах өдөр тутмын үйлдлүүдээс аль нь танд мэдэгдэхүйц хэцүү байсан бэ?", required: false, max: 5, options: ["Алхах эсвэл шатаар өгсөх", "Хэсэг хугацаанд зогсох эсвэл алхах", "Бөхийх, гутлаа өмсөх зэрэг хөдөлгөөн", "Хувцаслах эсвэл хувийн арчилгаагаа хийх", "Гэрийн ажил эсвэл өдөр тутмын ажлаа хийх", "Дээрхээс аль нь ч мэдэгдэхүйц хэцүү биш", "Хариулахгүй"], sensitive: true },
+    { id: "Q-FUNCTION", introducedIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, section: "Өдөр тутмын үйл ажиллагаа", type: "multi", text: "Сүүлийн 3 сарын хугацаанд дараах өдөр тутмын үйлдлүүдээс аль нь танд мэдэгдэхүйц хэцүү байсан бэ?", required: false, max: 5, options: ["Алхах эсвэл шатаар өгсөх", "Хэсэг хугацаанд зогсох эсвэл алхах", "Бөхийх, гутлаа өмсөх зэрэг хөдөлгөөн", "Хувцаслах эсвэл хувийн арчилгаагаа хийх", "Гэрийн ажил эсвэл өдөр тутмын ажлаа хийх", "Аль нь ч биш", "Хариулахгүй"], sensitive: true },
     { id: "Q-PORTION", section: "Хооллосны дараах мэдрэмж ба цадалт", type: "multi", text: "Идэх хэмжээгээ тохируулахад хэцүү санагддаг хоол аль нь вэ?", required: false, max: 3, options: ["Амттан", "Давслаг зууш", "Түргэн хоол", "Гурилан хоол", "Тодорхой хоол байхгүй", "Хариулахгүй"], sensitive: true },
     { id: "Q-EMOTION", section: "Сэтгэл хөдлөл", type: "single", text: "Стресстэй үедээ хоол идэх хүсэл тань хэр өөрчлөгддөг вэ?", required: true, options: ["Өөрчлөгддөггүй", "Бага зэрэг нэмэгддэг", "Нэлээд нэмэгддэг", "Тодорхой биш", "Хариулахгүй"], sensitive: true },
     { id: "Q-CUE", section: "Орчны дохио", type: "multi", text: "Өлсөөгүй үед идэх хүсэл төрөхөд аль нөхцөл нөлөөлдөг вэ?", required: false, max: 3, options: ["Хоол харагдах", "Хоолны үнэр үнэртэх", "Хоол захиалгын апп нээх", "Бусад хүн идэж байх", "Аль нь ч үгүй", "Хариулахгүй"] },
@@ -80,7 +78,7 @@
     } },
     { id: "PREG-BREASTFEEDING", introducedIn: ROUTING_SAFETY_QUESTIONNAIRE_VERSION, retiredIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, parent: "Q-SEX", showWhen: "Эмэгтэй", section: "Жирэмслэлт ба төрсний дараах үе", type: "single", text: "Та одоогоор хөхүүл үү?", required: false, options: ["Тийм", "Үгүй", "Хариулахгүй"], sensitive: true, sexSpecific: true },
     { id: "MENO-GATE", retiredIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, parent: "Q-SEX", showWhen: "Эмэгтэй", section: "Цэвэршилтийн үе", type: "single", text: "Цэвэршилттэй холбоотой асуулт танд хамаарах уу?", required: false, options: ["Тийм, хамаарна", "Үгүй, хамаарахгүй", "Тодорхойгүй", "Хариулахгүй"], sensitive: true, sexSpecific: true },
-    { id: "REPRO-STATUS", introducedIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, parent: "Q-SEX", showWhen: "Эмэгтэй", section: "Нөхөн үржихүйн үе", type: "multi", text: "Танд одоогоор дараах нөхцөлөөс аль нь хамаарах вэ?", required: false, max: 6, options: ["Сарын тэмдгийн мөчлөгтэй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл", "Цэвэршилтийн шилжилтийн үе эсвэл цэвэршсэн", "Дээрхээс аль нь ч хамаарахгүй", "Хариулахгүй"], sensitive: true, sexSpecific: true },
+    { id: "REPRO-STATUS", introducedIn: BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, parent: "Q-SEX", showWhen: "Эмэгтэй", section: "Нөхөн үржихүйн үе", type: "multi", text: "Танд одоогоор дараах нөхцөлөөс аль нь хамаарах вэ?", required: false, max: 6, options: ["Сарын тэмдгийн мөчлөгтэй", "Жирэмсэн", "Төрсний дараах 0–6 сар", "Төрсний дараах 6–24 сар", "Хөхүүл", "Цэвэршилтийн шилжилтийн үе эсвэл цэвэршсэн", "Аль нь ч биш", "Хариулахгүй"], sensitive: true, sexSpecific: true },
     { id: "S1-S03", section: "Аюулгүй байдлын дохио", type: "single", text: "Идсэнээ буцаахын тулд зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол гардаг уу?", required: true, options: ["Үгүй", "Өмнө байсан", "Одоо хааяа", "Одоо давтагддаг", "Хариулахгүй"], sensitive: true, variants: {
       [ROUTING_SAFETY_QUESTIONNAIRE_VERSION]: { text: "Сүүлийн 28 хоногт идсэнээ нөхөх эсвэл жин нэмэхээс сэргийлэх зорилгоор зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол байсан уу?", options: ["Үгүй", "Өмнө байсан, сүүлийн 28 хоногт байгаагүй", "Сүүлийн 28 хоногт байсан", "Хариулахгүй"] },
       [HOUSEHOLD_CONTEXT_QUESTIONNAIRE_VERSION]: { text: "Сүүлийн 28 хоногт идсэнээ нөхөх эсвэл жин нэмэхээс сэргийлэх зорилгоор зориудаар бөөлжих, туулгах эм хэрэглэх, хэт их дасгал хийх эсвэл олон цаг хоолгүй явах тохиолдол байсан уу?", options: ["Үгүй", "Өмнө байсан, сүүлийн 28 хоногт байгаагүй", "Сүүлийн 28 хоногт байсан", "Хариулахгүй"] },
@@ -192,10 +190,28 @@
     const selected = Array.isArray(answers[question.dynamicOptionsFrom]) ? answers[question.dynamicOptionsFrom] : [];
     return { ...question, options: selected.filter(option => option !== "Ямар нэг арга хэрэглэж үзээгүй") };
   }
+  function cutAtQuestion(questions, questionId) {
+    const index = questions.findIndex(question => question.id === questionId);
+    return index < 0 ? questions : questions.slice(0, index + 1);
+  }
+  function applyV5SafetyTriage(questions, answers, version) {
+    if (version !== BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION) return questions;
+    const recentSelfHarm = ["Хааяа", "Олон өдөр", "Бараг өдөр бүр"].includes(answers["S1-S04"]);
+    if (recentSelfHarm) return cutAtQuestion(questions, "S1-S04-NOW");
+
+    const acuteMedical = (Array.isArray(answers["S1-B01"]) ? answers["S1-B01"] : [])
+      .some(value => ["Будилах", "Ухаан балартах", "Бие огцом муудах"].includes(value));
+    if (acuteMedical) return cutAtQuestion(questions, "S1-B01");
+
+    const recentCompensatory = answers["S1-S03"] === "Сүүлийн 28 хоногт байсан";
+    if (recentCompensatory) return cutAtQuestion(questions, "S1-B01");
+    return questions;
+  }
   function visibleQuestions(answers = {}, version = QUESTIONNAIRE_VERSION) {
-    return QUESTIONS.filter(question => isApplicable(question, answers, new Set(), version))
+    const visible = QUESTIONS.filter(question => isApplicable(question, answers, new Set(), version))
       .map(question => materializeQuestion(question, answers, version))
       .filter(Boolean);
+    return applyV5SafetyTriage(visible, answers, version);
   }
   function autoLinkedLongestMethod(answers = {}, version = QUESTIONNAIRE_VERSION) {
     if (versionIndex(version) < versionIndex(PREVIOUS_QUESTIONNAIRE_VERSION)) return null;
