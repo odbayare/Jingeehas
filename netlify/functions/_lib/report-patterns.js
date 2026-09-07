@@ -59,8 +59,8 @@ const REPORT_PATTERNS = Object.freeze({
   },
   previous_attempt_sustainability: {
     id: "previous_attempt_sustainability", category: "behavioral", title: "Арга тасарсны дараа үр дүнгээ хадгалах хувилбаргүй үлдэх",
-    mandatoryAnchors: ["maintenance_gap_explicit"], supportingSignals: ["medium_duration_attempt", "sustained_attempt", "initial_attempt_success", "weight_regain"], contradictions: ["weight_regain"], contextualSignals: ["schedule_barrier", "cost_barrier"],
-    signals: ["medium_duration_attempt", "sustained_attempt", "initial_attempt_success", "weight_regain", "maintenance_gap_explicit", "schedule_barrier", "cost_barrier"],
+    mandatoryAnchors: ["maintenance_gap_explicit"], supportingSignals: ["maintenance_gap", "medium_duration_attempt", "sustained_attempt", "initial_attempt_success", "weight_regain"], contradictions: ["weight_regain", "maintenance_gap"], contextualSignals: ["schedule_barrier", "cost_barrier"],
+    signals: ["medium_duration_attempt", "sustained_attempt", "initial_attempt_success", "weight_regain", "maintenance_gap", "maintenance_gap_explicit", "schedule_barrier", "cost_barrier"],
     minQuestionIds: 3, minDimensions: 3, threshold: 6,
     recommendationId: "build_maintenance_bridge"
   }
@@ -113,7 +113,7 @@ function evaluatePatterns(signalRows = [], evidence = {}) {
       const past = Array.isArray(evidence.answerMap?.["Q-METHOD-PAST"]) ? evidence.answerMap["Q-METHOD-PAST"] : [];
       const linked = past.length === 1 || Boolean(evidence.linkedLongestMethod || evidence.answerMap?.["Q-METHOD-LONGEST"]);
       const duration = ["6–12 сар", "1 жилээс урт"].includes(evidence.answerMap?.["Q-METHOD-DURATION"]);
-      specialEligible = linked && duration && evidence.answerMap?.["Q-METHOD-RESULT"] === "Жин буурсан" && ["Хэсэгчлэн нэмэгдсэн", "Ихэнх нь эргэн нэмэгдсэн", "Өмнөхөөс илүү нэмэгдсэн"].includes(evidence.answerMap?.["Q-METHOD-REGAIN"]);
+      specialEligible = linked && duration && evidence.answerMap?.["Q-METHOD-RESULT"] === "Жин буурсан" && ["Хэсэгчлэн нэмэгдсэн", "Ихэнх нь эргэн нэмэгдсэн", "Бага зэрэг нэмэгдсэн", "Нэлээд нэмэгдсэн", "Өмнөхөөс илүү нэмэгдсэн"].includes(evidence.answerMap?.["Q-METHOD-REGAIN"]);
     }
     const eligible = anchors.length > 0 && specialEligible && questionIds.size >= pattern.minQuestionIds && dimensions.size >= pattern.minDimensions;
     return { ...pattern, score, eligible, supporting, contradicting, mandatoryAnchor: anchors.map(row => ({ signal: row.signal, questionId: row.questionId })),
