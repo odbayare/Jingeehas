@@ -29,6 +29,8 @@ const tests = [
   "tests/questionnaire-v3-safety-routing.test.js",
   "tests/hfe-v4-household-context.test.js",
   "tests/v5-body-functional-context.test.js",
+  "tests/v5-sequential-hotfix.test.js",
+  "tests/v5-virtual-user-logic.test.js",
   "tests/live-verifier-questionnaire-version.test.mjs",
   "tests/assessment-flow-regression-versioned.test.js",
   "tests/accessibility-print.test.js",

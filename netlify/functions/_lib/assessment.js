@@ -16,7 +16,7 @@ const {
   hasPaidAccess,
   requirePaidAccess
 } = require("./commercial-flow.js");
-const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION, questionById, visibleQuestions, autoLinkedLongestMethod, validateAnswer } = require("../../../questions.js");
+const { QUESTIONNAIRE_VERSION, LEGACY_QUESTIONNAIRE_VERSION, questionById, visibleQuestions, autoLinkedLongestMethod, validateAnswer, isBlankAnswerValue } = require("../../../questions.js");
 
 function assessmentQuestionnaireVersion(assessment) {
   return assessment.questionnaireVersion || LEGACY_QUESTIONNAIRE_VERSION;
@@ -111,9 +111,17 @@ async function saveAssessment(database, sessionId, input = {}, now = new Date())
   } else if (assessment.status !== "draft") throw Object.assign(new Error("Assessment is closed"), { statusCode: 409, code: "assessment_closed" });
   const answers = input.answers && typeof input.answers === "object" ? input.answers : {};
   const existingRows = await database.find("assessment_answers", { assessmentId: assessment.id });
-  const nextAnswerMap = { ...Object.fromEntries(existingRows.map(row => [row.questionId, row.value])), ...answers };
+  const nextAnswerMap = { ...Object.fromEntries(existingRows.map(row => [row.questionId, row.value])) };
+  for (const [questionId, value] of Object.entries(answers)) {
+    const question = questionById(questionId, questionnaireVersion);
+    if (question && isBlankAnswerValue(question, value)) delete nextAnswerMap[questionId];
+    else nextAnswerMap[questionId] = value;
+  }
   const applicableIds = new Set(visibleQuestions(nextAnswerMap, questionnaireVersion).map(question => question.id));
   const operations = [];
+  const savedQuestionIds = [];
+  const clearedQuestionIds = [];
+  const processedQuestionIds = [];
   for (const [questionId, value] of Object.entries(answers)) {
     if (!/^[A-Z0-9-]{2,40}$/.test(questionId)) throw Object.assign(new Error("Invalid question"), { statusCode: 400, code: "invalid_question" });
     const question = questionById(questionId, questionnaireVersion);
@@ -124,12 +132,22 @@ async function saveAssessment(database, sessionId, input = {}, now = new Date())
     }
     const validationError = question ? validateAnswer(question, value, { answers: nextAnswerMap, version: questionnaireVersion }) : "";
     if (validationError) throw Object.assign(new Error(validationError), { statusCode: 400, code: "invalid_answer" });
-    operations.push({ action: "upsert", table: "assessment_answers", id: `${assessment.id}:${questionId}`, row: {
-      assessmentId: assessment.id, questionId, value, updatedAt: now.toISOString()
-    } });
+    processedQuestionIds.push(questionId);
+    if (question && isBlankAnswerValue(question, value)) {
+      operations.push({ action: "delete", table: "assessment_answers", id: `${assessment.id}:${questionId}` });
+      clearedQuestionIds.push(questionId);
+    } else {
+      operations.push({ action: "upsert", table: "assessment_answers", id: `${assessment.id}:${questionId}`, row: {
+        assessmentId: assessment.id, questionId, value, updatedAt: now.toISOString()
+      } });
+      savedQuestionIds.push(questionId);
+    }
   }
   for (const row of existingRows) {
-    if (questionById(row.questionId, questionnaireVersion) && !applicableIds.has(row.questionId)) operations.push({ action: "delete", table: "assessment_answers", id: row.id });
+    if (questionById(row.questionId, questionnaireVersion) && !applicableIds.has(row.questionId)) {
+      operations.push({ action: "delete", table: "assessment_answers", id: row.id });
+      if (!clearedQuestionIds.includes(row.questionId)) clearedQuestionIds.push(row.questionId);
+    }
   }
   const summaries = input.confirmedSummaries && typeof input.confirmedSummaries === "object" ? input.confirmedSummaries : {};
   for (const [checkpointId, summary] of Object.entries(summaries)) {
@@ -145,7 +163,7 @@ async function saveAssessment(database, sessionId, input = {}, now = new Date())
     ...(startsOnSave ? { status: "in_progress" } : {}), ...(firstStart ? { startedAt: now.toISOString() } : {}), updatedAt: now.toISOString()
   } });
   const transaction = await database.transaction(operations);
-  return transaction.results[transaction.results.length - 1];
+  return { ...transaction.results[transaction.results.length - 1], savedQuestionIds, clearedQuestionIds, processedQuestionIds };
 }
 
 async function completeAssessment(database, sessionId, input = {}, now = new Date()) {

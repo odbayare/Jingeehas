@@ -190,6 +190,19 @@
     const selected = Array.isArray(answers[question.dynamicOptionsFrom]) ? answers[question.dynamicOptionsFrom] : [];
     return { ...question, options: selected.filter(option => option !== "Ямар нэг арга хэрэглэж үзээгүй") };
   }
+  function orderedQuestions(version = QUESTIONNAIRE_VERSION) {
+    const active = QUESTIONS.map(question => materializeVersion(question, version)).filter(Boolean);
+    const activeIds = new Set(active.map(question => question.id));
+    const emitted = new Set();
+    const ordered = [];
+    while (ordered.length < active.length) {
+      const next = active.find(question => !emitted.has(question.id) && (!question.parent || !activeIds.has(question.parent) || emitted.has(question.parent)));
+      if (!next) return active;
+      emitted.add(next.id);
+      ordered.push(next);
+    }
+    return ordered;
+  }
   function cutAtQuestion(questions, questionId) {
     const index = questions.findIndex(question => question.id === questionId);
     return index < 0 ? questions : questions.slice(0, index + 1);
@@ -208,7 +221,7 @@
     return questions;
   }
   function visibleQuestions(answers = {}, version = QUESTIONNAIRE_VERSION) {
-    const visible = QUESTIONS.filter(question => isApplicable(question, answers, new Set(), version))
+    const visible = orderedQuestions(version).filter(question => isApplicable(question, answers, new Set(), version))
       .map(question => materializeQuestion(question, answers, version))
       .filter(Boolean);
     return applyV5SafetyTriage(visible, answers, version);
@@ -224,7 +237,7 @@
     const version = context.version || QUESTIONNAIRE_VERSION;
     question = materializeQuestion(question, context.answers || {}, version);
     if (!question) return "Зөв хариулт сонгоно уу.";
-    const empty = value == null || value === "" || (Array.isArray(value) && value.length === 0);
+    const empty = isBlankAnswerValue(question, value);
     if (empty) return question.required ? "Энэ асуултад хариулна уу." : "";
     if (question.type === "number") {
       const number = Number(value);
@@ -238,6 +251,10 @@
     }
     if (question.type === "text" && (typeof value !== "string" || value.length > question.maxLength)) return "Хариултаа богиносгоно уу.";
     return "";
+  }
+
+  function isBlankAnswerValue(_question, value) {
+    return value == null || (typeof value === "string" && value.trim() === "") || (Array.isArray(value) && value.length === 0);
   }
 
   return {
@@ -254,8 +271,10 @@
     EXCLUSIVE_OPTIONS,
     questionById,
     isApplicable,
+    orderedQuestions,
     visibleQuestions,
     autoLinkedLongestMethod,
-    validateAnswer
+    validateAnswer,
+    isBlankAnswerValue
   };
 });

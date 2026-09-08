@@ -31,6 +31,24 @@ const questionApi = typeof require === "function" ? require("./questions.js") : 
 const EXCLUSIVE = new Set(["Аль нь ч үгүй", "Аль нь ч биш", "Онц өөрчлөлтгүй", "Хариулахгүй", "Одоогоор ямар нэг арга хэрэглээгүй", "Ямар нэг арга хэрэглэж үзээгүй", "Мэргэжлийн дэмжлэг аваагүй", "Тодорхой хоол байхгүй", "Тодорхой хоол анзаараагүй", "Тодорхой саад байгаагүй", "Ганцаараа", "Дээрхээс аль нь ч тогтмол тохиолддоггүй"]);
 const BRANCH_PREFIXES = Object.freeze({ "Q-SEX": ["MC-", "PREG-", "MENO-"], "MC-GATE": ["MC-"], "ALC-GATE": ["ALC-"], "TOB-GATE": ["TOB-"], "S1-S03": ["S1-S03-TYPE", "S1-S03-FREQUENCY"], "S1-S04": ["S1-S04-NOW"], "Q-METHOD-RESULT": ["Q-METHOD-REGAIN"], "HFE-HOUSEHOLD": ["HFE-CONTEXT"], "Q-METHOD-PAST": ["Q-METHOD-LONGEST", "Q-METHOD-DURATION", "Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN", "Q-METHOD-SUPPORT", "Q-METHOD-MEDICATION", "OPEN-PAST"] });
 
+function pruneInapplicableDescendantAnswers(questionId) {
+  const ordered = questionApi.orderedQuestions(state.questionnaireVersion);
+  const descendants = new Set();
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const question of ordered) {
+      if (!descendants.has(question.id) && (question.parent === questionId || descendants.has(question.parent))) {
+        descendants.add(question.id); changed = true;
+      }
+    }
+  }
+  for (const id of descendants) {
+    const question = questionApi.questionById(id, state.questionnaireVersion);
+    if (Object.prototype.hasOwnProperty.call(state.answers, id) && !questionApi.isApplicable(question, state.answers, new Set(), state.questionnaireVersion)) delete state.answers[id];
+  }
+}
+
 function createState() {
   return { contactGroupId: "", assessmentId: "", assessmentStatus: "", commercialFlowVersion: "", questionsAuthorized: false, questionnaireVersion: questionApi?.QUESTIONNAIRE_VERSION || "", payment: { status: "idle" },
     answers: {}, questionIndex: 0, validationError: "", report: null,
@@ -933,6 +951,7 @@ function updateAnswer(input) {
       if (key !== question.id && BRANCH_PREFIXES[question.id].some(prefix => key.startsWith(prefix))) delete state.answers[key];
     }
   }
+  if (previousValue !== state.answers[question.id]) pruneInapplicableDescendantAnswers(question.id);
   state.validationError = "";
 }
 async function nextQuestion() {
@@ -943,8 +962,13 @@ async function nextQuestion() {
   state.busy = true; state.slowSave = false; state.validationError = ""; render({ focus: false });
   const slowTimer = setTimeout(() => { if (state.busy) { state.slowSave = true; render({ focus: false }); } }, 1000);
   try {
-    const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: { [question.id]: state.answers[question.id] } }) });
-    if (!saved.savedQuestionIds?.includes(question.id)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed" } });
+    const answerValue = questionApi.isBlankAnswerValue(question, state.answers[question.id]) ? null : state.answers[question.id];
+    const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: { [question.id]: answerValue } }) });
+    const processedQuestionIds = saved.processedQuestionIds || [...(saved.savedQuestionIds || []), ...(saved.clearedQuestionIds || [])];
+    if (!processedQuestionIds.includes(question.id)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed" } });
+    for (const clearedQuestionId of saved.clearedQuestionIds || []) delete state.answers[clearedQuestionId];
+    if (answerValue === null) delete state.answers[question.id];
+    else state.answers[question.id] = answerValue;
     const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
     const persistedIndex = routedQuestions.findIndex(item => item.id === question.id);
     if (persistedIndex >= 0 && persistedIndex < routedQuestions.length - 1) {

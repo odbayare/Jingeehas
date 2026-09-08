@@ -1,12 +1,13 @@
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { applyMongolianCopyHotfixRuntime } from "./apply-mongolian-copy-hotfix-runtime.mjs";
 import { applyConversionFunnelV1 } from "./apply-conversion-funnel-v1.mjs";
 import { restoreQuestionOptionLabelHelper } from "./restore-question-option-label-helper.mjs";
 import { reapplyDisplayOnlyLabels } from "./reapply-display-labels.mjs";
 
-const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const generatedRoot = path.join(root, ".generated-copy-hotfix");
 const output = path.join(root, "dist");
 
