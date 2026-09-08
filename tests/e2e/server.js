@@ -8,6 +8,7 @@ const cohort = require("../fixtures/virtual-cohort-v2.js");
 const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/functions/_lib/report.js");
 const { MemoryDatabaseAdapter } = require("../support/memory-database.js");
 const { startAssessment, saveAssessment, completeAssessment, reportForSession } = require("../../netlify/functions/_lib/assessment.js");
+const { enrichV5BodyContext } = require("../../netlify/functions/weight-assessment-complete.js");
 const root = path.resolve(__dirname, "../..");
 const stats = {
   qpayCreate: 0,
@@ -256,6 +257,7 @@ const endpoints = {
     stats.assessmentComplete += 1;
     if (v5Mode) {
       const assessment = await completeAssessment(v5Database, v5SessionId, { assessmentId: v5AssessmentId }, new Date("2026-09-08T00:10:00.000Z"));
+      await enrichV5BodyContext(v5Database, assessment);
       assessmentStatus = assessment.status;
       return json(response, 200, { assessmentId: assessment.id, status: assessment.status, reportMode: assessment.reportMode,
         safetyRoute: assessment.safetyRoute, nextRoute: assessment.safetyRoute ? "/report" : "/assessment/result" });
