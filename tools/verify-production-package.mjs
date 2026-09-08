@@ -2,13 +2,14 @@ import nodeCrypto from "node:crypto";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { REQUIRED_PRODUCTION_FUNCTIONS } from "./required-production-functions.mjs";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const { PRODUCT } = require("../product-config.js");
 
-const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const dist = path.join(root, "dist");
 const functionRoot = path.join(root, ".generated-copy-hotfix", "netlify", "functions");
 execFileSync(process.execPath, ["tools/build-production.mjs"], { cwd: root, stdio: "inherit" });

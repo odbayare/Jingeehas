@@ -30,6 +30,6 @@ function questionAnalytics(id, version = questionBank.QUESTIONNAIRE_VERSION) {
   const canonicalText = String(question.text || "").trim().replace(/\s+/g, " ");
   return { questionId: question.id, analyticsLabel, sectionKey, sectionLabel: question.section, canonicalText,
     meaningIdentity: [question.id, sectionKey, question.section, analyticsLabel, canonicalText].join("\u001f"),
-    questionOrder: questionBank.QUESTIONS.findIndex(item => item.id === question.id) + 1, branchDepth };
+    questionOrder: questionBank.orderedQuestions(version).findIndex(item => item.id === question.id) + 1, branchDepth };
 }
 module.exports = { LABELS, SECTION_KEYS, questionAnalytics };

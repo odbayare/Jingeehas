@@ -6,6 +6,8 @@ const { evaluateSafetyGate, ROUTE_COPY } = require("../../netlify/functions/_lib
 const questions = require("../../questions.js");
 const cohort = require("../fixtures/virtual-cohort-v2.js");
 const { buildEvidence, buildFullReport, publicReport } = require("../../netlify/functions/_lib/report.js");
+const { MemoryDatabaseAdapter } = require("../support/memory-database.js");
+const { startAssessment, saveAssessment, completeAssessment, reportForSession } = require("../../netlify/functions/_lib/assessment.js");
 const root = path.resolve(__dirname, "../..");
 const stats = {
   qpayCreate: 0,
@@ -43,6 +45,21 @@ let paymentStatus = "";
 let entitled = false;
 let savedAnswers = {};
 let flowMode = "pattern";
+let v5Mode = false;
+let v5Database = null;
+const v5SessionId = "ws-v5-e2e";
+const v5AssessmentId = "wa-v5-e2e";
+const v5Mutations = [];
+async function startV5Flow() {
+  v5Mode = true; v5Database = new MemoryDatabaseAdapter(); v5Mutations.length = 0;
+  const now = new Date("2026-09-08T00:00:00.000Z").toISOString();
+  await v5Database.insert("sessions", { id: v5SessionId, tokenHash: "hash", createdAt: now, expiresAt: "2027-01-01T00:00:00.000Z", revokedAt: null });
+  await v5Database.insert("safety_checks", { id: "sc-v5-e2e", sessionId: v5SessionId, result: { route: "pending_assessment" }, createdAt: now });
+  await v5Database.insert("assessments", { id: v5AssessmentId, sessionId: v5SessionId, status: "draft", commercialFlowVersion: "free_assessment_postpaid_v1",
+    questionnaireVersion: questions.BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION, safetyCheckId: "sc-v5-e2e", startedAt: null, reportMode: null, safetyRoute: null,
+    createdAt: now, updatedAt: now, completedAt: null });
+  assessmentExists = true; assessmentStatus = "draft"; savedAnswers = {};
+}
 function resetFlowState() {
   for (const key of Object.keys(stats)) stats[key] = 0;
   recordedQuestionProgress.clear();
@@ -52,6 +69,7 @@ function resetFlowState() {
   entitled = false;
   savedAnswers = {};
   flowMode = "pattern";
+  v5Mode = false; v5Database = null; v5Mutations.length = 0;
 }
 const initialResult = {
   mode: "summary",
@@ -188,7 +206,7 @@ const endpoints = {
       assessmentId: previewBypass ? "wa-owner-e2e" : "wa-e2e",
       status: assessmentStatus,
       commercialFlowVersion: "free_assessment_postpaid_v1",
-      questionnaireVersion: questions.QUESTIONNAIRE_VERSION,
+      questionnaireVersion: v5Mode ? questions.BODY_FUNCTIONAL_QUESTIONNAIRE_VERSION : questions.QUESTIONNAIRE_VERSION,
       previewBypass
     });
   },
@@ -208,9 +226,23 @@ const endpoints = {
     entitled = true;
     json(response, 200, { paymentId: "wp-e2e", assessmentId: "wa-e2e", productCode: "WEIGHT_TEST_ONE_TIME", amount: 19900, status: "paid", entitlement: true, nextRoute: "/report" });
   },
-  "weight-assessment-questions": async (_body, response, request) => { assessmentStatus = "in_progress"; const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e"); json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", status: assessmentStatus, startedAt: "2026-07-21T08:00:00.000Z", questionnaireVersion: questions.QUESTIONNAIRE_VERSION }); },
+  "weight-assessment-questions": async (_body, response, request) => {
+    if (v5Mode) {
+      const assessment = await startAssessment(v5Database, v5SessionId, v5AssessmentId, new Date("2026-09-08T00:00:01.000Z"));
+      assessmentStatus = assessment.status;
+      return json(response, 200, { assessmentId: assessment.id, status: assessment.status, startedAt: assessment.startedAt, questionnaireVersion: assessment.questionnaireVersion });
+    }
+    assessmentStatus = "in_progress"; const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e"); json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", status: assessmentStatus, startedAt: "2026-07-21T08:00:00.000Z", questionnaireVersion: questions.QUESTIONNAIRE_VERSION });
+  },
   "weight-assessment-save": async (body, response) => {
     stats.assessmentSave += 1;
+    if (v5Mode) {
+      const assessment = await saveAssessment(v5Database, v5SessionId, body, new Date("2026-09-08T00:01:00.000Z"));
+      savedAnswers = Object.fromEntries((await v5Database.find("assessment_answers", { assessmentId: v5AssessmentId })).map(row => [row.questionId, row.value]));
+      v5Mutations.push({ savedQuestionIds: assessment.savedQuestionIds, clearedQuestionIds: assessment.clearedQuestionIds, processedQuestionIds: assessment.processedQuestionIds });
+      return json(response, 200, { assessmentId: assessment.id, status: assessment.status, savedAt: assessment.updatedAt,
+        savedQuestionIds: assessment.savedQuestionIds, clearedQuestionIds: assessment.clearedQuestionIds, processedQuestionIds: assessment.processedQuestionIds });
+    }
     const ids = Object.keys(body.answers || {});
     savedAnswers = { ...savedAnswers, ...(body.answers || {}) };
     await new Promise(resolve => setTimeout(resolve, ids.includes("Q-AGE") ? 250 : 20));
@@ -222,6 +254,12 @@ const endpoints = {
     return json(response, 200, { recorded: true, excluded: false }); },
   "weight-assessment-complete": async (_body, response, request) => {
     stats.assessmentComplete += 1;
+    if (v5Mode) {
+      const assessment = await completeAssessment(v5Database, v5SessionId, { assessmentId: v5AssessmentId }, new Date("2026-09-08T00:10:00.000Z"));
+      assessmentStatus = assessment.status;
+      return json(response, 200, { assessmentId: assessment.id, status: assessment.status, reportMode: assessment.reportMode,
+        safetyRoute: assessment.safetyRoute, nextRoute: assessment.safetyRoute ? "/report" : "/assessment/result" });
+    }
     assessmentStatus = "complete";
     const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e");
     const safetyRoute = flowMode === "safety" ? "professional_support" : null;
@@ -239,6 +277,7 @@ const endpoints = {
     json(response, 200, { saved: true });
   },
   "weight-assessment-report": async (_body, response, request) => {
+    if (v5Mode) return json(response, 200, await reportForSession(v5Database, v5SessionId, v5AssessmentId));
     const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e");
     const directReport = String(request.headers.referer || "").includes("/report");
     const hasAccess = entitled || preview || directReport;
@@ -256,6 +295,13 @@ const endpoints = {
     json(response, 200, { assessmentId: preview ? "wa-owner-e2e" : "wa-e2e", reportMode: "sufficient", safetyRoute: null, initialView: visibleInitial, fullReport: hasAccess ? selectedReport(request) : null, entitled: hasAccess });
   },
   "weight-session-state": async (_body, response, request) => {
+    if (v5Mode) {
+      const assessment = await v5Database.get("assessments", v5AssessmentId);
+      const answers = Object.fromEntries((await v5Database.find("assessment_answers", { assessmentId: v5AssessmentId })).map(row => [row.questionId, row.value]));
+      const nextRoute = assessment.status === "complete" ? (assessment.safetyRoute ? "/report" : "/assessment/result") : "/assessment/questions";
+      return json(response, 200, { assessment: { assessmentId: assessment.id, status: assessment.status, safetyRoute: assessment.safetyRoute,
+        commercialFlowVersion: assessment.commercialFlowVersion, questionnaireVersion: assessment.questionnaireVersion }, nextRoute, payment: null, answers, report: null });
+    }
     const preview = String(request.headers.cookie || "").includes("jingeehas_owner_preview=preview-e2e");
     const directReport = String(request.headers.referer || "").includes("/report");
     if (!assessmentExists && !directReport) return json(response, 200, { assessment: null, nextRoute: "/assessment/start", payment: null, answers: {}, report: null });
@@ -311,6 +357,16 @@ http.createServer(async (request, response) => {
   const url = new URL(request.url, "http://127.0.0.1:4178");
   if (url.pathname === "/__test/stats") return json(response, 200, stats);
   if (url.pathname === "/__test/reset") { resetFlowState(); return json(response, 200, { reset: true }); }
+  if (url.pathname === "/__test/v5-start") {
+    await startV5Flow();
+    response.writeHead(302, { location: "/assessment/questions?e2e=1", "set-cookie": "jingeehas_session=e2e; Path=/; HttpOnly; SameSite=Lax" });
+    return response.end();
+  }
+  if (url.pathname === "/__test/v5-state") {
+    const answers = v5Database ? Object.fromEntries((await v5Database.find("assessment_answers", { assessmentId: v5AssessmentId })).map(row => [row.questionId, row.value])) : {};
+    const assessment = v5Database ? await v5Database.get("assessments", v5AssessmentId) : null;
+    return json(response, 200, { assessment, answers, mutations: v5Mutations });
+  }
   if (url.pathname === "/__test/result") {
     assessmentExists = true;
     assessmentStatus = "complete";
@@ -328,7 +384,7 @@ http.createServer(async (request, response) => {
     response.writeHead(302, { location: "/report?e2e=1", "set-cookie": `jingeehas_cohort=${url.searchParams.get("id")}; Path=/; HttpOnly; SameSite=Lax` });
     return response.end();
   }
-  if (url.pathname.startsWith("/.netlify/functions/")) { const action = endpoints[url.pathname.split("/").pop()]; if (!action) return json(response, 404, { error: "not_found" }); return action(await readBody(request), response, request); }
+  if (url.pathname.startsWith("/.netlify/functions/")) { const action = endpoints[url.pathname.split("/").pop()]; if (!action) return json(response, 404, { error: "not_found" }); try { return await action(await readBody(request), response, request); } catch (error) { return json(response, error.statusCode || 500, { error: error.code || "server_error", questionId: error.questionId }); } }
   if (url.pathname === "/app-test.js" || url.pathname === "/app-production.js") { let source = fs.readFileSync(path.join(root, "app.js"), "utf8"); if (url.pathname === "/app-production.js") source = source.replace("const WEIGHT_TEST_COMING_SOON_MODE = false;", "const WEIGHT_TEST_COMING_SOON_MODE = true;"); response.writeHead(200, { "content-type": types[".js"] }); return response.end(source); }
   const relative = url.pathname === "/" ? "index.html" : url.pathname.slice(1); const absolute = path.join(root, relative);
   if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) { response.writeHead(200, { "content-type": types[path.extname(absolute)] || "application/octet-stream" }); return response.end(fs.readFileSync(absolute)); }

@@ -1,12 +1,13 @@
 import nodeCrypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const { PRODUCT } = require("../product-config.js");
 
-const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), "..");
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const staticRoot = path.join(root, "dist");
 const functionRoot = path.join(root, ".generated-copy-hotfix", "netlify", "functions");
 const output = path.join(staticRoot, "production-package-manifest.json");

@@ -698,11 +698,12 @@ function combinedManagementPlan(patternIds, prioritized, modules) {
   const primary = pairModules.find(item => item.patternId === prioritized?.id) || pairModules[0];
   const secondary = pairModules.find(item => item.patternId !== primary.patternId);
   if (!secondary) return null;
+  const withoutTerminalPunctuation = value => String(value || "").replace(/[.!?]+\s*$/, "");
   return {
     patternIds: [primary.patternId, secondary.patternId],
-    startWith: `${primary.title}: ${primary.observe}`,
+    startWith: `${primary.title}: ${withoutTerminalPunctuation(primary.observe)}; үүнийг “${secondary.title}” мөн давхар илэрсэн мөчөөр тусад нь тэмдэглэнэ.`,
     why: `${primary.title}-ийн нөхцөлийг эхэлж ажиглаад, дараа нь ${secondary.title}-тай давхцаж байгаа эсэхийг шалгавал бүх зүйлийг зэрэг өөрчлөхгүйгээр аль нөлөөнд түрүүлж анхаарахаа ялгаж болно.`,
-    nextStep: `${secondary.title}: ${secondary.prepare}`,
+    nextStep: `${secondary.title}: ${withoutTerminalPunctuation(secondary.prepare)}; энэ алхмыг “${primary.title}” хэв маягийн ажиглалтын дараа хэрэглэнэ.`,
     combinedAction: `${primary.title} болон ${secondary.title}: ${combinedManagementAction(primary.patternId, secondary.patternId).replace(/\.\s+/g, "; ")}`
   };
 }
@@ -1031,7 +1032,14 @@ function buildFullReport(evidence = {}, now = new Date(), metadata = {}) {
   const neutral = influencingPatterns.length ? null : neutralResult(evidence, composer, strengths, contextual, quality, professional);
   const overview = neutral ? null : overallPicture(evaluated, composer);
   const managementModules = evaluated.supported.map(candidate => managementModule(candidate, patternById.get(candidate.id), facts)).filter(Boolean);
-  const interactionPlans = interactions.map(interaction => combinedManagementPlan(interaction.patternIds, prioritized, managementModules)).filter(Boolean);
+  const interactionPlanKeys = new Set();
+  const interactionPlans = interactions.map(interaction => combinedManagementPlan(interaction.patternIds, prioritized, managementModules)).filter(plan => {
+    if (!plan) return false;
+    const key = [...plan.patternIds].sort().join(":");
+    if (interactionPlanKeys.has(key)) return false;
+    interactionPlanKeys.add(key);
+    return true;
+  });
   const combinedPlan = interactionPlans[0] || null;
   const initialActions = firstActionPlan(prioritized, evaluated.supported, patternById);
   const planFallback = fallbackPlan(prioritized, evaluated.supported, patternById);
