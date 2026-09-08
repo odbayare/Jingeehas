@@ -1,0 +1,124 @@
+name: PR67 stale-answer self-fix
+
+on:
+  push:
+    branches:
+      - codex/v5-sequential-navigation-hotfix
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: ${{ !contains(github.event.head_commit.message, '[pr67-stale-fix]') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: codex/v5-sequential-navigation-hotfix
+      - name: Patch stale conditional-answer reconciliation and regression
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          app = Path('app.js')
+          text = app.read_text(encoding='utf-8')
+          old = '''    const processedQuestionIds = saved.processedQuestionIds || [...(saved.savedQuestionIds || []), ...(saved.clearedQuestionIds || [])];
+              if (!processedQuestionIds.includes(question.id)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed" } });
+              state.answers[question.id] = answerValue;
+              const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);'''
+          new = '''    const processedQuestionIds = saved.processedQuestionIds || [...(saved.savedQuestionIds || []), ...(saved.clearedQuestionIds || [])];
+              if (!processedQuestionIds.includes(question.id)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed" } });
+              for (const clearedQuestionId of saved.clearedQuestionIds || []) delete state.answers[clearedQuestionId];
+              if (answerValue === null) delete state.answers[question.id];
+              else state.answers[question.id] = answerValue;
+              const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);'''
+          if old not in text:
+              raise SystemExit('app.js patch anchor not found')
+          app.write_text(text.replace(old, new, 1), encoding='utf-8')
+
+          spec = Path('tests/e2e/v5-virtual-users.spec.js')
+          source = spec.read_text(encoding='utf-8')
+          marker = 'V5 conditional maintenance answers do not resurrect after Back changes'
+          if marker in source:
+              raise SystemExit('regression test already present')
+          source += r'''
+
+test("V5 conditional maintenance answers do not resurrect after Back changes", async ({ page, request }) => {
+  test.setTimeout(240000);
+  const profile = profiles.find(item => item.id === "U08");
+  await page.goto("/__test/v5-start");
+  await expect.poll(() => new URL(page.url()).pathname).toBe("/assessment/questions");
+
+  const currentQuestionId = async () => page.locator("#question-form [data-question]").first().getAttribute("data-question");
+  const waitForQuestionChange = async previous => {
+    await page.waitForFunction(id => window.location.pathname !== "/assessment/questions" || document.querySelector("#question-form [data-question]")?.dataset.question !== id, previous, { timeout: 10000 });
+  };
+  const answerAndContinue = async override => {
+    const questionId = await currentQuestionId();
+    const first = page.locator("#question-form [data-question]").first();
+    const value = override === undefined ? profile.answers[questionId] : override;
+    expect(value, `U08 needs an answer for ${questionId}`).not.toBeUndefined();
+    const type = await first.getAttribute("type");
+    const tagName = await first.evaluate(element => element.tagName);
+    if (type === "number") await first.fill(String(value));
+    else if (tagName === "TEXTAREA") await first.fill(String(value));
+    else if (type === "radio") await page.locator(`#question-form [data-question="${attr(questionId)}"][value="${attr(value)}"]`).check();
+    else for (const selected of value) await page.locator(`#question-form [data-question="${attr(questionId)}"][value="${attr(selected)}"]`).check();
+    await page.getByRole("button", { name: /Үргэлжлүүлэх|Тестийг дуусгах/ }).click();
+    await waitForQuestionChange(questionId);
+  };
+  const goBack = async () => {
+    const previous = await currentQuestionId();
+    await page.getByRole("button", { name: "Буцах" }).click();
+    await page.waitForFunction(id => document.querySelector("#question-form [data-question]")?.dataset.question !== id, previous, { timeout: 10000 });
+  };
+
+  while (await currentQuestionId() !== "Q-MAINTENANCE-PLAN") await answerAndContinue();
+  await answerAndContinue(profile.answers["Q-MAINTENANCE-PLAN"]);
+  expect(await currentQuestionId()).toBe("Q-METHOD-SUPPORT");
+
+  for (let index = 0; index < 5; index += 1) await goBack();
+  expect(await currentQuestionId()).toBe("Q-METHOD-DURATION");
+  await answerAndContinue("2–8 долоо хоног");
+  let serverState = await request.get("/__test/v5-state").then(response => response.json());
+  expect(Object.prototype.hasOwnProperty.call(serverState.answers, "Q-MAINTENANCE-PLAN")).toBe(false);
+
+  await goBack();
+  expect(await currentQuestionId()).toBe("Q-METHOD-DURATION");
+  await answerAndContinue("6–12 сар");
+  for (const expectedId of ["Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN"]) {
+    expect(await currentQuestionId()).toBe(expectedId);
+    await answerAndContinue();
+  }
+  expect(await currentQuestionId()).toBe("Q-MAINTENANCE-PLAN");
+  await expect(page.locator('#question-form [data-question="Q-MAINTENANCE-PLAN"]:checked')).toHaveCount(0);
+
+  await answerAndContinue(profile.answers["Q-MAINTENANCE-PLAN"]);
+  for (let index = 0; index < 3; index += 1) await goBack();
+  expect(await currentQuestionId()).toBe("Q-METHOD-RESULT");
+  await answerAndContinue("Тодорхой өөрчлөлт ажиглагдаагүй");
+  serverState = await request.get("/__test/v5-state").then(response => response.json());
+  expect(Object.prototype.hasOwnProperty.call(serverState.answers, "Q-METHOD-REGAIN")).toBe(false);
+  expect(Object.prototype.hasOwnProperty.call(serverState.answers, "Q-MAINTENANCE-PLAN")).toBe(false);
+
+  await goBack();
+  expect(await currentQuestionId()).toBe("Q-METHOD-RESULT");
+  await answerAndContinue("Жин буурсан");
+  expect(await currentQuestionId()).toBe("Q-METHOD-REGAIN");
+  await expect(page.locator('#question-form [data-question="Q-METHOD-REGAIN"]:checked')).toHaveCount(0);
+});
+'''
+          spec.write_text(source, encoding='utf-8')
+          PY
+      - name: Remove temporary workflow and commit patch
+        shell: bash
+        run: |
+          git rm .github/workflows/pr67-stale-answer-self-fix.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app.js tests/e2e/v5-virtual-users.spec.js
+          git commit -m "[pr67-stale-fix] Reconcile cleared conditional answers"
+          git push origin HEAD:codex/v5-sequential-navigation-hotfix
