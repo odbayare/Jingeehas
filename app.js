@@ -966,7 +966,9 @@ async function nextQuestion() {
     const saved = await api("/.netlify/functions/weight-assessment-save", { method: "PATCH", body: JSON.stringify({ assessmentId: state.assessmentId, answers: { [question.id]: answerValue } }) });
     const processedQuestionIds = saved.processedQuestionIds || [...(saved.savedQuestionIds || []), ...(saved.clearedQuestionIds || [])];
     if (!processedQuestionIds.includes(question.id)) throw Object.assign(new Error("answer_not_confirmed"), { body: { error: "answer_not_confirmed" } });
-    state.answers[question.id] = answerValue;
+    for (const clearedQuestionId of saved.clearedQuestionIds || []) delete state.answers[clearedQuestionId];
+    if (answerValue === null) delete state.answers[question.id];
+    else state.answers[question.id] = answerValue;
     const routedQuestions = questionApi.visibleQuestions(state.answers, state.questionnaireVersion);
     const persistedIndex = routedQuestions.findIndex(item => item.id === question.id);
     if (persistedIndex >= 0 && persistedIndex < routedQuestions.length - 1) {

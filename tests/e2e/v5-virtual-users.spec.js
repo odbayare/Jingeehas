@@ -67,3 +67,68 @@ test("V5 exact 15 virtual users complete through real sequential browser UI", as
   expect(httpErrors, JSON.stringify(httpErrors)).toEqual([]);
   console.log(`V5_BROWSER_15_RESULTS=${JSON.stringify(results)}`);
 });
+
+test("V5 conditional maintenance answers do not resurrect after Back changes", async ({ page, request }) => {
+  test.setTimeout(240000);
+  const profile = profiles.find(item => item.id === "U08");
+  await page.goto("/__test/v5-start");
+  await expect.poll(() => new URL(page.url()).pathname).toBe("/assessment/questions");
+
+  const currentQuestionId = async () => page.locator("#question-form [data-question]").first().getAttribute("data-question");
+  const waitForQuestionChange = async previous => {
+    await page.waitForFunction(id => window.location.pathname !== "/assessment/questions" || document.querySelector("#question-form [data-question]")?.dataset.question !== id, previous, { timeout: 10000 });
+  };
+  const answerAndContinue = async override => {
+    const questionId = await currentQuestionId();
+    const first = page.locator("#question-form [data-question]").first();
+    const value = override === undefined ? profile.answers[questionId] : override;
+    expect(value, `U08 needs an answer for ${questionId}`).not.toBeUndefined();
+    const type = await first.getAttribute("type");
+    const tagName = await first.evaluate(element => element.tagName);
+    if (type === "number") await first.fill(String(value));
+    else if (tagName === "TEXTAREA") await first.fill(String(value));
+    else if (type === "radio") await page.locator(`#question-form [data-question="${attr(questionId)}"][value="${attr(value)}"]`).check();
+    else for (const selected of value) await page.locator(`#question-form [data-question="${attr(questionId)}"][value="${attr(selected)}"]`).check();
+    await page.getByRole("button", { name: /Үргэлжлүүлэх|Тестийг дуусгах/ }).click();
+    await waitForQuestionChange(questionId);
+  };
+  const goBack = async () => {
+    const previous = await currentQuestionId();
+    await page.getByRole("button", { name: "Буцах" }).click();
+    await page.waitForFunction(id => document.querySelector("#question-form [data-question]")?.dataset.question !== id, previous, { timeout: 10000 });
+  };
+
+  while (await currentQuestionId() !== "Q-MAINTENANCE-PLAN") await answerAndContinue();
+  await answerAndContinue(profile.answers["Q-MAINTENANCE-PLAN"]);
+  expect(await currentQuestionId()).toBe("Q-METHOD-SUPPORT");
+
+  for (let index = 0; index < 5; index += 1) await goBack();
+  expect(await currentQuestionId()).toBe("Q-METHOD-DURATION");
+  await answerAndContinue("2–8 долоо хоног");
+  let serverState = await request.get("/__test/v5-state").then(response => response.json());
+  expect(Object.prototype.hasOwnProperty.call(serverState.answers, "Q-MAINTENANCE-PLAN")).toBe(false);
+
+  await goBack();
+  expect(await currentQuestionId()).toBe("Q-METHOD-DURATION");
+  await answerAndContinue("6–12 сар");
+  for (const expectedId of ["Q-METHOD-STOP", "Q-METHOD-RESULT", "Q-METHOD-REGAIN"]) {
+    expect(await currentQuestionId()).toBe(expectedId);
+    await answerAndContinue();
+  }
+  expect(await currentQuestionId()).toBe("Q-MAINTENANCE-PLAN");
+  await expect(page.locator('#question-form [data-question="Q-MAINTENANCE-PLAN"]:checked')).toHaveCount(0);
+
+  await answerAndContinue(profile.answers["Q-MAINTENANCE-PLAN"]);
+  for (let index = 0; index < 3; index += 1) await goBack();
+  expect(await currentQuestionId()).toBe("Q-METHOD-RESULT");
+  await answerAndContinue("Тодорхой өөрчлөлт ажиглагдаагүй");
+  serverState = await request.get("/__test/v5-state").then(response => response.json());
+  expect(Object.prototype.hasOwnProperty.call(serverState.answers, "Q-METHOD-REGAIN")).toBe(false);
+  expect(Object.prototype.hasOwnProperty.call(serverState.answers, "Q-MAINTENANCE-PLAN")).toBe(false);
+
+  await goBack();
+  expect(await currentQuestionId()).toBe("Q-METHOD-RESULT");
+  await answerAndContinue("Жин буурсан");
+  expect(await currentQuestionId()).toBe("Q-METHOD-REGAIN");
+  await expect(page.locator('#question-form [data-question="Q-METHOD-REGAIN"]:checked')).toHaveCount(0);
+});
