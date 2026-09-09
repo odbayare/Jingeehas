@@ -76,7 +76,7 @@ assert(overviewHtml.includes("Түшиг болох давуу тал"), "V8 nat
 assert(!overviewHtml.includes("Хамгаалах буюу давуу тал"), "legacy overview strength label leaked into V8");
 const management = multiSections.find(section => section.id === "management");
 assert(management);
-assert.equal(management.heading, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?");
+assert.equal(management.heading, "Хэв маяг бүрийг удирдах арга");
 const context = multiSections.find(section => section.id === "context");
 const contextHtml = context?.paragraphs.join(" ") || "";
 for (const module of multi.managementModules || []) {
@@ -108,7 +108,7 @@ for (const id of ["overview", "patterns", "management", "initial-actions", "reco
   assert(v7Ids.includes(id), `historical V7 semantic snapshot section missing: ${id}`);
 }
 const historicalV7Overview = historicalV7Sections.find(section => section.id === "overview")?.paragraphs.join(" ") || "";
-assert.notEqual(historicalV7Sections.find(section => section.id === "management")?.heading, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?", "V8 editorial heading leaked into historical V7 snapshot");
+assert.equal(historicalV7Sections.find(section => section.id === "management")?.heading, "ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?", "historical V7 management heading changed");
 assert(historicalV7Overview.includes("Хамгийн тод ажиглагдсан хэв маяг"), "historical V7 overview renderer was replaced");
 assert(!historicalV7Overview.includes("Хамгийн тод харагдсан хэв маяг"), "V8 overview renderer leaked into historical V7 snapshot");
 

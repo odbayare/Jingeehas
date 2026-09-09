@@ -82,12 +82,23 @@ const NATURAL_COPY = Object.freeze([
   ["Орчны дохио дангаараа бүх сонголтыг тайлбарлахгүй.", "Орчин дангаараа таны бүх сонголтыг тайлбарлахгүй."],
   ["Хоолны зай уртсах эсвэл тогтмол бус болох үед өлсөлтийн дохио хэт хүчтэй болсны дараа анзаарагддаг.", "Хоолны зай уртрахад өлсөлт хэт хүчтэй болсны дараа л анзаарагдаж болно."],
   ["Орой хэт өлсөхөд идэх хэмжээ, хурд, сонголтоо тайван тохируулахад хэцүү болдог.", "Хэт өлссөн үед идэх хэмжээ, хурд, сонголтоо тайван тохируулахад хэцүү болдог."],
-  ["Өдөр бүр ижил биш тул яг аль цагт хүндрэл үүсдгийг ажиглах хэрэгтэй.", "Энэ байдал өдөр бүр ижил биш байж болно."],
+  ["Өдөр бүр ижил биш тул яг аль цагт хүндрэл үүсдгийг ажиглах хэрэгтэй.", "Энэ байдал өдөр бүр ижил илрэхгүй байж болно."],
   ["Нойр дутуу эсвэл тасалдсан өдөр бодож төлөвлөх тэнхээ оройдоо багасдаг.", "Нойр дутуу эсвэл тасалдсан өдөр төлөвлөж, сонголт хийх тэнхээ багасч болно."],
-  ["Ядарсан үед хоол бэлтгэх, сонголтоо урьдчилан бодох тэнхээ багасч, тогтвортой төлөвлөгөө барихад саад болдог.", "Ядарсан үед хоол бэлтгэх, урьдчилан сонгох нь хэцүү болж, төлөвлөгөөгөө тогтвортой үргэлжлүүлэхэд саад болж болно."],
+  ["Ядарсан үед хоол бэлтгэх, сонголтоо урьдчилан бодох тэнхээ багасч, тогтвортой төлөвлөгөө барихад саад болдог.", "Ядарсан үед хоол бэлтгэх, урьдчилан сонгоход хэцүү байж болох бөгөөд энэ нь төлөвлөгөөгөө тогтвортой үргэлжлүүлэхэд саад болж болно."],
   ["Өдөр тутмын бодит нөхцөлтэй нийцэхгүй төлөвлөгөө сайн санаатай байсан ч тогтмол хэрэгжихгүй үлддэг.", "Өдөр тутмын бодит нөхцөлтэй нийцэхгүй төлөвлөгөөг тогтмол хэрэгжүүлэхэд хэцүү байдаг."],
   ["Хэрэгжүүлэх босго өндөр байх тусам бодит нөхцөл өөрчлөгдөхөд төлөвлөгөөнөөс гарах нь амархан болдог.", "Хэрэгжүүлэхэд шаардагдах ачаалал их байх тусам нөхцөл өөрчлөгдөхөд төлөвлөгөөг үргэлжлүүлэхэд хэцүү болдог."],
   ["Энэ тайланг эцсийн онош гэж бус, дараагийн ажиглалтаа хаанаас эхлэхийг заах суурь зураглал болгон ашиглана.", "Энэ тайланг эцсийн дүгнэлт бус, дараагийн ажиглалтаа хаанаас эхлэхийг заах эхлэх цэг болгон ашиглаарай."]
+]);
+
+const CANONICAL_V8_COPY = Object.freeze([
+  ["Ийм үед идэх хэмжээгээ тайван тохируулахад хэцүү болж болно.", "Ийм үед идэх хэмжээгээ тайван тохируулахад хүндрэлтэй байж болно."],
+  ["Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулахад илүү хэцүү болж болно.", "Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулахад илүү хэцүү байж болно."],
+  ["Нойр дутуу өдөр ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөний хамгийн бага бэлтгэл шаардсан хувилбарыг ч хийхэд хүнд болж болно.", "Нойр дутуу өдөр ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөний хамгийн бага бэлтгэл шаардсан хувилбарыг ч хийхэд хүнд байж болно."],
+  ["Жин хасах төлөвлөгөө өдөр бүр яг ижил хэрэгжихгүй байж болно.", "Жин хасах төлөвлөгөөг өдөр бүр яг ижил хэрэгжүүлэх шаардлагагүй."],
+  ["Ажиглалт өдөр бүр яг ижил хэрэгжихгүй байж болно.", "Ажиглалт өдөр бүр яг ижил байх шаардлагагүй."],
+  ["Ядарсан өдрийн шийдвэрийн ачааллыг багасгах нь энэ тайланд харагдсан нойр, хуваарийн холбоотой хамгийн шууд нийцнэ.", "Ядарсан өдрийн шийдвэрийн ачааллыг багасгах нь таны хариултад харагдсан нойр, хуваарийн холбоотой хамгийн шууд нийцнэ."],
+  ["Асуумжид хамрагдаагүй шинж тэмдэг, эмчилгээ эсвэл биеийн өөрчлөлтийн талаар санаа зовж байгаа бол энэ тайлангаар шалтгаан тогтоохгүй, тохирох мэргэжлийн хүнтэй ярилцана уу.", "Асуумжид хамрагдаагүй шинж тэмдэг, эмчилгээ эсвэл биеийн өөрчлөлтийн шалтгааныг эдгээр хариултаар тогтоох боломжгүй тул тохирох мэргэжлийн хүнтэй ярилцана уу."],
+  ["Тестэд хамрагдаагүй шинж тэмдэг, эмчилгээ эсвэл биеийн өөрчлөлтийн талаар санаа зовж байгаа бол энэ тайлангаар шалтгаан тогтоохгүй, тохирох мэргэжлийн хүнтэй ярилцана уу.", "Тестэд хамрагдаагүй шинж тэмдэг, эмчилгээ эсвэл биеийн өөрчлөлтийн шалтгааныг эдгээр хариултаар тогтоох боломжгүй тул тохирох мэргэжлийн хүнтэй ярилцана уу."]
 ]);
 
 const MANAGEMENT_MODULE = `function managementModule(candidate, pattern, facts) {
@@ -193,6 +204,7 @@ const RENDER_PATTERN_ARTICLES = `function renderPatternArticles(full) {
 }`;
 
 const BUILD_SEMANTIC_SECTIONS = `function buildSemanticReportSectionsV7(full) {
+  const editorialV8 = full?.version === "${V8}";
   const guidance = full.neutralResult?.professionalScope || full.professionalGuidance || full.urgentGuidance
     ? renderReportParagraphs([full.neutralResult?.professionalScope, full.professionalGuidance, full.urgentGuidance])
     : "";
@@ -201,39 +213,38 @@ const BUILD_SEMANTIC_SECTIONS = `function buildSemanticReportSectionsV7(full) {
     const strengths = neutral.strengths?.length ? neutral.strengths : [neutral.strengthsFallback].filter(Boolean);
     const absent = neutral.notStronglySupported?.length ? neutral.notStronglySupported : [neutral.notStronglySupportedFallback].filter(Boolean);
     return [
-      { id: "neutral-overview", heading: "ТАНЫ ХАРИУЛТААР ЮУ ХАРАГДАВ?", paragraphs: [renderReportParagraphs([...(neutral.overview || []), ...absent])], visible: true },
-      { id: "neutral-strengths", heading: "ОДОО ТАНД ТҮШИГ БОЛОХ ЗҮЙЛС", paragraphs: [renderReportParagraphs(strengths)], visible: strengths.length > 0 },
-      { id: "neutral-limits", heading: "ЭНЭ ТЕСТЭЭР ЮУГ ДҮГНЭЖ БОЛОХГҮЙ ВЭ?", paragraphs: [renderReportParagraphs(neutral.limits || [])], visible: (neutral.limits || []).length > 0 },
-      { id: "neutral-observation", heading: "НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГЛАХ АРГА", paragraphs: [renderNeutralActionPlan(full.neutralActionPlan)], visible: Boolean(full.neutralActionPlan) },
-      { id: "recovery", heading: "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", paragraphs: [renderRecoveryPlan(full.recoveryPlan)], visible: Boolean(full.recoveryPlan) },
-      { id: "guidance", heading: "ХЭЗЭЭ МЭРГЭЖЛИЙН ХҮНТЭЙ ЗӨВЛӨЛДӨХ ВЭ?", paragraphs: [guidance], visible: Boolean(guidance) }
+      { id: "neutral-overview", heading: editorialV8 ? "Ерөнхий зураг" : "ТАНЫ ХАРИУЛТААР ЮУ ХАРАГДАВ?", paragraphs: [renderReportParagraphs([...(neutral.overview || []), ...absent])], visible: true },
+      { id: "neutral-strengths", heading: editorialV8 ? "Танд байгаа хамгаалах хүчин зүйлс" : "ОДОО ТАНД ТҮШИГ БОЛОХ ЗҮЙЛС", paragraphs: [renderReportParagraphs(strengths)], visible: strengths.length > 0 },
+      { id: "neutral-limits", heading: editorialV8 ? "Энэ тестээр юуг дүгнэж болохгүй вэ?" : "ЭНЭ ТЕСТЭЭР ЮУГ ДҮГНЭЖ БОЛОХГҮЙ ВЭ?", paragraphs: [renderReportParagraphs(neutral.limits || [])], visible: (neutral.limits || []).length > 0 },
+      { id: "neutral-observation", heading: editorialV8 ? "Нэг зүйлийг өөрчлөхгүйгээр ажиглах арга" : "НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГЛАХ АРГА", paragraphs: [renderNeutralActionPlan(full.neutralActionPlan)], visible: Boolean(full.neutralActionPlan) },
+      { id: "recovery", heading: editorialV8 ? "Төлөвлөгөө алдагдсан үед хэрхэн үргэлжлүүлэх вэ?" : "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", paragraphs: [renderRecoveryPlan(full.recoveryPlan)], visible: Boolean(full.recoveryPlan) },
+      { id: "guidance", heading: editorialV8 ? "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?" : "ХЭЗЭЭ МЭРГЭЖЛИЙН ХҮНТЭЙ ЗӨВЛӨЛДӨХ ВЭ?", paragraphs: [guidance], visible: Boolean(guidance) }
     ];
   }
   const patterns = renderPatternArticles(full);
   const interactions = (full.interactionSummary || []).map(item => \`<p>\${escapeHtml(item.explanation)}</p>\`).join("");
   const nonPatternContexts = (full.contextualFactors || []).filter(item => !item.isPattern).map(item => \`<article><h3>\${escapeHtml(item.title)}</h3>\${renderReportParagraphs([item.summary || item.explanation])}</article>\`).join("");
   const previous = full.previousAttemptAnalysis ? \`<article><h3>Өмнөх оролдлогын нөхцөл</h3>\${renderReportParagraphs(full.previousAttemptAnalysis.paragraphs || [full.previousAttemptAnalysis.summary, full.previousAttemptAnalysis.interpretation])}</article>\` : "";
-  const editorialV8 = full?.version === "${V8}";
   const triggerContexts = editorialV8 ? "" : (full.managementModules || []).map(module => {
     const observe = module.fields?.find(field => field.key === "observe")?.body;
     return observe ? \`<article><h3>\${escapeHtml(module.title)}</h3><p>\${escapeHtml(observe)}</p></article>\` : "";
   }).join("");
   const contextHtml = \`\${triggerContexts}\${nonPatternContexts}\${previous}\`;
   return [
-    { id: "overview", heading: "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [renderResultOverview(full)], visible: true },
-    { id: "patterns", heading: "ТАНД НӨЛӨӨЛЖ БУЙ ХЭВ МАЯГУУД", paragraphs: [patterns], visible: Boolean(patterns) },
-    { id: "interactions", heading: "ХЭВ МАЯГУУДЫН УЯЛДАА", paragraphs: [interactions], visible: Boolean(interactions && (full.managementModules || []).length >= 2) },
-    { id: "context", heading: "ЯМАР ҮЕД ИЛҮҮ ХҮЧТЭЙ БОЛДОГ ВЭ?", paragraphs: [contextHtml], visible: Boolean(contextHtml) },
-    { id: "management", heading: editorialV8 ? "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?" : "ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?", paragraphs: [renderManagementModules(full.managementModules)], visible: (full.managementModules || []).length > 0 },
-    { id: "combined-management", heading: "ХААНААС ЭХЭЛЖ, ЯМАР ДАРААЛЛААР АЖИЛЛАХ ВЭ?", paragraphs: [renderCombinedPlans(full)], visible: Boolean(full.combinedManagementPlan || (full.additionalInteractionManagementPlans || []).length) },
-    { id: "initial-actions", heading: "ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ", paragraphs: [renderInitialActions(full)], visible: (full.initialActions || []).length === 3 },
-    { id: "recovery", heading: "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", paragraphs: [renderRecoveryPlan(full.recoveryPlan)], visible: Boolean(full.recoveryPlan) },
-    { id: "guidance", heading: "ХЭЗЭЭ МЭРГЭЖЛИЙН ХҮНТЭЙ ЗӨВЛӨЛДӨХ ВЭ?", paragraphs: [guidance], visible: Boolean(guidance) }
+    { id: "overview", heading: editorialV8 ? "Ерөнхий зураг" : "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [renderResultOverview(full)], visible: true },
+    { id: "patterns", heading: editorialV8 ? "Танд нөлөөлж буй хэв маягууд" : "ТАНД НӨЛӨӨЛЖ БУЙ ХЭВ МАЯГУУД", paragraphs: [patterns], visible: Boolean(patterns) },
+    { id: "interactions", heading: editorialV8 ? "Хэв маягуудын уялдаа" : "ХЭВ МАЯГУУДЫН УЯЛДАА", paragraphs: [interactions], visible: Boolean(interactions && (full.managementModules || []).length >= 2) },
+    { id: "context", heading: editorialV8 ? "Нөлөө нь хүчтэй болдог нөхцөл" : "ЯМАР ҮЕД ИЛҮҮ ХҮЧТЭЙ БОЛДОГ ВЭ?", paragraphs: [contextHtml], visible: Boolean(contextHtml) },
+    { id: "management", heading: editorialV8 ? "Хэв маяг бүрийг удирдах арга" : "ХЭВ МАЯГ БҮРИЙН НӨЛӨӨГ ХЭРХЭН УДИРДАХ ВЭ?", paragraphs: [renderManagementModules(full.managementModules)], visible: (full.managementModules || []).length > 0 },
+    { id: "combined-management", heading: editorialV8 ? "Хаанаас эхэлж, ямар дарааллаар ажиллах вэ?" : "ХААНААС ЭХЭЛЖ, ЯМАР ДАРААЛЛААР АЖИЛЛАХ ВЭ?", paragraphs: [renderCombinedPlans(full)], visible: Boolean(full.combinedManagementPlan || (full.additionalInteractionManagementPlans || []).length) },
+    { id: "initial-actions", heading: editorialV8 ? "Эхний 3 алхам" : "ЭХЭЛЖ ХЭРЭГЖҮҮЛЭХ 3 АЛХАМ", paragraphs: [renderInitialActions(full)], visible: (full.initialActions || []).length === 3 },
+    { id: "recovery", heading: editorialV8 ? "Төлөвлөгөө алдагдсан үед хэрхэн үргэлжлүүлэх вэ?" : "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", paragraphs: [renderRecoveryPlan(full.recoveryPlan)], visible: Boolean(full.recoveryPlan) },
+    { id: "guidance", heading: editorialV8 ? "Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?" : "ХЭЗЭЭ МЭРГЭЖЛИЙН ХҮНТЭЙ ЗӨВЛӨЛДӨХ ВЭ?", paragraphs: [guidance], visible: Boolean(guidance) }
   ];
 }`;
 
 function patchReportCopy(source) {
-  return replaceAll(replaceAll(source, NATURAL_COPY), [...TERMINOLOGY, ...POLITE_REGISTER]);
+  return replaceAll(replaceAll(replaceAll(source, NATURAL_COPY), CANONICAL_V8_COPY), [...TERMINOLOGY, ...POLITE_REGISTER]);
 }
 
 function patchReport(source) {
@@ -245,7 +256,25 @@ function patchReport(source) {
   );
   output = replaceNamedFunction(output, "managementModule", MANAGEMENT_MODULE);
   output = replaceNamedFunction(output, "combinedManagementPlan", COMBINED_MANAGEMENT_PLAN);
-  output = replaceAll(output, [...TERMINOLOGY, ...POLITE_REGISTER]);
+  output = replaceAll(output, [...TERMINOLOGY, ...POLITE_REGISTER, ...CANONICAL_V8_COPY]);
+  output = replaceRequired(
+    output,
+    `  return "Эхний хэв маягийн өдөөгч нөхцөлийг ажиглахдаа дараагийн хэв маягтай холбоотой хүндрэл мөн давхцаж байгаа эсэхийг тэмдэглэнэ. Нэг удаад нэг бэлтгэсэн үйлдэл хэрэглэж, аль өөрчлөлт бодит амьдралд илүү тохирч байгааг тусад нь ажиглана.";`,
+    `  const shortPatternLabels = {
+    irregular_meals_late_hunger: "хоолны зай уртсах",
+    hunger_satiety: "өлсөх, цадах дохиог оройтож анзаарах",
+    emotional_regulation: "сэтгэл хөдлөл нэмэгдэхэд идэх хүсэл төрөх",
+    environmental_cues: "орчны дохионоос идэх хүсэл төрөх",
+    sleep_fatigue: "нойр дутсанаас ядаргаа нэмэгдэх",
+    restrictive_rebound: "хатуу дүрмийн дараа төлөвлөгөөг орхих",
+    plan_daily_life_mismatch: "төлөвлөгөө өдөр тутмын амьдралд багтахгүй байх",
+    low_movement: "өдөр тутмын хөдөлгөөн бага байх",
+    previous_attempt_sustainability: "өмнөх аргыг тогтвортой үргэлжлүүлэхэд хүндрэх"
+  };
+  const [first, second] = [...pair].map(id => shortPatternLabels[id] || "тухайн хэв маяг");
+  return \`\${first} нөхцөлд \${second} байдал давхцаж байгаа эсэхийг тэмдэглэж, нэг удаад нэг бэлтгэсэн үйлдэл хэрэглэн аль өөрчлөлт өдөр тутмын амьдралд илүү тохирч байгааг тусад нь ажиглана.\`;`,
+    "V8 semantic combined-plan fallback"
+  );
   output = replaceRequired(
     output,
     `const semanticV7 = safe.version === "${V7}";`,
