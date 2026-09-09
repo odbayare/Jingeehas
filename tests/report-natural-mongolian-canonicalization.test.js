@@ -137,6 +137,10 @@ function normalizedLongTextNodes(html) {
     .filter(value => value.length >= 25);
 }
 
+function reportContentHtml(sections) {
+  return sections.map(section => `<section><h2>${section.heading}</h2>${section.paragraphs.join("")}</section>`).join("");
+}
+
 function isAllCapsHeading(heading) {
   return /[А-ЯӨҮЁ]/iu.test(heading) && heading === heading.toLocaleUpperCase("mn-MN");
 }
@@ -197,7 +201,8 @@ function isAllCapsHeading(heading) {
   assert(resultFor("U13").rendered.includes("эмч эсвэл хооллолтын эмгэгийн чиглэлээр ажилладаг мэргэжилтэн"), "U13: professional-support guidance changed");
 
   const publicSurface = firstPass.map(item => `${JSON.stringify(item.result.publicPayload)}\n${item.result.rendered}`).join("\n");
-  const commercialText = commercial.map(item => renderedText(item.result.rendered)).join("\n");
+  const commercialContentByReport = commercial.map(item => reportContentHtml(item.result.sections));
+  const commercialText = commercialContentByReport.map(renderedText).join("\n");
   assert(!/Бүлэг\s+\d+/u.test(commercialText), "numbered group scaffolding leaked into V8 public output");
   assert(!commercialText.includes("Хариулттай холбоо:"), "answer-link scaffolding leaked into V8 public output");
   assert(!commercialText.includes("Тайлбар:"), "consumer explanation scaffolding leaked into V8 public output");
@@ -209,8 +214,32 @@ function isAllCapsHeading(heading) {
     baijBolno: (commercialText.match(/байж болно/gu) || []).length,
     boljBolno: (commercialText.match(/болж болно/gu) || []).length
   };
-  assert(modalCounts.baijBolno <= 0, `V8 байж болно ceiling exceeded: ${modalCounts.baijBolno}`);
-  assert(modalCounts.boljBolno <= 0, `V8 болж болно ceiling exceeded: ${modalCounts.boljBolno}`);
+  const modalSentenceCounts = new Map();
+  for (const content of commercialContentByReport) {
+    for (const sentence of normalizedLongTextNodes(content).filter(value => /байж болно|болж болно/u.test(value))) {
+      modalSentenceCounts.set(sentence, (modalSentenceCounts.get(sentence) || 0) + 1);
+    }
+  }
+  const approvedUncertaintySentences = new Set([
+    "Энэ байдал өдөр бүр ижил илрэхгүй байж болно.",
+    "Ийм үед идэх хэмжээгээ тайван тохируулахад хүндрэлтэй байж болно.",
+    "Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулахад илүү хэцүү байж болно.",
+    "Нойр дутуу өдөр ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөний хамгийн бага бэлтгэл шаардсан хувилбарыг ч хийхэд хүнд байж болно.",
+    "Ядарсан үед хоол бэлтгэх, урьдчилан сонгоход хэцүү байж болох бөгөөд энэ нь төлөвлөгөөгөө тогтвортой үргэлжлүүлэхэд саад болж болно."
+  ]);
+  assert.deepEqual([...modalSentenceCounts.keys()].filter(sentence => !approvedUncertaintySentences.has(sentence)), [], "undocumented modal sentence entered paid-report content");
+  assert(commercialText.includes("Хэт өлссөн үед идэх хэмжээ, хурд, сонголтоо тайван тохируулахад хэцүү болдог."), "directly observed recurring-behavior wording changed");
+  assert(commercialText.includes("Ийм үед идэх хэмжээгээ тайван тохируулахад хүндрэлтэй байж болно."), "genuine effect uncertainty was removed");
+  assert(commercialText.includes("Жин хасах төлөвлөгөөг өдөр бүр яг ижил хэрэгжүүлэх шаардлагагүй."), "implementation-flexibility wording changed");
+  assert(commercialText.includes("Ажиглалт өдөр бүр яг ижил байх шаардлагагүй."), "observation-flexibility wording changed");
+  for (const certaintyInflatingRewrite of [
+    "Ийм үед идэх хэмжээгээ тайван тохируулах хэцүүддэг.",
+    "Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулах илүү хэцүүддэг.",
+    "Нойр дутуу өдөр ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөний хамгийн бага бэлтгэл шаардсан хувилбарыг ч хийхэд хүндэрдэг.",
+    "Жин хасах төлөвлөгөө өдөр бүр яг ижил хэрэгждэггүй.",
+    "Энэ байдал өдөр бүр ижил давтагддаггүй.",
+    "Ядарсан үед хоол бэлтгэх, урьдчилан сонгох нь хэцүүдэж, төлөвлөгөөгөө тогтвортой үргэлжлүүлэхэд саад болдог."
+  ]) assert(!commercialText.includes(certaintyInflatingRewrite), `certainty-inflating rewrite remains: ${certaintyInflatingRewrite}`);
   assert.equal((commercialText.match(/энэ тайлан/gu) || []).length, 0, "unnecessary report self-reference remains");
   assert.equal((commercialText.match(/тайлангаар/gu) || []).length, 0, "unnecessary report-by-reference remains");
   assert.equal((commercialText.match(/асуумж дангаараа/gu) || []).length, 0, "legacy questionnaire self-reference remains");
@@ -222,10 +251,32 @@ function isAllCapsHeading(heading) {
   ];
   for (const sentence of knownScaffolding) assert(!commercialText.includes(sentence), `known repeated scaffolding remains: ${sentence}`);
   const repeated = new Map();
-  for (const { result } of commercial) {
-    for (const sentence of normalizedLongTextNodes(result.rendered)) repeated.set(sentence, (repeated.get(sentence) || 0) + 1);
+  for (const content of commercialContentByReport) {
+    for (const sentence of normalizedLongTextNodes(content)) repeated.set(sentence, (repeated.get(sentence) || 0) + 1);
   }
-  const structuralAllowlist = new Set([
+  const repetitionClassifications = new Map([
+    ["Ямар нөхцөл давтагдаж байна вэ?", "canonical structural label"],
+    ["Тухайн үед юу хийж болох вэ?", "canonical structural label"],
+    ["Юуг хэт хатуу шаардахгүй байх вэ?", "canonical structural label"],
+    ["Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?", "canonical structural label"],
+    ["Эхэлж аль хэв маягийн нөлөөг багасгах вэ?", "canonical structural label"],
+    ["Хоёр хэв маягийг зэрэг удирдахад ямар арга тохирох вэ?", "canonical structural label"],
+    ["Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг", "factual/evidence-driven"],
+    ["Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг", "factual/evidence-driven"],
+    ["Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг", "factual/evidence-driven"],
+    ["Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл", "factual/evidence-driven"],
+    ["Төлөвлөгөө алдагдсан үед хэрхэн үргэлжлүүлэх вэ?", "canonical structural label"],
+    ["Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл", "factual/evidence-driven"],
+    ["Биеийн суурь хэмжилтийн мэдээлэл", "factual/evidence-driven"],
+    ["Нэг орчны нөлөөг өөрчлөөд үр дүнг нь тусад нь ажиглаж болох тул үүнээс эхэлнэ.", "factual/evidence-driven"],
+    ["Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг: Идэх хүсэл төрүүлдэг нэг орчны нөлөөг сонгож ажиглаарай.", "factual/evidence-driven"],
+    ["Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг: Дараагийн алхамд хоолны дунд цадалтын мэдрэмжээ шалгах нэг сануулга бэлдээрэй.", "factual/evidence-driven"],
+    ["Доорх зөвлөмжийг дээр тайлбарласан нөхцөлтэйгээ уялдуулан хэрэглээрэй.", "canonical structural label"],
+    ["Жин хасах төлөвлөгөөг өдөр бүр яг ижил хэрэгжүүлэх шаардлагагүй.", "required disclaimer"],
+    ["Нөлөө нь хүчтэй болдог нөхцөл", "canonical structural label"],
+    ["Нэг өдөр төлөвлөснөөсөө өөр хооллосон нь бүх оролдлого бүтэлгүйтсэн гэсэн үг биш.", "required disclaimer"]
+  ]);
+  const repetitionAllowlist = new Set([
     "Ямар нөхцөл давтагдаж байна вэ?",
     "Тухайн үед юу хийж болох вэ?",
     "Юуг хэт хатуу шаардахгүй байх вэ?",
@@ -233,9 +284,20 @@ function isAllCapsHeading(heading) {
     "Эхэлж аль хэв маягийн нөлөөг багасгах вэ?",
     "Хоёр хэв маягийг зэрэг удирдахад ямар арга тохирох вэ?",
     "Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг",
-    "Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг"
+    "Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг",
+    "Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг",
+    "Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл",
+    "Төлөвлөгөө алдагдсан үед хэрхэн үргэлжлүүлэх вэ?"
   ]);
-  const unexplained = [...repeated].filter(([sentence, occurrences]) => occurrences > 12 && !structuralAllowlist.has(sentence));
+  const repetitionFailureThreshold = commercial.length;
+  const topRepeatedLongSentences = [...repeated]
+    .filter(([, occurrences]) => occurrences > 1)
+    .sort((left, right) => right[1] - left[1] || left[0].localeCompare(right[0], "mn"))
+    .slice(0, 20)
+    .map(([sentence, occurrences]) => ({ sentence, occurrences, classification: repetitionClassifications.get(sentence) || "UNCLASSIFIED" }));
+  console.log("Top paid-report repeated long sentences:", JSON.stringify(topRepeatedLongSentences));
+  assert(!topRepeatedLongSentences.some(item => item.classification === "UNCLASSIFIED"), "top repeated long sentence lacks an explicit classification");
+  const unexplained = [...repeated].filter(([sentence, occurrences]) => occurrences >= repetitionFailureThreshold && !repetitionAllowlist.has(sentence));
   assert.deepEqual(unexplained, [], `unexplained long repetition exceeded threshold: ${JSON.stringify(unexplained)}`);
 
   function resultFor(id) {
@@ -250,8 +312,11 @@ function isAllCapsHeading(heading) {
     answerLinkScaffolding: (commercialText.match(/Хариулттай холбоо:/gu) || []).length,
     explanationScaffolding: (commercialText.match(/Тайлбар:/gu) || []).length,
     modalCounts,
+    modalSentenceCounts: Object.fromEntries(modalSentenceCounts),
     reportSelfReference: (commercialText.match(/энэ тайлан|тайлангаар|асуумж дангаараа/gu) || []).length,
-    repeatedLongSentences: [...repeated].filter(([, occurrences]) => occurrences > 1).length
+    repetitionFailureThreshold,
+    repeatedLongSentences: [...repeated].filter(([, occurrences]) => occurrences > 1).length,
+    repeatedLongSentenceOccurrences: [...repeated].filter(([, occurrences]) => occurrences > 1).reduce((sum, [, occurrences]) => sum + occurrences, 0)
   }));
   console.log("V5 natural Mongolian canonicalization corpus tests passed");
 })().catch(error => {

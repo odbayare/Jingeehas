@@ -14,7 +14,7 @@ This change remains inside the existing V8 transform architecture. A future cons
 
 ## Corpus before and after
 
-The corpus was generated with fixed assessment/report timestamps through the real assessment completion, V5 body-context enrichment, `publicReport()` projection, and production-built renderer. Counts cover the 12 commercial public paid reports. U13–U15 were separately checked through their actual safety snapshots and renderer.
+The corpus was generated with fixed assessment/report timestamps through the real assessment completion, V5 body-context enrichment, `publicReport()` projection, and production-built renderer. Counts cover only the section headings and bodies returned by `buildReportSections()` for the 12 commercial public paid reports. Navigation, report headers, print controls, support copy, and the footer are excluded. U13–U15 were separately checked through their actual safety snapshots and renderer.
 
 | Audit item | Before | After | Classification |
 |---|---:|---:|---|
@@ -26,16 +26,32 @@ The corpus was generated with fixed assessment/report timestamps through the rea
 | Consumer-facing `Тайлбар:` | 0 | 0 | `QA_ONLY`; absent from public output |
 | `Нэгтгэл:` | 0 | 0 | `QA_ONLY`; absent from public output |
 | Two known generic long scaffolding sentences | 24 occurrences | 0 | replaced by deterministic evidence-pair wording |
-| Repeated normalized sentences, unique | 171 | 168 | legitimate factual/structural repetition retained |
-| Repeated normalized sentence occurrences | 976 | 939 | reduced without randomization |
-| `байж болно` | 19 | 0 | all 19 were recurring-behavior boilerplate in this corpus |
-| `болж болно` | 19 | 0 | all 19 were recurring-behavior boilerplate in this corpus |
+| Repeated normalized sentences, unique | 188 | 186 | paid-report content only; legitimate factual/structural repetition retained |
+| Repeated normalized sentence occurrences | 1,088 | 1,061 | paid-report content only; reduced without randomization |
+| `байж болно` | 19 | 21 | retained for possible effects or genuine variability; zero is not a quality target |
+| `болж болно` | 19 | 5 | retained for possible effects rather than promoted to observed certainty; zero is not a quality target |
 | `энэ тайлан` | 9 | 0 | ordinary self-reference removed |
 | `тайлангаар` | 4 | 0 | scope disclosure retained without report self-reference |
 | `асуумж дангаараа` | 0 | 0 | absent from rendered public output |
 | `persona`, `virtual user`, `fixture`, `QA`, standalone `U01`–`U15` | 0 | 0 | public invariant |
 
-Repeated pattern titles and evidence-driven conclusions remain when inputs genuinely support the same conclusion. The regression allows a small explicit set of structural field labels and repeated canonical pattern titles; it rejects known generic scaffolding and unexplained long repetitions above the corpus threshold.
+Repeated pattern titles and evidence-driven conclusions remain when inputs genuinely support the same conclusion. The regression now measures paid-report content only, prints the top 20 repeated long sentences with an explicit classification, and fails at `>= commercialReports` (12), so a sentence repeated once in every paid report cannot escape. Only 11 exact, documented structural labels or evidence-driven pattern/context titles are allowlisted. The two known generic scaffolding sentences remain hard-zero.
+
+## Epistemic-certainty audit
+
+Modal counts are descriptive metrics, not quality targets. Each PR-added rewrite that previously removed `байж болно` or `болж болно` was reclassified against what the answers actually establish:
+
+| Rewrite area | Class | Final wording decision |
+|---|---|---|
+| `Ийм үед ... тохируулахад хэцүү болж болно` | B — general possible effect | Retain uncertainty as `... тохируулахад хүндрэлтэй байж болно.` |
+| `Хоолны зай уртсахад ... илүү хэцүү болж болно` | B — interaction may have this effect | Retain uncertainty as `... илүү хэцүү байж болно.` |
+| `Нойр дутуу өдөр ... хийхэд хүнд болж болно` | B — general possible effect | Retain uncertainty as `... хийхэд хүнд байж болно.` |
+| `Ядарсан үед ... саад болж болно` | B — general possible effect | Retain uncertainty as `... хэцүү байж болох бөгөөд ... саад болж болно.` |
+| `Жин хасах төлөвлөгөө өдөр бүр яг ижил хэрэгжихгүй байж болно` | C — implementation flexibility | Use `Жин хасах төлөвлөгөөг өдөр бүр яг ижил хэрэгжүүлэх шаардлагагүй.` |
+| `Ажиглалт өдөр бүр яг ижил хэрэгжихгүй байж болно` | C — implementation flexibility | Use `Ажиглалт өдөр бүр яг ижил байх шаардлагагүй.` |
+| `Энэ байдал өдөр бүр ижил биш байж болно` | D — variability/uncertainty | Retain uncertainty as `Энэ байдал өдөр бүр ижил илрэхгүй байж болно.` |
+
+Class A remains direct only when a recurring behavior is supported by the answers, for example `Хэт өлссөн үед идэх хэмжээ, хурд, сонголтоо тайван тохируулахад хэцүү болдог.` The regression has targeted exact assertions for this observed form, the retained possible-effect form, and both not-required implementation forms. It rejects the six certainty-inflating direct rewrites from the first PR revision and allows modal sentences only from the five documented uncertainty sentences present in this fixed corpus.
 
 ## Canonical V8 headings
 
@@ -122,10 +138,10 @@ Before:
 
 After:
 
-> Энэ байдал өдөр бүр ижил давтагддаггүй.<br>
-> Ийм үед идэх хэмжээгээ тайван тохируулах хэцүүддэг.<br>
-> Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулах илүү хэцүүддэг.<br>
-> Жин хасах төлөвлөгөө өдөр бүр яг ижил хэрэгждэггүй.
+> Энэ байдал өдөр бүр ижил илрэхгүй байж болно.<br>
+> Ийм үед идэх хэмжээгээ тайван тохируулахад хүндрэлтэй байж болно.<br>
+> Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулахад илүү хэцүү байж болно.<br>
+> Жин хасах төлөвлөгөөг өдөр бүр яг ижил хэрэгжүүлэх шаардлагагүй.
 
 Generic interaction scaffolding is now tied deterministically to the actual pair. Example:
 
@@ -140,7 +156,7 @@ Before:
 
 After:
 
-> Ядарсан үед хоол бэлтгэх, урьдчилан сонгох нь хэцүүдэж, төлөвлөгөөгөө тогтвортой үргэлжлүүлэхэд саад болдог.<br>
+> Ядарсан үед хоол бэлтгэх, урьдчилан сонгоход хэцүү байж болох бөгөөд энэ нь төлөвлөгөөгөө тогтвортой үргэлжлүүлэхэд саад болж болно.<br>
 > Ядарсан өдрийн шийдвэрийн ачааллыг багасгах нь таны хариултад харагдсан нойр, хуваарийн холбоотой хамгийн шууд нийцнэ.
 
 ### U13 — eating-behavior safety
