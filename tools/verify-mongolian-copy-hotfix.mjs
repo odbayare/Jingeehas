@@ -45,9 +45,10 @@ const deployedFunctionsText = allJavaScript(functionRoot).map(file => fs.readFil
 assertIncludes(app, "QPay төлбөрөө хийсний дараа бүрэн тайлан автоматаар нээгдэнэ.", "Post-assessment pending copy");
 assertIncludes(app, "questionOptionLabel(question, option)", "Displayed option normalization");
 assertIncludes(app, "\"Мэргэжлийн хоолзүйчийн зөвлөгөө\": \"Мэргэжлийн хоол зүйчийн зөвлөгөө\"", "Display-only professional label");
-assertIncludes(app, "НЭГ ЗҮЙЛИЙГ ӨӨРЧЛӨХГҮЙГЭЭР АЖИГЛАХ АРГА", "Dedicated neutral observation heading");
-assertIncludes(app, "ТӨЛӨВЛӨГӨӨ АЛДАГДСАН ҮЕД ХЭРХЭН ҮРГЭЛЖЛҮҮЛЭХ ВЭ?", "Unified recovery heading");
-assertIncludes(app, "ХЭВ МАЯГ БҮРТ ЯАЖ ХАНДАХ ВЭ?", "Editorial management heading");
+assertIncludes(app, "Нэг зүйлийг өөрчлөхгүйгээр ажиглах арга", "V8 neutral observation heading");
+assertIncludes(app, "Төлөвлөгөө алдагдсан үед хэрхэн үргэлжлүүлэх вэ?", "V8 recovery heading");
+assertIncludes(app, "Хэв маяг бүрийг удирдах арга", "V8 management heading");
+assertIncludes(app, "Танд байгаа хамгаалах хүчин зүйлс", "V8 protective-factor heading");
 assertIncludes(app, "сэтгэлзүйн шалтгаануудаа та сайн мэдэж байгаа", "Approved hero paragraph one");
 assertIncludes(app, "Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд", "Approved hero paragraph two");
 assertExcludes(app, "сэтгэл зүйн шалтгаануудаа та сайн мэдэж байгаа", "Transformed hero paragraph one");
@@ -55,6 +56,7 @@ assertExcludes(app, "Жин хасахад саад болж буй сэтгэл
 assertIncludes(reportSource, "jingeehas-case-formulation-v8-editorial-polish", "Editorial report version");
 assertIncludes(reportSource, "function polishPublicText(value)", "Public copy sanitizer");
 assertIncludes(reportSource, "Хоолны зайг нэг өдрийн дотор ажиглаж", "Editorial combined-plan reason");
+assertIncludes(reportSource, "өдөр тутмын амьдралд илүү тохирч байгааг тусад нь ажиглана", "V8 semantic combined-plan fallback");
 assertIncludes(deployedFunctionsText, "103 дугаарт залгах", "Emergency action copy");
 
 assertExcludes(app, "const statusCopy = payment.status === \"paid\" ? PAYMENT_COPY.paidBeforeTest", "Flow-agnostic paid status");

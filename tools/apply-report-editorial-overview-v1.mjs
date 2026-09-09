@@ -60,8 +60,8 @@ function replaceRequired(source, from, to, label) {
 }
 
 export function applyReportEditorialOverviewV1(root) {
-  const legacyOverview = '{ id: "overview", heading: "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [renderResultOverview(full)], visible: true },';
-  const editorialOverview = '{ id: "overview", heading: "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [editorialV8 ? renderEditorialResultOverviewV8(full) : renderResultOverview(full)], visible: true },';
+  const legacyOverview = '{ id: "overview", heading: editorialV8 ? "Ерөнхий зураг" : "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [renderResultOverview(full)], visible: true },';
+  const editorialOverview = '{ id: "overview", heading: editorialV8 ? "Ерөнхий зураг" : "ТАНЫ ҮР ДҮНГИЙН ТОЙМ", paragraphs: [editorialV8 ? renderEditorialResultOverviewV8(full) : renderResultOverview(full)], visible: true },';
   for (const appPath of [path.join(root, "app.js"), path.join(root, "site", "app.js")]) {
     if (!fs.existsSync(appPath)) continue;
     let source = fs.readFileSync(appPath, "utf8");
