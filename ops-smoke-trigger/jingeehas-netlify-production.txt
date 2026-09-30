@@ -1,8 +1,10 @@
 Deploy current main to the linked Jingeehas Netlify production site and certify the exact live candidate package.
 
-Release scope: PR #69 canonicalizes current/new V8 paid-report Mongolian presentation without changing assessment semantics. It replaces V8 ALL-CAPS report section headings with deterministic sentence-case headings, removes known generic report scaffolding, preserves genuine uncertainty/modal meaning, reduces unnecessary report self-reference, and tightens report-content-only repetition lint. Historical V6/V7 and existing snapshot rendering remain version-aware and unchanged.
-Source PR merge SHA: 3b8eb9a5e346ffa0bbb3bb96b98c8eda81fbb6d3
+Release scope: PR #70 preserves the bank chooser DOM, disclosure state, and focus during automatic payment polling; protects manual checks, provider-confirmed paid navigation, expiry, report retries, and stale responses. Adds privacy-minimized qpay_handoff_attempted and qpay_page_returned observations through the existing authenticated analytics endpoint. These observations indicate a link attempt and later page visibility only, never proof of app opening or payment.
+Source PR merge SHA: 51dd50dbeb337ff766377e0f1264cb7ab5846fc6
+Reviewed source head SHA: cc89e3fe58c72d474ad961eec981d4805a579531
+Database prerequisite: reviewed migration 20260930104000_add_qpay_handoff_observations.sql applied on 2026-09-30 at 11:56:09 UTC; validated CHECK retains all 28 legacy names plus the two new observations; application history and RLS verified.
 Expected live origin: https://jingeehas.fit
 Expected deployment package: dist static assets plus .generated-copy-hotfix/netlify/functions
-Required certification: all unit/contract/E2E gates pass; exact candidate/live manifest match; current V8 headings are sentence-case and deterministic; the 15-user V5 corpus preserves all route, pattern, interaction, recommendation, household/body/function firewall, and determinism invariants; U13/U14/U15 safety public payload/rendering remain unchanged and safety routes bypass commerce; V6/V7 historical snapshot compatibility remains intact; 19,900₮ current price, historical payment verification, QPay authority, entitlement semantics, recovery, Meta/CAPI, and analytics behavior remain unchanged.
-Release trigger: 2026-09-09 PR69 V8 paid-report natural Mongolian canonicalization
+Required certification: all unit/contract/E2E gates pass; exact candidate/live manifest match; bank chooser DOM/open state/focus persist across polling; manual/automatic paid navigation, expiry, and stale-response regressions pass; 19,900 MNT current price, safety routing, report content, recovery, Meta/CAPI, and QPay payment authority remain unchanged. Do not create real invoices or payments for validation.
+Release trigger: 2026-09-30 PR70 checkout polling repair and privacy-minimized handoff observations
