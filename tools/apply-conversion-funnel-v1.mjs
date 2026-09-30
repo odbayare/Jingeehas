@@ -115,7 +115,7 @@ function optimizedRenderQpayAppGrid(payment = {}) {
 
 function optimizedRenderPayment() {
   const payment = state.payment || { status: "idle" };
-  const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
+  const createBlocked = ["creating", "checking", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
   const prepaid = state.commercialFlowVersion === "prepaid_v2";
   const statusCopy = payment.status === "paid"
     ? (prepaid ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY.paidAfterAssessment)

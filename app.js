@@ -63,6 +63,8 @@ function createState() {
 let state = createState();
 let testComingSoonOverride = null;
 let paymentPollTimer = null;
+let paymentCheckInFlight = null;
+let pendingQpayHandoff = null;
 let paymentPollingStartedAt = 0;
 function isComingSoon() { return testComingSoonOverride === null ? WEIGHT_TEST_COMING_SOON_MODE : testComingSoonOverride; }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>'"]/g, character => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" })[character]); }
@@ -332,7 +334,7 @@ function renderQpayPaymentOptions(payment = {}) {
 function renderPayment() {
   const payment = state.payment || { status: "idle" };
   const statusCopy = payment.status === "paid" ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY[payment.status] || "";
-  const createBlocked = ["creating", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
+  const createBlocked = ["creating", "checking", "create_error", "create_unknown", "reconciling", "create_failed_confirmed"].includes(payment.status);
   const prepaid = state.commercialFlowVersion === "prepaid_v2";
   const paymentReady = prepaid ? state.assessmentStatus === "payment_pending" : state.assessmentStatus === "complete";
   return `<div class="page">${navigation()}<main class="content-card"><h1 id="page-title" tabindex="-1">${prepaid ? "Төлбөрөө баталгаажуулж байна" : "Бүрэн тайлангаа нээх"}</h1>
@@ -869,7 +871,7 @@ async function submitConsent(form) {
   state.assessmentId = assessment.assessmentId; state.assessmentStatus = assessment.status; state.questionnaireVersion = assessment.questionnaireVersion || state.questionnaireVersion; state.invitation = null; navigate("/assessment/questions");
 }
 async function createInvoice() {
-  if (state.busy || state.assessmentStatus !== "complete") return;
+  if (state.busy || paymentCheckInFlight || state.assessmentStatus !== "complete") return;
   state.busy = true;
   setPaymentStatus("creating"); render();
   try { state.payment = await api("/.netlify/functions/qpay-create-invoice", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId, productCode: PRODUCT.code, amount: PRODUCT.amount }) }); }
@@ -879,7 +881,7 @@ async function createInvoice() {
   } finally { state.busy = false; } render();
 }
 async function continueToPayment() {
-  if (state.busy || state.assessmentStatus !== "complete") return;
+  if (state.busy || paymentCheckInFlight || state.assessmentStatus !== "complete") return;
   state.busy = true; setPaymentStatus("creating"); render({ focus: false });
   try {
     state.payment = await api("/.netlify/functions/qpay-create-invoice", {
@@ -894,28 +896,64 @@ async function continueToPayment() {
     navigate("/assessment/payment");
   }
 }
-async function checkPayment() {
-  if (state.busy || !state.payment?.paymentId) return;
-  state.busy = true;
-  setPaymentStatus("checking"); render();
+// Background checks must not replace the chooser or steal keyboard focus.
+function updatePaymentStatus() {
+  if (typeof document === "undefined") return;
+  const payment = state.payment || {};
+  const prepaid = state.commercialFlowVersion === "prepaid_v2";
+  const copy = payment.status === "paid"
+    ? (prepaid ? PAYMENT_COPY.paidBeforeTest : PAYMENT_COPY.paidAfterAssessment)
+    : (!prepaid && payment.status === "pending" ? "QPay төлбөрөө хийсний дараа бүрэн тайлан автоматаар нээгдэнэ." : PAYMENT_COPY[payment.status] || "");
+  const status = document.querySelector(".payment-status");
+  if (status && status.textContent !== copy) status.textContent = copy;
+  const button = document.querySelector('[data-action="check-payment"]');
+  if (button) button.setAttribute("aria-disabled", String(payment.status === "checking"));
+}
+async function checkPayment(options = {}) {
+  if (state.busy || paymentCheckInFlight || !state.payment?.paymentId) return;
+  const automatic = options.automatic === true;
+  const request = { paymentId: state.payment.paymentId, assessmentId: state.assessmentId };
+  paymentCheckInFlight = request;
+  const samePayment = () => state.assessmentId === request.assessmentId && state.payment?.paymentId === request.paymentId;
+  const onPaymentPage = () => typeof window !== "undefined" && routeName(window.location.pathname) === "payment";
+  setPaymentStatus("checking");
+  if (automatic) updatePaymentStatus(); else render();
   try {
-    state.payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: state.payment.paymentId }) });
-    if (state.payment.status === "paid") {
+    const payment = await api("/.netlify/functions/qpay-check-payment", { method: "POST", body: JSON.stringify({ paymentId: request.paymentId }) });
+    // A restored/new assessment or a navigation may have overtaken this request.
+    if (!samePayment() || state.payment.status !== "checking") return;
+    state.payment = payment;
+    if (state.payment.status === "paid" && onPaymentPage()) {
       if (state.commercialFlowVersion === "prepaid_v2") {
         state.assessmentStatus = "paid_ready";
         try {
-          const access = await api("/.netlify/functions/weight-assessment-questions", { method: "POST", body: JSON.stringify({ assessmentId: state.assessmentId }) });
+          const access = await api("/.netlify/functions/weight-assessment-questions", { method: "POST", body: JSON.stringify({ assessmentId: request.assessmentId }) });
+          if (!samePayment()) return;
           state.assessmentStatus = access.status; state.startedAt = access.startedAt || state.startedAt; state.questionsAuthorized = true;
         } catch {
-          setPaymentStatus("paid_but_not_unlocked"); state.questionsAuthorized = false; state.busy = false; render(); return;
+          if (samePayment()) { setPaymentStatus("paid_but_not_unlocked"); state.questionsAuthorized = false; }
+          return;
         }
       } else {
-        state.report = await loadReport();
+        const report = await loadReport();
+        if (!samePayment()) return;
+        state.report = report;
       }
-      state.busy = false; navigate(state.payment.nextRoute || (state.commercialFlowVersion === "prepaid_v2" ? "/assessment/questions" : "/report")); return;
+      if (!onPaymentPage()) return;
+      navigate(state.payment.nextRoute || (state.commercialFlowVersion === "prepaid_v2" ? "/assessment/questions" : "/report"));
     }
+  } catch {
+    // Report loading may fail after provider confirmation. Keep the existing
+    // retryable UI state; the next check still reads authoritative paid state.
+    if (samePayment() && ["checking", "paid"].includes(state.payment.status)) setPaymentStatus("check_error");
+  } finally {
+    if (paymentCheckInFlight === request) paymentCheckInFlight = null;
+    if (samePayment() && onPaymentPage()) {
+      if (automatic && ["pending", "checking", "check_error"].includes(state.payment.status)) {
+        updatePaymentStatus(); schedulePaymentPolling();
+      } else render({ focus: !automatic });
+    } else if (onPaymentPage()) schedulePaymentPolling();
   }
-  catch { setPaymentStatus("check_error"); } finally { state.busy = false; } render();
 }
 function schedulePaymentPolling() {
   if (typeof window === "undefined") return;
@@ -925,7 +963,44 @@ function schedulePaymentPolling() {
   if (!paymentPollingStartedAt) paymentPollingStartedAt = Date.now();
   const expired = payment.expiresAt && Date.parse(payment.expiresAt) <= Date.now();
   if (expired || Date.now() - paymentPollingStartedAt > 15 * 60 * 1000) return;
-  paymentPollTimer = setTimeout(() => { if (!document.hidden) checkPayment(); else schedulePaymentPolling(); }, document.hidden ? 12000 : 4000);
+  paymentPollTimer = setTimeout(() => { if (!document.hidden) checkPayment({ automatic: true }); else schedulePaymentPolling(); }, document.hidden ? 12000 : 4000);
+}
+// These are browser observations, never proof that a bank app opened or payment succeeded.
+// Keep the marker in memory only; full reloads may lose the return observation.
+function sendQpayHandoffEvent(eventName, attempt, eventId) {
+  if (typeof fetch === "undefined") return Promise.resolve(false);
+  const identity = analyticsIdentity();
+  const context = { visitorId: identity.visitorId, sessionId: identity.sessionId, deviceClass: identity.deviceClass };
+  return fetch("/.netlify/functions/analytics-collect", {
+    method: "POST", credentials: "same-origin", keepalive: true,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ eventId, eventName, assessmentId: attempt.assessmentId,
+      attemptId: attempt.attemptId, context })
+  }).then(response => response.ok).catch(() => false);
+}
+function observeQpayHandoffAttempt(event) {
+  if (event.defaultPrevented || event.button > 0 || state.commercialFlowVersion !== "free_assessment_postpaid_v1" ||
+      routeName(window.location.pathname) !== "payment" || !state.assessmentId || !state.payment?.paymentId ||
+      !["pending", "checking", "check_error"].includes(state.payment.status)) return;
+  const attempt = { attemptId: browserUuid(), eventId: browserUuid(), assessmentId: state.assessmentId,
+    startedAt: Date.now(), departed: false, returned: false };
+  pendingQpayHandoff = attempt;
+  attempt.delivery = sendQpayHandoffEvent("qpay_handoff_attempted", attempt, attempt.eventId);
+}
+function observeQpayPageDeparture() {
+  if (pendingQpayHandoff && routeName(window.location.pathname) === "payment") pendingQpayHandoff.departed = true;
+}
+function observeQpayPageReturn() {
+  const attempt = pendingQpayHandoff;
+  if (!attempt || !attempt.departed || attempt.returned || document.hidden ||
+      routeName(window.location.pathname) !== "payment" || state.assessmentId !== attempt.assessmentId) return;
+  attempt.returned = true;
+  if (Date.now() - attempt.startedAt > 30 * 60 * 1000) return;
+  // A keepalive attempt may have been interrupted during handoff. Replay the SAME
+  // event once if needed, before sending its return, so server pairing is ordered.
+  Promise.resolve(attempt.delivery).then(delivered => delivered || sendQpayHandoffEvent("qpay_handoff_attempted", attempt, attempt.eventId))
+    .then(delivered => delivered && sendQpayHandoffEvent("qpay_page_returned", attempt, browserUuid()))
+    .catch(() => {});
 }
 function updateAnswer(input) {
   const question = questionApi.questionById(input.dataset.question, state.questionnaireVersion); if (!question) return;
@@ -1106,6 +1181,7 @@ async function restoreServerState() {
 }
 
 function bind(root) {
+  root.querySelectorAll("a[data-qpay-app-link]").forEach(link => link.addEventListener("click", observeQpayHandoffAttempt));
   root.querySelectorAll("a[data-route]").forEach(link => link.addEventListener("click", event => { event.preventDefault(); if (window.location.pathname === "/" && link.getAttribute("href") === "/assessment/start") trackEvent("start_cta_clicked", "", `start_cta_clicked:${Date.now()}`); navigate(link.getAttribute("href")); }));
   const scientificMethodsToggle = root.querySelector('[data-action="toggle-scientific-methods"]');
   const scientificMethodsDetails = root.querySelector("#scientific-methods-details");
@@ -1176,6 +1252,13 @@ async function resolvePaymentPreparationInvite() {
   } catch {
     state.invitationError = "Зөвлөхийн урилгыг баталгаажуулж чадсангүй. Урилгын холбоосоо шалгаад дахин оролдоно уу.";
   }
+}
+if (typeof window !== "undefined") {
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) observeQpayPageDeparture(); else observeQpayPageReturn();
+  });
+  window.addEventListener("pagehide", observeQpayPageDeparture);
+  window.addEventListener("pageshow", observeQpayPageReturn);
 }
 if (typeof window !== "undefined") { window.addEventListener("popstate", async () => { captureInviteToken(); await restoreServerState(); await resolvePaymentPreparationInvite(); render(); }); window.addEventListener("DOMContentLoaded", async () => { captureInviteToken(); await restoreServerState(); await resolvePaymentPreparationInvite(); render({ focus: false }); }); }
 if (typeof module !== "undefined") module.exports = { PRODUCT, PAYMENT_COPY, PAYMENT_STATES, WEIGHT_TEST_COMING_SOON_MODE, isComingSoon, routeName, renderForPath, contactValidation, setPaymentStatus, money,
