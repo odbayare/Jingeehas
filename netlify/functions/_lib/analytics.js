@@ -4,7 +4,8 @@ const crypto = require("node:crypto");
 const { cookies } = require("./http.js");
 const { PREVIEW_COOKIE_NAME } = require("./preview.js");
 
-const BROWSER_EVENTS = new Set(["landing_viewed", "start_cta_clicked", "payment_preparation_viewed", "post_assessment_paywall_viewed", "paywall_viewed", "recovery_requested"]);
+const QPAY_HANDOFF_EVENTS = new Set(["qpay_handoff_attempted", "qpay_page_returned"]);
+const BROWSER_EVENTS = new Set(["landing_viewed", "start_cta_clicked", "payment_preparation_viewed", "post_assessment_paywall_viewed", "paywall_viewed", "recovery_requested", ...QPAY_HANDOFF_EVENTS]);
 const SERVER_EVENTS = new Set([
   "assessment_started",
   "assessment_completed",
@@ -120,6 +121,6 @@ async function assessmentContext(database, assessmentId) {
     utmCampaign: row.utmCampaign, utmContent: row.utmContent, utmTerm: row.utmTerm, referrerHost: row.referrerHost, deviceClass: row.deviceClass } : {};
 }
 
-module.exports = { BROWSER_EVENTS, SERVER_EVENTS, UUID, analyticsPepper, hashAnonymous, cleanText, cleanHost, attribution, clientContext,
+module.exports = { BROWSER_EVENTS, SERVER_EVENTS, QPAY_HANDOFF_EVENTS, UUID, analyticsPepper, hashAnonymous, cleanText, cleanHost, attribution, clientContext,
   flagsFromEvent, isKnownBotRequest, browserOriginAllowed, localAnalyticsDay, browserEventIdempotencyKey,
   funnelKeyHash, eventRow, recordEvent, recordEventSafe, assessmentContext };

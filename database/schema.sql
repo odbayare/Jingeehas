@@ -122,7 +122,7 @@ create index report_snapshot_versions_legacy_source_idx on report_snapshot_versi
 create table analytics_events (
   id uuid primary key,
   event_id uuid not null unique,
-  event_name text not null check (event_name in ('landing_viewed','start_cta_clicked','assessment_started','assessment_completed','paywall_viewed','invoice_created','payment_confirmed','invoice_create_failed','payment_check_started','payment_check_failed','recovery_requested','recovery_succeeded','report_opened')),
+  event_name text not null check (event_name in ('landing_viewed','start_cta_clicked','assessment_started','assessment_completed','paywall_viewed','invoice_created','payment_confirmed','invoice_create_failed','payment_check_started','payment_check_failed','recovery_requested','recovery_succeeded','report_opened','qpay_handoff_attempted','qpay_page_returned')),
   occurred_at timestamptz not null,
   visitor_id_hash text check (visitor_id_hash is null or visitor_id_hash ~ '^[a-f0-9]{64}$'),
   session_id_hash text check (session_id_hash is null or session_id_hash ~ '^[a-f0-9]{64}$'),
