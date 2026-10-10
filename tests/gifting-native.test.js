@@ -1,4 +1,5 @@
 "use strict";
+process.env.JINGEEHAS_DATABASE_API_KEY = "synthetic-local-only-gift-note-existing-credential-".repeat(2);
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const vm = require("node:vm");

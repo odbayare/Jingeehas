@@ -1,8 +1,10 @@
--- REVIEW ONLY: not applied or approved for release.
+-- Jingeehas gifting; owner-authorized release candidate.
 begin;
+set local lock_timeout='5s';
+set local statement_timeout='30s';
 create table jingeehas.gift_orders (
  id text primary key, session_id text not null references jingeehas.sessions(id),
- request_key text not null, note text not null check(length(note)<=280), amount integer not null check(amount=19900),
+ request_key text not null, note text not null check(length(note)<=2048 and (note='' or note ~ '^v1\.[A-Za-z0-9_-]+$')), amount integer not null check(amount=19900),
  sender_invoice_no text not null unique, invoice_id text unique, provider_payment_id text unique,
  status text not null check(status in ('creating','create_unknown','pending','paid','paid_review','claimed','canceled','closed_unpaid')),
  qr_image text not null default '', urls jsonb not null default '[]', expires_at timestamptz,

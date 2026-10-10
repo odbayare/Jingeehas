@@ -1,5 +1,6 @@
 "use strict";
 const { PRODUCT } = require("./config.js");
+const { sealNote, openNote } = require("./gift-note.js");
 const { randomId, randomToken, hashToken } = require("./crypto.js");
 const { confirmedProviderPayment } = require("./payment.js");
 const { CURRENT_QUESTIONNAIRE_VERSION } = require("../../../questions.js");
@@ -27,7 +28,7 @@ async function createGift(database, provider, sessionId, input = {}, now = new D
   if (typeof input.requestKey !== "string" || !/^[a-f0-9-]{36}$/.test(input.requestKey)) fail("invalid_request_key", 400);
   if (input.note != null && (typeof input.note !== "string" || input.note.length > 280)) fail("invalid_note", 400);
   const order = await request(database, "create", { id: randomId("go_"), sessionId, requestKey: input.requestKey,
-    note: (input.note || "").trim(), amount: PRODUCT.amount, senderInvoiceNo: randomId("jg_"), now: now.toISOString() });
+    note: sealNote((input.note || "").trim()), amount: PRODUCT.amount, senderInvoiceNo: randomId("jg_"), now: now.toISOString() });
   if (!order.created) return buyerView(order); // Never repeat an ambiguous provider create.
   try {
     const invoice = await provider.createInvoice({ senderInvoiceNo: order.senderInvoiceNo, amount: order.amount });
@@ -78,7 +79,7 @@ async function giftAction(database, provider, sessionId, input, now = new Date()
   if (input.action === "recover") return buyerView(await request(database, "recover", { sessionId, recoveryHash: tokenHash(input.recoveryCode) }));
   if (input.action === "preview") {
     const result = await request(database, "preview", { tokenHash: tokenHash(input.token), sessionId, now: timestamp });
-    return result.claimed ? { claimed: true, nextRoute: "/assessment/questions" } : { note: result.note || "", available: true };
+    return result.claimed ? { claimed: true, assessmentId: result.assessmentId, nextRoute: "/assessment/questions" } : { note: openNote(result.note), available: true };
   }
   if (input.action === "claim") {
     if (input.accept !== true) fail("gift_acceptance_required", 400);

@@ -10,6 +10,7 @@
     const result = await response.json(); if (!response.ok) throw new Error(result.error); return result;
   }
   function text(tag, value) { const node=document.createElement(tag); node.textContent=value; root.append(node); return node; }
+  function startRecipient(result) { sessionStorage.setItem("jingeehas_gift_assessment", result.assessmentId); location.assign(result.nextRoute); }
   function button(label, action) {
     const node=text("button",label); node.type="button"; node.className="button";
     node.onclick=async()=>{if(busy)return;busy=true;node.disabled=true;status.textContent="Түр хүлээнэ үү…";
@@ -60,9 +61,9 @@
   }
   try {
     await fetch("/.netlify/functions/weight-session-start",{method:"POST",headers:{"content-type":"application/json"},body:"{}"}).then(r=>{if(!r.ok)throw new Error("session");});
-    if(claimToken){const preview=await api({action:"preview",token:claimToken});if(preview.claimed){location.assign(preview.nextRoute);return;}text("h2","Танд Jingeehas-ийн үнэлгээ бэлэглэсэн байна");if(preview.note)text("p",preview.note);
+    if(claimToken){const preview=await api({action:"preview",token:claimToken});if(preview.claimed){startRecipient(preview);return;}text("h2","Танд Jingeehas-ийн үнэлгээ бэлэглэсэн байна");if(preview.note)text("p",preview.note);
       text("p","Хүлээн авах эсэхээ та өөрөө шийднэ. Үнэлгээг хүссэн үедээ эхлүүлж болно.");
-      button("Бэлгээ хүлээн авч, өөрийн үнэлгээг эхлүүлэх",async()=>{const result=await api({action:"claim",token:claimToken,accept:true});location.assign(result.nextRoute);});
+      button("Бэлгээ хүлээн авч, өөрийн үнэлгээг эхлүүлэх",async()=>{const result=await api({action:"claim",token:claimToken,accept:true});startRecipient(result);});
       const decline=text("a","Одоохондоо хүлээн авахгүй");decline.href="/";
     }else if(orderId || sessionStorage.getItem("jingeehas_gift_request")){
       try{await showOrder(await api({action:"status",orderId,requestKey:sessionStorage.getItem("jingeehas_gift_request")}));}

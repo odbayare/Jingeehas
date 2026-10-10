@@ -5,7 +5,7 @@
 Mongolian copy transformations applied; rendered-output verification follows.
 Deployed production manifest generated
 Production static package, patched Netlify functions, and deployed-byte manifest created.
-Staging package created (97 files, 44 functions); no deployment performed
+Staging package created (98 files, 44 functions); no deployment performed
 
 > weight-loss-deep-pattern-prototype@0.1.0 verify:staging-package
 > node tools/verify-staging-package.mjs
@@ -13,6 +13,6 @@ Staging package created (97 files, 44 functions); no deployment performed
 Mongolian copy transformations applied; rendered-output verification follows.
 Deployed production manifest generated
 Production static package, patched Netlify functions, and deployed-byte manifest created.
-Staging package created (97 files, 44 functions); no deployment performed
+Staging package created (98 files, 44 functions); no deployment performed
 Deleted-product repository guard passed
-STAGING_PACKAGE_STATUS=PASS (97 files, 44 functions, 18 required endpoints, no deployment)
+STAGING_PACKAGE_STATUS=PASS (98 files, 44 functions, 18 required endpoints, no deployment)

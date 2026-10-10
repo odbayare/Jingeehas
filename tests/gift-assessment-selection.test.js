@@ -1,0 +1,22 @@
+"use strict";
+process.env.NODE_ENV = "test";
+const assert = require("node:assert/strict");
+const { MemoryDatabaseAdapter } = require("./support/memory-database.js");
+const { setDatabaseForTests } = require("../netlify/functions/_lib/store.js");
+const { createSession } = require("../netlify/functions/_lib/session.js");
+const { createAssessment } = require("../netlify/functions/_lib/assessment.js");
+const { FREE_POSTPAID_FLOW } = require("../netlify/functions/_lib/commercial-flow.js");
+const handler = require("../netlify/functions/weight-session-state.js").handler;
+(async () => {
+  const db = new MemoryDatabaseAdapter(); setDatabaseForTests(db);
+  const recipient = await createSession(db), buyer = await createSession(db);
+  const gift = await createAssessment(db, recipient.session.id, { flowVersion: FREE_POSTPAID_FLOW });
+  const other = await createAssessment(db, recipient.session.id, { flowVersion: FREE_POSTPAID_FLOW });
+  await db.update("assessments", other.id, { updatedAt: "2099-01-01T00:00:00.000Z" });
+  const event = (session, selected) => ({ httpMethod: "GET", headers: { cookie: session.cookie.split(";")[0], ...(selected ? { "x-jingeehas-assessment-id": selected } : {}) } });
+  const ordinary = await handler(event(recipient)); assert.equal(JSON.parse(ordinary.body).assessment.assessmentId, other.id);
+  const focused = await handler(event(recipient, gift.id)); assert.equal(focused.statusCode, 200); assert.equal(JSON.parse(focused.body).assessment.assessmentId, gift.id);
+  const denied = await handler(event(buyer, gift.id)); assert.equal(denied.statusCode, 404); assert(!denied.body.includes(gift.id));
+  assert.equal((await handler(event(recipient, "missing-gift"))).statusCode, 404);
+  console.log("PASS gift assessment selection: recipient resumes exact claimed assessment despite newer own activity; buyer denied; ordinary default unchanged");
+})().catch(error => { console.error(error); process.exitCode = 1; });

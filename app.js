@@ -799,6 +799,7 @@ async function authorizeAssessmentQuestions(analyticsContext = {}) {
   state.questionsAuthorized = true;
 }
 async function startFreeAssessment(form) {
+  sessionStorage.removeItem("jingeehas_gift_assessment");
   if (state.busy) return;
   const input = formObject(form);
   state.busy = true; state.validationError = ""; render({ focus: false });
@@ -841,6 +842,7 @@ async function startFreeAssessment(form) {
   }
 }
 async function submitContact(form) {
+  sessionStorage.removeItem("jingeehas_gift_assessment");
   const input = formObject(form); const error = contactValidation(input); if (error) throw new Error(error);
   state.busy = true; render();
   await ensureSession();
@@ -1081,7 +1083,7 @@ async function requestRecovery(form) {
 async function confirmRecovery(form) {
   const input = formObject(form);
   const result = await api("/.netlify/functions/weight-recovery-confirm", { method: "POST", body: JSON.stringify({ recoveryId: state.recovery.recoveryId, code: input.code }) });
-  state.assessmentId = result.assessmentId; navigate(result.nextRoute || "/report"); await restoreServerState(); render();
+  sessionStorage.removeItem("jingeehas_gift_assessment"); state.assessmentId = result.assessmentId; navigate(result.nextRoute || "/report"); await restoreServerState(); render();
 }
 async function advisorLoginSubmit(form) { const result = await api("/.netlify/functions/advisor-login", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.profile = result; state.advisor.temporaryPasswordChange = result.forcePasswordChange; if (result.forcePasswordChange) render(); else { state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); } }
 async function advisorPasswordSubmit(form) { await api("/.netlify/functions/advisor-password-change", { method: "POST", body: JSON.stringify(formObject(form)) }); state.advisor.temporaryPasswordChange = false; state.advisor.dashboard = await api("/.netlify/functions/advisor-dashboard", { method: "GET" }); navigate("/advisor/dashboard"); }
@@ -1162,7 +1164,10 @@ async function restoreServerState() {
   }
   if (!["assessmentResult", "assessmentCompleted", "payment", "questions", "report", "dataDeletion"].includes(route)) return;
   try {
-    const restored = await api("/.netlify/functions/weight-session-state", { method: "GET" });
+    const selectedGift = sessionStorage.getItem("jingeehas_gift_assessment");
+    let restored;
+    try { restored = await api("/.netlify/functions/weight-session-state", { method: "GET", ...(selectedGift ? { headers: { "x-jingeehas-assessment-id": selectedGift } } : {}) }); }
+    catch (error) { if (!selectedGift || error.status !== 404) throw error; sessionStorage.removeItem("jingeehas_gift_assessment"); restored = await api("/.netlify/functions/weight-session-state", { method: "GET" }); }
     if (!restored.assessment) {
       if (["assessmentResult", "assessmentCompleted", "payment", "questions", "report"].includes(route)) navigate("/assessment/start", { replace: true });
       return;

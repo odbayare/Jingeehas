@@ -1,4 +1,5 @@
 "use strict";
+process.env.JINGEEHAS_DATABASE_API_KEY = "synthetic-local-only-gift-note-existing-credential-".repeat(2);
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { pathToFileURL } = require("node:url");
@@ -43,6 +44,14 @@ const { PRODUCT } = require("../product-config.js");
   const key="12345678-1234-1234-1234-123456789012";
   const create=()=>giftAction(database,provider,"buyer",{action:"create",requestKey:key,note:"Өөртөө цаг гаргаарай"});
   const [first,second]=await Promise.all([create(),create()]);assert.equal(first.orderId,second.orderId);assert.equal(creates,1);
+  const {sealNote,openNote}=require('../netlify/functions/_lib/gift-note.js');
+  const storedNote=(await pg.query('select note from jingeehas.gift_orders where id=$1',[first.orderId])).rows[0].note;
+  assert(!storedNote.includes('Өөртөө'));assert.equal(openNote(storedNote),'Өөртөө цаг гаргаарай');
+  assert.equal(openNote(sealNote('💛'.repeat(140))),'💛'.repeat(140));
+  assert.equal(openNote(storedNote.slice(0,-3)+'xxx'),'');
+  const existingKey=process.env.JINGEEHAS_DATABASE_API_KEY;process.env.JINGEEHAS_DATABASE_API_KEY='different-existing-key'.repeat(4);
+  assert.equal(openNote(storedNote),'');process.env.JINGEEHAS_DATABASE_API_KEY=existingKey;
+
   const id=first.orderId;
   await assert.rejects(giftAction(database,provider,"other",{action:"status",orderId:id}),{code:"gift_unavailable"});
   await assert.rejects(giftAction(database,provider,"buyer",{action:"link",orderId:id}),{code:"gift_unavailable"});
