@@ -20,7 +20,7 @@ Netlify published function metadata includes netlify-observability-extension ver
 
 ## Smallest remaining release scope
 
-1. Approve CUSTOMER_TERMS_PENDING.md and owner support procedure, naming response times, existing operator, purchaser verification criteria and refund mechanism. Drafts remain outside shipped assets.
+1. Approve CUSTOMER_TERMS_PENDING.md and owner support procedure, naming response times, existing operator, purchaser verification criteria and duplicate/erroneous-charge or mandatory-remedy mechanism (no discretionary refunds, including before claim). Drafts remain outside shipped assets.
 2. Confirm request/response body and authorization/cookie/capability capture/redaction/retention across Netlify observability, Supabase edge/API/proxy and any APM; inspect configuration read-only, no raw customer payloads. If unsafe settings are found, obtain explicit approval for only those changes.
 3. Generate the formal migration with a compatible already-available CLI/environment. The tested 180-line SQL proposal exists; installing/replacing this Mac's incompatible CLI is not authorized. Validate exact candidate on PostgreSQL 17 in separately authorized disposable/preview infrastructure, using mocks and no live email/payment.
 4. Only after those results: separately approve applying the Jingeehas-only migration, deploying the one existing gateway update plus static/Netlify candidate and enabling gifting. Reuse existing credentials. No ordinary schema/business-flow rewrite or new role/grant is needed for buyer/owner identity. Gift service-RPC/table permissions are limited to the proposal's existing service-role boundary.
