@@ -19,9 +19,11 @@
     "verify:staging-package": "node tools/verify-staging-package.mjs",
     "verify:production-package": "node tools/verify-production-package.mjs",
     "meta:draft:plan": "node tools/meta-jingeehas-draft.mjs --plan",
-    "meta:draft:preflight": "node tools/meta-jingeehas-draft.mjs --preflight"
+    "meta:draft:preflight": "node tools/meta-jingeehas-draft.mjs --preflight",
+    "test:gifting": "node tests/gifting.test.js"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "0.4.6",
     "@playwright/test": "1.61.1"
   }
 }

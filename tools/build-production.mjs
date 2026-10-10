@@ -24,7 +24,7 @@ reapplyDisplayOnlyLabels(generatedRoot);
 
 fs.rmSync(output, { recursive: true, force: true });
 fs.mkdirSync(output, { recursive: true });
-for (const file of ["index.html", "product-config.js", "meta-pixel.js", "styles.css", "_headers", "_redirects"]) {
+for (const file of ["index.html", "product-config.js", "meta-pixel.js", "styles.css", "gift.html", "gift.js", "_headers", "_redirects"]) {
   fs.copyFileSync(path.join(root, file), path.join(output, file));
 }
 for (const file of ["app.js", "questions.js"]) {

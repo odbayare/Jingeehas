@@ -1,0 +1,18 @@
+
+> weight-loss-deep-pattern-prototype@0.1.0 build:staging
+> node tools/build-staging.mjs
+
+Mongolian copy transformations applied; rendered-output verification follows.
+Deployed production manifest generated
+Production static package, patched Netlify functions, and deployed-byte manifest created.
+Staging package created (96 files, 43 functions); no deployment performed
+
+> weight-loss-deep-pattern-prototype@0.1.0 verify:staging-package
+> node tools/verify-staging-package.mjs
+
+Mongolian copy transformations applied; rendered-output verification follows.
+Deployed production manifest generated
+Production static package, patched Netlify functions, and deployed-byte manifest created.
+Staging package created (96 files, 43 functions); no deployment performed
+Deleted-product repository guard passed
+STAGING_PACKAGE_STATUS=PASS (96 files, 43 functions, 18 required endpoints, no deployment)

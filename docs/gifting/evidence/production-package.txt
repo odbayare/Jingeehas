@@ -1,0 +1,10 @@
+
+> weight-loss-deep-pattern-prototype@0.1.0 verify:production-package
+> node tools/verify-production-package.mjs
+
+Mongolian copy transformations applied; rendered-output verification follows.
+Deployed production manifest generated
+Production static package, patched Netlify functions, and deployed-byte manifest created.
+Deleted-product repository guard passed
+Deployed production manifest verified
+Production package verified (15 static files, 78 function files, 18 required endpoints)

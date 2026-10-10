@@ -1,0 +1,11 @@
+
+> weight-loss-deep-pattern-prototype@0.1.0 test:contracts
+> node tests/contracts/run.js
+
+advisor and admin authentication contract tests passed
+assessment API contract tests passed
+free assessment and sealed-paywall funnel contract tests passed
+owner preview access contract tests passed
+QPay API contract tests passed
+public free flow starts without payment or interactive pre-payment safety gate
+recovery API contract tests passed

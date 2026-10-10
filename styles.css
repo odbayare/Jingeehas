@@ -313,3 +313,7 @@ code { overflow-wrap: anywhere; }
   *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
   .spinner { animation: none; }
 }
+
+.gift-page #gift { display: grid; gap: 0.75rem; overflow-wrap: anywhere; }
+.gift-page #gift p { margin: 0.25rem 0; }
+.gift-page #gift img { max-width: 100%; justify-self: center; }

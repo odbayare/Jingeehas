@@ -100,6 +100,12 @@ exports.handler = async event => {
   if (!senderInvoiceNo) return providerCallbackResponse(200, "SUCCESS");
 
   const database = getDatabase();
+  if (senderInvoiceNo.startsWith("jg_")) {
+    try {
+      const result = await require("./_lib/gifting.js").confirmGift(database, getQPayProvider(), senderInvoiceNo);
+      return providerCallbackResponse(result.state === "retry" ? 503 : 200, result.state === "retry" ? "RETRY" : "SUCCESS");
+    } catch { return providerCallbackResponse(503, "RETRY"); }
+  }
   const result = await confirmCallbackPayment(database, getQPayProvider(), senderInvoiceNo);
   if (result.state === "ignored") return providerCallbackResponse(200, "SUCCESS");
   if (result.state !== "paid") return providerCallbackResponse(503, "RETRY");

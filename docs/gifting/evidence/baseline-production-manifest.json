@@ -1,0 +1,412 @@
+{
+  "schemaVersion": 2,
+  "product": {
+    "code": "WEIGHT_TEST_ONE_TIME",
+    "amount": 19900,
+    "displayPrice": "19,900₮",
+    "priceVersion": "p19900_v1",
+    "comingSoon": false
+  },
+  "packageRoot": "dist",
+  "functionsRoot": ".generated-copy-hotfix/netlify/functions",
+  "staticFiles": [
+    {
+      "file": "_headers",
+      "sha256": "eed5798fc9e65ecdeef0521e25c065ab534908edc01cc09188695482737373f8"
+    },
+    {
+      "file": "_redirects",
+      "sha256": "6036983e5fc00f0169c9e939b1816ed771eee00e27f2fcc517b819041460b9ef"
+    },
+    {
+      "file": "app.js",
+      "sha256": "b3e143af135e5eae12aa0347902c9d75d9f26a8dfd2eaa0438f5764ec0c5a737"
+    },
+    {
+      "file": "assets/favicon.svg",
+      "sha256": "95bea179e8bb51b4acc6374a1c43f284039dd60e4f3fbada62caf2be3b39e5dc"
+    },
+    {
+      "file": "assets/hero-woman-stretch.png",
+      "sha256": "e64a1c311c97f3d154359cf5caffc4d9ab45f7f22fc72ca506e6ac0668c43b16"
+    },
+    {
+      "file": "assets/hero.svg",
+      "sha256": "c8feb02e4b698f6979eed05d1623b0f77e081e834fdf54160a39b945bf528e84"
+    },
+    {
+      "file": "assets/social-preview.png",
+      "sha256": "a5a78006bb6f0577a295c180a03779d1277c59b91529c2499ab01be6a7709694"
+    },
+    {
+      "file": "index.html",
+      "sha256": "551252222784e1c15837dfdf02b4f3495f471c8e4688a762ff37d33aa7e3bcc1"
+    },
+    {
+      "file": "meta-pixel.js",
+      "sha256": "76afe061eb6038ece603e2f1fa96b883c17e31808e398de9792ca3490e0bd6ed"
+    },
+    {
+      "file": "product-config.js",
+      "sha256": "703f5d0f2a59ab9bedf179f861529b63d08e86e27c77b67da16cfb4169efb447"
+    },
+    {
+      "file": "questions.js",
+      "sha256": "25b535223016307ee40665ae09f0c80beb634107da6159d0104580b516552463"
+    },
+    {
+      "file": "styles.css",
+      "sha256": "1a39c3e995bafb4466886a91ab289f2e8233765ef4c958d81835d4d712d9f435"
+    }
+  ],
+  "serverFunctions": [
+    "admin-advisor-create",
+    "admin-advisor-update",
+    "admin-analytics-daily",
+    "admin-login",
+    "admin-logout",
+    "admin-preview-revoke",
+    "admin-preview-start",
+    "admin-preview-status",
+    "admin-question-progress",
+    "admin-regenerate-report-version",
+    "admin-report-preview",
+    "admin-report-regeneration-candidates",
+    "admin-session-state",
+    "advisor-client-invite",
+    "advisor-consent",
+    "advisor-dashboard",
+    "advisor-invite-resolve",
+    "advisor-login",
+    "advisor-logout",
+    "advisor-password-change",
+    "advisor-report",
+    "analytics-collect",
+    "meta-browser-config",
+    "qpay-check-payment",
+    "qpay-create-invoice",
+    "qpay-payment-callback",
+    "weight-assessment-complete",
+    "weight-assessment-create",
+    "weight-assessment-initial-result",
+    "weight-assessment-questions",
+    "weight-assessment-report",
+    "weight-assessment-save",
+    "weight-data-deletion-request",
+    "weight-entitlements",
+    "weight-question-progress",
+    "weight-recovery-confirm",
+    "weight-recovery-contact-save",
+    "weight-recovery-request",
+    "weight-result-email-save",
+    "weight-safety-gate",
+    "weight-session-start",
+    "weight-session-state"
+  ],
+  "functionFiles": [
+    {
+      "file": "_lib/admin.js",
+      "sha256": "cbcacd80c912d107d41ee0204c116c2f8d2b97916dcbd2d60d554a5387453012"
+    },
+    {
+      "file": "_lib/advisor.js",
+      "sha256": "e5a5966c58f37d1a5ba6938aabcdbd460e1b9bf91b09b06ba834a5b8a189796c"
+    },
+    {
+      "file": "_lib/analytics.js",
+      "sha256": "63c52f6e5dfc2294386b4ac13d4c4e5973982866bdab477e3f9f9662ee683afa"
+    },
+    {
+      "file": "_lib/answer-rules.js",
+      "sha256": "9ef83c812a2048b35ba7e592384a1ab5fadfa8dd77d8dbc926e9068b64599f27"
+    },
+    {
+      "file": "_lib/assessment.js",
+      "sha256": "bd6d170bf186b31bb1c9120e1d683080295b54522aac39c784e051a383772a3f"
+    },
+    {
+      "file": "_lib/auth.js",
+      "sha256": "101e00fcbe5c5f473775af2adfb27c49b1ee40064ad57aab53c3debdf581ff1a"
+    },
+    {
+      "file": "_lib/body-context.js",
+      "sha256": "f57e990ad1bd35efceb5363d637ec0f10aee43aca6b2538abe7dcd1721f70e4c"
+    },
+    {
+      "file": "_lib/commercial-flow.js",
+      "sha256": "7dcc6185cb02d94b3628c911a4ce5809cc679ad20e99e1e17e76be64081a315c"
+    },
+    {
+      "file": "_lib/config.js",
+      "sha256": "a0059d7bc6256e1edcfe34c0908514dd38d635da2feeb82401afcdcb8b6c1c00"
+    },
+    {
+      "file": "_lib/control-analytics.js",
+      "sha256": "7493a3bf4f3e1b3b4b02a0ae3ca736ade1b65819cfdedd231c6b9c407f99d5e2"
+    },
+    {
+      "file": "_lib/crypto.js",
+      "sha256": "ad4251b8575b9da7ce807df0c3cef22853a80b314e6b883cb09b945053a1bd6b"
+    },
+    {
+      "file": "_lib/household-context.js",
+      "sha256": "ce8098b8108b0cc73b565c6e7e383491588f49bd66ca059b69b897486ded7487"
+    },
+    {
+      "file": "_lib/http.js",
+      "sha256": "20c436a98d1f82ea3d01aab919360b67ca0b59e5c78ce1f8b9b2653aa7e5a9d0"
+    },
+    {
+      "file": "_lib/initial-result.js",
+      "sha256": "40ddfc40aa73436854175a7b5cafd30532443556efbd2ceceea40eb0c0b69d1c"
+    },
+    {
+      "file": "_lib/meta-capi.js",
+      "sha256": "93737d374cf471ef3450f5663a6fa58b6ac20794d7a96dbace123c197f716ecf"
+    },
+    {
+      "file": "_lib/payment-context.js",
+      "sha256": "a0c544f6f31eb7867b8d46eb22e2d006b50dd278a16a05adc0e0ed2ba275d6b9"
+    },
+    {
+      "file": "_lib/payment.js",
+      "sha256": "f531e88671e2d75064f55071f80db87c503acaba83ee64da1319ce05c9cd4846"
+    },
+    {
+      "file": "_lib/preview.js",
+      "sha256": "8f64434b11f3c95aedcc0b11798852d32846862df9c660942fa8d9163d4e93f8"
+    },
+    {
+      "file": "_lib/qpay.js",
+      "sha256": "cc0bab8b6cbff74549cb40d1ebd37aa910d36daa8ac82d6e4c7c1e732744944d"
+    },
+    {
+      "file": "_lib/question-analytics.js",
+      "sha256": "716b98fc169759e753e047409a29c60c57f55932a88c033ef068c249f8b6e3d3"
+    },
+    {
+      "file": "_lib/question-progress.js",
+      "sha256": "626f9ee6718aafeff04a8c519707ff33b25815325ecedb830014193bfc9d8684"
+    },
+    {
+      "file": "_lib/recovery.js",
+      "sha256": "0015740f9b5d01bcef7a8e93597a2f538f7be1dce6280db2a19f177498584d44"
+    },
+    {
+      "file": "_lib/report-copy.js",
+      "sha256": "076dfad963828487d1de0c95f182629831389b5ef225c921da5a726a1e303e0a"
+    },
+    {
+      "file": "_lib/report-patterns.js",
+      "sha256": "4774577d8e0f6867cf776342c58724875c4f969639ae27f7a968ea4b23802f52"
+    },
+    {
+      "file": "_lib/report-regeneration-candidates.js",
+      "sha256": "63d10b9a4f1813337c620b5cf1e2f30746ec21bda09ba0ffb7e45187c14ed217"
+    },
+    {
+      "file": "_lib/report-regeneration.js",
+      "sha256": "a38c9cb370f9224eae731cf3fbaa374b99f4de71270a50c41849deae4ea2aaab"
+    },
+    {
+      "file": "_lib/report-signals.js",
+      "sha256": "8b01958d28603714f7354f08c558eef71cb1461c1436ae30052f3f41fd1a62a0"
+    },
+    {
+      "file": "_lib/report-snapshots.js",
+      "sha256": "9090fea58b12c9e963447b7938414f3b74ef67ebb1457c6b3ffbf4257236e1ee"
+    },
+    {
+      "file": "_lib/report-validation.js",
+      "sha256": "7317de736e27ca7e28c907c1a4ae56265f836b125353fe149df3f2660937ac08"
+    },
+    {
+      "file": "_lib/report.js",
+      "sha256": "c475d2f2c1adefd08b68186e289c94a5e0953775023ef3d925ee635d7a4b97d0"
+    },
+    {
+      "file": "_lib/safety.js",
+      "sha256": "043ade20bb2de8d04ec0a0e837b1b6a65507304610560426a4f43cfa62c196d6"
+    },
+    {
+      "file": "_lib/session.js",
+      "sha256": "41ac015e397bb36e5eb920c025bf6582d730f3a105aa75f1087f3ca092d6fa21"
+    },
+    {
+      "file": "_lib/store.js",
+      "sha256": "324b1758da9edaa711d44eeb9717aaaa7b1a258fc0d8277095aeb4897418f90a"
+    },
+    {
+      "file": "_lib/v5-context.js",
+      "sha256": "8634797e2cbbc7b9c9b62d6cbba8e8630045b7ff3bf567e76ee3723d4afd30dc"
+    },
+    {
+      "file": "admin-advisor-create.js",
+      "sha256": "52503f94c741c8cd411a5af3e23e756811ebd12119bb5f887adfd600c007db1b"
+    },
+    {
+      "file": "admin-advisor-update.js",
+      "sha256": "b25bd99f79e4a5a04ae91b76c1cf1296456566ea0b6cebac7345d6c677581e9b"
+    },
+    {
+      "file": "admin-analytics-daily.js",
+      "sha256": "48d57e41f3771b1bdca583c9f3eadace04306f2d9f7b20532b259e9e3e34febe"
+    },
+    {
+      "file": "admin-login.js",
+      "sha256": "532744219dfe5aaa7a4e86a05eaa110b2151ac1903af603920baf93f67380a94"
+    },
+    {
+      "file": "admin-logout.js",
+      "sha256": "ead63705d1a48c57a0e90c9d26184fb609c982e0083ee1d13cba138f9bebc07b"
+    },
+    {
+      "file": "admin-preview-revoke.js",
+      "sha256": "ef42580ef1f13313f85fb9932238c5f2f1fe250b5a52a8dee205e4acefd743e7"
+    },
+    {
+      "file": "admin-preview-start.js",
+      "sha256": "32d6629877c29c652d52e5eb5d75556807963f253c2a98f392a38408f78f5c79"
+    },
+    {
+      "file": "admin-preview-status.js",
+      "sha256": "e022a77ef13e570cbaa803ca6cc650b974ec12f7bd0c6cc064313be1e56ae62e"
+    },
+    {
+      "file": "admin-question-progress.js",
+      "sha256": "341aefd943a20db17ec48637345849543dd84dd87fe3f12e4c2368d57f0a8688"
+    },
+    {
+      "file": "admin-regenerate-report-version.js",
+      "sha256": "5c3837e26125cd0bfec7294487d7826a2eb336770da4d6ef7dc467f58e6a1d4d"
+    },
+    {
+      "file": "admin-report-preview.js",
+      "sha256": "1a6e382e678313ddb59526d53a49896cd55259f12d3bfa8cda9235048237dd9d"
+    },
+    {
+      "file": "admin-report-regeneration-candidates.js",
+      "sha256": "f393b0b9e3e87c7215a49c9d659a907b77859d87e03112a22aa872648eb11bb7"
+    },
+    {
+      "file": "admin-session-state.js",
+      "sha256": "400d130c37cedcece31437040c7c548d5182a97f443d9ab1a680f5051b92f2bf"
+    },
+    {
+      "file": "advisor-client-invite.js",
+      "sha256": "6a244ea3c6b1a3c9e2d428baa4437e910152c1ea05f5c8b5941788ed1c4e3b09"
+    },
+    {
+      "file": "advisor-consent.js",
+      "sha256": "5da360ae63852c86c682499027cc9985c036c3eb0ceaa12d15a5b731e9c42a68"
+    },
+    {
+      "file": "advisor-dashboard.js",
+      "sha256": "b69c03c86ed79cd1d221f8dec7bfd0bedd590bb54c66c3ba1cc8125491a7f775"
+    },
+    {
+      "file": "advisor-invite-resolve.js",
+      "sha256": "9247b13d961385debe92562521e3f71d63c93ddf2261cc9029d750778687806e"
+    },
+    {
+      "file": "advisor-login.js",
+      "sha256": "fdd3f7e5b85ae269db191da414e93c77e0aa412063af20570cbb9b71af1fd486"
+    },
+    {
+      "file": "advisor-logout.js",
+      "sha256": "c3c81a82b1485edfe8a40179631e64b9f893623dde576e3dcc9fae8b3b015a2b"
+    },
+    {
+      "file": "advisor-password-change.js",
+      "sha256": "c06c1ac0c89304a82b42c88baf7ae0a33d8111e1f01911443416a5b14da12084"
+    },
+    {
+      "file": "advisor-report.js",
+      "sha256": "9e4b595f7bde4ddb28e94c66e16138a26e1b57aa3a11075c6c8eb79f8fc8657c"
+    },
+    {
+      "file": "analytics-collect.js",
+      "sha256": "d2b087b682e9721ec8894c0b7b42439869d3d99a0ccca43d00aba90f4be28650"
+    },
+    {
+      "file": "meta-browser-config.js",
+      "sha256": "705660b5e884c7a9df688a23775bee94dde289ee80ebe58b40dd4b6933eab66a"
+    },
+    {
+      "file": "qpay-check-payment.js",
+      "sha256": "c8e28db7d9de3d04252421fc7809286534954ba8e8554b3c0bab4c37e3315885"
+    },
+    {
+      "file": "qpay-create-invoice.js",
+      "sha256": "83a691dcd520e818a9a879f90882e66dc5b3aa84b2f2c36b00a0da8a0c45cd8f"
+    },
+    {
+      "file": "qpay-payment-callback.js",
+      "sha256": "d3e27f60dd9abac2f2b73d02751c0d64b7b6bba1775bd5090114e0e228429eb7"
+    },
+    {
+      "file": "weight-assessment-complete.js",
+      "sha256": "bcba5998aa660033518ff084404d5f5d9fcbcbc0ba672abba27ad104068395db"
+    },
+    {
+      "file": "weight-assessment-create.js",
+      "sha256": "6594148db6c0f8033fd78b7eb1526b4b6986d1b81bc3fc5815d97bffce0d4d30"
+    },
+    {
+      "file": "weight-assessment-initial-result.js",
+      "sha256": "b4aebfdb23334d1dfe46948db0dca5281edb4e329fd0ec1fe6f5ec0daf047955"
+    },
+    {
+      "file": "weight-assessment-questions.js",
+      "sha256": "b73f74d55248b930522be8cafa9de14e1a718322ff8b60366c3f0abeb0d69921"
+    },
+    {
+      "file": "weight-assessment-report.js",
+      "sha256": "63c3e458b5c9b3f679ede5556eef0ed3ec5e1ee2fc5f04a1e8bbecab5bd1f5be"
+    },
+    {
+      "file": "weight-assessment-save.js",
+      "sha256": "811d67f7855d268e0e1fd94d03568a31b958b5112a2598cb59ee56c724f0c540"
+    },
+    {
+      "file": "weight-data-deletion-request.js",
+      "sha256": "6dfd990f7a4eb40911b0328c0fc7f4f0e02196da807f685a7f0b56c3fc37128d"
+    },
+    {
+      "file": "weight-entitlements.js",
+      "sha256": "6a3e36faf672587cd1a76cf3b0cd4193359eb5252ce07cf3b6c86a2a6bebf9a0"
+    },
+    {
+      "file": "weight-question-progress.js",
+      "sha256": "6fc90a0c717c5c061db3dd7655a04fef0bce214a56b49cbc36217f6b82299a18"
+    },
+    {
+      "file": "weight-recovery-confirm.js",
+      "sha256": "dbc17e1f1302a2069be7299649957bbd330069cc4b3d5e09d6b9b5f9f1d2a1b1"
+    },
+    {
+      "file": "weight-recovery-contact-save.js",
+      "sha256": "1ffcccd28368eb0f87a5f431bb77939e04c8878b3bfcb1f8d06b0110176e5597"
+    },
+    {
+      "file": "weight-recovery-request.js",
+      "sha256": "315cb0925bf2c554044c78eaa1df69c9c54c53971792447f01659611831aadbe"
+    },
+    {
+      "file": "weight-result-email-save.js",
+      "sha256": "448e4b48a8929f7f7d46c356aed17af044000ac529da34579c9652c3ea10c480"
+    },
+    {
+      "file": "weight-safety-gate.js",
+      "sha256": "c797cbe12485160c53e2af01e4c223d7f222a537752804e55e23009031836f51"
+    },
+    {
+      "file": "weight-session-start.js",
+      "sha256": "75f7170fdc74080bf88e041b6e48cb2a2aea29450a3e94e85ce3f787327d7595"
+    },
+    {
+      "file": "weight-session-state.js",
+      "sha256": "010c939d3cce829dc476f540ac4ad2c655fb0590ab4c91c977ca9a637aa90acf"
+    }
+  ]
+}

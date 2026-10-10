@@ -160,6 +160,7 @@ function renderLanding() {
     <p class="hero-paragraph">Жин хасахад саад болж буй сэтгэлзүйн хэв маягууд, тэдгээрийн харилцан нөлөө болон хэрхэн удирдаж, нөлөөг нь багасгах аргуудаа мэдэхийн тулд тестээ бөглөөрэй. Энэ мэдээлэл таны бүрэн тайланд нээгдэнэ.</p>
     <div class="hero-actions"><a class="button" href="/assessment/start" data-route>ТЕСТЭЭ ЭХЛҮҮЛЭХ</a>
       <p class="hero-note">Тест үнэгүй · Хувийн тайлан ${PRODUCT.displayPrice}</p>
+      <a class="button secondary" href="/gift.html">Бэлэглэх</a>
     </div>
     </div><div class="hero-visual" aria-hidden="true"></div></section>
     <section class="hero-explainer" aria-label="Энэхүү тестийн олж харах зүйлс">
