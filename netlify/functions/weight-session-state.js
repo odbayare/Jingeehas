@@ -2,7 +2,7 @@
 const { getDatabase } = require("./_lib/store.js");
 const { handler, response } = require("./_lib/http.js");
 const { authenticateSession } = require("./_lib/session.js");
-const { reportForSession } = require("./_lib/assessment.js");
+const { reportForSession, ownedAssessment } = require("./_lib/assessment.js");
 const { paymentForCurrentOffer } = require("./_lib/payment.js");
 const { authenticateOwnerPreview } = require("./_lib/preview.js");
 const { hasPaidAccess, nextRoute } = require("./_lib/commercial-flow.js");
@@ -12,7 +12,9 @@ exports.handler = handler("GET", async event => {
   const direct = await database.find("assessments", { sessionId: session.id });
   const recovered = await database.find("assessment_sessions", { sessionId: session.id });
   for (const access of recovered) { const assessment = await database.get("assessments", access.assessmentId); if (assessment) direct.push(assessment); }
-  const assessment = [...new Map(direct.map(row => [row.id, row])).values()].sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0] || null;
+  const selected = event.headers?.["x-jingeehas-assessment-id"] || event.headers?.["X-Jingeehas-Assessment-Id"];
+  const assessment = selected ? await ownedAssessment(database, session.id, selected)
+    : [...new Map(direct.map(row => [row.id, row])).values()].sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0] || null;
   if (!assessment) return response(200, { assessment: null, payment: null, answers: {}, report: null });
   const payments = await database.find("payments", { assessmentId: assessment.id });
   const payment = payments.sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)))[0] || null;

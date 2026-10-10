@@ -1,0 +1,71 @@
+
+> weight-loss-deep-pattern-prototype@0.1.0 test
+> node tools/verify-mongolian-copy-hotfix.mjs && node tests/run-all.js
+
+Mongolian copy transformations applied; rendered-output verification follows.
+Deployed production manifest generated
+Production static package, patched Netlify functions, and deployed-byte manifest created.
+Mongolian copy and V8 editorial verification PASS
+PASS gifting: mocked provider + real disposable SQL; issuance, isolation, rollback, racing claims, replay, expiry/rotation, self-gift, ambiguous create, CSRF, disabled gate and SQL permissions
+PASS independent gifting safety fixture: entitled recipient gets safety guidance/null commercial report; invoice request blocked; buyer denied; zero payment rows
+PASS gift assessment selection: recipient resumes exact claimed assessment despite newer own activity; buyer denied; ordinary default unchanged
+removed product guard test passed
+safety gate tests passed
+safety provenance and branching tests passed
+direct assessment start regression tests passed
+paid-first assessment flow tests passed
+QPay deeplink UI tests passed
+QPay mobile handoff and provider callback tests passed
+QPay handoff analytics authorization, privacy, pairing, dedupe, and migration contract tests passed
+Payment polling stale-request cleanup, ownership, report retry, and navigation runtime tests passed
+non-blocking answer-save runtime regression passed
+non-blocking answer-save active-input and stale-worker guards passed
+sealed post-assessment paywall and stale-session isolation tests passed
+count-only paywall teaser and optimized QPay runtime contract passed
+deterministic multi-factor report tests passed
+versioned report snapshot and regeneration tests passed
+V2 report attribution, guidance, and first-experiment tests passed
+V2.1 factuality gates and report-level contradictions passed
+V2.2 copy-exactness rendering tests passed
+V2.2 P2 neutral repetition and mobile-length closeout passed
+full-report core customer value and actionable-management tests passed
+semantic report-builder V8 regression tests passed
+historical V6 report snapshot compatibility tests passed
+V7 Codex review regression tests passed
+V8 report editorial, overview, projection, and reading-load tests passed
+Top paid-report repeated long sentences: [{"sentence":"Хэзээ мэргэжлийн хүнтэй зөвлөлдөх вэ?","occurrences":42,"classification":"canonical structural label"},{"sentence":"Тухайн үед юу хийж болох вэ?","occurrences":34,"classification":"canonical structural label"},{"sentence":"Юуг хэт хатуу шаардахгүй байх вэ?","occurrences":34,"classification":"canonical structural label"},{"sentence":"Ямар нөхцөл давтагдаж байна вэ?","occurrences":34,"classification":"canonical structural label"},{"sentence":"Хоёр хэв маягийг зэрэг удирдахад ямар арга тохирох вэ?","occurrences":20,"classification":"canonical structural label"},{"sentence":"Эхэлж аль хэв маягийн нөлөөг багасгах вэ?","occurrences":20,"classification":"canonical structural label"},{"sentence":"Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг","occurrences":16,"classification":"factual/evidence-driven"},{"sentence":"Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг","occurrences":14,"classification":"factual/evidence-driven"},{"sentence":"Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг","occurrences":12,"classification":"factual/evidence-driven"},{"sentence":"Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл","occurrences":12,"classification":"factual/evidence-driven"},{"sentence":"Төлөвлөгөө алдагдсан үед хэрхэн үргэлжлүүлэх вэ?","occurrences":12,"classification":"canonical structural label"},{"sentence":"Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл","occurrences":10,"classification":"factual/evidence-driven"},{"sentence":"Биеийн суурь хэмжилтийн мэдээлэл","occurrences":9,"classification":"factual/evidence-driven"},{"sentence":"Нэг орчны нөлөөг өөрчлөөд үр дүнг нь тусад нь ажиглаж болох тул үүнээс эхэлнэ.","occurrences":9,"classification":"factual/evidence-driven"},{"sentence":"Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг: Идэх хүсэл төрүүлдэг нэг орчны нөлөөг сонгож ажиглаарай.","occurrences":9,"classification":"factual/evidence-driven"},{"sentence":"Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг: Дараагийн алхамд хоолны дунд цадалтын мэдрэмжээ шалгах нэг сануулга бэлдээрэй.","occurrences":9,"classification":"factual/evidence-driven"},{"sentence":"Доорх зөвлөмжийг дээр тайлбарласан нөхцөлтэйгээ уялдуулан хэрэглээрэй.","occurrences":8,"classification":"canonical structural label"},{"sentence":"Жин хасах төлөвлөгөөг өдөр бүр яг ижил хэрэгжүүлэх шаардлагагүй.","occurrences":8,"classification":"required disclaimer"},{"sentence":"Нөлөө нь хүчтэй болдог нөхцөл","occurrences":8,"classification":"canonical structural label"},{"sentence":"Нэг өдөр төлөвлөснөөсөө өөр хооллосон нь бүх оролдлого бүтэлгүйтсэн гэсэн үг биш.","occurrences":8,"classification":"required disclaimer"}]
+{"commercialReports":12,"safetyReports":3,"allCapsSectionHeadings":0,"groupNumberScaffolding":0,"answerLinkScaffolding":0,"explanationScaffolding":0,"modalCounts":{"baijBolno":21,"boljBolno":5},"modalSentenceCounts":{"Энэ байдал өдөр бүр ижил илрэхгүй байж болно.":7,"Ийм үед идэх хэмжээгээ тайван тохируулахад хүндрэлтэй байж болно.":7,"Хоолны зай уртсахад өлсөлт хүчтэй болж, цадсанаа анзаарах эсвэл хэмжээгээ тохируулахад илүү хэцүү байж болно.":6,"Ядарсан үед хоол бэлтгэх, урьдчилан сонгоход хэцүү байж болох бөгөөд энэ нь төлөвлөгөөгөө тогтвортой үргэлжлүүлэхэд саад болж болно.":5,"Нойр дутуу өдөр ядаргаа нэмэгдэж, өдөр тутмын төлөвлөгөөний хамгийн бага бэлтгэл шаардсан хувилбарыг ч хийхэд хүнд байж болно.":1},"reportSelfReference":0,"repetitionFailureThreshold":12,"repeatedLongSentences":186,"repeatedLongSentenceOccurrences":1061}
+V5 natural Mongolian canonicalization corpus tests passed
+V8 low-movement interaction-plan tests passed
+question bank and navigation tests passed
+questionnaire method-link versioning tests passed
+questionnaire V3 safety, routing, and evidence tests passed
+HFE V4 versioning, routing, scoring firewall, context links, feasibility, and stale-answer tests passed
+v5-body-functional-context.test.js PASS
+v5-sequential-hotfix.test.js PASS
+V5_LOGIC_15_RESULTS=[{"id":"U01","route":"commercial_eligible","logicalQuestionCount":28,"supportedPatternIds":[],"interactions":[],"coreTitles":[],"contextualTitles":[]},{"id":"U02","route":"commercial_eligible","logicalQuestionCount":26,"supportedPatternIds":[],"interactions":[],"coreTitles":[],"contextualTitles":[]},{"id":"U03","route":"commercial_eligible","logicalQuestionCount":26,"supportedPatternIds":["irregular_meals_late_hunger"],"interactions":[],"coreTitles":["Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг"],"contextualTitles":[]},{"id":"U04","route":"commercial_eligible","logicalQuestionCount":28,"supportedPatternIds":["sleep_fatigue"],"interactions":[],"coreTitles":[],"contextualTitles":["Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл"]},{"id":"U05","route":"commercial_eligible","logicalQuestionCount":28,"supportedPatternIds":["environmental_cues","low_movement","hunger_satiety"],"interactions":["cue_satiety","cue_movement"],"coreTitles":["Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг","Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг"],"contextualTitles":["Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл","Согтууруулах ундааны дараах хоолны сонголт","Гэрийн хоолны орчин","Гэрийн хоолны орчин"]},{"id":"U06","route":"commercial_eligible","logicalQuestionCount":27,"supportedPatternIds":["environmental_cues","irregular_meals_late_hunger","hunger_satiety","low_movement"],"interactions":["meal_hunger_satiety","cue_meal_rhythm","cue_satiety","cue_movement"],"coreTitles":["Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг","Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг","Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг"],"contextualTitles":["Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл","Согтууруулах ундааны дараах хоолны сонголт"]},{"id":"U07","route":"commercial_eligible","logicalQuestionCount":33,"supportedPatternIds":["restrictive_rebound","irregular_meals_late_hunger","plan_daily_life_mismatch","hunger_satiety","sleep_fatigue"],"interactions":["meal_hunger_satiety","sleep_plan"],"coreTitles":["Хэт хатуу дүрмээс болж төлөвлөгөөг бүхэлд нь орхих хэв маяг","Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг","Төлөвлөгөө өдөр тутмын амьдралтай нийцэхгүй байх саад","Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг"],"contextualTitles":["Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл","Цагийн хуваарьт багтах шаардлага"]},{"id":"U08","route":"commercial_eligible","logicalQuestionCount":33,"supportedPatternIds":["previous_attempt_sustainability","sleep_fatigue","irregular_meals_late_hunger","low_movement","hunger_satiety"],"interactions":["meal_hunger_satiety"],"coreTitles":["Өмнөх аргын үр дүнг хадгалах төлөвлөгөө дутсан нь","Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг","Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг"],"contextualTitles":["Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл","Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл","Согтууруулах ундааны дараах хоолны сонголт","Цагийн хуваарьт багтах шаардлага"]},{"id":"U09","route":"commercial_eligible","logicalQuestionCount":31,"supportedPatternIds":["environmental_cues","irregular_meals_late_hunger","emotional_regulation","hunger_satiety","sleep_fatigue","low_movement"],"interactions":["meal_hunger_satiety","sleep_emotion","cue_meal_rhythm","cue_satiety","cue_movement"],"coreTitles":["Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг","Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг","Сэтгэл хөдлөл ихсэх үед хоол руу татагдах хэв маяг","Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг"],"contextualTitles":["Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл","Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл","Согтууруулах ундааны дараах хоолны сонголт","Цагийн хуваарьт багтах шаардлага"]},{"id":"U10","route":"commercial_eligible","logicalQuestionCount":32,"supportedPatternIds":["environmental_cues","irregular_meals_late_hunger","emotional_regulation","hunger_satiety","sleep_fatigue","low_movement"],"interactions":["meal_hunger_satiety","sleep_emotion","cue_meal_rhythm","cue_satiety","cue_movement"],"coreTitles":["Орчны дохио идэх хүсэлд нөлөөлөх хэв маяг","Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг","Сэтгэл хөдлөл ихсэх үед хоол руу татагдах хэв маяг","Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг"],"contextualTitles":["Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл","Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл","Согтууруулах ундааны дараах хоолны сонголт","Цагийн хуваарьт багтах шаардлага","Гэрийн хоолны орчин","Гэрийн хоолны орчин","Гэрийн хоолны орчин","Гэрийн хоолны орчин"]},{"id":"U11","route":"commercial_eligible","logicalQuestionCount":33,"supportedPatternIds":["sleep_fatigue","irregular_meals_late_hunger","low_movement","hunger_satiety"],"interactions":["meal_hunger_satiety"],"coreTitles":["Хоолны зай уртсаж, өлсөлт оройтож мэдрэгдэх хэв маяг","Өлсөх, цадах мэдрэмжийг цагт нь анзаарахад хүндрэлтэй хэв маяг"],"contextualTitles":["Нойр, ядаргаа өдөр тутмын сонголтыг хүндрүүлэх нөхцөл","Өдрийн хөдөлгөөний суурь түвшин бага байх нөхцөл","Согтууруулах ундааны дараах хоолны сонголт","Цагийн хуваарьт багтах шаардлага"]},{"id":"U12","route":"commercial_eligible","logicalQuestionCount":26,"supportedPatternIds":[],"interactions":[],"coreTitles":[],"contextualTitles":[]},{"id":"U13","route":"eating_behavior_professional","logicalQuestionCount":24,"supportedPatternIds":[],"interactions":[],"coreTitles":[],"contextualTitles":[]},{"id":"U14","route":"urgent_self_harm","logicalQuestionCount":24,"supportedPatternIds":[],"interactions":[],"coreTitles":[],"contextualTitles":[]},{"id":"U15","route":"urgent_medical_symptom","logicalQuestionCount":24,"supportedPatternIds":[],"interactions":[],"coreTitles":[],"contextualTitles":[]}] 
+v5-virtual-user-logic.test.js PASS
+live-verifier-questionnaire-version.test.mjs PASS
+assessment flow regression and 10-profile route audit passed
+accessibility and print tests passed
+security headers, routing, privacy, and metadata tests passed
+methodology trust-content tests passed
+production security tests passed
+certification tooling tests passed
+admin bootstrap tests passed
+admin report candidate performance tests passed
+flow-aware daily funnel analytics tests passed
+campaign attribution analytics tests passed
+clean control analytics tests passed
+question progress analytics tests passed
+question-progress-outcomes-v5.test.js PASS
+Meta CAPI tests passed
+guarded Meta PAUSED draft builder tests passed
+19,900 MNT price authority and expand-only migration tests passed
+landing personal-attribute policy copy tests passed
+owner preview access contract tests passed
+assessment API contract tests passed
+free assessment and sealed-paywall funnel contract tests passed
+QPay API contract tests passed
+recovery API contract tests passed
+advisor and admin authentication contract tests passed

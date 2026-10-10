@@ -1,0 +1,1 @@
+PASS independent gifting safety fixture: entitled recipient gets safety guidance/null commercial report; invoice request blocked; buyer denied; zero payment rows

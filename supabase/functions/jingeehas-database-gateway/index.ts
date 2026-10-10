@@ -125,14 +125,14 @@ Deno.serve(async (request: Request) => {
   if (!supabaseUrl || !serviceRoleKey) return json(503, { error: "gateway_unavailable" });
 
   try {
-    const rpcResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/jingeehas_execute_request`, {
+    const rpcResponse = await fetch(`${supabaseUrl}/rest/v1/rpc/${(operation as Record<string, unknown>).action === "gift_request" ? "jingeehas_gift_request" : "jingeehas_execute_request"}`, {
       method: "POST",
       headers: {
         authorization: `Bearer ${serviceRoleKey}`,
         apikey: serviceRoleKey,
         "content-type": "application/json",
       },
-      body: JSON.stringify({ request: normalizeOperation(operation as Record<string, unknown>) }),
+      body: JSON.stringify({ request: (operation as Record<string, unknown>).action === "gift_request" ? (operation as Record<string, unknown>).input : normalizeOperation(operation as Record<string, unknown>) }),
       signal: AbortSignal.timeout(7000),
     });
     if (!rpcResponse.ok) return json(rpcResponse.status === 409 ? 409 : rpcResponse.status === 404 ? 404 : 503, { error: "database_error" });

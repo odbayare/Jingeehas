@@ -23,6 +23,7 @@ class RestDatabaseAdapter {
     });
     return response.json();
   }
+  giftRequest(input) { return this.request({ action: "gift_request", input }); }
   get(table, id) { return this.request({ action: "get", table, id }); }
   find(table, filters) { return table === "analytics_events" ? this.request({ action: "find_analytics_events", filters }) : this.request({ action: "find", table, filters }); }
   insert(table, row) { return table === "analytics_events" ? this.request({ action: "insert_analytics_event", row }) : this.request({ action: "insert", table, row }); }
@@ -76,4 +77,4 @@ function getDatabase() {
   return new RestDatabaseAdapter();
 }
 
-module.exports = { RestDatabaseAdapter, setDatabaseForTests, getDatabase };
+module.exports = { deepCamelKeys, RestDatabaseAdapter, setDatabaseForTests, getDatabase };
