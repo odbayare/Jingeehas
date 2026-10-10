@@ -1,0 +1,57 @@
+.gift-brand { display: inline-flex; align-items: center; gap: .45rem; text-decoration: none; font-weight: 750; letter-spacing: -.035em; }
+.gift-brand span { color: #8d6b33; font-size: .85rem; }
+.gift-recipient { background: radial-gradient(ellipse at 50% 0, #eceede 0, #f7f3eb 65%); }
+.gift-recipient .page { padding: 0 1rem; }
+.gift-recipient .content-card { width: min(620px, 100%); margin: clamp(1rem, 4vw, 3rem) auto; padding: clamp(1.4rem, 5vw, 3rem); text-align: center; border-color: #e0dfd2; border-radius: 2rem; box-shadow: 0 20px 65px #2031260d; }
+.gift-recipient .gift-brand { margin-bottom: 1.8rem; }
+.gift-recipient #gift-title { margin: 0 0 .85rem; font-size: clamp(1.75rem, 6vw, 2.6rem); line-height: 1.25; letter-spacing: -.045em; text-wrap: balance; }
+.gift-recipient #gift-intro { max-width: 36ch; margin: 0 auto; color: var(--muted); font-size: 1rem; line-height: 1.75; text-wrap: pretty; }
+.gift-surprise { margin: .9rem 0 0; }
+.gift-art { position: relative; width: 210px; height: 195px; margin: 0 auto .5rem; }
+.gift-art::before { content: ""; position: absolute; width: 170px; height: 170px; top: 12px; left: 20px; background: #f3eddc; border: 1px solid #e7dec3; border-radius: 50%; }
+.gift-box { position: absolute; width: 102px; height: 82px; left: 54px; top: 80px; background: linear-gradient(110deg, #38654f, #284e3d); border-radius: 0 0 12px 12px; box-shadow: 0 12px 18px #2031261f; }
+.gift-box::after { content: ""; position: absolute; width: 19px; height: 100%; left: 42px; background: #d7c398; }
+.gift-lid { position: absolute; width: 114px; height: 26px; left: 48px; top: 66px; border-radius: 5px; background: #46765b; box-shadow: 0 5px 0 #173c282e; }
+.gift-lid::after { content: ""; position: absolute; width: 19px; height: 100%; left: 48px; background: #e3d1aa; }
+.gift-bow { position: absolute; width: 19px; height: 16px; left: 96px; top: 50px; background: #d7c398; border-radius: 5px; }
+.gift-bow::before, .gift-bow::after { content: ""; position: absolute; width: 29px; height: 24px; top: -10px; border: 6px solid #d7c398; border-radius: 80% 80% 15% 80%; }
+.gift-bow::before { right: 11px; transform: rotate(8deg); }
+.gift-bow::after { left: 11px; transform: scaleX(-1) rotate(8deg); }
+.gift-spark { position: absolute; z-index: 1; width: 9px; height: 9px; background: #a88c51; transform: rotate(45deg); border-radius: 2px; }
+.gift-spark-one { top: 40px; left: 28px; }
+.gift-spark-two { top: 65px; right: 15px; width: 6px; height: 6px; }
+.gift-spark-three { top: 145px; right: 25px; width: 5px; height: 5px; background: #598368; }
+.gift-open { min-width: 200px; box-shadow: 0 6px 15px #2031260f; }
+.gift-reveal-hint { max-width: 34ch; margin: .85rem auto 0; font-size: .8rem; color: var(--muted); }
+.gift-greeting-panel { padding: 1.4rem 1.2rem; margin: .2rem 0 0; border: 1px solid #e7dec9; border-radius: 1.25rem; background: linear-gradient(140deg, #fcf9ef, #fffdf8); }
+.gift-greeting-panel h2 { margin: 0 0 1rem; color: #59634b; font-size: .85rem; font-weight: 650; letter-spacing: .025em; }
+.gift-greeting { margin: 0; font-size: clamp(1.1rem, 4.5vw, 1.4rem); font-weight: 550; line-height: 1.8; letter-spacing: -.025em; white-space: pre-wrap; overflow-wrap: anywhere; }
+.gift-invitation { margin: 1.5rem 0 1.1rem; padding-top: 1.25rem; border-top: 1px solid #e8e2d3; color: var(--muted); font-size: .88rem; line-height: 1.7; }
+.gift-greeting-panel .button { width: 100%; }
+.gift-later { display: inline-block; margin-top: 1rem; font-size: .85rem; text-underline-offset: 4px; }
+.gift-recipient-privacy { margin: 1.15rem auto 0; max-width: 45ch; font-size: .8rem; line-height: 1.7; color: var(--muted); }
+.gift-recipient #gift-status { margin: 1rem 0; overflow-wrap: anywhere; }
+.gift-recipient #gift-status:empty { display: none; }
+.gift-recipient .content-card > p:not([id]) { margin-top: 1.5rem; color: var(--muted); font-size: .78rem; line-height: 1.7; text-align: left; }
+.gift-recipient details { padding-top: 1rem; border-top: 1px solid #e6e5d9; margin-top: 1rem; text-align: left; font-size: .85rem; color: var(--muted); }
+.gift-recipient summary { cursor: pointer; color: var(--primary-dark); }
+.gift-recipient [hidden] { display: none; }
+.gift-recipient .button:focus-visible, .gift-recipient a:focus-visible, .gift-recipient summary:focus-visible, .gift-greeting-panel h2:focus-visible { outline: 3px solid var(--focus); outline-offset: 5px; }
+@media (prefers-reduced-motion: no-preference) {
+  .gift-lid, .gift-bow { transition: transform .55s cubic-bezier(.22, .61, .36, 1); }
+  .gift-art { transition: height .4s ease; }
+  .is-open .gift-lid, .is-open .gift-bow { transform: translate(-4px, -24px) rotate(-10deg); }
+  .is-open .gift-spark { animation: gift-sparkle .65s ease-out both; }
+  .gift-greeting-panel:not([hidden]) { animation: gift-greeting-in .45s ease-out both; }
+  @keyframes gift-sparkle { 50% { transform: translateY(-12px) rotate(110deg) scale(1.35); } }
+  @keyframes gift-greeting-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  .is-open .gift-lid, .is-open .gift-bow { transform: translateY(-12px); }
+}
+@media (max-width: 400px) {
+  .gift-recipient .page { padding: 0 .65rem; }
+  .gift-recipient .content-card { padding: 1.5rem 1.1rem; border-radius: 1.5rem; }
+  .gift-recipient .gift-brand { margin-bottom: 1.4rem; }
+  .gift-greeting-panel { padding: 1.25rem .9rem; }
+}
