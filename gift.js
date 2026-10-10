@@ -3,6 +3,9 @@
   const root = document.getElementById("gift"), status = document.getElementById("gift-status");
   const claimToken = location.hash.slice(1);
   const recipientEntry = Boolean(claimToken || history.state?.giftRecipient);
+  document.querySelector(".skip-link").addEventListener("click", event => {
+    event.preventDefault(); document.getElementById("gift-main").focus();
+  });
   window.addEventListener("hashchange", () => { if (location.hash) location.reload(); });
   history.replaceState(recipientEntry ? { giftRecipient: true } : null, "", location.pathname); // No capability or greeting in URL, history, or storage.
   if (recipientEntry) {

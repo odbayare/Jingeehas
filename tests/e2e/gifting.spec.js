@@ -162,3 +162,15 @@ test("custom greeting has a polished desktop reveal with motion confined to deco
   await page.screenshot({path:testInfo.outputPath("gift-surprise-open-desktop.png"),fullPage:true,animations:"disabled"});
   expect(calls.map(x=>x.action)).toEqual(["preview"]);await expect(page.locator("audio,video")).toHaveCount(0);
 });
+test("keyboard skip navigation preserves the recipient token closure and revealed greeting",async({page})=>{
+  const calls=[];await setup(page,(route,input)=>{calls.push(input);return route.fulfill({json:{available:true,note:"Танд зориулсан тайван мөч"}});});
+  await page.goto(`/gift.html#${token}`);
+  await page.getByRole("link",{name:"Үндсэн хэсэг рүү очих"}).press("Enter");
+  await expect(page.locator("#gift-main")).toBeFocused();
+  await page.getByRole("button",{name:"Бэлгээ нээх",exact:true}).click();
+  await page.getByRole("link",{name:"Үндсэн хэсэг рүү очих"}).press("Enter");
+  await expect(page.locator("#gift-main")).toBeFocused();
+  await expect(page.getByText("Танд зориулсан тайван мөч",{exact:true})).toBeVisible();
+  await expect(page.getByRole("button",{name:"Бэлгээ хүлээн авах",exact:true})).toBeVisible();
+  expect(await page.evaluate(()=>location.hash)).toBe("");expect(calls.map(x=>x.action)).toEqual(["preview"]);
+});
