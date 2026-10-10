@@ -1,13 +1,7 @@
 
-> weight-loss-deep-pattern-prototype@0.1.0 test:e2e
-> playwright test
-
-
 Running 53 tests using 1 worker
 
 
-(node:63923) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
 
 [1/53] tests/e2e/gifting.spec.js:12:1 › buyer only obtains a share link after provider-confirmed payment; reload resumes
 [2/53] tests/e2e/gifting.spec.js:27:1 › recipient explicitly accepts; fragment and note never enter analytics; note is plain text

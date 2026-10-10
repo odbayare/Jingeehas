@@ -1,6 +1,6 @@
 "use strict";
-const { test,expect }=require("@playwright/test");
 const fs=require("node:fs");
+const { test,expect }=require("@playwright/test");
 const path=require("node:path");
 const token="a".repeat(43);
 async function setup(page,reply){
@@ -46,13 +46,13 @@ test("a saved buyer recovery code resumes the gift in a fresh session without re
   await page.getByRole("button",{name:"Бэлгээ сэргээх код хадгалах"}).click();await expect(page.getByLabel("Бэлэг сэргээх код")).toHaveValue("b".repeat(43));
   expect(calls.map(x=>x.action)).toEqual(["recover","recovery_key"]);
 });
-test("gifting recipient is usable at 375px and unavailable links offer no acceptance",async({page})=>{
+test("gifting recipient is usable at 375px and unavailable links offer no acceptance",async({page},testInfo)=>{
   await page.setViewportSize({width:375,height:812});
   await setup(page,route=>route.fulfill({json:{available:true,note:"Өөртөө цаг гаргаарай"}}));
   await page.goto(`/gift.html#${token}`);
   await expect(page.getByRole("button",{name:"Бэлгээ хүлээн авч, өөрийн үнэлгээг эхлүүлэх"})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
-  fs.mkdirSync("docs/gifting/evidence",{recursive:true});await page.screenshot({path:"docs/gifting/evidence/recipient-375.png",fullPage:true});
+  await page.screenshot({path:testInfo.outputPath("gift-recipient-375.png"),fullPage:true});
   await page.route("**/.netlify/functions/gift",route=>route.fulfill({status:404,json:{error:"gift_unavailable"}}));
   await page.goto(`/gift.html#${"z".repeat(43)}`);await expect(page.getByRole("button",{name:"Бэлгээ хүлээн авч, өөрийн үнэлгээг эхлүүлэх"})).toHaveCount(0);
 });

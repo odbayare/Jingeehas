@@ -11,4 +11,4 @@ Running 8 tests using 1 worker
 [6/8] tests/e2e/gifting.spec.js:59:1 › unknown invoices survive reload without another create and show a support reference
 [7/8] tests/e2e/gifting.spec.js:69:1 › verified payment after cancellation displays recoverable review without a gift link
 [8/8] tests/e2e/gifting.spec.js:82:1 › a lost create response resumes by its stored request key
-  8 passed (2.1s)
+  8 passed (1.9s)
