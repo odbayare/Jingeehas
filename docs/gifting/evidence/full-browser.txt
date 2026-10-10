@@ -3,59 +3,64 @@
 > playwright test
 
 
-Running 48 tests using 1 worker
+Running 53 tests using 1 worker
 
 
-(node:30770) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:63923) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
 
-[1/48] tests/e2e/gifting.spec.js:12:1 › buyer only obtains a share link after provider-confirmed payment; reload resumes
-[2/48] tests/e2e/gifting.spec.js:27:1 › recipient explicitly accepts; fragment and note never enter analytics; note is plain text
-[3/48] tests/e2e/gifting.spec.js:38:1 › disabled gifting cannot initiate a payment
-[4/48] tests/e2e/payment-polling.spec.js:181:3 › production checkout keeps its 17-app chooser and keyboard focus through repeated 4s polls at 375px
-[5/48] tests/e2e/payment-polling.spec.js:181:3 › production checkout keeps its 17-app chooser and keyboard focus through repeated 4s polls at 1440px
-[6/48] tests/e2e/payment-polling.spec.js:202:1 › slow pending, HTTP error, and network error polls preserve the chooser and never overlap
-[7/48] tests/e2e/payment-polling.spec.js:227:1 › manual verification still shows checking, then handles pending and paid navigation
-[8/48] tests/e2e/payment-polling.spec.js:246:1 › automatic payment confirmation opens the report once and stops checkout polling
-[9/48] tests/e2e/payment-polling.spec.js:259:3 › automatic verification retries report loading after paid confirmation and a report 503
-[10/48] tests/e2e/payment-polling.spec.js:259:3 › manual verification retries report loading after paid confirmation and a report 503
-[11/48] tests/e2e/payment-polling.spec.js:288:3 › a late pending poll cannot rerender or navigate after leaving checkout
-[12/48] tests/e2e/payment-polling.spec.js:288:3 › a late paid poll cannot rerender or navigate after leaving checkout
-[13/48] tests/e2e/payment-polling.spec.js:288:3 › a late error poll cannot rerender or navigate after leaving checkout
-[14/48] tests/e2e/payment-polling.spec.js:310:1 › expired invoices do not restart automatic checks on page return, but manual verification is available
-[15/48] tests/e2e/payment-polling.spec.js:326:1 › handoff telemetry records attempts, correlates a single return, and contains no provider details
-[16/48] tests/e2e/payment-polling.spec.js:364:1 › return retries an undelivered handoff with the same event identity before recording its return
-[17/48] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 375px
-[18/48] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 390px
-[19/48] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 430px
-[20/48] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 768px
-[21/48] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 1440px
-[22/48] tests/e2e/product-flow.spec.js:112:1 › landing CTA retains SPA routing and analytics tracking
-[23/48] tests/e2e/product-flow.spec.js:125:1 › natural Mongolian report preview is complete, ordered, and responsive
-[24/48] tests/e2e/product-flow.spec.js:171:1 › landing restores trust content before the retained scientific methodology box
-[25/48] tests/e2e/product-flow.spec.js:190:1 › scientific methodology box is responsive and keyboard accessible
-[26/48] tests/e2e/product-flow.spec.js:229:1 › owner daily funnel and campaign attribution tables are responsive
-[27/48] tests/e2e/product-flow.spec.js:257:1 › question progress card stays compact and expands in two levels
-[28/48] tests/e2e/product-flow.spec.js:281:1 › detailed methodology route returns its conservative evidence disclosure
-[29/48] tests/e2e/product-flow.spec.js:290:1 › coming-soon cannot be bypassed by a public query
-[30/48] tests/e2e/product-flow.spec.js:296:1 › authenticated owner preview starts through the server gate without QPay
-[31/48] tests/e2e/product-flow.spec.js:318:1 › public free flow starts without contact, payment, or pre-payment safety requests
-[32/48] tests/e2e/product-flow.spec.js:336:1 › sealed result route requires an eligible completed assessment
-[33/48] tests/e2e/product-flow.spec.js:342:1 › free completion shows only the sealed paywall before provider-confirmed full report
-[34/48] tests/e2e/product-flow.spec.js:420:1 › neutral completion shows the same sealed paywall
-[35/48] tests/e2e/product-flow.spec.js:432:1 › single-pattern completion also shows the same sealed paywall
-[36/48] tests/e2e/product-flow.spec.js:442:1 › safety completion bypasses ordinary result, paywall, and invoice creation
-[37/48] tests/e2e/product-flow.spec.js:457:1 › question transition gives immediate feedback and ignores duplicate submit
-[38/48] tests/e2e/product-flow.spec.js:472:1 › HFE back navigation prunes household context after changing to lives alone
-[39/48] tests/e2e/product-flow.spec.js:512:1 › recovery succeeds in a new browser context
-[40/48] tests/e2e/product-flow.spec.js:524:1 › invitation token is removed and consent decline is explicit
-[41/48] tests/e2e/product-flow.spec.js:535:1 › free start is responsive with accessible touch targets
-[42/48] tests/e2e/product-flow.spec.js:545:1 › legacy assessment contact URL has no extra step
-[43/48] tests/e2e/product-flow.spec.js:552:1 › advisor dashboard uses Mongolian statuses and accessible table overflow
-[44/48] tests/e2e/product-flow.spec.js:566:1 › print mode hides controls and keeps report
-[45/48] tests/e2e/product-flow.spec.js:575:3 › VU-03 report remains readable at 375px and complete in print
-[46/48] tests/e2e/product-flow.spec.js:575:3 › VU-06 report remains readable at 375px and complete in print
-[47/48] tests/e2e/v5-virtual-users.spec.js:9:1 › V5 exact 15 virtual users complete through real sequential browser UI
+[1/53] tests/e2e/gifting.spec.js:12:1 › buyer only obtains a share link after provider-confirmed payment; reload resumes
+[2/53] tests/e2e/gifting.spec.js:27:1 › recipient explicitly accepts; fragment and note never enter analytics; note is plain text
+[3/53] tests/e2e/gifting.spec.js:38:1 › disabled gifting cannot initiate a payment
+[4/53] tests/e2e/gifting.spec.js:42:1 › a saved buyer recovery code resumes the gift in a fresh session without recipient details
+[5/53] tests/e2e/gifting.spec.js:49:1 › gifting recipient is usable at 375px and unavailable links offer no acceptance
+[6/53] tests/e2e/gifting.spec.js:59:1 › unknown invoices survive reload without another create and show a support reference
+[7/53] tests/e2e/gifting.spec.js:69:1 › verified payment after cancellation displays recoverable review without a gift link
+[8/53] tests/e2e/gifting.spec.js:82:1 › a lost create response resumes by its stored request key
+[9/53] tests/e2e/payment-polling.spec.js:181:3 › production checkout keeps its 17-app chooser and keyboard focus through repeated 4s polls at 375px
+[10/53] tests/e2e/payment-polling.spec.js:181:3 › production checkout keeps its 17-app chooser and keyboard focus through repeated 4s polls at 1440px
+[11/53] tests/e2e/payment-polling.spec.js:202:1 › slow pending, HTTP error, and network error polls preserve the chooser and never overlap
+[12/53] tests/e2e/payment-polling.spec.js:227:1 › manual verification still shows checking, then handles pending and paid navigation
+[13/53] tests/e2e/payment-polling.spec.js:246:1 › automatic payment confirmation opens the report once and stops checkout polling
+[14/53] tests/e2e/payment-polling.spec.js:259:3 › automatic verification retries report loading after paid confirmation and a report 503
+[15/53] tests/e2e/payment-polling.spec.js:259:3 › manual verification retries report loading after paid confirmation and a report 503
+[16/53] tests/e2e/payment-polling.spec.js:288:3 › a late pending poll cannot rerender or navigate after leaving checkout
+[17/53] tests/e2e/payment-polling.spec.js:288:3 › a late paid poll cannot rerender or navigate after leaving checkout
+[18/53] tests/e2e/payment-polling.spec.js:288:3 › a late error poll cannot rerender or navigate after leaving checkout
+[19/53] tests/e2e/payment-polling.spec.js:310:1 › expired invoices do not restart automatic checks on page return, but manual verification is available
+[20/53] tests/e2e/payment-polling.spec.js:326:1 › handoff telemetry records attempts, correlates a single return, and contains no provider details
+[21/53] tests/e2e/payment-polling.spec.js:364:1 › return retries an undelivered handoff with the same event identity before recording its return
+[22/53] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 375px
+[23/53] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 390px
+[24/53] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 430px
+[25/53] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 768px
+[26/53] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 1440px
+[27/53] tests/e2e/product-flow.spec.js:112:1 › landing CTA retains SPA routing and analytics tracking
+[28/53] tests/e2e/product-flow.spec.js:125:1 › natural Mongolian report preview is complete, ordered, and responsive
+[29/53] tests/e2e/product-flow.spec.js:171:1 › landing restores trust content before the retained scientific methodology box
+[30/53] tests/e2e/product-flow.spec.js:190:1 › scientific methodology box is responsive and keyboard accessible
+[31/53] tests/e2e/product-flow.spec.js:229:1 › owner daily funnel and campaign attribution tables are responsive
+[32/53] tests/e2e/product-flow.spec.js:257:1 › question progress card stays compact and expands in two levels
+[33/53] tests/e2e/product-flow.spec.js:281:1 › detailed methodology route returns its conservative evidence disclosure
+[34/53] tests/e2e/product-flow.spec.js:290:1 › coming-soon cannot be bypassed by a public query
+[35/53] tests/e2e/product-flow.spec.js:296:1 › authenticated owner preview starts through the server gate without QPay
+[36/53] tests/e2e/product-flow.spec.js:318:1 › public free flow starts without contact, payment, or pre-payment safety requests
+[37/53] tests/e2e/product-flow.spec.js:336:1 › sealed result route requires an eligible completed assessment
+[38/53] tests/e2e/product-flow.spec.js:342:1 › free completion shows only the sealed paywall before provider-confirmed full report
+[39/53] tests/e2e/product-flow.spec.js:420:1 › neutral completion shows the same sealed paywall
+[40/53] tests/e2e/product-flow.spec.js:432:1 › single-pattern completion also shows the same sealed paywall
+[41/53] tests/e2e/product-flow.spec.js:442:1 › safety completion bypasses ordinary result, paywall, and invoice creation
+[42/53] tests/e2e/product-flow.spec.js:457:1 › question transition gives immediate feedback and ignores duplicate submit
+[43/53] tests/e2e/product-flow.spec.js:472:1 › HFE back navigation prunes household context after changing to lives alone
+[44/53] tests/e2e/product-flow.spec.js:512:1 › recovery succeeds in a new browser context
+[45/53] tests/e2e/product-flow.spec.js:524:1 › invitation token is removed and consent decline is explicit
+[46/53] tests/e2e/product-flow.spec.js:535:1 › free start is responsive with accessible touch targets
+[47/53] tests/e2e/product-flow.spec.js:545:1 › legacy assessment contact URL has no extra step
+[48/53] tests/e2e/product-flow.spec.js:552:1 › advisor dashboard uses Mongolian statuses and accessible table overflow
+[49/53] tests/e2e/product-flow.spec.js:566:1 › print mode hides controls and keeps report
+[50/53] tests/e2e/product-flow.spec.js:575:3 › VU-03 report remains readable at 375px and complete in print
+[51/53] tests/e2e/product-flow.spec.js:575:3 › VU-06 report remains readable at 375px and complete in print
+[52/53] tests/e2e/v5-virtual-users.spec.js:9:1 › V5 exact 15 virtual users complete through real sequential browser UI
 tests/e2e/v5-virtual-users.spec.js:9:1 › V5 exact 15 virtual users complete through real sequential browser UI
 V5_BROWSER_PROFILE=U01
 
@@ -89,5 +94,5 @@ V5_BROWSER_PROFILE=U15
 
 V5_BROWSER_15_RESULTS=[{"id":"U01","visitedCount":28,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U02","visitedCount":26,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U03","visitedCount":26,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U04","visitedCount":28,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U05","visitedCount":28,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U06","visitedCount":27,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U07","visitedCount":33,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U08","visitedCount":33,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U09","visitedCount":31,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U10","visitedCount":32,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U11","visitedCount":33,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U12","visitedCount":26,"safetyRoute":null,"path":"/assessment/result","blankProcessed":true},{"id":"U13","visitedCount":24,"safetyRoute":"eating_behavior_professional","path":"/report","blankProcessed":true},{"id":"U14","visitedCount":24,"safetyRoute":"urgent_self_harm","path":"/report","blankProcessed":true},{"id":"U15","visitedCount":24,"safetyRoute":"urgent_medical_symptom","path":"/report","blankProcessed":true}]
 
-[48/48] tests/e2e/v5-virtual-users.spec.js:71:1 › V5 conditional maintenance answers do not resurrect after Back changes
-  48 passed (5.3m)
+[53/53] tests/e2e/v5-virtual-users.spec.js:71:1 › V5 conditional maintenance answers do not resurrect after Back changes
+  53 passed (5.3m)

@@ -7,6 +7,7 @@ Deployed production manifest generated
 Production static package, patched Netlify functions, and deployed-byte manifest created.
 Mongolian copy and V8 editorial verification PASS
 PASS gifting: mocked provider + real disposable SQL; issuance, isolation, rollback, racing claims, replay, expiry/rotation, self-gift, ambiguous create, CSRF, disabled gate and SQL permissions
+PASS independent gifting safety fixture: entitled recipient gets safety guidance/null commercial report; invoice request blocked; buyer denied; zero payment rows
 removed product guard test passed
 safety gate tests passed
 safety provenance and branching tests passed

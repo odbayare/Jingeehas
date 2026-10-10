@@ -11,5 +11,6 @@ exports.handler = handler("POST", async (event, input) => {
   const database = getDatabase();
   await authenticateOwnerPreview(database, event);
   const session = await authenticateSession(database, event);
-  return response(200, await giftAction(database, getQPayProvider(), session.id, input));
+  const provider = { createInvoice: input => getQPayProvider().createInvoice(input), checkPayment: id => getQPayProvider().checkPayment(id) };
+  return response(200, await giftAction(database, provider, session.id, input));
 });

@@ -20,7 +20,8 @@
     "verify:production-package": "node tools/verify-production-package.mjs",
     "meta:draft:plan": "node tools/meta-jingeehas-draft.mjs --plan",
     "meta:draft:preflight": "node tools/meta-jingeehas-draft.mjs --preflight",
-    "test:gifting": "node tests/gifting.test.js"
+    "test:gifting": "node tests/gifting.test.js",
+    "test:gifting:native": "node tests/gifting-native.test.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.4.6",

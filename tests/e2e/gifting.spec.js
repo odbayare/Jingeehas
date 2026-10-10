@@ -56,3 +56,32 @@ test("gifting recipient is usable at 375px and unavailable links offer no accept
   await page.route("**/.netlify/functions/gift",route=>route.fulfill({status:404,json:{error:"gift_unavailable"}}));
   await page.goto(`/gift.html#${"z".repeat(43)}`);await expect(page.getByRole("button",{name:"Бэлгээ хүлээн авч, өөрийн үнэлгээг эхлүүлэх"})).toHaveCount(0);
 });
+test("unknown invoices survive reload without another create and show a support reference",async({page})=>{
+  let creates=0;await setup(page,(route,input)=>{
+    if(input.action==="create")creates++;
+    return route.fulfill({json:{orderId:"go-unknown",amount:19900,status:"create_unknown",supportRequired:true}});
+  });
+  await page.goto("/gift.html");await page.getByRole("button",{name:"QPay-ээр бэлэг авах"}).click();
+  await expect(page.getByText("Захиалгын лавлах: go-unknown")).toBeVisible();await page.reload();
+  await expect(page.getByRole("button",{name:"QPay-ээр бэлэг авах"})).toHaveCount(0);expect(creates).toBe(1);
+  await expect(page.getByRole("link",{name:"Захиалгын лавлахаар дэмжлэг авах"})).toBeVisible();
+});
+test("verified payment after cancellation displays recoverable review without a gift link",async({page})=>{
+  let state="pending";await setup(page,(route,input)=>{
+    if(input.action==="cancel")state="canceled";if(input.action==="check")state="paid_review";
+    return route.fulfill({json:{orderId:"go-canceled",amount:19900,status:state,urls:[]}});
+  });
+  await page.goto("/gift.html");await page.getByRole("button",{name:"QPay-ээр бэлэг авах"}).click();
+  await page.getByRole("button",{name:"Захиалгыг зогсоох хүсэлт"}).click();
+  await expect(page.getByText(/QPay нэхэмжлэх хаагдсан эсэхийг/)).toBeVisible();
+  await page.getByRole("button",{name:"Захиалгын төлөв шинэчлэх"}).click();
+  await expect(page.getByText(/Төлбөр бүртгэгдсэн байна/)).toBeVisible();
+  await expect(page.getByRole("button",{name:"Хуваалцах шинэ холбоос авах"})).toHaveCount(0);
+  await expect(page.getByRole("button",{name:"Бэлгээ сэргээх код хадгалах"})).toBeVisible();
+});
+test("a lost create response resumes by its stored request key",async({page})=>{
+  await page.addInitScript(()=>sessionStorage.setItem("jingeehas_gift_request","12345678-1234-1234-1234-123456789012"));
+  const calls=[];await setup(page,(route,input)=>{calls.push(input);return route.fulfill({json:{orderId:"go-interrupted",amount:19900,status:"pending",urls:[]}});});
+  await page.goto("/gift.html");await expect(page.getByRole("button",{name:"Төлбөр шалгах"})).toBeVisible();
+  expect(calls.map(x=>x.action)).toEqual(["status"]);expect(calls[0].requestKey).toBe("12345678-1234-1234-1234-123456789012");
+});

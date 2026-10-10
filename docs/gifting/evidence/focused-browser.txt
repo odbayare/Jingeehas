@@ -1,24 +1,14 @@
 
-> weight-loss-deep-pattern-prototype@0.1.0 test:e2e
-> playwright test tests/e2e/gifting.spec.js tests/e2e/product-flow.spec.js --grep buyer|recipient|disabled gifting|gifting recipient|landing|hero
+Running 8 tests using 1 worker
 
 
-Running 12 tests using 1 worker
 
-
-(node:41214) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
-(Use `node --trace-warnings ...` to show where the warning was created)
-
-[1/12] tests/e2e/gifting.spec.js:12:1 › buyer only obtains a share link after provider-confirmed payment; reload resumes
-[2/12] tests/e2e/gifting.spec.js:27:1 › recipient explicitly accepts; fragment and note never enter analytics; note is plain text
-[3/12] tests/e2e/gifting.spec.js:38:1 › disabled gifting cannot initiate a payment
-[4/12] tests/e2e/gifting.spec.js:42:1 › a saved buyer recovery code resumes the gift in a fresh session without recipient details
-[5/12] tests/e2e/gifting.spec.js:49:1 › gifting recipient is usable at 375px and unavailable links offer no acceptance
-[6/12] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 375px
-[7/12] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 390px
-[8/12] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 430px
-[9/12] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 768px
-[10/12] tests/e2e/product-flow.spec.js:51:3 › refreshed landing hero is usable at 1440px
-[11/12] tests/e2e/product-flow.spec.js:112:1 › landing CTA retains SPA routing and analytics tracking
-[12/12] tests/e2e/product-flow.spec.js:171:1 › landing restores trust content before the retained scientific methodology box
-  12 passed (2.6s)
+[1/8] tests/e2e/gifting.spec.js:12:1 › buyer only obtains a share link after provider-confirmed payment; reload resumes
+[2/8] tests/e2e/gifting.spec.js:27:1 › recipient explicitly accepts; fragment and note never enter analytics; note is plain text
+[3/8] tests/e2e/gifting.spec.js:38:1 › disabled gifting cannot initiate a payment
+[4/8] tests/e2e/gifting.spec.js:42:1 › a saved buyer recovery code resumes the gift in a fresh session without recipient details
+[5/8] tests/e2e/gifting.spec.js:49:1 › gifting recipient is usable at 375px and unavailable links offer no acceptance
+[6/8] tests/e2e/gifting.spec.js:59:1 › unknown invoices survive reload without another create and show a support reference
+[7/8] tests/e2e/gifting.spec.js:69:1 › verified payment after cancellation displays recoverable review without a gift link
+[8/8] tests/e2e/gifting.spec.js:82:1 › a lost create response resumes by its stored request key
+  8 passed (2.1s)

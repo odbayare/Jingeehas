@@ -2,7 +2,7 @@
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const { pathToFileURL } = require("node:url");
-const { giftAction, confirmGift, enabled, sameOrigin } = require("../netlify/functions/_lib/gifting.js");
+const { giftAction, confirmGift, enabled, sameOrigin, supportGift } = require("../netlify/functions/_lib/gifting.js");
 const { deepCamelKeys } = require("../netlify/functions/_lib/store.js");
 const { hashToken } = require("../netlify/functions/_lib/crypto.js");
 const { ownedAssessment } = require("../netlify/functions/_lib/assessment.js");
@@ -15,7 +15,7 @@ const { PRODUCT } = require("../product-config.js");
   const pg=new PGlite();
   await pg.exec("create schema jingeehas; create role anon; create role authenticated; create role service_role; set search_path=jingeehas,public;");
   const schema=fs.readFileSync("database/schema.sql","utf8");
-  for(const name of ["sessions","safety_checks","assessments","payments","entitlements"]){
+  for(const name of ["sessions","safety_checks","assessments","payments","entitlements","admin_accounts","admin_sessions","admin_audit_logs"]){
     const definition=schema.match(new RegExp(`create table ${name} \\([\\s\\S]*?\\n\\);`))[0];
     await pg.exec(definition);
   }
@@ -32,6 +32,8 @@ const { PRODUCT } = require("../product-config.js");
   await assert.rejects(pg.query("update jingeehas.entitlements set payment_id=null where id='ordinary-entitlement'"));
   await pg.exec(`select set_config('request.jwt.claims','{"role":"service_role"}',false)`);
   for(const sid of ["buyer","recipient","other"]){await pg.query("insert into jingeehas.sessions values($1,$2,now(),now()+interval '30 days',null)",[sid,hashToken(sid)]);}
+  await pg.exec(`insert into jingeehas.admin_accounts values('owner','owner@example.invalid','fixture-only','active',true,now(),null);
+    insert into jingeehas.admin_sessions(id,admin_id,token_hash,expires_at,created_at) values('owner-session','owner','owner-fixture',now()+interval '1 hour',now());`);
   const database={
     async giftRequest(input){return deepCamelKeys((await pg.query("select public.jingeehas_gift_request($1::jsonb) as result",[JSON.stringify(input)])).rows[0].result);},
     async get(table,id){if(table==="assessment_sessions")return null;return deepCamelKeys((await pg.query(`select * from jingeehas.${table} where id=$1`,[id])).rows[0]||null);}
@@ -78,8 +80,17 @@ const { PRODUCT } = require("../product-config.js");
   await assert.rejects(giftAction(database,provider,"buyer",{action:"link",orderId:id}),{code:"gift_unavailable"});
   // Canceled orders never issue gifts; self-gift requires the same explicit acceptance.
   const own=await giftAction(database,provider,"buyer",{action:"create",requestKey:"22345678-1234-1234-1234-123456789012"});
-  await pg.query("update jingeehas.gift_orders set status='canceled' where id=$1",[own.orderId]);
-  const canceled=await database.get("gift_orders",own.orderId);assert.equal((await confirmGift(database,provider,canceled.senderInvoiceNo)).state,"ignored");
+  await giftAction(database,provider,"buyer",{action:"cancel",orderId:own.orderId});
+  const canceled=await database.get("gift_orders",own.orderId);providerRows=[];assert.equal((await confirmGift(database,provider,canceled.senderInvoiceNo)).state,"retry");
+  await assert.rejects(giftAction(database,provider,"buyer",{action:"create",requestKey:"62345678-1234-1234-1234-123456789012"}),{code:"gift_invoice_reconciliation_required"});
+  await supportGift(database,provider,"owner-session",{action:"close_unpaid",orderId:own.orderId,operationKey:"62345678-1234-1234-1234-123456789012",evidenceRef:"CASE_CLOSED_FIXTURE",providerClosedVerified:true});
+  providerRows=[{payment_status:"PAID",payment_amount:PRODUCT.amount,payment_id:"late-canceled-gift"}];
+  assert.equal((await confirmGift(database,provider,canceled.senderInvoiceNo)).state,"review");
+  assert.equal((await database.get("gift_orders",own.orderId)).status,"paid_review");
+  await assert.rejects(giftAction(database,provider,"buyer",{action:"link",orderId:own.orderId}),{code:"gift_unavailable"});
+  const release={action:"release_paid_value",orderId:own.orderId,operationKey:"72345678-1234-1234-1234-123456789012",evidenceRef:"CASE_BUYER_CHOICE",buyerRequestedGift:true};
+  assert.equal((await supportGift(database,provider,"owner-session",release)).status,"paid");
+  assert.equal((await supportGift(database,provider,"owner-session",release)).status,"paid");
   const self=await giftAction(database,provider,"buyer",{action:"create",requestKey:"32345678-1234-1234-1234-123456789012"});
   await assert.rejects(giftAction(database,provider,"buyer",{action:"create",requestKey:"52345678-1234-1234-1234-123456789012"}),{code:"gift_invoice_reconciliation_required"});
   providerRows=[{payment_status:"PAID",payment_amount:PRODUCT.amount,payment_id:"self-gift-paid"}];
@@ -93,8 +104,17 @@ const { PRODUCT } = require("../product-config.js");
   const selfToken=(await giftAction(database,provider,"buyer",{action:"link",orderId:self.orderId})).claimPath.split("#")[1];
   const selfClaim=await giftAction(database,provider,"buyer",{action:"claim",token:selfToken,accept:true});assert.equal((await database.get("assessments",selfClaim.assessmentId)).sessionId,"buyer");
   const ambiguousProvider={async createInvoice(){throw new Error("timeout");}};
-  await assert.rejects(giftAction(database,ambiguousProvider,"buyer",{action:"create",requestKey:"42345678-1234-1234-1234-123456789012"}),{code:"gift_invoice_reconciliation_required"});
+  const ambiguous=await giftAction(database,ambiguousProvider,"buyer",{action:"create",requestKey:"42345678-1234-1234-1234-123456789012"});assert.equal(ambiguous.status,"create_unknown");
   assert.equal((await giftAction(database,provider,"buyer",{action:"create",requestKey:"42345678-1234-1234-1234-123456789012"})).status,"create_unknown");
+  const unknown=await database.get("gift_orders",ambiguous.orderId);
+  assert.equal((await confirmGift(database,provider,unknown.senderInvoiceNo)).state,"retry");
+  assert.equal((await giftAction(database,provider,"buyer",{action:"status",requestKey:"42345678-1234-1234-1234-123456789012"})).orderId,unknown.id);
+  providerRows=[{payment_status:"PAID",payment_amount:PRODUCT.amount,payment_id:"reconciled-gift-paid"}];
+  const attachment={action:"attach_invoice",orderId:unknown.id,operationKey:"82345678-1234-1234-1234-123456789012",evidenceRef:"CASE_MERCHANT_MATCH",invoiceId:"known-merchant-invoice",providerReferenceVerified:true};
+  await assert.rejects(supportGift(database,provider,"missing-owner",attachment),{code:"owner_required"});
+  assert.equal((await supportGift(database,provider,"owner-session",attachment)).status,"paid");
+  assert.equal((await supportGift(database,provider,"owner-session",attachment)).status,"paid");
+  assert.equal(creates,3); // Reconciliation checks existing invoices; never creates one.
   await assert.rejects(giftAction(database,provider,"buyer",{action:"preview",token:"invalid"}),{code:"gift_unavailable"});
   assert.throws(()=>sameOrigin({headers:{origin:"https://evil.test",host:"jingeehas.fit"}}),{code:"origin_required"});sameOrigin({headers:{origin:"https://jingeehas.fit",host:"jingeehas.fit"}});
   const prior=process.env.JINGEEHAS_GIFTING_ENABLED;delete process.env.JINGEEHAS_GIFTING_ENABLED;assert.throws(enabled,{code:"gifting_unavailable"});if(prior!==undefined)process.env.JINGEEHAS_GIFTING_ENABLED=prior;

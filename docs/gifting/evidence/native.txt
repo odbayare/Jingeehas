@@ -1,0 +1,20 @@
+
+> weight-loss-deep-pattern-prototype@0.1.0 test:gifting:native
+> node tests/gifting-native.test.js
+
+PostgreSQL 16.14 (Homebrew) on aarch64-apple-darwin25.4.0, compiled by Apple clang version 21.0.0 (clang-2100.0.123.102), 64-bit
+PASS four separate native backend connections
+PASS 8 concurrent creates: one stored order and one mocked provider invoice
+PASS five held-lock claim races, six recipients each: one winner, atomic recipient ownership, replay and claimed-rebind denial
+PASS six held-lock cancellation/payment races and callback replays: every verified receipt preserved; no unpaid or duplicate entitlement
+PASS ordinary source isolation: merchant attachment cannot reuse ordinary invoice; payment-ID overlap holds without gift rights or ordinary-row mutation
+PASS in-flight invoice persistence after buyer session expires and unpaid merchant attachment: no paid rights
+PASS missing-invoice recovery and late payment after verified closure; immutable invoice binding; no replacement invoice
+PASS native session expiry during lock wait and forced mid-claim rollback: no consumed gift or orphan assessment/safety row
+PASS claim/support-recovery race: either recipient claim wins or old capabilities revoke; no purchaser assessment access or ordinary payment rows
+PASS support HTTP: session credential and owner role required; same-origin enforced; no recipient/capability fields in projection
+PASS native role/owner permissions and expiration while a claim waits for lock
+(node:70114) ExperimentalWarning: stripTypeScriptTypes is an experimental feature and might change at any time
+(Use `node --trace-warnings ...` to show where the warning was created)
+PASS actual gateway handler: dedicated auth, credential-type rejection, service-only gift RPC, customer ownership and unchanged ordinary dispatch
+NATIVE_GIFTING_STATUS=PASS

@@ -21,7 +21,7 @@ async function request(database, action, input = {}) {
   return result;
 }
 function buyerView(order) {
-  return { orderId: order.id, amount: order.amount, status: order.status, qrImage: order.qrImage || "", urls: order.urls || [], expiresAt: order.expiresAt || null };
+  return { supportRequired: ["create_unknown", "canceled", "paid_review"].includes(order.status), orderId: order.id, amount: order.amount, status: order.status, qrImage: order.qrImage || "", urls: order.urls || [], expiresAt: order.expiresAt || null };
 }
 async function createGift(database, provider, sessionId, input = {}, now = new Date()) {
   if (typeof input.requestKey !== "string" || !/^[a-f0-9-]{36}$/.test(input.requestKey)) fail("invalid_request_key", 400);
@@ -32,27 +32,32 @@ async function createGift(database, provider, sessionId, input = {}, now = new D
   try {
     const invoice = await provider.createInvoice({ senderInvoiceNo: order.senderInvoiceNo, amount: order.amount });
     if (!invoice?.invoiceId) throw new Error("ambiguous");
-    return buyerView(await request(database, "invoice", { id: order.id, sessionId, invoice, now: now.toISOString() }));
+    return buyerView(await request(database, "provider_invoice", { id: order.id, invoice, now: now.toISOString() }));
   } catch {
-    await request(database, "unknown", { id: order.id, sessionId });
-    fail("gift_invoice_reconciliation_required", 502);
+    return buyerView(await request(database, "callback_wait", { id: order.id }));
   }
 }
 async function confirmGift(database, provider, reference, now = new Date()) {
   const order = await request(database, "callback_lookup", { senderInvoiceNo: reference });
-  if (!order?.invoiceId || order.status === "canceled") return { state: "ignored" };
+  if (!order?.id) return { state: "ignored" };
+  if (order.status === "paid_review") return { state: "review" };
+  if (!order.invoiceId) {
+    await request(database, "callback_wait", { id: order.id });
+    return { state: "retry" };
+  }
   if (["paid", "claimed"].includes(order.status)) return { state: "paid" };
   let result;
   try { result = await provider.checkPayment(order.invoiceId); } catch { return { state: "retry" }; }
   const paid = confirmedProviderPayment(result, order.amount);
   if (!paid) return { state: "retry" };
   const confirmed = await request(database, "confirm", { id: order.id, providerPaymentId: String(paid.payment_id || paid.id), now: now.toISOString() });
-  return { state: ["paid", "claimed"].includes(confirmed.status) ? "paid" : "ignored" };
+  return { state: ["paid", "claimed"].includes(confirmed.status) ? "paid" : confirmed.status === "paid_review" ? "review" : "retry" };
 }
 async function giftAction(database, provider, sessionId, input, now = new Date()) {
   const timestamp = now.toISOString();
   if (input.action === "create") return createGift(database, provider, sessionId, input, now);
-  if (input.action === "status") return buyerView(await request(database, "buyer", { id: input.orderId, sessionId }));
+  if (input.action === "status") return buyerView(await request(database, "buyer", { id: input.orderId, requestKey: input.requestKey, sessionId }));
+  if (input.action === "cancel") return buyerView(await request(database, "cancel", { id: input.orderId, sessionId }));
   if (input.action === "check") {
     const order = await request(database, "buyer", { id: input.orderId, sessionId });
     await confirmGift(database, provider, order.senderInvoiceNo, now);
@@ -60,8 +65,10 @@ async function giftAction(database, provider, sessionId, input, now = new Date()
   }
   if (input.action === "link") {
     const token = randomToken();
-    await request(database, "rotate", { id: input.orderId, sessionId, tokenHash: hashToken(token), now: timestamp });
-    return { claimPath: `/gift.html#${token}` }; // Fragment never enters HTTP/referrer logs.
+    const days = Number(process.env.JINGEEHAS_GIFT_LINK_DAYS || 30);
+    if (!Number.isInteger(days) || days < 1 || days > 365) fail("gift_policy_unavailable", 503);
+    await request(database, "rotate", { id: input.orderId, sessionId, tokenHash: hashToken(token), linkLifetimeSeconds: days * 86400, now: timestamp });
+    return { linkDays: days, claimPath: `/gift.html#${token}` }; // Fragment never enters HTTP/referrer logs.
   }
   if (input.action === "recovery_key") {
     const code = randomToken();
@@ -80,4 +87,37 @@ async function giftAction(database, provider, sessionId, input, now = new Date()
   }
   fail("invalid_gift_action", 400);
 }
-module.exports = { enabled, sameOrigin, buyerView, createGift, confirmGift, giftAction };
+function supportView(order) {
+  return { orderId: order.id, amount: order.amount, status: order.status, senderInvoiceNo: order.senderInvoiceNo,
+    invoiceId: order.invoiceId || null, paidAt: order.paidAt || null, reviewReason: order.reviewReason || null };
+}
+async function supportGift(database, provider, adminSessionId, input = {}) {
+  const allowed = new Set(["lookup", "attach_invoice", "check", "close_unpaid", "release_paid_value", "rebind_buyer"]);
+  if (!allowed.has(input.action)) fail("invalid_gift_action", 400);
+  const owner = { adminSessionId, id: input.orderId };
+  if (input.action === "lookup") return supportView(await request(database, "support_lookup", owner));
+  if (input.action === "check") {
+    const order = await request(database, "support_lookup", owner);
+    await confirmGift(database, provider, order.senderInvoiceNo);
+    return supportView(await request(database, "support_lookup", owner));
+  }
+  if (typeof input.operationKey !== "string" || !/^[a-f0-9-]{36}$/.test(input.operationKey) ||
+      typeof input.evidenceRef !== "string" || !/^[A-Za-z0-9_-]{8,80}$/.test(input.evidenceRef)) fail("support_evidence_required", 400);
+  if (input.action === "attach_invoice" && (input.providerReferenceVerified !== true || typeof input.invoiceId !== "string" || !/^[A-Za-z0-9_-]{1,128}$/.test(input.invoiceId))) fail("provider_reference_verification_required", 400);
+  if (input.action === "close_unpaid") {
+    if (input.providerClosedVerified !== true) fail("provider_closure_verification_required", 400);
+    const order = await request(database, "support_lookup", owner);
+    if (order.invoiceId) await confirmGift(database, provider, order.senderInvoiceNo);
+  }
+  if (input.action === "release_paid_value" && input.buyerRequestedGift !== true) fail("buyer_resolution_required", 400);
+  if (input.action === "rebind_buyer" && input.buyerVerified !== true) fail("buyer_verification_required", 400);
+  const result = await request(database, `support_${input.action}`, { ...owner, operationKey: input.operationKey, evidenceRef: input.evidenceRef,
+    invoiceId: input.invoiceId, providerReferenceVerified: input.providerReferenceVerified, providerClosedVerified: input.providerClosedVerified,
+    buyerRequestedGift: input.buyerRequestedGift, buyerVerified: input.buyerVerified, buyerSessionId: input.buyerSessionId });
+  if (input.action === "attach_invoice") {
+    await confirmGift(database, provider, result.senderInvoiceNo);
+    return supportView(await request(database, "support_lookup", owner));
+  }
+  return supportView(result);
+}
+module.exports = { enabled, sameOrigin, buyerView, createGift, confirmGift, giftAction, supportView, supportGift };
