@@ -6,8 +6,8 @@ const path = require("node:path");
 
 const distAppPath = path.join(__dirname, "..", "dist", "app.js");
 const generatedInitialResultPath = path.join(__dirname, "..", ".generated-copy-hotfix", "netlify", "functions", "_lib", "initial-result.js");
-assert(fs.existsSync(distAppPath), "production app must be generated before count-teaser runtime test");
-assert(fs.existsSync(generatedInitialResultPath), "generated count-teaser initial-result backend is missing");
+assert(fs.existsSync(distAppPath), "production app must be generated before paywall corrective runtime test");
+assert(fs.existsSync(generatedInitialResultPath), "generated count-teaser backend is missing");
 
 const app = require(distAppPath);
 const appSource = fs.readFileSync(distAppPath, "utf8");
@@ -16,10 +16,10 @@ for (const expected of [
   "/.netlify/functions/weight-assessment-initial-result?assessmentId=",
   "function renderPersonalizedConversionProof(",
   "jingeehas-initial-result-v3-counts",
-  "БҮРЭН ТАЙЛАНГАА НЭЭХ · ${PRODUCT.displayPrice}",
   "QPay-аар ${PRODUCT.displayPrice} төлөх",
   "Бусад банк, wallet харах"
-]) assert(appSource.includes(expected), `conversion runtime behavior missing: ${expected}`);
+]) assert(appSource.includes(expected), `retained conversion runtime behavior missing: ${expected}`);
+assert(!appSource.includes("БҮРЭН ТАЙЛАНГАА НЭЭХ · ${PRODUCT.displayPrice}"), "Sep5 paywall price-in-CTA presentation must not survive corrective restore");
 
 const {
   INITIAL_RESULT_SCHEMA_VERSION,
@@ -57,7 +57,7 @@ const expectedCounts = { schemaVersion: COUNT_TEASER_SCHEMA_VERSION, mode: "coun
 assert.equal(INITIAL_RESULT_SCHEMA_VERSION, "jingeehas-post-assessment-paywall-v1");
 assert.equal(COUNT_TEASER_SCHEMA_VERSION, "jingeehas-initial-result-v3-counts");
 assert.deepEqual(buildInitialResult(fullReport), sealed, "stored snapshot must remain sealed");
-assert.deepEqual(publicInitialResult(sealed, fullReport), expectedCounts, "sealed snapshot should project safe counts only");
+assert.deepEqual(publicInitialResult(sealed, fullReport), expectedCounts, "backend may retain privacy-safe counts without rendering them on the corrective paywall");
 assert.deepEqual(publicInitialResult({ schemaVersion: LEGACY_INITIAL_RESULT_SCHEMA_VERSION, title: "LEAK" }, fullReport), expectedCounts);
 assert.deepEqual(publicInitialResult({ schemaVersion: COUNT_ONLY_INITIAL_RESULT_SCHEMA_VERSION, patternCount: 99 }, fullReport), expectedCounts);
 
@@ -78,16 +78,25 @@ app._test.setState({
 });
 const paywall = app.renderForPath("/assessment/result");
 for (const expected of [
+  "ТЕСТ ДУУСЛАА",
+  "Таны хариултад тулгуурласан хувийн тайлан бэлэн боллоо",
+  "Бүрэн тайлангаас та:",
+  "ТАНЫ ХУВИЙН БҮРЭН ТАЙЛАН",
+  "19,900₮",
+  ">БҮРЭН ТАЙЛАНГАА НЭЭХ<"
+]) assert(paywall.includes(expected), `restored paywall presentation missing: ${expected}`);
+for (const forbidden of [
   "ТАНЫ ХАРИУЛТААС",
   "2 хэв маяг",
   "1 уялдаа холбоо",
   "Энд зөвхөн тоог харуулж байна.",
-  "БҮРЭН ТАЙЛАНГАА НЭЭХ · 19,900₮",
   "Бүрэн тайланд юу багтах вэ?",
-  "Бүрэн тайлангаас та:"
-]) assert(paywall.includes(expected), `count-teaser paywall copy missing: ${expected}`);
-for (const forbidden of ["SERVER ONLY PATTERN", "SERVER ONLY CONDITION", "SERVER ONLY REASON", "SERVER ONLY ACTION"])
-  assert(!paywall.includes(forbidden), `paid report detail leaked into count-teaser paywall: ${forbidden}`);
+  "БҮРЭН ТАЙЛАНГАА НЭЭХ · 19,900₮",
+  "SERVER ONLY PATTERN",
+  "SERVER ONLY CONDITION",
+  "SERVER ONLY REASON",
+  "SERVER ONLY ACTION"
+]) assert(!paywall.includes(forbidden), `corrective paywall retained Sep5 or paid-report detail: ${forbidden}`);
 
 const banks = Array.from({ length: 8 }, (_, index) => ({
   kind: "bank_app",
@@ -132,4 +141,4 @@ assert(paidPage.includes("Төлбөр баталгаажлаа. Бүрэн та
 assert(!paidPage.includes("Төлбөр баталгаажлаа. Тест нээгдлээ."));
 
 app._test.resetComingSoon();
-console.log("count-only paywall teaser and optimized QPay runtime contract passed");
+console.log("restored pre-Sep5 paywall decision layer and optimized QPay runtime contract passed");
