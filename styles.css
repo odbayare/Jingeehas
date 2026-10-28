@@ -160,6 +160,8 @@ th, td { padding: 0.75rem; border-bottom: 1px solid var(--border); text-align: l
 .sample-report h2 { max-width: 18ch; margin: 0.35rem 0 1rem; font-size: clamp(2rem, 4.6vw, 3.35rem); }
 .report-preview-lead { max-width: 72ch; margin: 0 0 1.5rem; color: var(--text); font-size: clamp(1.05rem, 1.4vw, 1.2rem); font-weight: 600; line-height: 1.7; }
 .sample-report-card { max-width: 960px; border: 1px solid #b9cabc; border-radius: 1.35rem; padding: clamp(0.4rem, 1.5vw, 0.75rem) clamp(1.1rem, 3.5vw, 2.5rem); background: #f4f8f3; box-shadow: 0 16px 36px rgba(32, 49, 38, 0.08); }
+.illustrative-report { margin-bottom: 1.5rem; }
+.illustrative-report h3 { margin: 0 0 0.65rem; font-size: clamp(1.25rem, 2.5vw, 1.65rem); line-height: 1.4; }
 .report-preview-item { min-width: 0; padding: clamp(1rem, 2.2vw, 1.45rem) 0; }
 .report-preview-item + .report-preview-item { border-top: 1px solid rgba(35, 92, 67, 0.2); }
 .sample-report-card p:not(.sample-kicker) { max-width: 76ch; margin: 0; color: var(--muted); font-size: 1rem; line-height: 1.7; overflow-wrap: break-word; }

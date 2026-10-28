@@ -141,7 +141,13 @@ test("natural Mongolian report preview is complete, ordered, and responsive", as
     await expect(preview.getByText("Таны авах тайлан", { exact: true })).toBeVisible();
     await expect(preview.getByRole("heading", { name: "Таны тайлан ямар байх вэ?" })).toBeVisible();
     await expect(preview.locator(".report-preview-lead")).toHaveText(lead);
-    await expect(preview.locator(".report-preview-item")).toHaveCount(5);
+    await expect(preview.locator(".sample-report-card:not(.illustrative-report) .report-preview-item")).toHaveCount(5);
+    const example = preview.getByRole("article", { name: "Номины өдрийн хоол хойшилдог үед" });
+    await expect(example).toBeVisible();
+    await expect(example.locator(".report-preview-item")).toHaveCount(4);
+    await expect(example).toContainText("Бодит хэрэглэгчийн мэдээлэл ашиглаагүй");
+    await expect(example).toContainText("Энэ нь таны хувийн үр дүн биш");
+    for (const label of ["1 · ИЛЭРСЭН ХЭВ МАЯГ", "2 · ӨДӨР ТУТАМД ЯАЖ НӨЛӨӨЛӨХ ВЭ?", "3 · ЭХНИЙ ПРАКТИК АЛХАМ"]) await expect(example.getByText(label, { exact: true })).toBeVisible();
     for (const label of labels) await expect(preview.getByText(label, { exact: true })).toBeVisible();
     for (const body of bodies) await expect(preview.getByText(body, { exact: true })).toBeVisible();
     for (const phrase of banned) await expect(preview.getByText(phrase, { exact: false })).toHaveCount(0);

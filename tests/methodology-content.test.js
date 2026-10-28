@@ -27,7 +27,11 @@ for (const banned of bannedReportPhrases) {
   assert(!source.toLowerCase().includes(banned), `source: ${banned}`);
   assert(!landing.toLowerCase().includes(banned), `rendered: ${banned}`);
 }
-assert.equal((landing.match(/class="report-preview-item"/g) || []).length, 5);
+assert.equal((landing.match(/class="report-preview-item"/g) || []).length, 9);
+const illustrativeReport = landing.match(/<article class="sample-report-card illustrative-report"[\s\S]*?<\/article>/)?.[0];
+assert(illustrativeReport, "one fictional report excerpt is rendered");
+for (const copy of ["ЗОХИОМОЛ ЖИШЭЭ", "Бодит хэрэглэгчийн мэдээлэл ашиглаагүй", "Энэ нь таны хувийн үр дүн биш", "1 · ИЛЭРСЭН ХЭВ МАЯГ", "2 · ӨДӨР ТУТАМД ЯАЖ НӨЛӨӨЛӨХ ВЭ?", "3 · ЭХНИЙ ПРАКТИК АЛХАМ", "Өдөр бүр ижил эсэхийг ажиглах хэрэгтэй."]) assert(illustrativeReport.includes(copy), copy);
+assert(!/кг|эмчил|баталгаатай|заавал турна/i.test(illustrativeReport));
 assert(landing.indexOf('class="hero"') < landing.indexOf('id="sample-report"'));
 assert(landing.indexOf('id="sample-report"') < landing.indexOf('class="methodology-summary"'));
 assert(landing.indexOf('class="methodology-summary"') < landing.indexOf('class="scientific-methods-box"'));
